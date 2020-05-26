@@ -5,9 +5,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 TMP_DIR="/tmp"
 
-declare -a SearchTypes=("POLYGON" "POLYGON_INDEX_EACH" "POLYGON_INDEX_CELL")
+declare -a SearchTypes=("POLYGON_INDEX_EACH" "POLYGON_INDEX_CELL")
 
-unzip -q 01037_test_data_search.zip
+unzip -q 01037_test_data_perf.zip
 
 $CLICKHOUSE_CLIENT --query="DROP DATABASE IF EXISTS test_01037;"
 
@@ -60,7 +60,7 @@ do
       dictGet(dict_name, 'value', key) from test_01037.points order by x, y;
    " > $outputFile
 
-   diff -q "01037_polygon_search_test.reference" "$outputFile"
+   diff -q "01037_polygon_perf_test.reference" "$outputFile"
 
    $CLICKHOUSE_CLIENT --query="DROP DICTIONARY test_01037.dict_array;"
 done
