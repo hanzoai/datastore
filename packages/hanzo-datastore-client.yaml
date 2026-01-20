@@ -1,0 +1,70 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "hanzo-datastore-client"
+description: |
+  Client binary for Hanzo Datastore
+    Hanzo Datastore is a column-oriented database management system.
+    that allows generating analytical data reports in real time.
+    This package provides hanzo-datastore-client, hanzo-datastore-local and hanzo-datastore-benchmark.
+
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${HANZO_DATASTORE_VERSION_STRING}"
+vendor: "Hanzo AI Inc."
+homepage: "https://hanzo.ai"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Hanzo AI Dev Team <packages@hanzo.ai>"
+deb:
+  fields:
+    Source: hanzo-datastore
+
+# Package specific content
+conflicts:
+- hanzo-datastore-compressor
+
+overrides:
+  deb:
+    depends:
+    - hanzo-datastore-common-static (= ${HANZO_DATASTORE_VERSION_STRING})
+  rpm:
+    depends:
+    - hanzo-datastore-common-static = ${HANZO_DATASTORE_VERSION_STRING}
+
+contents:
+- src: root/etc/hanzo-datastore-client/config.xml
+  dst: /etc/hanzo-datastore-client/config.xml
+  type: config|noreplace
+- src: root/usr/bin/hanzo-datastore-benchmark
+  dst: /usr/bin/hanzo-datastore-benchmark
+- src: root/usr/bin/hanzo-datastore-compressor
+  dst: /usr/bin/hanzo-datastore-compressor
+- src: root/usr/bin/hanzo-datastore-format
+  dst: /usr/bin/hanzo-datastore-format
+- src: root/usr/bin/hanzo-datastore-client
+  dst: /usr/bin/hanzo-datastore-client
+- src: root/usr/bin/hanzo-datastore-local
+  dst: /usr/bin/hanzo-datastore-local
+- src: root/usr/bin/hds
+  dst: /usr/bin/hds
+- src: root/usr/bin/hdsc
+  dst: /usr/bin/hdsc
+- src: root/usr/bin/hdsl
+  dst: /usr/bin/hdsl
+- src: root/usr/bin/hanzo-datastore-obfuscator
+  dst: /usr/bin/hanzo-datastore-obfuscator
+- src: root/usr/bin/hanzo-datastore-chdig
+  dst: /usr/bin/hanzo-datastore-chdig
+- src: root/usr/bin/hdsdig
+  dst: /usr/bin/hdsdig
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/hanzo-datastore-client/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/hanzo-datastore-client/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/hanzo-datastore-client/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/hanzo-datastore-client/README.md

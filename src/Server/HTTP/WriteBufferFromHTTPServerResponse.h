@@ -19,7 +19,7 @@ namespace DB
 /// Postpone sending HTTP header until first data is flushed. This is needed in HTTP servers
 ///  to change some HTTP headers (e.g. response code) before any data is sent to the client.
 ///
-/// Also this class write and flush special X-ClickHouse-Progress HTTP headers
+/// Also this class write and flush special X-Datastore-Progress HTTP headers
 ///  if no data was sent at the time of progress notification.
 /// This allows to implement progress bar in HTTP clients.
 class WriteBufferFromHTTPServerResponse final : public HTTPWriteBuffer
@@ -81,13 +81,13 @@ private:
     ///  but not finish them with \r\n, allowing to send more headers subsequently.
     void startSendHeaders();
 
-    /// Used to write the header X-ClickHouse-Progress / X-ClickHouse-Summary
+    /// Used to write the header X-Datastore-Progress / X-Datastore-Summary
     void writeHeaderProgressImpl(const char * header_name, Progress::DisplayMode mode);
-    /// Used to write the header X-ClickHouse-Progress
+    /// Used to write the header X-Datastore-Progress
     void writeHeaderProgress();
-    /// Used to write the header X-ClickHouse-Summary
+    /// Used to write the header X-Datastore-Summary
     void writeHeaderSummary();
-    /// Use to write the header X-ClickHouse-Exception-Code even when progress has been sent
+    /// Use to write the header X-Datastore-Exception-Code even when progress has been sent
     void writeExceptionCode();
 
     /// This method finish headers with \r\n, allowing to start to send body.

@@ -1,4 +1,4 @@
-# docker build -t clickhouse/test-mysql57 .
+# docker build -t hanzoai/datastore-test-mysql57 .
 
 FROM mysql:5.7
 

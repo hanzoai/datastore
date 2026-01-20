@@ -1,15 +1,15 @@
 from praktika import Artifact, Docker, Job, Secret
 from praktika.utils import MetaClasses, Utils
 
-# i.e. "ClickHouse/ci/tmp"
+# i.e. "hanzoai/datastore/ci/tmp"
 TEMP_DIR = f"{Utils.cwd()}/ci/tmp"  # == _Settings.TEMP_DIR != env_helper.TEMP_PATH
 
-SYNC = "CH Inc sync"
+SYNC = "Hanzo sync"
 
-S3_BUCKET_NAME = "clickhouse-builds"
-S3_REPORT_BUCKET_NAME = "clickhouse-test-reports"
-S3_BUCKET_HTTP_ENDPOINT = "clickhouse-builds.s3.amazonaws.com"
-S3_REPORT_BUCKET_HTTP_ENDPOINT = "s3.amazonaws.com/clickhouse-test-reports"
+S3_BUCKET_NAME = "hanzo-datastore-builds"
+S3_REPORT_BUCKET_NAME = "hanzo-datastore-test-reports"
+S3_BUCKET_HTTP_ENDPOINT = "hanzo-datastore-builds.s3.amazonaws.com"
+S3_REPORT_BUCKET_HTTP_ENDPOINT = "s3.amazonaws.com/hanzo-datastore-test-reports"
 
 
 class RunnerLabels:
@@ -57,233 +57,233 @@ SECRETS = [
         type=Secret.Type.AWS_SSM_PARAMETER,
     ),
     Secret.Config(
-        name="clickhouse-test-stat-url",
+        name="hanzo-datastore-test-stat-url",
         type=Secret.Type.AWS_SSM_PARAMETER,
         region="us-east-1",
     ),
     Secret.Config(
-        name="clickhouse-test-stat-login",
+        name="hanzo-datastore-test-stat-login",
         type=Secret.Type.AWS_SSM_PARAMETER,
         region="us-east-1",
     ),
     Secret.Config(
-        name="clickhouse-test-stat-password",
+        name="hanzo-datastore-test-stat-password",
         type=Secret.Type.AWS_SSM_PARAMETER,
         region="us-east-1",
     ),
     azure_secret,
     chcache_secret,
     Secret.Config(
-        name="woolenwolf_gh_app.clickhouse-app-id",
+        name="hanzo_gh_app.hanzo-datastore-app-id",
         type=Secret.Type.AWS_SSM_SECRET,
     ),
     Secret.Config(
-        name="woolenwolf_gh_app.clickhouse-app-key",
+        name="hanzo_gh_app.hanzo-datastore-app-key",
         type=Secret.Type.AWS_SSM_SECRET,
     ),
 ]
 
 DOCKERS = [
     Docker.Config(
-        name="clickhouse/style-test",
+        name="hanzoai/datastore-style-test",
         path="./ci/docker/style-test",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/fasttest",
+        name="hanzoai/datastore-fasttest",
         path="./ci/docker/fasttest",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/binary-builder",
+        name="hanzoai/datastore-binary-builder",
         path="./ci/docker/binary-builder",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/fasttest"],
+        depends_on=["hanzoai/datastore-fasttest"],
     ),
     Docker.Config(
-        name="clickhouse/stateless-test",
+        name="hanzoai/datastore-stateless-test",
         path="./ci/docker/stateless-test",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/cctools",
+        name="hanzoai/datastore-cctools",
         path="./ci/docker/cctools",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/fasttest"],
+        depends_on=["hanzoai/datastore-fasttest"],
     ),
     Docker.Config(
-        name="clickhouse/test-base",
+        name="hanzoai/datastore-test-base",
         path="./ci/docker/test-base",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/stress-test",
+        name="hanzoai/datastore-stress-test",
         path="./ci/docker/stress-test",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/stateless-test"],
+        depends_on=["hanzoai/datastore-stateless-test"],
     ),
     Docker.Config(
-        name="clickhouse/fuzzer",
+        name="hanzoai/datastore-fuzzer",
         path="./ci/docker/fuzzer",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/performance-comparison",
+        name="hanzoai/datastore-performance-comparison",
         path="./ci/docker/performance-comparison",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/keeper-jepsen-test",
+        name="hanzoai/datastore-keeper-jepsen-test",
         path="./ci/docker/keeper-jepsen-test",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/server-jepsen-test",
+        name="hanzoai/datastore-server-jepsen-test",
         path="./ci/docker/server-jepsen-test",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/integration-test",
+        name="hanzoai/datastore-integration-test",
         path="./ci/docker/integration/base",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/integration-tests-runner",
+        name="hanzoai/datastore-integration-tests-runner",
         path="./ci/docker/integration/runner",
         platforms=Docker.Platforms.arm_amd,
-        depends_on=["clickhouse/test-base"],
+        depends_on=["hanzoai/datastore-test-base"],
     ),
     Docker.Config(
-        name="clickhouse/integration-test-with-unity-catalog",
+        name="hanzoai/datastore-integration-test-with-unity-catalog",
         path="./ci/docker/integration/clickhouse_with_unity_catalog",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/integration-test-with-hms",
+        name="hanzoai/datastore-integration-test-with-hms",
         path="./ci/docker/integration/clickhouse_with_hms_catalog",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/integration-helper",
+        name="hanzoai/datastore-integration-helper",
         path="./ci/docker/integration/helper_container",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/kerberos-kdc",
+        name="hanzoai/datastore-kerberos-kdc",
         path="./ci/docker/integration/kerberos_kdc",
         platforms=[Docker.Platforms.AMD],
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/test-mysql80",
+        name="hanzoai/datastore-test-mysql80",
         path="./ci/docker/integration/mysql80",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/test-mysql57",
+        name="hanzoai/datastore-test-mysql57",
         path="./ci/docker/integration/mysql57",
         platforms=Docker.Platforms.AMD,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/mysql-golang-client",
+        name="hanzoai/datastore-mysql-golang-client",
         path="./ci/docker/integration/mysql_golang_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/mysql-java-client",
+        name="hanzoai/datastore-mysql-java-client",
         path="./ci/docker/integration/mysql_java_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/mysql-js-client",
+        name="hanzoai/datastore-mysql-js-client",
         path="./ci/docker/integration/mysql_js_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/arrowflight-server-test",
+        name="hanzoai/datastore-arrowflight-server-test",
         path="./ci/docker/integration/arrowflight",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/dotnet-client",
+        name="hanzoai/datastore-dotnet-client",
         path="./ci/docker/integration/dotnet_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/mysql-php-client",
+        name="hanzoai/datastore-mysql-php-client",
         path="./ci/docker/integration/mysql_php_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/nginx-dav",
+        name="hanzoai/datastore-nginx-dav",
         path="./ci/docker/integration/nginx_dav",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/postgresql-java-client",
+        name="hanzoai/datastore-postgresql-java-client",
         path="./ci/docker/integration/postgresql_java_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/python-bottle",
+        name="hanzoai/datastore-python-bottle",
         path="./ci/docker/integration/resolver",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/s3-proxy",
+        name="hanzoai/datastore-s3-proxy",
         path="./ci/docker/integration/s3_proxy",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/docs-builder",
+        name="hanzoai/datastore-docs-builder",
         path="./ci/docker/docs-builder",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/install-deb-test",
+        name="hanzoai/datastore-install-deb-test",
         path="./ci/docker/install/deb",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/install-rpm-test",
+        name="hanzoai/datastore-install-rpm-test",
         path="./ci/docker/install/rpm",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/sqlancer-test",
+        name="hanzoai/datastore-sqlancer-test",
         path="./ci/docker/sqlancer-test",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],
     ),
     Docker.Config(
-        name="clickhouse/mysql_dotnet_client",
+        name="hanzoai/datastore-mysql_dotnet_client",
         path="./ci/docker/integration/mysql_dotnet_client",
         platforms=Docker.Platforms.arm_amd,
         depends_on=[],

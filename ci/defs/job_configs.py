@@ -6,7 +6,7 @@ from ci.defs.defs import ArtifactNames, BuildTypes, JobNames, RunnerLabels
 LIMITED_MEM = Utils.physical_memory() - 2 * 1024**3
 
 BINARY_DOCKER_COMMAND = (
-    "clickhouse/binary-builder+--network=host+"
+    "hanzoai/datastore-binary-builder+--network=host+"
     f"--memory={Utils.physical_memory() * 95 // 100}+"
     f"--memory-reservation={Utils.physical_memory() * 9 // 10}"
 )
@@ -52,7 +52,7 @@ common_ft_job_config = Job.Config(
     # some tests can be flaky due to very slow disks - use tmpfs for temporary ClickHouse files
     # --cap-add=SYS_PTRACE and --privileged for gdb in docker
     # --root/--privileged/--cgroupns=host is required for clickhouse-test --memory-limit
-    run_in_docker=f"clickhouse/stateless-test+--memory={LIMITED_MEM}+--cgroupns=host+--cap-add=SYS_PTRACE+--privileged+--security-opt seccomp=unconfined+--tmpfs /tmp/clickhouse:mode=1777+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/etc/clickhouse-server1:/etc/clickhouse-server1+--volume=./ci/tmp/etc/clickhouse-server2:/etc/clickhouse-server2+--volume=./ci/tmp/var/log:/var/log+root",
+    run_in_docker=f"hanzoai/datastore-stateless-test+--memory={LIMITED_MEM}+--cgroupns=host+--cap-add=SYS_PTRACE+--privileged+--security-opt seccomp=unconfined+--tmpfs /tmp/clickhouse:mode=1777+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/etc/clickhouse-server1:/etc/clickhouse-server1+--volume=./ci/tmp/etc/clickhouse-server2:/etc/clickhouse-server2+--volume=./ci/tmp/var/log:/var/log+root",
     digest_config=Job.CacheDigestConfig(
         include_paths=[
             "./ci/jobs/functional_tests.py",
@@ -104,11 +104,11 @@ common_integration_test_job_config = Job.Config(
             "./ci/jobs/scripts/docker_in_docker.sh",
         ],
     ),
-    run_in_docker=f"clickhouse/integration-tests-runner+root+--memory={LIMITED_MEM}+--privileged+--dns-search='.'+--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--cgroupns=host",
+    run_in_docker=f"hanzoai/datastore-integration-tests-runner+root+--memory={LIMITED_MEM}+--privileged+--dns-search='.'+--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--cgroupns=host",
 )
 
 BINARY_DOCKER_COMMAND = (
-    "clickhouse/binary-builder+--network=host+"
+    "hanzoai/datastore-binary-builder+--network=host+"
     f"--memory={Utils.physical_memory() * 95 // 100}+"
     f"--memory-reservation={Utils.physical_memory() * 9 // 10}"
 )
@@ -119,7 +119,7 @@ class JobConfigs:
         name=JobNames.STYLE_CHECK,
         runs_on=RunnerLabels.STYLE_CHECK_ARM,
         command="python3 ./ci/jobs/check_style.py",
-        run_in_docker="clickhouse/style-test",
+        run_in_docker="hanzoai/datastore-style-test",
         enable_commit_status=True,
     )
     pr_body = Job.Config(
@@ -135,7 +135,7 @@ class JobConfigs:
         command="python3 ./ci/jobs/fast_test.py",
         # --network=host required for ec2 metadata http endpoint to work
         # --root/--privileged/--cgroupns=host is required for clickhouse-test --memory-limit
-        run_in_docker="clickhouse/fasttest+--network=host+--privileged+--cgroupns=host+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/var/log:/var/log+root",
+        run_in_docker="hanzoai/datastore-fasttest+--network=host+--privileged+--cgroupns=host+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/var/log:/var/log+root",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./ci/jobs/fast_test.py",
@@ -435,7 +435,7 @@ class JobConfigs:
         runs_on=RunnerLabels.FUNC_TESTER_ARM,
         command="python3 ./ci/jobs/functional_tests.py --options BugfixValidation",
         # some tests can be flaky due to very slow disks - use tmpfs for temporary ClickHouse files
-        run_in_docker="clickhouse/stateless-test+--network=host+--privileged+--cgroupns=host+root+--security-opt seccomp=unconfined+--tmpfs /tmp/clickhouse:mode=1777",
+        run_in_docker="hanzoai/datastore-stateless-test+--network=host+--privileged+--cgroupns=host+root+--security-opt seccomp=unconfined+--tmpfs /tmp/clickhouse:mode=1777",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./ci/jobs/functional_tests.py",
@@ -627,7 +627,7 @@ class JobConfigs:
         name=JobNames.UNITTEST,
         runs_on=[],  # from parametrize()
         command=f"python3 ./ci/jobs/unit_tests_job.py",
-        run_in_docker="clickhouse/fasttest+--privileged",
+        run_in_docker="hanzoai/datastore-fasttest+--privileged",
         digest_config=Job.CacheDigestConfig(
             include_paths=["./ci/jobs/unit_tests_job.py"],
         ),
@@ -912,7 +912,7 @@ class JobConfigs:
         runs_on=["#from param"],
         command='python3 ./ci/jobs/performance_tests.py --test-options "{PARAMETER}"',
         # TODO: switch to stateless-test image
-        run_in_docker="clickhouse/performance-comparison",
+        run_in_docker="hanzoai/datastore-performance-comparison",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./tests/performance/",
@@ -948,7 +948,7 @@ class JobConfigs:
         runs_on=["#from param"],
         command='python3 ./ci/jobs/performance_tests.py --test-options "{PARAMETER}"',
         # TODO: switch to stateless-test image
-        run_in_docker="clickhouse/performance-comparison",
+        run_in_docker="hanzoai/datastore-performance-comparison",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./tests/performance/",
@@ -981,7 +981,7 @@ class JobConfigs:
                 "./ci/jobs/scripts/functional_tests/setup_log_cluster.sh",
             ],
         ),
-        run_in_docker="clickhouse/stateless-test+--shm-size=16g+--network=host",
+        run_in_docker="hanzoai/datastore-stateless-test+--shm-size=16g+--network=host",
     ).parametrize(
         Job.ParamSet(
             parameter=BuildTypes.AMD_RELEASE,
@@ -1007,7 +1007,7 @@ class JobConfigs:
                 "./src/Functions",
             ],
         ),
-        run_in_docker="clickhouse/docs-builder",
+        run_in_docker="hanzoai/datastore-docs-builder",
         requires=[JobNames.STYLE_CHECK, ArtifactNames.CH_ARM_BINARY],
     )
     docker_server = Job.Config(
@@ -1045,7 +1045,7 @@ class JobConfigs:
         digest_config=Job.CacheDigestConfig(
             include_paths=["./ci/jobs/sqlancer_job.sh", "./ci/docker/sqlancer-test"],
         ),
-        run_in_docker="clickhouse/sqlancer-test",
+        run_in_docker="hanzoai/datastore-sqlancer-test",
         timeout=3600,
     ).parametrize(
         Job.ParamSet(
@@ -1064,7 +1064,7 @@ class JobConfigs:
             ],
         ),
         requires=[ArtifactNames.CH_ARM_RELEASE],
-        run_in_docker="clickhouse/stateless-test",
+        run_in_docker="hanzoai/datastore-stateless-test",
         timeout=10800,
     )
     jepsen_keeper = Job.Config(
@@ -1088,6 +1088,6 @@ class JobConfigs:
     vector_search_stress_job = Job.Config(
         name="Vector Search Stress",
         runs_on=RunnerLabels.ARM_MEDIUM,
-        run_in_docker="clickhouse/performance-comparison",
+        run_in_docker="hanzoai/datastore-performance-comparison",
         command="python3 ./ci/jobs/vector_search_stress_tests.py",
     )

@@ -1,7 +1,3 @@
 #pragma once
-
-namespace ClickHouseRevision
-{
-    unsigned getVersionRevision();
-    unsigned getVersionInteger();
-}
+// Backward compatibility header - redirects to HanzoRevision.h
+#include <Common/HanzoRevision.h>

@@ -195,7 +195,7 @@ class Lambda:
                     {
                         "Effect": "Allow",
                         "Action": ["s3:GetObject", "s3:HeadObject"],
-                        "Resource": "arn:aws:s3:::clickhouse-test-reports-private/*",
+                        "Resource": "arn:aws:s3:::hanzo-datastore-test-reports-private/*",
                     }
                 ],
             }
@@ -233,12 +233,12 @@ class Lambda:
                     {
                         "Effect": "Allow",
                         "Action": ["s3:GetObject", "s3:HeadObject", "s3:PutObject"],
-                        "Resource": "arn:aws:s3:::clickhouse-test-reports-private/*",
+                        "Resource": "arn:aws:s3:::hanzo-datastore-test-reports-private/*",
                     },
                     {
                         "Effect": "Allow",
                         "Action": ["s3:ListBucket"],
-                        "Resource": "arn:aws:s3:::clickhouse-test-reports-private",
+                        "Resource": "arn:aws:s3:::hanzo-datastore-test-reports-private",
                     },
                 ],
             }

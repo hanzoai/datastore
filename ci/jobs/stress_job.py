@@ -98,7 +98,7 @@ def get_run_command(
         # For dmesg and sysctl
         "--privileged "
         # a static link, don't use S3_URL or S3_DOWNLOAD
-        "-e S3_URL='https://s3.amazonaws.com/clickhouse-datasets' "
+        "-e S3_URL='https://s3.amazonaws.com/hanzo-datastore-datasets' "
         "--tmpfs /tmp/clickhouse:mode=1777 "
         f"--volume={build_path}:/package_folder "
         f"--volume={result_path}:/test_output "
@@ -181,7 +181,7 @@ def run_stress_test(upgrade_check: bool = False) -> None:
 
     packages_path = temp_path
 
-    docker_image = DockerImage.get_docker_image("clickhouse/stress-test").pull_image()
+    docker_image = DockerImage.get_docker_image("hanzoai/datastore-stress-test").pull_image()
 
     server_log_path = temp_path / "server_log"
     server_log_path.mkdir(parents=True, exist_ok=True)

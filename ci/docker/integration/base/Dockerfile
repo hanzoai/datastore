@@ -1,7 +1,7 @@
 # rebuild in #33610
-# docker build -t clickhouse/integration-test .
+# docker build -t hanzoai/datastore-integration-test .
 ARG FROM_TAG=latest
-FROM clickhouse/test-base:$FROM_TAG
+FROM hanzoai/datastore-test-base:$FROM_TAG
 
 SHELL ["/bin/bash", "-c"]
 
@@ -73,10 +73,10 @@ maxClientCnxns=80' > /opt/zookeeper/conf/zoo.cfg && \
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad \
+COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad \
   /opt/openssl-fips/openssl.cnf \
   /opt/openssl-fips/fipsmodule.cnf \
   /opt/openssl-fips/fips.so \

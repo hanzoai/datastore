@@ -24,7 +24,7 @@ This guide explains how to preview and validate the CI HTML page (`ci/praktika/j
    
    - `REF`: branch or ref name (e.g., `master`)
    - `sha`: the commit SHA to test
-   - `base_url`: URL-encoded base URL to CI reports (encoded `https://s3.amazonaws.com/clickhouse-test-reports` becomes `https%3A%2F%2Fs3.amazonaws.com%2Fclickhouse-test-reports`)
+   - `base_url`: URL-encoded base URL to CI reports (encoded `https://s3.amazonaws.com/hanzo-datastore-test-reports` becomes `https%3A%2F%2Fs3.amazonaws.com%2Fhanzo-datastore-test-reports`)
    - `name_0`: display name for the data source (e.g., `MasterCI`)
 
 ### Quick start with an AI agent
@@ -33,7 +33,7 @@ Ask your agent to start Chrome with CORS disabled and open `./ci/praktika/json.h
 
 ```
 Please start Chrome with disabled CORS and open ./ci/praktika/json.html file with params:
-REF=master&sha=YOUR_COMMIT_SHA&base_url=https%3A%2F%2Fs3.amazonaws.com%2Fclickhouse-test-reports&name_0=MasterCI
+REF=master&sha=YOUR_COMMIT_SHA&base_url=https%3A%2F%2Fs3.amazonaws.com%2Fhanzo-datastore-test-reports&name_0=MasterCI
 ```
 
 Note: Replace `YOUR_COMMIT_SHA` with the specific commit SHA you need to test.
@@ -48,7 +48,7 @@ open -a "Google Chrome" --args \
   --disable-site-isolation-trials \
   --allow-file-access-from-files \
   --user-data-dir="/tmp/ch-dev" \
-  "file:///ABSOLUTE_PATH_TO_REPO/ci/praktika/json.html?REF=master&sha=YOUR_COMMIT_SHA&base_url=https%3A%2F%2Fs3.amazonaws.com%2Fclickhouse-test-reports&name_0=MasterCI"
+  "file:///ABSOLUTE_PATH_TO_REPO/ci/praktika/json.html?REF=master&sha=YOUR_COMMIT_SHA&base_url=https%3A%2F%2Fs3.amazonaws.com%2Fhanzo-datastore-test-reports&name_0=MasterCI"
 ```
 
 - Replace `ABSOLUTE_PATH_TO_REPO` with your local path.
@@ -58,7 +58,7 @@ open -a "Google Chrome" --args \
 
 ```
 Please start Chrome with disabled CORS and open ./ci/praktika/json.html file with params:
-REF=master&sha=59d18f406d9ef99bbf400184fd0ba47a84381bec&base_url=https%3A%2F%2Fs3.amazonaws.com%2Fclickhouse-test-reports&name_0=MasterCI
+REF=master&sha=59d18f406d9ef99bbf400184fd0ba47a84381bec&base_url=https%3A%2F%2Fs3.amazonaws.com%2Fhanzo-datastore-test-reports&name_0=MasterCI
 ```
 
 ---

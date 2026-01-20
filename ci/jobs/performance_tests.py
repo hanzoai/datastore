@@ -281,7 +281,7 @@ def find_prev_build(info, build_type):
     commits = info.get_kv_data("previous_commits_sha") or []
     assert commits, "No commits found to fetch reference build"
     for sha in commits:
-        link = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/clickhouse"
+        link = f"https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/clickhouse"
         if Shell.check(f"curl -sfI {link} > /dev/null"):
             return link
 
@@ -292,7 +292,7 @@ def find_base_release_build(info, build_type):
     commits = info.get_kv_data("release_branch_base_sha_with_predecessors") or []
     assert commits, "No commits found to fetch reference build"
     for sha in commits:
-        link = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/clickhouse"
+        link = f"https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/clickhouse"
         if Shell.check(f"curl -sfI {link} > /dev/null"):
             return link
     return None
@@ -329,7 +329,7 @@ def main():
                 link_for_ref_ch = find_prev_build(info, "build_arm_release")
                 assert link_for_ref_ch, "previous clickhouse build has not been found"
             else:
-                link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+                link_for_ref_ch = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_arm_release")
             assert link_for_ref_ch, "reference clickhouse build has not been found"
@@ -341,7 +341,7 @@ def main():
                 link_for_ref_ch = find_prev_build(info, "build_amd_release")
                 assert link_for_ref_ch, "previous clickhouse build has not been found"
             else:
-                link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
+                link_for_ref_ch = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_amd_release")
             assert link_for_ref_ch, "reference clickhouse build has not been found"
@@ -480,11 +480,11 @@ def main():
         if not Path(f"{db_path}/.done").is_file():
             Shell.check(f"mkdir -p {db_path}/data/default/", verbose=True)
             dataset_paths = {
-                "hits10": "https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_10m_single.tar",
-                "hits100": "https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_100m_single.tar",
-                "hits1": "https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_v1.tar",
-                "values": "https://clickhouse-datasets.s3.amazonaws.com/values_with_expressions/partitions/test_values.tar",
-                "tpch10": "https://clickhouse-datasets.s3.amazonaws.com/h/10/tpch.tar",
+                "hits10": "https://hanzo-datastore-datasets.s3.amazonaws.com/hits/partitions/hits_10m_single.tar",
+                "hits100": "https://hanzo-datastore-datasets.s3.amazonaws.com/hits/partitions/hits_100m_single.tar",
+                "hits1": "https://hanzo-datastore-datasets.s3.amazonaws.com/hits/partitions/hits_v1.tar",
+                "values": "https://hanzo-datastore-datasets.s3.amazonaws.com/values_with_expressions/partitions/test_values.tar",
+                "tpch10": "https://hanzo-datastore-datasets.s3.amazonaws.com/h/10/tpch.tar",
             }
             cmds = []
             for dataset_path in dataset_paths.values():

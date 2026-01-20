@@ -59,12 +59,12 @@ class CreateIssue:
         quoted_job_name = quote(job_name, safe="")
         if not pr_number:
             res = (
-                "https://s3.amazonaws.com/clickhouse-test-reports/json.html"
+                "https://s3.amazonaws.com/hanzo-datastore-test-reports/json.html"
                 f"?REF=master&sha={head_sha}&name_0=MasterCI"
             )
         else:
             res = (
-                "https://s3.amazonaws.com/clickhouse-test-reports/json.html"
+                "https://s3.amazonaws.com/hanzo-datastore-test-reports/json.html"
                 f"?PR={pr_number}&sha={head_sha}&name_0=PR"
             )
         if job_name:
@@ -99,7 +99,7 @@ class CreateIssue:
             return ""
 
         return Issue.create_from(title=title, body=body, labels=labels).create_on_gh(
-            repo_name="ClickHouse/ClickHouse"
+            repo_name="hanzoai/datastore"
         )
 
     @classmethod
@@ -337,9 +337,9 @@ class CommitStatusCheck:
     @staticmethod
     def get_ci_praktika_result(pr_number, commit_sha):
         if pr_number != 0:
-            report_url = f"https://s3.amazonaws.com/clickhouse-test-reports/PRs/{pr_number}/{commit_sha}/result_pr.json"
+            report_url = f"https://s3.amazonaws.com/hanzo-datastore-test-reports/PRs/{pr_number}/{commit_sha}/result_pr.json"
         else:
-            report_url = f"https://s3.amazonaws.com/clickhouse-test-reports/REFs/master/{commit_sha}/result_masterci.json"
+            report_url = f"https://s3.amazonaws.com/hanzo-datastore-test-reports/REFs/master/{commit_sha}/result_masterci.json"
         _ = Shell.check(f"curl {report_url} -o /tmp/result_pr.json > /dev/null 2>&1")
         return Result.from_file("/tmp/result_pr.json")
 
@@ -359,7 +359,7 @@ class CommitStatusCheck:
                         "Ignored",
                         commit_status_data.url,
                         sha=sha,
-                        repo="ClickHouse/ClickHouse",
+                        repo="hanzoai/datastore",
                     )
                 else:
                     sys.exit(0)
@@ -380,7 +380,7 @@ class CommitStatusCheck:
                         "Ignored",
                         commit_status_data.url,
                         sha=sha,
-                        repo="ClickHouse/ClickHouse",
+                        repo="hanzoai/datastore",
                     )
                 else:
                     sys.exit(0)
@@ -420,7 +420,7 @@ class CommitStatusCheck:
                 "Manually overridden",
                 "",
                 sha=sha,
-                repo="ClickHouse/ClickHouse",
+                repo="hanzoai/datastore",
             )
 
     @classmethod
@@ -436,7 +436,7 @@ class CommitStatusCheck:
         """
         # Get commit statuses with pagination
         statuses_list = Shell.get_output(
-            f"gh api repos/ClickHouse/ClickHouse/commits/{head_sha}/statuses --paginate"
+            f"gh api repos/hanzoai/datastore/commits/{head_sha}/statuses --paginate"
         )
         statuses_list = json.loads(statuses_list)
 
@@ -521,7 +521,7 @@ def main():
     else:
         # Interactive mode: show menu to select PR
         my_prs_number_and_title = Shell.get_output(
-            "gh pr list --author @me --json number,title --base master --limit 20 --repo ClickHouse/ClickHouse"
+            "gh pr list --author @me --json number,title --base master --limit 20 --repo hanzoai/datastore"
         )
         my_prs_number_and_title = json.loads(my_prs_number_and_title)
         pr_menu = []
@@ -545,18 +545,18 @@ def main():
             pr_number = selected_pr[1]
 
     if not is_master_commit:
-        pr_url = f"https://github.com/ClickHouse/ClickHouse/pull/{pr_number}"
+        pr_url = f"https://github.com/hanzoai/datastore/pull/{pr_number}"
         pr_data = Shell.get_output(
-            f"gh pr view {pr_number} --json headRefOid,headRefName --repo ClickHouse/ClickHouse"
+            f"gh pr view {pr_number} --json headRefOid,headRefName --repo hanzoai/datastore"
         )
         pr_data = json.loads(pr_data)
         head_sha = pr_data["headRefOid"]
-        if GH.pr_has_conflicts(pr_number, "ClickHouse/ClickHouse"):
+        if GH.pr_has_conflicts(pr_number, "hanzoai/datastore"):
             print("PR has conflicts, cannot merge")
             sys.exit(1)
     else:
         head_sha = commit_sha
-        pr_url = f"https://github.com/ClickHouse/ClickHouse/commit/{commit_sha}"
+        pr_url = f"https://github.com/hanzoai/datastore/commit/{commit_sha}"
 
     print(f"Change URL: {pr_url}")
     print(f"Commit SHA: {head_sha}")
@@ -626,7 +626,7 @@ def main():
             or issue_catalog.updated_at < datetime.now().timestamp() - 10 * 60
         ):
             issue_catalog = TestCaseIssueCatalog.from_gh(
-                verbose=False, repo="ClickHouse/ClickHouse"
+                verbose=False, repo="hanzoai/datastore"
             )
             issue_catalog.dump()
         print(f"Loaded {len(issue_catalog.active_test_issues)} active issues from gh\n")
@@ -761,7 +761,7 @@ def main():
             if not GH.post_updateable_comment(
                 comment_tags_and_bodies={"summary": summary_body},
                 pr=pr_number,
-                repo="ClickHouse/ClickHouse",
+                repo="hanzoai/datastore",
                 only_update=True,
                 verbose=False,
             ):
@@ -776,11 +776,11 @@ def main():
         sys.exit(0)
 
     if Shell.check(
-        f"gh pr view {pr_number} --json isDraft --jq '.isDraft' --repo ClickHouse/ClickHouse | grep -q true"
+        f"gh pr view {pr_number} --json isDraft --jq '.isDraft' --repo hanzoai/datastore | grep -q true"
     ):
         if UserPrompt.confirm(f"It's a draft PR. Do you want to undraft it?"):
             Shell.check(
-                f"gh pr ready {pr_number} --repo ClickHouse/ClickHouse",
+                f"gh pr ready {pr_number} --repo hanzoai/datastore",
                 strict=True,
                 verbose=True,
             )
@@ -792,7 +792,7 @@ def main():
         mergeable_check_status, sha=head_sha
     )
 
-    if Shell.check(f"gh pr merge {pr_number} --auto --repo ClickHouse/ClickHouse"):
+    if Shell.check(f"gh pr merge {pr_number} --auto --repo hanzoai/datastore"):
         # Check if PR was successfully added to the merge queue
         # uncomment/fix if GH misses became regular
         # merge_status = Shell.check(

@@ -392,7 +392,7 @@ def main():
         run_by_hash_total = 0
 
     docker_image = DockerImage.get_docker_image(
-        "clickhouse/stateless-test"
+        "hanzoai/datastore-stateless-test"
     ).pull_image()
 
     fuzzers_path = temp_path

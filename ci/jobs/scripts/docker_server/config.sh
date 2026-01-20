@@ -8,6 +8,6 @@ clickhouseTests=$( find "$currentDir"/tests/ -maxdepth 1 -name 'clickhouse-*' -t
 keeperTests=$( find "$currentDir"/tests/ -maxdepth 1 -name 'keeper-*' -type d -exec basename {} \; )
 
 imageTests+=(
-	['clickhouse/clickhouse-server']="${clickhouseTests}"
-	['clickhouse/clickhouse-keeper']="${keeperTests}"
+	['hanzoai/datastore']="${clickhouseTests}"
+	['hanzoai/datastore-keeper']="${keeperTests}"
 )

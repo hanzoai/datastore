@@ -35,7 +35,7 @@ SET(VERSION_STRING {string})
 """
 
 
-class ClickHouseVersion:
+class DatastoreVersion:
     """Immutable version class. On update returns a new instance"""
 
     PART_TYPE = Literal["major", "minor", "patch"]
@@ -62,7 +62,7 @@ class ClickHouseVersion:
         self._describe = ""
         self._description = ""
 
-    def update(self, part: PART_TYPE) -> "ClickHouseVersion":
+    def update(self, part: PART_TYPE) -> "DatastoreVersion":
         """If part is valid, returns a new version"""
         if part == "major":
             return self.major_update()
@@ -72,7 +72,7 @@ class ClickHouseVersion:
             return self.patch_update()
         raise KeyError(f"wrong part {part} is used")
 
-    def bump(self) -> "ClickHouseVersion":
+    def bump(self) -> "DatastoreVersion":
         if self.minor < 12:
             self._minor += 1
             self._revision += 1
@@ -86,32 +86,32 @@ class ClickHouseVersion:
             self._tweak = 1
         return self
 
-    def bump_patch(self) -> "ClickHouseVersion":
+    def bump_patch(self) -> "DatastoreVersion":
         self._revision += 1
         self._patch += 1
         self._tweak = 1
         return self
 
-    def reset_tweak(self) -> "ClickHouseVersion":
+    def reset_tweak(self) -> "DatastoreVersion":
         self._tweak = 1
         return self
 
-    def major_update(self) -> "ClickHouseVersion":
+    def major_update(self) -> "DatastoreVersion":
         if self._git is not None:
             self._git.update()
-        return ClickHouseVersion(self.major + 1, 1, 1, self.revision + 1, self._git)
+        return DatastoreVersion(self.major + 1, 1, 1, self.revision + 1, self._git)
 
-    def minor_update(self) -> "ClickHouseVersion":
+    def minor_update(self) -> "DatastoreVersion":
         if self._git is not None:
             self._git.update()
-        return ClickHouseVersion(
+        return DatastoreVersion(
             self.major, self.minor + 1, 1, self.revision + 1, self._git
         )
 
-    def patch_update(self) -> "ClickHouseVersion":
+    def patch_update(self) -> "DatastoreVersion":
         if self._git is not None:
             self._git.update()
-        return ClickHouseVersion(
+        return DatastoreVersion(
             self.major, self.minor, self.patch + 1, self.revision, self._git
         )
 
@@ -197,8 +197,8 @@ class ClickHouseVersion:
         self._describe = f"v{self.string}-{version_type}"
         return self
 
-    def copy(self) -> "ClickHouseVersion":
-        copy = ClickHouseVersion(
+    def copy(self) -> "DatastoreVersion":
+        copy = DatastoreVersion(
             self.major,
             self.minor,
             self.patch,
@@ -233,7 +233,7 @@ class ClickHouseVersion:
 
         return False
 
-    def __le__(self, other: "ClickHouseVersion") -> bool:
+    def __le__(self, other: "DatastoreVersion") -> bool:
         return self == other or self < other
 
     def __hash__(self):
@@ -244,12 +244,16 @@ class ClickHouseVersion:
 
     def __repr__(self):
         return (
-            f"<ClickHouseVersion({self.major},{self.minor},{self.patch},{self.tweak},"
+            f"<DatastoreVersion({self.major},{self.minor},{self.patch},{self.tweak},"
             f"'{self.description}')>"
         )
 
 
-ClickHouseVersions = List[ClickHouseVersion]
+DatastoreVersions = List[DatastoreVersion]
+
+# Backward compatibility aliases
+ClickHouseVersion = DatastoreVersion
+ClickHouseVersions = DatastoreVersions
 
 
 class VersionType:
@@ -295,12 +299,12 @@ def read_versions(versions_path: Union[Path, str] = FILE_WITH_VERSION_PATH) -> V
 def get_version_from_repo(
     versions_path: Union[Path, str] = FILE_WITH_VERSION_PATH,
     git: Optional[Git] = None,
-) -> ClickHouseVersion:
-    """Get a ClickHouseVersion from FILE_WITH_VERSION_PATH. When the `git` parameter is
+) -> DatastoreVersion:
+    """Get a DatastoreVersion from FILE_WITH_VERSION_PATH. When the `git` parameter is
     present, a proper `tweak` version part is calculated for case if the latest tag has
     a `new` type and greater than version in `FILE_WITH_VERSION_PATH`"""
     versions = read_versions(versions_path)
-    cmake_version = ClickHouseVersion(
+    cmake_version = DatastoreVersion(
         versions["major"],
         versions["minor"],
         versions["patch"],
@@ -323,13 +327,13 @@ def get_version_from_repo(
 
 def get_version_from_string(
     version: str, git: Optional[Git] = None
-) -> ClickHouseVersion:
+) -> DatastoreVersion:
     validate_version(version)
     parts = version.split(".")
-    return ClickHouseVersion(parts[0], parts[1], parts[2], -1, git, parts[3])
+    return DatastoreVersion(parts[0], parts[1], parts[2], -1, git, parts[3])
 
 
-def get_version_from_tag(tag: str) -> ClickHouseVersion:
+def get_version_from_tag(tag: str) -> DatastoreVersion:
     Git.check_tag(tag)
     tag, description = tag[1:].split("-", 1)
     version = get_version_from_string(tag)
@@ -337,7 +341,7 @@ def get_version_from_tag(tag: str) -> ClickHouseVersion:
     return version
 
 
-def version_arg(version: str) -> ClickHouseVersion:
+def version_arg(version: str) -> DatastoreVersion:
     version = removeprefix(version, "refs/tags/")
     try:
         return get_version_from_string(version)
@@ -351,7 +355,7 @@ def version_arg(version: str) -> ClickHouseVersion:
     raise ArgumentTypeError(f"version {version} does not match tag of plain version")
 
 
-def get_tagged_versions() -> ClickHouseVersions:
+def get_tagged_versions() -> DatastoreVersions:
     versions = []
     for tag in get_tags():
         try:
@@ -363,10 +367,10 @@ def get_tagged_versions() -> ClickHouseVersions:
 
 
 def get_supported_versions(
-    versions: Optional[Iterable[ClickHouseVersion]] = None,
-) -> Set[ClickHouseVersion]:
-    supported_stable = set()  # type: Set[ClickHouseVersion]
-    supported_lts = set()  # type: Set[ClickHouseVersion]
+    versions: Optional[Iterable[DatastoreVersion]] = None,
+) -> Set[DatastoreVersion]:
+    supported_stable = set()  # type: Set[DatastoreVersion]
+    supported_lts = set()  # type: Set[DatastoreVersion]
     if versions:
         versions = list(versions)
     else:
@@ -397,7 +401,7 @@ def get_supported_versions(
 
 
 def update_cmake_version(
-    version: ClickHouseVersion,
+    version: DatastoreVersion,
     versions_path: Union[Path, str] = FILE_WITH_VERSION_PATH,
     preserve_sha: bool = False,
 ) -> None:
@@ -506,7 +510,7 @@ def main():
         update_cmake_version(version)
 
     for k, v in version.as_dict().items():
-        name = f"CLICKHOUSE_VERSION_{k.upper()}"
+        name = f"HANZO_DATASTORE_VERSION_{k.upper()}"
         print(f"{name}='{v}'")
         if args.export:
             print(f"export {name}")

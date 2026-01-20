@@ -1,28 +1,28 @@
-# Hanzo Datastore (ClickHouse Fork)
+# Hanzo Datastore
 
 ## Overview
 
-**Hanzo Datastore** is a fork of ClickHouse optimized for the Hanzo AI platform's unified analytics needs. It provides:
+**Hanzo Datastore** is a column-oriented database for real-time analytics, based on ClickHouse and optimized for the Hanzo AI platform's unified analytics needs. It provides:
 
 - **Web Analytics** - Privacy-focused visitor tracking (from Umami)
 - **AI Observability** - LLM traces, costs, latency (from LangFuse)
 - **Business Metrics** - Revenue, conversions, API usage
 - **Infrastructure Metrics** - Base instances, app deployments
 
-Repository: https://github.com/hanzoai/ClickHouse
+Repository: https://github.com/hanzoai/datastore
 
 ## Quick Start
 
 ```bash
-# Start ClickHouse with Hanzo schema
+# Start Hanzo Datastore with schema
 cd hanzo
 docker compose up -d
 
 # Initialize schema
-docker exec -i hanzo-clickhouse clickhouse-client < schema.sql
+docker exec -i hanzo-datastore hanzo-datastore-client < schema.sql
 
-# Connect to ClickHouse
-docker exec -it hanzo-clickhouse clickhouse-client
+# Connect to Hanzo Datastore
+docker exec -it hanzo-datastore hanzo-datastore-client
 ```
 
 ## Hanzo Schema
@@ -61,27 +61,27 @@ Real-time aggregations for dashboards:
 
 Console connects for AI observability:
 ```env
-CLICKHOUSE_URL=http://localhost:8123
-CLICKHOUSE_DATABASE=hanzo
+HANZO_DATASTORE_URL=http://localhost:8123
+HANZO_DATASTORE_DATABASE=hanzo
 ```
 
 ### With hanzo/analytics (Umami fork)
 
 Analytics connects for web tracking:
 ```env
-DATABASE_URL=clickhouse://default:@localhost:8123/hanzo
+DATABASE_URL=hanzo-datastore://default:@localhost:8123/hanzo
 ```
 
 ### With hanzo/platform (Dokploy fork)
 
 Platform writes deployment metrics:
 ```env
-CLICKHOUSE_HOST=localhost
-CLICKHOUSE_PORT=8123
-CLICKHOUSE_DB=hanzo
+HANZO_DATASTORE_HOST=localhost
+HANZO_DATASTORE_PORT=8123
+HANZO_DATASTORE_DB=hanzo
 ```
 
-## Syncing with Upstream
+## Syncing with Upstream ClickHouse
 
 ```bash
 # Fetch upstream changes
@@ -94,7 +94,7 @@ git merge upstream/master
 git checkout --ours hanzo/
 
 # Push to origin
-git push origin main
+git push origin master
 ```
 
 ## Performance Tuning
@@ -126,10 +126,9 @@ Large text fields use ZSTD(3):
 ## Docker Compose
 
 See `hanzo/compose.yml` for local development setup with:
-- ClickHouse server
-- ClickHouse Keeper (for replication)
+- Hanzo Datastore server
+- Hanzo Datastore Keeper (for replication)
 - Grafana for visualization
-- nginx proxy
 
 ## Related Repositories
 

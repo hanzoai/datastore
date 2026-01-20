@@ -1,4 +1,4 @@
-# docker build -t clickhouse/sqlancer-test .
+# docker build -t hanzoai/datastore-sqlancer-test .
 FROM ubuntu:22.04
 
 # ARG for quick switch to a given ubuntu mirror

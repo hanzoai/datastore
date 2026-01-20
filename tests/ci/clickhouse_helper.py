@@ -23,17 +23,17 @@ class InsertException(Exception):
     pass
 
 
-class ClickHouseHelper:
+class DatastoreHelper:
     def __init__(
         self, url: Optional[str] = None, auth: Optional[Dict[str, str]] = None
     ):
         if url is None:
-            url = get_parameter_from_ssm("clickhouse-test-stat-url")
+            url = get_parameter_from_ssm("hanzo-datastore-test-stat-url")
 
         self.url = url
         self.auth = auth or {
-            "X-ClickHouse-User": get_parameter_from_ssm("clickhouse-test-stat-login"),
-            "X-ClickHouse-Key": get_parameter_from_ssm("clickhouse-test-stat-password"),
+            "X-Datastore-User": get_parameter_from_ssm("hanzo-datastore-test-stat-login"),
+            "X-Datastore-Key": get_parameter_from_ssm("hanzo-datastore-test-stat-password"),
         }
 
     @staticmethod
@@ -55,7 +55,7 @@ class ClickHouseHelper:
                 params[k] = v
 
         with open(file, "rb") as data_fd:
-            ClickHouseHelper._insert_post(
+            DatastoreHelper._insert_post(
                 url, params=params, data=data_fd, headers=auth, **kwargs
             )
 
@@ -67,7 +67,7 @@ class ClickHouseHelper:
             "date_time_input_format": "best_effort",
             "send_logs_level": "warning",
         }
-        ClickHouseHelper._insert_post(url, params=params, data=json_str, headers=auth)
+        DatastoreHelper._insert_post(url, params=params, data=json_str, headers=auth)
 
     @staticmethod
     def _insert_post(*args, **kwargs):
@@ -91,7 +91,7 @@ class ClickHouseHelper:
                 break
 
             error = (
-                f"Cannot insert data into clickhouse at try {i}: HTTP code "
+                f"Cannot insert data into datastore at try {i}: HTTP code "
                 f"{response.status_code}: '{response.text}'"
             )
 
@@ -119,7 +119,7 @@ class ClickHouseHelper:
             self._insert_json_str_info(db, table, event_str)
         except InsertException as e:
             logging.error(
-                "Exception happened during inserting data into clickhouse: %s", e
+                "Exception happened during inserting data into datastore: %s", e
             )
             if not safe:
                 raise
@@ -133,7 +133,7 @@ class ClickHouseHelper:
             self._insert_json_str_info(db, table, ",".join(jsons))
         except InsertException as e:
             logging.error(
-                "Exception happened during inserting data into clickhouse: %s", e
+                "Exception happened during inserting data into datastore: %s", e
             )
             if not safe:
                 raise
@@ -162,7 +162,7 @@ class ClickHouseHelper:
                     logging.warning("Response text %s", response.text)
                 time.sleep(0.1 * i)
 
-        raise CHException("Cannot fetch data from clickhouse")
+        raise CHException("Cannot fetch data from datastore")
 
     def select_json_each_row(self, db, query, query_params=None):
         text = self._select_and_get_json_each_row(db, query, query_params)
@@ -265,9 +265,9 @@ class CiLogsCredentials:
     def __init__(self, config_path: Path):
         self.config_path = config_path
         try:
-            self._host = get_parameter_from_ssm("clickhouse_ci_logs_host")  # type: str
+            self._host = get_parameter_from_ssm("datastore_ci_logs_host")  # type: str
             self._password = get_parameter_from_ssm(
-                "clickhouse_ci_logs_password"
+                "datastore_ci_logs_password"
             )  # type: str
         except:
             logging.warning(
@@ -287,9 +287,9 @@ class CiLogsCredentials:
             return
         self.config_path.parent.mkdir(parents=True, exist_ok=True)
         self.config_path.write_text(
-            f"CLICKHOUSE_CI_LOGS_HOST={self.host}\n"
-            "CLICKHOUSE_CI_LOGS_USER=ci\n"
-            f"CLICKHOUSE_CI_LOGS_PASSWORD={self.password}\n",
+            f"DATASTORE_CI_LOGS_HOST={self.host}\n"
+            "DATASTORE_CI_LOGS_USER=ci\n"
+            f"DATASTORE_CI_LOGS_PASSWORD={self.password}\n",
             encoding="utf-8",
         )
 
@@ -313,7 +313,7 @@ class CiLogsCredentials:
         )
         return (
             f'-e EXTRA_COLUMNS_EXPRESSION="{extra_columns}" '
-            f"-e CLICKHOUSE_CI_LOGS_CREDENTIALS=/tmp/export-logs-config.sh "
+            f"-e DATASTORE_CI_LOGS_CREDENTIALS=/tmp/export-logs-config.sh "
             f"--volume={self.config_path.absolute()}:/tmp/export-logs-config.sh:ro "
         )
 
@@ -328,13 +328,13 @@ class CiLogsCredentials:
 
         def process_line(line: str) -> str:
             if self.host and self.password:
-                return line.replace(self.host, "CLICKHOUSE_CI_LOGS_HOST").replace(
-                    self.password, "CLICKHOUSE_CI_LOGS_PASSWORD"
+                return line.replace(self.host, "DATASTORE_CI_LOGS_HOST").replace(
+                    self.password, "DATASTORE_CI_LOGS_PASSWORD"
                 )
             if self.host:
-                return line.replace(self.host, "CLICKHOUSE_CI_LOGS_HOST")
+                return line.replace(self.host, "DATASTORE_CI_LOGS_HOST")
             # the remaining is self.password
-            return line.replace(self.password, "CLICKHOUSE_CI_LOGS_PASSWORD")
+            return line.replace(self.password, "DATASTORE_CI_LOGS_PASSWORD")
 
         # errors="surrogateescape" require python 3.10.
         # With ubuntu 22.04 we are safe
@@ -351,3 +351,7 @@ class CiLogsCredentials:
     @property
     def password(self) -> str:
         return self._password
+
+
+# Backward compatibility alias
+ClickHouseHelper = DatastoreHelper

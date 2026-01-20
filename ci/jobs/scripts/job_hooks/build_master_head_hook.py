@@ -24,7 +24,7 @@ BUILD_TYPE_TO_STATIC_LOCATION = {
 def check():
     info = Info()
     Shell.check("find ./ci/tmp/build/programs -type f", verbose=True)
-    if not info.pr_number and info.repo_name == "ClickHouse/ClickHouse":
+    if not info.pr_number and info.repo_name == "hanzoai/datastore":
         for build_type, prefix in BUILD_TYPE_TO_STATIC_LOCATION.items():
             if build_type in info.job_name:
                 print("Upload builds to static location")

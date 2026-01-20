@@ -591,8 +591,8 @@ clickhouse-local --query "
 -- Join the metric names back to the metric statistics we've calculated, and make
 -- a denormalized table of them -- statistics for all metrics for all queries.
 -- The WITH, ARRAY JOIN and CROSS JOIN do not like each other:
---  https://github.com/ClickHouse/ClickHouse/issues/11868
---  https://github.com/ClickHouse/ClickHouse/issues/11757
+--  https://github.com/hanzoai/datastore/issues/11868
+--  https://github.com/hanzoai/datastore/issues/11757
 -- Because of this, we make a view with arrays first, and then apply all the
 -- array joins.
 create view query_metric_stat_arrays as
@@ -844,7 +844,7 @@ create view test_times_view as
     ;
 
 -- WITH TOTALS doesn't work with INSERT SELECT, so we have to jump through these
--- hoops: https://github.com/ClickHouse/ClickHouse/issues/15227
+-- hoops: https://github.com/hanzoai/datastore/issues/15227
 create view test_times_view_total as
     select
         'Total' test,
@@ -1172,8 +1172,8 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
         test_duration_ms :: UInt64 AS test_duration_ms,
         report_url,
         $PR_TO_TEST = 0
-            ? 'https://github.com/ClickHouse/ClickHouse/commit/$SHA_TO_TEST'
-            : 'https://github.com/ClickHouse/ClickHouse/pull/$PR_TO_TEST' pull_request_url,
+            ? 'https://github.com/hanzoai/datastore/commit/$SHA_TO_TEST'
+            : 'https://github.com/hanzoai/datastore/pull/$PR_TO_TEST' pull_request_url,
         '' commit_url,
         '' task_url,
         '' base_ref,
@@ -1184,7 +1184,7 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
         select '' test_name,
             '$(sed -n 's/.*<!--message: \(.*\)-->/\1/p' report.html)' test_status,
             0 test_duration_ms,
-            'https://s3.amazonaws.com/clickhouse-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/report.html#fail1' report_url
+            'https://s3.amazonaws.com/hanzo-datastore-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/report.html#fail1' report_url
         union all
             select
                 test || ' #' || toString(query_index) || '::' || test_desc_.1 test_name,
@@ -1194,7 +1194,7 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
                     'success'
                 ) test_status,
                 test_desc_.2*1e3 test_duration_ms,
-                'https://s3.amazonaws.com/clickhouse-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/'
+                'https://s3.amazonaws.com/hanzo-datastore-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/'
                     || multiIf(
                         changed_fail != 0 and diff > 0, 'report.html#changes-in-performance.',
                         unstable_fail != 0, 'report.html#unstable-queries.',

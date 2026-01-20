@@ -5,12 +5,12 @@
     https://github.com/docker-library/official-images/
     https://github.com/docker-library/docs/
 2. update the fork repos to upstream:
-    https://github.com/ClickHouse/docker-library-official-images
-    https://github.com/ClickHouse/docker-library-docs
+    https://github.com/hanzoai/docker-library-official-images
+    https://github.com/hanzoai/docker-library-docs
 3. checkout all necessary repos:
-    https://github.com/ClickHouse/docker-library
-    https://github.com/ClickHouse/docker-library-official-images
-    https://github.com/ClickHouse/docker-library-docs
+    https://github.com/hanzoai/docker-library
+    https://github.com/hanzoai/docker-library-official-images
+    https://github.com/hanzoai/docker-library-docs
 """
 
 import argparse
@@ -31,7 +31,7 @@ from github_helper import GitHub, Repository
 from official_docker import MAINTAINERS_HEADER, path_is_changed
 from ssh import SSHKey
 
-LIBRARY_BRANCH = "ClickHouse-docker-library"
+LIBRARY_BRANCH = "hanzo-docker-library"
 
 temp_path = Path(TEMP_PATH)
 
@@ -80,7 +80,7 @@ def update_docs(repos: LibraryRepos, dry_run: bool = True) -> None:
     - Create the branch
     - Check the documentation should be updated:
         - Copy content of ./docker/server/README.src to the
-            docker-library-docs/clickhouse
+            docker-library-docs/datastore
         - Find every file with `docker-official-library:off` in it, clean to the
             `docker-official-library:on`
         - Check if the repository content is changed
@@ -113,7 +113,7 @@ def update_docs(repos: LibraryRepos, dry_run: bool = True) -> None:
         run(f"{GIT_PREFIX} checkout -B {LIBRARY_BRANCH} --no-track", cwd=docs_dir)
 
     # Copy and filter the docs sources
-    ch_docs = docs_dir / "clickhouse"
+    ch_docs = docs_dir / "datastore"
     docs_src = Path(git_runner.cwd) / "docker/server/README.src"
     copytree(docs_src, ch_docs, dirs_exist_ok=True)
     start_filter = "<!-- docker-official-library:off -->"
@@ -142,12 +142,12 @@ def update_docs(repos: LibraryRepos, dry_run: bool = True) -> None:
     logging.info("The diff:\n%s", run("git diff", cwd=docs_dir))
     if dry_run:
         logging.info(
-            "The library/clickhouse file in %s is changed, would update the upstream",
+            "The library/datastore file in %s is changed, would update the upstream",
             repos.images.parent.full_name,
         )
 
     run(
-        f"{GIT_PREFIX} commit -m 'Update clickhouse according the the latest tags' "
+        f"{GIT_PREFIX} commit -m 'Update datastore according the the latest tags' "
         f"{ch_docs}",
         dry_run,
         cwd=docs_dir,
@@ -169,7 +169,7 @@ def update_docs(repos: LibraryRepos, dry_run: bool = True) -> None:
     repos.docs.parent.create_pull(
         base=repos.docs.parent.default_branch,
         head=pr_head,
-        title=f"Update {ch_docs.name} docs according to ClickHouse/ClickHouse",
+        title=f"Update {ch_docs.name} docs according to hanzoai/datastore",
         body=f"This is an automatic PR to update `{ch_docs.name}` docs.\n\n{MAINTAINERS_HEADER}",
     )
 
@@ -181,15 +181,15 @@ def update_library_images(repos: LibraryRepos, dry_run: bool = True) -> None:
         - Checkout the branch
         - Check the LDF should be updated
         - Push changes if there are
-    - Create directories in ClickHouse/docker-library via
+    - Create directories in hanzoai/docker-library via
         `tests/ci/official_docker.py generate-tree`
     - If there aren't changes:
         - Finish
     - Create a new LDF as `tests/ci/official_docker.py generate-ldf`
-    - Update ClickHouse/docker-library-official-images to the upstream
-    - Create a branch in ClickHouse/docker-library-official-images
-    - Copy `ClickHouse/docker-library/clickhouse` to
-        `ClickHouse/docker-library-official-images/clickhouse`
+    - Update hanzoai/docker-library-official-images to the upstream
+    - Create a branch in hanzoai/docker-library-official-images
+    - Copy `hanzoai/docker-library/datastore` to
+        `hanzoai/docker-library-official-images/datastore`
     - Commit, create a PR
     """
     org = repos.ldf.owner.name
@@ -231,8 +231,8 @@ def update_library_images(repos: LibraryRepos, dry_run: bool = True) -> None:
         images_pr = None
         run(f"{GIT_PREFIX} checkout -B {LIBRARY_BRANCH} --no-track", cwd=images_dir)
 
-    ch_ldf = images_dir / "library/clickhouse"
-    copy2(ldf_dir / "clickhouse", ch_ldf)
+    ch_ldf = images_dir / "library/datastore"
+    copy2(ldf_dir / "datastore", ch_ldf)
     if not path_is_changed(ch_ldf):
         logging.info(
             "Nothing is changed in %s, finishing", repos.images.parent.full_name
@@ -249,7 +249,7 @@ def update_library_images(repos: LibraryRepos, dry_run: bool = True) -> None:
         )
 
     run(
-        f"{GIT_PREFIX} commit -m 'Update clickhouse according the the latest tags' "
+        f"{GIT_PREFIX} commit -m 'Update datastore according the the latest tags' "
         f"{ch_ldf}",
         dry_run,
         cwd=images_dir,
@@ -345,17 +345,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--token", help="github token, if not set, used from smm")
     parser.add_argument(
         "--ldf-repo",
-        default="ClickHouse/docker-library",
+        default="hanzoai/docker-library",
         help="repo with Library Definition File and Dockerfiles",
     )
     parser.add_argument(
         "--images-repo",
-        default="ClickHouse/docker-library-official-images",
+        default="hanzoai/docker-library-official-images",
         help="fork repo of https://github.com/docker-library/official-images/",
     )
     parser.add_argument(
         "--docs-repo",
-        default="ClickHouse/docker-library-docs",
+        default="hanzoai/docker-library-docs",
         help="fork repo of https://github.com/docker-library/docs/",
     )
 
@@ -394,8 +394,8 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(level=logging.INFO)
 
     assert not is_shallow()
-    if os.getenv("ROBOT_CLICKHOUSE_SSH_KEY", ""):
-        with SSHKey("ROBOT_CLICKHOUSE_SSH_KEY"):
+    if os.getenv("ROBOT_HANZO_SSH_KEY", ""):
+        with SSHKey("ROBOT_HANZO_SSH_KEY"):
             main()
     else:
         main()

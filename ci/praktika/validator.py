@@ -327,7 +327,7 @@ class Validator:
                         message += (
                             "\n      echo requests==2.32.4 >> ./ci/requirements.txt"
                         )
-                        message += "\n      echo https://clickhouse-builds.s3.amazonaws.com/packages/praktika-0.1-py3-none-any.whl >> ./ci/requirements.txt"
+                        message += "\n      echo https://hanzo-datastore-builds.s3.amazonaws.com/packages/praktika-0.1-py3-none-any.whl >> ./ci/requirements.txt"
                     cls.evaluate_check(path.is_file(), message, job.name, workflow.name)
 
     @classmethod

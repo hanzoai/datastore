@@ -746,5 +746,5 @@ if __name__ == "__main__":
             "test3": "foobar33",
         },
         pr=81471,
-        repo="ClickHouse/ClickHouse",
+        repo="hanzoai/datastore",
     )

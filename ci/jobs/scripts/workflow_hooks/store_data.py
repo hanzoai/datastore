@@ -23,10 +23,10 @@ if __name__ == "__main__":
     digest = Digest().calc_job_digest(some_build_job, {}, {}).split("-")[0]
     info.store_kv_data("build_digest", digest)
 
-    if info.git_branch == "master" and info.repo_name == "ClickHouse/ClickHouse":
+    if info.git_branch == "master" and info.repo_name == "hanzoai/datastore":
         # store previous commits for perf tests
         raw = Shell.get_output(
-            f"gh api 'repos/ClickHouse/ClickHouse/commits?sha={info.git_branch}&per_page=30' -q '.[].sha' | head -n30",
+            f"gh api 'repos/hanzoai/datastore/commits?sha={info.git_branch}&per_page=30' -q '.[].sha' | head -n30",
             verbose=True,
         )
         commits = raw.splitlines()
@@ -49,7 +49,7 @@ if __name__ == "__main__":
                 )
         info.store_kv_data("file_diff", file_diff)
 
-    elif info.git_branch == "master" and info.repo_name == "ClickHouse/ClickHouse":
+    elif info.git_branch == "master" and info.repo_name == "hanzoai/datastore":
         # store commit sha of release branch base to find binary for performance comparison in the job script later
         release_branch_base_sha = CHVersion.get_release_version_as_dict().get("githash")
         print(f"Release branch base sha: {release_branch_base_sha}")

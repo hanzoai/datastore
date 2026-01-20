@@ -577,7 +577,7 @@ static ResultProgress flushQueryProgress(const QueryPipeline & pipeline, bool pu
         res.result_bytes = progress_out.written_bytes;
     }
 
-    /// Report same memory_usage in X-ClickHouse-Summary as in query_log
+    /// Report same memory_usage in X-Datastore-Summary as in query_log
     if (process_list_elem)
         res.memory_usage = std::max<Int64>(process_list_elem->getInfo().peak_memory_usage, 0);
 
@@ -2267,7 +2267,7 @@ void executeQuery(
     ///
     /// That way we have:
     /// - correct finish time of the query (regardless of how long does the query_finish_callback() takes)
-    /// - correct progress for HTTP (X-ClickHouse-Summary requires result_rows/result_bytes)
+    /// - correct progress for HTTP (X-Datastore-Summary requires result_rows/result_bytes)
     /// - correct NetworkSendElapsedMicroseconds/NetworkSendBytes in query_log
     const auto finish_time = std::chrono::system_clock::now();
     std::exception_ptr exception_ptr;

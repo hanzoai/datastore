@@ -174,11 +174,11 @@ jobs:
             python3 -m praktika run 'Build (amd_binary)' --workflow "NightlyJepsen" --ci |& tee ./ci/tmp/job.log
           fi
 
-  clickhouse_keeper_jepsen:
+  datastore_keeper_jepsen:
     runs-on: [self-hosted, style-checker]
     needs: [config_workflow, dockers_build_amd, dockers_build_arm, build_amd_binary]
     if: ${{ !cancelled() && !contains(needs.*.outputs.pipeline_status, 'failure') && !contains(needs.*.outputs.pipeline_status, 'undefined') && !contains(fromJson(needs.config_workflow.outputs.data).workflow_config.cache_success_base64, 'Q2xpY2tIb3VzZSBLZWVwZXIgSmVwc2Vu') }}
-    name: "ClickHouse Keeper Jepsen"
+    name: "Datastore Keeper Jepsen"
     outputs:
       data: ${{ steps.run.outputs.DATA }}
       pipeline_status: ${{ steps.run.outputs.pipeline_status || 'undefined' }}
@@ -209,14 +209,14 @@ jobs:
           . ./ci/tmp/praktika_setup_env.sh
           set -o pipefail
           if command -v ts &> /dev/null; then
-            python3 -m praktika run 'ClickHouse Keeper Jepsen' --workflow "NightlyJepsen" --ci |& ts '[%Y-%m-%d %H:%M:%S]' | tee ./ci/tmp/job.log
+            python3 -m praktika run 'Datastore Keeper Jepsen' --workflow "NightlyJepsen" --ci |& ts '[%Y-%m-%d %H:%M:%S]' | tee ./ci/tmp/job.log
           else
-            python3 -m praktika run 'ClickHouse Keeper Jepsen' --workflow "NightlyJepsen" --ci |& tee ./ci/tmp/job.log
+            python3 -m praktika run 'Datastore Keeper Jepsen' --workflow "NightlyJepsen" --ci |& tee ./ci/tmp/job.log
           fi
 
   finish_workflow:
     runs-on: [self-hosted, style-checker-aarch64]
-    needs: [config_workflow, dockers_build_amd, dockers_build_arm, build_amd_binary, clickhouse_keeper_jepsen]
+    needs: [config_workflow, dockers_build_amd, dockers_build_arm, build_amd_binary, datastore_keeper_jepsen]
     if: ${{ always() }}
     name: "Finish Workflow"
     outputs:

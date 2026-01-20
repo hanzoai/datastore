@@ -129,7 +129,7 @@ class DiffToSymbols:
         return result
 
     def get_file_with_line_numbers(self):
-        diff_url = f"https://patch-diff.githubusercontent.com/raw/ClickHouse/ClickHouse/pull/{self.pr_number}.diff"
+        diff_url = f"https://patch-diff.githubusercontent.com/raw/hanzoai/datastore/pull/{self.pr_number}.diff"
         diff_bytes = self.fetch(diff_url)
         return self.parse_diff_to_line_numbers(diff_bytes)
 

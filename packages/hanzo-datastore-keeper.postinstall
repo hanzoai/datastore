@@ -1,17 +1,15 @@
 #!/bin/sh
 set -e
-# set -x
 
-PROGRAM=clickhouse-keeper
-KEEPER_USER=${KEEPER_USER:-clickhouse}
-KEEPER_GROUP=${KEEPER_GROUP:-clickhouse}
-# Please note that we don't support paths with whitespaces. This is rather ignorant.
-KEEPER_CONFDIR=${KEEPER_CONFDIR:-/etc/$PROGRAM}
-KEEPER_DATADIR=${KEEPER_DATADIR:-/var/lib/clickhouse}
-KEEPER_LOGDIR=${KEEPER_LOGDIR:-/var/log/$PROGRAM}
+PROGRAM=hanzo-datastore-keeper
+KEEPER_USER=${KEEPER_USER:-hanzo-datastore}
+KEEPER_GROUP=${KEEPER_GROUP:-hanzo-datastore}
+KEEPER_CONFDIR=${KEEPER_CONFDIR:-/etc/hanzo-datastore-keeper}
+KEEPER_DATADIR=${KEEPER_DATADIR:-/var/lib/hanzo-datastore}
+KEEPER_LOGDIR=${KEEPER_LOGDIR:-/var/log/hanzo-datastore-keeper}
 
 [ -f /usr/share/debconf/confmodule ] && . /usr/share/debconf/confmodule
-[ -f /etc/default/clickhouse-keeper ] && . /etc/default/clickhouse-keeper
+[ -f /etc/default/hanzo-datastore-keeper ] && . /etc/default/hanzo-datastore-keeper
 
 if [ ! -f "/etc/debian_version" ]; then
     not_deb_os=1
@@ -28,19 +26,17 @@ if [ "$1" = configure ] || [ -n "$not_deb_os" ]; then
             "${KEEPER_USER}"
     fi
 
-    if [ -x "/bin/systemctl" ] && [ -f /lib/systemd/system/clickhouse-keeper.service ] && [ -d /run/systemd/system ]; then
-        # if old rc.d service present - remove it
-        if [ -x "/etc/init.d/clickhouse-keeper" ] && [ -x "/usr/sbin/update-rc.d" ]; then
-            /usr/sbin/update-rc.d clickhouse-keeper remove
+    if [ -x "/bin/systemctl" ] && [ -f /lib/systemd/system/hanzo-datastore-keeper.service ] && [ -d /run/systemd/system ]; then
+        if [ -x "/etc/init.d/hanzo-datastore-keeper" ] && [ -x "/usr/sbin/update-rc.d" ]; then
+            /usr/sbin/update-rc.d hanzo-datastore-keeper remove
         fi
 
         /bin/systemctl daemon-reload
-        /bin/systemctl enable clickhouse-keeper
+        /bin/systemctl enable hanzo-datastore-keeper
     else
-        # If you downgrading to version older than 1.1.54336 run: systemctl disable clickhouse-keeper
-        if [ -x "/etc/init.d/clickhouse-keeper" ]; then
+        if [ -x "/etc/init.d/hanzo-datastore-keeper" ]; then
             if [ -x "/usr/sbin/update-rc.d" ]; then
-                /usr/sbin/update-rc.d clickhouse-keeper defaults 19 19 >/dev/null || exit $?
+                /usr/sbin/update-rc.d hanzo-datastore-keeper defaults 19 19 >/dev/null || exit $?
             else
                 echo # Other OS
             fi
@@ -62,4 +58,3 @@ if [ "$1" = configure ] || [ -n "$not_deb_os" ]; then
         chmod 0770 "${KEEPER_LOGDIR}"
     fi
 fi
-# vim: ts=4: sw=4: sts=4: expandtab

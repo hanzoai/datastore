@@ -62,14 +62,14 @@ bool authenticateUserByHTTP(
 
     /// The user and password can be passed by headers (similar to X-Auth-*),
     /// which is used by load balancers to pass authentication information.
-    std::string user = request.get("X-ClickHouse-User", "");
-    std::string password = request.get("X-ClickHouse-Key", "");
-    std::string quota_key = request.get("X-ClickHouse-Quota", "");
+    std::string user = request.get("X-Datastore-User", "");
+    std::string password = request.get("X-Datastore-Key", "");
+    std::string quota_key = request.get("X-Datastore-Quota", "");
     bool has_auth_headers = !user.empty() || !password.empty();
 
-    /// The header 'X-ClickHouse-SSL-Certificate-Auth: on' enables checking the common name
+    /// The header 'X-Datastore-SSL-Certificate-Auth: on' enables checking the common name
     /// extracted from the SSL certificate used for this connection instead of checking password.
-    bool has_ssl_certificate_auth = (request.get("X-ClickHouse-SSL-Certificate-Auth", "") == "on");
+    bool has_ssl_certificate_auth = (request.get("X-Datastore-SSL-Certificate-Auth", "") == "on");
     bool has_config_credentials = config_credentials.has_value();
 
     /// User name and password can be passed using HTTP Basic auth or query parameters
@@ -89,7 +89,7 @@ bool authenticateUserByHTTP(
     if (has_ssl_certificate_auth)
     {
 #if USE_SSL
-        /// For SSL certificate authentication we extract the user name from the "X-ClickHouse-User" HTTP header.
+        /// For SSL certificate authentication we extract the user name from the "X-Datastore-User" HTTP header.
         checkUserNameNotEmpty(user, "X-ClickHouse HTTP headers");
 
         /// It is prohibited to mix different authorization schemes.

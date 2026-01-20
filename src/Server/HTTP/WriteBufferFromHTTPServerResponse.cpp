@@ -67,13 +67,13 @@ void WriteBufferFromHTTPServerResponse::writeHeaderSummary()
 {
     accumulated_progress.incrementElapsedNs(progress_watch.elapsed());
     /// Write the verbose summary with all the zero values included, if any.
-    /// This is needed for compatibility with an old version of the third-party ClickHouse driver for Elixir.
-    writeHeaderProgressImpl("X-ClickHouse-Summary: ", Progress::DisplayMode::Verbose);
+    /// This is needed for compatibility with an old version of third-party drivers.
+    writeHeaderProgressImpl("X-Datastore-Summary: ", Progress::DisplayMode::Verbose);
 }
 
 void WriteBufferFromHTTPServerResponse::writeHeaderProgress()
 {
-    writeHeaderProgressImpl("X-ClickHouse-Progress: ", Progress::DisplayMode::Minimal);
+    writeHeaderProgressImpl("X-Datastore-Progress: ", Progress::DisplayMode::Minimal);
 }
 
 void WriteBufferFromHTTPServerResponse::writeExceptionCode()
@@ -83,7 +83,7 @@ void WriteBufferFromHTTPServerResponse::writeExceptionCode()
 
     if (headers_started_sending)
     {
-        static std::string_view header_key = "X-ClickHouse-Exception-Code: ";
+        static std::string_view header_key = "X-Datastore-Exception-Code: ";
         socketSendBytes(header_key.data(), header_key.size());
         auto str_code = std::to_string(exception_code);
         socketSendBytes(str_code.data(), str_code.size());
@@ -109,7 +109,7 @@ void WriteBufferFromHTTPServerResponse::finishSendHeaders()
     if (add_cors_header)
         response.set("Access-Control-Allow-Origin", "*");
 
-    response.set("X-ClickHouse-Exception-Tag", exception_tag);
+    response.set("X-Datastore-Exception-Tag", exception_tag);
 
     writeHeaderSummary();
     writeExceptionCode();
@@ -198,10 +198,10 @@ void WriteBufferFromHTTPServerResponse::setExceptionCode(int code)
     if (headers_started_sending)
         exception_code = code;
     else
-        response.set("X-ClickHouse-Exception-Code", toString<int>(code));
+        response.set("X-Datastore-Exception-Code", toString<int>(code));
 
     if (code == ErrorCodes::REQUIRED_PASSWORD)
-        response.requireAuthentication("ClickHouse server HTTP API");
+        response.requireAuthentication("Hanzo Datastore server HTTP API");
     else
         response.setStatusAndReason(exceptionCodeToHTTPStatus(code));
 }

@@ -1,4 +1,4 @@
-# docker build -t clickhouse/docs-builder .
+# docker build -t hanzoai/datastore-docs-builder .
 FROM node:20-bookworm-slim
 
 RUN apt-get update && \

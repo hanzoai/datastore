@@ -3,7 +3,7 @@ set -ex
 set -o pipefail
 trap "exit" INT TERM
 trap 'kill $(jobs -pr) ||:' EXIT
-#S3_URL=${S3_URL:="https://clickhouse-builds.s3.amazonaws.com"}
+#S3_URL=${S3_URL:="https://hanzo-datastore-builds.s3.amazonaws.com"}
 #BUILD_NAME=${BUILD_NAME:-package_release}
 #export S3_URL BUILD_NAME
 
@@ -21,11 +21,11 @@ mkdir left ||:
 datasets=${CHPC_DATASETS-"hits1 hits10 hits100 values tpch10"}
 
 declare -A dataset_paths
-dataset_paths["hits10"]="https://clickhouse-private-datasets.s3.amazonaws.com/hits_10m_single/partitions/hits_10m_single.tar"
-dataset_paths["hits100"]="https://clickhouse-private-datasets.s3.amazonaws.com/hits_100m_single/partitions/hits_100m_single.tar"
-dataset_paths["hits1"]="https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_v1.tar"
-dataset_paths["values"]="https://clickhouse-datasets.s3.amazonaws.com/values_with_expressions/partitions/test_values.tar"
-dataset_paths["tpch10"]="https://clickhouse-datasets.s3.amazonaws.com/h/10/tpch.tar"
+dataset_paths["hits10"]="https://hanzo-datastore-private-datasets.s3.amazonaws.com/hits_10m_single/partitions/hits_10m_single.tar"
+dataset_paths["hits100"]="https://hanzo-datastore-private-datasets.s3.amazonaws.com/hits_100m_single/partitions/hits_100m_single.tar"
+dataset_paths["hits1"]="https://hanzo-datastore-datasets.s3.amazonaws.com/hits/partitions/hits_v1.tar"
+dataset_paths["values"]="https://hanzo-datastore-datasets.s3.amazonaws.com/values_with_expressions/partitions/test_values.tar"
+dataset_paths["tpch10"]="https://hanzo-datastore-datasets.s3.amazonaws.com/h/10/tpch.tar"
 
 
 function download

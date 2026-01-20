@@ -110,4 +110,4 @@ ATTACH TABLE hits UUID 'c449dfbf-ba06-4d13-abec-8396559eb955'
 )
 ENGINE = MergeTree
 SETTINGS disk = disk(type = cache, path = '/dev/shm/clickhouse/', max_size = '16G',
-         disk = disk(type = web, endpoint = 'https://clickhouse-datasets-web.s3.us-east-1.amazonaws.com/'));
+         disk = disk(type = web, endpoint = 'https://hanzo-datastore-datasets-web.s3.us-east-1.amazonaws.com/'));

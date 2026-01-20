@@ -20,9 +20,9 @@ def main():
 
     # Get link to the latest CH binary
     if Utils.is_arm():
-        latest_ch_master_url = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+        latest_ch_master_url = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
     elif Utils.is_amd():
-        latest_ch_master_url = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
+        latest_ch_master_url = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
     else:
         assert False, f"Unknown processor architecture"
 
@@ -73,7 +73,7 @@ def main():
 
         def do():
             res = S3.copy_file_from_s3(
-                s3_path="clickhouse-datasets/hits/partitions/hits_v1.tar",
+                s3_path="hanzo-datastore-datasets/hits/partitions/hits_v1.tar",
                 local_path=temp_dir,
             )
             return res

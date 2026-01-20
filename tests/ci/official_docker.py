@@ -20,7 +20,7 @@ from typing import Dict, Iterable, List, Optional, Set
 from env_helper import GITHUB_REPOSITORY, IS_CI
 from git_helper import GIT_PREFIX, Git, git_runner, is_shallow
 from version_helper import (
-    ClickHouseVersion,
+    DatastoreVersion,
     get_supported_versions,
     get_tagged_versions,
     get_version_from_string,
@@ -33,15 +33,12 @@ UBUNTU_NAMES = {
 if not IS_CI:
     GIT_PREFIX = "git"
 
-DOCKER_LIBRARY_REPOSITORY = "ClickHouse/docker-library"
+DOCKER_LIBRARY_REPOSITORY = "hanzoai/docker-library"
 
-DOCKER_LIBRARY_NAME = {"server": "clickhouse"}
+DOCKER_LIBRARY_NAME = {"server": "datastore"}
 
 MAINTAINERS_HEADER = (
-    "Maintainers: Misha f. Shiryaev <felixoid@clickhouse.com> (@Felixoid),\n"
-    "             Max Kainov <max.kainov@clickhouse.com> (@mkaynov),\n"
-    "             Alexander Tokmakov <tavplubix@clickhouse.com> (@tavplubix),\n"
-    "             Alexander Sapin <alesapin@clickhouse.com> (@alesapin)"
+    "Maintainers: Hanzo AI <packages@hanzo.ai> (@hanzoai)"
 )
 
 
@@ -142,9 +139,9 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
-def get_versions_greater(minimal: ClickHouseVersion) -> Set[ClickHouseVersion]:
+def get_versions_greater(minimal: DatastoreVersion) -> Set[DatastoreVersion]:
     "Get the latest patch version for each major.minor >= minimal"
-    supported = {}  # type: Dict[str, ClickHouseVersion]
+    supported = {}  # type: Dict[str, DatastoreVersion]
     versions = get_tagged_versions()
     for v in versions:
         if v < minimal or not v.is_supported:
@@ -158,8 +155,8 @@ def get_versions_greater(minimal: ClickHouseVersion) -> Set[ClickHouseVersion]:
 
 
 def create_versions_dirs(
-    versions: Iterable[ClickHouseVersion], directory: Path
-) -> Dict[ClickHouseVersion, Path]:
+    versions: Iterable[DatastoreVersion], directory: Path
+) -> Dict[DatastoreVersion, Path]:
     assert directory.is_dir() or not directory.exists()
     dirs = {}
     for v in versions:
@@ -171,7 +168,7 @@ def create_versions_dirs(
 
 
 def generate_docker_directories(
-    version_dirs: Dict[ClickHouseVersion, Path],
+    version_dirs: Dict[DatastoreVersion, Path],
     docker_branch: str,
     dockerfile_glob: str,
     build_images: bool = False,
@@ -310,9 +307,9 @@ class TagAttrs:
     """A mutable metadata to preserve between generating tags for different versions"""
 
     # Only one latest can exist
-    latest: ClickHouseVersion
+    latest: DatastoreVersion
     # Only one lts version can exist
-    lts: Optional[ClickHouseVersion]
+    lts: Optional[DatastoreVersion]
 
 
 def ldf_header(git: Git, directory: Path) -> List[str]:
@@ -335,7 +332,7 @@ def ldf_header(git: Git, directory: Path) -> List[str]:
     ]
 
 
-def ldf_tags(version: ClickHouseVersion, distro: str, tag_attrs: TagAttrs) -> str:
+def ldf_tags(version: DatastoreVersion, distro: str, tag_attrs: TagAttrs) -> str:
     """returns the string 'Tags: coma, separated, tags'"""
     tags = []
     # without_distro shows that it's the default tags set, without `-jammy` suffix

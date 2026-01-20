@@ -22,7 +22,7 @@ ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
     TZ=UTC \
-    CLICKHOUSE_CONFIG=/etc/clickhouse-server/config.xml
+    HANZO_CONFIG=/etc/hanzo-datastore-keeper/keeper_config.xml
 
 COPY --from=glibc-donor /lib/linux-gnu/libc.so.6 /lib/linux-gnu/libdl.so.2 /lib/linux-gnu/libm.so.6 /lib/linux-gnu/libpthread.so.0 /lib/linux-gnu/librt.so.1 /lib/linux-gnu/libnss_dns.so.2 /lib/linux-gnu/libnss_files.so.2 /lib/linux-gnu/libresolv.so.2 /lib/linux-gnu/ld-2.35.so /lib/
 COPY --from=glibc-donor /etc/nsswitch.conf /etc/
@@ -37,9 +37,9 @@ RUN arch=${TARGETARCH:-amd64} \
 
 # lts / testing / prestable / etc
 ARG REPO_CHANNEL="stable"
-ARG REPOSITORY="https://packages.clickhouse.com/tgz/${REPO_CHANNEL}"
+ARG REPOSITORY="https://packages.hanzo.ai/tgz/${REPO_CHANNEL}"
 ARG VERSION="25.12.3.21"
-ARG PACKAGES="clickhouse-keeper"
+ARG PACKAGES="hanzo-datastore-keeper"
 ARG DIRECT_DOWNLOAD_URLS=""
 
 # user/group precreated explicitly with fixed uid/gid on purpose.
@@ -50,8 +50,8 @@ ARG DIRECT_DOWNLOAD_URLS=""
 # The same uid / gid (101) is used both for alpine and ubuntu.
 ARG DEFAULT_UID="101"
 ARG DEFAULT_GID="101"
-RUN addgroup -S -g "${DEFAULT_GID}" clickhouse && \
-    adduser -S -h "/var/lib/clickhouse" -s /bin/bash -G clickhouse -g "ClickHouse keeper" -u "${DEFAULT_UID}" clickhouse
+RUN addgroup -S -g "${DEFAULT_GID}" hanzo-datastore && \
+    adduser -S -h "/var/lib/hanzo-datastore" -s /bin/bash -G hanzo-datastore -g "Hanzo Datastore keeper" -u "${DEFAULT_UID}" hanzo-datastore
 
 ARG TARGETARCH
 RUN arch=${TARGETARCH:-amd64} \
@@ -83,17 +83,17 @@ RUN arch=${TARGETARCH:-amd64} \
     && cp /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
-ARG DEFAULT_CONFIG_DIR="/etc/clickhouse-keeper"
-ARG DEFAULT_DATA_DIR="/var/lib/clickhouse-keeper"
-ARG DEFAULT_LOG_DIR="/var/log/clickhouse-keeper"
-RUN clickhouse-keeper --version \
+ARG DEFAULT_CONFIG_DIR="/etc/hanzo-datastore-keeper"
+ARG DEFAULT_DATA_DIR="/var/lib/hanzo-datastore-keeper"
+ARG DEFAULT_LOG_DIR="/var/log/hanzo-datastore-keeper"
+RUN hanzo-datastore-keeper --version \
     && mkdir -p "${DEFAULT_DATA_DIR}" "${DEFAULT_LOG_DIR}" "${DEFAULT_CONFIG_DIR}" \
-    && chown clickhouse:clickhouse "${DEFAULT_DATA_DIR}" \
-    && chown root:clickhouse "${DEFAULT_LOG_DIR}" \
+    && chown hanzo-datastore:hanzo-datastore "${DEFAULT_DATA_DIR}" \
+    && chown root:hanzo-datastore "${DEFAULT_LOG_DIR}" \
     && chmod ugo+Xrw -R "${DEFAULT_DATA_DIR}" "${DEFAULT_LOG_DIR}" "${DEFAULT_CONFIG_DIR}"
 
-# /var/lib/clickhouse is necessary due to the current default configuration for Keeper
-VOLUME "${DEFAULT_DATA_DIR}" /var/lib/clickhouse
+# /var/lib/hanzo-datastore is necessary due to the current default configuration for Keeper
+VOLUME "${DEFAULT_DATA_DIR}" /var/lib/hanzo-datastore
 EXPOSE 2181 10181 44444 9181
 
 ENTRYPOINT ["/entrypoint.sh"]

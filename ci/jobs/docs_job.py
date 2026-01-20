@@ -27,7 +27,7 @@ if __name__ == "__main__":
         )
     )
 
-    testname = "Get ClickHouse/ClickHouse docs"
+    testname = "Get hanzoai/datastore docs"
     results.append(
         Result.from_commands_run(
             name=testname,

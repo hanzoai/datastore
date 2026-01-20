@@ -21,9 +21,9 @@ temp_path = Path(f"{Utils.cwd()}/ci/tmp")
 GITHUB_SERVER_URL = os.getenv("GITHUB_SERVER_URL", "https://github.com")
 with tempfile.NamedTemporaryFile("w", delete=False) as f:
     GIT_KNOWN_HOSTS_FILE = f.name
-    GIT_PREFIX = (  # All commits to remote are done as robot-clickhouse
-        "git -c user.email=robot-clickhouse@users.noreply.github.com "
-        "-c user.name=robot-clickhouse -c commit.gpgsign=false "
+    GIT_PREFIX = (  # All commits to remote are done as robot-hanzo
+        "git -c user.email=robot-hanzo@users.noreply.github.com "
+        "-c user.name=robot-hanzo -c commit.gpgsign=false "
         "-c core.sshCommand="
         f"'ssh -o UserKnownHostsFile={GIT_KNOWN_HOSTS_FILE} "
         "-o StrictHostKeyChecking=accept-new'"
@@ -326,10 +326,10 @@ def main():
 
     if "server image" in info.job_name:
         image_path = args.image_path or "docker/server"
-        image_repo = args.image_repo or "clickhouse/clickhouse-server"
+        image_repo = args.image_repo or "hanzoai/datastore"
     elif "keeper image" in info.job_name:
         image_path = args.image_path or "docker/keeper"
-        image_repo = args.image_repo or "clickhouse/clickhouse-keeper"
+        image_repo = args.image_repo or "hanzoai/datastore-keeper"
     else:
         assert False, f"Unexpected job name [{info.job_name}]"
 
@@ -355,14 +355,14 @@ def main():
     for arch, build_name in zip(ARCH, ("amd_release", "arm_release")):
         if args.allow_build_reuse:
             # read s3 urls from pre-downloaded build reports
-            if "clickhouse-server" in image_repo:
+            if "datastore" in image_repo and "keeper" not in image_repo:
                 PACKAGES = [
-                    "clickhouse-client",
-                    "clickhouse-server",
-                    "clickhouse-common-static",
+                    "hanzo-datastore-client",
+                    "hanzo-datastore-server",
+                    "hanzo-datastore-common-static",
                 ]
-            elif "clickhouse-keeper" in image_repo:
-                PACKAGES = ["clickhouse-keeper"]
+            elif "datastore-keeper" in image_repo:
+                PACKAGES = ["hanzo-datastore-keeper"]
             else:
                 assert False, "BUG"
             urls = read_build_urls(build_name)

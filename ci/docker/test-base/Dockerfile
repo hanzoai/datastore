@@ -1,4 +1,4 @@
-# docker build -t clickhouse/test-base .
+# docker build -t hanzoai/datastore-test-base .
 FROM ubuntu:22.04
 
 # ARG for quick switch to a given ubuntu mirror
@@ -76,10 +76,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /var/cache/debconf /tmp/*
 
 # Note, libmpfr6 is also a requirement for gdb
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad \
+COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad \
   /opt/openssl-fips/openssl.cnf \
   /opt/openssl-fips/fipsmodule.cnf \
   /opt/openssl-fips/fips.so \
@@ -90,14 +90,14 @@ COPY --from=clickhouse/cctools:859fb360308eb8ac47ad \
 RUN BRIDGE_VERSION='25.1.5.31' \
     && ARCH=$(dpkg --print-architecture) \
     && cd /tmp \
-    && wget "https://packages.clickhouse.com/deb/pool/main/c/clickhouse/clickhouse-odbc-bridge_${BRIDGE_VERSION}_${ARCH}.deb" \
-    && wget "https://packages.clickhouse.com/deb/pool/main/c/clickhouse/clickhouse-library-bridge_${BRIDGE_VERSION}_${ARCH}.deb" \
-    && dpkg -i clickhouse-odbc-bridge_${BRIDGE_VERSION}_${ARCH}.deb clickhouse-library-bridge_${BRIDGE_VERSION}_${ARCH}.deb \
-    && rm clickhouse-odbc-bridge_${BRIDGE_VERSION}_${ARCH}.deb clickhouse-library-bridge_${BRIDGE_VERSION}_${ARCH}.deb
+    && wget "https://packages.hanzo.ai/deb/pool/main/c/hanzoai/hanzo-datastore-odbc-bridge_${BRIDGE_VERSION}_${ARCH}.deb" \
+    && wget "https://packages.hanzo.ai/deb/pool/main/c/hanzoai/hanzo-datastore-library-bridge_${BRIDGE_VERSION}_${ARCH}.deb" \
+    && dpkg -i hanzo-datastore-odbc-bridge_${BRIDGE_VERSION}_${ARCH}.deb hanzo-datastore-library-bridge_${BRIDGE_VERSION}_${ARCH}.deb \
+    && rm hanzo-datastore-odbc-bridge_${BRIDGE_VERSION}_${ARCH}.deb hanzo-datastore-library-bridge_${BRIDGE_VERSION}_${ARCH}.deb
 
 COPY jeprof /usr/bin/jeprof
 RUN wget -q -O /usr/bin/jeprof.orig https://raw.githubusercontent.com/jemalloc/jemalloc/41a859ef7325569c6c25f92d294d45123bb81355/bin/jeprof.in &&  \
-    sed -i -e 's/@jemalloc_version@/clickhouse/g' -e 's/@JEMALLOC_PREFIX@//g' /usr/bin/jeprof.orig && chmod +x /usr/bin/jeprof.orig
+    sed -i -e 's/@jemalloc_version@/hanzoai/g' -e 's/@JEMALLOC_PREFIX@//g' /usr/bin/jeprof.orig && chmod +x /usr/bin/jeprof.orig
 
 RUN wget -q -O /usr/bin/flamegraph.pl https://raw.githubusercontent.com/brendangregg/FlameGraph/cd9ee4c4449775a2f867acf31c84b7fe4b132ad5/flamegraph.pl && chmod +x /usr/bin/flamegraph.pl
 RUN wget -q -O /usr/bin/difffolded.pl https://raw.githubusercontent.com/brendangregg/FlameGraph/cd9ee4c4449775a2f867acf31c84b7fe4b132ad5/difffolded.pl && chmod +x /usr/bin/difffolded.pl

@@ -6,11 +6,11 @@ Usage:
 ```
 $ ls $HOME/someclickhouse
 clickhouse-client_18.14.9_all.deb clickhouse-common-static_18.14.9_amd64.deb clickhouse-server_18.14.9_all.deb
-$ docker run --volume=$HOME/someclickhouse:/package_folder --volume=$HOME/test_output:/test_output clickhouse/stress-test
+$ docker run --volume=$HOME/someclickhouse:/package_folder --volume=$HOME/test_output:/test_output hanzoai/datastore-stress-test
 Selecting previously unselected package clickhouse-common-static.
 (Reading database ... 14442 files and directories currently installed.)
 ...
-Start clickhouse-server service: Path to data directory in /etc/clickhouse-server/config.xml: /var/lib/clickhouse/
+Start clickhouse-server service: Path to data directory in /etc/clickhouse-server/config.xml: /var/lib/hanzoai/
 DONE
 2018-10-22 13:40:35,744 Will wait functests to finish
 2018-10-22 13:40:40,747 Finished 0 from 16 processes

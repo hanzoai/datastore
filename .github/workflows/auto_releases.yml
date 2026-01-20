@@ -27,13 +27,13 @@ jobs:
       - name: Set envs
         run: |
           cat >> "$GITHUB_ENV" << 'EOF'
-          ROBOT_CLICKHOUSE_SSH_KEY<<RCSK
-          ${{secrets.ROBOT_CLICKHOUSE_SSH_KEY}}
+          ROBOT_HANZO_SSH_KEY<<RCSK
+          ${{secrets.ROBOT_HANZO_SSH_KEY}}
           RCSK
           EOF
           echo "DRY_RUN=true" >> "$GITHUB_ENV"
       - name: Check out repository code
-        uses: ClickHouse/checkout@v1
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # full history needed
       - name: Debug Info
@@ -76,7 +76,7 @@ jobs:
       type: patch
       dry-run: ${{ fromJson(needs.AutoReleaseInfo.outputs.dry_run) }}
     secrets:
-      ROBOT_CLICKHOUSE_COMMIT_TOKEN: ${{ secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN }}
+      ROBOT_HANZO_COMMIT_TOKEN: ${{ secrets.ROBOT_HANZO_COMMIT_TOKEN }}
 
   CleanUp:
     needs: [Releases]
@@ -92,7 +92,7 @@ jobs:
 #    if: ${{ !cancelled() }}
 #    steps:
 #      - name: Check out repository code
-#        uses: ClickHouse/checkout@v1
+#        uses: actions/checkout@v4
 #      - name: Post
 #        run: |
 #          cd "$GITHUB_WORKSPACE/tests/ci"

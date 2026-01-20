@@ -1,21 +1,21 @@
 services:
-  clickhouse:
-    image: clickhouse/clickhouse-server:latest
-    container_name: hanzo-clickhouse
+  datastore:
+    image: hanzoai/datastore:latest
+    container_name: hanzo-datastore
     ports:
       - "8123:8123"  # HTTP interface
       - "9000:9000"  # Native TCP
       - "9009:9009"  # Interserver
     volumes:
-      - clickhouse-data:/var/lib/clickhouse
-      - clickhouse-logs:/var/log/clickhouse-server
+      - datastore-data:/var/lib/hanzo-datastore
+      - datastore-logs:/var/log/hanzo-datastore-server
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-      - ./config.xml:/etc/clickhouse-server/config.d/hanzo.xml:ro
+      - ./config.xml:/etc/hanzo-datastore-server/config.d/hanzo.xml:ro
     environment:
-      CLICKHOUSE_DB: hanzo
-      CLICKHOUSE_USER: hanzo
-      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-hanzo_dev}
-      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+      HANZO_DATASTORE_DB: hanzo
+      HANZO_DATASTORE_USER: hanzo
+      HANZO_DATASTORE_PASSWORD: ${HANZO_DATASTORE_PASSWORD:-hanzo_dev}
+      HANZO_DATASTORE_DEFAULT_ACCESS_MANAGEMENT: 1
     ulimits:
       nofile:
         soft: 262144
@@ -28,12 +28,12 @@ services:
     restart: unless-stopped
 
   keeper:
-    image: clickhouse/clickhouse-keeper:latest
-    container_name: hanzo-keeper
+    image: hanzoai/datastore-keeper:latest
+    container_name: hanzo-datastore-keeper
     ports:
       - "9181:9181"  # Keeper client port
     volumes:
-      - keeper-data:/var/lib/clickhouse-keeper
+      - keeper-data:/var/lib/hanzo-datastore-keeper
     restart: unless-stopped
 
   grafana:
@@ -48,12 +48,12 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
       GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
     depends_on:
-      - clickhouse
+      - datastore
     restart: unless-stopped
 
 volumes:
-  clickhouse-data:
-  clickhouse-logs:
+  datastore-data:
+  datastore-logs:
   keeper-data:
   grafana-data:
 

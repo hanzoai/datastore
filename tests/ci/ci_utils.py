@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 class Envs:
-    GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "ClickHouse/ClickHouse")
+    GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "hanzoai/datastore")
     WORKFLOW_RESULT_FILE = os.getenv(
         "WORKFLOW_RESULT_FILE", "/tmp/workflow_results.json"
     )
-    S3_BUILDS_BUCKET = os.getenv("S3_BUILDS_BUCKET", "clickhouse-builds")
+    S3_BUILDS_BUCKET = os.getenv("S3_BUILDS_BUCKET", "hanzo-datastore-builds")
     GITHUB_WORKFLOW = os.getenv("GITHUB_WORKFLOW", "")
     GITHUB_ACTOR = os.getenv("GITHUB_ACTOR", "")
 
@@ -255,7 +255,7 @@ class GH:
     @staticmethod
     def is_latest_release_branch(branch):
         latest_branch = Shell.get_output(
-            'gh pr list --label release --repo ClickHouse/ClickHouse --search "sort:created" -L1 --json headRefName'
+            'gh pr list --label release --repo hanzoai/datastore --search "sort:created" -L1 --json headRefName'
         )
         if latest_branch:
             latest_branch = json.loads(latest_branch)[0]["headRefName"]
@@ -378,5 +378,5 @@ class Utils:
     def is_job_triggered_manually():
         return (
             "robot" not in Envs.GITHUB_ACTOR
-            and "clickhouse-ci" not in Envs.GITHUB_ACTOR
+            and "hanzo-ci" not in Envs.GITHUB_ACTOR
         )

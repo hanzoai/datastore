@@ -1,0 +1,55 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "hanzo-datastore-keeper"
+description: |
+  Static hanzo-datastore-keeper binary
+    A stand-alone hanzo-datastore-keeper package
+
+
+#
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${HANZO_DATASTORE_VERSION_STRING}"
+vendor: "Hanzo AI Inc."
+homepage: "https://hanzo.ai"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Hanzo AI Dev Team <packages@hanzo.ai>"
+deb:
+  fields:
+    Source: hanzo-datastore
+
+# Package specific content
+conflicts:
+- hanzo-datastore-server
+suggests:
+- hanzo-datastore-keeper-dbg
+
+contents:
+- src: root/etc/hanzo-datastore-keeper/keeper_config.xml
+  dst: /etc/hanzo-datastore-keeper/keeper_config.xml
+  type: config|noreplace
+- src: hanzo-datastore-keeper.service
+  dst: /lib/systemd/system/hanzo-datastore-keeper.service
+- src: root/usr/bin/hanzo-datastore-keeper
+  dst: /usr/bin/hanzo-datastore-keeper
+- src: hanzo-datastore-keeper
+  dst: /usr/bin/hanzo-datastore-keeper-client
+  type: symlink
+- src: hanzo-datastore-keeper
+  dst: /usr/bin/hanzo-datastore-keeper-converter
+  type: symlink
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/hanzo-datastore-keeper/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/hanzo-datastore-keeper/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/hanzo-datastore-keeper/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/hanzo-datastore-keeper/README.md
+
+scripts:
+  postinstall: ./hanzo-datastore-keeper.postinstall

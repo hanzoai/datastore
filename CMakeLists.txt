@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 3.25)
 # on the order in which contrib/ libraries are traversed.
 set (CMAKE_POLICY_DEFAULT_CMP0126 NEW)
 
-project(ClickHouse LANGUAGES C CXX ASM)
+project(HanzoDatastore LANGUAGES C CXX ASM)
 
 # If turned off: e.g. when ENABLE_FOO is ON, but FOO tool was not found, the CMake will continue.
 option(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION
@@ -23,7 +23,7 @@ option(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION
    but is not possible to satisfy" ON)
 
 # This allows to compile some code conditionally in the private build while having byte-identical source files.
-set (CLICKHOUSE_CLOUD 0)
+set (HANZO_CLOUD 0)
 
 if(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION)
     set(RECONFIGURE_MESSAGE_LEVEL FATAL_ERROR)

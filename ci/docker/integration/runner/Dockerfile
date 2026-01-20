@@ -1,6 +1,6 @@
-# docker build -t clickhouse/integration-tests-runner .
+# docker build -t hanzoai/datastore-integration-tests-runner .
 ARG FROM_TAG=latest
-FROM clickhouse/test-base:$FROM_TAG
+FROM hanzoai/datastore-test-base:$FROM_TAG
 
 # ARG for quick switch to a given ubuntu mirror
 ARG apt_archive="http://archive.ubuntu.com"
@@ -63,7 +63,7 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && dockerd --version; docker --version
 
 # kazoo 2.10.0 is broken
-# https://s3.amazonaws.com/clickhouse-test-reports/59337/524625a1d2f4cc608a3f1059e3df2c30f353a649/integration_tests__asan__analyzer__[5_6].html
+# https://s3.amazonaws.com/hanzo-datastore-test-reports/59337/524625a1d2f4cc608a3f1059e3df2c30f353a649/integration_tests__asan__analyzer__[5_6].html
 COPY requirements.txt /
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
 RUN python3 -m pip install git+https://github.com/ClickHouse/kazoo.git
@@ -93,10 +93,10 @@ RUN set -x \
 COPY modprobe.sh /usr/local/bin/modprobe
 COPY misc/ /misc/
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad \
+COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad \
   /opt/openssl-fips/openssl.cnf \
   /opt/openssl-fips/fipsmodule.cnf \
   /opt/openssl-fips/fips.so \

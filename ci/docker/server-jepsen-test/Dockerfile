@@ -1,7 +1,7 @@
 # rebuild in #33610
-# docker build -t clickhouse/server-jepsen-test .
+# docker build -t hanzoai/datastore-server-jepsen-test .
 ARG FROM_TAG=latest
-FROM clickhouse/test-base:$FROM_TAG
+FROM hanzoai/datastore-test-base:$FROM_TAG
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CLOJURE_VERSION=1.10.3.814

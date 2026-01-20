@@ -2178,7 +2178,7 @@ Possible values:
 )", 0) \
     \
     DECLARE(Bool, send_progress_in_http_headers, false, R"(
-Enables or disables `X-ClickHouse-Progress` HTTP response headers in `clickhouse-server` responses.
+Enables or disables `X-Datastore-Progress` HTTP response headers in `hanzo-datastore` responses.
 
 For more information, read the [HTTP interface description](/interfaces/http).
 
@@ -2189,7 +2189,7 @@ Possible values:
 )", 0) \
     \
     DECLARE(UInt64, http_headers_progress_interval_ms, 100, R"(
-Do not send HTTP headers X-ClickHouse-Progress more frequently than at each specified interval.
+Do not send HTTP headers X-Datastore-Progress more frequently than at each specified interval.
 )", 0) \
     DECLARE(Bool, http_wait_end_of_query, false, R"(
 Enable HTTP response buffering on the server-side.
@@ -6685,7 +6685,7 @@ Traverse frozen data (shadow directory) in addition to actual table data when qu
 If all four arguments to `geoDistance`, `greatCircleDistance`, `greatCircleAngle` functions are Float64, return Float64 and use double precision for internal calculations. In previous ClickHouse versions, the functions always returned Float32.
 )", 0) \
     DECLARE(Bool, allow_get_client_http_header, false, R"(
-Allow to use the function `getClientHTTPHeader` which lets to obtain a value of an the current HTTP request's header. It is not enabled by default for security reasons, because some headers, such as `Cookie`, could contain sensitive info. Note that the `X-ClickHouse-*` and `Authentication` headers are always restricted and cannot be obtained with this function.
+Allow to use the function `getClientHTTPHeader` which lets to obtain a value of an the current HTTP request's header. It is not enabled by default for security reasons, because some headers, such as `Cookie`, could contain sensitive info. Note that the `X-Datastore-*` and `Authentication` headers are always restricted and cannot be obtained with this function.
 )", 0) \
     DECLARE(Bool, cast_string_to_dynamic_use_inference, false, R"(
 Use types inference during String to Dynamic conversion

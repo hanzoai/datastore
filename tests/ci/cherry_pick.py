@@ -384,7 +384,7 @@ close it.
         assignees = [
             a
             for a in assignees
-            if "robot-clickhouse" not in str(a) and "clickhouse-gh" not in str(a)
+            if "robot-hanzo" not in str(a) and "hanzo-gh" not in str(a)
         ]
         logging.info(
             "Assing #%s to author and assignees of the original PR: %s",
@@ -425,7 +425,7 @@ class BackportPRs:
     @property
     def remote_line(self) -> str:
         if not self._remote_line:
-            # lines of "origin	git@github.com:ClickHouse/ClickHouse.git (fetch)"
+            # lines of "origin	git@github.com:hanzoai/datastore.git (fetch)"
             remotes = git_runner("git remote -v").split("\n")
             # We need the first word from the first matching result
             self._remote_line = next(
@@ -549,7 +549,7 @@ class BackportPRs:
                 ReleaseBranch(
                     (
                         br
-                        if self._repo_name == "ClickHouse/ClickHouse"
+                        if self._repo_name == "hanzoai/datastore"
                         else f"release/{br}"
                     ),
                     pr,
@@ -818,8 +818,8 @@ if __name__ == "__main__":
     assert not is_shallow()
     try:
         with stash():
-            if os.getenv("ROBOT_CLICKHOUSE_SSH_KEY", ""):
-                with SSHKey("ROBOT_CLICKHOUSE_SSH_KEY"):
+            if os.getenv("ROBOT_HANZO_SSH_KEY", ""):
+                with SSHKey("ROBOT_HANZO_SSH_KEY"):
                     main()
             else:
                 main()

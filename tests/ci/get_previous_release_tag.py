@@ -7,13 +7,13 @@ from typing import Dict, List, Optional, Tuple
 from build_download_helper import get_gh_api
 from git_helper import TAG_REGEXP
 from version_helper import (
-    ClickHouseVersion,
+    DatastoreVersion,
     get_version_from_string,
     get_version_from_tag,
 )
 
-CLICKHOUSE_TAGS_URL = "https://api.github.com/repos/ClickHouse/ClickHouse/releases"
-PACKAGE_REGEXP = r"\Aclickhouse-common-static_.+[.]deb"
+DATASTORE_TAGS_URL = "https://api.github.com/repos/hanzoai/datastore/releases"
+PACKAGE_REGEXP = r"\Ahanzo-datastore-common-static_.+[.]deb"
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class ReleaseInfo:
 
 
 def find_previous_release(
-    server_version: Optional[ClickHouseVersion], releases: List[ReleaseInfo]
+    server_version: Optional[DatastoreVersion], releases: List[ReleaseInfo]
 ) -> Tuple[bool, Optional[ReleaseInfo]]:
     releases.sort(key=lambda x: x.version, reverse=True)
 
@@ -57,13 +57,13 @@ def find_previous_release(
 
 
 def get_previous_release(
-    server_version: Optional[ClickHouseVersion],
+    server_version: Optional[DatastoreVersion],
 ) -> Optional[ReleaseInfo]:
     page = 1
     found = False
     while not found:
         response = get_gh_api(
-            CLICKHOUSE_TAGS_URL, params={"page": page, "per_page": 100}, timeout=10
+            DATASTORE_TAGS_URL, params={"page": page, "per_page": 100}, timeout=10
         )
         if not response.ok:
             logger.error(
@@ -89,7 +89,7 @@ def get_previous_release(
 
 
 def get_release_by_tag(tag: str) -> ReleaseInfo:
-    response = get_gh_api(f"{CLICKHOUSE_TAGS_URL}/tags/{tag}", timeout=10)
+    response = get_gh_api(f"{DATASTORE_TAGS_URL}/tags/{tag}", timeout=10)
     release = response.json()
     assets = {
         a["name"]: a["browser_download_url"]

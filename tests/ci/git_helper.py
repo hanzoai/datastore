@@ -33,9 +33,9 @@ TWEAK = 1
 
 with tempfile.NamedTemporaryFile("w", delete=False) as f:
     GIT_KNOWN_HOSTS_FILE = f.name
-    GIT_PREFIX = (  # All commits to remote are done as robot-clickhouse
-        "git -c user.email=robot-clickhouse@users.noreply.github.com "
-        "-c user.name=robot-clickhouse -c commit.gpgsign=false "
+    GIT_PREFIX = (  # All commits to remote are done as robot-hanzo
+        "git -c user.email=robot-hanzo@users.noreply.github.com "
+        "-c user.name=robot-hanzo -c commit.gpgsign=false "
         "-c core.sshCommand="
         f"'ssh -o UserKnownHostsFile={GIT_KNOWN_HOSTS_FILE} "
         "-o StrictHostKeyChecking=accept-new'"

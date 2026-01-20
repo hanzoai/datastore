@@ -254,7 +254,7 @@ pre {{ white-space: pre-wrap; }}
 <h1><span class="gradient">{header}</span></h1>
 """
 
-FOOTER_HTML_TEMPLATE = """<img id="fish" src="https://presentations.clickhouse.com/images/fish.png" />
+FOOTER_HTML_TEMPLATE = """<img id="fish" src="https://cdn.hanzo.ai/images/fish.png" />
 <script type="text/javascript">
     /// Straight from https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
 
@@ -392,8 +392,8 @@ def _format_header(
     header: str, branch_name: str, branch_url: Optional[str] = None
 ) -> str:
     result = header
-    if "ClickHouse" not in result:
-        result = f"ClickHouse {result}"
+    if "Hanzo Datastore" not in result:
+        result = f"Hanzo Datastore {result}"
     if branch_url:
         result = f'{result} for <a href="{branch_url}">{branch_name}</a>'
     else:

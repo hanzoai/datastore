@@ -1,4 +1,4 @@
-# docker build -t clickhouse/integration-helper .
+# docker build -t hanzoai/datastore-integration-helper .
 # Helper docker container to run iptables without sudo
 
 FROM alpine:3.18

@@ -29,15 +29,15 @@
     <!-- Logging -->
     <logger>
         <level>information</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/hanzo-datastore-server/hanzo-datastore-server.log</log>
+        <errorlog>/var/log/hanzo-datastore-server/hanzo-datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
     </logger>
 
     <!-- HTTP interface settings -->
     <http_server_default_response>
-        <![CDATA[<html><body>Hanzo Datastore (ClickHouse)</body></html>]]>
+        <![CDATA[<html><body>Hanzo Datastore - https://hanzo.ai</body></html>]]>
     </http_server_default_response>
 
     <!-- Prometheus metrics endpoint -->

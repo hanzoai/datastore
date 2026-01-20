@@ -16,8 +16,8 @@ ARG apt_archive="http://archive.ubuntu.com"
 # installed to prevent picking those uid / gid by some unrelated software.
 # The same uid / gid (101) is used both for alpine and ubuntu.
 RUN sed -i "s|http://archive.ubuntu.com|${apt_archive}|g" /etc/apt/sources.list \
-    && groupadd -r clickhouse --gid=101 \
-    && useradd -r -g clickhouse --uid=101 --home-dir=/var/lib/clickhouse --shell=/bin/bash clickhouse \
+    && groupadd -r hanzo-datastore --gid=101 \
+    && useradd -r -g hanzo-datastore --uid=101 --home-dir=/var/lib/hanzo-datastore --shell=/bin/bash hanzo-datastore \
     && apt-get update \
     && apt-get install --yes --no-install-recommends \
         busybox \
@@ -29,9 +29,9 @@ RUN sed -i "s|http://archive.ubuntu.com|${apt_archive}|g" /etc/apt/sources.list 
     && rm -rf /var/lib/apt/lists/* /var/cache/debconf /tmp/*
 
 ARG REPO_CHANNEL="stable"
-ARG REPOSITORY="deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb ${REPO_CHANNEL} main"
+ARG REPOSITORY="deb [signed-by=/usr/share/keyrings/hanzo-datastore-keyring.gpg] https://packages.hanzo.ai/deb ${REPO_CHANNEL} main"
 ARG VERSION="25.12.3.21"
-ARG PACKAGES="clickhouse-client clickhouse-server clickhouse-common-static"
+ARG PACKAGES="hanzo-datastore-client hanzo-datastore-server hanzo-datastore-common-static"
 
 #docker-official-library:off
 # The part between `docker-official-library` tags is related to our builds
@@ -51,12 +51,12 @@ ARG TARGETARCH
 # install from direct URL
 RUN if [ -n "${DIRECT_DOWNLOAD_URLS}" ]; then \
         echo "installing from custom predefined urls with deb packages: ${DIRECT_DOWNLOAD_URLS}" \
-        && rm -rf /tmp/clickhouse_debs \
-        && mkdir -p /tmp/clickhouse_debs \
+        && rm -rf /tmp/hanzo_debs \
+        && mkdir -p /tmp/hanzo_debs \
         && for url in $DIRECT_DOWNLOAD_URLS; do \
-            wget --progress=bar:force:noscroll "$url" -P /tmp/clickhouse_debs || exit 1 \
+            wget --progress=bar:force:noscroll "$url" -P /tmp/hanzo_debs || exit 1 \
         ; done \
-        && dpkg -i /tmp/clickhouse_debs/*.deb \
+        && dpkg -i /tmp/hanzo_debs/*.deb \
         && rm -rf /tmp/* ; \
     fi
 
@@ -64,34 +64,34 @@ RUN if [ -n "${DIRECT_DOWNLOAD_URLS}" ]; then \
 RUN arch="${TARGETARCH:-amd64}" \
     && if [ -n "${deb_location_url}" ]; then \
         echo "installing from custom url with deb packages: ${deb_location_url}" \
-        && rm -rf /tmp/clickhouse_debs \
-        && mkdir -p /tmp/clickhouse_debs \
+        && rm -rf /tmp/hanzo_debs \
+        && mkdir -p /tmp/hanzo_debs \
         && for package in ${PACKAGES}; do \
-            { wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_${arch}.deb" -P /tmp/clickhouse_debs || \
-                wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_all.deb" -P /tmp/clickhouse_debs ; } \
+            { wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_${arch}.deb" -P /tmp/hanzo_debs || \
+                wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_all.deb" -P /tmp/hanzo_debs ; } \
             || exit 1 \
         ; done \
-        && dpkg -i /tmp/clickhouse_debs/*.deb \
+        && dpkg -i /tmp/hanzo_debs/*.deb \
         && rm -rf /tmp/* ; \
     fi
 
 # install from a single binary
 RUN if [ -n "${single_binary_location_url}" ]; then \
         echo "installing from single binary url: ${single_binary_location_url}" \
-        && rm -rf /tmp/clickhouse_binary \
-        && mkdir -p /tmp/clickhouse_binary \
-        && wget --progress=bar:force:noscroll "${single_binary_location_url}" -O /tmp/clickhouse_binary/clickhouse \
-        && chmod +x /tmp/clickhouse_binary/clickhouse \
-        && /tmp/clickhouse_binary/clickhouse install --user "clickhouse" --group "clickhouse" \
+        && rm -rf /tmp/hanzo_binary \
+        && mkdir -p /tmp/hanzo_binary \
+        && wget --progress=bar:force:noscroll "${single_binary_location_url}" -O /tmp/hanzo_binary/hanzo-datastore \
+        && chmod +x /tmp/hanzo_binary/hanzo-datastore \
+        && /tmp/hanzo_binary/hanzo-datastore install --user "hanzo-datastore" --group "hanzo-datastore" \
         && rm -rf /tmp/* ; \
     fi
 
 # The rest is the same in the official docker and in our build system
 #docker-official-library:on
 
-# A fallback to installation from ClickHouse repository
-# It works unless the clickhouse binary already exists
-RUN clickhouse local -q 'SELECT 1' >/dev/null 2>&1 && exit 0 || : \
+# A fallback to installation from Hanzo repository
+# It works unless the hanzo-datastore binary already exists
+RUN hanzo-datastore local -q 'SELECT 1' >/dev/null 2>&1 && exit 0 || : \
     ; apt-get update \
     && apt-get install --yes --no-install-recommends \
         dirmngr \
@@ -99,12 +99,12 @@ RUN clickhouse local -q 'SELECT 1' >/dev/null 2>&1 && exit 0 || : \
     && mkdir -p /etc/apt/sources.list.d \
     && GNUPGHOME=$(mktemp -d) \
     && GNUPGHOME="$GNUPGHOME" gpg --batch --no-default-keyring \
-        --keyring /usr/share/keyrings/clickhouse-keyring.gpg \
+        --keyring /usr/share/keyrings/hanzo-datastore-keyring.gpg \
         --keyserver hkp://keyserver.ubuntu.com:80 \
         --recv-keys 3a9ea1193a97b548be1457d48919f6bd2b48d754 \
     && rm -rf "$GNUPGHOME" \
-    && chmod +r /usr/share/keyrings/clickhouse-keyring.gpg \
-    && echo "${REPOSITORY}" > /etc/apt/sources.list.d/clickhouse.list \
+    && chmod +r /usr/share/keyrings/hanzo-datastore-keyring.gpg \
+    && echo "${REPOSITORY}" > /etc/apt/sources.list.d/hanzo-datastore.list \
     && echo "installing from repository: ${REPOSITORY}" \
     && apt-get update \
     && for package in ${PACKAGES}; do \
@@ -116,15 +116,15 @@ RUN clickhouse local -q 'SELECT 1' >/dev/null 2>&1 && exit 0 || : \
         /var/cache/debconf \
         /tmp/* \
     && apt-get autoremove --purge -yq dirmngr gnupg2 \
-    && chmod ugo+Xrw -R /etc/clickhouse-server /etc/clickhouse-client
+    && chmod ugo+Xrw -R /etc/hanzo-datastore-server /etc/hanzo-datastore-client
 # The last chmod is here to make the next one is No-op in docker official library Dockerfile
 
 # post install
-# we need to allow "others" access to clickhouse folder, because docker container
+# we need to allow "others" access to hanzo-datastore folder, because docker container
 # can be started with arbitrary uid (openshift usecase)
-RUN clickhouse-local -q 'SELECT * FROM system.build_options' \
-    && mkdir -p /var/lib/clickhouse /var/log/clickhouse-server /etc/clickhouse-server /etc/clickhouse-client \
-    && chmod ugo+Xrw -R /var/lib/clickhouse /var/log/clickhouse-server /etc/clickhouse-server /etc/clickhouse-client
+RUN hanzo-datastore-local -q 'SELECT * FROM system.build_options' \
+    && mkdir -p /var/lib/hanzo-datastore /var/log/hanzo-datastore-server /etc/hanzo-datastore-server /etc/hanzo-datastore-client \
+    && chmod ugo+Xrw -R /var/lib/hanzo-datastore /var/log/hanzo-datastore-server /etc/hanzo-datastore-server /etc/hanzo-datastore-client
 
 RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8
@@ -132,12 +132,12 @@ ENV TZ=UTC
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-COPY docker_related_config.xml /etc/clickhouse-server/config.d/
+COPY docker_related_config.xml /etc/hanzo-datastore-server/config.d/
 COPY entrypoint.sh /entrypoint.sh
 
 EXPOSE 9000 8123 9009
-VOLUME /var/lib/clickhouse
+VOLUME /var/lib/hanzo-datastore
 
-ENV CLICKHOUSE_CONFIG=/etc/clickhouse-server/config.xml
+ENV HANZO_CONFIG=/etc/hanzo-datastore-server/config.xml
 
 ENTRYPOINT ["/entrypoint.sh"]

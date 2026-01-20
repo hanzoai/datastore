@@ -1,4 +1,4 @@
-# docker build -t clickhouse/python-bottle .
+# docker build -t hanzoai/datastore-python-bottle .
 # Helper docker container to run python bottle apps
 
 # python cgi module is dropped in 3.13 - pin to 3.12

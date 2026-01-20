@@ -245,7 +245,7 @@ def main():
         ch_path = temp_dir
         if not info.is_local_run or not (Path(temp_dir) / "clickhouse").is_file():
             link_arch = "aarch64" if Utils.is_arm() else "amd64"
-            link_to_master_head_binary = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/{link_arch}/clickhouse"
+            link_to_master_head_binary = f"https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/{link_arch}/clickhouse"
             Shell.run(
                 f"wget -nv -P {temp_dir} {link_to_master_head_binary}",
                 verbose=True,

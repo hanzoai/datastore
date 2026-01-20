@@ -515,7 +515,7 @@ class ReleaseInfo:
                 Shell.check(
                     f"""gh pr create --repo {Envs.GITHUB_REPOSITORY} --title 'Release pull request for branch {self.release_branch}' \
                                 --head {self.release_branch} {pr_labels} \
-                                --body 'This PullRequest is a part of ClickHouse release cycle. It is used by CI system only. Do not perform any changes with it.'""",
+                                --body 'This PullRequest is a part of Hanzo Datastore release cycle. It is used by CI system only. Do not perform any changes with it.'""",
                     dry_run=dry_run,
                     strict=True,
                     verbose=True,
@@ -534,7 +534,7 @@ class ReleaseInfo:
                     url = "dry-run"
                 print(f"ChangeLog PR url [{url}]")
                 self.changelog_pr = url
-            self.docker = f"docker run --rm clickhouse/clickhouse:{self.version} clickhouse --version"
+            self.docker = f"docker run --rm hanzoai/datastore:{self.version} hanzo-datastore --version"
         else:
             # new release branch - find version bump pr on a master branch
             branch = self.get_version_bump_branch()
@@ -618,12 +618,12 @@ class RepoTypes:
 
 class PackageDownloader:
     PACKAGES = (
-        "clickhouse-client",
-        "clickhouse-common-static",
-        "clickhouse-common-static-dbg",
-        "clickhouse-keeper",
-        "clickhouse-keeper-dbg",
-        "clickhouse-server",
+        "hanzo-datastore-client",
+        "hanzo-datastore-common-static",
+        "hanzo-datastore-common-static-dbg",
+        "hanzo-datastore-keeper",
+        "hanzo-datastore-keeper-dbg",
+        "hanzo-datastore-server",
     )
 
     PACKAGE_ARCHS = ("amd", "arm")
@@ -662,7 +662,7 @@ class PackageDownloader:
         self.rpm_package_files = []
         self.tgz_package_files = []
         # just binaries for macos
-        self.macos_package_files = ["clickhouse-macos", "clickhouse-macos-aarch64"]
+        self.macos_package_files = ["hanzo-datastore-macos", "hanzo-datastore-macos-aarch64"]
         self.file_to_job_name = {}
         self.macos_binary_to_job_name = {}
 
@@ -700,7 +700,7 @@ class PackageDownloader:
                 self.file_to_job_name[tgz_package_file_name] = job_name
 
                 destination_binary_name = (
-                    f"clickhouse-{self.MACOS_PACKAGE_TO_BIN_SUFFIX[package_arch]}"
+                    f"hanzo-datastore-{self.MACOS_PACKAGE_TO_BIN_SUFFIX[package_arch]}"
                 )
                 assert destination_binary_name in self.macos_package_files
                 self.macos_binary_to_job_name[destination_binary_name] = job_name_darwin
@@ -762,7 +762,7 @@ class PackageDownloader:
                     self.s3_release_prefix,
                     self.commit_sha,
                     job_name,
-                    "clickhouse",
+                    "hanzo-datastore",
                 ]
             )
             self.s3.download_file(
@@ -926,8 +926,8 @@ if __name__ == "__main__":
     # prepare ssh for git if needed
     _ssh_agent = None
     _key_pub = None
-    if os.getenv("ROBOT_CLICKHOUSE_SSH_KEY", ""):
-        _key = os.getenv("ROBOT_CLICKHOUSE_SSH_KEY")
+    if os.getenv("ROBOT_HANZO_SSH_KEY", ""):
+        _key = os.getenv("ROBOT_HANZO_SSH_KEY")
         _ssh_agent = SSHAgent()
         _key_pub = _ssh_agent.add(_key)
         _ssh_agent.print_keys()

@@ -1,1 +1,1 @@
-[ClickHouse Inc.](%%GITHUB-REPO%%)
+[Hanzo AI Inc.](%%GITHUB-REPO%%)

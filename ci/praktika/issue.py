@@ -333,7 +333,7 @@ class Issue:
             else:
                 test_name = title
         issue_url = (
-            f"https://github.com/ClickHouse/ClickHouse/issues/{number}"
+            f"https://github.com/hanzoai/datastore/issues/{number}"
             if number
             else ""
         )
@@ -492,7 +492,7 @@ class TestCaseIssueCatalog(MetaClasses.Serializable):
         compressed_name = Utils.compress_gz(local_name)
         link = S3.copy_file_to_s3(
             local_path=compressed_name,
-            s3_path=f"clickhouse-test-reports/statistics",
+            s3_path=f"hanzo-datastore-test-reports/statistics",
             content_type="application/json",
             content_encoding="gzip",
         )
@@ -509,7 +509,7 @@ class TestCaseIssueCatalog(MetaClasses.Serializable):
         """
         local_catalog_gz = cls.file_name_static(cls.name) + ".gz"
         local_catalog_json = cls.file_name_static(cls.name)
-        s3_catalog_path = f"clickhouse-test-reports/statistics/{Utils.normalize_string(cls.name)}.json.gz"
+        s3_catalog_path = f"hanzo-datastore-test-reports/statistics/{Utils.normalize_string(cls.name)}.json.gz"
 
         if not S3.copy_file_from_s3(
             s3_catalog_path, local_catalog_gz, _skip_download_counter=True

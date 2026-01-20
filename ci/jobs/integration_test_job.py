@@ -291,9 +291,9 @@ tar -czf ./ci/tmp/logs.tar.gz \
 
     if is_bugfix_validation:
         if Utils.is_arm():
-            link_to_master_head_binary = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+            link_to_master_head_binary = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
         else:
-            link_to_master_head_binary = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
+            link_to_master_head_binary = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
         if not info.is_local_run or not (Path(temp_path) / "clickhouse").exists():
             print(
                 f"NOTE: Clickhouse binary will be downloaded to [{temp_path}] from [{link_to_master_head_binary}]"

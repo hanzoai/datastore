@@ -1,7 +1,7 @@
 # rebuild in #33610
-# docker build -t clickhouse/stress-test .
+# docker build -t hanzoai/datastore-stress-test .
 ARG FROM_TAG=latest
-FROM clickhouse/stateless-test:$FROM_TAG
+FROM hanzoai/datastore-stateless-test:$FROM_TAG
 
 RUN apt-get update -y \
     && env DEBIAN_FRONTEND=noninteractive \

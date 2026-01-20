@@ -61,18 +61,18 @@ env:
         default: false
         type: boolean
     secrets:
-      ROBOT_CLICKHOUSE_COMMIT_TOKEN:
+      ROBOT_HANZO_COMMIT_TOKEN:
 
 jobs:
   CreateRelease:
     env:
-      GH_TOKEN: ${{ secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN }}
+      GH_TOKEN: ${{ secrets.ROBOT_HANZO_COMMIT_TOKEN }}
     runs-on: [self-hosted, release-maker]
     steps:
       - name: Check out repository code
-        uses: ClickHouse/checkout@v1
+        uses: actions/checkout@v4
         with:
-          token: ${{secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN}}
+          token: ${{secrets.ROBOT_HANZO_COMMIT_TOKEN}}
           fetch-depth: 0
       - name: Debug Info
         uses: ./.github/actions/debug
@@ -135,12 +135,12 @@ jobs:
           ./utils/list-versions/update-docker-version.sh
           echo "Generate ChangeLog"
           export CI=1
-          docker pull clickhouse/style-test:latest
+          docker pull hanzoai/datastore-style-test:latest
           docker run -u "${UID}:${GID}" -e PYTHONUNBUFFERED=1 -e CI=1 --network=host \
             --volume=".:/wd" --workdir="/wd" \
-            clickhouse/style-test:latest \
+            hanzoai/datastore-style-test:latest \
             ./tests/ci/changelog.py -v --debug-helpers \
-            --gh-user-or-token ${{ secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN }} \
+            --gh-user-or-token ${{ secrets.ROBOT_HANZO_COMMIT_TOKEN }} \
             --jobs=5 \
             --output="./docs/changelogs/${{ env.RELEASE_TAG }}.md" ${{ env.RELEASE_TAG }}
           git add ./docs/changelogs/${{ env.RELEASE_TAG }}.md
@@ -151,9 +151,9 @@ jobs:
         if: ${{ inputs.type == 'patch' && ! inputs.dry-run && ! inputs.only-repo && ! inputs.only-docker }}
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
-          author: "robot-clickhouse <robot-clickhouse@users.noreply.github.com>"
-          token: ${{ secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN }}
-          committer: "robot-clickhouse <robot-clickhouse@users.noreply.github.com>"
+          author: "robot-hanzo <robot-hanzo@users.noreply.github.com>"
+          token: ${{ secrets.ROBOT_HANZO_COMMIT_TOKEN }}
+          committer: "robot-hanzo <robot-hanzo@users.noreply.github.com>"
           commit-message: Update version_date.tsv and changelogs after ${{ env.RELEASE_TAG }}
           branch: auto/${{ env.RELEASE_TAG }}
           base: master
@@ -207,27 +207,27 @@ jobs:
         shell: bash
         run: |
           python3 ./tests/ci/artifactory.py --test-debian ${{ inputs.dry-run == true && '--dry-run' || '' }}
-      - name: Docker clickhouse/clickhouse-server building
+      - name: Docker hanzoai/datastore building
         if: ${{ inputs.type == 'patch' && inputs.dry-run != true }}
         shell: bash
         run: |
           cd "./tests/ci"
           python3 ./create_release.py --set-progress-started --progress "docker server release"
-          export DOCKER_IMAGE="clickhouse/clickhouse-server"
+          export DOCKER_IMAGE="hanzoai/datastore"
 
           # We must use docker file from the release commit
           git checkout "${{ env.RELEASE_TAG }}"
           python3 ./version_helper.py --export > /tmp/version.sh
           . /tmp/version.sh
 
-          if [[ $CLICKHOUSE_VERSION_STRING =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "ClickHouse version: $CLICKHOUSE_VERSION_STRING"
+          if [[ $HANZO_DATASTORE_VERSION_STRING =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Datastore version: $HANZO_DATASTORE_VERSION_STRING"
           else
-            echo "Invalid version string: $CLICKHOUSE_VERSION_STRING"
+            echo "Invalid version string: $HANZO_DATASTORE_VERSION_STRING"
             exit 1
           fi
-          CLICKHOUSE_VERSION_MINOR=${CLICKHOUSE_VERSION_STRING%.*}
-          CLICKHOUSE_VERSION_MAJOR=${CLICKHOUSE_VERSION_MINOR%.*}
+          DATASTORE_VERSION_MINOR=${HANZO_DATASTORE_VERSION_STRING%.*}
+          DATASTORE_VERSION_MAJOR=${DATASTORE_VERSION_MINOR%.*}
 
           # Define build configurations
           configs=(
@@ -241,11 +241,11 @@ jobs:
             dockerfile=${config##*:}
 
             VERSION_SUFFIX=$([ "$variant" = "ubuntu" ] && echo "" || echo "-$variant")
-            LABEL_VERSION="${CLICKHOUSE_VERSION_STRING}${VERSION_SUFFIX}"
+            LABEL_VERSION="${HANZO_DATASTORE_VERSION_STRING}${VERSION_SUFFIX}"
             TAGS=(
-              "--tag=${DOCKER_IMAGE}:${CLICKHOUSE_VERSION_STRING}${VERSION_SUFFIX}"
-              "--tag=${DOCKER_IMAGE}:${CLICKHOUSE_VERSION_MINOR}${VERSION_SUFFIX}"
-              "--tag=${DOCKER_IMAGE}:${CLICKHOUSE_VERSION_MAJOR}${VERSION_SUFFIX}"
+              "--tag=${DOCKER_IMAGE}:${HANZO_DATASTORE_VERSION_STRING}${VERSION_SUFFIX}"
+              "--tag=${DOCKER_IMAGE}:${DATASTORE_VERSION_MINOR}${VERSION_SUFFIX}"
+              "--tag=${DOCKER_IMAGE}:${DATASTORE_VERSION_MAJOR}${VERSION_SUFFIX}"
             )
 
             if [ "$IS_LATEST" = "1" ]; then
@@ -258,9 +258,9 @@ jobs:
             docker buildx build \
               --platform=linux/amd64,linux/arm64 \
               --output=type=registry \
-              --label=com.clickhouse.build.version="$LABEL_VERSION" \
+              --label=com.hanzoai.build.version="$LABEL_VERSION" \
               ${TAGS[*]} \
-              --build-arg=VERSION="$CLICKHOUSE_VERSION_STRING" \
+              --build-arg=VERSION="$HANZO_DATASTORE_VERSION_STRING" \
               --progress=plain \
               --file="$dockerfile" \
               ../../docker/server
@@ -268,28 +268,28 @@ jobs:
 
           git checkout -
           python3 ./create_release.py --set-progress-completed
-      - name: Docker clickhouse/clickhouse-keeper building
+      - name: Docker hanzoai/datastore-keeper building
         if: ${{ inputs.type == 'patch' && inputs.dry-run != true }}
         shell: bash
         run: |
           cd "./tests/ci"
           python3 ./create_release.py --set-progress-started --progress "docker keeper release"
           
-          export DOCKER_IMAGE="clickhouse/clickhouse-keeper"
+          export DOCKER_IMAGE="hanzoai/datastore-keeper"
 
           # We must use docker file from the release commit
           git checkout "${{ env.RELEASE_TAG }}"
           python3 ./version_helper.py --export > /tmp/version.sh
           . /tmp/version.sh
 
-          if [[ $CLICKHOUSE_VERSION_STRING =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "ClickHouse version: $CLICKHOUSE_VERSION_STRING"
+          if [[ $HANZO_DATASTORE_VERSION_STRING =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Datastore version: $HANZO_DATASTORE_VERSION_STRING"
           else
-            echo "Invalid version string: $CLICKHOUSE_VERSION_STRING"
+            echo "Invalid version string: $HANZO_DATASTORE_VERSION_STRING"
             exit 1
           fi
-          CLICKHOUSE_VERSION_MINOR=${CLICKHOUSE_VERSION_STRING%.*}
-          CLICKHOUSE_VERSION_MAJOR=${CLICKHOUSE_VERSION_MINOR%.*}
+          DATASTORE_VERSION_MINOR=${HANZO_DATASTORE_VERSION_STRING%.*}
+          DATASTORE_VERSION_MAJOR=${DATASTORE_VERSION_MINOR%.*}
 
           # Define build configurations
           configs=(
@@ -303,11 +303,11 @@ jobs:
             dockerfile=${config##*:}
 
             VERSION_SUFFIX=$([ "$variant" = "ubuntu" ] && echo "" || echo "-$variant")
-            LABEL_VERSION="${CLICKHOUSE_VERSION_STRING}${VERSION_SUFFIX}"
+            LABEL_VERSION="${HANZO_DATASTORE_VERSION_STRING}${VERSION_SUFFIX}"
             TAGS=(
-              "--tag=${DOCKER_IMAGE}:${CLICKHOUSE_VERSION_STRING}${VERSION_SUFFIX}"
-              "--tag=${DOCKER_IMAGE}:${CLICKHOUSE_VERSION_MINOR}${VERSION_SUFFIX}"
-              "--tag=${DOCKER_IMAGE}:${CLICKHOUSE_VERSION_MAJOR}${VERSION_SUFFIX}"
+              "--tag=${DOCKER_IMAGE}:${HANZO_DATASTORE_VERSION_STRING}${VERSION_SUFFIX}"
+              "--tag=${DOCKER_IMAGE}:${DATASTORE_VERSION_MINOR}${VERSION_SUFFIX}"
+              "--tag=${DOCKER_IMAGE}:${DATASTORE_VERSION_MAJOR}${VERSION_SUFFIX}"
             )
 
             if [ "$IS_LATEST" = "1" ]; then
@@ -320,9 +320,9 @@ jobs:
             docker buildx build \
               --platform=linux/amd64,linux/arm64 \
               --output=type=registry \
-              --label=com.clickhoghuse.build.version="$LABEL_VERSION" \
+              --label=com.hanzoai.build.version="$LABEL_VERSION" \
               ${TAGS[*]} \
-              --build-arg=VERSION="$CLICKHOUSE_VERSION_STRING" \
+              --build-arg=VERSION="$HANZO_DATASTORE_VERSION_STRING" \
               --progress=plain \
               --file="$dockerfile" \
               ../../docker/keeper

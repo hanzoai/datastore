@@ -1,15 +1,20 @@
 # This CITATION.cff file was generated with cffinit.
 
 cff-version: 1.2.0
-title: "ClickHouse"
+title: "Hanzo Datastore"
 message: "If you use this software, please cite it as below."
 type: software
 authors:
-  - family-names: "Milovidov"
-    given-names: "Alexey"
-repository-code: 'https://github.com/ClickHouse/ClickHouse'
-url: 'https://clickhouse.com'
+  - name: "Hanzo AI Inc."
+repository-code: 'https://github.com/hanzoai/datastore'
+url: 'https://hanzo.ai'
 license: Apache-2.0
+keywords:
+  - analytics
+  - database
+  - olap
+  - real-time
+  - ai
 preferred-citation:
   type: article
   authors:

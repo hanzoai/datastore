@@ -7,8 +7,8 @@ from ci.praktika.info import Info
 from ci.praktika.result import Result
 from ci.praktika.utils import Shell, Utils
 
-IMAGE_UBUNTU = "clickhouse/test-old-ubuntu"
-IMAGE_CENTOS = "clickhouse/test-old-centos"
+IMAGE_UBUNTU = "hanzoai/datastore-test-old-ubuntu"
+IMAGE_CENTOS = "hanzoai/datastore-test-old-centos"
 DOWNLOAD_RETRIES_COUNT = 5
 
 temp_path = Path(f"{Utils.cwd()}/ci/tmp")
