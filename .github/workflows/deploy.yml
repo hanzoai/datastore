@@ -2,7 +2,7 @@ name: Build and Deploy Hanzo Datastore
 
 on:
   push:
-    branches: [main]
+    branches: [master, main]
     paths:
       - 'docker/server/**'
       - 'programs/**'
