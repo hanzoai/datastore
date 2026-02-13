@@ -1,0 +1,13 @@
+ARG CH_VERSION=24
+
+# Hanzo Datastore: ClickHouse with Hanzo branding
+FROM clickhouse/clickhouse-server:${CH_VERSION}-alpine
+
+LABEL maintainer="dev@hanzo.ai"
+LABEL org.opencontainers.image.source="https://github.com/hanzoai/datastore"
+LABEL org.opencontainers.image.description="Hanzo Datastore - Columnar analytics engine for AI telemetry"
+
+EXPOSE 8123 9000
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=30s --retries=3 \
+    CMD wget -qO- http://localhost:8123/ping || exit 1
