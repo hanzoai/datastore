@@ -1,3 +1,7 @@
+---
+title: Changelog
+---
+
 ### Watch all release presentations and videos at [ClickHouse Theater](https://presentations.clickhouse.com/) and [YouTube Playlist](https://www.youtube.com/playlist?list=PL0Z2YDlm0b3jAlSy1JxyP8zluvXaN3nxU).
 
 ### Table of Contents
