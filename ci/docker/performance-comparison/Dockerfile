@@ -1,7 +1,10 @@
-# docker build -t hanzoai/datastore-performance-comparison .
+# docker build -t clickhouse/performance-comparison .
 
 ARG FROM_TAG=latest
-FROM hanzoai/datastore-test-base:$FROM_TAG
+FROM clickhouse/test-base:$FROM_TAG
+
+# Remove problematic Kitware repository
+RUN rm -f /etc/apt/sources.list.d/*kitware* || true
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
@@ -12,7 +15,6 @@ RUN apt-get update \
             git \
             gnuplot \
             imagemagick \
-            libc6-dbg \
             moreutils \
             ncdu \
             numactl \
@@ -40,7 +42,8 @@ RUN apt-get update \
 COPY requirements.txt /
 RUN pip3 --no-cache-dir install -r requirements.txt
 
-COPY --from=hanzoai/datastore-cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+
+COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
 
 # aws cli to acquire secrets and params from ssm

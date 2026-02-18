@@ -54,7 +54,7 @@ SECRET_GH_APP_PEM_KEY: str = "hanzo_gh_app.hanzo-datastore-app-key"
 INSTALL_PYTHON_REQS_FOR_NATIVE_JOBS = ""
 
 DISABLED_WORKFLOWS = [
-    "new_pull_request.py",
+    # ""
 ]
 
 DEFAULT_LOCAL_TEST_WORKFLOW = "pull_request.py"
