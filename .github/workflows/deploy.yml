@@ -36,18 +36,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push (Alpine)
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: docker/server
-          file: docker/server/Dockerfile.alpine
+          context: .
+          file: Dockerfile.hanzo
           push: true
           tags: |
             ghcr.io/hanzoai/datastore:latest
-            ghcr.io/hanzoai/datastore:alpine
             ghcr.io/hanzoai/datastore:${{ github.sha }}
             docker.io/hanzoai/datastore:latest
-            docker.io/hanzoai/datastore:alpine
           cache-from: type=gha,scope=datastore
           cache-to: type=gha,mode=max,scope=datastore
 
