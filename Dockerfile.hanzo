@@ -1,4 +1,4 @@
-ARG CH_VERSION=24
+ARG CH_VERSION=26
 
 # Hanzo Datastore: ClickHouse with Hanzo branding
 FROM clickhouse/clickhouse-server:${CH_VERSION}-alpine

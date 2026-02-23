@@ -3,6 +3,7 @@ name: Build and Deploy Hanzo Datastore
 on:
   push:
     branches: [master, main]
+    tags: ['v*']
     paths:
       - 'Dockerfile*'
       - 'docker/server/**'
@@ -32,10 +33,26 @@ jobs:
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
+        continue-on-error: true
         with:
           registry: docker.io
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/hanzoai/datastore
+            hanzoai/datastore
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=26,enable={{is_default_branch}}
+            type=sha,prefix=
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -43,10 +60,8 @@ jobs:
           context: .
           file: Dockerfile.hanzo
           push: true
-          tags: |
-            ghcr.io/hanzoai/datastore:latest
-            ghcr.io/hanzoai/datastore:${{ github.sha }}
-            docker.io/hanzoai/datastore:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=datastore
           cache-to: type=gha,mode=max,scope=datastore
 
@@ -70,22 +85,3 @@ jobs:
             datastore=ghcr.io/hanzoai/datastore:latest
           kubectl -n hanzo rollout status statefulset/datastore --timeout=300s
 
-  deploy-lux:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Configure kubectl (lux-k8s)
-        run: doctl kubernetes cluster kubeconfig save do-sfo3-lux-k8s
-
-      - name: Rolling update datastore
-        run: |
-          kubectl -n hanzo set image statefulset/hanzo-clickhouse \
-            clickhouse=ghcr.io/hanzoai/datastore:latest
-          kubectl -n hanzo rollout status statefulset/hanzo-clickhouse --timeout=300s
