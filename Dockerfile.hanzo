@@ -1,6 +1,6 @@
-ARG CH_VERSION=26
+ARG CH_VERSION=26.1
 
-# Hanzo Datastore: ClickHouse with Hanzo branding
+# Hanzo Datastore: Columnar analytics engine
 FROM clickhouse/clickhouse-server:${CH_VERSION}-alpine
 
 LABEL maintainer="dev@hanzo.ai"
