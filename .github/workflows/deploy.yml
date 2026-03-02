@@ -80,5 +80,6 @@ jobs:
       - name: Rolling update datastore
         run: |
           kubectl -n hanzo set image statefulset/datastore \
-            datastore=ghcr.io/hanzoai/datastore:latest
-          kubectl -n hanzo rollout status statefulset/datastore --timeout=300s
+            datastore=ghcr.io/hanzoai/datastore:sha-${GITHUB_SHA::7}
+          kubectl -n hanzo rollout restart statefulset/datastore
+          kubectl -n hanzo rollout status statefulset/datastore --timeout=600s
