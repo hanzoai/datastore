@@ -97,11 +97,13 @@ RUN arch=${TARGETARCH:-amd64} \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-keeper \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-extract-from-config \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-su \
-    # Rename config directories if upstream names exist
-    && if [ -d /etc/clickhouse-server ] && [ ! -d /etc/hanzo-datastore-server ]; then \
-        mv /etc/clickhouse-server /etc/hanzo-datastore-server; fi \
-    && if [ -d /etc/clickhouse-client ] && [ ! -d /etc/hanzo-datastore-client ]; then \
-        mv /etc/clickhouse-client /etc/hanzo-datastore-client; fi
+    # Merge upstream config into hanzo-datastore paths (COPY may have pre-created dirs)
+    && if [ -d /etc/clickhouse-server ]; then \
+        cp -a /etc/clickhouse-server/* /etc/hanzo-datastore-server/ 2>/dev/null || true; \
+        rm -rf /etc/clickhouse-server; fi \
+    && if [ -d /etc/clickhouse-client ]; then \
+        cp -a /etc/clickhouse-client/* /etc/hanzo-datastore-client/ 2>/dev/null || true; \
+        rm -rf /etc/clickhouse-client; fi
 
 ARG DEFAULT_CLIENT_CONFIG_DIR="/etc/hanzo-datastore-client"
 ARG DEFAULT_SERVER_CONFIG_DIR="/etc/hanzo-datastore-server"
