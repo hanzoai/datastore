@@ -35,6 +35,7 @@ COPY --from=glibc-donor /lib/linux-gnu/libc.so.6 /lib/linux-gnu/libdl.so.2 /lib/
 COPY --from=glibc-donor /etc/nsswitch.conf /etc/
 COPY docker/server/docker_related_config.xml /etc/hanzo-datastore-server/config.d/
 COPY docker/server/datastore-port-override.xml /etc/hanzo-datastore-server/config.d/
+COPY docker/server/hanzo-paths.xml /etc/hanzo-datastore-server/config.d/
 COPY docker/server/entrypoint.sh /entrypoint.sh
 COPY docker/server/nginx-header-proxy.conf /etc/nginx/http.d/datastore-proxy.conf
 
