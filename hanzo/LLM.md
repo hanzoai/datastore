@@ -102,12 +102,12 @@ git push origin master
 ### Recommended Settings
 
 ```xml
-<!-- config.d/hanzo.xml -->
-<datastore>
+<!-- config.d/hanzo.xml — root element MUST be <clickhouse> (engine hardcodes it) -->
+<clickhouse>
     <max_memory_usage>10000000000</max_memory_usage>
     <max_bytes_before_external_group_by>5000000000</max_bytes_before_external_group_by>
     <distributed_aggregation_memory_efficient>1</distributed_aggregation_memory_efficient>
-</datastore>
+</clickhouse>
 ```
 
 ### Partitioning Strategy
