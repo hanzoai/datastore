@@ -1,6 +1,6 @@
 -- Hanzo Unified Analytics Schema
 -- Combines web analytics, AI observability, and business metrics
--- Based on ClickHouse with optimizations for Hanzo platform
+-- Optimized for Hanzo platform
 
 -- =============================================================================
 -- DATABASE SETUP
