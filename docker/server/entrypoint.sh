@@ -188,7 +188,9 @@ function init_db() {
             fi
 
             # Listen only on localhost until the initialization is done
-            hanzo-datastore su "${USER}:${GROUP}" hanzo-datastore-server --config-file="$DATASTORE_CONFIG" -- --listen_host=127.0.0.1 &
+            # NOTE: must use subcommand "hanzo-datastore server" not symlink "hanzo-datastore-server"
+            # because the upstream binary only recognizes "clickhouse-*" prefixed symlinks for multicall dispatch
+            hanzo-datastore su "${USER}:${GROUP}" /usr/bin/hanzo-datastore server --config-file="$DATASTORE_CONFIG" -- --listen_host=127.0.0.1 &
             pid="$!"
 
             # check if server is ready to accept connections
@@ -203,7 +205,7 @@ function init_db() {
                 sleep 1
             done
 
-            hanzoclient=( hanzo-datastore-client --multiquery --host "127.0.0.1" --port "$NATIVE_PORT" -u "$DATASTORE_USER" --password "$DATASTORE_PASSWORD" )
+            hanzoclient=( hanzo-datastore client --multiquery --host "127.0.0.1" --port "$NATIVE_PORT" -u "$DATASTORE_USER" --password "$DATASTORE_PASSWORD" )
 
             echo
 
@@ -268,7 +270,10 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
     fi
 
     # This replaces the shell script with the server:
-    exec hanzo-datastore su "${USER}:${GROUP}" hanzo-datastore-server --config-file="$DATASTORE_CONFIG" "$@"
+    # NOTE: must use subcommand syntax — the upstream binary's multicall dispatch only
+    # recognises "clickhouse-*" prefixed symlinks, so "hanzo-datastore-server" falls
+    # through to the default "local" mode. Using "hanzo-datastore server" works correctly.
+    exec hanzo-datastore su "${USER}:${GROUP}" /usr/bin/hanzo-datastore server --config-file="$DATASTORE_CONFIG" "$@"
 fi
 
 # Otherwise, we assume the user want to run his own process, for example a `bash` shell to explore this image
