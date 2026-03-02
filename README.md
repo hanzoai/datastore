@@ -7,7 +7,7 @@
 
 <h4>Hanzo Datastore is an open-source column-oriented database management system that allows generating analytical data reports in real-time.</h4>
 
-<h5>Based on ClickHouse - optimized for AI analytics and Hanzo ecosystem integration.</h5>
+<h4>High-performance columnar analytics engine for the Hanzo AI ecosystem.</h4>
 
 </div>
 
@@ -55,15 +55,6 @@ This starts:
 * [Hanzo AI](https://hanzo.ai) - AI infrastructure platform
 * [GitHub Repository](https://github.com/hanzoai/datastore)
 * [Issue Tracker](https://github.com/hanzoai/datastore/issues)
-
-## Based on ClickHouse
-
-Hanzo Datastore is a fork of [ClickHouse](https://clickhouse.com), the world's fastest open-source OLAP database. We maintain compatibility with upstream ClickHouse while adding Hanzo-specific integrations and optimizations.
-
-### Upstream Resources
-
-* [ClickHouse Documentation](https://clickhouse.com/docs)
-* [ClickHouse GitHub](https://github.com/ClickHouse/ClickHouse)
 
 ## Contributing
 

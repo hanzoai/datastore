@@ -262,6 +262,11 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
     manage_user
     init_db
 
+    # Start nginx header-translation proxy (8123 → 8124)
+    if command -v nginx >/dev/null 2>&1 && [ -f /etc/nginx/http.d/datastore-proxy.conf ]; then
+        nginx
+    fi
+
     # This replaces the shell script with the server:
     exec hanzo-datastore su "${USER}:${GROUP}" hanzo-datastore-server --config-file="$DATASTORE_CONFIG" "$@"
 fi
