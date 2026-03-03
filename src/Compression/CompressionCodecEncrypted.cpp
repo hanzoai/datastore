@@ -100,7 +100,7 @@ const char * getMethod(EncryptionMethod Method)
     /// The encrypting codecs were originally implemented using boringssl's API. At a later point and for FIPS-related reasons, an
     /// implementation based on OpenSSL was added specifically for s390/x. At that time, OpenSSL did not provide *-SIV ciphers (they were
     /// only added with OpenSSL 3.2), whereas boringssl provided them for ages. As a result, s390/x used non-SIV ciphers instead (leading to
-    /// a different ciphertext / persistence). When ClickHouse migrated to OpenSSL on all platforms, this twist for s390/x needed to be kept,
+    /// a different ciphertext / persistence). When Datastore migrated to OpenSSL on all platforms, this twist for s390/x needed to be kept,
     /// otherwise encrypted data on s390/x can no longer be read.
     if (Method == AES_128_GCM_SIV)
 #if defined(__s390x__)

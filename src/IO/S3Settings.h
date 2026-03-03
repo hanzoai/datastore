@@ -34,7 +34,7 @@ struct S3Settings
     /// Read all settings with from specified prefix in config. Expect settings name to start with "s3_".
     /// Override 4 settings: readonly, min_bytes_for_seek, list_object_keys_size, objects_chunk_size_to_delete from
     /// settings values from config without "s3_" prefix. This method exists for historical reasons. Initially we added
-    /// some settings which don't directly affect S3 requests in terms of S3 API, but they affect ClickHouse logic
+    /// some settings which don't directly affect S3 requests in terms of S3 API, but they affect Datastore logic
     /// when it reads from ObjectStorage.
     ///
     /// This method is useful when you need to get S3Settings for Disk or ObjectStorage, not a standalone S3Client.

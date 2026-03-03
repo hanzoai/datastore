@@ -1,1 +1,1 @@
-extern int mainEntryClickHouseCheckMarks(int argc, char ** argv);
+extern int mainEntryDatastoreCheckMarks(int argc, char ** argv);

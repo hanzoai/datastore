@@ -715,7 +715,7 @@ to the following logic for different types:
 | `(U)Int*`                  | Prints hex digits ("nibbles") from the most significant to least significant (big-endian or "human-readable" order). It starts with the most significant non-zero byte (leading zero bytes are omitted) but always prints both digits of every byte even if the leading digit is zero. |
 | `Date` and `DateTime`      | Formatted as corresponding integers (the number of days since epoch for Date and the value of unix timestamp for DateTime).                                                                                                                                                            |
 | `String` and `FixedString` | All bytes are simply encoded as two hexadecimal numbers. Zero bytes are not omitted.                                                                                                                                                                                                   |
-| `Float*` and `Decimal`     | Encoded as their representation in memory. ClickHouse represents the values internally always as little endian, therefore they are encoded as such. Zero leading/trailing bytes are not omitted.                                                                                                                   |
+| `Float*` and `Decimal`     | Encoded as their representation in memory. Datastore represents the values internally always as little endian, therefore they are encoded as such. Zero leading/trailing bytes are not omitted.                                                                                                                   |
 | `UUID`                     | Encoded as big-endian order string.                                                                                                                                                                                                                                                    |
 
 The function uses uppercase letters `A-F` and not using any prefixes (like `0x`) or suffixes (like `h`).
@@ -771,7 +771,7 @@ it to the byte represented by the number. The returned value is a binary string 
 If you want to convert the result to a number, you can use the `reverse` and `reinterpretAs<Type>` functions.
 
 :::note
-`clickhouse-client` interprets strings as UTF-8.
+`datastore-client` interprets strings as UTF-8.
 This may cause that values returned by `hex` to be displayed surprisingly.
 :::
 
@@ -875,7 +875,7 @@ Interprets each pair of binary digits (in the argument) as a number and converts
 For a numeric argument `unbin()` does not return the inverse of `bin()`. If you want to convert the result to a number, you can use the reverse and `reinterpretAs<Type>` functions.
 
 :::note
-If `unbin` is invoked from within the `clickhouse-client`, binary strings are displayed using UTF-8.
+If `unbin` is invoked from within the `datastore-client`, binary strings are displayed using UTF-8.
 :::
 
 Supports binary digits `0` and `1`. The number of binary digits does not have to be multiples of eight. If the argument string contains anything other than binary digits,

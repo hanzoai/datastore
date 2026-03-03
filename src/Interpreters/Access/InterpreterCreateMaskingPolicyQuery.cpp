@@ -22,7 +22,7 @@ namespace ErrorCodes
 
 BlockIO InterpreterCreateMaskingPolicyQuery::execute()
 {
-    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Masking Policies are available only in ClickHouse Cloud");
+    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Masking Policies are available only in Datastore Cloud");
 }
 
 void registerInterpreterCreateMaskingPolicyQuery(InterpreterFactory & factory)

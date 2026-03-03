@@ -260,7 +260,7 @@ size_t tryMergeFilterIntoJoinCondition(QueryPlan::Node * parent_node, QueryPlan:
         return 0;
 
     /// Pushing filter condition into the JOIN can affect the result in case of ANY join.
-    /// In ClickHouse all JOINs return columns of both tables, but for SEMI, ANTI joins
+    /// In Datastore all JOINs return columns of both tables, but for SEMI, ANTI joins
     /// it works as ANY join.
     auto strictness = join_operator.strictness;
     if (strictness != JoinStrictness::Unspecified && strictness != JoinStrictness::All)

@@ -10,14 +10,14 @@ using namespace DB;
 TEST(Common, getMultipleValuesFromConfig)
 {
     std::istringstream      // STYLE_CHECK_ALLOW_STD_STRING_STREAM
-            xml_isteam(R"END(<clickhouse>
+            xml_isteam(R"END(<datastore>
     <first_level>
         <second_level>0</second_level>
         <second_level>1</second_level>
         <second_level>2</second_level>
         <second_level>3</second_level>
     </first_level>
-</clickhouse>)END");
+</datastore>)END");
 
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(xml_isteam);
     std::vector<std::string> answer = getMultipleValuesFromConfig(*config, "first_level", "second_level");

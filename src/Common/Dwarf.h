@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-/** This file was edited for ClickHouse.
+/** This file was edited for Datastore.
  *  Original is from folly library.
   */
 

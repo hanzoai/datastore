@@ -702,7 +702,7 @@ void QueryOracle::generateOracleSelectQuery(RandomGenerator & rg, const PeerQuer
     const uint32_t ncols = rg.randomInt<uint32_t>(1, 5);
 
     peer_query = pq;
-    if (peer_query == PeerQuery::ClickHouseOnly && (fc.measure_performance || fc.compare_explains) && rg.nextBool())
+    if (peer_query == PeerQuery::DatastoreOnly && (fc.measure_performance || fc.compare_explains) && rg.nextBool())
     {
         const bool next_opt = rg.nextBool();
 
@@ -734,7 +734,7 @@ void QueryOracle::generateOracleSelectQuery(RandomGenerator & rg, const PeerQuer
     gen.setAllowNotDetermistic(false);
     gen.enforceFinal(true);
     gen.generatingPeerQuery(pq);
-    gen.setAllowEngineUDF(peer_query != PeerQuery::ClickHouseOnly);
+    gen.setAllowEngineUDF(peer_query != PeerQuery::DatastoreOnly);
     if (compare_explain)
     {
         /// INSERT INTO FILE EXPLAIN SELECT is not supported, so run
@@ -962,7 +962,7 @@ void QueryOracle::optimizePeerTables(const StatementGenerator & gen)
         /// Lastly optimize tables
         const auto & ntable = gen.tables.at(entry);
 
-        other_steps_success &= gen.connections.optimizeTableForOracle(PeerTableDatabase::ClickHouse, ntable);
+        other_steps_success &= gen.connections.optimizeTableForOracle(PeerTableDatabase::Datastore, ntable);
         if (measure_performance)
         {
             other_steps_success &= gen.connections.optimizeTableForOracle(PeerTableDatabase::None, ntable);
@@ -1015,13 +1015,13 @@ void QueryOracle::replaceQueryWithTablePeers(
 
                                 if (t.hasDatabasePeer())
                                 {
-                                    if (peer_query != PeerQuery::ClickHouseOnly)
+                                    if (peer_query != PeerQuery::DatastoreOnly)
                                     {
                                         insertOnTableOrCluster(rg, gen, t, true, &tf);
                                     }
                                     found_tables.insert(tname);
-                                    res = !t.hasClickHousePeer();
-                                    can_test_oracle_result &= t.hasClickHousePeer();
+                                    res = !t.hasDatastorePeer();
+                                    can_test_oracle_result &= t.hasDatastorePeer();
                                 }
                             }
                         }
@@ -1032,7 +1032,7 @@ void QueryOracle::replaceQueryWithTablePeers(
             }});
     iterateQuery(nsel, rules);
 
-    if (peer_query == PeerQuery::ClickHouseOnly && !measure_performance)
+    if (peer_query == PeerQuery::DatastoreOnly && !measure_performance)
     {
         /// Use a different file for the peer database
         FileFunc & ff = *sq2.mutable_single_query()
@@ -1141,14 +1141,14 @@ void QueryOracle::processSecondOracleQueryResult(const int errcode, ExternalInte
         {
             if (measure_performance)
             {
-                if (ei.getPerformanceMetricsForLastQuery(PeerTableDatabase::ClickHouse, this->res2))
+                if (ei.getPerformanceMetricsForLastQuery(PeerTableDatabase::Datastore, this->res2))
                 {
                     fc.comparePerformanceResults(oracle_name, this->res1, this->res2);
                 }
             }
             else
             {
-                md5_hash2.hashFile((peer_query == PeerQuery::ClickHouseOnly ? qfile_peer : qcfile).generic_string(), second_digest);
+                md5_hash2.hashFile((peer_query == PeerQuery::DatastoreOnly ? qfile_peer : qcfile).generic_string(), second_digest);
                 if (first_digest != second_digest)
                 {
                     throw DB::Exception(DB::ErrorCodes::BUZZHOUSE, "{}: failed with different result sets", oracle_name);

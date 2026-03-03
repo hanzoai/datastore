@@ -234,13 +234,13 @@ PostgreSQLTableStructure::ColumnsInfoPtr readNamesAndTypesList(
             const auto & name_and_type = columns[i];
 
             /// If the relation is empty, then array_ndims returns NULL.
-            /// ClickHouse cannot support this use case.
+            /// Datastore cannot support this use case.
             if (isTableEmpty(tx, postgres_table))
                 throw Exception(ErrorCodes::BAD_ARGUMENTS, "PostgreSQL relation containing arrays cannot be empty: {}", postgres_table);
 
             /// All rows must contain the same number of dimensions.
             /// 1 is ok. If number of dimensions in all rows is not the same -
-            /// such arrays are not able to be used as ClickHouse Array at all.
+            /// such arrays are not able to be used as Datastore Array at all.
             ///
             /// For empty arrays, array_ndims([]) will return NULL.
             auto postgres_column = doubleQuoteString(name_and_type.name);

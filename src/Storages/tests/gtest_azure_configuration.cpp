@@ -86,7 +86,7 @@ void loadNamedCollectionConfig(const String & xml)
 
 TEST(StorageAzureConfiguration, FromNamedCollectionWithExtraCredentials)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <FromNamedCollectionWithExtraCredentials>
             <container>test_container</container>
@@ -95,7 +95,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithExtraCredentials)
             <tenant_id>test_tenant_id</tenant_id>
         </FromNamedCollectionWithExtraCredentials>
     </named_collections>
-    </clickhouse>)CONFIG");
+    </datastore>)CONFIG");
 
     loadNamedCollectionConfig(xml);
 
@@ -108,7 +108,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithExtraCredentials)
 
 TEST(StorageAzureConfiguration, FromNamedCollectionWithAccount)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <FromNamedCollectionWithAccount>
             <container>test_container</container>
@@ -117,7 +117,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithAccount)
             <account_key>test_key</account_key>
         </FromNamedCollectionWithAccount>
     </named_collections>
-    </clickhouse>)CONFIG");
+    </datastore>)CONFIG");
 
     loadNamedCollectionConfig(xml);
 
@@ -130,7 +130,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithAccount)
 
 TEST(StorageAzureConfiguration, FromNamedCollectionWithURL)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <FromNamedCollectionWithURL>
             <container>test_container</container>
@@ -138,7 +138,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithURL)
             <connection_string>https://azurite1:10000/devstoreaccount1?foo=bar</connection_string>
         </FromNamedCollectionWithURL>
     </named_collections>
-    </clickhouse>)CONFIG");
+    </datastore>)CONFIG");
 
     loadNamedCollectionConfig(xml);
 
@@ -151,7 +151,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithURL)
 
 TEST(StorageAzureConfiguration, FromNamedCollectionWithExtraCredentialsAndAccount)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <FromNamedCollectionWithExtraCredentialsAndAccount>
             <container>test_container</container>
@@ -162,7 +162,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithExtraCredentialsAndAccoun
             <tenant_id>test_tenant_id</tenant_id>
         </FromNamedCollectionWithExtraCredentialsAndAccount>
     </named_collections>
-    </clickhouse>)CONFIG");
+    </datastore>)CONFIG");
 
     loadNamedCollectionConfig(xml);
 
@@ -174,7 +174,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithExtraCredentialsAndAccoun
 
 TEST(StorageAzureConfiguration, FromNamedCollectionWithPartialExtraCredentials)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <FromNamedCollectionWithPartialExtraCredentials>
             <container>test_container</container>
@@ -184,7 +184,7 @@ TEST(StorageAzureConfiguration, FromNamedCollectionWithPartialExtraCredentials)
             <client_id>test_client_id</client_id>
         </FromNamedCollectionWithPartialExtraCredentials>
     </named_collections>
-    </clickhouse>)CONFIG");
+    </datastore>)CONFIG");
 
     loadNamedCollectionConfig(xml);
 

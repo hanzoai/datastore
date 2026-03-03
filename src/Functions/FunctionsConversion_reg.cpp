@@ -4027,7 +4027,7 @@ SELECT
     /// parseDateTimeBestEffort documentation
     FunctionDocumentation::Description parseDateTimeBestEffort_description = R"(
 Converts a date and time in the String representation to DateTime data type.
-The function parses [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html), [RFC 1123 - 5.2.14 RFC-822](https://datatracker.ietf.org/doc/html/rfc822) Date and Time Specification, ClickHouse's and some other date and time formats.
+The function parses [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html), [RFC 1123 - 5.2.14 RFC-822](https://datatracker.ietf.org/doc/html/rfc822) Date and Time Specification, Datastore's and some other date and time formats.
 
 Supported non-standard formats:
 - A string containing 9..10 digit unix timestamp.
@@ -4092,7 +4092,7 @@ SELECT parseDateTimeBestEffort('1735689600') AS parseDateTimeBestEffort
     /// parseDateTimeBestEffortOrZero documentation
     FunctionDocumentation::Description parseDateTimeBestEffortOrZero_description = R"(
 Same as [`parseDateTimeBestEffort`](#parseDateTimeBestEffort) except that it returns a zero date or a zero date time when it encounters a date format that cannot be processed.
-The function parses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), [RFC 1123 - 5.2.14 RFC-822 Date and Time Specification](https://tools.ietf.org/html/rfc1123#page-55), ClickHouse's and some other date and time formats.
+The function parses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), [RFC 1123 - 5.2.14 RFC-822 Date and Time Specification](https://tools.ietf.org/html/rfc1123#page-55), Datastore's and some other date and time formats.
 
 Supported non-standard formats:
 - A string containing 9..10 digit unix timestamp.
@@ -4136,7 +4136,7 @@ SELECT parseDateTimeBestEffortOrZero('23/10/2025 12:12:57') AS valid,
     /// parseDateTimeBestEffortOrNull documentation
     FunctionDocumentation::Description parseDateTimeBestEffortOrNull_description = R"(
 The same as [`parseDateTimeBestEffort`](#parseDateTimeBestEffort) except that it returns `NULL` when it encounters a date format that cannot be processed.
-The function parses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), [RFC 1123 - 5.2.14 RFC-822 Date and Time Specification](https://tools.ietf.org/html/rfc1123#page-55), ClickHouse's and some other date and time formats.
+The function parses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), [RFC 1123 - 5.2.14 RFC-822 Date and Time Specification](https://tools.ietf.org/html/rfc1123#page-55), Datastore's and some other date and time formats.
 
 Supported non-standard formats:
 - A string containing 9..10 digit unix timestamp.
@@ -4283,7 +4283,7 @@ SELECT parseDateTimeBestEffortUSOrNull('02/10/2025') AS valid_us,
     FunctionDocumentation::Description description_parseDateTime32BestEffort = R"(
 Converts a string representation of a date and time to the [`DateTime`](/sql-reference/data-types/datetime) data type.
 
-The function parses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), [RFC 1123 - 5.2.14 RFC-822 Date and Time Specification](https://tools.ietf.org/html/rfc1123#page-55), ClickHouse's and some other date and time formats.
+The function parses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), [RFC 1123 - 5.2.14 RFC-822 Date and Time Specification](https://tools.ietf.org/html/rfc1123#page-55), Datastore's and some other date and time formats.
     )";
     FunctionDocumentation::Syntax syntax_parseDateTime32BestEffort = "parseDateTime32BestEffort(time_string[, time_zone])";
     FunctionDocumentation::Arguments arguments_parseDateTime32BestEffort =

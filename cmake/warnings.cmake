@@ -43,7 +43,7 @@ no_warning(thread-safety-negative) # experimental flag, too many false positives
 no_warning(unsafe-buffer-usage) # too aggressive
 no_warning(switch-default) # conflicts with "defaults in a switch covering all enum values"
 no_warning(nrvo) # not eliding copy on return - too aggressive
-no_warning(missing-noreturn) # too aggressive with no clear benefit, see https://github.com/ClickHouse/ClickHouse/pull/86416
+no_warning(missing-noreturn) # too aggressive with no clear benefit, see https://github.com/Datastore/Datastore/pull/86416
 no_warning(lifetime-safety-intra-tu-suggestions) # New in clang-23
 no_warning(lifetime-safety-cross-tu-suggestions) # New in clang-23
 if (ARCH_E2K)

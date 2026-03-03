@@ -30,8 +30,8 @@ NATSConnection::NATSConnection(const NATSConfiguration & configuration_, LoggerP
         natsOptions_SetSecure(options.get(), true);
     }
 
-    // use CLICKHOUSE_NATS_TLS_SECURE=0 env var to skip TLS verification of server cert
-    const char * val = std::getenv("CLICKHOUSE_NATS_TLS_SECURE"); // NOLINT(concurrency-mt-unsafe) // this is safe on Linux glibc/Musl, but potentially not safe on other platforms
+    // use DATASTORE_NATS_TLS_SECURE=0 env var to skip TLS verification of server cert
+    const char * val = std::getenv("DATASTORE_NATS_TLS_SECURE"); // NOLINT(concurrency-mt-unsafe) // this is safe on Linux glibc/Musl, but potentially not safe on other platforms
     std::string tls_secure = val == nullptr ? std::string("1") : std::string(val);
     if (tls_secure == "0")
     {

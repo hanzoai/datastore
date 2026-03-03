@@ -184,7 +184,7 @@ private:
     bool send_progress;
     bool send_profile_events;
     String server_display_name;
-    String description = "clickhouse-local";
+    String description = "datastore-local";
 
     std::optional<LocalQueryState> state;
 

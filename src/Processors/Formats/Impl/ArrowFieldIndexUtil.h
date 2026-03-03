@@ -67,22 +67,22 @@ public:
     }
 
     // For a parquet schema {x: {i: int, j: int}}, this should be populated as follows
-    // clickhouse_index = 0, parquet_indexes = {0, 1}
-    struct ClickHouseIndexToParquetIndex
+    // datastore_index = 0, parquet_indexes = {0, 1}
+    struct DatastoreIndexToParquetIndex
     {
-        std::size_t clickhouse_index;
+        std::size_t datastore_index;
         std::vector<int> parquet_indexes;
     };
 
     /// Only collect the required fields' indices. Eg. when just read a field of a struct,
     /// don't need to collect the whole indices in this struct.
-    std::vector<ClickHouseIndexToParquetIndex> findRequiredIndices(
+    std::vector<DatastoreIndexToParquetIndex> findRequiredIndices(
         const Block & header,
         const arrow::Schema & schema,
         const parquet::FileMetaData & file,
-        const std::optional<std::unordered_map<String, String>> & clickhouse_to_parquet_names)
+        const std::optional<std::unordered_map<String, String>> & datastore_to_parquet_names)
     {
-        std::vector<ClickHouseIndexToParquetIndex> required_indices;
+        std::vector<DatastoreIndexToParquetIndex> required_indices;
         std::unordered_set<int> added_indices;
         /// Flat all named fields' index information into a map.
         auto fields_indices = calculateFieldIndices(schema);
@@ -91,9 +91,9 @@ public:
             const auto & named_col = header.getByPosition(i);
             std::string col_name = named_col.name;
             String transformed_name = col_name;
-            if (clickhouse_to_parquet_names)
+            if (datastore_to_parquet_names)
             {
-                if (auto it = clickhouse_to_parquet_names->find(col_name); it != clickhouse_to_parquet_names->end())
+                if (auto it = datastore_to_parquet_names->find(col_name); it != datastore_to_parquet_names->end())
                     transformed_name = it->second;
             }
             if (ignore_case)
@@ -101,7 +101,7 @@ public:
                 boost::to_lower(col_name);
                 boost::to_lower(transformed_name);
             }
-            findRequiredIndices(col_name, transformed_name, i, named_col.type, fields_indices, added_indices, required_indices, file, clickhouse_to_parquet_names);
+            findRequiredIndices(col_name, transformed_name, i, named_col.type, fields_indices, added_indices, required_indices, file, datastore_to_parquet_names);
         }
         return required_indices;
     }
@@ -196,9 +196,9 @@ private:
         DataTypePtr data_type,
         const std::unordered_map<std::string, std::pair<int, int>> & field_indices,
         std::unordered_set<int> & added_indices,
-        std::vector<ClickHouseIndexToParquetIndex> & required_indices,
+        std::vector<DatastoreIndexToParquetIndex> & required_indices,
         const parquet::FileMetaData & file,
-        const std::optional<std::unordered_map<String, String>> & clickhouse_to_parquet_names)
+        const std::optional<std::unordered_map<String, String>> & datastore_to_parquet_names)
     {
         auto nested_type = removeNullable(data_type);
         if (const DB::DataTypeTuple * type_tuple = typeid_cast<const DB::DataTypeTuple *>(nested_type.get()))
@@ -214,28 +214,28 @@ private:
                         boost::to_lower(field_name);
                     const auto & field_type = field_types[i];
                     auto full_name = Nested::concatenateName(name, field_name);
-                    if (clickhouse_to_parquet_names)
+                    if (datastore_to_parquet_names)
                     {
-                        if (auto it = clickhouse_to_parquet_names->find(full_name); it != clickhouse_to_parquet_names->end())
+                        if (auto it = datastore_to_parquet_names->find(full_name); it != datastore_to_parquet_names->end())
                         {
                             full_name = it->second;
                         }
                     }
 
-                    findRequiredIndices(Nested::concatenateName(name, field_name), full_name, header_index, field_type, field_indices, added_indices, required_indices, file, clickhouse_to_parquet_names);
+                    findRequiredIndices(Nested::concatenateName(name, field_name), full_name, header_index, field_type, field_indices, added_indices, required_indices, file, datastore_to_parquet_names);
                 }
                 return;
             }
         }
         else if (const auto * type_array = typeid_cast<const DB::DataTypeArray *>(nested_type.get()))
         {
-            findRequiredIndices(name, transformed_name, header_index, type_array->getNestedType(), field_indices, added_indices, required_indices, file, clickhouse_to_parquet_names);
+            findRequiredIndices(name, transformed_name, header_index, type_array->getNestedType(), field_indices, added_indices, required_indices, file, datastore_to_parquet_names);
             return;
         }
         else if (const auto * type_map = typeid_cast<const DB::DataTypeMap *>(nested_type.get()))
         {
-            findRequiredIndices(name, transformed_name, header_index, type_map->getKeyType(), field_indices, added_indices, required_indices, file, clickhouse_to_parquet_names);
-            findRequiredIndices(Nested::concatenateName(name, "value"), Nested::concatenateName(transformed_name, "value"), header_index, type_map->getValueType(), field_indices, added_indices, required_indices, file, clickhouse_to_parquet_names);
+            findRequiredIndices(name, transformed_name, header_index, type_map->getKeyType(), field_indices, added_indices, required_indices, file, datastore_to_parquet_names);
+            findRequiredIndices(Nested::concatenateName(name, "value"), Nested::concatenateName(transformed_name, "value"), header_index, type_map->getValueType(), field_indices, added_indices, required_indices, file, datastore_to_parquet_names);
             return;
         }
         auto it = field_indices.find(transformed_name);
@@ -246,8 +246,8 @@ private:
         }
         else
         {
-            ClickHouseIndexToParquetIndex index_mapping;
-            index_mapping.clickhouse_index = header_index;
+            DatastoreIndexToParquetIndex index_mapping;
+            index_mapping.datastore_index = header_index;
             for (int j = 0; j < it->second.second; ++j)
             {
                 auto index = it->second.first + j;

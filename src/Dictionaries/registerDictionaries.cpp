@@ -9,7 +9,7 @@ class DictionarySourceFactory;
 void registerDictionarySourceNull(DictionarySourceFactory & factory);
 void registerDictionarySourceFile(DictionarySourceFactory & source_factory);
 void registerDictionarySourceMysql(DictionarySourceFactory & source_factory);
-void registerDictionarySourceClickHouse(DictionarySourceFactory & source_factory);
+void registerDictionarySourceDatastore(DictionarySourceFactory & source_factory);
 void registerDictionarySourceMongoDB(DictionarySourceFactory & source_factory);
 void registerDictionarySourceMongoDBPocoLegacy(DictionarySourceFactory & source_factory);
 void registerDictionarySourceCassandra(DictionarySourceFactory & source_factory);
@@ -44,7 +44,7 @@ void registerDictionaries()
         registerDictionarySourceNull(source_factory);
         registerDictionarySourceFile(source_factory);
         registerDictionarySourceMysql(source_factory);
-        registerDictionarySourceClickHouse(source_factory);
+        registerDictionarySourceDatastore(source_factory);
         registerDictionarySourceMongoDB(source_factory);
         registerDictionarySourceRedis(source_factory);
         registerDictionarySourceCassandra(source_factory);

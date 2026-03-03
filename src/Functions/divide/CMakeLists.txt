@@ -19,4 +19,4 @@ else ()
 endif ()
 
 add_library(divide_impl divide.cpp)
-target_link_libraries(divide_impl ${IMPLEMENTATIONS} clickhouse_common_io)
+target_link_libraries(divide_impl ${IMPLEMENTATIONS} datastore_common_io)

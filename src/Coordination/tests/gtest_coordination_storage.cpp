@@ -1189,7 +1189,7 @@ TYPED_TEST(CoordinationTest, TestBlockACL)
 
     int64_t zxid = 1;
 
-    static constexpr std::string_view digest = "clickhouse:test";
+    static constexpr std::string_view digest = "datastore:test";
     static constexpr std::string_view new_digest = "antonio:test";
 
     static constexpr int64_t session_id = 42;

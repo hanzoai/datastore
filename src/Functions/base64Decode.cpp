@@ -34,7 +34,7 @@ Throws an exception in case of error.
         "SELECT base64Decode('Y2xpY2tob3VzZQ==')",
         R"(
 ┌─base64Decode('Y2xpY2tob3VzZQ==')─┐
-│ clickhouse                       │
+│ datastore                       │
 └──────────────────────────────────┘
         )"
     }

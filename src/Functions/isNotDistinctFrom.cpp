@@ -16,8 +16,8 @@ REGISTER_FUNCTION(IsNotDistinctFrom)
     FunctionDocumentation::Syntax syntax = "isNotDistinctFrom(x, y)";
 
     FunctionDocumentation::Arguments arguments = {
-        {"x", "First value to compare. Can be any ClickHouse data type.", {"Any"}},
-        {"y", "Second value to compare. Can be any ClickHouse data type.", {"Any"}}
+        {"x", "First value to compare. Can be any Datastore data type.", {"Any"}},
+        {"y", "Second value to compare. Can be any Datastore data type.", {"Any"}}
     };
 
     FunctionDocumentation::ReturnedValue returned_value = {

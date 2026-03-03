@@ -288,7 +288,7 @@ public:
     DB::Strings hot_table_settings;
     DB::Strings tokenizers;
 
-    std::optional<ServerCredentials> clickhouse_server;
+    std::optional<ServerCredentials> datastore_server;
     std::optional<ServerCredentials> mysql_server;
     std::optional<ServerCredentials> postgresql_server;
     std::optional<ServerCredentials> sqlite_server;
@@ -365,11 +365,11 @@ public:
     uint32_t deterministic_prob = 50;
 
     std::filesystem::path log_path = std::filesystem::temp_directory_path() / "out.sql";
-    std::filesystem::path client_file_path = "/var/lib/clickhouse/user_files";
-    std::filesystem::path server_file_path = "/var/lib/clickhouse/user_files";
+    std::filesystem::path client_file_path = "/var/lib/datastore/user_files";
+    std::filesystem::path server_file_path = "/var/lib/datastore/user_files";
     std::filesystem::path fuzz_client_out = client_file_path / "fuzz.data";
     std::filesystem::path fuzz_server_out = server_file_path / "fuzz.data";
-    std::filesystem::path lakes_path = "/var/lib/clickhouse/user_files/lakehouses";
+    std::filesystem::path lakes_path = "/var/lib/datastore/user_files/lakehouses";
 
     FuzzConfig()
         : cb(nullptr)
@@ -408,7 +408,7 @@ public:
 
     void comparePerformanceResults(const String & oracle_name, PerformanceResult & server, PerformanceResult & peer) const;
 
-    void validateClickHouseHealth();
+    void validateDatastoreHealth();
 };
 
 }

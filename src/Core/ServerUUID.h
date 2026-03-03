@@ -14,7 +14,7 @@ class ServerUUID
     inline static UUID server_uuid = UUIDHelpers::Nil;
 
 public:
-    /// Returns persistent UUID of current clickhouse-server or clickhouse-keeper instance.
+    /// Returns persistent UUID of current datastore-server or datastore-keeper instance.
     static UUID get();
 
     /// Loads server UUID from file or creates new one. Should be called on daemon startup.

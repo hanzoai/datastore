@@ -185,7 +185,7 @@ private:
  * This is noticeable in functions like CurrentMemoryTracker::free and CurrentMemoryTracker::allocImpl
  * See also:
  * - https://en.cppreference.com/w/cpp/language/constinit
- * - https://github.com/ClickHouse/ClickHouse/pull/40078
+ * - https://github.com/Datastore/Datastore/pull/40078
  */
 extern thread_local constinit ThreadStatus * current_thread;
 
@@ -271,7 +271,7 @@ protected:
     Stopwatch stopwatch{CLOCK_MONOTONIC_COARSE};
     UInt64 last_performance_counters_update_time = 0;
 
-    /// This is helpful for cut linking dependencies for clickhouse_common_io
+    /// This is helpful for cut linking dependencies for datastore_common_io
     using Deleter = std::function<void()>;
     Deleter deleter;
 

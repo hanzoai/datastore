@@ -38,7 +38,7 @@
 #include <Common/ErrnoException.h>
 #include <Common/Jemalloc.h>
 #include <Common/getMultipleKeysFromConfig.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/Config/ConfigProcessor.h>
 #include <Common/SymbolIndex.h>
 #include <Common/getExecutablePath.h>
@@ -473,7 +473,7 @@ void BaseDaemon::initializeTerminationAndSignalProcessing()
 void BaseDaemon::logRevision() const
 {
     logger().information("Starting " + std::string{VERSION_FULL}
-        + " (revision: " + std::to_string(ClickHouseRevision::getVersionRevision())
+        + " (revision: " + std::to_string(DatastoreRevision::getVersionRevision())
         + ", git hash: " + std::string(GIT_HASH)
         + ", build id: " + (build_id.empty() ? "<unknown>" : build_id) + ")"
         + ", PID " + std::to_string(getpid()));
@@ -561,8 +561,8 @@ void BaseDaemon::setupWatchdog()
     if (argv0)
         original_process_name = argv0;
 
-    bool restart = getenvBool("CLICKHOUSE_WATCHDOG_RESTART");
-    bool forward_signals = !getenvBool("CLICKHOUSE_WATCHDOG_NO_FORWARD");
+    bool restart = getenvBool("DATASTORE_WATCHDOG_RESTART");
+    bool forward_signals = !getenvBool("DATASTORE_WATCHDOG_NO_FORWARD");
 
     while (true)
     {
@@ -632,11 +632,11 @@ void BaseDaemon::setupWatchdog()
         notify_sync.close();
 
         /// Change short thread name and process name.
-        DB::setThreadName(ThreadName::CLICKHOUSE_WATCH);
+        DB::setThreadName(ThreadName::DATASTORE_WATCH);
 
         if (argv0)
         {
-            const char * new_process_name = "clickhouse-watchdog";
+            const char * new_process_name = "datastore-watchdog";
             memset(argv0, 0, original_process_name.size());
             memcpy(argv0, new_process_name, std::min(strlen(new_process_name), original_process_name.size()));
         }

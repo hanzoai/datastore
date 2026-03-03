@@ -11,7 +11,7 @@
 namespace DB
 {
 
-// Common base class to access the clickhouse-library-bridge.
+// Common base class to access the datastore-library-bridge.
 class LibraryBridgeHelper : public IBridgeHelper
 {
 protected:
@@ -19,7 +19,7 @@ protected:
 
     void startBridge(std::unique_ptr<ShellCommand> cmd) const override;
 
-    String serviceAlias() const override { return "clickhouse-library-bridge"; }
+    String serviceAlias() const override { return "datastore-library-bridge"; }
 
     String serviceFileName() const override { return serviceAlias(); }
 

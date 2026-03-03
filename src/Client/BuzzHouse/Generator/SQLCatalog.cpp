@@ -257,7 +257,7 @@ void SQLDatabase::setDatabasePath(RandomGenerator & rg, const FuzzConfig & fc)
         integration = IntegrationCall::Dolor; /// Has to use La Casa Del Dolor
         format = (catalog == LakeCatalog::REST || catalog == LakeCatalog::Hive || catalog == LakeCatalog::Glue) ? LakeFormat::Iceberg
                                                                                                                 : LakeFormat::DeltaLake;
-        storage = LakeStorage::S3; /// What ClickHouse supports now
+        storage = LakeStorage::S3; /// What Datastore supports now
     }
 }
 
@@ -560,9 +560,9 @@ bool SQLBase::hasSQLitePeer() const
     return peer_table == PeerTableDatabase::SQLite;
 }
 
-bool SQLBase::hasClickHousePeer() const
+bool SQLBase::hasDatastorePeer() const
 {
-    return peer_table == PeerTableDatabase::ClickHouse;
+    return peer_table == PeerTableDatabase::Datastore;
 }
 
 const std::optional<String> & SQLBase::getCluster() const
@@ -636,7 +636,7 @@ void SQLBase::setTablePath(RandomGenerator & rg, const FuzzConfig & fc, const bo
         /// Set bucket path first if possible
         String next_bucket_path;
 
-        /// Set integration call to use, sometimes create tables in ClickHouse, others also in Spark
+        /// Set integration call to use, sometimes create tables in Datastore, others also in Spark
         if (has_dolor && (isAnyIcebergEngine() || isAnyDeltaLakeEngine()) && rg.nextBool())
         {
             integration = IntegrationCall::Dolor;

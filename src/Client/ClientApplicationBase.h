@@ -22,7 +22,7 @@ void interruptSignalHandler(int signum);
 
 /**
  * The base class for client appliucations such as
- * clickhouse-client or clickhouse-local.
+ * datastore-client or datastore-local.
  * The main purpose and responsibility of it is dealing with
  * application-specific stuff such as command line arguments parsing
  * and setting up signal handlers, so queries will be cancelled after

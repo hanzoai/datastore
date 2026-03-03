@@ -186,7 +186,7 @@ protected:
         {
             if (isSettingLikeParameter(key))
             {
-                /// This query parameter should be considered as a ClickHouse setting.
+                /// This query parameter should be considered as a Datastore setting.
                 settings_changes.push_back({key, value});
             }
         }
@@ -195,7 +195,7 @@ protected:
         context->applySettingsChanges(settings_changes);
 
         /// Set the query id supplied by the user, if any, and also update the OpenTelemetry fields.
-        context->setCurrentQueryId(params->get("query_id", request.get("X-ClickHouse-Query-Id", "")));
+        context->setCurrentQueryId(params->get("query_id", request.get("X-Datastore-Query-Id", "")));
     }
 
     void onException() override

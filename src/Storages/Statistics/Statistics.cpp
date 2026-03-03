@@ -38,7 +38,7 @@ namespace ErrorCodes
 enum StatisticsFileVersion : UInt16
 {
     V0 = 0,
-    V1 = 1, /// modify the format of uniq, https://github.com/ClickHouse/ClickHouse/pull/90311
+    V1 = 1, /// modify the format of uniq, https://github.com/Datastore/Datastore/pull/90311
 };
 
 std::optional<Float64> StatisticsUtils::tryConvertToFloat64(const Field & value, const DataTypePtr & data_type)
@@ -284,7 +284,7 @@ std::shared_ptr<ColumnStatistics> ColumnStatistics::deserialize(ReadBuffer & buf
     UInt16 version;
     readIntBinary(version, buf);
 
-    /// TODO: we should check the version of statistics format when we start clickhouse server, and do materialize statistics automatically.
+    /// TODO: we should check the version of statistics format when we start datastore server, and do materialize statistics automatically.
     if (version != V1)
         throw Exception(ErrorCodes::ILLEGAL_STATISTICS, "We try to read stale file format version: {}. Please run `ALTER TABLE [db.]table MATERIALIZE STATISTICS ALL` to regenerate the statistics", version);
 

@@ -28,8 +28,8 @@ using DatabasePtr = std::shared_ptr<IDatabase>;
 ///    on table creation (e.g. {table}, to avoid changing the path if the table is later renamed),
 ///    others are expanded on each server startup and each replica (e.g. {replica} because it's
 ///    different on different replicas).
-///  * When dropping table with znode path (say) "/clickhouse/tables/{uuid}/{shard}", delete not only
-///    the znode at this path but also the parent znode "/clickhouse/tables/{uuid}" if it became empty.
+///  * When dropping table with znode path (say) "/datastore/tables/{uuid}/{shard}", delete not only
+///    the znode at this path but also the parent znode "/datastore/tables/{uuid}" if it became empty.
 ///    Otherwise each created+dropped table would leave behind an empty znode.
 
 struct TableZnodeInfo
@@ -52,7 +52,7 @@ struct TableZnodeInfo
 
     /// Path to an ancestor of `path` that should be considered "owned" by this table (shared among
     /// replicas of the table). When table is dropped, this znode will be removed if it became empty.
-    /// E.g. path = "/clickhouse/tables/{uuid}/{shard}", path_prefix_to_drop = "/clickhouse/tables/{uuid}".
+    /// E.g. path = "/datastore/tables/{uuid}/{shard}", path_prefix_to_drop = "/datastore/tables/{uuid}".
     String path_prefix_for_drop;
 
     static TableZnodeInfo resolve(

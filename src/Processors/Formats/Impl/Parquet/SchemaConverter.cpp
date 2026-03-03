@@ -140,7 +140,7 @@ std::string_view SchemaConverter::useColumnMapperIfNeeded(const parq::SchemaElem
 {
     if (!column_mapper)
         return element.name;
-    const auto & map = column_mapper->getFieldIdToClickHouseName();
+    const auto & map = column_mapper->getFieldIdToDatastoreName();
     if (!element.__isset.field_id)
     {
         /// Does iceberg require that parquet files have field ids?
@@ -342,7 +342,7 @@ bool SchemaConverter::processSubtreePrimitive(TraversalNode & node)
             primitive_type_hint = assert_cast<const DataTypeNullable &>(*primitive_type_hint).getNestedType();
         }
     }
-    /// Force map key to be non-nullable because clickhouse Map doesn't support nullable map key.
+    /// Force map key to be non-nullable because datastore Map doesn't support nullable map key.
     else if (!options.schema_inference_force_not_nullable && node.schema_context != SchemaContext::MapKey)
     {
         if (levels.back().is_array == false)
@@ -469,7 +469,7 @@ bool SchemaConverter::processSubtreeMap(TraversalNode & node)
         else if (typeid_cast<const DataTypeArray *>(node.type_hint.get()))
         {
             /// Support explicitly requesting Array(Tuple) type for map columns. Useful e.g. if the map
-            /// key type is something that's not allowed as Map key in clickhouse.
+            /// key type is something that's not allowed as Map key in datastore.
             array_type_hint = node.type_hint;
             no_map = true;
         }
@@ -745,7 +745,7 @@ void SchemaConverter::processPrimitiveColumn(
     ///  * Parquet Type ("physical type"),
     ///  * Parquet ConvertedType (deprecated, but we have to support it),
     ///  * Parquet LogicalType,
-    ///  * ClickHouse type hint (e.g. if the user specified column types explicitly).
+    ///  * Datastore type hint (e.g. if the user specified column types explicitly).
     ///
     /// Outputs:
     ///  * out_decoder - how to decode the column (it then separately further dispatches to
@@ -944,7 +944,7 @@ void SchemaConverter::processPrimitiveColumn(
             throw Exception(ErrorCodes::INCORRECT_DATA, "Unexpected integer logical type: {}", thriftToString(element));
 
         /// Can't leave the signed->unsigned conversion to castColumn.
-        /// E.g. if parquet type is UINT64, and the requested clickhouse type is Int128,
+        /// E.g. if parquet type is UINT64, and the requested datastore type is Int128,
         /// casting Int64 -> UInt64 -> Int128 produces different result from Int64 -> Int128.
         auto converter = std::make_shared<IntConverter>();
         converter->input_size = physical_bits / 8;
@@ -968,7 +968,7 @@ void SchemaConverter::processPrimitiveColumn(
     else if (logical.__isset.TIMESTAMP || logical.__isset.TIME || converted == CONV::TIMESTAMP_MILLIS || converted == CONV::TIMESTAMP_MICROS || converted == CONV::TIME_MILLIS || converted == CONV::TIME_MICROS)
     {
         /// We interpret both timestamp (logical.TIMESTAMP) and time-of-day (logical.TIME)
-        /// types as timestamps, since clickhouse doesn't have time-of-day type.
+        /// types as timestamps, since datastore doesn't have time-of-day type.
         /// E.g. time of day 12:34:56.789 turns into timestamp 1970-01-01 12:34:56.789.
 
         UInt32 scale;
@@ -1253,7 +1253,7 @@ void SchemaConverter::processPrimitiveColumn(
             if (type_hint)
             {
                 /// If parquet type is FIXED_LEN_BYTE_ARRAY(16), and type hint is [U]Int128, assume
-                /// it's binary little-endian [U]Int128. That's how clickhouse parquet writer writes
+                /// it's binary little-endian [U]Int128. That's how datastore parquet writer writes
                 /// [U]Int128 (btw, we should probably change that to Decimal).
                 /// Same for FIXED_LEN_BYTE_ARRAY(32) and [U]Int256.
                 /// We can't leave this conversion to castColumn because it would parse as text.

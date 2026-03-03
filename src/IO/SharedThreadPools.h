@@ -27,7 +27,7 @@ public:
     bool isInitialized() const;
     void reloadConfiguration(size_t max_threads, size_t max_free_threads, size_t queue_size);
 
-    /// Server and clickhouse-local initialize all thread pools on startup, with settings from config.
+    /// Server and datastore-local initialize all thread pools on startup, with settings from config.
     /// Client and misc tools may initialize the pools they use lazily using this method instead.
     void initializeWithDefaultSettingsIfNotInitialized();
 

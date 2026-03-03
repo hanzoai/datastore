@@ -64,7 +64,7 @@ For example:
 ```text
 svn+ssh://some.svn-hosting.com:80/repo/trunk
 some.svn-hosting.com:80/repo/trunk
-https://clickhouse.com/time/
+https://datastore.com/time/
 ```
 :::
     )";

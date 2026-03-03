@@ -57,7 +57,7 @@ AuthenticationData::Digest AuthenticationData::Util::encodeSHA256(std::string_vi
     ::DB::encodeSHA256(text, hash.data());
     return hash;
 #else
-    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SHA256 passwords support is disabled, because ClickHouse was built without SSL library");
+    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SHA256 passwords support is disabled, because Datastore was built without SSL library");
 #endif
 }
 
@@ -70,7 +70,7 @@ AuthenticationData::Digest AuthenticationData::Util::encodeScramSHA256(std::stri
     auto salted_password = pbkdf2SHA256(password, salt_digest, 4096);
     return salted_password;
 #else
-    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SCRAM SHA256 passwords support is disabled, because ClickHouse was built without SSL library");
+    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SCRAM SHA256 passwords support is disabled, because Datastore was built without SSL library");
 #endif
 }
 
@@ -106,7 +106,7 @@ AuthenticationData::Digest AuthenticationData::Util::encodeBcrypt(std::string_vi
 #else
     throw Exception(
         ErrorCodes::SUPPORT_IS_DISABLED,
-        "bcrypt passwords support is disabled, because ClickHouse was built without bcrypt library");
+        "bcrypt passwords support is disabled, because Datastore was built without bcrypt library");
 #endif
 }
 
@@ -141,7 +141,7 @@ bool AuthenticationData::Util::checkPasswordBcrypt(std::string_view password [[m
 #else
     throw Exception(
         ErrorCodes::SUPPORT_IS_DISABLED,
-        "bcrypt passwords support is disabled, because ClickHouse was built without bcrypt library");
+        "bcrypt passwords support is disabled, because Datastore was built without bcrypt library");
 #endif
 }
 
@@ -411,7 +411,7 @@ boost::intrusive_ptr<ASTAuthenticationData> AuthenticationData::toAST() const
         }
         case AuthenticationType::JWT:
         {
-            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "JWT is available only in ClickHouse Cloud");
+            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "JWT is available only in Datastore Cloud");
         }
         case AuthenticationType::KERBEROS:
         {
@@ -437,7 +437,7 @@ boost::intrusive_ptr<ASTAuthenticationData> AuthenticationData::toAST() const
 
             break;
 #else
-            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL certificates support is disabled, because ClickHouse was built without SSL library");
+            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL certificates support is disabled, because Datastore was built without SSL library");
 #endif
         }
         case AuthenticationType::SSH_KEY:
@@ -448,7 +448,7 @@ boost::intrusive_ptr<ASTAuthenticationData> AuthenticationData::toAST() const
 
             break;
 #else
-            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because ClickHouse is built without libssh");
+            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because Datastore is built without libssh");
 #endif
         }
         case AuthenticationType::HTTP:
@@ -529,7 +529,7 @@ AuthenticationData AuthenticationData::fromAST(const ASTAuthenticationData & que
         auth_data.setValidUntil(valid_until);
         return auth_data;
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because ClickHouse is built without libssh");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because Datastore is built without libssh");
 #endif
     }
 
@@ -594,7 +594,7 @@ AuthenticationData AuthenticationData::fromAST(const ASTAuthenticationData & que
             auth_data.setSalt(salt);
 #else
             throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-                            "SHA256 passwords support is disabled, because ClickHouse was built without SSL library");
+                            "SHA256 passwords support is disabled, because Datastore was built without SSL library");
 #endif
         }
 
@@ -623,7 +623,7 @@ AuthenticationData AuthenticationData::fromAST(const ASTAuthenticationData & que
             return auth_data;
 #else
             throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-                            "SHA256 passwords support is disabled, because ClickHouse was built without SSL library");
+                            "SHA256 passwords support is disabled, because Datastore was built without SSL library");
 #endif
         }
 
@@ -675,7 +675,7 @@ AuthenticationData AuthenticationData::fromAST(const ASTAuthenticationData & que
         for (const auto & arg : args)
             auth_data.addSSLCertificateSubject(ssl_cert_subject_type, checkAndGetLiteralArgument<String>(arg, "ssl_certificate_subject"));
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL certificates support is disabled, because ClickHouse was built without SSL library");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL certificates support is disabled, because Datastore was built without SSL library");
 #endif
     }
     else if (query.type == AuthenticationType::HTTP)

@@ -6,13 +6,13 @@ get_property(TZDATA_VERSION GLOBAL PROPERTY TZDATA_VERSION_PROP)
 get_property(OPENSSL_VERSION GLOBAL PROPERTY OPENSSL_VERSION_PROP)
 
 function(generate_system_build_options)
-    include(${ClickHouse_SOURCE_DIR}/src/configure_config.cmake)
+    include(${Datastore_SOURCE_DIR}/src/configure_config.cmake)
     configure_file(StorageSystemBuildOptions.cpp.in StorageSystemBuildOptions.generated.cpp)
 endfunction()
 
 generate_system_build_options()
 
-include("${ClickHouse_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
+include("${Datastore_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
 add_headers_and_sources(storages_system .)
 list (APPEND storages_system_sources StorageSystemBuildOptions.generated.cpp)
 
@@ -53,18 +53,18 @@ list (APPEND storages_system_sources ${GENERATED_LICENSES_SRC})
 set_source_files_properties(${GENERATED_LICENSES_SRC} PROPERTIES COMPILE_FLAGS -w)
 
 list (SORT storages_system_sources) # Reproducible build
-add_library(clickhouse_storages_system ${storages_system_sources})
+add_library(datastore_storages_system ${storages_system_sources})
 
-target_link_libraries(clickhouse_storages_system PRIVATE
+target_link_libraries(datastore_storages_system PRIVATE
     dbms
     common
-    clickhouse_common_zookeeper_base
-    clickhouse_common_zookeeper
-    clickhouse_parsers
+    datastore_common_zookeeper_base
+    datastore_common_zookeeper
+    datastore_parsers
     Poco::JSON
 )
 
 if (TARGET ch_contrib::icu)
-    target_link_libraries(clickhouse_storages_system PRIVATE ch_contrib::icu)
-    target_compile_definitions(clickhouse_storages_system PRIVATE U_HIDE_DEPRECATED_API)
+    target_link_libraries(datastore_storages_system PRIVATE ch_contrib::icu)
+    target_compile_definitions(datastore_storages_system PRIVATE U_HIDE_DEPRECATED_API)
 endif()

@@ -130,7 +130,7 @@ std::shared_ptr<arrow::Table> getWriteMetadata(
 
 }
 
-static constexpr auto engine_info = "ClickHouse";
+static constexpr auto engine_info = "Datastore";
 
 WriteTransaction::WriteTransaction(DeltaLake::KernelHelperPtr kernel_helper_)
     : kernel_helper(kernel_helper_)

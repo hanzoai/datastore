@@ -28,7 +28,7 @@ public:
     static DictionarySourceFactory & instance();
 
     /// 'default_database' - the database where dictionary itself was created.
-    /// It is used as default_database for ClickHouse dictionary source when no explicit database was specified.
+    /// It is used as default_database for Datastore dictionary source when no explicit database was specified.
     /// Does not make sense for other sources.
     using Creator = std::function<DictionarySourcePtr(
         const String & name,

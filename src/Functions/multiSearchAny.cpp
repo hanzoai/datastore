@@ -34,9 +34,9 @@ Functions [`multiSearchAnyCaseInsensitive`](#multiSearchAnyCaseInsensitive), [`m
     FunctionDocumentation::Examples examples = {
     {
         "Any match search",
-        "SELECT multiSearchAny('ClickHouse',['C','H'])",
+        "SELECT multiSearchAny('Datastore',['C','H'])",
         R"(
-┌─multiSearchAny('ClickHouse', ['C', 'H'])─┐
+┌─multiSearchAny('Datastore', ['C', 'H'])─┐
 │                                        1 │
 └──────────────────────────────────────────┘
         )"

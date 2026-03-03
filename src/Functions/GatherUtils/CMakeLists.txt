@@ -1,6 +1,6 @@
-include("${ClickHouse_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
+include("${Datastore_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
 
-add_headers_and_sources(clickhouse_functions_gatherutils .)
+add_headers_and_sources(datastore_functions_gatherutils .)
 
 # Used by arrayResize.cpp
 set(DBMS_GATHERUTILS_FUNCTIONS
@@ -11,14 +11,14 @@ set(DBMS_GATHERUTILS_FUNCTIONS
     resizeDynamicSize.cpp
 )
 
-extract_into_parent_list(clickhouse_functions_gatherutils_sources dbms_sources ${DBMS_GATHERUTILS_FUNCTIONS})
-extract_into_parent_list(clickhouse_functions_gatherutils_headers
+extract_into_parent_list(datastore_functions_gatherutils_sources dbms_sources ${DBMS_GATHERUTILS_FUNCTIONS})
+extract_into_parent_list(datastore_functions_gatherutils_headers
     GatherUtils.h
 )
 
-add_library(clickhouse_functions_gatherutils ${clickhouse_functions_gatherutils_sources} ${clickhouse_functions_gatherutils_headers})
-target_link_libraries(clickhouse_functions_gatherutils PRIVATE dbms)
+add_library(datastore_functions_gatherutils ${datastore_functions_gatherutils_sources} ${datastore_functions_gatherutils_headers})
+target_link_libraries(datastore_functions_gatherutils PRIVATE dbms)
 
 if (OMIT_HEAVY_DEBUG_SYMBOLS)
-    target_compile_options(clickhouse_functions_gatherutils PRIVATE "-g1")
+    target_compile_options(datastore_functions_gatherutils PRIVATE "-g1")
 endif()

@@ -364,7 +364,7 @@ void MergeTreePartsMover::swapClonedPart(TemporaryClonedPart & cloned_part) cons
     renameClonedPart(*cloned_part.part);
 
     /// If server goes down here we will get two copy of the part with the same name on different disks.
-    /// And on the next ClickHouse startup during loading parts the first copy (in the order of defining disks
+    /// And on the next Datastore startup during loading parts the first copy (in the order of defining disks
     /// in the storage policy) will be loaded as Active, the second one will be loaded as Outdated and removed as duplicate.
     /// See MergeTreeData::loadDataParts().
     data->swapActivePart(cloned_part.part, part_lock);

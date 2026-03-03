@@ -26,7 +26,7 @@ To match against literal `%`, `_` and `\` (which are `LIKE` metacharacters), pre
 The backslash loses its special meaning (i.e. is interpreted literally) if it prepends a character different than `%`, `_` or `\`.
 
 :::note
-ClickHouse requires backslashes in strings [to be quoted as well](../syntax.md#string), so you would actually need to write `\\%`, `\\_` and `\\\\`.
+Datastore requires backslashes in strings [to be quoted as well](../syntax.md#string), so you would actually need to write `\\%`, `\\_` and `\\\\`.
 :::
 
 For `LIKE` expressions of the form `%needle%`, the function is as fast as the `position` function.
@@ -45,16 +45,16 @@ like(haystack, pattern)
     {
     {
         "Usage example",
-        "SELECT like('ClickHouse', '%House');",
+        "SELECT like('Datastore', '%House');",
         R"(
-┌─like('ClickHouse', '%House')─┐
+┌─like('Datastore', '%House')─┐
 │                            1 │
 └──────────────────────────────┘
         )"
     },
     {
         "Single character wildcard",
-        "SELECT like('ClickHouse', 'Click_ouse');",
+        "SELECT like('Datastore', 'Click_ouse');",
         R"(
 ┌─like('ClickH⋯lick_ouse')─┐
 │                        1 │
@@ -63,9 +63,9 @@ like(haystack, pattern)
     },
     {
         "Non-matching pattern",
-        "SELECT like('ClickHouse', '%SQL%');",
+        "SELECT like('Datastore', '%SQL%');",
         R"(
-┌─like('ClickHouse', '%SQL%')─┐
+┌─like('Datastore', '%SQL%')─┐
 │                           0 │
 └─────────────────────────────┘
         )"

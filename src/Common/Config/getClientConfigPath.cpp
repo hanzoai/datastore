@@ -15,16 +15,16 @@ std::optional<std::string> getClientConfigPath(const std::string & home_path)
     std::string config_path;
 
     std::vector<std::string> names;
-    names.emplace_back("./clickhouse-client");
+    names.emplace_back("./datastore-client");
 
     auto xdg_config_home = XDGBaseDirectories::getConfigurationHome();
     if (!xdg_config_home.empty())
         names.emplace_back(xdg_config_home / "config");
 
     if (!home_path.empty())
-        names.emplace_back(home_path + "/.clickhouse-client/config");
+        names.emplace_back(home_path + "/.datastore-client/config");
 
-    names.emplace_back("/etc/clickhouse-client/config");
+    names.emplace_back("/etc/datastore-client/config");
 
     for (const auto & name : names)
     {

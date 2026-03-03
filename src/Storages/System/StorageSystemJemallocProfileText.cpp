@@ -59,7 +59,7 @@ Pipe StorageSystemJemallocProfileText::read(
     auto header = storage_snapshot->metadata->getSampleBlockWithVirtuals(getVirtualsList());
 
     /// Get the last flushed profile filename
-    auto last_profile = std::string(Jemalloc::flushProfile("/tmp/jemalloc_clickhouse"));
+    auto last_profile = std::string(Jemalloc::flushProfile("/tmp/jemalloc_datastore"));
 
     /// Get the output format from settings
     auto format = context->getSettingsRef()[Setting::jemalloc_profile_text_output_format];

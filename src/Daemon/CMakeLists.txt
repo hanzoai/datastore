@@ -4,4 +4,4 @@ add_library (daemon
     CrashWriter.cpp
 )
 
-target_link_libraries (daemon PUBLIC loggers common PRIVATE clickhouse_parsers clickhouse_common_io clickhouse_common_config)
+target_link_libraries (daemon PUBLIC loggers common PRIVATE datastore_parsers datastore_common_io datastore_common_config)

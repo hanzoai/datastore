@@ -13,7 +13,7 @@
 
 /** This program tests merge-selecting algorithm.
  * Usage:
-clickhouse-client --query="
+datastore-client --query="
     SELECT name, bytes, now() - modification_time
     FROM system.parts
     WHERE table = 'visits' AND active AND partition = '201610'" | ./merge_selector2

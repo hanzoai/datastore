@@ -15,7 +15,7 @@ namespace DB
 
 class Pipe;
 
-// Class to access the external dictionary part of the clickhouse-library-bridge.
+// Class to access the external dictionary part of the datastore-library-bridge.
 class ExternalDictionaryLibraryBridgeHelper final : public LibraryBridgeHelper
 {
 

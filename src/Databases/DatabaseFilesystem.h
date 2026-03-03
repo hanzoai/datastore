@@ -17,8 +17,8 @@ class Context;
   * and provides a read-only access to the data in the file.
   * Tables are cached inside the database for quick access
   *
-  * Used in clickhouse-local to access local files.
-  * For clickhouse-server requires allows to access file only from user_files directory.
+  * Used in datastore-local to access local files.
+  * For datastore-server requires allows to access file only from user_files directory.
   */
 class DatabaseFilesystem : public IDatabase, protected WithContext
 {

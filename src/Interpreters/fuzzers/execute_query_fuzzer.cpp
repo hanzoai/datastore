@@ -34,7 +34,7 @@ static ConfigurationPtr getConfigurationFromXMLString(const char * xml_data)
     return {new Poco::Util::XMLConfiguration{&input_source}};
 }
 
-const char * config_xml = "<clickhouse></clickhouse>";
+const char * config_xml = "<datastore></datastore>";
 
 ContextMutablePtr context;
 
@@ -49,7 +49,7 @@ extern "C" int LLVMFuzzerInitialize(int *, char ***)
     context->setConfig(getConfigurationFromXMLString(config_xml));
 
     /// Initialize temporary storage for processing queries
-    context->setTemporaryStoragePath((fs::temp_directory_path() / "clickhouse_fuzzer_tmp" / "").string(), 0);
+    context->setTemporaryStoragePath((fs::temp_directory_path() / "datastore_fuzzer_tmp" / "").string(), 0);
 
     MainThreadStatus::getInstance();
 

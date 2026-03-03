@@ -11,7 +11,7 @@ namespace DB
  * Searches for tables in each database in order until found, and delegates operations to the appropriate database
  * Useful for combining databases
  *
- * Used in clickhouse-local to combine DatabaseFileSystem and DatabaseMemory
+ * Used in datastore-local to combine DatabaseFileSystem and DatabaseMemory
  */
 class DatabaseOverlay : public IDatabase, protected WithContext
 {

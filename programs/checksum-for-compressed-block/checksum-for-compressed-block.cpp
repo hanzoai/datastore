@@ -1,1 +1,1 @@
-extern int mainEntryClickHouseChecksumForCompressedBlock(int, char **);
+extern int mainEntryDatastoreChecksumForCompressedBlock(int, char **);

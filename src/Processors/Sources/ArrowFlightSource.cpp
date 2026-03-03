@@ -164,8 +164,8 @@ Chunk ArrowFlightSource::generate()
 
     ArrowColumnToCHColumn converter(sample_block, "Arrow",
                                     /* format_settings= */ {},
-                                    /* parquet_columns_to_clickhouse= */ std::nullopt,
-                                    /* clickhouse_columns_to_parquet= */ std::nullopt,
+                                    /* parquet_columns_to_datastore= */ std::nullopt,
+                                    /* datastore_columns_to_parquet= */ std::nullopt,
                                     /* allow_missing_columns = */ true,
                                     /* null_as_default = */ true,
                                     FormatSettings::DateTimeOverflowBehavior::Throw,

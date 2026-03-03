@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 /// Interposing these symbols explicitly. The idea works like this: malloc.cpp compiles to a
-/// dedicated object (namely clickhouse_malloc.o), and it will show earlier in the link command
+/// dedicated object (namely datastore_malloc.o), and it will show earlier in the link command
 /// than malloc libs like libjemalloc.a. As a result, these symbols get picked in time right after.
 
 extern "C"

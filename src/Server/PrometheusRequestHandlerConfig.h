@@ -12,7 +12,7 @@ struct PrometheusRequestHandlerConfig
 {
     enum class Type
     {
-        /// Exposes ClickHouse metrics for scraping by Prometheus.
+        /// Exposes Datastore metrics for scraping by Prometheus.
         ExposeMetrics,
 
         /// Handles Prometheus remote-write protocol.

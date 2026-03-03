@@ -47,7 +47,7 @@ protected:
 /// Function with key-value arguments is a function which arguments consist of
 /// pairs (see above). For example:
 ///                                    ->Pair with list of pairs as value<-
-/// SOURCE(USER 'clickhouse' PORT 9000 REPLICA(HOST '127.0.0.1' PRIORITY 1) TABLE 'some_table')
+/// SOURCE(USER 'datastore' PORT 9000 REPLICA(HOST '127.0.0.1' PRIORITY 1) TABLE 'some_table')
 class ASTFunctionWithKeyValueArguments : public IAST
 {
 public:

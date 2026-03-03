@@ -24,8 +24,8 @@ public:
     PostgreSQLReplicationHandler(
             const String & postgres_database_,
             const String & postgres_table_,
-            const String & clickhouse_database_,
-            const String & clickhouse_uuid_,
+            const String & datastore_database_,
+            const String & datastore_uuid_,
             const postgres::ConnectionInfo & connection_info_,
             ContextPtr context_,
             bool is_attach_,
@@ -131,7 +131,7 @@ private:
 
     String schema_list;
 
-    /// Schema can be as a part of table name, i.e. as a clickhouse table it is accessed like db.`schema.table`.
+    /// Schema can be as a part of table name, i.e. as a datastore table it is accessed like db.`schema.table`.
     /// This is possible to allow replicating tables from multiple schemas in the same MaterializedPostgreSQL database engine.
     mutable bool schema_as_a_part_of_table_name = false;
 

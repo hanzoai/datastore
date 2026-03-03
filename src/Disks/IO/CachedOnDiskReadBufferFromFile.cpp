@@ -689,8 +689,8 @@ bool CachedOnDiskReadBufferFromFile::predownloadForFileSegment(
     LoggerPtr log)
 {
     OpenTelemetry::SpanHolder span("CachedOnDiskReadBufferFromFile::predownload");
-    span.addAttribute("clickhouse.key", file_segment.key().toString());
-    span.addAttribute("clickhouse.size", state.bytes_to_predownload);
+    span.addAttribute("datastore.key", file_segment.key().toString());
+    span.addAttribute("datastore.size", state.bytes_to_predownload);
 
     if (state.bytes_to_predownload)
     {

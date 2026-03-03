@@ -26,10 +26,10 @@ Examples of typical returned values: http, https, ftp, mailto, tel, magnet.
     {
         "Usage example",
         R"(
-SELECT protocol('https://clickhouse.com/');
+SELECT protocol('https://datastore.com/');
         )",
         R"(
-┌─protocol('https://clickhouse.com/')─┐
+┌─protocol('https://datastore.com/')─┐
 │ https                               │
 └─────────────────────────────────────┘
         )"

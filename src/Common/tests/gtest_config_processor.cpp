@@ -24,10 +24,10 @@ TEST(Common, ConfigProcessorManyElements)
 
     {
         DB::WriteBufferFromFile out(config_file->path());
-        writeString("<clickhouse>\n", out);
+        writeString("<datastore>\n", out);
         for (size_t i = 0; i < element_count; ++i)
             writeString("<x><name>" + std::to_string(i) + "</name></x>\n", out);
-        writeString("</clickhouse>\n", out);
+        writeString("</datastore>\n", out);
         out.finalize();
     }
 

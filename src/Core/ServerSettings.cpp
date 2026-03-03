@@ -41,7 +41,7 @@ namespace
 {
     constexpr int getDefaultOomScore() {
 #if defined(OS_LINUX) && !defined(NDEBUG)
-        /// In debug version on Linux, increase oom score so that clickhouse is killed
+        /// In debug version on Linux, increase oom score so that datastore is killed
         /// first, instead of some service. Use a carefully chosen random score of 555:
         /// the maximum is 1000, and chromium uses 300 for its tab processes. Ignore
         /// whatever errors that occur, because it's just a debugging aid and we don't
@@ -59,18 +59,18 @@ namespace
 #define LIST_OF_SERVER_SETTINGS_WITHOUT_PATH(DECLARE, ALIAS) \
     DECLARE(InsertDeduplicationVersions, insert_deduplication_version, InsertDeduplicationVersions::COMPATIBLE_DOUBLE_HASHES, R"(
         This setting makes it possible to migrate from the code version which makes insert deduplication for sync and async inserts totally different not transparent way to the code version where inserted data would be deduplicated across sync and async inserts.
-        The default value is `old_separate_hashes`, which means that ClickHouse will use different deduplication hashes for sync and async inserts (the same as before).
+        The default value is `old_separate_hashes`, which means that Datastore will use different deduplication hashes for sync and async inserts (the same as before).
         This value should be used as a default value to be backward compatible. All existing instances of Clickhouse should use this value to avoid breaking changes.
-        The value `compatible_double_hashes` means that ClickHouse will use two deduplication hashes: the old one for sync or async inserts and another the new one for all inserts. This value should be used to migrate existing instances to the new behavior in a safe way.
+        The value `compatible_double_hashes` means that Datastore will use two deduplication hashes: the old one for sync or async inserts and another the new one for all inserts. This value should be used to migrate existing instances to the new behavior in a safe way.
         This value should be enabled for some time (see replicated_deduplication_window and non_replicated_deduplication_window settings) to make sure that no sync or async inserts are lost during migration.
-        Finally the value `new_unified_hash` means that ClickHouse will use the new deduplication hash for sync and async inserts. This value could be enabled on new instances of ClickHouse or on instances which already used `compatible_double_hashes` value for some time.
+        Finally the value `new_unified_hash` means that Datastore will use the new deduplication hash for sync and async inserts. This value could be enabled on new instances of Datastore or on instances which already used `compatible_double_hashes` value for some time.
     )", 0) \
     DECLARE(UInt64, dictionary_background_reconnect_interval, 1000, "Interval in milliseconds for reconnection attempts of failed MySQL and Postgres dictionaries having `background_reconnect` enabled.", 0) \
     DECLARE(Bool, show_addresses_in_stack_traces, true, R"(If it is set true will show addresses in stack traces)", 0) \
-    DECLARE(Bool, shutdown_wait_unfinished_queries, false, R"(If set true ClickHouse will wait for running queries finish before shutdown.)", 0) \
+    DECLARE(Bool, shutdown_wait_unfinished_queries, false, R"(If set true Datastore will wait for running queries finish before shutdown.)", 0) \
     DECLARE(UInt64, shutdown_wait_unfinished, 5, R"(Delay in seconds to wait for unfinished queries)", 0) \
     DECLARE(UInt64, max_thread_pool_size, 10000, R"(
-    ClickHouse uses threads from the Global Thread pool to process queries. If there is no idle thread to process a query, then a new thread is created in the pool. `max_thread_pool_size` limits the maximum number of threads in the pool.
+    Datastore uses threads from the Global Thread pool to process queries. If there is no idle thread to process a query, then a new thread is created in the pool. `max_thread_pool_size` limits the maximum number of threads in the pool.
 
     **Example**
 
@@ -79,7 +79,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_thread_pool_free_size, 1000, R"(
-    If the number of **idle** threads in the Global Thread pool is greater than [`max_thread_pool_free_size`](/operations/server-configuration-parameters/settings#max_thread_pool_free_size), then ClickHouse releases resources occupied by some threads and the pool size is decreased. Threads can be created again if necessary.
+    If the number of **idle** threads in the Global Thread pool is greater than [`max_thread_pool_free_size`](/operations/server-configuration-parameters/settings#max_thread_pool_free_size), then Datastore releases resources occupied by some threads and the pool size is decreased. Threads can be created again if necessary.
 
     **Example**
 
@@ -101,10 +101,10 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_io_thread_pool_size, 100, R"(
-    ClickHouse uses threads from the IO Thread pool to do some IO operations (e.g. to interact with S3). `max_io_thread_pool_size` limits the maximum number of threads in the pool.
+    Datastore uses threads from the IO Thread pool to do some IO operations (e.g. to interact with S3). `max_io_thread_pool_size` limits the maximum number of threads in the pool.
     )", 0) \
     DECLARE(UInt64, max_io_thread_pool_free_size, 0, R"(
-    If the number of **idle** threads in the IO Thread pool exceeds `max_io_thread_pool_free_size`, ClickHouse will release resources occupied by idling threads and decrease the pool size. Threads can be created again if necessary.
+    If the number of **idle** threads in the IO Thread pool exceeds `max_io_thread_pool_free_size`, Datastore will release resources occupied by idling threads and decrease the pool size. Threads can be created again if necessary.
     )", 0) \
     DECLARE(UInt64, io_thread_pool_queue_size, 10000, R"(
     The maximum number of jobs that can be scheduled on the IO Thread pool.
@@ -114,10 +114,10 @@ namespace
     :::
     )", 0) \
     DECLARE(UInt64, max_prefixes_deserialization_thread_pool_size, 100, R"(
-    ClickHouse uses threads from the prefixes deserialization Thread pool for parallel reading of metadata of columns and subcolumns from file prefixes in Wide parts in MergeTree. `max_prefixes_deserialization_thread_pool_size` limits the maximum number of threads in the pool.
+    Datastore uses threads from the prefixes deserialization Thread pool for parallel reading of metadata of columns and subcolumns from file prefixes in Wide parts in MergeTree. `max_prefixes_deserialization_thread_pool_size` limits the maximum number of threads in the pool.
     )", 0) \
     DECLARE(UInt64, max_prefixes_deserialization_thread_pool_free_size, 0, R"(
-    If the number of **idle** threads in the prefixes deserialization Thread pool exceeds `max_prefixes_deserialization_thread_pool_free_size`, ClickHouse will release resources occupied by idling threads and decrease the pool size. Threads can be created again if necessary.
+    If the number of **idle** threads in the prefixes deserialization Thread pool exceeds `max_prefixes_deserialization_thread_pool_free_size`, Datastore will release resources occupied by idling threads and decrease the pool size. Threads can be created again if necessary.
     )", 0) \
     DECLARE(UInt64, prefixes_deserialization_thread_pool_thread_pool_queue_size, 10000, R"(
     The maximum number of jobs that can be scheduled on the prefixes deserialization Thread pool.
@@ -178,8 +178,8 @@ namespace
     A value of `0` means unlimited.
     :::
     )", 0) \
-    DECLARE(UInt64, max_backups_io_thread_pool_size, 1000, R"(ClickHouse uses threads from the Backups IO Thread pool to do S3 backup IO operations. `max_backups_io_thread_pool_size` limits the maximum number of threads in the pool.)", 0) \
-    DECLARE(UInt64, max_backups_io_thread_pool_free_size, 0, R"(If the number of **idle** threads in the Backups IO Thread pool exceeds `max_backup_io_thread_pool_free_size`, ClickHouse will release resources occupied by idling threads and decrease the pool size. Threads can be created again if necessary.)", 0) \
+    DECLARE(UInt64, max_backups_io_thread_pool_size, 1000, R"(Datastore uses threads from the Backups IO Thread pool to do S3 backup IO operations. `max_backups_io_thread_pool_size` limits the maximum number of threads in the pool.)", 0) \
+    DECLARE(UInt64, max_backups_io_thread_pool_free_size, 0, R"(If the number of **idle** threads in the Backups IO Thread pool exceeds `max_backup_io_thread_pool_free_size`, Datastore will release resources occupied by idling threads and decrease the pool size. Threads can be created again if necessary.)", 0) \
     DECLARE(UInt64, backups_io_thread_pool_queue_size, 0, R"(
     The maximum number of jobs that can be scheduled on the Backups IO Thread pool. It is recommended to keep this queue unlimited due to the current S3 backup logic.
 
@@ -190,7 +190,7 @@ namespace
     DECLARE(NonZeroUInt64, backup_threads, 16, R"(The maximum number of threads to execute `BACKUP` requests.)", 0) \
     DECLARE(UInt64, max_backup_bandwidth_for_server, 0, R"(The maximum read speed in bytes per second for all backups on server. Zero means unlimited.)", 0) \
     DECLARE(NonZeroUInt64, restore_threads, 16, R"(The maximum number of threads to execute RESTORE requests.)", 0) \
-    DECLARE(Bool, shutdown_wait_backups_and_restores, true, R"(If set to true ClickHouse will wait for running backups and restores to finish before shutdown.)", 0) \
+    DECLARE(Bool, shutdown_wait_backups_and_restores, true, R"(If set to true Datastore will wait for running backups and restores to finish before shutdown.)", 0) \
     DECLARE(Double, cannot_allocate_thread_fault_injection_probability, 0, R"(For testing purposes.)", 0) \
     DECLARE(Int32, max_connections, 4096, R"(Max server connections.)", 0) \
     DECLARE(UInt32, asynchronous_metrics_update_period_s, 1, R"(Period in seconds for updating asynchronous metrics.)", 0) \
@@ -221,7 +221,7 @@ namespace
     When `/disk1` is full, temporary data will be stored on `/disk2`.
 
     ```xml
-    <clickhouse>
+    <datastore>
     <storage_configuration>
         <disks>
             <disk1>
@@ -249,7 +249,7 @@ namespace
     <!-- highlight-start -->
     <tmp_policy>tmp_two_disks</tmp_policy>
     <!-- highlight-end -->
-    </clickhouse>
+    </datastore>
     ```
     )", 0) \
     DECLARE(UInt64, max_temporary_data_on_disk_size, 0, R"(
@@ -278,7 +278,7 @@ namespace
     Both the cache for `local_disk`, and temporary data will be stored in `/tiny_local_cache` on the filesystem, managed by `tiny_local_cache`.
 
     ```xml
-    <clickhouse>
+    <datastore>
     <storage_configuration>
         <disks>
             <local_disk>
@@ -302,7 +302,7 @@ namespace
     <!-- highlight-start -->
     <temporary_data_in_cache>tiny_local_cache</temporary_data_in_cache>
     <!-- highlight-end -->
-    </clickhouse>
+    </datastore>
     ```
     )", 0) \
     DECLARE(Bool, temporary_data_in_distributed_cache, 0, R"(Store temporary data in the distributed cache.)", 0) \
@@ -331,7 +331,7 @@ namespace
     )", 0) \
     DECLARE(UInt64, merges_mutations_memory_usage_soft_limit, 0, R"(
     Sets the limit on how much RAM is allowed to use for performing merge and mutation operations.
-    If ClickHouse reaches the limit set, it won't schedule any new background merge or mutation operations but will continue to execute already scheduled tasks.
+    If Datastore reaches the limit set, it won't schedule any new background merge or mutation operations but will continue to execute already scheduled tasks.
 
     :::note
     A value of `0` means unlimited.
@@ -360,7 +360,7 @@ namespace
     DECLARE(UInt64, async_insert_threads, 16, R"(Maximum number of threads to actually parse and insert data in background. Zero means asynchronous mode is disabled)", 0) \
     DECLARE(Bool, async_insert_queue_flush_on_shutdown, true, R"(If true queue of asynchronous inserts is flushed on graceful shutdown)", 0) \
     DECLARE(Bool, ignore_empty_sql_security_in_create_view_query, true, R"(
-    If true, ClickHouse doesn't write defaults for empty SQL security statement in `CREATE VIEW` queries.
+    If true, Datastore doesn't write defaults for empty SQL security statement in `CREATE VIEW` queries.
 
     :::note
     This setting is only necessary for the migration period and will become obsolete in 24.4
@@ -381,9 +381,9 @@ namespace
     )", 0) \
     DECLARE(UInt64, database_catalog_unused_dir_hide_timeout_sec, 60 * 60, R"(
     Parameter of a task that cleans up garbage from `store/` directory.
-    If some subdirectory is not used by clickhouse-server and this directory was not modified for last
+    If some subdirectory is not used by datastore-server and this directory was not modified for last
     [`database_catalog_unused_dir_hide_timeout_sec`](/operations/server-configuration-parameters/settings#database_catalog_unused_dir_hide_timeout_sec) seconds, the task will "hide" this directory by
-    removing all access rights. It also works for directories that clickhouse-server does not
+    removing all access rights. It also works for directories that datastore-server does not
     expect to see inside `store/`.
 
     :::note
@@ -392,11 +392,11 @@ namespace
     )", 0) \
     DECLARE(UInt64, database_catalog_unused_dir_rm_timeout_sec, 30 * 24 * 60 * 60, R"(
     Parameter of a task that cleans up garbage from `store/` directory.
-    If some subdirectory is not used by clickhouse-server and it was previously "hidden"
+    If some subdirectory is not used by datastore-server and it was previously "hidden"
     (see [database_catalog_unused_dir_hide_timeout_sec](/operations/server-configuration-parameters/settings#database_catalog_unused_dir_hide_timeout_sec))
     and this directory was not modified for last
     [`database_catalog_unused_dir_rm_timeout_sec`]/operations/server-configuration-parameters/settings#database_catalog_unused_dir_rm_timeout_sec) seconds, the task will remove this directory.
-    It also works for directories that clickhouse-server does not
+    It also works for directories that datastore-server does not
     expect to see inside `store/`.
 
     :::note
@@ -411,7 +411,7 @@ namespace
     A value of `0` means "never". The default value corresponds to 1 day.
     :::
     )", 0) \
-    DECLARE(UInt64, database_catalog_drop_error_cooldown_sec, 5, R"(In case of a failed table drop, ClickHouse will wait for this time-out before retrying the operation.)", 0) \
+    DECLARE(UInt64, database_catalog_drop_error_cooldown_sec, 5, R"(In case of a failed table drop, Datastore will wait for this time-out before retrying the operation.)", 0) \
     DECLARE(UInt64, database_catalog_drop_table_concurrency, 16, R"(The size of the threadpool used for dropping tables.)", 0) \
     \
     \
@@ -598,7 +598,7 @@ namespace
     )", 0) \
     DECLARE(Double, query_condition_cache_size_ratio, DEFAULT_QUERY_CONDITION_CACHE_SIZE_RATIO, "The size of the protected queue (in case of SLRU policy) in the query condition cache relative to the cache's total size.", 0) \
     \
-    DECLARE(Bool, disable_internal_dns_cache, false, "Disables the internal DNS cache. Recommended for operating ClickHouse in systems with frequently changing infrastructure such as Kubernetes.", 0) \
+    DECLARE(Bool, disable_internal_dns_cache, false, "Disables the internal DNS cache. Recommended for operating Datastore in systems with frequently changing infrastructure such as Kubernetes.", 0) \
     DECLARE(UInt64, dns_cache_max_entries, 10000, R"(Internal DNS cache max entries.)", 0) \
     DECLARE(Int32, dns_cache_update_period, 15, "Internal DNS cache update period in seconds.", 0) \
     DECLARE(UInt32, dns_max_consecutive_failures, 5, R"(
@@ -619,7 +619,7 @@ namespace
     :::note
     A value of `0` means that you can delete all tables without any restrictions.
 
-    This setting does not require a restart of the ClickHouse server to apply. Another way to disable the restriction is to create the `<clickhouse-path>/flags/force_drop_table` file.
+    This setting does not require a restart of the Datastore server to apply. Another way to disable the restriction is to create the `<datastore-path>/flags/force_drop_table` file.
     :::
 
     **Example**
@@ -632,7 +632,7 @@ namespace
     Restriction on dropping partitions.
 
     If the size of a [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) table exceeds [`max_partition_size_to_drop`](#max_partition_size_to_drop) (in bytes), you can't drop a partition using a [DROP PARTITION](../../sql-reference/statements/alter/partition.md#drop-partitionpart) query.
-    This setting does not require a restart of the ClickHouse server to apply. Another way to disable the restriction is to create the `<clickhouse-path>/flags/force_drop_table` file.
+    This setting does not require a restart of the Datastore server to apply. Another way to disable the restriction is to create the `<datastore-path>/flags/force_drop_table` file.
 
     :::note
     The value `0` means that you can drop partitions without any restrictions.
@@ -647,7 +647,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_named_collection_num_to_warn, 1000lu, R"(
-    If the number of named collections exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of named collections exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -656,7 +656,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_table_num_to_warn, 5000lu, R"(
-    If the number of attached tables exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached tables exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -665,7 +665,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_pending_mutations_to_warn, 500lu, R"(
-    If the number of pending mutations exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of pending mutations exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -674,7 +674,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_pending_mutations_execution_time_to_warn, 86400lu, R"(
-    If any of the pending mutations exceeds the specified value in seconds, clickhouse server will add warning messages to `system.warnings` table.
+    If any of the pending mutations exceeds the specified value in seconds, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -683,7 +683,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_view_num_to_warn, 10000lu, R"(
-    If the number of attached views exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached views exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -692,7 +692,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_dictionary_num_to_warn, 1000lu, R"(
-    If the number of attached dictionaries exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached dictionaries exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -701,7 +701,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_database_num_to_warn, 1000lu, R"(
-    If the number of attached databases exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached databases exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -710,7 +710,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_part_num_to_warn, 100000lu, R"(
-    If the number of active parts exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of active parts exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -839,7 +839,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     Sets the number of threads performing background merges and mutations for tables with MergeTree engines.
 
     :::note
-    - This setting could also be applied at server startup from the `default` profile configuration for backward compatibility at the ClickHouse server start.
+    - This setting could also be applied at server startup from the `default` profile configuration for backward compatibility at the Datastore server start.
     - You can only increase the number of threads at runtime.
     - To lower the number of threads you have to restart the server.
     - By adjusting this setting, you manage CPU and disk load.
@@ -863,7 +863,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(Float, background_merges_mutations_concurrency_ratio, 2, R"(
     Sets a ratio between the number of threads and the number of background merges and mutations that can be executed concurrently.
 
-    For example, if the ratio equals to 2 and [`background_pool_size`](/operations/server-configuration-parameters/settings#background_pool_size) is set to 16 then ClickHouse can execute 32 background merges concurrently. This is possible, because background operations could be suspended and postponed. This is needed to give small merges more execution priority.
+    For example, if the ratio equals to 2 and [`background_pool_size`](/operations/server-configuration-parameters/settings#background_pool_size) is set to 16 then Datastore can execute 32 background merges concurrently. This is possible, because background operations could be suspended and postponed. This is needed to give small merges more execution priority.
 
     :::note
     You can only increase this ratio at runtime. To lower it you have to restart the server.
@@ -907,7 +907,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(Bool, async_load_databases, true, R"(
     Asynchronous loading of databases and tables.
 
-    - If `true` all non-system databases with `Ordinary`, `Atomic` and `Replicated` engine will be loaded asynchronously after the ClickHouse server start up. See `system.asynchronous_loader` table, `tables_loader_background_pool_size` and `tables_loader_foreground_pool_size` server settings. Any query that tries to access a table, that is not yet loaded, will wait for exactly this table to be started up. If load job fails, query will rethrow an error (instead of shutting down the whole server in case of `async_load_databases = false`). The table that is waited for by at least one query will be loaded with higher priority. DDL queries on a database will wait for exactly that database to be started up. Also consider setting a limit `max_waiting_queries` for the total number of waiting queries.
+    - If `true` all non-system databases with `Ordinary`, `Atomic` and `Replicated` engine will be loaded asynchronously after the Datastore server start up. See `system.asynchronous_loader` table, `tables_loader_background_pool_size` and `tables_loader_foreground_pool_size` server settings. Any query that tries to access a table, that is not yet loaded, will wait for exactly this table to be started up. If load job fails, query will rethrow an error (instead of shutting down the whole server in case of `async_load_databases = false`). The table that is waited for by at least one query will be loaded with higher priority. DDL queries on a database will wait for exactly that database to be started up. Also consider setting a limit `max_waiting_queries` for the total number of waiting queries.
     - If `false`, all databases are loaded when the server starts.
 
     **Example**
@@ -919,7 +919,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(Bool, async_load_system_database, false, R"(
     Asynchronous loading of system tables. Helpful if there is a high amount of log tables and parts in the `system` database. Independent of the `async_load_databases` setting.
 
-    - If set to `true`, all system databases with `Ordinary`, `Atomic`, and `Replicated` engines will be loaded asynchronously after the ClickHouse server starts. See `system.asynchronous_loader` table, `tables_loader_background_pool_size` and `tables_loader_foreground_pool_size` server settings. Any query that tries to access a system table, that is not yet loaded, will wait for exactly this table to be started up. The table that is waited for by at least one query will be loaded with higher priority. Also consider setting the `max_waiting_queries` setting to limit the total number of waiting queries.
+    - If set to `true`, all system databases with `Ordinary`, `Atomic`, and `Replicated` engines will be loaded asynchronously after the Datastore server starts. See `system.asynchronous_loader` table, `tables_loader_background_pool_size` and `tables_loader_foreground_pool_size` server settings. Any query that tries to access a system table, that is not yet loaded, will wait for exactly this table to be started up. The table that is waited for by at least one query will be loaded with higher priority. Also consider setting the `max_waiting_queries` setting to limit the total number of waiting queries.
     - If set to `false`, system database loads before server start.
 
     **Example**
@@ -942,7 +942,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     - `1` — Enabled.
     )", 0) \
     DECLARE(Seconds, keep_alive_timeout, DEFAULT_HTTP_KEEP_ALIVE_TIMEOUT, R"(
-    The number of seconds that ClickHouse waits for incoming requests for HTTP protocol before closing the connection.
+    The number of seconds that Datastore waits for incoming requests for HTTP protocol before closing the connection.
 
     **Example**
 
@@ -951,7 +951,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     ```
     )", 0) \
     DECLARE(UInt64, max_keep_alive_requests, 10000, R"(
-    Maximal number of requests through a single keep-alive connection until it will be closed by ClickHouse server.
+    Maximal number of requests through a single keep-alive connection until it will be closed by Datastore server.
 
     **Example**
 
@@ -992,13 +992,13 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(Bool, database_replicated_allow_detach_permanently, true, R"(Allow detaching tables permanently in Replicated databases)", 0) \
     DECLARE(Bool, database_replicated_drop_broken_tables, false, R"(Drop unexpected tables from Replicated databases instead of moving them to a separate local database)", 0) \
     DECLARE(Bool, distributed_ddl_use_initial_user_and_roles, false, R"(If enabled, ON CLUSTER queries will preserve and use the initiator's user and roles for execution on remote shards. This ensures consistent access control across the cluster but requires that the user and roles exist on all nodes.)", 0) \
-    DECLARE(String, default_replica_path, "/clickhouse/tables/{uuid}/{shard}", R"(
+    DECLARE(String, default_replica_path, "/datastore/tables/{uuid}/{shard}", R"(
     The path to the table in ZooKeeper.
 
     **Example**
 
     ```xml
-    <default_replica_path>/clickhouse/tables/{uuid}/{shard}</default_replica_path>
+    <default_replica_path>/datastore/tables/{uuid}/{shard}</default_replica_path>
     ```
     )", 0) \
     DECLARE(String, default_replica_name, "{replica}", R"(
@@ -1093,26 +1093,26 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **See Also**
     - [Workload Scheduling](/operations/workload-scheduling.md)
     )", 0) \
-    DECLARE(String, series_keeper_path, "/clickhouse/series", R"(
+    DECLARE(String, series_keeper_path, "/datastore/series", R"(
     Path in Keeper with auto-incremental numbers, generated by the `generateSerialID` function. Each series will be a node under this path.
     )", 0) \
     DECLARE(String, users_to_ignore_early_memory_limit_check, "", R"(
     Comma-separated list of users to ignore an early memory limit check. If user is not in this list, a query will be rejected if the total memory usage exceeds the limit.
     )", 0) \
     DECLARE(Bool, prepare_system_log_tables_on_startup, false, R"(
-    If true, ClickHouse creates all configured `system.*_log` tables before the startup. It can be helpful if some startup scripts depend on these tables.
+    If true, Datastore creates all configured `system.*_log` tables before the startup. It can be helpful if some startup scripts depend on these tables.
     )", 0) \
     DECLARE(UInt64, config_reload_interval_ms, 2000, R"(
-    How often clickhouse will reload config and check for new changes
+    How often datastore will reload config and check for new changes
     )", 0) \
     DECLARE(UInt64, memory_worker_period_ms, 0, R"(
     Tick period of background memory worker which corrects memory tracker memory usages and cleans up unused pages during higher memory usage. If set to 0, default value will be used depending on the memory usage source
     )", 0) \
     DECLARE(Double, memory_worker_purge_dirty_pages_threshold_ratio, 0.2, R"(
-    The threshold ratio for jemalloc dirty pages relative to the memory available to ClickHouse server. When dirty pages size exceeds this ratio, the background memory worker forces purging of dirty pages. If set to 0, forced purging based on dirty pages ratio is disabled.
+    The threshold ratio for jemalloc dirty pages relative to the memory available to Datastore server. When dirty pages size exceeds this ratio, the background memory worker forces purging of dirty pages. If set to 0, forced purging based on dirty pages ratio is disabled.
     )", 0) \
     DECLARE(Double, memory_worker_purge_total_memory_threshold_ratio, 0.9, R"(
-    The threshold ratio for purging jemalloc relative to the memory available to ClickHouse server. When total memory usage exceeds this ratio, the background memory worker forces purging of dirty pages. If set to 0, forced purging based on total memory is disabled.
+    The threshold ratio for purging jemalloc relative to the memory available to Datastore server. When total memory usage exceeds this ratio, the background memory worker forces purging of dirty pages. If set to 0, forced purging based on total memory is disabled.
     )", 0) \
     DECLARE(UInt64, memory_worker_decay_adjustment_period_ms, 5000, R"(
     Duration in milliseconds that memory pressure must persist before dynamically adjusting jemalloc's `dirty_decay_ms`. When memory usage remains above the purge threshold for this period, automatic dirty page decay is disabled (`dirty_decay_ms=0`) to aggressively reclaim memory. When usage stays below the threshold for this period, the default decay behavior is restored. Set to 0 to disable dynamic adjustment and use jemalloc's default decay settings.
@@ -1125,24 +1125,24 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     Disable insert/alter/delete queries. This setting will be enabled if someone needs read-only nodes to prevent insertion and mutation affect reading performance. Inserts into external engines (S3, DataLake, MySQL, PostrgeSQL, Kafka, etc) are allowed despite this setting.
     )", 0) \
     DECLARE(UInt64, parts_kill_delay_period, 30, R"(
-    Period to completely remove parts for SharedMergeTree. Only available in ClickHouse Cloud
+    Period to completely remove parts for SharedMergeTree. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, parts_kill_delay_period_random_add, 10, R"(
-    Add uniformly distributed value from 0 to x seconds to kill_delay_period to avoid thundering herd effect and subsequent DoS of ZooKeeper in case of very large number of tables. Only available in ClickHouse Cloud
+    Add uniformly distributed value from 0 to x seconds to kill_delay_period to avoid thundering herd effect and subsequent DoS of ZooKeeper in case of very large number of tables. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, parts_killer_pool_size, 128, R"(
-    Threads for cleanup of shared merge tree parts killer threads. Only available in ClickHouse Cloud
+    Threads for cleanup of shared merge tree parts killer threads. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, snapshot_cleaner_period, 120, R"(
-    Period to completely remove snapshot parts for SharedMergeTree. Only available in ClickHouse Cloud
+    Period to completely remove snapshot parts for SharedMergeTree. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, snapshot_cleaner_pool_size, 128, R"(
-    Threads for cleanup of shared merge tree snapshot cleaner threads. Only available in ClickHouse Cloud
+    Threads for cleanup of shared merge tree snapshot cleaner threads. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, keeper_multiread_batch_size, 10'000, R"(
-    Maximum size of batch for MultiRead request to [Zoo]Keeper that support batching. If set to 0, batching is disabled. Available only in ClickHouse Cloud.
+    Maximum size of batch for MultiRead request to [Zoo]Keeper that support batching. If set to 0, batching is disabled. Available only in Datastore Cloud.
     )", 0) \
-    DECLARE(String, license_file, "", "License file contents for ClickHouse Enterprise Edition", 0) \
+    DECLARE(String, license_file, "", "License file contents for Datastore Enterprise Edition", 0) \
     DECLARE(String, license_public_key_for_testing, "", "Licensing demo key, for CI use only", 0) \
     DECLARE(NonZeroUInt64, prefetch_threadpool_pool_size, 100, R"(Size of background pool for prefetches for remote object storages)", 0) \
     DECLARE(UInt64, prefetch_threadpool_queue_size, 10000, R"(Number of tasks which is possible to push into prefetches pool)", 0) \
@@ -1192,7 +1192,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     If `wait_dictionaries_load_at_startup` is `false`, then the server
     will start loading all the dictionaries at startup and it will receive connections in parallel with that loading.
     When a dictionary is used in a query for the first time then the query will wait until the dictionary is loaded if it's not loaded yet.
-    Setting `wait_dictionaries_load_at_startup` to `false` can make ClickHouse start faster, however some queries can be executed slower
+    Setting `wait_dictionaries_load_at_startup` to `false` can make Datastore start faster, however some queries can be executed slower
     (because they will have to wait for some dictionaries to be loaded).
 
     If `wait_dictionaries_load_at_startup` is `true`, then the server will wait at startup
@@ -1214,7 +1214,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     <process_query_plan_packet>true</process_query_plan_packet>
     ```
     )", 0) \
-    DECLARE(Bool, storage_shared_set_join_use_inner_uuid, true, "If enabled, an inner UUID is generated during the creation of SharedSet and SharedJoin. ClickHouse Cloud only", 0) \
+    DECLARE(Bool, storage_shared_set_join_use_inner_uuid, true, "If enabled, an inner UUID is generated during the creation of SharedSet and SharedJoin. Datastore Cloud only", 0) \
     DECLARE(UInt64, startup_mv_delay_ms, 0, R"(Debug parameter to simulate materizlied view creation delay)", 0) \
     DECLARE(UInt64, os_cpu_busy_time_threshold, 1'000'000, "Threshold of OS CPU busy time in microseconds (OSCPUVirtualTimeMicroseconds metric) to consider CPU doing some useful work, no CPU overload would be considered if busy time was below this value.", 0) \
     DECLARE(Bool, os_collect_psi_metrics, true, "Enable accounting PSI metrics from /proc/pressure/ files.", 0) \
@@ -1229,7 +1229,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(Float, distributed_cache_keep_up_free_connections_ratio, 0.1f, "Soft limit for number of active connection distributed cache will try to keep free. After the number of free connections goes below distributed_cache_keep_up_free_connections_ratio * max_connections, connections with oldest activity will be closed until the number goes above the limit.", 0) \
     DECLARE(UInt64, tcp_close_connection_after_queries_num, 0, R"(Maximum number of queries allowed per TCP connection before the connection is closed. Set to 0 for unlimited queries.)", 0) \
     DECLARE(UInt64, tcp_close_connection_after_queries_seconds, 0, R"(Maximum lifetime of a TCP connection in seconds before it is closed. Set to 0 for unlimited connection lifetime.)", 0) \
-    DECLARE(Bool, skip_binary_checksum_checks, false, R"(Skips ClickHouse binary checksum integrity checks)", 0) \
+    DECLARE(Bool, skip_binary_checksum_checks, false, R"(Skips Datastore binary checksum integrity checks)", 0) \
     DECLARE(Bool, abort_on_logical_error, false, R"(Crash the server on LOGICAL_ERROR exceptions. Only for experts.)", 0) \
     DECLARE(UInt64, jemalloc_flush_profile_interval_bytes, 0, R"(Flushing jemalloc profile will be done after global peak memory usage increased by jemalloc_flush_profile_interval_bytes)", 0) \
     DECLARE(Bool, jemalloc_flush_profile_on_memory_exceeded, 0, R"(Flushing jemalloc profile will be done on total memory exceeded errors)", 0) \
@@ -1276,7 +1276,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(Bool, enforce_keeper_component_tracking, false, R"(
     If enabled, every ZooKeeper request must have a component name set via `Coordination::setCurrentComponent`. Throws a `LOGICAL_ERROR` exception if the component is missing.
     )", 0) \
-    DECLARE(String, keeper_hosts, "", R"(Dynamic setting. Contains a set of [Zoo]Keeper hosts ClickHouse can potentially connect to. Doesn't expose information from `<auxiliary_zookeepers>`)", 0) \
+    DECLARE(String, keeper_hosts, "", R"(Dynamic setting. Contains a set of [Zoo]Keeper hosts Datastore can potentially connect to. Doesn't expose information from `<auxiliary_zookeepers>`)", 0) \
     DECLARE(Bool, allow_experimental_webassembly_udf, false, R"(Enable experimental support for WebAssembly UDFs)", EXPERIMENTAL) \
     DECLARE(Bool, allow_impersonate_user, false, R"(Enable/disable the IMPERSONATE feature (EXECUTE AS target_user). The setting is deprecated.)", SettingsTierType::OBSOLETE) \
     DECLARE(UInt64, s3_credentials_provider_max_cache_size, 100, R"(The maximum number of S3 credentials providers that can be cached)", 0) \
@@ -1297,43 +1297,43 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <path>/var/lib/clickhouse/</path>
+    <path>/var/lib/datastore/</path>
     ```
     )", 0) \
-    DECLARE(String, user_files_path, "/var/lib/clickhouse/user_files/", R"(
+    DECLARE(String, user_files_path, "/var/lib/datastore/user_files/", R"(
     The directory with user files. Used in the table function [file()](/sql-reference/table-functions/file), [fileCluster()](/sql-reference/table-functions/fileCluster).
 
     **Example**
 
     ```xml
-    <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+    <user_files_path>/var/lib/datastore/user_files/</user_files_path>
     ```
     )", 0) \
-    DECLARE(String, dictionaries_lib_path, "/var/lib/clickhouse/dictionaries_lib/", R"(
+    DECLARE(String, dictionaries_lib_path, "/var/lib/datastore/dictionaries_lib/", R"(
     The directory with dictionaries lib.
 
     **Example**
 
     ```xml
-    <dictionaries_lib_path>/var/lib/clickhouse/dictionaries_lib/</dictionaries_lib_path>
+    <dictionaries_lib_path>/var/lib/datastore/dictionaries_lib/</dictionaries_lib_path>
     ```
     )", 0) \
-    DECLARE(String, user_scripts_path, "/var/lib/clickhouse/user_scripts/", R"(
+    DECLARE(String, user_scripts_path, "/var/lib/datastore/user_scripts/", R"(
     The directory with user scripts files. Used for Executable user defined functions [Executable User Defined Functions](/sql-reference/functions/udf#executable-user-defined-functions).
 
     **Example**
 
     ```xml
-    <user_scripts_path>/var/lib/clickhouse/user_scripts/</user_scripts_path>
+    <user_scripts_path>/var/lib/datastore/user_scripts/</user_scripts_path>
     ```
     )", 0) \
-    DECLARE(String, top_level_domains_path, "/var/lib/clickhouse/top_level_domains/", R"(
+    DECLARE(String, top_level_domains_path, "/var/lib/datastore/top_level_domains/", R"(
     The directory with top level domains.
 
     **Example**
 
     ```xml
-    <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path>
+    <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path>
     ```
     )", 0) \
     DECLARE(String, interserver_http_host, "", R"(
@@ -1346,11 +1346,11 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <interserver_http_host>example.clickhouse.com</interserver_http_host>
+    <interserver_http_host>example.datastore.com</interserver_http_host>
     ```
     )", 0) \
     DECLARE(UInt64, interserver_http_port, 0, R"(
-    Port for exchanging data between ClickHouse servers.
+    Port for exchanging data between Datastore servers.
 
     **Example**
 
@@ -1364,11 +1364,11 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <interserver_https_host>example.clickhouse.com</interserver_https_host>
+    <interserver_https_host>example.datastore.com</interserver_https_host>
     ```
     )", 0) \
     DECLARE(UInt64, interserver_https_port, 0, R"(
-    Port for exchanging data between ClickHouse servers over `<HTTPS>`.
+    Port for exchanging data between Datastore servers over `<HTTPS>`.
 
     **Example**
 
@@ -1387,7 +1387,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     <include_from>/etc/metrica.xml</include_from>
     ```
     )", 0) \
-    DECLARE(String, tmp_path, "/var/lib/clickhouse/tmp/", R"(
+    DECLARE(String, tmp_path, "/var/lib/datastore/tmp/", R"(
     Path on the local filesystem to store temporary data for processing large queries.
 
     :::note
@@ -1398,26 +1398,26 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+    <tmp_path>/var/lib/datastore/tmp/</tmp_path>
     ```
     )", 0) \
-    DECLARE(String, format_schema_path, "/var/lib/clickhouse/format_schemas/", R"(
+    DECLARE(String, format_schema_path, "/var/lib/datastore/format_schemas/", R"(
     The path to the directory with the schemes for the input data, such as schemas for the [CapnProto](/interfaces/formats/CapnProto) format.
 
     **Example**
 
     ```xml
     <!-- Directory containing schema files for various input formats. -->
-    <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
+    <format_schema_path>/var/lib/datastore/format_schemas/</format_schema_path>
     ```
     )", 0) \
-    DECLARE(String, google_protos_path, "/usr/share/clickhouse/protos/", R"(
+    DECLARE(String, google_protos_path, "/usr/share/datastore/protos/", R"(
     Defines a directory containing proto files for Protobuf types.
 
     **Example**
 
     ```xml
-    <google_protos_path>/usr/share/clickhouse/protos/</google_protos_path>
+    <google_protos_path>/usr/share/datastore/protos/</google_protos_path>
     ```
     )", 0) \
     DECLARE(String, filesystem_caches_path, "", R"(
@@ -1426,7 +1426,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>
+    <filesystem_caches_path>/var/lib/datastore/filesystem_caches/</filesystem_caches_path>
     ```
     )", 0) \
     DECLARE(Int32, oom_score, getDefaultOomScore(), R"(On Linux systems this can control the behavior of OOM killer.)", 0) \
@@ -1444,7 +1444,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     ```
     )", 0) \
     DECLARE(Bool, mlock_executable, false, R"(
-    Perform `<mlockall>` after startup to lower first queries latency and to prevent clickhouse executable from being paged out under high IO load.
+    Perform `<mlockall>` after startup to lower first queries latency and to prevent datastore executable from being paged out under high IO load.
 
     :::note
     Enabling this option is recommended but will lead to increased startup time for up to a few seconds. Keep in mind that this setting would not work without "CAP_IPC_LOCK" capability.
@@ -1464,8 +1464,8 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     - The default value is large enough,
     - For accepting client's connections server has separate thread.
 
-    So even if you have `<TcpExtListenOverflows>` (from `<nstat>`) non-zero and this counter grows for ClickHouse server it does not mean that this value needs to be increased, since:
-    - Usually if `<4096>` is not enough it shows some internal ClickHouse scaling issue, so it is better to report an issue.
+    So even if you have `<TcpExtListenOverflows>` (from `<nstat>`) non-zero and this counter grows for Datastore server it does not mean that this value needs to be increased, since:
+    - Usually if `<4096>` is not enough it shows some internal Datastore scaling issue, so it is better to report an issue.
     - It does not mean that the server can handle more connections later (and even if it could, by that moment clients may be gone or disconnected).
 
     **Example**
@@ -1515,9 +1515,9 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(String, logger_errorlog, "", R"(The path to the error log file.)", 0, "logger.errorlog") \
     DECLARE(String, logger_size, "100M", R"(Rotation policy: Maximum size of the log files in bytes. Once the log file size exceeds this threshold, it is renamed and archived, and a new log file is created.)", 0, "logger.size") \
     DECLARE(String, logger_rotation, "100M", R"(Rotation policy: Controls when log files are rotated. Rotation can be based on size, time, or a combination of both. Examples: 100M, daily, 100M,daily. Once the log file exceeds the specified size or when the specified time interval is reached, it is renamed and archived, and a new log file is created.)", 0, "logger.rotation") \
-    DECLARE(UInt64, logger_count, 1, R"(Rotation policy: How many historical log files ClickHouse are kept at most.)", 0, "logger.count") \
+    DECLARE(UInt64, logger_count, 1, R"(Rotation policy: How many historical log files Datastore are kept at most.)", 0, "logger.count") \
     DECLARE(Bool, logger_stream_compress, false, R"(Compress log messages using LZ4. Set to `<1>` or `<true>` to enable.)", 0, "logger.stream_compress") \
-    DECLARE(Bool, logger_console, false, R"(Enable logging to the console. Set to `<1>` or `<true>` to enable. Default is `<1>` if ClickHouse does not run in daemon mode, `<0>` otherwise.)", 0, "logger.console") \
+    DECLARE(Bool, logger_console, false, R"(Enable logging to the console. Set to `<1>` or `<true>` to enable. Default is `<1>` if Datastore does not run in daemon mode, `<0>` otherwise.)", 0, "logger.console") \
     DECLARE(String, logger_console_log_level, "trace", R"(Log level for console output. Defaults to `<level>`.)", 0, "logger.console_log_level") \
     DECLARE(String, logger_formatting_type, "json", R"(Log format for console output. Currently, only `<json>` is supported.)", 0, "logger.formatting.type") \
     DECLARE(Bool, logger_use_syslog, false, R"(Also forward log output to syslog.)", 0, "logger.use_syslog") \
@@ -1529,9 +1529,9 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(String, openssl_server_private_key_file, "", R"(Path to the file with the secret key of the PEM certificate. The file may contain a key and certificate at the same time.)", 0, "openSSL.server.privateKeyFile") \
     DECLARE(String, openssl_server_certificate_file, "", R"(Path to the client/server certificate file in PEM format. You can omit it if `<privateKeyFile>` contains the certificate.)", 0, "openSSL.server.certificateFile") \
     DECLARE(String, openssl_server_ca_config, "", R"(Path to the file or directory that contains trusted CA certificates. If this points to a file, it must be in PEM format and can contain several CA certificates. If this points to a directory, it must contain one .pem file per CA certificate. The filenames are looked up by the CA subject name hash value. Details can be found in the man page of [SSL_CTX_load_verify_locations](https://docs.openssl.org/3.0/man3/SSL_CTX_load_verify_locations/).)", 0, "openSSL.server.caConfig") \
-    DECLARE(String, openssl_server_verification_mode, "relaxed", R"(The method for checking the node's certificates. Details are in the description of the [Context](https://github.com/ClickHouse/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/Context.h) class. Possible values: `<none>`, `<relaxed>`, `<strict>`, `<once>`.)", 0, "openSSL.server.verificationMode") \
+    DECLARE(String, openssl_server_verification_mode, "relaxed", R"(The method for checking the node's certificates. Details are in the description of the [Context](https://github.com/Datastore/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/Context.h) class. Possible values: `<none>`, `<relaxed>`, `<strict>`, `<once>`.)", 0, "openSSL.server.verificationMode") \
     DECLARE(UInt64, openssl_server_verification_depth, 9, R"(The maximum length of the verification chain. Verification will fail if the certificate chain length exceeds the set value.)", 0, "openSSL.server.verificationDepth") \
-    DECLARE(Bool, openssl_server_load_default_ca_file, true, R"(Determines whether built-in CA certificates for OpenSSL will be used. ClickHouse assumes that builtin CA certificates are in the file `</etc/ssl/cert.pem>` (resp. the directory `</etc/ssl/certs>`) or in file (resp. directory) specified by the environment variable `<SSL_CERT_FILE>` (resp. `<SSL_CERT_DIR>`).)", 0, "openSSL.server.loadDefaultCAFile") \
+    DECLARE(Bool, openssl_server_load_default_ca_file, true, R"(Determines whether built-in CA certificates for OpenSSL will be used. Datastore assumes that builtin CA certificates are in the file `</etc/ssl/cert.pem>` (resp. the directory `</etc/ssl/certs>`) or in file (resp. directory) specified by the environment variable `<SSL_CERT_FILE>` (resp. `<SSL_CERT_DIR>`).)", 0, "openSSL.server.loadDefaultCAFile") \
     DECLARE(String, openssl_server_chipher_list, "ALL:!ADH:!LOW:!EXP:!MD5:!3DES:@STRENGTH", R"(Supported OpenSSL encryptions.)", 0, "openSSL.server.cipherList") \
     DECLARE(Bool, openssl_server_cache_sessions, false, R"(Enables or disables caching sessions. Must be used in combination with `<sessionIdContext>`. Acceptable values: `<true>`, `<false>`.)", 0, "openSSL.server.cacheSessions") \
     DECLARE(String, openssl_server_session_id_context, "application.name", R"(A unique set of random characters that the server appends to each generated identifier. The length of the string must not exceed `<SSL_MAX_SSL_SESSION_ID_LENGTH>`. This parameter is always recommended since it helps avoid problems both if the server caches the session and if the client requested caching.)", 0, "openSSL.server.sessionIdContext") \
@@ -1549,9 +1549,9 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(String, openssl_client_private_key_file, "", R"(Path to the file with the secret key of the PEM certificate. The file may contain a key and certificate at the same time.)", 0, "openSSL.client.privateKeyFile") \
     DECLARE(String, openssl_client_certificate_file, "", R"(Path to the client/server certificate file in PEM format. You can omit it if `<privateKeyFile>` contains the certificate.)", 0, "openSSL.client.certificateFile") \
     DECLARE(String, openssl_client_ca_config, "", R"(Path to the file or directory that contains trusted CA certificates. If this points to a file, it must be in PEM format and can contain several CA certificates. If this points to a directory, it must contain one .pem file per CA certificate. The filenames are looked up by the CA subject name hash value. Details can be found in the man page of [SSL_CTX_load_verify_locations](https://docs.openssl.org/3.0/man3/SSL_CTX_load_verify_locations/).)", 0, "openSSL.client.caConfig") \
-    DECLARE(String, openssl_client_verification_mode, "relaxed", R"(The method for checking the node's certificates. Details are in the description of the [Context](https://github.com/ClickHouse/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/Context.h) class. Possible values: `<none>`, `<relaxed>`, `<strict>`, `<once>`.)", 0, "openSSL.client.verificationMode") \
+    DECLARE(String, openssl_client_verification_mode, "relaxed", R"(The method for checking the node's certificates. Details are in the description of the [Context](https://github.com/Datastore/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/Context.h) class. Possible values: `<none>`, `<relaxed>`, `<strict>`, `<once>`.)", 0, "openSSL.client.verificationMode") \
     DECLARE(UInt64, openssl_client_verification_depth, 9, R"(The maximum length of the verification chain. Verification will fail if the certificate chain length exceeds the set value.)", 0, "openSSL.client.verificationDepth") \
-    DECLARE(Bool, openssl_client_load_default_ca_file, true, R"(Determines whether built-in CA certificates for OpenSSL will be used. ClickHouse assumes that builtin CA certificates are in the file `</etc/ssl/cert.pem>` (resp. the directory `</etc/ssl/certs>`) or in file (resp. directory) specified by the environment variable `<SSL_CERT_FILE>` (resp. `<SSL_CERT_DIR>`).)", 0, "openSSL.client.loadDefaultCAFile") \
+    DECLARE(Bool, openssl_client_load_default_ca_file, true, R"(Determines whether built-in CA certificates for OpenSSL will be used. Datastore assumes that builtin CA certificates are in the file `</etc/ssl/cert.pem>` (resp. the directory `</etc/ssl/certs>`) or in file (resp. directory) specified by the environment variable `<SSL_CERT_FILE>` (resp. `<SSL_CERT_DIR>`).)", 0, "openSSL.client.loadDefaultCAFile") \
     DECLARE(String, openssl_client_chipher_list, "ALL:!ADH:!LOW:!EXP:!MD5:!3DES:@STRENGTH", R"(Supported OpenSSL encryptions.)", 0, "openSSL.client.cipherList") \
     DECLARE(Bool, openssl_client_cache_sessions, false, R"(Enables or disables caching sessions. Must be used in combination with `<sessionIdContext>`. Acceptable values: `<true>`, `<false>`.)", 0, "openSSL.client.cacheSessions") \
     DECLARE(Bool, openssl_client_extended_verification, false, R"(If enabled, verify that the certificate CN or SAN matches the peer hostname.)", 0, "openSSL.client.extendedVerification") \
@@ -1563,8 +1563,8 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     DECLARE(String, openssl_client_invalid_certificate_handler, "RejectCertificateHandler", R"(Class (a subclass of CertificateHandler) for verifying invalid certificates. For example: `<<invalidCertificateHandler> <name>RejectCertificateHandler</name> </invalidCertificateHandler>>`.)", 0, "openSSL.client.invalidCertificateHandler.name") \
     DECLARE(String, openssl_client_disable_protocols, "", R"(Protocols that are not allowed to be used.)", 0, "openSSL.client.disableProtocols") \
     DECLARE(Bool, openssl_client_prefer_server_ciphers, false, R"(Client-preferred server ciphers.)", 0, "openSSL.client.preferServerCiphers") \
-    DECLARE(String, distributed_ddl_path, "/clickhouse/task_queue/ddl/", R"(the path in Keeper for the `<task_queue>` for DDL queries)", 0, "distributed_ddl.path") \
-    DECLARE(String, distributed_ddl_replicas_path, "/clickhouse/task_queue/replicas/", R"(the path in Keeper for the `<task_queue>` for replicas)", 0, "distributed_ddl.replicas_path") \
+    DECLARE(String, distributed_ddl_path, "/datastore/task_queue/ddl/", R"(the path in Keeper for the `<task_queue>` for DDL queries)", 0, "distributed_ddl.path") \
+    DECLARE(String, distributed_ddl_replicas_path, "/datastore/task_queue/replicas/", R"(the path in Keeper for the `<task_queue>` for replicas)", 0, "distributed_ddl.replicas_path") \
     DECLARE(String, distributed_ddl_profile, "", R"(the profile used to execute the DDL queries)", 0, "distributed_ddl.profile") \
     DECLARE(Int32, distributed_ddl_pool_size, 1, R"(how many `<ON CLUSTER>` queries can be run simultaneously)", 0, "distributed_ddl.pool_size") \
     DECLARE(UInt64, distributed_ddl_max_tasks_in_queue, 1000, R"(the maximum number of tasks that can be in the queue.)", 0, "distributed_ddl.max_tasks_in_queue") \

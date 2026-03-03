@@ -5,7 +5,7 @@ namespace DB
 
 /// Important note:
 /// `storage_engine_name` is not the type of the object storage the function works on top of.
-/// This is the name of ClickHouse's storage engine.
+/// This is the name of Datastore's storage engine.
 
 struct AzureDefinition
 {

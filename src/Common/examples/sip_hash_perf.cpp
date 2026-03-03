@@ -11,11 +11,11 @@
 
 /** Test this way:
   *
-  * clickhouse-client --query="SELECT SearchPhrase AS k FROM test.hits WHERE k != ''" > phrases.tsv
-  * clickhouse-client --query="SELECT URL AS k FROM test.hits" > urls.tsv
-  * clickhouse-client --query="SELECT SearchPhrase AS k FROM test.hits" > phrases_with_empty.tsv
-  * clickhouse-client --query="SELECT Title AS k FROM test.hits" > titles.tsv
-  * clickhouse-client --query="SELECT PageCharset AS k FROM test.hits" > charset.tsv
+  * datastore-client --query="SELECT SearchPhrase AS k FROM test.hits WHERE k != ''" > phrases.tsv
+  * datastore-client --query="SELECT URL AS k FROM test.hits" > urls.tsv
+  * datastore-client --query="SELECT SearchPhrase AS k FROM test.hits" > phrases_with_empty.tsv
+  * datastore-client --query="SELECT Title AS k FROM test.hits" > titles.tsv
+  * datastore-client --query="SELECT PageCharset AS k FROM test.hits" > charset.tsv
   *
   * for i in {1..1000}; do ./sip_hash_perf < titles.tsv 2>&1 | grep Processed | grep -oP '\d+\.\d+ rows/sec'; done | awk '{ if ($1 > x) { x = $1; print x } }'
   */

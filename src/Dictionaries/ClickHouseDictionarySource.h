@@ -12,11 +12,11 @@
 
 namespace DB
 {
-/** Allows loading dictionaries from local or remote ClickHouse instance
+/** Allows loading dictionaries from local or remote Datastore instance
   *    @todo use ConnectionPoolWithFailover
   *    @todo invent a way to keep track of source modifications
   */
-class ClickHouseDictionarySource final : public IDictionarySource
+class DatastoreDictionarySource final : public IDictionarySource
 {
 public:
     struct Configuration
@@ -39,15 +39,15 @@ public:
         const bool secure;
     };
 
-    ClickHouseDictionarySource(
+    DatastoreDictionarySource(
         const DictionaryStructure & dict_struct_,
         const Configuration & configuration_,
         const Block & sample_block_,
         ContextMutablePtr context_);
 
     /// copy-constructor is provided in order to support cloneability
-    ClickHouseDictionarySource(const ClickHouseDictionarySource & other);
-    ClickHouseDictionarySource & operator=(const ClickHouseDictionarySource &) = delete;
+    DatastoreDictionarySource(const DatastoreDictionarySource & other);
+    DatastoreDictionarySource & operator=(const DatastoreDictionarySource &) = delete;
 
     BlockIO loadAll() override;
 
@@ -64,7 +64,7 @@ public:
 
     bool isLocal() const { return configuration.is_local; }
 
-    DictionarySourcePtr clone() const override { return std::make_shared<ClickHouseDictionarySource>(*this); }
+    DictionarySourcePtr clone() const override { return std::make_shared<DatastoreDictionarySource>(*this); }
 
     std::string toString() const override;
 
@@ -88,7 +88,7 @@ private:
     ContextMutablePtr context;
     ConnectionPoolWithFailoverPtr pool;
     std::string load_all_query;
-    LoggerPtr log = getLogger("ClickHouseDictionarySource");
+    LoggerPtr log = getLogger("DatastoreDictionarySource");
 
     /// RegExpTreeDictionary is the only dictionary whose structure of attributions differ from the input block.
     /// For now we need to modify sample_block in the ctor of RegExpTreeDictionary.

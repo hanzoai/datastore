@@ -33,7 +33,7 @@ Like [`multiSearchAllPositions`](#multiSearchAllPositions) but ignores case.
     FunctionDocumentation::Examples examples = {
     {
         "Case insensitive multi-search",
-        "SELECT multiSearchAllPositionsCaseInsensitive('ClickHouse',['c','h'])",
+        "SELECT multiSearchAllPositionsCaseInsensitive('Datastore',['c','h'])",
         R"(
 ┌─multiSearchA⋯['c', 'h'])─┐
 │ [1,6]                    │

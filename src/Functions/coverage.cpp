@@ -27,7 +27,7 @@ enum class Kind : uint8_t
     All
 };
 
-/** If ClickHouse is build with coverage instrumentation, returns an array
+/** If Datastore is build with coverage instrumentation, returns an array
   * of currently accumulated (`coverageCurrent`)
   * or accumulated since the startup (`coverageCumulative`)
   * or all possible (`coverageAll`) unique code addresses.
@@ -98,7 +98,7 @@ REGISTER_FUNCTION(Coverage)
         FunctionDocumentation
         {
             .description=R"(
-This function is only available if ClickHouse was built with the SANITIZE_COVERAGE=1 option.
+This function is only available if Datastore was built with the SANITIZE_COVERAGE=1 option.
 
 It returns an array of unique addresses (a subset of the instrumented points in code) in the code
 encountered at runtime after the previous coverage reset (with the `SYSTEM RESET COVERAGE` query) or after server startup.
@@ -130,7 +130,7 @@ See https://clang.llvm.org/docs/SanitizerCoverage.html for more information.
         FunctionDocumentation
         {
             .description=R"(
-This function is only available if ClickHouse was built with the SANITIZE_COVERAGE=1 option.
+This function is only available if Datastore was built with the SANITIZE_COVERAGE=1 option.
 
 It returns an array of unique addresses (a subset of the instrumented points in code) in the code
 encountered at runtime after server startup.
@@ -147,7 +147,7 @@ See the `coverageCurrent` function for the details.
         FunctionDocumentation
         {
             .description=R"(
-This function is only available if ClickHouse was built with the SANITIZE_COVERAGE=1 option.
+This function is only available if Datastore was built with the SANITIZE_COVERAGE=1 option.
 
 It returns an array of all unique addresses in the code instrumented for coverage
 - all possible addresses that can appear in the result of the `coverage` function.

@@ -56,7 +56,7 @@ Returns the value of the dictionary attribute that corresponds to `id_expr`,
 otherwise returns the content of the `<null_value>` element specified for the attribute in the dictionary configuration.
 
 :::note
-ClickHouse throws an exception if it cannot parse the value of the attribute or the value does not match the attribute data type.
+Datastore throws an exception if it cannot parse the value of the attribute or the value does not match the attribute data type.
 :::
     )"};
 }
@@ -69,7 +69,7 @@ Returns the value of the dictionary attribute that corresponds to `id_expr`,
 otherwise returns the value passed as the `default_value_expr` parameter.
 
 :::note
-ClickHouse throws an exception if it cannot parse the value of the attribute or the value does not match the attribute data type.
+Datastore throws an exception if it cannot parse the value of the attribute or the value does not match the attribute data type.
 :::
     )"};
 }

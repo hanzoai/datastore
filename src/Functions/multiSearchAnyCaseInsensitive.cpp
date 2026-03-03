@@ -31,9 +31,9 @@ Like [multiSearchAny](#multiSearchAny) but ignores case.
     FunctionDocumentation::Examples examples = {
     {
         "Case insensitive search",
-        "SELECT multiSearchAnyCaseInsensitive('ClickHouse',['c','h'])",
+        "SELECT multiSearchAnyCaseInsensitive('Datastore',['c','h'])",
         R"(
-┌─multiSearchAnyCaseInsensitive('ClickHouse', ['c', 'h'])─┐
+┌─multiSearchAnyCaseInsensitive('Datastore', ['c', 'h'])─┐
 │                                                       1 │
 └─────────────────────────────────────────────────────────┘
         )"

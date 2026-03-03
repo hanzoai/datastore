@@ -1,1 +1,1 @@
-extern int mainEntryClickHouseZooKeeperRemoveByList(int argc, char ** argv);
+extern int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv);

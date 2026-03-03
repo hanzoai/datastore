@@ -56,7 +56,7 @@ if (ARCH_AARCH64)
 
     # Best-effort check: The build generates and executes intermediate binaries, e.g. protoc and llvm-tablegen. If we build on ARM for ARM
     # and the build machine is too old, i.e. doesn't satisfy above modern profile, then these intermediate binaries will not run (dump
-    # SIGILL). Even if they could run, the build machine wouldn't be able to run the ClickHouse binary. In that case, suggest to run the
+    # SIGILL). Even if they could run, the build machine wouldn't be able to run the Datastore binary. In that case, suggest to run the
     # build with the compat profile.
     if (OS_LINUX AND CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "^(aarch64.*|AARCH64.*|arm64.*|ARM64.*)" AND NOT NO_ARMV81_OR_HIGHER)
         # CPU features in /proc/cpuinfo and compiler flags don't align :( ... pick an obvious flag contained in the modern but not in the
@@ -86,7 +86,7 @@ elseif (ARCH_PPC64LE)
 elseif (ARCH_AMD64)
     # x86-64 microarchitecture levels (https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels):
     #   1 — SSE2 baseline, maximum compatibility with older/embedded hardware
-    #   2 — SSE4.2, SSSE3, POPCNT (default, matches ClickHouse's historical baseline)
+    #   2 — SSE4.2, SSSE3, POPCNT (default, matches Datastore's historical baseline)
     #   3 — AVX2, BMI1/2, FMA, F16C etc.
     #   4 — AVX-512F/BW/CD/DQ/VL
     set (X86_ARCH_LEVEL "2" CACHE STRING "x86-64 microarchitecture level (1, 2, 3, 4)")
@@ -107,14 +107,14 @@ elseif (ARCH_AMD64)
         endif()
     endif()
 
-    # ClickHouse can be cross-compiled (e.g. on an ARM host for x86) but it is also possible to build ClickHouse on x86 w/o AVX for x86 w/
+    # Datastore can be cross-compiled (e.g. on an ARM host for x86) but it is also possible to build Datastore on x86 w/o AVX for x86 w/
     # AVX. We only assume that the compiler can emit certain SIMD instructions, we don't care if the host system is able to run the binary.
 
     if (X86_ARCH_LEVEL VERSION_GREATER_EQUAL 2)
         set (COMPILER_FLAGS "${COMPILER_FLAGS} -march=x86-64-v${X86_ARCH_LEVEL}")
         list (APPEND RUSTFLAGS_CPU "-C" "target-cpu=x86-64-v${X86_ARCH_LEVEL}")
 
-        # PCLMULQDQ is not formally part of any psABI microarchitecture level but ClickHouse's baseline has always included it and
+        # PCLMULQDQ is not formally part of any psABI microarchitecture level but Datastore's baseline has always included it and
         # third-party dependencies (zlib-ng, RocksDB) rely on it. All CPUs that support x86-64-v2 also support PCLMULQDQ.
         set (COMPILER_FLAGS "${COMPILER_FLAGS} -mpclmul")
         list (APPEND RUSTFLAGS_CPU "-C" "target-feature=+pclmulqdq")

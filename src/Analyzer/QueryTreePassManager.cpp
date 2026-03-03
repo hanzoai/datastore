@@ -172,7 +172,7 @@ private:
 
 }
 
-/** ClickHouse query tree pass manager.
+/** Datastore query tree pass manager.
   *
   * TODO: Add optimizations based on function semantics. Example: SELECT * FROM test_table WHERE id != id. (id is not nullable column).
   */

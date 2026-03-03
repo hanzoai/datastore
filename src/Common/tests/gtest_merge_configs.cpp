@@ -27,7 +27,7 @@ TEST(Config, MergeConfigsOneSided)
     {
         WriteBufferFromFile out(config_file->path());
         std::string data = R"YAML(
-clickhouse:
+datastore:
     field1: "1"
     field2: "2"
 )YAML";
@@ -40,7 +40,7 @@ clickhouse:
     {
         WriteBufferFromFile out(system_tables_file->path());
         std::string data = R"YAML(
-clickhouse:
+datastore:
     text_log:
         database: system
         table: text_log
@@ -60,12 +60,12 @@ clickhouse:
     DB::ConfigurationPtr configuration(new Poco::Util::XMLConfiguration(config_xml));
 
 
-    ASSERT_EQ("1", configuration->getString("clickhouse.field1"));
-    ASSERT_EQ("2", configuration->getString("clickhouse.field2"));
-    ASSERT_EQ("system", configuration->getString("clickhouse.text_log.database"));
-    ASSERT_EQ("text_log", configuration->getString("clickhouse.text_log.table"));
-    ASSERT_EQ("ENGINE MergeTree", configuration->getString("clickhouse.text_log.engine"));
-    ASSERT_FALSE(configuration->has("clickhouse.text_log.partition_by"));
+    ASSERT_EQ("1", configuration->getString("datastore.field1"));
+    ASSERT_EQ("2", configuration->getString("datastore.field2"));
+    ASSERT_EQ("system", configuration->getString("datastore.text_log.database"));
+    ASSERT_EQ("text_log", configuration->getString("datastore.text_log.table"));
+    ASSERT_EQ("ENGINE MergeTree", configuration->getString("datastore.text_log.engine"));
+    ASSERT_FALSE(configuration->has("datastore.text_log.partition_by"));
 }
 
 
@@ -86,7 +86,7 @@ TEST(Config, MergeConfigsTwoSided)
     {
         WriteBufferFromFile out(config_file->path());
         std::string data = R"YAML(
-clickhouse:
+datastore:
     field1 : "1"
     field2 : "2"
     text_log :
@@ -106,7 +106,7 @@ clickhouse:
     {
         WriteBufferFromFile out(system_tables_file->path());
         std::string data = R"YAML(
-clickhouse:
+datastore:
     field3 : "3"
     field4 : "4"
     text_log :
@@ -128,12 +128,12 @@ clickhouse:
     DB::ConfigurationPtr configuration(new Poco::Util::XMLConfiguration(config_xml));
 
 
-    ASSERT_EQ("1", configuration->getString("clickhouse.field1"));
-    ASSERT_EQ("2", configuration->getString("clickhouse.field2"));
-    ASSERT_EQ("3", configuration->getString("clickhouse.field3"));
-    ASSERT_EQ("4", configuration->getString("clickhouse.field4"));
-    ASSERT_EQ("system", configuration->getString("clickhouse.text_log.database"));
-    ASSERT_EQ("text_log", configuration->getString("clickhouse.text_log.table"));
-    ASSERT_EQ("ENGINE MergeTree", configuration->getString("clickhouse.text_log.engine"));
-    ASSERT_FALSE(configuration->has("clickhouse.text_log.partition_by"));
+    ASSERT_EQ("1", configuration->getString("datastore.field1"));
+    ASSERT_EQ("2", configuration->getString("datastore.field2"));
+    ASSERT_EQ("3", configuration->getString("datastore.field3"));
+    ASSERT_EQ("4", configuration->getString("datastore.field4"));
+    ASSERT_EQ("system", configuration->getString("datastore.text_log.database"));
+    ASSERT_EQ("text_log", configuration->getString("datastore.text_log.table"));
+    ASSERT_EQ("ENGINE MergeTree", configuration->getString("datastore.text_log.engine"));
+    ASSERT_FALSE(configuration->has("datastore.text_log.partition_by"));
 }

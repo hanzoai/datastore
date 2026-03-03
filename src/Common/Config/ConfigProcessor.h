@@ -64,7 +64,7 @@ public:
     /// 2) Determine the includes file from the config: <include_from>/path2/metrika.xml</include_from>
     ///    If this path is not configured, use /etc/metrika.xml
     /// 3) Replace elements matching the "<foo incl="bar"/>" pattern with
-    ///    "<foo>contents of the clickhouse/bar element in metrika.xml</foo>"
+    ///    "<foo>contents of the datastore/bar element in metrika.xml</foo>"
     /// 4) If zk_node_cache is non-NULL, replace elements matching the "<foo from_zk="/bar">" pattern with
     ///    "<foo>contents of the /bar ZooKeeper node</foo>".
     ///    If has_zk_includes is non-NULL and there are such elements, set has_zk_includes to true.
@@ -185,8 +185,8 @@ private:
 
     static void mergeRecursive(XMLDocumentPtr config, Poco::XML::Node * config_root, const Poco::XML::Node * with_root);
 
-    /// If config root node name is not 'clickhouse' and merging config's root node names doesn't match, bypasses merging and returns false.
-    /// For compatibility root node 'yandex' considered equal to 'clickhouse'.
+    /// If config root node name is not 'datastore' and merging config's root node names doesn't match, bypasses merging and returns false.
+    /// For compatibility root node 'yandex' considered equal to 'datastore'.
     bool merge(XMLDocumentPtr config, XMLDocumentPtr with);
 
     static void doIncludesRecursive(

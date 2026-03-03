@@ -9,15 +9,15 @@ set (SRCS
     parseConnectionCredentials.cpp
 )
 
-add_library(clickhouse_common_config ${SRCS})
-target_link_libraries(clickhouse_common_config
+add_library(datastore_common_config ${SRCS})
+target_link_libraries(datastore_common_config
     PUBLIC
-        clickhouse_common_zookeeper_base
-        clickhouse_common_zookeeper
+        datastore_common_zookeeper_base
+        datastore_common_zookeeper
         common
         Poco::XML
 )
 
 if (TARGET ch_contrib::yaml_cpp)
-    target_link_libraries(clickhouse_common_config PRIVATE ch_contrib::yaml_cpp)
+    target_link_libraries(datastore_common_config PRIVATE ch_contrib::yaml_cpp)
 endif()

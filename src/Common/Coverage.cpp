@@ -25,15 +25,15 @@ __attribute__((no_sanitize("coverage")))
 void dumpCoverage()
 {
     /// A user can request to dump the coverage information into files at exit.
-    /// This is useful for non-server applications such as clickhouse-format or clickhouse-client,
+    /// This is useful for non-server applications such as datastore-format or datastore-client,
     /// that cannot introspect it with SQL functions at runtime.
 
-    /// The CLICKHOUSE_WRITE_COVERAGE environment variable defines a prefix for a filename 'prefix.pid'
+    /// The DATASTORE_WRITE_COVERAGE environment variable defines a prefix for a filename 'prefix.pid'
     /// containing the list of addresses of covered .
 
     /// The format is even simpler than Clang's "sancov": an array of 64-bit addresses, native byte order, no header.
 
-    if (const char * coverage_filename_prefix = getenv("CLICKHOUSE_WRITE_COVERAGE")) // NOLINT(concurrency-mt-unsafe)
+    if (const char * coverage_filename_prefix = getenv("DATASTORE_WRITE_COVERAGE")) // NOLINT(concurrency-mt-unsafe)
     {
         auto dump = [](const std::string & name, auto span)
         {

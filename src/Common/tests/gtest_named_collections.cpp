@@ -37,7 +37,7 @@ public:
 
 TEST(NamedCollections, SimpleConfig)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <collection1>
             <key1>value1</key1>
@@ -51,7 +51,7 @@ TEST(NamedCollections, SimpleConfig)
             <key6>6.6</key6>
         </collection2>
     </named_collections>
-</clickhouse>)CONFIG");
+</datastore>)CONFIG");
 
     Poco::XML::DOMParser dom_parser;
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
@@ -124,7 +124,7 @@ key6:	6.6
 
 TEST(NamedCollections, NestedConfig)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <collection3>
             <key1>
@@ -141,7 +141,7 @@ TEST(NamedCollections, NestedConfig)
             </key2>
         </collection3>
     </named_collections>
-</clickhouse>)CONFIG");
+</datastore>)CONFIG");
 
     Poco::XML::DOMParser dom_parser;
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
@@ -174,7 +174,7 @@ key2:
 
 TEST(NamedCollections, NestedConfigDuplicateKeys)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <named_collections>
         <collection>
             <headers>
@@ -193,7 +193,7 @@ TEST(NamedCollections, NestedConfigDuplicateKeys)
             </headers>
         </collection>
     </named_collections>
-</clickhouse>)CONFIG");
+</datastore>)CONFIG");
 
     Poco::XML::DOMParser dom_parser;
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);

@@ -3,12 +3,12 @@ if (NOT TARGET ch_contrib::nuraft)
     return ()
 endif ()
 
-set (CLICKHOUSE_KEEPER_UTILS_SOURCES KeeperUtils.cpp)
+set (DATASTORE_KEEPER_UTILS_SOURCES KeeperUtils.cpp)
 
-set (CLICKHOUSE_KEEPER_UTILS_LINK
+set (DATASTORE_KEEPER_UTILS_LINK
     PRIVATE
-        clickhouse_functions
+        datastore_functions
         dbms
 )
 
-clickhouse_program_add(keeper-utils)
+datastore_program_add(keeper-utils)

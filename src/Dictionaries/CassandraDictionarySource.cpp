@@ -38,7 +38,7 @@ void registerDictionarySourceCassandra(DictionarySourceFactory & factory)
     return std::make_unique<CassandraDictionarySource>(dict_struct, config, source_config_prefix, sample_block);
 #else
     throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-        "Dictionary source of type `cassandra` is disabled because ClickHouse was built without cassandra support.");
+        "Dictionary source of type `cassandra` is disabled because Datastore was built without cassandra support.");
 #endif
     };
     factory.registerSource("cassandra", create_table_source);

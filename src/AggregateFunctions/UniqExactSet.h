@@ -80,8 +80,8 @@ public:
 
         /// If all the hashtables are mixed by singleLevel and twoLevel, or all singleLevel (larger than 6000 for average value), they could be converted into
         /// twoLevel hashtables in parallel and then merge together. please refer to the following PR for more details.
-        /// https://github.com/ClickHouse/ClickHouse/pull/50748
-        /// https://github.com/ClickHouse/ClickHouse/pull/52973
+        /// https://github.com/Datastore/Datastore/pull/50748
+        /// https://github.com/Datastore/Datastore/pull/52973
         if ((single_level_set_num > 0 && single_level_set_num < data_vec.size()) || ((all_single_hash_size/data_vec.size()) > 6000))
         {
             try

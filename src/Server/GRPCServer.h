@@ -4,7 +4,7 @@
 
 #if USE_GRPC
 
-#include "clickhouse_grpc.grpc.pb.h"
+#include "datastore_grpc.grpc.pb.h"
 #include <Poco/Net/SocketAddress.h>
 #include <base/types.h>
 #include <Common/Logger.h>
@@ -44,7 +44,7 @@ public:
     size_t currentThreads() const override { return currentConnections(); }
 
 private:
-    using GRPCService = clickhouse::grpc::ClickHouse::AsyncService;
+    using GRPCService = datastore::grpc::Datastore::AsyncService;
     class Runner;
 
     IServer & iserver;

@@ -11,7 +11,7 @@ class ReadBuffer;
 class WriteBuffer;
 
 /** These are "generally recognizable" compression methods for data import/export.
-  * Do not mess with more efficient compression methods used by ClickHouse internally
+  * Do not mess with more efficient compression methods used by Datastore internally
   *  (they use non-standard framing, indexes, checksums...)
   */
 

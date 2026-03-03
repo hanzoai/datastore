@@ -321,7 +321,7 @@ static DatabasePtr createMemoryDatabaseIfNotExists(ContextPtr context, const Str
     return system_database;
 }
 
-static DatabasePtr createClickHouseLocalDatabaseOverlay(const String & name_, ContextPtr context)
+static DatabasePtr createDatastoreLocalDatabaseOverlay(const String & name_, ContextPtr context)
 {
     auto overlay = std::make_shared<DatabaseOverlay>(name_, context);
 
@@ -390,12 +390,12 @@ void LocalServer::tryInitPath()
             LOG_DEBUG(log, "Will create working directory inside current directory: {}", parent_folder.string());
         }
 
-        /// we can have another clickhouse-local running simultaneously, even with the same PID (for ex. - several dockers mounting the same folder)
-        /// or it can be some leftovers from other clickhouse-local runs
+        /// we can have another datastore-local running simultaneously, even with the same PID (for ex. - several dockers mounting the same folder)
+        /// or it can be some leftovers from other datastore-local runs
         /// as we can't accurately distinguish those situations we don't touch any existent folders
         /// we just try to pick some free name for our working folder
 
-        default_path = parent_folder / fmt::format("clickhouse-local-{}", UUIDHelpers::generateV4());
+        default_path = parent_folder / fmt::format("datastore-local-{}", UUIDHelpers::generateV4());
 
         if (fs::exists(default_path))
             throw Exception(ErrorCodes::FILE_ALREADY_EXISTS, "Unsuccessful attempt to set up the working directory: {} already exists.", default_path.string());
@@ -532,7 +532,7 @@ static ConfigurationPtr getConfigurationFromXMLString(const char * xml_data)
 void LocalServer::setupUsers()
 {
     static const char * minimal_default_user_xml =
-        "<clickhouse>"
+        "<datastore>"
         "    <profiles>"
         "        <default></default>"
         "    </profiles>"
@@ -551,7 +551,7 @@ void LocalServer::setupUsers()
         "    <quotas>"
         "        <default></default>"
         "    </quotas>"
-        "</clickhouse>";
+        "</datastore>";
 
     ConfigurationPtr users_config;
     auto & access_control = global_context->getAccessControl();
@@ -789,9 +789,9 @@ void LocalServer::processConfig()
     }
 
     print_stack_trace = getClientConfiguration().getBool("stacktrace", false);
-    const std::string clickhouse_dialect{"clickhouse"};
+    const std::string datastore_dialect{"datastore"};
     load_suggestions = (is_interactive || delayed_interactive) && !getClientConfiguration().getBool("disable_suggestion", false)
-        && getClientConfiguration().getString("dialect", clickhouse_dialect) == clickhouse_dialect;
+        && getClientConfiguration().getString("dialect", datastore_dialect) == datastore_dialect;
     wait_for_suggestions_to_load = getClientConfiguration().getBool("wait_for_suggestions_to_load", false);
 
     auto logging = (getClientConfiguration().has("logger.console")
@@ -813,7 +813,7 @@ void LocalServer::processConfig()
     {
         getClientConfiguration().setString("logger", "logger");
         getClientConfiguration().setString("logger.level", logging ? level : "fatal");
-        buildLoggers(getClientConfiguration(), logger(), "clickhouse-local");
+        buildLoggers(getClientConfiguration(), logger(), "datastore-local");
     }
 
     shared_context = Context::createShared();
@@ -1030,7 +1030,7 @@ void LocalServer::processConfig()
     std::string server_default_database = server_settings[ServerSetting::default_database];
     if (!server_default_database.empty())
     {
-        DatabasePtr database = createClickHouseLocalDatabaseOverlay(server_default_database, global_context);
+        DatabasePtr database = createDatastoreLocalDatabaseOverlay(server_default_database, global_context);
         if (UUID uuid = database->getUUID(); uuid != UUIDHelpers::Nil)
             DatabaseCatalog::instance().addUUIDMapping(uuid);
         DatabaseCatalog::instance().attachDatabase(server_default_database, database);
@@ -1119,9 +1119,9 @@ void LocalServer::processConfig()
 [[ maybe_unused ]] static std::string getHelpHeader()
 {
     return
-        "usage: clickhouse-local [initial table definition] [--query <query>]\n"
+        "usage: datastore-local [initial table definition] [--query <query>]\n"
 
-        "clickhouse-local allows to execute SQL queries on your data files via single command line call."
+        "datastore-local allows to execute SQL queries on your data files via single command line call."
         " To do so, initially you need to define your data source and its format."
         " After you can execute your SQL queries in usual manner.\n"
 
@@ -1137,7 +1137,7 @@ void LocalServer::processConfig()
     return
         "Example printing memory used by each Unix user:\n"
         "ps aux | tail -n +2 | awk '{ printf(\"%s\\t%s\\n\", $1, $4) }' | "
-        "clickhouse-local -S \"user String, mem Float64\" -q"
+        "datastore-local -S \"user String, mem Float64\" -q"
             " \"SELECT user, round(sum(mem), 2) as mem_total FROM table GROUP BY user ORDER"
             " BY mem_total DESC FORMAT PrettyCompact\"";
 }
@@ -1148,10 +1148,10 @@ void LocalServer::printHelpMessage(const OptionsDescription & options_descriptio
     output_stream << getHelpHeader() << "\n";
     if (options_description.main_description.has_value())
         output_stream << options_description.main_description.value() << "\n";
-    output_stream << "All settings are documented at https://clickhouse.com/docs/operations/settings/settings.\n\n";
+    output_stream << "All settings are documented at https://datastore.com/docs/operations/settings/settings.\n\n";
     output_stream << getHelpFooter() << "\n";
     output_stream << "In addition, --param_name=value can be specified for substitution of parameters for parameterized queries.\n";
-    output_stream << "\nSee also: https://clickhouse.com/docs/en/operations/utilities/clickhouse-local/\n";
+    output_stream << "\nSee also: https://datastore.com/docs/en/operations/utilities/datastore-local/\n";
 }
 
 
@@ -1272,7 +1272,7 @@ void LocalServer::readArguments(int argc, char ** argv, Arguments & common_argum
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseLocal(int argc, char ** argv)
+int mainEntryDatastoreLocal(int argc, char ** argv)
 {
     DB::MainThreadStatus::getInstance();
 

@@ -71,7 +71,7 @@ std::shared_ptr<const QueryPlan> createRemotePlanForParallelReplicas(
 
     /// For Analyzer, identifier in GROUP BY/ORDER BY/LIMIT BY lists has been resolved to
     /// ConstantNode in QueryTree if it is an alias of a constant, so we should not replace
-    /// ConstantNode with ProjectionNode again(https://github.com/ClickHouse/ClickHouse/issues/62289).
+    /// ConstantNode with ProjectionNode again(https://github.com/Datastore/Datastore/issues/62289).
     new_context->setSetting("enable_positional_arguments", Field(false));
     new_context->setSetting("allow_experimental_parallel_reading_from_replicas", Field(0));
     auto interpreter = InterpreterSelectQueryAnalyzer(query_ast, new_context, select_query_options);
@@ -108,7 +108,7 @@ std::pair<QueryPlanPtr, bool> createLocalPlanForParallelReplicas(
 
     /// For Analyzer, identifier in GROUP BY/ORDER BY/LIMIT BY lists has been resolved to
     /// ConstantNode in QueryTree if it is an alias of a constant, so we should not replace
-    /// ConstantNode with ProjectionNode again(https://github.com/ClickHouse/ClickHouse/issues/62289).
+    /// ConstantNode with ProjectionNode again(https://github.com/Datastore/Datastore/issues/62289).
     auto new_context = Context::createCopy(context);
     new_context->setSetting("enable_positional_arguments", Field(false));
     new_context->setSetting("allow_experimental_parallel_reading_from_replicas", Field(0));

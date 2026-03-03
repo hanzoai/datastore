@@ -1,7 +1,7 @@
 #include <Backups/BackupCoordinationReplicatedTables.h>
 #include <Storages/MergeTree/MergeTreePartInfo.h>
 #include <Storages/MergeTree/ReplicatedMergeTreeMutationEntry.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     #include <Storages/SharedMergeTree/SharedMergeTreeMutationEntry.h>
 #endif
 #include <Common/Exception.h>

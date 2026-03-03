@@ -57,7 +57,7 @@ struct HostID
 
     String readableString() const;
 
-    bool isLocalAddress(UInt16 clickhouse_port) const;
+    bool isLocalAddress(UInt16 datastore_port) const;
     bool isLoopbackHost() const;
 
     static String applyToString(const HostID & host_id)

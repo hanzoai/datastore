@@ -33,9 +33,9 @@ ilike(haystack, pattern)
     {
     {
         "Usage example",
-        "SELECT ilike('ClickHouse', '%house%');",
+        "SELECT ilike('Datastore', '%house%');",
         R"(
-┌─ilike('ClickHouse', '%house%')─┐
+┌─ilike('Datastore', '%house%')─┐
 │                              1 │
 └────────────────────────────────┘
         )"

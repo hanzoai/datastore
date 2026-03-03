@@ -215,17 +215,17 @@ String getOrEmpty(const Aws::Http::HeaderValueCollection & map, const String & k
 
 void setClickhouseAttemptNumber(Aws::AmazonWebServiceRequest & request, size_t attempt)
 {
-    request.SetAdditionalCustomHeaderValue("clickhouse-request", fmt::format("attempt={}", attempt));
+    request.SetAdditionalCustomHeaderValue("datastore-request", fmt::format("attempt={}", attempt));
 }
 
 size_t getClickhouseAttemptNumber(const Aws::AmazonWebServiceRequest & request)
 {
-    return getAttemptFromInfo(getOrEmpty(request.GetHeaders(), "clickhouse-request"));
+    return getAttemptFromInfo(getOrEmpty(request.GetHeaders(), "datastore-request"));
 }
 
 size_t getClickhouseAttemptNumber(const Aws::Http::HttpRequest & request)
 {
-    return getAttemptFromInfo(getOrEmpty(request.GetHeaders(), "clickhouse-request"));
+    return getAttemptFromInfo(getOrEmpty(request.GetHeaders(), "datastore-request"));
 }
 
 size_t getSDKAttemptNumber(const Aws::Http::HttpRequest & request)

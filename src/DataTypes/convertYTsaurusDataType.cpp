@@ -130,11 +130,11 @@ DataTypePtr convertYTPrimitiveType(const String & data_type, bool type_v3)
     }
     else if (data_type == "null")
     {
-        throw Exception(ErrorCodes::INCORRECT_DATA, "ClickHouse couldn't parse YT data type \"null\"");
+        throw Exception(ErrorCodes::INCORRECT_DATA, "Datastore couldn't parse YT data type \"null\"");
     }
     else if (data_type == "void")
     {
-        throw Exception(ErrorCodes::INCORRECT_DATA, "ClickHouse couldn't parse YT data type \"void\"");
+        throw Exception(ErrorCodes::INCORRECT_DATA, "Datastore couldn't parse YT data type \"void\"");
     }
 
     return data_type_ptr;
@@ -191,7 +191,7 @@ DataTypePtr convertYTOptional(const Poco::JSON::Object::Ptr & json)
     {
         throw Exception(ErrorCodes::INCORRECT_DATA, "Couldn't parse 'optional' type from YT(incorrect nested type)");
     }
-    /// ClickHouse/docs/engines/table-engines/integrations/ytsaurus.md *See Also*
+    /// Datastore/docs/engines/table-engines/integrations/ytsaurus.md *See Also*
     if (!nested_type->canBeInsideNullable())
     {
         switch (nested_type->getTypeId())

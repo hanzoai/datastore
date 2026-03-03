@@ -552,7 +552,7 @@ It is widely used in databases and big data systems where computing accurate qua
 The algorithm is highly efficient, taking only O(log n) space and O(log log n) time per item (where n is the size of the input).
 It is also highly accurate, providing an approximate quantile value with high probability.
 
-`quantileGK` is different from other quantile functions in ClickHouse, because it enables user to control the accuracy of the approximate quantile result.
+`quantileGK` is different from other quantile functions in Datastore, because it enables user to control the accuracy of the approximate quantile result.
     )";
     FunctionDocumentation::Syntax syntax = R"(
 quantileGK(accuracy, level)(expr)

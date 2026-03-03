@@ -60,7 +60,7 @@
 #include <Storages/IStorage.h>
 #include <Storages/MergeTree/MergeTreeSettings.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/DistributedCacheLog.h>
 #include <Interpreters/DistributedCacheServerLog.h>
 #endif
@@ -188,7 +188,7 @@ std::shared_ptr<TSystemLog> createSystemLog(
         log_settings.engine += " ORDER BY (" + order_by + ")";
 
         /// SETTINGS expr is not necessary.
-        ///   https://clickhouse.com/docs/engines/table-engines/mergetree-family/mergetree#settings
+        ///   https://datastore.com/docs/engines/table-engines/mergetree-family/mergetree#settings
         ///
         /// STORAGE POLICY expr is retained for backward compatible.
         String storage_policy = config.getString(config_prefix + ".storage_policy", "");
@@ -296,7 +296,7 @@ SystemLogs::SystemLogs(ContextPtr global_context, const Poco::Util::AbstractConf
     member = createSystemLog<log_type>(global_context, "system", #member, config, #member, descr); \
 
     LIST_OF_ALL_SYSTEM_LOGS(CREATE_PUBLIC_MEMBERS)
-    #if CLICKHOUSE_CLOUD
+    #if DATASTORE_CLOUD
         LIST_OF_CLOUD_SYSTEM_LOGS(CREATE_PUBLIC_MEMBERS)
     #endif
 #undef CREATE_PUBLIC_MEMBERS
@@ -380,7 +380,7 @@ std::vector<ISystemLog *> SystemLogs::getAllLogs() const
 
     std::vector<ISystemLog *> result = {
         LIST_OF_ALL_SYSTEM_LOGS(GET_RAW_POINTERS)
-        #if CLICKHOUSE_CLOUD
+        #if DATASTORE_CLOUD
             LIST_OF_CLOUD_SYSTEM_LOGS(GET_RAW_POINTERS)
         #endif
     };
@@ -440,7 +440,7 @@ void SystemLogs::flushImpl(const std::vector<std::pair<String, String>> & names,
         std::unordered_map<String, ISystemLog *> logs_map
         {
             LIST_OF_ALL_SYSTEM_LOGS(GET_MAP_VALUES)
-            #if CLICKHOUSE_CLOUD
+            #if DATASTORE_CLOUD
                 LIST_OF_CLOUD_SYSTEM_LOGS(GET_MAP_VALUES)
             #endif
         };
@@ -863,7 +863,7 @@ ASTPtr SystemLog<LogElement>::getCreateTableQuery()
 
 #define INSTANTIATE_SYSTEM_LOG(ELEMENT) template class SystemLog<ELEMENT>;
 SYSTEM_LOG_ELEMENTS(INSTANTIATE_SYSTEM_LOG)
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 SYSTEM_LOG_ELEMENTS_CLOUD(INSTANTIATE_SYSTEM_LOG)
 #endif
 

@@ -14,7 +14,7 @@
 #include <Disks/DiskLocal.h>
 
 
-int mainEntryClickHouseKeeperConverter(int argc, char ** argv)
+int mainEntryDatastoreKeeperConverter(int argc, char ** argv)
 {
     using namespace DB;
     namespace po = boost::program_options;
@@ -24,7 +24,7 @@ int mainEntryClickHouseKeeperConverter(int argc, char ** argv)
         ("help,h", "produce help message")
         ("zookeeper-logs-dir", po::value<std::string>(), "Path to directory with ZooKeeper logs")
         ("zookeeper-snapshots-dir", po::value<std::string>(), "Path to directory with ZooKeeper snapshots")
-        ("output-dir", po::value<std::string>(), "Directory to place output clickhouse-keeper snapshot")
+        ("output-dir", po::value<std::string>(), "Directory to place output datastore-keeper snapshot")
     ;
     po::variables_map options;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), options);
@@ -35,7 +35,7 @@ int mainEntryClickHouseKeeperConverter(int argc, char ** argv)
 
     if (options.contains("help"))
     {
-        std::cout << "Usage: " << argv[0] << " --zookeeper-logs-dir /var/lib/zookeeper/data/version-2 --zookeeper-snapshots-dir /var/lib/zookeeper/data/version-2 --output-dir /var/lib/clickhouse/coordination/snapshots" << std::endl;
+        std::cout << "Usage: " << argv[0] << " --zookeeper-logs-dir /var/lib/zookeeper/data/version-2 --zookeeper-snapshots-dir /var/lib/zookeeper/data/version-2 --output-dir /var/lib/datastore/coordination/snapshots" << std::endl;
         std::cout << desc << std::endl;
         return 0;
     }

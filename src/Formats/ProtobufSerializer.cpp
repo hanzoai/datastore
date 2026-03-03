@@ -4128,7 +4128,7 @@ namespace
 
                 if (skip_unsupported_fields)
                     return std::nullopt;
-                throw Exception(ErrorCodes::BAD_ARGUMENTS, "ClickHouse supports only 8-bit and 16-bit enums");
+                throw Exception(ErrorCodes::BAD_ARGUMENTS, "Datastore supports only 8-bit and 16-bit enums");
             }
             case FieldTypeId::TYPE_GROUP:
             case FieldTypeId::TYPE_MESSAGE:
@@ -4149,7 +4149,7 @@ namespace
                             return std::nullopt;
                         throw Exception(
                             ErrorCodes::BAD_ARGUMENTS,
-                            "ClickHouse doesn't support type recursion ({})",
+                            "Datastore doesn't support type recursion ({})",
                             nested_field_descriptor->full_name());
                     }
 
@@ -4171,7 +4171,7 @@ namespace
                             continue;
                         throw Exception(
                             ErrorCodes::BAD_ARGUMENTS,
-                            "ClickHouse doesn't support type recursion ({})",
+                            "Datastore doesn't support type recursion ({})",
                             message_descriptor->field(i)->full_name());
                     }
                     auto nested_name_and_type = getNameAndDataTypeFromFieldRecursive(
@@ -4279,7 +4279,7 @@ NamesAndTypesList protobufSchemaToCHSchema(const google::protobuf::Descriptor * 
         }
     }
     if (schema.empty())
-        throw Exception(ErrorCodes::BAD_ARGUMENTS, "Cannot convert Protobuf schema to ClickHouse table schema, all fields have unsupported types");
+        throw Exception(ErrorCodes::BAD_ARGUMENTS, "Cannot convert Protobuf schema to Datastore table schema, all fields have unsupported types");
     if (!oneofs.empty())
         schema.splice(schema.end(), oneofs);
     return schema;

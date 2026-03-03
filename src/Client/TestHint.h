@@ -35,12 +35,12 @@ class Lexer;
 ///
 /// Examples:
 ///
-/// - echo 'select / -- { clientError 62 }' | clickhouse-client -nm
+/// - echo 'select / -- { clientError 62 }' | datastore-client -nm
 ///
 //    Here the client parses the query but it is incorrect, so it expects
 ///   SYNTAX_ERROR (62).
 ///
-/// - echo 'select foo -- { serverError 47 }' | clickhouse-client -nm
+/// - echo 'select foo -- { serverError 47 }' | datastore-client -nm
 ///
 ///   But here the query is correct, but there is no such column "foo", so it
 ///   is UNKNOWN_IDENTIFIER server error.

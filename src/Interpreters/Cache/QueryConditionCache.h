@@ -31,7 +31,7 @@ public:
 private:
     /// A hash of the table id, part name and condition id.
     /// CityHash128 is enough to use for practical applications as the probability of collisions is very low.
-    /// https://github.com/ClickHouse/ClickHouse/issues/9506
+    /// https://github.com/Datastore/Datastore/issues/9506
     using Key = UInt128;
 
     struct Entry
@@ -55,7 +55,7 @@ private:
 #endif
 
         /// (*) You might wonder why Entry has its own mutex considering that CacheBase locks internally already. The reason is that
-        ///     ClickHouse scans ranges within the same part in parallel. The first scan creates and inserts a new Key + Entry into the cache,
+        ///     Datastore scans ranges within the same part in parallel. The first scan creates and inserts a new Key + Entry into the cache,
         ///     the 2nd ... Nth scans find the existing Key and update its Entry for the new ranges. This can only be done safely in a
         ///     synchronized fashion.
 

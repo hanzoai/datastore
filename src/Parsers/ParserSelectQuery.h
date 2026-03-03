@@ -15,7 +15,7 @@ protected:
 
     /// If this flag is enabled, it will accept queries without SELECT, e.g. 1 + 2,
     /// (without SELECT, WITH is also not allowed; queries starting with FROM are also not allowed without SELECT)
-    /// in this case, ClickHouse can be used as a calculator in the command line.
+    /// in this case, Datastore can be used as a calculator in the command line.
     bool implicit_select = false;
 
 public:

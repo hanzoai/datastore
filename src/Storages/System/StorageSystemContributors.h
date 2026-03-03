@@ -7,7 +7,7 @@ namespace DB
 class Context;
 
 
-/** System table "contributors" with list of clickhouse contributors
+/** System table "contributors" with list of datastore contributors
   */
 class StorageSystemContributors final : public IStorageSystemOneBlock
 {
