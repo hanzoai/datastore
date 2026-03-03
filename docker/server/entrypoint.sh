@@ -266,7 +266,14 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
 
     # Start nginx header-translation proxy (8123 → 8124)
     if command -v nginx >/dev/null 2>&1 && [ -f /etc/nginx/http.d/datastore-proxy.conf ]; then
-        nginx
+        # Ensure nginx runtime dirs are writable (needed when running as non-root)
+        for _d in /var/lib/nginx/logs /var/lib/nginx/tmp/client_body /var/lib/nginx/tmp/proxy /var/lib/nginx/tmp/fastcgi /var/lib/nginx/tmp/uwsgi /var/lib/nginx/tmp/scgi /run/nginx; do
+            mkdir -p "$_d" 2>/dev/null || true
+        done
+        if [ "$(id -u)" = "0" ]; then
+            chown -R "${USER}:${GROUP}" /var/lib/nginx /run/nginx 2>/dev/null || true
+        fi
+        nginx 2>/dev/null || echo "$0: warning: nginx failed to start, header translation proxy unavailable"
     fi
 
     # This replaces the shell script with the server:

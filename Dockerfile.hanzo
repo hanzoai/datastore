@@ -104,7 +104,11 @@ RUN arch=${TARGETARCH:-amd64} \
         rm -rf /etc/clickhouse-server; fi \
     && if [ -d /etc/clickhouse-client ]; then \
         cp -a /etc/clickhouse-client/* /etc/hanzo-datastore-client/ 2>/dev/null || true; \
-        rm -rf /etc/clickhouse-client; fi
+        rm -rf /etc/clickhouse-client; fi \
+    # Pre-create nginx runtime dirs writable by hanzo-datastore user (for non-root operation)
+    && mkdir -p /var/lib/nginx/logs /var/lib/nginx/tmp/client_body /var/lib/nginx/tmp/proxy \
+        /var/lib/nginx/tmp/fastcgi /var/lib/nginx/tmp/uwsgi /var/lib/nginx/tmp/scgi /run/nginx \
+    && chown -R hanzo-datastore:hanzo-datastore /var/lib/nginx /run/nginx
 
 ARG DEFAULT_CLIENT_CONFIG_DIR="/etc/hanzo-datastore-client"
 ARG DEFAULT_SERVER_CONFIG_DIR="/etc/hanzo-datastore-server"
