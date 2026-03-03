@@ -1,1 +1,1 @@
-int mainEntryClickHouseKeeperConverter(int argc, char ** argv);
+int mainEntryDatastoreKeeperConverter(int argc, char ** argv);

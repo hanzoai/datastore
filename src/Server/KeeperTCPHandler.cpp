@@ -278,7 +278,7 @@ void KeeperTCPHandler::sendHandshake(bool has_leader, bool & use_compression)
     else
     {
         /// Ignore connections if we are not leader, client will throw exception
-        /// and reconnect to another replica faster. ClickHouse client provide
+        /// and reconnect to another replica faster. Datastore client provide
         /// clear message for such protocol version.
         Coordination::write(Coordination::KEEPER_PROTOCOL_VERSION_CONNECTION_REJECT, *out);
     }

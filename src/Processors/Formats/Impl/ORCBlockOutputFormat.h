@@ -57,7 +57,7 @@ private:
     template <typename NumberType, typename NumberVectorBatch, typename ConvertFunc>
     void writeNumbers(orc::ColumnVectorBatch & orc_column, const IColumn & column, const PaddedPODArray<UInt8> * null_bytemap, ConvertFunc convert);
 
-    /// ConvertFunc is needed to convert ClickHouse Int128 to ORC Int128.
+    /// ConvertFunc is needed to convert Datastore Int128 to ORC Int128.
     template <typename Decimal, typename DecimalVectorBatch, typename ConvertFunc>
     void writeDecimals(orc::ColumnVectorBatch & orc_column, const IColumn & column, DataTypePtr & type,
                         const PaddedPODArray<UInt8> * null_bytemap, ConvertFunc convert);

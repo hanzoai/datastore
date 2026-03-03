@@ -30,7 +30,7 @@ REGISTER_FUNCTION(NotILike)
     {
     {
         "Usage example",
-        "SELECT notILike('ClickHouse', '%house%');",
+        "SELECT notILike('Datastore', '%house%');",
         R"(
 ┌─notILike('Cl⋯ '%house%')─┐
 │                        0 │

@@ -16,7 +16,7 @@ using RuntimeDataflowStatisticsCacheUpdaterPtr = std::shared_ptr<RuntimeDataflow
 
 /** Executes a certain expression over the block.
   * The expression consists of column identifiers from the block, constants, common functions.
-  * For example: hits * 2 + 3, url LIKE '%clickhouse%'
+  * For example: hits * 2 + 3, url LIKE '%datastore%'
   * The expression processes each row independently of the others.
   */
 class ExpressionTransform final : public ISimpleTransform

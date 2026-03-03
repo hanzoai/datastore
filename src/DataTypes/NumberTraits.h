@@ -248,7 +248,7 @@ template <typename A> struct ToInteger
 };
 
 
-// CLICKHOUSE-29. The same depth, different signs
+// DATASTORE-29. The same depth, different signs
 // NOTE: This case is applied for 64-bit integers only (for backward compatibility), but could be used for any-bit integers
 /// NOLINTBEGIN(misc-redundant-expression)
 template <typename A, typename B>

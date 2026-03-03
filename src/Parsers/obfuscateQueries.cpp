@@ -90,7 +90,7 @@ const std::unordered_set<std::string> & getObfuscateKeywords()
             "POSTINGS", "HEADER", "METADATA", "ALLOCATE", "FREE", "LOAD", "UNLOAD", "UNKNOWN",
             "CLIENT", "MODEL",
             /// Dictionary layout/source keywords
-            "FLAT", "HASHED", "IP_TRIE", "REGEXP_TREE", "DIRECT", "CLICKHOUSE", "EXECUTABLE",
+            "FLAT", "HASHED", "IP_TRIE", "REGEXP_TREE", "DIRECT", "DATASTORE", "EXECUTABLE",
             "LIBRARY",
             /// Special SQL functions/types parsed by special rules
             "EXTRACT", "TRIM", "DECIMAL",

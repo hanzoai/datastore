@@ -10,7 +10,7 @@
 #include <Parsers/ASTIdentifier.h>
 #include <Storages/AlterCommands.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -54,7 +54,7 @@ BlockIO InterpreterDropIndexQuery::execute()
         return database->tryEnqueueReplicatedDDL(query_ptr, current_context, {}, std::move(guard));
     }
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (SharedDatabaseCatalog::shouldReplicateQuery(getContext(), query_ptr))
     {
         return SharedDatabaseCatalog::instance().tryExecuteDDLQuery(query_ptr, getContext());

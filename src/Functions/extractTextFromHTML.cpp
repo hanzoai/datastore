@@ -53,9 +53,9 @@
   *
   * Usage example:
   *
-  * SELECT extractTextFromHTML(html) FROM url('https://github.com/ClickHouse/ClickHouse', RawBLOB, 'html String')
+  * SELECT extractTextFromHTML(html) FROM url('https://github.com/Datastore/Datastore', RawBLOB, 'html String')
   *
-  * - ClickHouse has embedded web browser.
+  * - Datastore has embedded web browser.
   */
 
 namespace DB

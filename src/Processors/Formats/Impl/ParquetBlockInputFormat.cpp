@@ -111,9 +111,9 @@ void traverseAllFields(const parquet::schema::NodePtr & node, std::unordered_map
 /// There are two questionable decisions in this implementation:
 ///  * We parse the value from the encoded byte string instead of casting the parquet::Statistics
 ///    to parquet::TypedStatistics and taking the value from there.
-///  * We dispatch based on the parquet logical+converted+physical type instead of the ClickHouse type.
+///  * We dispatch based on the parquet logical+converted+physical type instead of the Datastore type.
 /// The idea is that this is similar to what we'll have to do when reimplementing Parquet parsing in
-/// ClickHouse instead of using Arrow (for speed). So, this is an exercise in parsing Parquet manually.
+/// Datastore instead of using Arrow (for speed). So, this is an exercise in parsing Parquet manually.
 static Field decodePlainParquetValueSlow(const std::string & data, parquet::Type::type physical_type, const parquet::ColumnDescriptor & descr, TypeIndex type_hint)
 {
     using namespace parquet;
@@ -339,7 +339,7 @@ private:
 static KeyCondition::ColumnIndexToBloomFilter buildColumnIndexToBF(
     parquet::BloomFilterReader & bf_reader,
     int row_group,
-    const std::vector<ArrowFieldIndexUtil::ClickHouseIndexToParquetIndex> & clickhouse_column_index_to_parquet_index,
+    const std::vector<ArrowFieldIndexUtil::DatastoreIndexToParquetIndex> & datastore_column_index_to_parquet_index,
     const std::unordered_set<std::size_t> & filtering_columns
 )
 {
@@ -352,9 +352,9 @@ static KeyCondition::ColumnIndexToBloomFilter buildColumnIndexToBF(
 
     KeyCondition::ColumnIndexToBloomFilter index_to_column_bf;
 
-    for (const auto & [clickhouse_index, parquet_indexes] : clickhouse_column_index_to_parquet_index)
+    for (const auto & [datastore_index, parquet_indexes] : datastore_column_index_to_parquet_index)
     {
-        if (!filtering_columns.contains(clickhouse_index))
+        if (!filtering_columns.contains(datastore_index))
         {
             continue;
         }
@@ -374,7 +374,7 @@ static KeyCondition::ColumnIndexToBloomFilter buildColumnIndexToBF(
             continue;
         }
 
-        index_to_column_bf[clickhouse_index] = std::make_unique<ParquetBloomFilter>(std::move(parquet_bf));
+        index_to_column_bf[datastore_index] = std::make_unique<ParquetBloomFilter>(std::move(parquet_bf));
     }
 
     return index_to_column_bf;
@@ -565,15 +565,15 @@ std::unordered_set<std::size_t> getBloomFilterFilteringColumnKeys(const KeyCondi
 
 const parquet::ColumnDescriptor * getColumnDescriptorIfBloomFilterIsPresent(
     const std::unique_ptr<parquet::RowGroupMetaData> & parquet_rg_metadata,
-    const std::vector<ArrowFieldIndexUtil::ClickHouseIndexToParquetIndex> & clickhouse_column_index_to_parquet_index,
-    std::size_t clickhouse_column_index)
+    const std::vector<ArrowFieldIndexUtil::DatastoreIndexToParquetIndex> & datastore_column_index_to_parquet_index,
+    std::size_t datastore_column_index)
 {
-    if (clickhouse_column_index_to_parquet_index.size() <= clickhouse_column_index)
+    if (datastore_column_index_to_parquet_index.size() <= datastore_column_index)
     {
         return nullptr;
     }
 
-    const auto & parquet_indexes = clickhouse_column_index_to_parquet_index[clickhouse_column_index].parquet_indexes;
+    const auto & parquet_indexes = datastore_column_index_to_parquet_index[datastore_column_index].parquet_indexes;
 
     /// Complex types like structs, tuples and maps will have more than one index; we don't support those for now.
     /// Empty tuples are also not supported.
@@ -716,17 +716,17 @@ void ParquetBlockInputFormat::initializeIfNeeded()
         const auto & group_node = metadata->schema()->group_node();
 
         std::unordered_map<Int64, String> parquet_field_ids;
-        parquet_names_to_clickhouse = std::unordered_map<String, String>{};
+        parquet_names_to_datastore = std::unordered_map<String, String>{};
         for (int i = 0; i < group_node->field_count(); ++i)
             traverseAllFields(group_node->field(i), parquet_field_ids);
 
         auto result = format_filter_info->column_mapper->makeMapping(parquet_field_ids);
-        clickhouse_names_to_parquet = std::move(result.first);
-        parquet_names_to_clickhouse = std::move(result.second);
+        datastore_names_to_parquet = std::move(result.first);
+        parquet_names_to_datastore = std::move(result.second);
     }
-    auto index_mapping = field_util.findRequiredIndices(getPort().getHeader(), *schema, *metadata, clickhouse_names_to_parquet);
+    auto index_mapping = field_util.findRequiredIndices(getPort().getHeader(), *schema, *metadata, datastore_names_to_parquet);
 
-    for (const auto & [clickhouse_header_index, parquet_indexes] : index_mapping)
+    for (const auto & [datastore_header_index, parquet_indexes] : index_mapping)
     {
         for (auto parquet_index : parquet_indexes)
         {
@@ -951,8 +951,8 @@ void ParquetBlockInputFormat::initializeRowGroupBatchReader(size_t row_group_bat
         getPort().getHeader(),
         "Parquet",
         format_settings,
-        parquet_names_to_clickhouse,
-        clickhouse_names_to_parquet,
+        parquet_names_to_datastore,
+        datastore_names_to_parquet,
         format_settings.parquet.allow_missing_columns,
         format_settings.null_as_default,
         format_settings.date_time_overflow_behavior,

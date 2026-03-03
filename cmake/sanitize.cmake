@@ -39,7 +39,7 @@ if (SANITIZE)
             # compilers or CPU. We use in hash functions like SipHash and many other places in our codebase.
             # This flag is needed only because fuzzers are run inside oss-fuzz infrastructure
             # and they have a bunch of flags not halt the program if UIO happend and even to silence that warnings.
-            # But for unknown reason that flags don't work with ClickHouse or we don't understand how to properly use them,
+            # But for unknown reason that flags don't work with Datastore or we don't understand how to properly use them,
             # that's why we often receive reports about UIO. The simplest way to avoid this is just  set this flag here.
             set(UBSAN_FLAGS "${UBSAN_FLAGS} -fno-sanitize=unsigned-integer-overflow")
         endif()
@@ -70,7 +70,7 @@ endif()
 # The compiler searches -isystem paths before its implicit resource directory, so putting our
 # bundled path here ensures it takes precedence without disrupting #include_next chains (which
 # libcxx relies on to reach the compiler's own stddef.h, stdarg.h, etc.).
-include_directories (SYSTEM "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/compiler-rt/include")
+include_directories (SYSTEM "${Datastore_SOURCE_DIR}/contrib/llvm-project/compiler-rt/include")
 
 option (SANITIZE_COVERAGE "Instrumentation for code coverage with custom callbacks" OFF)
 
@@ -82,7 +82,7 @@ if (SANITIZE_COVERAGE)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSANITIZE_COVERAGE=1")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSANITIZE_COVERAGE=1")
 
-    # But the actual coverage will be enabled on per-library basis: for ClickHouse code, but not for 3rd-party.
+    # But the actual coverage will be enabled on per-library basis: for Datastore code, but not for 3rd-party.
     set (COVERAGE_FLAGS "-fsanitize-coverage=trace-pc-guard,pc-table")
 
     set (WITHOUT_COVERAGE_FLAGS "-fno-profile-instr-generate -fno-coverage-mapping -fno-sanitize-coverage=trace-pc-guard,pc-table")

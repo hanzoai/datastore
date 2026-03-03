@@ -457,7 +457,7 @@ void GSSAcceptorContext::initHandles()
 
 String GSSAcceptorContext::processToken(const String &, LoggerPtr)
 {
-    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "ClickHouse was built without GSS-API/Kerberos support");
+    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Datastore was built without GSS-API/Kerberos support");
 }
 
 #endif // USE_KRB5

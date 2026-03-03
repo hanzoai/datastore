@@ -112,7 +112,7 @@ namespace fs = std::filesystem;
 using namespace std::literals;
 
 #if USE_FUZZING_MODE
-int clickhouseMain(int argc_, char ** argv_);
+int datastoreMain(int argc_, char ** argv_);
 #endif
 
 namespace DB
@@ -1917,7 +1917,7 @@ void ClientBase::sendData(Block & sample, const ColumnsDescription & columns_des
     if (!parsed_insert_query)
         return;
 
-    /// If it's clickhouse-local, and the input data reading is already baked into the query pipeline,
+    /// If it's datastore-local, and the input data reading is already baked into the query pipeline,
     /// don't read the data again here. This happens in some cases (e.g. input() table function) but not others (e.g. INFILE).
     if (!connection->isSendDataNeeded())
         return;
@@ -3275,7 +3275,7 @@ void ClientBase::addCommonOptions(OptionsDescription & options_description)
     chassert(!options_description.main_description.has_value(), "The options_description.main_description should be initialized by the method addCommonOptions().");
 
     options_description.main_description.emplace(createOptionsDescription("Main options", terminal_width));
-    /// Common options for clickhouse-client and clickhouse-local.
+    /// Common options for datastore-client and datastore-local.
     options_description.main_description->add_options()
         ("help", "Print usage summary and exit; combine with --verbose to display all options")
         ("verbose", "Increase output verbosity")
@@ -3303,7 +3303,7 @@ void ClientBase::addCommonOptions(OptionsDescription & options_description)
         ("progress-table", po::value<ProgressOption>()->implicit_value(ProgressOption::TTY, "tty")->default_value(ProgressOption::DEFAULT, "default"), "Print a progress table with changing metrics during query execution - to TTY: tty|on|1|true|yes; to STDERR non-interactive mode: err; OFF: off|0|false|no; DEFAULT - interactive to TTY, non-interactive is off")
         ("enable-progress-table-toggle", po::value<bool>()->default_value(true), "Enable toggling of the progress table by pressing the control key (Space). Only applicable in interactive mode with the progress table enabled.")
 
-        ("disable_suggestion,A", "Disable loading suggestions. Note that suggestions are loaded asynchronously through a second connection to ClickHouse server. Recommended when pasting queries with TAB characters.") /// Shorthand -A like in MySQL client
+        ("disable_suggestion,A", "Disable loading suggestions. Note that suggestions are loaded asynchronously through a second connection to Datastore server. Recommended when pasting queries with TAB characters.") /// Shorthand -A like in MySQL client
         ("wait_for_suggestions_to_load", "Load suggestion data synchonously")
         ("suggestion_limit", po::value<int>()->default_value(10000), "Suggestion limit for how many databases, tables and columns to fetch")
 
@@ -3315,7 +3315,7 @@ void ClientBase::addCommonOptions(OptionsDescription & options_description)
         ("log-level", po::value<std::string>(), "Log level")
         ("server_logs_file", po::value<std::string>(), "Write server logs to specified file")
 
-        ("format,f", po::value<std::string>(), "Default input and output format. In clickhouse-client only the default output format.")
+        ("format,f", po::value<std::string>(), "Default input and output format. In datastore-client only the default output format.")
         ("output-format", po::value<std::string>(), "Default output format. Takes precedence over --format.")
         ("vertical,E", "Same as --format=Vertical or FORMAT Vertical or \\G at end of command")
 
@@ -3843,17 +3843,17 @@ void ClientBase::runNonInteractive()
 
 fs::path ClientBase::getHistoryFilePath()
 {
-    auto * history_file_from_env = getenv("CLICKHOUSE_HISTORY_FILE"); // NOLINT(concurrency-mt-unsafe)
+    auto * history_file_from_env = getenv("DATASTORE_HISTORY_FILE"); // NOLINT(concurrency-mt-unsafe)
     if (history_file_from_env)
         return history_file_from_env;
 
-    /// Client query history was stored in ~/.clickhouse-client-history
-    /// before moving to $XDG_STATE_HOME/clickhouse/client-query-history.
+    /// Client query history was stored in ~/.datastore-client-history
+    /// before moving to $XDG_STATE_HOME/datastore/client-query-history.
     /// We'll pick up the old file and use it if it is already present.
     auto * home_path = getenv("HOME"); // NOLINT(concurrency-mt-unsafe)
     if (home_path)
     {
-        auto path_in_home_dir = fs::path(home_path) / ".clickhouse-client-history";
+        auto path_in_home_dir = fs::path(home_path) / ".datastore-client-history";
 
         if (fs::exists(path_in_home_dir))
             return path_in_home_dir;
@@ -3863,7 +3863,7 @@ fs::path ClientBase::getHistoryFilePath()
     if (!xdg_state_home.empty())
         return xdg_state_home / "client-query-history";
 
-    throw Exception(ErrorCodes::CANNOT_OPEN_FILE, "Neither $CLICKHOUSE_HISTORY_FILE, $HOME nor $XDG_STATE_HOME is set; cannot place history file.");
+    throw Exception(ErrorCodes::CANNOT_OPEN_FILE, "Neither $DATASTORE_HISTORY_FILE, $HOME nor $XDG_STATE_HOME is set; cannot place history file.");
 }
 
 #if !USE_FUZZING_MODE
@@ -3876,7 +3876,7 @@ void ClientBase::clearTerminal()
     /// and clear until end of screen.
     /// It is needed if garbage is left in terminal.
     /// Show cursor. It can be left hidden by invocation of previous programs.
-    /// A test for this feature: perl -e 'print "x"x100000'; echo -ne '\033[0;0H\033[?25l'; clickhouse-client
+    /// A test for this feature: perl -e 'print "x"x100000'; echo -ne '\033[0;0H\033[?25l'; datastore-client
     output_stream << "\r" "\033[0J" "\033[?25h";
 }
 

@@ -813,8 +813,8 @@ public:
     };
     const std::function<bool(const SQLTable &)> attached_tables_for_table_peer_oracle
         = [](const SQLTable & t) { return t.isAttached() && !t.isNotTruncableEngine() && t.is_deterministic; };
-    const std::function<bool(const SQLTable &)> attached_tables_for_clickhouse_table_peer_oracle
-        = [](const SQLTable & t) { return t.isAttached() && !t.isNotTruncableEngine() && t.hasClickHousePeer(); };
+    const std::function<bool(const SQLTable &)> attached_tables_for_datastore_table_peer_oracle
+        = [](const SQLTable & t) { return t.isAttached() && !t.isNotTruncableEngine() && t.hasDatastorePeer(); };
     const std::function<bool(const SQLTable &)> attached_tables_for_external_call
         = [](const SQLTable & t) { return t.isAttached() && t.integration == IntegrationCall::Dolor; };
 

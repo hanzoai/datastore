@@ -1041,7 +1041,7 @@ void MergeTreeData::checkProperties(
 
             indices_names.insert(index.name);
 
-            /// Workaround for https://github.com/ClickHouse/ClickHouse/issues/82385 where functions hasAllTokens/hasAnyTokens don't work
+            /// Workaround for https://github.com/Datastore/Datastore/issues/82385 where functions hasAllTokens/hasAnyTokens don't work
             /// on columns with more than one text index
             if (index.type == TEXT_INDEX_NAME)
             {
@@ -6968,7 +6968,7 @@ void MergeTreeData::restorePartFromBackup(std::shared_ptr<RestoredPartsHolder> r
     /// Calculate paths, for example:
     /// part_name = 0_1_1_0
     /// part_path_in_backup = /data/test/table/0_1_1_0
-    /// temp_part_dir = /var/lib/clickhouse/data/test/table/tmp_restore_all_0_1_1_0-XXXXXXXX
+    /// temp_part_dir = /var/lib/datastore/data/test/table/tmp_restore_all_0_1_1_0-XXXXXXXX
     auto disk = reservation->getDisk();
     fs::path temp_part_dir = restored_parts_holder->getTemporaryDirectory(disk, part_name);
 
@@ -9285,8 +9285,8 @@ PartitionCommandsResultInfo MergeTreeData::freezePartitionsByMatcher(
 {
     auto settings = getSettings();
 
-    String clickhouse_path = fs::canonical(local_context->getPath());
-    String default_shadow_path = fs::path(clickhouse_path) / "shadow/";
+    String datastore_path = fs::canonical(local_context->getPath());
+    String default_shadow_path = fs::path(datastore_path) / "shadow/";
     fs::create_directories(default_shadow_path);
     auto increment = Increment(fs::path(default_shadow_path) / "increment.txt").get(true);
 

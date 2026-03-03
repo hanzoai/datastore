@@ -1,1 +1,1 @@
-extern int mainEntryClickHouseKeeperUtils(int argc, char ** argv);
+extern int mainEntryDatastoreKeeperUtils(int argc, char ** argv);

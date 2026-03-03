@@ -397,7 +397,7 @@ FuzzConfig::FuzzConfig(DB::ClientBase * c, const String & path)
         {"random_limited_values", [&](const JSONObjectType & value) { random_limited_values = value.getBool(); }},
         {"truncate_output", [&](const JSONObjectType & value) { truncate_output = value.getBool(); }},
         {"allow_transactions", [&](const JSONObjectType & value) { allow_transactions = value.getBool(); }},
-        {"clickhouse", [&](const JSONObjectType & value) { clickhouse_server = loadServerCredentials(value, "clickhouse", 9004, 9005); }},
+        {"datastore", [&](const JSONObjectType & value) { datastore_server = loadServerCredentials(value, "datastore", 9004, 9005); }},
         {"mysql", [&](const JSONObjectType & value) { mysql_server = loadServerCredentials(value, "mysql", 3306, 3306); }},
         {"postgresql", [&](const JSONObjectType & value) { postgresql_server = loadServerCredentials(value, "postgresql", 5432); }},
         {"sqlite", [&](const JSONObjectType & value) { sqlite_server = loadServerCredentials(value, "sqlite", 0); }},
@@ -732,7 +732,7 @@ String FuzzConfig::tableGetRandomPartitionOrPart(
     return res;
 }
 
-void FuzzConfig::validateClickHouseHealth()
+void FuzzConfig::validateDatastoreHealth()
 {
     if (processServerQuery(
             false,
@@ -780,7 +780,7 @@ void FuzzConfig::validateClickHouseHealth()
             const uint32_t val = static_cast<uint32_t>(std::stoul(buf));
             if (val != 0)
             {
-                throw DB::Exception(DB::ErrorCodes::BUZZHOUSE, "ClickHouse health check: found {} {}", val, health_errors[i]);
+                throw DB::Exception(DB::ErrorCodes::BUZZHOUSE, "Datastore health check: found {} {}", val, health_errors[i]);
             }
             i++;
             buf.resize(0);
@@ -813,7 +813,7 @@ void FuzzConfig::comparePerformanceResults(const String & oracle_name, Performan
                 {
                     throw DB::Exception(
                         DB::ErrorCodes::BUZZHOUSE,
-                        "{}: ClickHouse peer server {}: {} was less than the target server: {}",
+                        "{}: Datastore peer server {}: {} was less than the target server: {}",
                         oracle_name,
                         key,
                         peer.result_strings.at(key),

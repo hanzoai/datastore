@@ -16,7 +16,7 @@
 namespace DB
 {
 
-/// Lightweight Application for clickhouse-local
+/// Lightweight Application for datastore-local
 /// No networking, no extra configs and working directories, no pid and status files, no dictionaries, no logging.
 /// Quiet mode by default
 class LocalServer : public ClientApplicationBase, public Loggers

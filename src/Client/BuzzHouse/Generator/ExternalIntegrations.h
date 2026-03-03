@@ -39,13 +39,13 @@
 namespace BuzzHouse
 {
 
-class ClickHouseIntegration
+class DatastoreIntegration
 {
 public:
     FuzzConfig & fc;
     const ServerCredentials & sc;
 
-    ClickHouseIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
+    DatastoreIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
         : fc(fcc)
         , sc(scc)
     {
@@ -65,15 +65,15 @@ public:
 
     virtual bool reRunCreateTable(const String &) { return false; }
 
-    virtual ~ClickHouseIntegration() = default;
+    virtual ~DatastoreIntegration() = default;
 };
 
-class ClickHouseIntegratedDatabase : public ClickHouseIntegration
+class DatastoreIntegratedDatabase : public DatastoreIntegration
 {
 public:
     std::ofstream out_file;
-    explicit ClickHouseIntegratedDatabase(FuzzConfig & fcc, const ServerCredentials & scc)
-        : ClickHouseIntegration(fcc, scc)
+    explicit DatastoreIntegratedDatabase(FuzzConfig & fcc, const ServerCredentials & scc)
+        : DatastoreIntegration(fcc, scc)
         , out_file(std::ofstream(scc.query_log_file, std::ios::out | std::ios::trunc))
     {
     }
@@ -98,26 +98,26 @@ public:
 
     bool performQueryOnServerOrRemote(PeerTableDatabase, const String &);
 
-    ~ClickHouseIntegratedDatabase() override = default;
+    ~DatastoreIntegratedDatabase() override = default;
 
 private:
     void swapTableDefinitions(RandomGenerator & rg, CreateTable & newt);
 };
 
-class MySQLIntegration : public ClickHouseIntegratedDatabase
+class MySQLIntegration : public DatastoreIntegratedDatabase
 {
 #if defined USE_MYSQL && USE_MYSQL
 private:
     static void closeMySQLConnection(MYSQL * mysql);
     using MySQLUniqueKeyPtr = std::unique_ptr<MYSQL, decltype(&closeMySQLConnection)>;
 
-    const bool is_clickhouse;
+    const bool is_datastore;
     MySQLUniqueKeyPtr mysql_connection;
 
 public:
     MySQLIntegration(FuzzConfig & fcc, const ServerCredentials & scc, const bool is_click, MySQLUniqueKeyPtr mcon)
-        : ClickHouseIntegratedDatabase(fcc, scc)
-        , is_clickhouse(is_click)
+        : DatastoreIntegratedDatabase(fcc, scc)
+        , is_datastore(is_click)
         , mysql_connection(std::move(mcon))
     {
     }
@@ -139,7 +139,7 @@ public:
 #else
 public:
     MySQLIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
-        : ClickHouseIntegratedDatabase(fcc, scc)
+        : DatastoreIntegratedDatabase(fcc, scc)
     {
     }
 
@@ -148,7 +148,7 @@ public:
     ~MySQLIntegration() override = default;
 };
 
-class PostgreSQLIntegration : public ClickHouseIntegratedDatabase
+class PostgreSQLIntegration : public DatastoreIntegratedDatabase
 {
 #if defined USE_LIBPQXX && USE_LIBPQXX
 private:
@@ -161,7 +161,7 @@ private:
 
 public:
     PostgreSQLIntegration(FuzzConfig & fcc, const ServerCredentials & scc, PostgreSQLUniqueKeyPtr pcon)
-        : ClickHouseIntegratedDatabase(fcc, scc)
+        : DatastoreIntegratedDatabase(fcc, scc)
         , postgres_connection(std::move(pcon))
     {
     }
@@ -181,7 +181,7 @@ public:
 #else
 public:
     PostgreSQLIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
-        : ClickHouseIntegratedDatabase(fcc, scc)
+        : DatastoreIntegratedDatabase(fcc, scc)
     {
     }
 
@@ -190,7 +190,7 @@ public:
     ~PostgreSQLIntegration() override = default;
 };
 
-class SQLiteIntegration : public ClickHouseIntegratedDatabase
+class SQLiteIntegration : public DatastoreIntegratedDatabase
 {
 #if defined USE_SQLITE && USE_SQLITE
 private:
@@ -203,7 +203,7 @@ public:
     const std::filesystem::path sqlite_path;
 
     SQLiteIntegration(FuzzConfig & fcc, const ServerCredentials & scc, SQLiteUniqueKeyPtr scon, const std::filesystem::path & spath)
-        : ClickHouseIntegratedDatabase(fcc, scc)
+        : DatastoreIntegratedDatabase(fcc, scc)
         , sqlite_connection(std::move(scon))
         , sqlite_path(spath)
     {
@@ -225,7 +225,7 @@ public:
     const std::filesystem::path sqlite_path;
 
     SQLiteIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
-        : ClickHouseIntegratedDatabase(fcc, scc)
+        : DatastoreIntegratedDatabase(fcc, scc)
     {
     }
 
@@ -234,11 +234,11 @@ public:
     ~SQLiteIntegration() override = default;
 };
 
-class RedisIntegration : public ClickHouseIntegration
+class RedisIntegration : public DatastoreIntegration
 {
 public:
     RedisIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
-        : ClickHouseIntegration(fcc, scc)
+        : DatastoreIntegration(fcc, scc)
     {
     }
 
@@ -249,7 +249,7 @@ public:
     ~RedisIntegration() override = default;
 };
 
-class MongoDBIntegration : public ClickHouseIntegration
+class MongoDBIntegration : public DatastoreIntegration
 {
 #if defined USE_MONGODB && USE_MONGODB
 private:
@@ -267,7 +267,7 @@ private:
 
 public:
     MongoDBIntegration(FuzzConfig & fcc, const ServerCredentials & scc, mongocxx::client & mcon, mongocxx::database & db)
-        : ClickHouseIntegration(fcc, scc)
+        : DatastoreIntegration(fcc, scc)
         , out_file(std::ofstream(scc.query_log_file, std::ios::out | std::ios::trunc))
         , client(std::move(mcon))
         , database(std::move(db))
@@ -284,7 +284,7 @@ public:
 #else
 public:
     MongoDBIntegration(FuzzConfig & fcc, const ServerCredentials & scc)
-        : ClickHouseIntegration(fcc, scc)
+        : DatastoreIntegration(fcc, scc)
     {
     }
 
@@ -294,11 +294,11 @@ public:
 #endif
 };
 
-class MinIOIntegration : public ClickHouseIntegration
+class MinIOIntegration : public DatastoreIntegration
 {
 public:
     explicit MinIOIntegration(FuzzConfig & fcc, const ServerCredentials & ssc)
-        : ClickHouseIntegration(fcc, ssc)
+        : DatastoreIntegration(fcc, ssc)
     {
     }
 
@@ -311,11 +311,11 @@ public:
     ~MinIOIntegration() override = default;
 };
 
-class AzuriteIntegration : public ClickHouseIntegration
+class AzuriteIntegration : public DatastoreIntegration
 {
 public:
     explicit AzuriteIntegration(FuzzConfig & fcc, const ServerCredentials & ssc)
-        : ClickHouseIntegration(fcc, ssc)
+        : DatastoreIntegration(fcc, ssc)
     {
     }
 
@@ -328,11 +328,11 @@ public:
     ~AzuriteIntegration() override = default;
 };
 
-class HTTPIntegration : public ClickHouseIntegration
+class HTTPIntegration : public DatastoreIntegration
 {
 public:
     explicit HTTPIntegration(FuzzConfig & fcc, const ServerCredentials & ssc)
-        : ClickHouseIntegration(fcc, ssc)
+        : DatastoreIntegration(fcc, ssc)
     {
     }
 
@@ -343,14 +343,14 @@ public:
     ~HTTPIntegration() override = default;
 };
 
-class DolorIntegration : public ClickHouseIntegration
+class DolorIntegration : public DatastoreIntegration
 {
 private:
     bool httpPut(const String & path, const String & body);
 
 public:
     explicit DolorIntegration(FuzzConfig & fcc, const ServerCredentials & ssc)
-        : ClickHouseIntegration(fcc, ssc)
+        : DatastoreIntegration(fcc, ssc)
     {
     }
 
@@ -384,7 +384,7 @@ private:
     std::unique_ptr<AzuriteIntegration> azurite;
     std::unique_ptr<HTTPIntegration> http;
     std::unique_ptr<DolorIntegration> dolor;
-    std::unique_ptr<MySQLIntegration> clickhouse;
+    std::unique_ptr<MySQLIntegration> datastore;
 
     std::filesystem::path default_sqlite_path;
     size_t requires_external_call_check = 0;
@@ -394,7 +394,7 @@ private:
 
     std::filesystem::path getDatabaseDataDir(PeerTableDatabase pt, bool server) const;
 
-    ClickHouseIntegratedDatabase * getPeerPtr(PeerTableDatabase pt) const;
+    DatastoreIntegratedDatabase * getPeerPtr(PeerTableDatabase pt) const;
 
 public:
     bool getRequiresExternalCallCheck() const { return requires_external_call_check > 0; }
@@ -433,7 +433,7 @@ public:
 
     bool hasHTTPConnection() const { return http != nullptr; }
 
-    bool hasClickHouseExtraServerConnection() const { return clickhouse != nullptr; }
+    bool hasDatastoreExtraServerConnection() const { return datastore != nullptr; }
 
     const std::filesystem::path & getSQLitePath() const { return sqlite ? sqlite->sqlite_path : default_sqlite_path; }
 

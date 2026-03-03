@@ -33,7 +33,7 @@ namespace DB
 class ReadBufferFromPocoSocket;
 class TCPServer;
 
-/// Handler for MySQL wire protocol connections. Allows to connect to ClickHouse using MySQL client.
+/// Handler for MySQL wire protocol connections. Allows to connect to Datastore using MySQL client.
 class MySQLHandler : public Poco::Net::TCPServerConnection
 {
     /// statement_id -> statement
@@ -103,7 +103,7 @@ protected:
     using QueriesReplacements = std::unordered_map<std::string, QueryReplacementFn>;
     QueriesReplacements queries_replacements;
 
-    /// MySQL setting name --> ClickHouse setting name
+    /// MySQL setting name --> Datastore setting name
     using SettingsReplacements = std::unordered_map<std::string, std::string>;
     SettingsReplacements settings_replacements;
 

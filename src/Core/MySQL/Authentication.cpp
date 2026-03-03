@@ -126,7 +126,7 @@ void Sha256Password::authenticate(
 
         if (packet_endpoint->in->eof())
             throw Exception(ErrorCodes::MYSQL_CLIENT_INSUFFICIENT_CAPABILITIES,
-                            "Client doesn't support authentication method {} used by ClickHouse. "
+                            "Client doesn't support authentication method {} used by Datastore. "
                             "Specifying user password using 'password_double_sha1_hex' may fix the problem.",
                             getName());
 

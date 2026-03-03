@@ -39,7 +39,7 @@
 #    include <Common/parseRemoteDescription.h>
 #    include <Common/setThreadName.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #    include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -106,7 +106,7 @@ DatabaseMySQL::DatabaseMySQL(
         {
             tryLogCurrentException("DatabaseMySQL");
         }
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         else if (SharedDatabaseCatalog::initialized() && !SharedDatabaseCatalog::isInitialQuery(context_))
         {
             tryLogCurrentException("DatabaseMySQL");

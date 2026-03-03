@@ -24,10 +24,10 @@ REGISTER_FUNCTION(ArrayPushBack)
 
 :::note
 - Only numbers can be added to an array with numbers, and only strings can be added to an array of strings.
-- When adding numbers, ClickHouse automatically sets the type of `x` for the data type of the array.
+- When adding numbers, Datastore automatically sets the type of `x` for the data type of the array.
 - Can be `NULL`. The function adds a `NULL` element to an array, and the type of array elements converts to `Nullable`.
 
-For more information about the types of data in ClickHouse, see [Data types](/sql-reference/data-types).
+For more information about the types of data in Datastore, see [Data types](/sql-reference/data-types).
 :::
     )"},
     };

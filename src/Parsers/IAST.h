@@ -322,7 +322,7 @@ public:
         formatImpl(ostr, settings, state, std::move(frame));
     }
 
-    /// TODO: Move more logic into this class (see https://github.com/ClickHouse/ClickHouse/pull/45649).
+    /// TODO: Move more logic into this class (see https://github.com/Datastore/Datastore/pull/45649).
     struct FormattingBuffer
     {
         WriteBuffer & ostr;

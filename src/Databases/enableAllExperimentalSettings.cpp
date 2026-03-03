@@ -64,7 +64,7 @@ void enableAllExperimentalSettings(ContextMutablePtr context)
     context->setSetting("allow_experimental_database_paimon_rest_catalog", 1);
     context->setSetting("allow_experimental_object_storage_queue_hive_partitioning", 1);
 
-    /// clickhouse-private settings
+    /// datastore-private settings
     context->setSetting("allow_experimental_shared_set_join", 1);
 }
 

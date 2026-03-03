@@ -113,7 +113,7 @@ public:
     virtual void sendData(const Block & block, const String & name, bool scalar) = 0;
 
     /// Whether the client needs to read and send the data for the INSERT.
-    /// False if the server will read the data through other means (in particular if clickhouse-local added input reading step directly into the query pipeline).
+    /// False if the server will read the data through other means (in particular if datastore-local added input reading step directly into the query pipeline).
     virtual bool isSendDataNeeded() const { return true; }
 
     /// Send all contents of external (temporary) tables.

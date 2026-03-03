@@ -83,7 +83,7 @@ TEST(Common, SensitiveDataMasker)
     try
     {
         std::istringstream      // STYLE_CHECK_ALLOW_STD_STRING_STREAM
-            xml_isteam(R"END(<clickhouse>
+            xml_isteam(R"END(<datastore>
     <query_masking_rules>
         <rule>
             <name>test</name>
@@ -94,7 +94,7 @@ TEST(Common, SensitiveDataMasker)
             <regexp>abc</regexp>
         </rule>
     </query_masking_rules>
-</clickhouse>)END");
+</datastore>)END");
 
         Poco::AutoPtr<Poco::Util::XMLConfiguration> xml_config = new Poco::Util::XMLConfiguration(xml_isteam);
         DB::SensitiveDataMasker masker_xml_based_exception_check(*xml_config, "query_masking_rules");
@@ -112,11 +112,11 @@ TEST(Common, SensitiveDataMasker)
     try
     {
         std::istringstream      // STYLE_CHECK_ALLOW_STD_STRING_STREAM
-            xml_isteam(R"END(<clickhouse>
+            xml_isteam(R"END(<datastore>
     <query_masking_rules>
         <rule><name>test</name></rule>
     </query_masking_rules>
-</clickhouse>)END");
+</datastore>)END");
 
         Poco::AutoPtr<Poco::Util::XMLConfiguration> xml_config = new Poco::Util::XMLConfiguration(xml_isteam);
         DB::SensitiveDataMasker masker_xml_based_exception_check(*xml_config, "query_masking_rules");
@@ -134,11 +134,11 @@ TEST(Common, SensitiveDataMasker)
     try
     {
         std::istringstream      // STYLE_CHECK_ALLOW_STD_STRING_STREAM
-            xml_isteam(R"END(<clickhouse>
+            xml_isteam(R"END(<datastore>
     <query_masking_rules>
         <rule><name>test</name><regexp>())(</regexp></rule>
     </query_masking_rules>
-</clickhouse>)END");
+</datastore>)END");
 
         Poco::AutoPtr<Poco::Util::XMLConfiguration> xml_config = new Poco::Util::XMLConfiguration(xml_isteam);
         DB::SensitiveDataMasker masker_xml_based_exception_check(*xml_config, "query_masking_rules");
@@ -157,7 +157,7 @@ TEST(Common, SensitiveDataMasker)
     {
         std::istringstream      // STYLE_CHECK_ALLOW_STD_STRING_STREAM
             xml_isteam(R"END(
-<clickhouse>
+<datastore>
     <query_masking_rules>
         <rule>
             <name>hide SSN</name><!-- by default: it will use xml path, like query_masking_rules.rule[1] -->
@@ -187,7 +187,7 @@ TEST(Common, SensitiveDataMasker)
             <replace>[QUERY IS CENSORED]</replace>
         </rule>
     </query_masking_rules>
-</clickhouse>)END");
+</datastore>)END");
 
         Poco::AutoPtr<Poco::Util::XMLConfiguration> xml_config = new Poco::Util::XMLConfiguration(xml_isteam);
         DB::SensitiveDataMasker masker_xml_based(*xml_config, "query_masking_rules");

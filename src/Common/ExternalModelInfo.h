@@ -6,7 +6,7 @@
 namespace DB
 {
 
-/// Details about external machine learning model, used by clickhouse-server and clickhouse-library-bridge
+/// Details about external machine learning model, used by datastore-server and datastore-library-bridge
 struct ExternalModelInfo
 {
     String model_path;

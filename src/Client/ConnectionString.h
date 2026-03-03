@@ -6,14 +6,14 @@
 
 namespace DB
 {
-/** Tries to parse ClickHouse connection string.
- * if @connection_string starts with 'clickhouse:' then connection string will be parsed
+/** Tries to parse Datastore connection string.
+ * if @connection_string starts with 'datastore:' then connection string will be parsed
  * and converted into a set of arguments for the client.
- * Connection string format is similar to URI "clickhouse:[//[user[:password]@][hosts_and_ports]][/dbname][?query_parameters]"
+ * Connection string format is similar to URI "datastore:[//[user[:password]@][hosts_and_ports]][/dbname][?query_parameters]"
  * with the difference that hosts_and_ports can contain multiple hosts separated by ','.
- * example: clickhouse://user@host1:port1,host2:port2
+ * example: datastore://user@host1:port1,host2:port2
  * @return Returns false if no connection string was specified. If a connection string was specified, returns true if it is valid, and throws an exception if it is invalid.
- * @exception Throws DB::Exception if URI has valid scheme (clickhouse:), but invalid internals.
+ * @exception Throws DB::Exception if URI has valid scheme (datastore:), but invalid internals.
 */
 bool tryParseConnectionString(
     std::string_view connection_string,

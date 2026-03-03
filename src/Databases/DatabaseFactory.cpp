@@ -4,7 +4,7 @@
 #include <Databases/DatabaseFactory.h>
 #include <Databases/DatabaseReplicated.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Databases/DatabaseShared.h>
 #endif
 
@@ -66,7 +66,7 @@ void cckMetadataPathForOrdinary(const ASTCreateQuery & create, const String & me
                     "It may be a result of manual intervention, crash on very first server start or a bug. "
                     "Database cannot be attached (it's kind of protection from potential data loss). "
                     "Metadata directory must not be a symlink and must contain tables metadata files itself. "
-                    "You have to resolve this manually. It can be done like this: rm {}; sudo -u clickhouse mv {} {};",
+                    "You have to resolve this manually. It can be done like this: rm {}; sudo -u datastore mv {} {};",
                     metadata_path, database_name, target_path,
                     quoteString(path_to_remove.string()), quoteString(target_path), quoteString(path_to_remove.string()));
 

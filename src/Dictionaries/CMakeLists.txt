@@ -1,8 +1,8 @@
-include("${ClickHouse_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
+include("${Datastore_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
 
-add_headers_and_sources(clickhouse_dictionaries .)
+add_headers_and_sources(datastore_dictionaries .)
 
-add_headers_and_sources(clickhouse_dictionaries "${CMAKE_CURRENT_BINARY_DIR}/generated/")
+add_headers_and_sources(datastore_dictionaries "${CMAKE_CURRENT_BINARY_DIR}/generated/")
 
 # Libcxx hardening means out-of-bounds checks which causes noticeable degradations for some workflows.
 # TUs where libcxx hardening needs to be disabled are specified here.
@@ -24,41 +24,41 @@ if (OMIT_HEAVY_DEBUG_SYMBOLS)
         APPEND_STRING PROPERTY COMPILE_FLAGS " -g1")
 endif()
 
-extract_into_parent_list(clickhouse_dictionaries_sources dbms_sources
+extract_into_parent_list(datastore_dictionaries_sources dbms_sources
     DictionaryFactory.cpp # DictionaryFactory::instance() Used by ExternalDictionariesLoader.cpp, getDictionaryConfigurationFromAST.cpp...
     DictionarySourceFactory.cpp # DictionarySourceFactory::instance() Used by DictionaryFactory.cpp
     DictionaryStructure.cpp # DictionaryStructure::DictionaryStructure (ExternalDictionariesLoader.cpp)
     getDictionaryConfigurationFromAST.cpp # getDictionaryConfigurationFromAST (StorageDictionary.cpp, AST Visitors)
 )
-extract_into_parent_list(clickhouse_dictionaries_headers dbms_headers
+extract_into_parent_list(datastore_dictionaries_headers dbms_headers
     DictionaryFactory.h
     DictionarySourceFactory.h
     DictionaryStructure.h
     getDictionaryConfigurationFromAST.h
 )
 
-add_library(clickhouse_dictionaries ${clickhouse_dictionaries_headers} ${clickhouse_dictionaries_sources})
+add_library(datastore_dictionaries ${datastore_dictionaries_headers} ${datastore_dictionaries_sources})
 
-target_link_libraries(clickhouse_dictionaries
+target_link_libraries(datastore_dictionaries
     PRIVATE
-        clickhouse_common_io
+        datastore_common_io
         dbms
         Poco::Redis
 )
 
-target_link_libraries(clickhouse_dictionaries PUBLIC ch_contrib::abseil_swiss_tables)
+target_link_libraries(datastore_dictionaries PUBLIC ch_contrib::abseil_swiss_tables)
 
 if (TARGET ch_contrib::cassandra)
-    target_link_libraries(clickhouse_dictionaries PRIVATE ch_contrib::cassandra)
+    target_link_libraries(datastore_dictionaries PRIVATE ch_contrib::cassandra)
 endif()
 
 if (TARGET ch_contrib::yaml_cpp)
-    target_link_libraries(clickhouse_dictionaries PRIVATE ch_contrib::yaml_cpp)
+    target_link_libraries(datastore_dictionaries PRIVATE ch_contrib::yaml_cpp)
 endif()
 
 if (TARGET ch_contrib::vectorscan)
-    target_link_libraries(clickhouse_dictionaries PRIVATE ch_contrib::vectorscan)
+    target_link_libraries(datastore_dictionaries PRIVATE ch_contrib::vectorscan)
 endif()
 
 add_subdirectory(Embedded)
-target_link_libraries(clickhouse_dictionaries PRIVATE ch_contrib::sparsehash)
+target_link_libraries(datastore_dictionaries PRIVATE ch_contrib::sparsehash)

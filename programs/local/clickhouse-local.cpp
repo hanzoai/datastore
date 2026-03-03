@@ -1,1 +1,1 @@
-int mainEntryClickHouseLocal(int argc, char ** argv);
+int mainEntryDatastoreLocal(int argc, char ** argv);

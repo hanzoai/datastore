@@ -212,7 +212,7 @@ void Client::initialize(Poco::Util::Application & self)
     if (home_path_cstr)
         home_path = home_path_cstr;
 
-    const char * env_host = getenv("CLICKHOUSE_HOST"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_host = getenv("DATASTORE_HOST"); // NOLINT(concurrency-mt-unsafe)
 
     std::optional<std::string> config_path;
     if (config().has("config-file"))
@@ -308,11 +308,11 @@ void Client::initialize(Poco::Util::Application & self)
       * may be statically allocated, and can be modified by a subsequent call to getenv(), putenv(3), setenv(3), or unsetenv(3).
       */
 
-    const char * env_user = getenv("CLICKHOUSE_USER"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_user = getenv("DATASTORE_USER"); // NOLINT(concurrency-mt-unsafe)
     if (env_user && !config().has("user"))
         config().setString("user", env_user);
 
-    const char * env_password = getenv("CLICKHOUSE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_password = getenv("DATASTORE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
     if (env_password && !config().has("password"))
         config().setString("password", env_password);
 
@@ -486,7 +486,7 @@ void Client::login()
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
             "Could not retrieve authentication endpoints for host '{}'. Please specify --oauth-url and --oauth-client-id if you are "
-            "not using ClickHouse Cloud.",
+            "not using Datastore Cloud.",
             host);
     }
 
@@ -600,7 +600,7 @@ void Client::connect()
     {
         output_stream << "Connected to " << server_name << " server version " << server_version << "." << std::endl << std::endl;
 
-#if not CLICKHOUSE_CLOUD
+#if not DATASTORE_CLOUD
         if (!config().has("no-server-client-version-message"))
         {
             auto client_version_tuple = std::make_tuple(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -608,13 +608,13 @@ void Client::connect()
 
             if (client_version_tuple < server_version_tuple)
             {
-                output_stream << "ClickHouse client version is older than ClickHouse server. "
+                output_stream << "Datastore client version is older than Datastore server. "
                           << "It may lack support for new features." << std::endl
                           << std::endl;
             }
-            else if (client_version_tuple > server_version_tuple && server_display_name != "clickhouse-cloud")
+            else if (client_version_tuple > server_version_tuple && server_display_name != "datastore-cloud")
             {
-                output_stream << "ClickHouse server version is older than ClickHouse client. "
+                output_stream << "Datastore server version is older than Datastore client. "
                           << "It may indicate that the server is out of date and can be upgraded." << std::endl
                           << std::endl;
             }
@@ -732,9 +732,9 @@ void Client::printHelpMessage(const OptionsDescription & options_description)
     if (options_description.hosts_and_ports_description.has_value())
         output_stream << options_description.hosts_and_ports_description.value() << "\n";
 
-    output_stream << "All settings are documented at https://clickhouse.com/docs/operations/settings/settings.\n";
+    output_stream << "All settings are documented at https://datastore.com/docs/operations/settings/settings.\n";
     output_stream << "In addition, --param_name=value can be specified for substitution of parameters for parameterized queries.\n";
-    output_stream << "\nSee also: https://clickhouse.com/docs/en/integrations/sql-clients/cli\n";
+    output_stream << "\nSee also: https://datastore.com/docs/en/integrations/sql-clients/cli\n";
 }
 
 
@@ -1064,7 +1064,7 @@ void Client::readArguments(
     std::vector<Arguments> & external_tables_arguments,
     std::vector<Arguments> & hosts_and_ports_arguments)
 {
-    // Default to oauth authentication for ClickHouse Cloud for a hostname argument.
+    // Default to oauth authentication for Datastore Cloud for a hostname argument.
     bool is_hostname_argument = false;
 #if USE_JWT_CPP && USE_SSL
     if (argc >= 2)
@@ -1086,7 +1086,7 @@ void Client::readArguments(
                     hostname = host;
                     port = std::to_string(uri.getPort());
                 }
-                /// Check if connection string contains user credentials (e.g., clickhouse://user:password@host)
+                /// Check if connection string contains user credentials (e.g., datastore://user:password@host)
                 has_auth_in_connection_string = !uri.getUserInfo().empty();
             }
             catch (const Poco::URISyntaxException &) // NOLINT(bugprone-empty-catch)
@@ -1312,7 +1312,7 @@ void Client::readArguments(
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseClient(int argc, char ** argv)
+int mainEntryDatastoreClient(int argc, char ** argv)
 {
     DB::MainThreadStatus::getInstance();
 

@@ -84,7 +84,7 @@ REGISTER_FUNCTION(WKB)
 {
     factory.registerFunction<FunctionWKB>(FunctionDocumentation{
         .description = R"(
-    Parses a Well-Known Binary (WKB) representation of a Point geometry and returns it in the internal ClickHouse format.
+    Parses a Well-Known Binary (WKB) representation of a Point geometry and returns it in the internal Datastore format.
     )",
         .syntax = "wkb(geometry)",
         .arguments{{"geometry", "The input geometry type to convert into WKB."}},

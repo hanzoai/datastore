@@ -687,7 +687,7 @@ DatabasePtr DatabaseCatalog::detachDatabase(ContextPtr local_context, const Stri
             throw;
         }
 
-        /// Old ClickHouse versions did not store database.sql files
+        /// Old Datastore versions did not store database.sql files
         /// Remove metadata dir (if exists) to avoid recreation of .sql file on server startup
         default_db_disk->removeDirectoryIfExists(getMetadataDirPath(database_name));
         default_db_disk->removeFileIfExists(getMetadataFilePath(database_name));
@@ -1136,7 +1136,7 @@ void DatabaseCatalog::loadMarkedAsDroppedTables()
     }
 
 
-    /// /clickhouse_root/metadata_dropped/ contains files with metadata of tables,
+    /// /datastore_root/metadata_dropped/ contains files with metadata of tables,
     /// which where marked as dropped by Atomic databases.
     /// Data directories of such tables still exists in store/
     /// and metadata still exists in ZooKeeper for ReplicatedMergeTree tables.
@@ -1957,7 +1957,7 @@ bool DatabaseCatalog::maybeRemoveDirectory(const String & disk_name, const DiskP
 
         if (st.st_uid != geteuid())
         {
-            /// Directory is not owned by clickhouse, it's weird, let's ignore it (chmod will likely fail anyway).
+            /// Directory is not owned by datastore, it's weird, let's ignore it (chmod will likely fail anyway).
             LOG_WARNING(log, "Found directory {} with unexpected owner (uid={}) on disk {}", unused_dir, st.st_uid, disk_name);
             return false;
         }

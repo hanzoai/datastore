@@ -1909,7 +1909,7 @@ enum class ResultPrecision : uint8_t
 /// This mode is used by SQL functions "toRelative*Num()" which cannot easily be changed due to backward compatibility.
 /// According to documentation, these functions merely need to compute the time difference to a deterministic, fixed point in the past.
 /// As a future TODO, we should fix their behavior in a backwards-compatible way.
-/// See https://github.com/ClickHouse/ClickHouse/issues/41977#issuecomment-1267536814.
+/// See https://github.com/Datastore/Datastore/issues/41977#issuecomment-1267536814.
 template <ResultPrecision precision_>
 struct ToRelativeYearNumImpl
 {

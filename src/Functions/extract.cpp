@@ -82,18 +82,18 @@ If the regular expression has capturing groups (sub-patterns), the function matc
     FunctionDocumentation::Examples examples = {
     {
         "Extract domain from email",
-        "SELECT extract('test@clickhouse.com', '.*@(.*)$')",
+        "SELECT extract('test@datastore.com', '.*@(.*)$')",
         R"(
-┌─extract('test@clickhouse.com', '.*@(.*)$')─┐
-│ clickhouse.com                            │
+┌─extract('test@datastore.com', '.*@(.*)$')─┐
+│ datastore.com                            │
 └───────────────────────────────────────────┘
         )"
     },
     {
         "No match returns empty string",
-        "SELECT extract('test@clickhouse.com', 'no_match')",
+        "SELECT extract('test@datastore.com', 'no_match')",
         R"(
-┌─extract('test@clickhouse.com', 'no_match')─┐
+┌─extract('test@datastore.com', 'no_match')─┐
 │                                            │
 └────────────────────────────────────────────┘
         )"

@@ -23,7 +23,7 @@ Checks whether a string begins with the provided string.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT startsWith('ClickHouse', 'Click');",
+        "SELECT startsWith('Datastore', 'Click');",
         R"(
 ┌─startsWith('⋯', 'Click')─┐
 │                        1 │
@@ -52,7 +52,7 @@ Checks whether a string begins with the provided case-insensitive string.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT startsWithCaseInsensitive('ClickHouse', 'CLICK');",
+        "SELECT startsWithCaseInsensitive('Datastore', 'CLICK');",
         R"(
 ┌─startsWithCaseInsensitive('⋯', 'CLICK')─┐
 │                                       1 │

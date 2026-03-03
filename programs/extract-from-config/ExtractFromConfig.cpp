@@ -145,7 +145,7 @@ static std::vector<std::string> extractFromConfig(const std::string & config_pat
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseExtractFromConfig(int argc, char ** argv)
+int mainEntryDatastoreExtractFromConfig(int argc, char ** argv)
 {
     bool print_stacktrace = false;
     bool process_zk_includes = false;
@@ -182,7 +182,7 @@ int mainEntryClickHouseExtractFromConfig(int argc, char ** argv)
         {
             std::cerr << "Preprocess config file and extract value of the given key." << std::endl
                 << std::endl;
-            std::cerr << "Usage: clickhouse extract-from-config [options]" << std::endl
+            std::cerr << "Usage: datastore extract-from-config [options]" << std::endl
                 << std::endl;
             std::cerr << options_desc << std::endl;
             return 0;

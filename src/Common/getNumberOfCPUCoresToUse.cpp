@@ -172,7 +172,7 @@ unsigned getNumberOfCPUCoresToUseImpl()
 #if defined(__x86_64__) && defined(OS_LINUX)
     /// Most x86_64 CPUs have 2-way SMT (Hyper-Threading).
     /// Aarch64 and RISC-V don't have SMT so far.
-    /// POWER has SMT and it can be multi-way (e.g. 8-way), but we don't know how ClickHouse really behaves, so use all of them.
+    /// POWER has SMT and it can be multi-way (e.g. 8-way), but we don't know how Datastore really behaves, so use all of them.
     ///
     /// On really big machines, SMT is detrimental to performance (+ ~5% overhead in ClickBench). On such machines, we limit ourself to the physical cores.
     /// Few cores indicate it is a small machine, runs in a VM or is a limited cloud instance --> it is reasonable to use all the cores.

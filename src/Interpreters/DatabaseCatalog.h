@@ -152,7 +152,7 @@ public:
     DatabasePtr getDatabase(const UUID & uuid) const;
     DatabasePtr tryGetDatabase(const UUID & uuid) const;
     bool isDatabaseExist(std::string_view database_name) const;
-    /// Datalake catalogs are implement at IDatabase level in ClickHouse.
+    /// Datalake catalogs are implement at IDatabase level in Datastore.
     /// In general case Datalake catalog is a some remote service which contains iceberg/delta tables.
     /// Sometimes this service charges money for requests. With this flag we explicitly protect ourself
     /// to not accidentally query external non-free service for some trivial things like

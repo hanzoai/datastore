@@ -90,7 +90,7 @@ struct ReplicatedFetchReadCallback
     {
         replicated_fetch_entry->bytes_read_compressed.store(bytes_count, std::memory_order_relaxed);
 
-        /// It's possible when we fetch part from very old clickhouse version
+        /// It's possible when we fetch part from very old datastore version
         /// which doesn't send total size.
         if (replicated_fetch_entry->total_size_bytes_compressed != 0)
         {
@@ -689,7 +689,7 @@ void Fetcher::downloadBaseOrProjectionPartToDisk(
         readBinary(file_size, in);
 
         /// File must be inside "absolute_part_path" directory.
-        /// Otherwise malicious ClickHouse replica may force us to write to arbitrary path.
+        /// Otherwise malicious Datastore replica may force us to write to arbitrary path.
         String absolute_file_path = fs::weakly_canonical(fs::path(data_part_storage->getRelativePath()) / file_name);
         if (!startsWith(absolute_file_path, fs::weakly_canonical(data_part_storage->getRelativePath()).string()))
             throw Exception(ErrorCodes::INSECURE_PATH,

@@ -2404,7 +2404,7 @@ public:
     }
 };
 
-// ClickHouse-specific lag/lead family implementation.
+// Datastore-specific lag/lead family implementation.
 /// `full_partition_default_frame` controls whether the function supplies a default window frame:
 /// - `true` (used by `lag`/`lead`): use the full-partition ROWS frame (UNBOUNDED PRECEDING .. UNBOUNDED FOLLOWING).
 /// - `false` (used by `lagInFrame`/`leadInFrame`): no default frame, so the caller-provided frame is respected.

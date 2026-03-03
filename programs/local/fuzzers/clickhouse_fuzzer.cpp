@@ -59,7 +59,7 @@ const char * __ubsan_default_options()
 #pragma clang diagnostic pop
 #endif
 
-int mainEntryClickHouseLocal(int argc, char ** argv);
+int mainEntryDatastoreLocal(int argc, char ** argv);
 
 namespace
 {
@@ -114,7 +114,7 @@ __attribute__((constructor(202))) void init_ssl()
 /// class C { C() { assert(inside_main); } };
 bool inside_main = false;
 
-int clickhouseMain(int argc_, char ** argv_)
+int datastoreMain(int argc_, char ** argv_)
 {
     inside_main = true;
     SCOPE_EXIT({ inside_main = false; });
@@ -130,15 +130,15 @@ int clickhouseMain(int argc_, char ** argv_)
 #endif
 
     /// This is used for testing. For example,
-    /// clickhouse-local should be able to run a simple query without throw/catch.
-    if (getenv("CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
+    /// datastore-local should be able to run a simple query without throw/catch.
+    if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 
     /// Reset new handler to default (that throws std::bad_alloc)
     /// It is needed because LLVM library clobbers it.
     std::set_new_handler(nullptr);
 
-    int exit_code = mainEntryClickHouseLocal(argc_, argv_);
+    int exit_code = mainEntryDatastoreLocal(argc_, argv_);
 
 #if defined(SANITIZE_COVERAGE)
     dumpCoverage();
@@ -173,8 +173,8 @@ std::atomic<FuzzerState> state{FuzzerState::NONE};
 String query;
 
 std::optional<std::thread> runner;
-String clickhouse{"clickhouse"};
-std::vector<char *> clickhouse_args{clickhouse.data()};
+String datastore{"datastore"};
+std::vector<char *> datastore_args{datastore.data()};
 
 extern "C"
 int LLVMFuzzerInitialize(const int *argc, char ***argv)
@@ -186,19 +186,19 @@ int LLVMFuzzerInitialize(const int *argc, char ***argv)
     // Initialize as a main thread
     DB::MainThreadStatus::getInstance();
 
-    // Collect clickhouse arguments
+    // Collect datastore arguments
     bool ignore = false;
     for (int i = 1; i < *argc; ++i)
         if (ignore)
-            clickhouse_args.push_back((*argv)[i]);
+            datastore_args.push_back((*argv)[i]);
         else
             if (std::string_view arg{(*argv)[i]}; arg.substr(0, arg.find('=')) == "-ignore_remaining_args")
                 ignore = true;
 
     {
-        // Start clickhouse local
+        // Start datastore local
         std::unique_lock lock(mutex);
-        runner = std::thread(clickhouseMain, clickhouse_args.size(), clickhouse_args.data());
+        runner = std::thread(datastoreMain, datastore_args.size(), datastore_args.data());
         if (!cv.wait_for(lock, std::chrono::seconds(30), []{ return state == FuzzerState::WAITING_FOR_INPUT; }))
             abort();
     }

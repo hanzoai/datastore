@@ -187,12 +187,12 @@ The function is primarily used for testing and debugging purposes.
 The `sleep()` function should generally not be used in production environments, as it can negatively impact query performance and system responsiveness.
 However, it can be useful in the following scenarios:
 
-1. **Testing**: When testing or benchmarking ClickHouse, you may want to simulate delays or introduce pauses to observe how the system behaves under certain conditions.
+1. **Testing**: When testing or benchmarking Datastore, you may want to simulate delays or introduce pauses to observe how the system behaves under certain conditions.
 2. **Debugging**: If you need to examine the state of the system or the execution of a query at a specific point in time, you can use `sleep()` to introduce a pause, allowing you to inspect or collect relevant information.
 3. **Simulation**: In some cases, you may want to simulate real-world scenarios where delays or pauses occur, such as network latency or external system dependencies.
 
 :::warning
-It's important to use the `sleep()` function judiciously and only when necessary, as it can potentially impact the overall performance and responsiveness of your ClickHouse system.
+It's important to use the `sleep()` function judiciously and only when necessary, as it can potentially impact the overall performance and responsiveness of your Datastore system.
 :::
 
 For security reasons, the function can only be executed in the default user profile (with `allow_sleep` enabled).
@@ -232,12 +232,12 @@ Pauses the execution of a query for a specified number of seconds for each row i
 The `sleepEachRow()` function is primarily used for testing and debugging purposes, similar to the [`sleep()`](#sleep) function.
 It allows you to simulate delays or introduce pauses in the processing of each row, which can be useful in scenarios such as:
 
-1. **Testing**: When testing or benchmarking ClickHouse's performance under specific conditions, you can use `sleepEachRow()` to simulate delays or introduce pauses for each row processed.
+1. **Testing**: When testing or benchmarking Datastore's performance under specific conditions, you can use `sleepEachRow()` to simulate delays or introduce pauses for each row processed.
 2. **Debugging**: If you need to examine the state of the system or the execution of a query for each row processed, you can use `sleepEachRow()` to introduce pauses, allowing you to inspect or collect relevant information.
 3. **Simulation**: In some cases, you may want to simulate real-world scenarios where delays or pauses occur for each row processed, such as when dealing with external systems or network latencies.
 
 :::warning
-Like the `sleep()` function, it's important to use `sleepEachRow()` judiciously and only when necessary, as it can significantly impact the overall performance and responsiveness of your ClickHouse system, especially when dealing with large result sets.
+Like the `sleep()` function, it's important to use `sleepEachRow()` judiciously and only when necessary, as it can significantly impact the overall performance and responsiveness of your Datastore system, especially when dealing with large result sets.
 :::
 )";
     FunctionDocumentation::Syntax syntax_sleepEachRow = "sleepEachRow(seconds)";

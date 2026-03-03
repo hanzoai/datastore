@@ -12,10 +12,10 @@
 #include <Interpreters/Context.h>
 
 
-int mainEntryClickHouseServer(int argc, char ** argv);
+int mainEntryDatastoreServer(int argc, char ** argv);
 
-static std::string clickhouse("clickhouse-server");
-static std::vector<char *> args{clickhouse.data()};
+static std::string datastore("datastore-server");
+static std::vector<char *> args{datastore.data()};
 static std::future<int> main_app;
 
 static std::string s_host("0.0.0.0");
@@ -73,7 +73,7 @@ int LLVMFuzzerInitialize(int * argc, char ***argv)
 
     args.push_back(nullptr);
 
-    main_app = std::async(std::launch::async, mainEntryClickHouseServer, args.size() - 1, args.data());
+    main_app = std::async(std::launch::async, mainEntryDatastoreServer, args.size() - 1, args.data());
 
     while (!DB::Context::getGlobalContextInstance() || !DB::Context::getGlobalContextInstance()->isServerCompletelyStarted())
     {

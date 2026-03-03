@@ -152,12 +152,12 @@ ColumnsDescription SessionLogElement::getColumnsDescription()
         {"client_port", std::make_shared<DataTypeUInt16>(), "The client port that was used to log in/out."},
         {"interface", std::move(interface_type_column), "The interface from which the login was initiated."},
 
-        {"client_hostname", std::make_shared<DataTypeString>(), "The hostname of the client machine where the clickhouse-client or another TCP client is run."},
-        {"client_name", std::make_shared<DataTypeString>(), "The clickhouse-client or another TCP client name."},
-        {"client_revision", std::make_shared<DataTypeUInt32>(), "Revision of the clickhouse-client or another TCP client."},
-        {"client_version_major", std::make_shared<DataTypeUInt32>(), "The major version of the clickhouse-client or another TCP client."},
-        {"client_version_minor", std::make_shared<DataTypeUInt32>(), "The minor version of the clickhouse-client or another TCP client."},
-        {"client_version_patch", std::make_shared<DataTypeUInt32>(), "Patch component of the clickhouse-client or another TCP client version."},
+        {"client_hostname", std::make_shared<DataTypeString>(), "The hostname of the client machine where the datastore-client or another TCP client is run."},
+        {"client_name", std::make_shared<DataTypeString>(), "The datastore-client or another TCP client name."},
+        {"client_revision", std::make_shared<DataTypeUInt32>(), "Revision of the datastore-client or another TCP client."},
+        {"client_version_major", std::make_shared<DataTypeUInt32>(), "The major version of the datastore-client or another TCP client."},
+        {"client_version_minor", std::make_shared<DataTypeUInt32>(), "The minor version of the datastore-client or another TCP client."},
+        {"client_version_patch", std::make_shared<DataTypeUInt32>(), "Patch component of the datastore-client or another TCP client version."},
 
         {"failure_reason", std::make_shared<DataTypeString>(), "The exception message containing the reason for the login/logout failure."},
     };

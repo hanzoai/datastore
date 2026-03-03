@@ -217,7 +217,7 @@ static NamesAndTypesList getColumnsList(const ASTExpressionList * columns_defini
             if (type_name_upper == "SET")
                 data_type_node->resetArguments();
 
-            /// Transforms MySQL ENUM's list of strings to ClickHouse string-integer pairs
+            /// Transforms MySQL ENUM's list of strings to Datastore string-integer pairs
             /// For example ENUM('a', 'b', 'c') -> ENUM('a'=1, 'b'=2, 'c'=3)
             /// Elements on a position further than 32767 are assigned negative values, starting with -32768.
             /// Note: Enum would be transformed to Enum8 if number of elements is less then 128, otherwise it would be transformed to Enum16.

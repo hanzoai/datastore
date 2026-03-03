@@ -1,7 +1,7 @@
 #include <base/getFQDNOrHostName.h>
 #include <Interpreters/TextLog.h>
 
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DateLUTImpl.h>
 #include <DataTypes/DataTypeDate.h>
 #include <DataTypes/DataTypeDateTime.h>
@@ -48,7 +48,7 @@ ColumnsDescription TextLogElement::getColumnsDescription()
         {"logger_name", std::make_shared<DataTypeLowCardinality>(std::make_shared<DataTypeString>()), "Name of the logger (e.g., DDLWorker)."},
         {"message", std::make_shared<DataTypeString>(), "The message itself."},
 
-        {"revision", std::make_shared<DataTypeUInt32>(), "ClickHouse revision."},
+        {"revision", std::make_shared<DataTypeUInt32>(), "Datastore revision."},
 
         {"source_file", std::make_shared<DataTypeLowCardinality>(std::make_shared<DataTypeString>()), "Source file from which the logging was done."},
         {"source_line", std::make_shared<DataTypeUInt64>(), "Source line from which the logging was done."},
@@ -85,7 +85,7 @@ void TextLogElement::appendToBlock(MutableColumns & columns) const
     columns[i++]->insert(logger_name);
     columns[i++]->insert(message);
 
-    columns[i++]->insert(ClickHouseRevision::getVersionRevision());
+    columns[i++]->insert(DatastoreRevision::getVersionRevision());
 
     columns[i++]->insert(source_file);
     columns[i++]->insert(source_line);

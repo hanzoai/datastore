@@ -271,7 +271,7 @@ bool WriteBufferFromHTTPServerResponse::cancelWithException(HTTPServerRequest & 
         {
             drainRequestIfNeeded(request, response);
             // We try to send the exception message when the transmission has not been started yet
-            // Set HTTP code and HTTP message. Add "X-ClickHouse-Exception-Code" header.
+            // Set HTTP code and HTTP message. Add "X-Datastore-Exception-Code" header.
             // If it is not HEAD request send the message in the body.
             setExceptionCode(exception_code_);
 

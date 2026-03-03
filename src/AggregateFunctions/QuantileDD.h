@@ -27,7 +27,7 @@ namespace DB
  *
  * This implementation maintains the binary compatibility with the DDSketch ProtoBuf format
  * https://github.com/DataDog/sketches-java/blob/master/src/protobuf/proto/DDSketch.proto.
- * Which enables sending the pre-aggregated sketches to the ClickHouse server and calculating the quantiles
+ * Which enables sending the pre-aggregated sketches to the Datastore server and calculating the quantiles
  * during the query time. See DDSketchEncoding.h for byte-level details.
  *
 */

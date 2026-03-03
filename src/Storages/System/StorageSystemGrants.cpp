@@ -24,7 +24,7 @@ ColumnsDescription StorageSystemGrants::getColumnsDescription()
     {
         {"user_name", std::make_shared<DataTypeNullable>(std::make_shared<DataTypeString>()), "User name."},
         {"role_name", std::make_shared<DataTypeNullable>(std::make_shared<DataTypeString>()), "Role assigned to user account."},
-        {"access_type", std::make_shared<DataTypeEnum16>(StorageSystemPrivileges::getAccessTypeEnumValues()), "Access parameters for ClickHouse user account."},
+        {"access_type", std::make_shared<DataTypeEnum16>(StorageSystemPrivileges::getAccessTypeEnumValues()), "Access parameters for Datastore user account."},
         {"access_object", std::make_shared<DataTypeString>(), "Parameter for access_type. Contains: "
             "1 - Name of the source type for READ/WRITE grants."
             "2 - Name of the table engine for TABLE ENGINE  grants."

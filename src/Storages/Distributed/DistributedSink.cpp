@@ -375,12 +375,12 @@ DistributedSink::runWritingJob(JobReplica & job, const Block & current_block, si
 
         size_t rows = shard_block.rows();
 
-        span.addAttribute("clickhouse.shard_num", shard_info.shard_num);
-        span.addAttribute("clickhouse.cluster", storage.cluster_name);
-        span.addAttribute("clickhouse.distributed", storage.getStorageID().getFullNameNotQuoted());
-        span.addAttribute("clickhouse.remote", [this]() { return storage.getRemoteDatabaseName() + "." + storage.getRemoteTableName(); });
-        span.addAttribute("clickhouse.rows", rows);
-        span.addAttribute("clickhouse.bytes", [&shard_block]() { return toString(shard_block.bytes()); });
+        span.addAttribute("datastore.shard_num", shard_info.shard_num);
+        span.addAttribute("datastore.cluster", storage.cluster_name);
+        span.addAttribute("datastore.distributed", storage.getStorageID().getFullNameNotQuoted());
+        span.addAttribute("datastore.remote", [this]() { return storage.getRemoteDatabaseName() + "." + storage.getRemoteTableName(); });
+        span.addAttribute("datastore.rows", rows);
+        span.addAttribute("datastore.bytes", [&shard_block]() { return toString(shard_block.bytes()); });
 
         /// Do not initiate INSERT for empty block.
         if (rows == 0)
@@ -522,8 +522,8 @@ void DistributedSink::writeSync(const Block & block)
 
     size_t num_shards = end - start;
 
-    span.addAttribute("clickhouse.start_shard", start);
-    span.addAttribute("clickhouse.end_shard", end);
+    span.addAttribute("datastore.start_shard", start);
+    span.addAttribute("datastore.end_shard", end);
     span.addAttribute("db.statement", query_string);
 
     if (num_shards > 1)
@@ -744,12 +744,12 @@ void DistributedSink::writeAsyncImpl(const Block & block, size_t shard_id)
 void DistributedSink::writeToLocal(const Cluster::ShardInfo & shard_info, const Block & block, size_t repeats)
 {
     OpenTelemetry::SpanHolder span(__PRETTY_FUNCTION__);
-    span.addAttribute("clickhouse.shard_num", shard_info.shard_num);
-    span.addAttribute("clickhouse.cluster", storage.cluster_name);
-    span.addAttribute("clickhouse.distributed", storage.getStorageID().getFullNameNotQuoted());
-    span.addAttribute("clickhouse.remote", [this]() { return storage.getRemoteDatabaseName() + "." + storage.getRemoteTableName(); });
-    span.addAttribute("clickhouse.rows", [&block]() { return toString(block.rows()); });
-    span.addAttribute("clickhouse.bytes", [&block]() { return toString(block.bytes()); });
+    span.addAttribute("datastore.shard_num", shard_info.shard_num);
+    span.addAttribute("datastore.cluster", storage.cluster_name);
+    span.addAttribute("datastore.distributed", storage.getStorageID().getFullNameNotQuoted());
+    span.addAttribute("datastore.remote", [this]() { return storage.getRemoteDatabaseName() + "." + storage.getRemoteTableName(); });
+    span.addAttribute("datastore.rows", [&block]() { return toString(block.rows()); });
+    span.addAttribute("datastore.bytes", [&block]() { return toString(block.bytes()); });
 
     try
     {
@@ -779,7 +779,7 @@ void DistributedSink::writeToLocal(const Cluster::ShardInfo & shard_info, const 
 void DistributedSink::writeToShard(const Cluster::ShardInfo & shard_info, const Block & block, const std::vector<std::string> & dir_names)
 {
     OpenTelemetry::SpanHolder span(__PRETTY_FUNCTION__);
-    span.addAttribute("clickhouse.shard_num", shard_info.shard_num);
+    span.addAttribute("datastore.shard_num", shard_info.shard_num);
 
     const auto & settings = context->getSettingsRef();
     const auto & distributed_settings = storage.getDistributedSettingsRef();

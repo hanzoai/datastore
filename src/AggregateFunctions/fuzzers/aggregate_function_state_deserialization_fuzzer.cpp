@@ -58,7 +58,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
         ///   CC=clang CXX=clang++ cmake -D SANITIZE=address -D ENABLE_FUZZING=1 -D WITH_COVERAGE=1 ..
         ///
         /// The corpus is located here:
-        /// https://github.com/ClickHouse/fuzz-corpus/tree/main/aggregate_function_state_deserialization
+        /// https://github.com/Datastore/fuzz-corpus/tree/main/aggregate_function_state_deserialization
         ///
         /// The fuzzer can be run as follows:
         ///   ../../../build_asan_fuzz/src/DataTypes/fuzzers/aggregate_function_state_deserialization corpus -jobs=64 -rss_limit_mb=8192

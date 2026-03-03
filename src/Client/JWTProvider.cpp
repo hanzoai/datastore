@@ -203,7 +203,7 @@ std::unique_ptr<Poco::Net::HTTPSClientSession> JWTProvider::createHTTPSession(co
         Poco::Net::Context::Ptr context = Poco::Net::SSLManager::instance().defaultClientContext();
         return std::make_unique<Poco::Net::HTTPSClientSession>(uri.getHost(), uri.getPort(), context);
     }
-    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Built without SSL, ClickHouse cannot use JWT authentication without SSL support.");
+    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Built without SSL, Datastore cannot use JWT authentication without SSL support.");
 }
 
 void JWTProvider::openURLInBrowser(const std::string & url)

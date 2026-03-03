@@ -499,8 +499,8 @@ Block MergeTreeDataWriter::mergeBlock(
     OpenTelemetry::SpanHolder span("MergeTreeDataWriter::mergeBlock");
 
     size_t block_size = header->rows();
-    span.addAttribute("clickhouse.rows", block_size);
-    span.addAttribute("clickhouse.columns", header->columns());
+    span.addAttribute("datastore.rows", block_size);
+    span.addAttribute("datastore.columns", header->columns());
 
     auto get_merging_algorithm = [&]() -> std::shared_ptr<IMergingAlgorithm>
     {
@@ -547,7 +547,7 @@ Block MergeTreeDataWriter::mergeBlock(
     if (!merging_algorithm)
         return *header;
 
-    span.addAttribute("clickhouse.merging_algorithm", merging_algorithm->getName());
+    span.addAttribute("datastore.merging_algorithm", merging_algorithm->getName());
 
     Chunk chunk(header->getColumns(), block_size);
 

@@ -69,7 +69,7 @@ void checkAndWriteHeader(DB::ReadBuffer & in, DB::WriteBuffer & out)
 
 }
 
-int mainEntryClickHouseCompressor(int argc, char ** argv)
+int mainEntryDatastoreCompressor(int argc, char ** argv)
 {
     using namespace DB;
     namespace po = boost::program_options;
@@ -109,7 +109,7 @@ int mainEntryClickHouseCompressor(int argc, char ** argv)
             std::cout << "Usage: " << argv[0] << " [options] < INPUT > OUTPUT" << std::endl;
             std::cout << "Usage: " << argv[0] << " [options] INPUT OUTPUT" << std::endl;
             std::cout << desc << std::endl;
-            std::cout << "\nSee also: https://clickhouse.com/docs/en/operations/utilities/clickhouse-compressor/\n";
+            std::cout << "\nSee also: https://datastore.com/docs/en/operations/utilities/datastore-compressor/\n";
             return 0;
         }
 

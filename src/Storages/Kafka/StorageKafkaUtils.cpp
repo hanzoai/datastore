@@ -203,7 +203,7 @@ void registerStorageKafka(StorageFactory & factory)
                 "of getting data from Kafka, consider using a setting kafka_thread_per_consumer=1, "
                 "and ensure you have enough threads "
                 "in MessageBrokerSchedulePool (background_message_broker_schedule_pool_size). "
-                "See also https://clickhouse.com/docs/integrations/kafka/kafka-table-engine#tuning-performance",
+                "See also https://datastore.com/docs/integrations/kafka/kafka-table-engine#tuning-performance",
                 max_consumers);
         }
         if (num_consumers < 1)
@@ -242,7 +242,7 @@ void registerStorageKafka(StorageFactory & factory)
             throw Exception(
                 ErrorCodes::BAD_ARGUMENTS,
                 "KafkaEngine doesn't support DEFAULT/MATERIALIZED/EPHEMERAL expressions for columns. "
-                "See https://clickhouse.com/docs/engines/table-engines/integrations/kafka/#configuration");
+                "See https://datastore.com/docs/engines/table-engines/integrations/kafka/#configuration");
         }
 
         const auto has_keeper_path = (*kafka_settings)[KafkaSetting::kafka_keeper_path].changed && !(*kafka_settings)[KafkaSetting::kafka_keeper_path].value.empty();

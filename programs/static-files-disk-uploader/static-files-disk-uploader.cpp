@@ -150,7 +150,7 @@ static void processTableFiles(const fs::path & data_path, fs::path dst_path, boo
 }
 }
 
-int mainEntryClickHouseStaticFilesDiskUploader(int argc, char ** argv)
+int mainEntryDatastoreStaticFilesDiskUploader(int argc, char ** argv)
 try
 {
     using namespace DB;

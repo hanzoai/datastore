@@ -11,7 +11,7 @@
 
 /** Server provides three interfaces:
   * 1. HTTP - simple interface for any applications.
-  * 2. TCP - interface for native clickhouse-client and for server to server internal communications.
+  * 2. TCP - interface for native datastore-client and for server to server internal communications.
   *    More rich and efficient, but less compatible
   *     - data is transferred by columns;
   *     - data is transferred compressed;

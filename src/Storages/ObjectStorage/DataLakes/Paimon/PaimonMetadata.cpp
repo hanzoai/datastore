@@ -163,7 +163,7 @@ NamesAndTypesList PaimonMetadata::getTableSchema(ContextPtr /*local_context*/) c
 
     for (const auto & field : table_schema->fields)
     {
-        names_types_list.emplace_back(field.name, field.type.clickhouse_data_type);
+        names_types_list.emplace_back(field.name, field.type.datastore_data_type);
     }
     return names_types_list;
 }

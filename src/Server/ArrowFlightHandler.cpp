@@ -374,7 +374,7 @@ namespace
         std::shared_ptr<const CHColumnToArrowColumn> ch_to_arrow_converter;
     };
 
-    /// Creates a converter to convert ClickHouse blocks to the Arrow format.
+    /// Creates a converter to convert Datastore blocks to the Arrow format.
     std::shared_ptr<CHColumnToArrowColumn> createCHToArrowConverter(const Block & header)
     {
         CHColumnToArrowColumn::Settings arrow_settings;

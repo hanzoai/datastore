@@ -55,7 +55,7 @@ void dumpMachine(std::shared_ptr<KeeperStateMachine<DB::KeeperMemoryStorage>> ma
     std::cout << std::flush;
 }
 
-int mainEntryClickHouseKeeperDataDumper(int argc, char ** argv)
+int mainEntryDatastoreKeeperDataDumper(int argc, char ** argv)
 {
     if (argc != 3)
     {

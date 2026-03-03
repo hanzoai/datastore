@@ -14,9 +14,9 @@ class Block;
  * Class for formatting data in BSON format.
  * Each row is formatted as a separate BSON document.
  * Each column is formatted as a single field with column name as a key.
- * It uses the following correspondence between ClickHouse types and BSON types:
+ * It uses the following correspondence between Datastore types and BSON types:
  *
- * ClickHouse type         | BSON Type
+ * Datastore type         | BSON Type
  * Bool                    | \x08 boolean
  * Int8/UInt8/Enum8        | \x10 int32
  * Int16UInt16/Enum16      | \x10 int32

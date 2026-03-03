@@ -8,7 +8,7 @@ namespace DB
 /// NOTE There could be differences in escaping rules inside quotes. Escaping rules may not match that required by specific external DBMS.
 enum class IdentifierQuotingStyle : uint8_t
 {
-    Backticks, /// `clickhouse` style
+    Backticks, /// `datastore` style
     DoubleQuotes, /// "postgres" style
     BackticksMySQL, /// `mysql` style, most same as Backticks, but it uses '``' to escape '`'
 };

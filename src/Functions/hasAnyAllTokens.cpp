@@ -446,7 +446,7 @@ If the column has no text index defined, the `splitByNonAlpha` tokenizer is used
 If the `needle` argument is of type [Array(String)](../../sql-reference/data-types/array.md), each array element is treated as a token — no additional tokenization takes place.
 
 Duplicate tokens are ignored.
-For example, ['ClickHouse', 'ClickHouse'] is treated the same as ['ClickHouse'].
+For example, ['Datastore', 'Datastore'] is treated the same as ['Datastore'].
     )";
     FunctionDocumentation::Syntax syntax_hasAnyTokens = R"(
 hasAnyTokens(input, needles)
@@ -516,7 +516,7 @@ ENGINE = MergeTree
 ORDER BY id;
 
 INSERT INTO log VALUES
-    (1, ['clickhouse', 'clickhouse cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
+    (1, ['datastore', 'datastore cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
     (2, ['chdb'], {'embedded': 'true', 'log_level': 'DEBUG'});
         )",
         ""
@@ -524,7 +524,7 @@ INSERT INTO log VALUES
     {
         "Example with an array column",
         R"(
-SELECT count() FROM log WHERE hasAnyTokens(tags, 'clickhouse');
+SELECT count() FROM log WHERE hasAnyTokens(tags, 'datastore');
         )",
         R"(
 ┌─count()─┐
@@ -581,7 +581,7 @@ If the column has no text index defined, the `splitByNonAlpha` tokenizer is used
 If the `needle` argument is of type [Array(String)](../../sql-reference/data-types/array.md), each array element is treated as a token — no additional tokenization takes place.
 
 Duplicate tokens are ignored.
-For example, needles = ['ClickHouse', 'ClickHouse'] is treated the same as ['ClickHouse'].
+For example, needles = ['Datastore', 'Datastore'] is treated the same as ['Datastore'].
     )";
     FunctionDocumentation::Syntax syntax_hasAllTokens = R"(
 hasAllTokens(input, needles)
@@ -662,7 +662,7 @@ ENGINE = MergeTree
 ORDER BY id;
 
 INSERT INTO log VALUES
-    (1, ['clickhouse', 'clickhouse cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
+    (1, ['datastore', 'datastore cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
     (2, ['chdb'], {'embedded': 'true', 'log_level': 'DEBUG'});
         )",
         ""
@@ -670,7 +670,7 @@ INSERT INTO log VALUES
     {
         "Example with an array column",
         R"(
-SELECT count() FROM log WHERE hasAllTokens(tags, 'clickhouse');
+SELECT count() FROM log WHERE hasAllTokens(tags, 'datastore');
         )",
         R"(
 ┌─count()─┐

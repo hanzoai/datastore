@@ -1,1 +1,1 @@
-int mainEntryClickHouseStaticFilesDiskUploader(int argc, char ** argv);
+int mainEntryDatastoreStaticFilesDiskUploader(int argc, char ** argv);

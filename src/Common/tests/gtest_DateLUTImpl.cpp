@@ -20,7 +20,7 @@
 /// For the expansion of gtest macros.
 #pragma clang diagnostic ignored "-Wused-but-marked-unused"
 
-// All timezones present at build time and embedded into ClickHouse binary.
+// All timezones present at build time and embedded into Datastore binary.
 extern const char * auto_time_zones[];
 
 namespace

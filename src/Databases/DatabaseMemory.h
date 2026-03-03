@@ -37,9 +37,9 @@ public:
     ASTPtr getCreateTableQueryImpl(const String & name, ContextPtr context, bool throw_on_error) const override;
 
     /// DatabaseMemory allows to create tables, which store data on disk.
-    /// It's needed to create such tables in default database of clickhouse-local.
+    /// It's needed to create such tables in default database of datastore-local.
     /// TODO May be it's better to use DiskMemory for such tables.
-    ///      To save data on disk it's possible to explicitly CREATE DATABASE db ENGINE=Ordinary in clickhouse-local.
+    ///      To save data on disk it's possible to explicitly CREATE DATABASE db ENGINE=Ordinary in datastore-local.
     String getTableDataPath(const String & table_name) const override { return data_path + escapeForFileName(table_name) + "/"; }
     String getTableDataPath(const ASTCreateQuery & query) const override { return getTableDataPath(query.getTable()); }
 

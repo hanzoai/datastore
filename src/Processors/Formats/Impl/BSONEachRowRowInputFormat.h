@@ -15,9 +15,9 @@ namespace DB
  * Class for parsing data in BSON format.
  * Each row is parsed as a separate BSON document.
  * Each column is parsed as a single field with column name as a key.
- * It uses the following correspondence between BSON types and ClickHouse types:
+ * It uses the following correspondence between BSON types and Datastore types:
  *
- * BSON Type                                   | ClickHouse Type
+ * BSON Type                                   | Datastore Type
  * \x01 double                                 | Float32/Float64
  * \x02 string                                 | String/FixedString
  * \x03 document                               | Map/Named Tuple
@@ -38,7 +38,7 @@ namespace DB
  *
  * Other BSON types are not supported.
  * Also, we perform conversion between different integer types
- * (for example, you can insert BSON int32 value into ClickHouse UInt8)
+ * (for example, you can insert BSON int32 value into Datastore UInt8)
  * Big integers and decimals Int128/UInt128/Int256/UInt256/Decimal128/Decimal256
  * can be parsed from BSON Binary value with \x00 binary subtype. In this case
  * we validate that the size of binary data equals the size of expected value.

@@ -142,7 +142,7 @@ void FileChecker::repair()
 void FileChecker::save(WriteBuffer & buffer) const
 {
     /// So complex JSON structure - for compatibility with the old format.
-    writeCString("{\"clickhouse\":{", buffer);
+    writeCString("{\"datastore\":{", buffer);
 
     auto settings = FormatSettings();
     for (auto it = map.begin(); it != map.end(); ++it)
@@ -198,7 +198,7 @@ void FileChecker::load()
     }
     JSON json(out.str());
 
-    JSON files = json.has("clickhouse") ? json["clickhouse"] : json["yandex"];
+    JSON files = json.has("datastore") ? json["datastore"] : json["yandex"];
     for (const JSON file : files) // NOLINT
         map[unescapeForFileName(file.getName())] = file.getValue()["size"].toUInt();
 }

@@ -5,7 +5,7 @@
 #include <DataTypes/DataTypeArray.h>
 #include <DataTypes/DataTypeTuple.h>
 #include <DataTypes/DataTypesNumber.h>
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionarySourceHelpers.h>
 #include <Interpreters/Context.h>
 #include <Common/logger_useful.h>
@@ -226,8 +226,8 @@ DictionaryPtr createLayout(const std::string & /*name*/,
     const auto & dict_prefix = layout_prefix + "." + keys.front();
 
     ContextMutablePtr context = copyContextAndApplySettingsFromDictionaryConfig(global_context, config, config_prefix);
-    const auto * clickhouse_source = dynamic_cast<const ClickHouseDictionarySource *>(source_ptr.get());
-    bool use_async_executor = clickhouse_source && clickhouse_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
+    const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get());
+    bool use_async_executor = datastore_source && datastore_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
 
     IPolygonDictionary::Configuration configuration
     {

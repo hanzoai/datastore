@@ -273,7 +273,7 @@ namespace DB
 
             /// Pass null null_map, because fillArrowArray will decide whether nested_type is nullable, if nullable, it will create a new null_map from nested_column
             /// Note that it is only needed by gluten(https://github.com/oap-project/gluten), because array type in gluten is by default nullable.
-            /// And it does not influence the original ClickHouse logic, because null_map passed to fillArrowArrayWithArrayColumnData is always nullptr for ClickHouse doesn't allow nullable complex types including array type.
+            /// And it does not influence the original Datastore logic, because null_map passed to fillArrowArrayWithArrayColumnData is always nullptr for Datastore doesn't allow nullable complex types including array type.
             fillArrowArray(column_name, nested_column, nested_type, nullptr, value_builder, format_name, offsets[array_idx - 1], offsets[array_idx], settings, dictionary_values);
         }
     }
@@ -403,7 +403,7 @@ namespace DB
         if ((indexes_int32_type && dict_size > INT32_MAX) || (indexes_uint32_type && dict_size > UINT32_MAX) || (indexes_int64_type && dict_size > INT64_MAX))
             throw Exception(
                 ErrorCodes::ILLEGAL_COLUMN,
-                "Cannot convert ClickHouse LowCardinality column to Arrow Dictionary column:"
+                "Cannot convert Datastore LowCardinality column to Arrow Dictionary column:"
                 " resulting dictionary size exceeds the max value of index type {}", dict_indexes_arrow_type->name());
     }
 
@@ -433,7 +433,7 @@ namespace DB
         }
         else
         {
-            /// In ClickHouse blocks with same header can contain LowCardinality columns with
+            /// In Datastore blocks with same header can contain LowCardinality columns with
             /// different dictionaries.
             /// Arrow supports only single dictionary for all batches, but it allows to extend
             /// dictionary if previous dictionary is a prefix of a new one.
@@ -927,7 +927,7 @@ namespace DB
     {
         switch (indexes_column->getDataType())
         {
-            /// In ClickHouse blocks with same header can contain LowCardinality columns with
+            /// In Datastore blocks with same header can contain LowCardinality columns with
             /// different dictionaries.
             /// Arrow supports only single dictionary for all batches, but it allows to extend
             /// dictionary if previous dictionary is a prefix of a new one.

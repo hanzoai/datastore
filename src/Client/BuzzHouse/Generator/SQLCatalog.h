@@ -44,13 +44,13 @@ enum class PeerTableDatabase
     MySQL = 1,
     PostgreSQL = 2,
     SQLite = 3,
-    ClickHouse = 4
+    Datastore = 4
 };
 
 enum class PeerQuery
 {
     None = 0,
-    ClickHouseOnly = 1,
+    DatastoreOnly = 1,
     AllPeers = 2
 };
 
@@ -369,7 +369,7 @@ public:
 
     bool hasSQLitePeer() const;
 
-    bool hasClickHousePeer() const;
+    bool hasDatastorePeer() const;
 
     const std::optional<String> & getCluster() const;
 

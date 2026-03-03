@@ -65,7 +65,7 @@ bool ZstdInflatingReadBuffer::nextImpl()
                 "ZSTD stream decoding failed: error '{}'{}; ZSTD version: {}{}",
                 ZSTD_getErrorName(ret),
                 ZSTD_error_frameParameter_windowTooLarge == ret
-                    ? ". You can increase the maximum window size with the 'zstd_window_log_max' setting in ClickHouse. Example: 'SET zstd_window_log_max = 31'"
+                    ? ". You can increase the maximum window size with the 'zstd_window_log_max' setting in Datastore. Example: 'SET zstd_window_log_max = 31'"
                     : "",
                 ZSTD_VERSION_STRING,
                 getExceptionEntryWithFileName(*in));

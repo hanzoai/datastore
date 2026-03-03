@@ -212,8 +212,8 @@ void HedgedConnections::sendQuery(
     {
         Settings modified_settings = settings;
 
-        /// Queries in foreign languages are transformed to ClickHouse-SQL. Ensure the setting before sending.
-        modified_settings[Setting::dialect] = Dialect::clickhouse;
+        /// Queries in foreign languages are transformed to Datastore-SQL. Ensure the setting before sending.
+        modified_settings[Setting::dialect] = Dialect::datastore;
         modified_settings[Setting::dialect].changed = false;
 
         if (disable_two_level_aggregation)

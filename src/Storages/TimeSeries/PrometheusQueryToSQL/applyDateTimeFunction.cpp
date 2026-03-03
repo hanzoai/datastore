@@ -72,7 +72,7 @@ namespace
                  /// Returned values should be from 28 to 31.
                  [](ASTPtr t) -> ASTPtr
                  {
-                     /// TODO: Consider adding function toDaysInMonth() to ClickHouse.
+                     /// TODO: Consider adding function toDaysInMonth() to Datastore.
                      return makeASTFunction(
                          "plus",
                          makeASTFunction(

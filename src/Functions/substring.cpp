@@ -287,7 +287,7 @@ If this assumption is violated, no exception is thrown and the result is undefin
         documentation, FunctionFactory::Case::Insensitive);
     factory.registerAlias("substr", "substring", FunctionFactory::Case::Insensitive); // MySQL alias
     factory.registerAlias("mid", "substring", FunctionFactory::Case::Insensitive); /// MySQL alias
-    factory.registerAlias("byteSlice", "substring", FunctionFactory::Case::Insensitive); /// resembles PostgreSQL's get_byte function, similar to ClickHouse's bitSlice
+    factory.registerAlias("byteSlice", "substring", FunctionFactory::Case::Insensitive); /// resembles PostgreSQL's get_byte function, similar to Datastore's bitSlice
 
     factory.registerFunction("substringUTF8",
         [](ContextPtr){ return FunctionSubstring::create("substringUTF8", true); },

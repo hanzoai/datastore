@@ -23,7 +23,7 @@ using RWLock = std::shared_ptr<RWLockImpl>;
 /// (Phase Fair RWLock as suggested in https://www.cs.unc.edu/~anderson/papers/rtsj10-for-web.pdf)
 /// It is used for synchronizing access to various objects on query level (i.e. Storages).
 ///
-/// In general, ClickHouse processes queries by multiple threads of execution in parallel.
+/// In general, Datastore processes queries by multiple threads of execution in parallel.
 /// As opposed to the standard OS synchronization primitives (mutexes), this implementation allows
 /// unlock() to be called by a thread other than the one, that called lock().
 /// It is also possible to acquire RWLock in Read mode without waiting (FastPath) by multiple threads,

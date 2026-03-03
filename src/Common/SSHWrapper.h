@@ -52,7 +52,7 @@ private:
 class SSHKeyFactory
 {
 public:
-    /// The check whether the path is allowed to read for ClickHouse has
+    /// The check whether the path is allowed to read for Datastore has
     /// (e.g. a file is inside `user_files` directory)
     /// to be done outside of this functions.
     static SSHKey makePrivateKeyFromFile(String filename, String passphrase);

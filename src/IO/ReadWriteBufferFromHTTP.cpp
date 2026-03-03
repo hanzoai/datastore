@@ -246,7 +246,7 @@ ReadWriteBufferFromHTTP::ReadWriteBufferFromHTTP(
 
     if (iter == http_header_entries.end())
     {
-        http_header_entries.emplace_back(user_agent, fmt::format("ClickHouse/{}{}", VERSION_STRING, VERSION_OFFICIAL));
+        http_header_entries.emplace_back(user_agent, fmt::format("Datastore/{}{}", VERSION_STRING, VERSION_OFFICIAL));
     }
 
     if (!delay_initialization && use_external_buffer)

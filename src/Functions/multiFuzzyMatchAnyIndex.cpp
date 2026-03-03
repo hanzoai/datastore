@@ -31,7 +31,7 @@ REGISTER_FUNCTION(MultiFuzzyMatchAnyIndex)
     {
     {
         "Usage example",
-        "SELECT multiFuzzyMatchAnyIndex('ClickHouse', 2, ['ClckHouse', 'ClickHose', 'ClickHouse']);",
+        "SELECT multiFuzzyMatchAnyIndex('Datastore', 2, ['ClckHouse', 'ClickHose', 'Datastore']);",
         R"(
 ┌─multiFuzzyMa⋯ickHouse'])─┐
 │                        2 │

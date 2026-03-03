@@ -71,7 +71,7 @@ TableZnodeInfo TableZnodeInfo::resolve(const String & requested_path, const Stri
     res.replica_name = context->getMacros()->expand(res.replica_name, info);
 
     /// We do not allow renaming table with these macros in metadata, because zookeeper_path will be broken after RENAME TABLE.
-    /// NOTE: it may happen if table was created by older version of ClickHouse (< 20.10) and macros was not unfolded on table creation
+    /// NOTE: it may happen if table was created by older version of Datastore (< 20.10) and macros was not unfolded on table creation
     /// or if one of these macros is recursively expanded from some other macro.
     /// Also do not allow to move table from Atomic to Ordinary database if there's {uuid} macro
     if (info.expanded_database || info.expanded_table)

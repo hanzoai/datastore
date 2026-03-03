@@ -79,7 +79,7 @@ REGISTER_FUNCTION(ToTypeName)
 {
     FunctionDocumentation::Description description = R"(
 Returns the type name of the passed argument.
-If `NULL` is passed, the function returns type `Nullable(Nothing)`, which corresponds to ClickHouse's internal `NULL` representation.
+If `NULL` is passed, the function returns type `Nullable(Nothing)`, which corresponds to Datastore's internal `NULL` representation.
     )";
     FunctionDocumentation::Syntax syntax = "toTypeName(x)";
     FunctionDocumentation::Arguments arguments = {

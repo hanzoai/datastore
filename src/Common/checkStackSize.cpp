@@ -104,12 +104,12 @@ static size_t getStackSize(void ** out_address)
     return size;
 }
 
-/** It works fine when interpreters are instantiated by ClickHouse code in properly prepared threads,
-  *  but there are cases when ClickHouse runs as a library inside another application.
+/** It works fine when interpreters are instantiated by Datastore code in properly prepared threads,
+  *  but there are cases when Datastore runs as a library inside another application.
   * If application is using user-space lightweight threads with manually allocated stacks,
   *  current implementation is not reasonable, as it has no way to properly check the remaining
   *  stack size without knowing the details of how stacks are allocated.
-  * We mark this function as weak symbol to be able to replace it in another ClickHouse-based products.
+  * We mark this function as weak symbol to be able to replace it in another Datastore-based products.
   */
 __attribute__((__weak__)) void checkStackSize()
 {

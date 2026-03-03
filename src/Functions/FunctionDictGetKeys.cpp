@@ -544,7 +544,7 @@ This is most effective with large dictionaries when the input has low cardinalit
     FunctionDocumentation::ReturnedValue returned_value
         = {"For single key dictionaries: an array of keys whose attribute equals `value_expr`. For multi key dictionaries: an array of "
            "tuples of keys whose attribute equals `value_expr`. If there is no attribute corresponding to `value_expr` in the dictionary, "
-           "then an empty array is returned. ClickHouse throws an exception if it cannot parse the value of the attribute or the value "
+           "then an empty array is returned. Datastore throws an exception if it cannot parse the value of the attribute or the value "
            "cannot be converted to the attribute data type.",
            {}};
     FunctionDocumentation::Examples examples

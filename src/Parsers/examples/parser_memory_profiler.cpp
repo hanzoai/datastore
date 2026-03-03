@@ -318,7 +318,7 @@ try
             }
         }
 
-        /// Enable per-thread profiling (ClickHouse jemalloc defaults to prof_thread_active_init:false)
+        /// Enable per-thread profiling (Datastore jemalloc defaults to prof_thread_active_init:false)
         bool thread_active = true;
         mallctl("thread.prof.active", nullptr, nullptr, &thread_active, sizeof(thread_active));
 

@@ -26,8 +26,8 @@ public:
         const Block & header_,
         const std::string & format_name_,
         const FormatSettings & format_settings_,
-        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse_,
-        const std::optional<std::unordered_map<String, String>> & clickhouse_columns_to_parquet_,
+        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore_,
+        const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet_,
         bool allow_missing_columns_,
         bool null_as_default_,
         FormatSettings::DateTimeOverflowBehavior date_time_overflow_behavior_,
@@ -42,7 +42,7 @@ public:
         std::shared_ptr<const arrow::KeyValueMetadata> metadata,
         BlockMissingValues * block_missing_values = nullptr);
 
-    /// Transform arrow schema to ClickHouse header
+    /// Transform arrow schema to Datastore header
     static Block arrowSchemaToCHHeader(
         const arrow::Schema & schema,
         std::shared_ptr<const arrow::KeyValueMetadata> metadata,
@@ -53,8 +53,8 @@ public:
         bool case_insensitive_matching = false,
         bool allow_geoparquet_parser = true,
         bool enable_json_parsing = true,
-        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse = std::nullopt,
-        const std::optional<std::unordered_map<String, String>> & clickhouse_columns_to_parquet = std::nullopt);
+        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore = std::nullopt,
+        const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet = std::nullopt);
 
     struct DictionaryInfo
     {
@@ -96,8 +96,8 @@ private:
     /// to LowCardinality every chunk we save it and reuse.
     std::unordered_map<std::string, DictionaryInfo> dictionary_infos;
 
-    std::optional<std::unordered_map<String, String>> parquet_columns_to_clickhouse;
-    std::optional<std::unordered_map<String, String>> clickhouse_columns_to_parquet;
+    std::optional<std::unordered_map<String, String>> parquet_columns_to_datastore;
+    std::optional<std::unordered_map<String, String>> datastore_columns_to_parquet;
 };
 
 }

@@ -1,1 +1,1 @@
-int mainEntryClickHouseFormat(int argc, char ** argv);
+int mainEntryDatastoreFormat(int argc, char ** argv);

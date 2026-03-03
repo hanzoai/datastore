@@ -1,1 +1,1 @@
-int mainEntryClickHouseCompressor(int argc, char ** argv);
+int mainEntryDatastoreCompressor(int argc, char ** argv);

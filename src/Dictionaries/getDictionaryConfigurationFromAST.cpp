@@ -704,20 +704,20 @@ getDictionaryConfigurationFromAST(const ASTCreateQuery & query, ContextPtr conte
     return conf;
 }
 
-std::optional<ClickHouseDictionarySourceInfo>
-getInfoIfClickHouseDictionarySource(DictionaryConfigurationPtr & config, ContextPtr global_context)
+std::optional<DatastoreDictionarySourceInfo>
+getInfoIfDatastoreDictionarySource(DictionaryConfigurationPtr & config, ContextPtr global_context)
 {
-    ClickHouseDictionarySourceInfo info;
+    DatastoreDictionarySourceInfo info;
 
-    bool secure = config->getBool("dictionary.source.clickhouse.secure", false);
+    bool secure = config->getBool("dictionary.source.datastore.secure", false);
     UInt16 default_port = secure ? global_context->getTCPPortSecure().value_or(0) : global_context->getTCPPort();
 
-    String host = config->getString("dictionary.source.clickhouse.host", "localhost");
-    UInt16 port = static_cast<UInt16>(config->getUInt("dictionary.source.clickhouse.port", default_port));
-    String database = config->getString("dictionary.source.clickhouse.db", "");
-    String table = config->getString("dictionary.source.clickhouse.table", "");
+    String host = config->getString("dictionary.source.datastore.host", "localhost");
+    UInt16 port = static_cast<UInt16>(config->getUInt("dictionary.source.datastore.port", default_port));
+    String database = config->getString("dictionary.source.datastore.db", "");
+    String table = config->getString("dictionary.source.datastore.table", "");
 
-    info.query = config->getString("dictionary.source.clickhouse.query", "");
+    info.query = config->getString("dictionary.source.datastore.query", "");
 
     if (!table.empty())
         info.table_name = {database, table};

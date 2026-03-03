@@ -259,7 +259,7 @@ By default, removes common whitespace (ASCII) characters.
     FunctionDocumentation::Examples examples_left = {
     {
         "Usage example",
-        "SELECT trimLeft('ClickHouse', 'Click');",
+        "SELECT trimLeft('Datastore', 'Click');",
         R"(
 ┌─trimLeft('Cl⋯', 'Click')─┐
 │ House                    │
@@ -284,7 +284,7 @@ By default, removes common whitespace (ASCII) characters.
     FunctionDocumentation::Examples examples_right = {
     {
         "Usage example",
-        "SELECT trimRight('ClickHouse','House');",
+        "SELECT trimRight('Datastore','House');",
         R"(
 ┌─trimRight('C⋯', 'House')─┐
 │ Click                    │
@@ -307,10 +307,10 @@ By default, removes common whitespace (ASCII) characters.
     FunctionDocumentation::Examples examples_both = {
     {
         "Usage example",
-        "SELECT trimBoth('$$ClickHouse$$', '$')",
+        "SELECT trimBoth('$$Datastore$$', '$')",
         R"(
 ┌─trimBoth('$$⋯se$$', '$')─┐
-│ ClickHouse               │
+│ Datastore               │
 └──────────────────────────┘
         )"
     }

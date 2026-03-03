@@ -8,11 +8,11 @@ struct Settings;
 
 /** Data for HyperLogLogBiasEstimator in the uniqCombined function.
   * The development plan is as follows:
-  * 1. Assemble ClickHouse.
+  * 1. Assemble Datastore.
   * 2. Run the script src/src/scripts/gen-bias-data.py, which returns one array for getRawEstimates()
   *     and another array for getBiases().
   * 3. Update `raw_estimates` and `biases` arrays. Also update the size of arrays in InterpolatedData.
-  * 4. Assemble ClickHouse.
+  * 4. Assemble Datastore.
   * 5. Run the script src/src/scripts/linear-counting-threshold.py, which creates 3 files:
   * - raw_graph.txt (1st column: the present number of unique values;
   *    2nd column: relative error in the case of HyperLogLog without applying any corrections)
@@ -24,7 +24,7 @@ struct Settings;
   * 7. Determine the minimum number of unique values at which it is better to correct the error
   *     using its evaluation (ie, using the HyperLogLog++ algorithm) than applying the LinearCounting algorithm.
   * 7. Accordingly, update the constant in the function getThreshold()
-  * 8. Assemble ClickHouse.
+  * 8. Assemble Datastore.
   */
 struct UniqCombinedBiasData
 {

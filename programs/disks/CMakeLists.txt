@@ -1,4 +1,4 @@
-set (CLICKHOUSE_DISKS_SOURCES
+set (DATASTORE_DISKS_SOURCES
     DisksApp.cpp
     DisksClient.cpp
     ICommand.cpp
@@ -18,19 +18,19 @@ set (CLICKHOUSE_DISKS_SOURCES
     CommandGetCurrentDiskAndPath.cpp
     Utils.cpp)
 
-if (CLICKHOUSE_CLOUD)
-  set (CLICKHOUSE_DISKS_SOURCES ${CLICKHOUSE_DISKS_SOURCES} CommandPackedIO.cpp)
+if (DATASTORE_CLOUD)
+  set (DATASTORE_DISKS_SOURCES ${DATASTORE_DISKS_SOURCES} CommandPackedIO.cpp)
 endif ()
 
-set (CLICKHOUSE_DISKS_LINK
+set (DATASTORE_DISKS_LINK
     PRIVATE
         boost::program_options
-        clickhouse_aggregate_functions
-        clickhouse_common_config
-        clickhouse_common_io
-        clickhouse_functions
-        clickhouse_parsers
-        clickhouse_table_functions
+        datastore_aggregate_functions
+        datastore_common_config
+        datastore_common_io
+        datastore_functions
+        datastore_parsers
+        datastore_table_functions
         )
 
-clickhouse_program_add(disks)
+datastore_program_add(disks)

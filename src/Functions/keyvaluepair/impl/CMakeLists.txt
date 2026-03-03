@@ -1,7 +1,7 @@
-include("${ClickHouse_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
-add_headers_and_sources(clickhouse_functions_extractkeyvaluepairs_core .)
-add_headers_and_sources(clickhouse_functions_extractkeyvaluepairs_core impl)
+include("${Datastore_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
+add_headers_and_sources(datastore_functions_extractkeyvaluepairs_core .)
+add_headers_and_sources(datastore_functions_extractkeyvaluepairs_core impl)
 
-add_library(clickhouse_functions_extractkeyvaluepairs_core ${clickhouse_functions_extractkeyvaluepairs_core_sources} ${clickhouse_functions_extractkeyvaluepairs_core_headers})
+add_library(datastore_functions_extractkeyvaluepairs_core ${datastore_functions_extractkeyvaluepairs_core_sources} ${datastore_functions_extractkeyvaluepairs_core_headers})
 
-target_link_libraries(clickhouse_functions_extractkeyvaluepairs_core PRIVATE dbms)
+target_link_libraries(datastore_functions_extractkeyvaluepairs_core PRIVATE dbms)

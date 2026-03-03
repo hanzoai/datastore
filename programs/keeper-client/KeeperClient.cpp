@@ -101,7 +101,7 @@ void KeeperClient::defineOptions(Poco::Util::OptionSet & options)
             .binding("use-xid-64"));
 
     options.addOption(
-        Poco::Util::Option("config-file", "c", "if set, will try to get a connection string from clickhouse config. default `config.xml`")
+        Poco::Util::Option("config-file", "c", "if set, will try to get a connection string from datastore config. default `config.xml`")
             .argument("<file>")
             .binding("config-file"));
 
@@ -424,12 +424,12 @@ void KeeperClient::connectToKeeper()
 
     ConfigProcessor config_processor(config().getString("config-file", "config.xml"));
 
-    /// This will handle a situation when clickhouse is running on the embedded config, but config.d folder is also present.
-    ConfigProcessor::registerEmbeddedConfig("config.xml", "<clickhouse/>");
-    auto clickhouse_config = config_processor.loadConfig();
+    /// This will handle a situation when datastore is running on the embedded config, but config.d folder is also present.
+    ConfigProcessor::registerEmbeddedConfig("config.xml", "<datastore/>");
+    auto datastore_config = config_processor.loadConfig();
 
     Poco::Util::AbstractConfiguration::Keys keys;
-    clickhouse_config.configuration->keys("zookeeper", keys);
+    datastore_config.configuration->keys("zookeeper", keys);
 
     zkutil::ZooKeeperArgs new_zk_args;
 
@@ -443,10 +443,10 @@ void KeeperClient::connectToKeeper()
                 continue;
 
             String prefix = "zookeeper." + key;
-            String host = clickhouse_config.configuration->getString(prefix + ".host");
-            String port = clickhouse_config.configuration->getString(prefix + ".port");
+            String host = datastore_config.configuration->getString(prefix + ".host");
+            String port = datastore_config.configuration->getString(prefix + ".port");
 
-            if (clickhouse_config.configuration->has(prefix + ".secure") || config().has("secure"))
+            if (datastore_config.configuration->has(prefix + ".secure") || config().has("secure"))
                 host = "secure://" + host;
 
             new_zk_args.hosts.push_back(host + ":" + port);
@@ -510,7 +510,7 @@ int KeeperClient::main(const std::vector<String> & /* args */)
 }
 
 
-int mainEntryClickHouseKeeperClient(int argc, char ** argv)
+int mainEntryDatastoreKeeperClient(int argc, char ** argv)
 {
     try
     {

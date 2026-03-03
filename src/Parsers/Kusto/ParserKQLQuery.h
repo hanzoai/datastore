@@ -37,7 +37,7 @@ public:
     explicit ParserSimpleCHSubquery(ASTPtr parent_select_node_ = nullptr) { parent_select_node = parent_select_node_; }
 
 protected:
-    const char * getName() const override { return "Simple ClickHouse subquery"; }
+    const char * getName() const override { return "Simple Datastore subquery"; }
     bool parseImpl(Pos & pos, ASTPtr & node, Expected & expected) override;
     ASTPtr parent_select_node;
 };

@@ -263,7 +263,7 @@ void DistributedAsyncInsertBatch::sendBatch(const SettingsChanges & settings_cha
             tracing_contexts.emplace_back(distributed_header.createTracingContextHolder(
                 __PRETTY_FUNCTION__,
                 parent.storage.getContext()->getOpenTelemetrySpanLog()));
-            tracing_contexts.back()->root_span.addAttribute("clickhouse.distributed_batch_start_time", batch_start_time);
+            tracing_contexts.back()->root_span.addAttribute("datastore.distributed_batch_start_time", batch_start_time);
 
             if (!remote)
             {

@@ -360,8 +360,8 @@ private:
     std::exception_ptr background_exception = nullptr;
     std::atomic<int> is_stopped{0};
     bool is_initialized = false;
-    std::optional<std::unordered_map<String, String>> parquet_names_to_clickhouse;
-    std::optional<std::unordered_map<String, String>> clickhouse_names_to_parquet;
+    std::optional<std::unordered_map<String, String>> parquet_names_to_datastore;
+    std::optional<std::unordered_map<String, String>> datastore_names_to_parquet;
 };
 
 class ArrowParquetSchemaReader : public ISchemaReader

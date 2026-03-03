@@ -1,7 +1,7 @@
 #include <Dictionaries/RangeHashedDictionary.h>
 
 #include <Core/Settings.h>
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionarySourceHelpers.h>
 #include <Dictionaries/DictionaryFactory.h>
 #include <Interpreters/Context.h>
@@ -62,8 +62,8 @@ static DictionaryPtr createRangeHashedDictionary(const std::string & full_name,
         lookup_strategy = RangeHashedDictionaryLookupStrategy::max;
 
     auto context = copyContextAndApplySettingsFromDictionaryConfig(global_context, config, config_prefix);
-    const auto * clickhouse_source = dynamic_cast<const ClickHouseDictionarySource *>(source_ptr.get());
-    bool use_async_executor = clickhouse_source && clickhouse_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
+    const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get());
+    bool use_async_executor = datastore_source && datastore_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
 
     RangeHashedDictionaryConfiguration configuration
     {

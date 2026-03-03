@@ -104,7 +104,7 @@ public:
         }
         else if (which.isUUID())
         {
-            // Function toUnderType: UUID => toUInt128 doesn't work for some reason so we need to use toUInt128 clickhouse implementation
+            // Function toUnderType: UUID => toUInt128 doesn't work for some reason so we need to use toUInt128 datastore implementation
             ColumnPtr intermediate_representation = FunctionFactory::instance()
                                                         .get("toUInt128", context)
                                                         ->build(arguments)

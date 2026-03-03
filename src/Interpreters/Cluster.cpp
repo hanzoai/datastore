@@ -50,7 +50,7 @@ namespace
 /// Default shard weight.
 constexpr UInt32 default_weight = 1;
 
-inline bool isLocalImpl(const Cluster::Address & address, const Poco::Net::SocketAddress & resolved_address, UInt16 clickhouse_port)
+inline bool isLocalImpl(const Cluster::Address & address, const Poco::Net::SocketAddress & resolved_address, UInt16 datastore_port)
 {
     /// If there is replica, for which:
     /// - its port is the same that the server is listening;
@@ -62,7 +62,7 @@ inline bool isLocalImpl(const Cluster::Address & address, const Poco::Net::Socke
     /// Also, replica is considered non-local, if it has default database set
     ///  (only reason is to avoid query rewrite).
 
-    return address.default_database.empty() && isLocalAddress(resolved_address, clickhouse_port);
+    return address.default_database.empty() && isLocalAddress(resolved_address, datastore_port);
 }
 
 void concatInsertPath(std::string & insert_path, const std::string & dir_name)
@@ -92,10 +92,10 @@ std::optional<Poco::Net::SocketAddress> Cluster::Address::getResolvedAddress() c
 }
 
 
-bool Cluster::Address::isLocal(UInt16 clickhouse_port) const
+bool Cluster::Address::isLocal(UInt16 datastore_port) const
 {
     if (auto resolved = getResolvedAddress())
-        return isLocalImpl(*this, *resolved, clickhouse_port);
+        return isLocalImpl(*this, *resolved, datastore_port);
     return false;
 }
 
@@ -153,13 +153,13 @@ Cluster::Address::Address(
     std::pair<std::string, UInt16> parsed_host_port;
     if (!params.treat_local_port_as_remote)
     {
-        parsed_host_port = parseAddress(info.hostname, params.clickhouse_port);
+        parsed_host_port = parseAddress(info.hostname, params.datastore_port);
     }
     else
     {
-        /// For clickhouse-local (treat_local_port_as_remote) try to read the address without passing a default port
+        /// For datastore-local (treat_local_port_as_remote) try to read the address without passing a default port
         /// If it works we have a full address that includes a port, which means it won't be local
-        /// since clickhouse-local doesn't listen in any port
+        /// since datastore-local doesn't listen in any port
         /// If it doesn't include a port then use the default one and it could be local (if the address is)
         try
         {
@@ -168,7 +168,7 @@ Cluster::Address::Address(
         }
         catch (...)
         {
-            parsed_host_port = parseAddress(info.hostname, params.clickhouse_port);
+            parsed_host_port = parseAddress(info.hostname, params.datastore_port);
         }
     }
     host_name = parsed_host_port.first;
@@ -178,7 +178,7 @@ Cluster::Address::Address(
     secure = params.secure ? Protocol::Secure::Enable : Protocol::Secure::Disable;
     bind_host = params.bind_host;
     priority = params.priority;
-    is_local = can_be_local && isLocal(params.clickhouse_port);
+    is_local = can_be_local && isLocal(params.datastore_port);
     shard_index = shard_index_;
     replica_index = replica_index_;
     cluster = params.cluster_name;
@@ -953,7 +953,7 @@ const std::string & Cluster::ShardInfo::insertPathForInternalReplication(bool pr
 bool Cluster::maybeCrossReplication() const
 {
     /// Cluster can be used for cross-replication if some replicas have different default database names,
-    /// so one clickhouse-server instance can contain multiple replicas.
+    /// so one datastore-server instance can contain multiple replicas.
 
     if (addresses_with_failover.empty())
         return false;

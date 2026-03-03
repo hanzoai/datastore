@@ -29,7 +29,7 @@ ColumnsDescription StorageSystemSettingsChanges::getColumnsDescription()
     return ColumnsDescription
     {
         {"type", getSettingsTypeEnum(), "The group of settings (Session, MergeTree...)"},
-        {"version", std::make_shared<DataTypeString>(), "The ClickHouse server version."},
+        {"version", std::make_shared<DataTypeString>(), "The Datastore server version."},
         {"changes",
          std::make_shared<DataTypeArray>(std::make_shared<DataTypeTuple>(
              DataTypes{
@@ -37,7 +37,7 @@ ColumnsDescription StorageSystemSettingsChanges::getColumnsDescription()
                  std::make_shared<DataTypeString>(),
                  std::make_shared<DataTypeString>(),
                  std::make_shared<DataTypeString>()},
-             Names{"name", "previous_value", "new_value", "reason"})), "The list of changes in settings which changed the behaviour of ClickHouse."},
+             Names{"name", "previous_value", "new_value", "reason"})), "The list of changes in settings which changed the behaviour of Datastore."},
     };
 }
 

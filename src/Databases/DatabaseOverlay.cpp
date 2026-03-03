@@ -181,7 +181,7 @@ ASTPtr DatabaseOverlay::getCreateTableQueryImpl(const String & name, ContextPtr 
 }
 
 /*
- * DatabaseOverlay cannot be constructed by "CREATE DATABASE" query, as it is not a traditional ClickHouse database
+ * DatabaseOverlay cannot be constructed by "CREATE DATABASE" query, as it is not a traditional Datastore database
  * To use DatabaseOverlay, it must be constructed programmatically in code
  */
 ASTPtr DatabaseOverlay::getCreateDatabaseQueryImpl() const
