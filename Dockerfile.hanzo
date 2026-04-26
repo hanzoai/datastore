@@ -1,9 +1,29 @@
-# Hanzo Datastore — Columnar analytics engine
+# Hanzo Datastore — Columnar analytics engine + native ZAP duplex listener
 # This is the production build. Uses docker/server/Dockerfile.alpine as source.
 # Build: docker build -t ghcr.io/hanzoai/datastore:latest -f Dockerfile.hanzo docker/server/
+#
+# The image runs two processes in one container:
+#   PID 1: hanzo-datastore server (HTTP 8123, native TCP 9000, replication 9009)
+#   bg:    zap-bridge (ZAP duplex on TCP 9999, proxies to 127.0.0.1:9000)
+#
+# This replaces the deleted out-of-process zap-sidecar — native ZAP everywhere.
+# Bridge source: cmd/zap-bridge (per-package go.mod, independent of C++ build).
 
 ARG DS_VERSION=26.2.3.2
 ARG REPO_CHANNEL=stable
+
+# -- ZAP bridge build stage ----------------------------------------------------
+# Compiles the Go zap-bridge binary for the target architecture. Independent
+# of the ClickHouse C++ build — fast, cacheable, no cross-pollination.
+FROM golang:1.26-alpine AS zap-builder
+ARG TARGETARCH
+WORKDIR /src
+# Copy only what the bridge needs so unrelated repo changes don't bust cache.
+COPY cmd/zap-bridge/ ./cmd/zap-bridge/
+WORKDIR /src/cmd/zap-bridge
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH:-amd64} \
+    go build -trimpath -ldflags='-s -w' -o /out/zap-bridge ./...
 
 FROM ubuntu:22.04 AS glibc-donor
 ARG TARGETARCH
@@ -38,6 +58,11 @@ COPY docker/server/datastore-port-override.xml /etc/hanzo-datastore-server/confi
 COPY docker/server/hanzo-paths.xml /etc/hanzo-datastore-server/config.d/
 COPY docker/server/entrypoint.sh /entrypoint.sh
 COPY docker/server/nginx-header-proxy.conf /etc/nginx/http.d/datastore-proxy.conf
+
+# Native ZAP bridge — single static binary. Started by entrypoint.sh in the
+# background before clickhouse-server. Listens on :9999, proxies to
+# 127.0.0.1:9000. See cmd/zap-bridge/main.go for the wire protocol.
+COPY --from=zap-builder /out/zap-bridge /usr/local/bin/zap-bridge
 
 ARG TARGETARCH
 RUN arch=${TARGETARCH:-amd64} \
@@ -127,7 +152,8 @@ RUN mkdir -p \
     && chmod ugo+Xrw -R "${DEFAULT_DATA_DIR}" "${DEFAULT_LOG_DIR}" "${DEFAULT_CLIENT_CONFIG_DIR}" "${DEFAULT_SERVER_CONFIG_DIR}"
 
 VOLUME "${DEFAULT_DATA_DIR}"
-EXPOSE 9000 8123 9009
+# 8123: HTTP   9000: native TCP   9009: replication   9999: native ZAP duplex
+EXPOSE 9000 8123 9009 9999
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=30s --retries=3 \
     CMD wget -qO- http://localhost:8123/ping || exit 1
