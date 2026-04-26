@@ -120,11 +120,9 @@ RUN arch=${TARGETARCH:-amd64} \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore-server \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore-client \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore-local \
-    && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore-keeper \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-server \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-client \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-local \
-    && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-keeper \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-extract-from-config \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-su \
     # Merge upstream config into hanzo-datastore paths (COPY may have pre-created dirs)

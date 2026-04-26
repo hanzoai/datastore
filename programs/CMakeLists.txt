@@ -19,11 +19,16 @@ option (ENABLE_DATASTORE_ALL "Enable all Datastore modes by default" ON)
 # https://presentations.datastore.com/matemarketing_2020/
 option (ENABLE_DATASTORE_GIT_IMPORT "A tool to analyze Git repositories" ${ENABLE_DATASTORE_ALL})
 
-option (ENABLE_DATASTORE_KEEPER "Datastore alternative to ZooKeeper" ${ENABLE_DATASTORE_ALL})
+option (ENABLE_DATASTORE_KEEPER "Datastore alternative to ZooKeeper (standalone keeper entry-point bound into the multipurpose binary)" OFF)
 
-option (ENABLE_DATASTORE_KEEPER_CONVERTER "Util allows to convert ZooKeeper logs and snapshots into datastore-keeper snapshot" ${ENABLE_DATASTORE_ALL})
+option (ENABLE_DATASTORE_KEEPER_CONVERTER "Util allows to convert ZooKeeper logs and snapshots into datastore-keeper snapshot" OFF)
 
-option (ENABLE_DATASTORE_KEEPER_CLIENT "Datastore Keeper Client" ${ENABLE_DATASTORE_ALL})
+option (ENABLE_DATASTORE_KEEPER_CLIENT "Datastore Keeper Client" OFF)
+
+# NOTE: Embedded coordination (Raft via NuRaft) is provided by `src/Coordination/` and is
+# linked into the server library unconditionally. Setting the options above to OFF only
+# drops the standalone keeper entry-point and the keeper-converter/keeper-client tools;
+# `MergeTree` replication and DDL coordination via `<keeper_server>` config still work.
 
 if (NOT ENABLE_NURAFT)
     # RECONFIGURE_MESSAGE_LEVEL should not be used here,
