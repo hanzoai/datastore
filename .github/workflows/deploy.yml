@@ -9,6 +9,7 @@ on:
       - 'docker/server/**'
       - 'programs/**'
       - 'src/**'
+      - 'cmd/zap-bridge/**'
       - '.github/workflows/deploy.yml'
 permissions:
   contents: read
@@ -18,4 +19,6 @@ jobs:
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       image: ghcr.io/hanzoai/datastore
+      # Hanzo overlay: ClickHouse fork + native ZAP bridge in cmd/zap-bridge.
+      dockerfile: Dockerfile.hanzo
     secrets: inherit
