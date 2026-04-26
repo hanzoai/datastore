@@ -46,7 +46,18 @@ cd hanzo && docker compose up
 
 ## Upstream Sync
 
-`upstream` remote is `ClickHouse/ClickHouse`. Periodic merges land via a `merge-clickhouse-updates` branch with manual conflict resolution; the Hanzo overlay (`hanzo/`, `cmd/zap-bridge/`, `Dockerfile.hanzo`) is kept distinct from upstream paths to minimize collisions.
+Automated via `.github/workflows/upstream-sync.yml` (weekly, Mon 06:00 UTC,
+plus `workflow_dispatch`). The workflow fetches `upstream/master`, merges into
+a fresh `upstream-sync/<UTC-date>` branch, and opens a **draft** PR — it
+never auto-merges. On conflict the merge commit is pushed with conflict
+markers intact and the draft PR is labelled `upstream-sync,conflict`.
+
+There is exactly one upstream sync workflow. Do not add a second.
+
+The Hanzo overlay (`hanzo/`, `cmd/zap-bridge/`, `Dockerfile.hanzo`) is kept
+disjoint from upstream paths to minimize collisions, so most syncs land
+clean. Watch areas for conflicts: `docker/`, `programs/server/config.xml`,
+top-level `CMakeLists.txt`, and any upstream rename of `cmd/`.
 
 ## Phase 1 — Single Binary (Embedded Coordination)
 
