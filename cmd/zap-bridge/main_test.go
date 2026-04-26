@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/ClickHouse/clickhouse-go/v2/lib/column"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
@@ -160,14 +161,35 @@ func (b *fakeBatch) Append(v ...any) error {
 // Helpers
 // ---------------------------------------------------------------------------
 
+// testHMACKey is the shared key used by every test bridge + builder so
+// HMAC verification passes by default. Tests that probe auth failure
+// build their own bridges with a different key.
+var testHMACKey = []byte("0123456789abcdef0123456789abcdef")
+
 // buildRequest constructs a real ZAP message with the canonical
-// (path, body) shape — exactly what hanzo/orm/db/zap.go sends.
+// (path, body, ts, hmac) shape — exactly what hanzo/orm/db/zap.go sends.
+// Signs with testHMACKey; tests that need an unsigned/wrong-key request
+// use buildRequestRaw.
 func buildRequest(t *testing.T, path string, body []byte) *zap.Message {
 	t.Helper()
-	b := zap.NewBuilder(len(body) + 128)
-	obj := b.StartObject(20)
+	return buildRequestRaw(t, path, body, testHMACKey, time.Now().UnixMilli())
+}
+
+// buildRequestRaw is the underlying builder — exposed so adversarial
+// tests can craft messages with bad keys, stale timestamps, or missing
+// MACs. ts is Unix milliseconds. If key is nil, the HMAC field is left
+// empty (unsigned frame).
+func buildRequestRaw(t *testing.T, path string, body []byte, key []byte, ts int64) *zap.Message {
+	t.Helper()
+	b := zap.NewBuilder(len(body) + 256)
+	obj := b.StartObject(objectFixedSize)
 	obj.SetText(fieldPath, path)
 	obj.SetBytes(fieldBody, body)
+	obj.SetUint64(fieldTS, uint64(ts))
+	if key != nil {
+		mac := computeHMAC(key, path, body, uint64(ts))
+		obj.SetBytes(fieldHMAC, mac)
+	}
 	obj.FinishAsRoot()
 	// Sender sets flags = msgType << 8 — but we use the wire-level 8-bit
 	// projection because shifting a uint16 = 302 left by 8 overflows at
@@ -195,10 +217,12 @@ func decodeResponse(t *testing.T, msg *zap.Message) (uint32, []byte) {
 }
 
 // newTestBridge builds a bridge wired to the supplied fake — no real
-// ClickHouse, no ZAP listener. Just the handler logic.
+// ClickHouse, no ZAP listener. Just the handler logic. admit is left
+// nil so handler tests don't block on the semaphore; security tests
+// that exercise the gate construct their own bridge.
 func newTestBridge(fe *fakeExec) *bridge {
 	return &bridge{
-		cfg: config{database: "test"},
+		cfg: config{database: "test", hmacKey: testHMACKey},
 		ch:  fe,
 	}
 }
@@ -388,10 +412,10 @@ func TestUnknownPathReturns404(t *testing.T) {
 	}
 }
 
-// Compat: the deleted zap-sidecar treated an unrecognised path with a
-// non-empty body as a query. Preserve this for back-compat with older
-// clients that used the bare wire protocol.
-func TestUnknownPathFallsThroughToQueryWithBody(t *testing.T) {
+// Red finding #1 follow-up: the deleted zap-sidecar's "unrecognised path
+// → query fallback" is auth-free SQL. We removed it. This test pins the
+// new behaviour: unknown paths return 404, never fall through.
+func TestUnknownPathRejectsBodyFallthrough(t *testing.T) {
 	called := false
 	fe := &fakeExec{
 		queryRows: func(ctx context.Context, q string, args ...any) (driver.Rows, error) {
@@ -403,11 +427,11 @@ func TestUnknownPathFallsThroughToQueryWithBody(t *testing.T) {
 	body, _ := json.Marshal(map[string]any{"sql": "SELECT 1 AS v"})
 	resp := b.handle(context.Background(), "", buildRequest(t, "/legacy", body))
 	status, _ := decodeResponse(t, resp)
-	if status != 200 {
-		t.Fatalf("status: got %d, want 200", status)
+	if status != 404 {
+		t.Fatalf("status: got %d, want 404 (unknown path must NOT fall through)", status)
 	}
-	if !called {
-		t.Error("query fallback was not triggered")
+	if called {
+		t.Error("executor was invoked — unknown path fell through to query")
 	}
 }
 

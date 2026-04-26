@@ -1,0 +1,41 @@
+<!--
+  insights_writer — least-privilege account used by zap-bridge.
+
+  Scope: INSERT, SELECT, ALTER UPDATE, ALTER DELETE on `insights` only.
+  No DDL (CREATE/DROP/ALTER TABLE), no system-table access, no inter-DB
+  joins outside the `insights` and `default` databases.
+
+  The `default` user remains loopback-only (CH built-in default), and is
+  used exclusively for bootstrap and migrations — not for the bridge.
+
+  Rationale: even with HMAC auth on the wire, defense-in-depth means
+  the bridge's CH credentials are scoped to what the bridge actually
+  does. The previous design connected as `default` with full privileges,
+  so a bridge process compromise = full warehouse compromise.
+
+  Password is set at startup from env DATASTORE_PASSWORD (matching the
+  KMS-synced credentials in the K8s secret `datastore`). The XML entry
+  here is replaced by the entrypoint at runtime so the password never
+  lands in the image.
+-->
+<clickhouse>
+  <users>
+    <insights_writer>
+      <profile>default</profile>
+      <networks>
+        <ip>::1</ip>
+        <ip>127.0.0.1</ip>
+      </networks>
+      <!-- Password substituted at runtime by entrypoint.sh from
+           ${DATASTORE_PASSWORD}. -->
+      <password><![CDATA[__DATASTORE_PASSWORD__]]></password>
+      <quota>default</quota>
+      <access_management>0</access_management>
+      <grants>
+        <query>GRANT SELECT, INSERT, ALTER UPDATE, ALTER DELETE ON insights.* TO insights_writer</query>
+        <query>GRANT SELECT ON system.tables TO insights_writer</query>
+        <query>GRANT SELECT ON system.columns TO insights_writer</query>
+      </grants>
+    </insights_writer>
+  </users>
+</clickhouse>
