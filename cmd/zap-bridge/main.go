@@ -19,22 +19,25 @@
 //	Request fields:
 //	  fieldPath = 4   Text   request path (sub-method dispatch)
 //	  fieldBody = 12  Bytes  JSON body
+//	  fieldTS   = 20  Uint64 Unix-ms timestamp (replay guard)
+//	  fieldHMAC = 28  Bytes  HMAC-SHA256(key, path || \x00 || body || \x00 || ts-bytes)
 //
 //	Response fields:
 //	  respStatus  = 0   Uint32  HTTP-style status code
 //	  respBody    = 4   Bytes   JSON or NDJSON response
-//	  respHeaders = 8   Bytes   JSON-encoded headers
 //
 // Sub-methods (path):
 //
 //	/health  liveness probe — returns 200 iff ClickHouse responds to SELECT 1.
-//	/query   {sql, database?, format?} — runs SELECT, returns NDJSON.
-//	/exec    {sql, database?} — runs a non-SELECT, returns {ok:true}.
+//	/query   {sql, args?, database?} — runs SELECT, returns NDJSON.
+//	/exec    {sql, args?, database?} — runs a non-SELECT, returns {ok:true}.
 //	/insert  {table, database?, rows:[{...}]} — bulk insert via JSONEachRow.
-//	/tables  {database?} — list tables, returns JSON array.
 //
-// Default fallback: a non-empty body with no recognised path is treated as
-// a query (matches the deleted bridge for back-compat).
+// Authentication: every frame must carry a valid HMAC-SHA256 signature
+// over (path || \x00 || body || \x00 || ts-bytes), keyed with the shared
+// secret in DATASTORE_BRIDGE_HMAC_KEY (base64-encoded). Unsigned or
+// invalid frames are rejected with 401. Replay protection: timestamps
+// older than 60s or further than 60s in the future are rejected.
 //
 // Why MsgType 302 + path-based sub-dispatch (instead of a separate opcode
 // per method, like hanzo/tasks/service/frontend/zap_handler.go does at
@@ -47,6 +50,11 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/base64"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -90,28 +98,51 @@ const msgTypeDatastoreWire uint16 = MsgTypeDatastore & 0xFF
 // Request fields:
 //   fieldPath = 4   Text   sub-method dispatch ("/health", "/query", ...)
 //   fieldBody = 12  Bytes  JSON body
+//   fieldTS   = 20  Uint64 Unix-ms timestamp for replay protection
+//   fieldHMAC = 28  Bytes  HMAC-SHA256(key, path||0x00||body||0x00||ts-LE-bytes)
 //
 // Response fields:
 //   respStatus = 0  Uint32  HTTP-style status code
 //   respBody   = 4  Bytes   JSON or NDJSON payload
 //
-// Note: the deleted hanzo/zap/internal/datastore/proxy.go also wrote a
-// `respHeaders` Bytes field at offset 8. That layout is broken — Bytes
-// occupies offset+8 inline, so a Bytes at 4 (occupies 4..11) collides
-// with another Bytes at 8 (occupies 8..15). The collision overwrote the
-// body's length with the headers' deferred-offset placeholder, producing
-// responses where reading `body` returned body+headers concatenated.
-// No caller ever read respHeaders (verified across hanzo/orm/db/zap.go
-// and hanzo/cloud/object/zap.go), so we drop it. New callers that need
-// content-type negotiation should use the path: /query → NDJSON, all
-// others → JSON. Keeping respBody at offset 4 preserves bytewise
-// compatibility with existing readers.
+// Layout note: each Bytes field consumes 8 bytes inline (offset+length
+// pointer). Bytes@4 occupies 4..11; Bytes@12 occupies 12..19; Uint64@20
+// occupies 20..27; Bytes@28 occupies 28..35. Object fixed-section size
+// is 36. The deleted respHeaders field at offset 8 was broken (its
+// 8-byte slot collided with respBody at 4..11), so we dropped it.
 const (
 	fieldPath = 4
 	fieldBody = 12
+	fieldTS   = 20
+	fieldHMAC = 28
 
 	respStatus = 0
 	respBody   = 4
+
+	// objectFixedSize is the size to pass to StartObject for outgoing
+	// requests. Matches the highest field-end offset (28+8=36).
+	objectFixedSize = 36
+
+	// hmacReplayWindow is how far in the past or future a request
+	// timestamp may be before we reject it as replayed/forged. Tuned
+	// for in-cluster RTT plus modest clock skew.
+	hmacReplayWindow = 60 * time.Second
+
+	// handlerTimeout caps every request's ClickHouse work. Bridge ctx
+	// is bound to the node lifetime (no caller deadline propagation
+	// from luxfi/zap); without this, slow CH queries pin connections
+	// indefinitely after the caller has given up.
+	handlerTimeout = 30 * time.Second
+
+	// maxInsertRows is the per-request row cap. ZAP frames are already
+	// capped at 10MiB upstream; this caps memory pressure across
+	// concurrent inserts on top of that. 10k rows × ~1KiB/row ≈ 10MiB
+	// matches the wire ceiling.
+	maxInsertRows = 10_000
+
+	// chMaxOpenConns is the ClickHouse connection-pool size. Two are
+	// reserved for /health (semaphore admit gate is set to N-2).
+	chMaxOpenConns = 10
 )
 
 // config gathers all runtime knobs. All have safe defaults — zero-flag
@@ -119,20 +150,21 @@ const (
 type config struct {
 	listen      string // ZAP listen, default :9999
 	clickhouse  string // ClickHouse native TCP, default 127.0.0.1:9000
-	user        string // CH username, default "default"
+	user        string // CH username, default "insights_writer"
 	password    string // CH password, default ""
-	database    string // default DB, default "default"
+	database    string // default DB, default "insights"
 	nodeID      string // ZAP NodeID, default hostname or "datastore"
 	serviceType string // ZAP service, default "_hanzo._tcp"
+	hmacKey     []byte // HMAC-SHA256 key, base64-decoded from env
 }
 
-func loadConfig() config {
+func loadConfig() (config, error) {
 	cfg := config{
 		listen:      env("ZAP_LISTEN", ":9999"),
 		clickhouse:  env("DATASTORE_NATIVE_ADDR", "127.0.0.1:9000"),
-		user:        env("DATASTORE_USER", "default"),
+		user:        env("DATASTORE_USER", "insights_writer"),
 		password:    env("DATASTORE_PASSWORD", ""),
-		database:    env("DATASTORE_DB", "default"),
+		database:    env("DATASTORE_DB", "insights"),
 		nodeID:      env("ZAP_NODE_ID", ""),
 		serviceType: env("ZAP_SERVICE_TYPE", "_hanzo._tcp"),
 	}
@@ -152,7 +184,20 @@ func loadConfig() config {
 			cfg.nodeID = "datastore"
 		}
 	}
-	return cfg
+
+	keyB64 := os.Getenv("DATASTORE_BRIDGE_HMAC_KEY")
+	if keyB64 == "" {
+		return cfg, errors.New("DATASTORE_BRIDGE_HMAC_KEY required (base64-encoded ≥32 bytes)")
+	}
+	key, err := base64.StdEncoding.DecodeString(keyB64)
+	if err != nil {
+		return cfg, fmt.Errorf("DATASTORE_BRIDGE_HMAC_KEY: %w", err)
+	}
+	if len(key) < 32 {
+		return cfg, fmt.Errorf("DATASTORE_BRIDGE_HMAC_KEY: %d bytes, need ≥32", len(key))
+	}
+	cfg.hmacKey = key
+	return cfg, nil
 }
 
 func env(k, def string) string {
@@ -163,9 +208,13 @@ func env(k, def string) string {
 }
 
 func main() {
-	cfg := loadConfig()
+	cfg, err := loadConfig()
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})).
 		With("component", "zap-bridge")
+	if err != nil {
+		logger.Error("config load failed", "err", err)
+		os.Exit(1)
+	}
 
 	rootCtx, rootCancel := context.WithCancel(context.Background())
 	defer rootCancel()
@@ -181,6 +230,7 @@ func main() {
 		"listen", cfg.listen,
 		"clickhouse", cfg.clickhouse,
 		"db", cfg.database,
+		"user", cfg.user,
 	)
 
 	// Graceful shutdown on SIGTERM/SIGINT. We drain in-flight ZAP requests
@@ -218,6 +268,12 @@ type bridge struct {
 	ch   executor
 	conn driver.Conn // nil in tests; canonical close target in production.
 
+	// admit is the accept-side concurrency semaphore. It bounds the
+	// number of concurrent CH-touching handlers below the pool size,
+	// reserving headroom for /health and shutdown. Set to
+	// chMaxOpenConns-2 = 8 in production.
+	admit chan struct{}
+
 	// inflight tracks in-progress handler invocations so shutdown can
 	// drain rather than truncate. Atomic counter — handlers Add(1) on
 	// entry and Add(-1) on exit; shutdown spins on this.
@@ -254,6 +310,7 @@ func newBridge(ctx context.Context, logger *slog.Logger, cfg config) (*bridge, e
 		node:   node,
 		ch:     conn,
 		conn:   conn,
+		admit:  make(chan struct{}, chMaxOpenConns-2),
 	}
 
 	node.Handle(msgTypeDatastoreWire, func(hctx context.Context, from string, msg *zap.Message) (*zap.Message, error) {
@@ -307,7 +364,7 @@ func openClickHouse(ctx context.Context, logger *slog.Logger, cfg config) (drive
 			Password: cfg.password,
 		},
 		DialTimeout:      10 * time.Second,
-		MaxOpenConns:     10,
+		MaxOpenConns:     chMaxOpenConns,
 		MaxIdleConns:     5,
 		ConnMaxLifetime:  time.Hour,
 		ConnOpenStrategy: clickhouse.ConnOpenInOrder,
@@ -343,6 +400,14 @@ func openClickHouse(ctx context.Context, logger *slog.Logger, cfg config) (drive
 // handle dispatches a ZAP message to the right sub-method based on the
 // path field. Errors are encoded into the response — never returned to
 // the ZAP layer (which would close the connection).
+//
+// Auth flow: HMAC validation runs first, before any handler logic. An
+// invalid HMAC returns 401 with no information about why (timestamp out
+// of range vs MAC mismatch are indistinguishable to attackers).
+//
+// Concurrency: every handler that touches CH passes through admit. The
+// semaphore is small (8) — DoS via slow queries cannot starve /health.
+// /health bypasses the gate so probes work even under saturation.
 func (b *bridge) handle(ctx context.Context, _ string, msg *zap.Message) *zap.Message {
 	root := msg.Root()
 	if root.IsNull() {
@@ -350,27 +415,103 @@ func (b *bridge) handle(ctx context.Context, _ string, msg *zap.Message) *zap.Me
 	}
 	path := root.Text(fieldPath)
 	body := root.Bytes(fieldBody)
+	ts := root.Uint64(fieldTS)
+	mac := root.Bytes(fieldHMAC)
+
+	if !b.verifyHMAC(path, body, ts, mac) {
+		return respondJSON(http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+	}
+
+	// Per-request deadline. The luxfi/zap node ctx is bound to node
+	// lifetime; without an explicit deadline a slow CH query pins the
+	// connection long after the caller has timed out. 30s matches the
+	// orm client's default QueryTimeout.
+	ctx, cancel := context.WithTimeout(ctx, handlerTimeout)
+	defer cancel()
 
 	switch path {
 	case "/health":
+		// /health bypasses the admit gate so probes work under saturation.
 		return b.health(ctx)
 	case "/query":
+		if !b.acquire(ctx) {
+			return respondJSON(http.StatusServiceUnavailable, map[string]string{"error": "busy"})
+		}
+		defer b.release()
 		return b.query(ctx, body)
 	case "/exec":
+		if !b.acquire(ctx) {
+			return respondJSON(http.StatusServiceUnavailable, map[string]string{"error": "busy"})
+		}
+		defer b.release()
 		return b.exec(ctx, body)
 	case "/insert":
-		return b.insert(ctx, body)
-	case "/tables":
-		return b.tables(ctx, body)
-	default:
-		// Compat with deleted proxy: an unrecognised path with a non-empty
-		// body is interpreted as a query. This preserves the historical
-		// behaviour of the zap-sidecar so older clients keep working.
-		if len(body) > 0 {
-			return b.query(ctx, body)
+		if !b.acquire(ctx) {
+			return respondJSON(http.StatusServiceUnavailable, map[string]string{"error": "busy"})
 		}
+		defer b.release()
+		return b.insert(ctx, body)
+	default:
 		return respondJSON(http.StatusNotFound, map[string]string{"error": "unknown path: " + path})
 	}
+}
+
+// verifyHMAC checks the timestamp window and the MAC. Returns true iff
+// the request is authentic AND fresh. Constant-time comparison.
+//
+// MAC payload: path || 0x00 || body || 0x00 || ts-LE-8-bytes. The 0x00
+// separators prevent extension/cutting attacks across path/body boundaries.
+func (b *bridge) verifyHMAC(path string, body []byte, ts uint64, mac []byte) bool {
+	if len(mac) != sha256.Size {
+		return false
+	}
+	if len(b.cfg.hmacKey) == 0 {
+		return false
+	}
+	now := time.Now().UnixMilli()
+	skew := int64(ts) - now
+	if skew < -hmacReplayWindow.Milliseconds() || skew > hmacReplayWindow.Milliseconds() {
+		return false
+	}
+	expected := computeHMAC(b.cfg.hmacKey, path, body, ts)
+	return subtle.ConstantTimeCompare(expected, mac) == 1
+}
+
+// computeHMAC is the canonical HMAC payload format. Exposed so client
+// libraries (orm/db/zap.go, cloud/object/zap.go) can compute matching
+// signatures with the same code path.
+func computeHMAC(key []byte, path string, body []byte, ts uint64) []byte {
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(path))
+	h.Write([]byte{0})
+	h.Write(body)
+	h.Write([]byte{0})
+	var tsbuf [8]byte
+	binary.LittleEndian.PutUint64(tsbuf[:], ts)
+	h.Write(tsbuf[:])
+	return h.Sum(nil)
+}
+
+// acquire grabs an admit slot or returns false on ctx cancellation.
+// Tests construct bridges with admit=nil (no limiter); skip the gate
+// in that case so handler-only unit tests don't block.
+func (b *bridge) acquire(ctx context.Context) bool {
+	if b.admit == nil {
+		return true
+	}
+	select {
+	case b.admit <- struct{}{}:
+		return true
+	case <-ctx.Done():
+		return false
+	}
+}
+
+func (b *bridge) release() {
+	if b.admit == nil {
+		return
+	}
+	<-b.admit
 }
 
 // ---------------------------------------------------------------------------
@@ -414,8 +555,10 @@ type queryReq struct {
 func (b *bridge) query(ctx context.Context, body []byte) *zap.Message {
 	var req queryReq
 	if err := json.Unmarshal(body, &req); err != nil {
-		// Compat: if the body isn't JSON, treat the whole thing as raw SQL.
-		req.SQL = string(body)
+		// Strict JSON only — the deleted bridge's "raw bytes as SQL"
+		// fallback was an auth-free SQL surface (Red finding #1). All
+		// callers ship JSON; refuse anything else.
+		return respondJSON(http.StatusBadRequest, map[string]string{"error": "invalid JSON: " + err.Error()})
 	}
 	if strings.TrimSpace(req.SQL) == "" {
 		return respondJSON(http.StatusBadRequest, map[string]string{"error": "missing sql"})
@@ -510,6 +653,11 @@ func (b *bridge) insert(ctx context.Context, body []byte) *zap.Message {
 	if req.Table == "" {
 		return respondJSON(http.StatusBadRequest, map[string]string{"error": "missing table"})
 	}
+	if len(req.Rows) > maxInsertRows {
+		return respondJSON(http.StatusBadRequest, map[string]string{
+			"error": fmt.Sprintf("rows %d exceeds max %d", len(req.Rows), maxInsertRows),
+		})
+	}
 	if len(req.Rows) == 0 {
 		return respondJSON(http.StatusOK, map[string]interface{}{"ok": true, "inserted": 0})
 	}
@@ -553,45 +701,6 @@ func (b *bridge) insert(ctx context.Context, body []byte) *zap.Message {
 	return respondJSON(http.StatusOK, map[string]interface{}{
 		"ok":       true,
 		"inserted": len(req.Rows),
-	})
-}
-
-// ---------------------------------------------------------------------------
-// /tables — list tables in a database
-// ---------------------------------------------------------------------------
-
-type tablesReq struct {
-	Database string `json:"database,omitempty"`
-}
-
-func (b *bridge) tables(ctx context.Context, body []byte) *zap.Message {
-	req := tablesReq{Database: b.cfg.database}
-	if len(body) > 0 {
-		_ = json.Unmarshal(body, &req)
-	}
-	if req.Database == "" {
-		req.Database = b.cfg.database
-	}
-	rows, err := b.ch.Query(ctx, "SELECT name FROM system.tables WHERE database = ?", req.Database)
-	if err != nil {
-		return respondJSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	defer rows.Close()
-
-	var names []string
-	for rows.Next() {
-		var n string
-		if err := rows.Scan(&n); err != nil {
-			return respondJSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-		}
-		names = append(names, n)
-	}
-	if err := rows.Err(); err != nil {
-		return respondJSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	return respondJSON(http.StatusOK, map[string]interface{}{
-		"database": req.Database,
-		"tables":   names,
 	})
 }
 

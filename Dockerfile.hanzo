@@ -107,7 +107,11 @@ RUN arch=${TARGETARCH:-amd64} \
     ; done \
     && rm /tmp/*.tgz /install -r \
     && chmod +x /entrypoint.sh \
-    && apk add --no-cache bash tzdata nginx \
+    # tini is PID 1 — forwards SIGTERM to entire process group so both
+    # the server (exec'd as PID 1's child) and zap-bridge (backgrounded
+    # by entrypoint.sh) drain gracefully on shutdown. -g flag propagates
+    # signals to the entire process group, not just the immediate child.
+    && apk add --no-cache bash tzdata nginx tini \
     && cp /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone \
     # White-label: rename upstream binary → hanzo-datastore
@@ -158,4 +162,9 @@ EXPOSE 9000 8123 9009 9999
 HEALTHCHECK --interval=15s --timeout=3s --start-period=30s --retries=3 \
     CMD wget -qO- http://localhost:8123/ping || exit 1
 
-ENTRYPOINT ["/entrypoint.sh"]
+# tini -g as PID 1 → forwards SIGTERM to the entire process group on
+# shutdown. Without this, the bridge (backgrounded by entrypoint.sh)
+# never receives SIGTERM when k8s sends one to the container; its
+# graceful-drain logic is dead code. With tini -g, both the server
+# (exec'd by entrypoint.sh) and the bridge (backgrounded) get the signal.
+ENTRYPOINT ["/sbin/tini", "-g", "--", "/entrypoint.sh"]
