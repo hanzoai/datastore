@@ -3,11 +3,11 @@
 // Dockerfile.hanzo `zap-builder` stage.
 module github.com/hanzoai/datastore/cmd/zap-bridge
 
-go 1.26.1
+go 1.26.3
 
 require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.30.0
-	github.com/luxfi/zap v0.2.1
+	github.com/zap-proto/go v0.2.1
 )
 
 require (
