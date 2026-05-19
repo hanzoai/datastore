@@ -1,37 +1,48 @@
-#include <Access/ContextAccess.h>
-#include <Core/Settings.h>
-#include <Databases/DatabaseReplicated.h>
-#include <Interpreters/Context.h>
-#include <Interpreters/DatabaseCatalog.h>
 #include <Interpreters/InterpreterDropIndexQuery.h>
+#include <Interpreters/InterpreterAlterQuery.h>
 #include <Interpreters/InterpreterFactory.h>
-#include <Interpreters/executeDDLQueryOnCluster.h>
-#include <Parsers/ASTDropIndexQuery.h>
-#include <Parsers/ASTIdentifier.h>
-#include <Storages/AlterCommands.h>
+#include <Interpreters/Context.h>
 
+<<<<<<< HEAD
 #if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
+=======
+#include <Parsers/ASTAlterQuery.h>
+#include <Parsers/ASTDropIndexQuery.h>
+>>>>>>> v26.3.10.62-lts
 
 namespace DB
 {
-namespace Setting
+
+namespace
 {
-    extern const SettingsSeconds lock_acquire_timeout;
+
+ASTPtr rewriteToAlterTable(const ASTDropIndexQuery & query)
+{
+    auto alter = make_intrusive<ASTAlterQuery>();
+    alter->alter_object = ASTAlterQuery::AlterObjectType::TABLE;
+    alter->setDatabase(query.getDatabase());
+    alter->setTable(query.getTable());
+    alter->cluster = query.cluster;
+
+    auto command_list = make_intrusive<ASTExpressionList>();
+    command_list->children.push_back(query.convertToASTAlterCommand());
+
+    alter->command_list = command_list.get();
+    alter->children.push_back(std::move(command_list));
+
+    return alter;
 }
 
-namespace ErrorCodes
-{
-    extern const int TABLE_IS_READ_ONLY;
 }
-
 
 BlockIO InterpreterDropIndexQuery::execute()
 {
-    auto current_context = getContext();
     const auto & drop_index = query_ptr->as<ASTDropIndexQuery &>();
+    const auto context = Context::createCopy(getContext());
 
+<<<<<<< HEAD
     AccessRightsElements required_access;
     required_access.emplace_back(AccessType::ALTER_DROP_INDEX, drop_index.getDatabase(), drop_index.getTable());
 
@@ -84,6 +95,10 @@ BlockIO InterpreterDropIndexQuery::execute()
     table->alter(alter_commands, current_context, alter_lock);
 
     return {};
+=======
+    auto alter_query = rewriteToAlterTable(drop_index);
+    return InterpreterAlterQuery(alter_query, context).execute();
+>>>>>>> v26.3.10.62-lts
 }
 
 void registerInterpreterDropIndexQuery(InterpreterFactory & factory)

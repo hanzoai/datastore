@@ -64,6 +64,7 @@ const char * __ubsan_default_options()
 #pragma clang diagnostic pop
 #endif
 
+<<<<<<< HEAD
 /// Universal executable for various datastore applications
 int mainEntryDatastoreBenchmark(int argc, char ** argv);
 int mainEntryDatastoreCheckMarks(int argc, char ** argv);
@@ -82,6 +83,27 @@ int mainEntryDatastoreServer(int argc, char ** argv);
 int mainEntryDatastoreStaticFilesDiskUploader(int argc, char ** argv);
 int mainEntryDatastoreZooKeeperDumpTree(int argc, char ** argv);
 int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv);
+=======
+/// Universal executable for various clickhouse applications
+int mainEntryClickHouseBenchmark(int argc, char ** argv);
+int mainEntryClickHouseCheckMarks(int argc, char ** argv);
+int mainEntryClickHouseChecksumForCompressedBlock(int, char **);
+int mainEntryClickHouseClient(int argc, char ** argv);
+int mainEntryClickHouseCompressor(int argc, char ** argv);
+int mainEntryClickHouseDisks(int argc, char ** argv);
+int mainEntryClickHouseDockerInit(int argc, char ** argv);
+int mainEntryClickHouseExtractFromConfig(int argc, char ** argv);
+int mainEntryClickHouseFormat(int argc, char ** argv);
+int mainEntryClickHouseFstDumpTree(int argc, char ** argv);
+int mainEntryClickHouseGitImport(int argc, char ** argv);
+int mainEntryClickHouseLocal(int argc, char ** argv);
+int mainEntryClickHouseObfuscator(int argc, char ** argv);
+int mainEntryClickHouseSU(int argc, char ** argv);
+int mainEntryClickHouseServer(int argc, char ** argv);
+int mainEntryClickHouseStaticFilesDiskUploader(int argc, char ** argv);
+int mainEntryClickHouseZooKeeperDumpTree(int argc, char ** argv);
+int mainEntryClickHouseZooKeeperRemoveByList(int argc, char ** argv);
+>>>>>>> v26.3.10.62-lts
 
 int mainEntryDatastoreHashBinary(int, char **)
 {
@@ -140,6 +162,7 @@ std::pair<std::string_view, MainFunc> datastore_applications[] =
     {"chdig", mainEntryDatastoreChdig},
     {"dig", mainEntryDatastoreChdig},
 #endif
+<<<<<<< HEAD
     {"benchmark", mainEntryDatastoreBenchmark},
     {"server", mainEntryDatastoreServer},
     {"extract-from-config", mainEntryDatastoreExtractFromConfig},
@@ -155,6 +178,24 @@ std::pair<std::string_view, MainFunc> datastore_applications[] =
     {"checksum-for-compressed-block", mainEntryDatastoreChecksumForCompressedBlock},
     {"zookeeper-dump-tree", mainEntryDatastoreZooKeeperDumpTree},
     {"zookeeper-remove-by-list", mainEntryDatastoreZooKeeperRemoveByList},
+=======
+    {"benchmark", mainEntryClickHouseBenchmark},
+    {"server", mainEntryClickHouseServer},
+    {"extract-from-config", mainEntryClickHouseExtractFromConfig},
+    {"compressor", mainEntryClickHouseCompressor},
+    {"format", mainEntryClickHouseFormat},
+    {"obfuscator", mainEntryClickHouseObfuscator},
+    {"git-import", mainEntryClickHouseGitImport},
+    {"static-files-disk-uploader", mainEntryClickHouseStaticFilesDiskUploader},
+    {"su", mainEntryClickHouseSU},
+    {"hash-binary", mainEntryClickHouseHashBinary},
+    {"disks", mainEntryClickHouseDisks},
+    {"docker-init", mainEntryClickHouseDockerInit},
+    {"check-marks", mainEntryClickHouseCheckMarks},
+    {"checksum-for-compressed-block", mainEntryClickHouseChecksumForCompressedBlock},
+    {"zookeeper-dump-tree", mainEntryClickHouseZooKeeperDumpTree},
+    {"zookeeper-remove-by-list", mainEntryClickHouseZooKeeperRemoveByList},
+>>>>>>> v26.3.10.62-lts
 
     // keeper
 #if ENABLE_DATASTORE_KEEPER
@@ -262,15 +303,15 @@ extern "C"
 /// Some of these messages are non-actionable for the users, such as:
 /// <jemalloc>: Number of CPUs detected is not deterministic. Per-CPU arena disabled.
 #if USE_JEMALLOC && defined(NDEBUG) && !defined(SANITIZER)
-extern "C" void (*malloc_message)(void *, const char *s);
-__attribute__((constructor(0))) void init_je_malloc_message() { malloc_message = [](void *, const char *){}; }
+extern "C" void (*je_malloc_message)(void *, const char *s);
+__attribute__((constructor(0))) void init_je_malloc_message() { je_malloc_message = [](void *, const char *){}; }
 #elif USE_JEMALLOC
 #include <unordered_set>
 /// Ignore messages which can be safely ignored, e.g. EAGAIN on pthread_create
-extern "C" void (*malloc_message)(void *, const char * s);
+extern "C" void (*je_malloc_message)(void *, const char * s);
 __attribute__((constructor(0))) void init_je_malloc_message()
 {
-    malloc_message = [](void *, const char * str)
+    je_malloc_message = [](void *, const char * str)
     {
         using namespace std::literals;
         static const std::unordered_set<std::string_view> ignore_messages{

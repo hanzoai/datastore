@@ -40,9 +40,15 @@ RUN arch=${TARGETARCH:-amd64} \
 
 # Upstream package repository (rehosted at pkg.hanzo.ai)
 ARG REPO_CHANNEL="stable"
+<<<<<<< HEAD
 ARG REPOSITORY="https://pkg.hanzo.ai/datastore/tgz/${REPO_CHANNEL}"
 ARG VERSION="26.2.3.2"
 ARG PACKAGES="datastore-client datastore-server datastore-common-static"
+=======
+ARG REPOSITORY="https://packages.clickhouse.com/tgz/${REPO_CHANNEL}"
+ARG VERSION="26.2.5.45"
+ARG PACKAGES="clickhouse-client clickhouse-server clickhouse-common-static"
+>>>>>>> v26.3.10.62-lts
 ARG DIRECT_DOWNLOAD_URLS=""
 
 ARG DEFAULT_UID="101"

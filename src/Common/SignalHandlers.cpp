@@ -183,7 +183,7 @@ static void signalHandler(int sig, siginfo_t * info, void * context)
             for (size_t i = 0; i < terminate_current_exception_trace_size; ++i)
                 terminate_current_exception_trace[i] = stack_trace_frames[i];
         }
-        catch (...) {} // NOLINT(bugprone-empty-catch)
+        catch (...) {} // NOLINT(bugprone-empty-catch) Ok: best-effort in terminate handler
     }
     else
     {
@@ -295,10 +295,17 @@ void SignalListener::run()
     }
     else
     {
+<<<<<<< HEAD
         /// This is the case of datastore-client and datastore-local.
 #if defined(__ELF__) && !defined(OS_FREEBSD)
         /// This operation is heavy (0.5 sec under TSan) - we don't do it in constructor to not slow-down datastore-client,
         /// Do it lazily to not slow-down the termination of datastore-client.
+=======
+        /// This is the case of clickhouse-client and clickhouse-local.
+#if (defined(__ELF__) && !defined(OS_FREEBSD)) || defined(OS_DARWIN)
+        /// This operation is heavy (0.5 sec under TSan) - we don't do it in constructor to not slow-down clickhouse-client,
+        /// Do it lazily to not slow-down the termination of clickhouse-client.
+>>>>>>> v26.3.10.62-lts
         build_id = []{ return SymbolIndex::instance().getBuildIDHex(); };
 #else
         build_id = [] { return String("<unknown>"); };
@@ -599,7 +606,7 @@ try
     /// List changed settings.
     if (!query_id.empty())
     {
-        ContextPtr query_context = thread_ptr->getQueryContext();
+        ContextPtr query_context = thread_ptr->tryGetQueryContext();
         if (query_context)
         {
             String changed_settings = query_context->getSettingsRef().toString();
