@@ -19,11 +19,7 @@ title: Changelog
 
 # 2026 Changelog
 
-<<<<<<< HEAD
 ### <a id="262"></a> Datastore release 26.2, 2026-02-26. [Presentation](https://presentations.datastore.com/2026-release-26.2/), [Video](TODO)
-=======
-### <a id="262"></a> ClickHouse release 26.2, 2026-02-26. [Presentation](https://presentations.clickhouse.com/2026-release-26.2/), [Video](https://www.youtube.com/watch?v=7qHba08vNfo)
->>>>>>> v26.3.10.62-lts
 
 #### Backward Incompatible Change
 * Deduplication is turned ON for all inserts by default. It was OFF before for async inserts and for MV's, but it was ON for sync inserts. The goal is to have the same defaults for both ways of inserts. If you have deduplication explicitly disabled on your cluster, you have to explicitly set `deduplicate_insert='backward_compatible_choice'` to keep the old behavior. The same with `deduplicate_blocks_in_dependent_materialized_views`. [#95970](https://github.com/Datastore/Datastore/pull/95970) ([Sema Checherinda](https://github.com/CheSema)).

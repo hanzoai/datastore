@@ -382,11 +382,7 @@ bool Client::processWithASTFuzzer(std::string_view full_query)
         {
             /// Always run query on peer server
             fmt::print(stdout, "Running query on peer server\n");
-<<<<<<< HEAD
-            peer_success &= external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, query_to_execute);
-=======
-            peer_success &= !external_integrations->performQuery(BuzzHouse::PeerTableDatabase::ClickHouse, query_to_execute);
->>>>>>> v26.3.10.62-lts
+            peer_success &= !external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, query_to_execute);
         }
         if (can_compare && fuzz_config->compare_success_results && peer_success != !have_error)
         {
@@ -822,41 +818,18 @@ bool Client::buzzHouse()
                              = ((!external_integrations->hasMySQLConnection() && !external_integrations->hasPostgreSQLConnection()
                                  && !external_integrations->hasSQLiteConnection())
                                 || rg.nextBool())
-                                 && gen.collectionHas<BuzzHouse::SQLTable>(gen.attached_tables_for_clickhouse_table_peer_oracle)
-                             ? BuzzHouse::PeerQuery::ClickHouseOnly
+                                 && gen.collectionHas<BuzzHouse::SQLTable>(gen.attached_tables_for_datastore_table_peer_oracle)
+                             ? BuzzHouse::PeerQuery::DatastoreOnly
                              : BuzzHouse::PeerQuery::AllPeers;
-                         const bool clickhouse_only = nquery == BuzzHouse::PeerQuery::ClickHouseOnly;
+                         const bool datastore_only = nquery == BuzzHouse::PeerQuery::DatastoreOnly;
 
                          sq2.Clear();
                          qo.generateOracleSelectQuery(rg, nquery, gen, sq1);
                          qo.replaceQueryWithTablePeers(rg, sq1, gen, peer_queries, sq2);
 
-<<<<<<< HEAD
-                    if (test_content)
-                    {
-                        full_query.resize(0);
-                        BuzzHouse::SQLQueryToString(full_query, sq2);
-                        fuzz_config->outf << full_query << std::endl;
-                        server_up &= processBuzzHouseQuery(full_query);
-                        qo.processSecondOracleQueryResult(error_code, *external_integrations, "Dump and read table");
-                    }
-                }
-                else if (peer_oracle && nopt < (correctness_oracle + settings_oracle + dump_oracle + peer_oracle + 1))
-                {
-                    /// Test results with peer tables
-                    int err_res = 0;
-                    BuzzHouse::PeerQuery nquery
-                        = ((!external_integrations->hasMySQLConnection() && !external_integrations->hasPostgreSQLConnection()
-                            && !external_integrations->hasSQLiteConnection())
-                           || rg.nextBool())
-                            && gen.collectionHas<BuzzHouse::SQLTable>(gen.attached_tables_for_datastore_table_peer_oracle)
-                        ? BuzzHouse::PeerQuery::DatastoreOnly
-                        : BuzzHouse::PeerQuery::AllPeers;
-                    const bool datastore_only = nquery == BuzzHouse::PeerQuery::DatastoreOnly;
-=======
-                         if (clickhouse_only)
+                         if (datastore_only)
                          {
-                             external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::ClickHouse);
+                             external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::Datastore);
                          }
                          qo.truncatePeerTables(gen);
                          for (const auto & entry : peer_queries)
@@ -868,7 +841,6 @@ bool Client::buzzHouse()
                              qo.setIntermediateStepSuccess(!have_error);
                          }
                          qo.optimizePeerTables(gen);
->>>>>>> v26.3.10.62-lts
 
                          full_query.resize(0);
                          BuzzHouse::SQLQueryToString(full_query, sq1);
@@ -876,28 +848,12 @@ bool Client::buzzHouse()
                          server_up &= processBuzzHouseQuery(full_query);
                          qo.processFirstOracleQueryResult(error_code, *external_integrations);
 
-<<<<<<< HEAD
-                    if (datastore_only)
-                    {
-                        external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::Datastore);
-                    }
-                    qo.truncatePeerTables(gen);
-                    for (const auto & entry : peer_queries)
-                    {
-                        full_query2.resize(0);
-                        BuzzHouse::SQLQueryToString(full_query2, entry);
-                        fuzz_config->outf << full_query2 << std::endl;
-                        server_up &= processBuzzHouseQuery(full_query2);
-                        qo.setIntermediateStepSuccess(!have_error);
-                    }
-                    qo.optimizePeerTables(gen);
-=======
                          full_query2.resize(0);
                          BuzzHouse::SQLQueryToString(full_query2, sq2);
                          fuzz_config->outf << full_query2 << std::endl;
-                         if (clickhouse_only)
+                         if (datastore_only)
                          {
-                             err_res = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::ClickHouse, full_query2);
+                             err_res = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, full_query2);
                          }
                          else
                          {
@@ -913,7 +869,6 @@ bool Client::buzzHouse()
                          qo.resetOracleValues();
                          sq2.Clear();
                          qo.generateRoundtripOracleQueries(rg, gen, sq1, sq2);
->>>>>>> v26.3.10.62-lts
 
                          full_query.resize(0);
                          BuzzHouse::SQLQueryToString(full_query, sq1);
@@ -921,70 +876,6 @@ bool Client::buzzHouse()
                          server_up &= processBuzzHouseQuery(full_query);
                          qo.processFirstOracleQueryResult(error_code, *external_integrations);
 
-<<<<<<< HEAD
-                    full_query2.resize(0);
-                    BuzzHouse::SQLQueryToString(full_query2, sq2);
-                    fuzz_config->outf << full_query2 << std::endl;
-                    if (datastore_only)
-                    {
-                        err_res = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, full_query2) ? 0 : 1;
-                    }
-                    else
-                    {
-                        server_up &= processBuzzHouseQuery(full_query2);
-                        err_res = error_code;
-                    }
-                    qo.processSecondOracleQueryResult(err_res, *external_integrations, "Peer table query");
-                }
-                else if (restart_client && nopt < (correctness_oracle + settings_oracle + dump_oracle + peer_oracle + restart_client + 1))
-                {
-                    fuzz_config->outf << restart_cmd << std::endl;
-                    gen.setInTransaction(false);
-                    server_up &= fuzzLoopReconnect();
-                }
-                else if (
-                    external_call
-                    && nopt < (correctness_oracle + settings_oracle + dump_oracle + peer_oracle + restart_client + external_call + 1))
-                {
-                    const uint64_t nseed = rg.nextInFullRange();
-                    const auto & tbl
-                        = rg.pickRandomly(gen.filterCollection<BuzzHouse::SQLTable>(gen.attached_tables_for_external_call)).get();
-                    const auto & engine = tbl.isAnyIcebergEngine() ? "iceberg" : (tbl.isAnyDeltaLakeEngine() ? "deltalake" : "kafka");
-                    const auto & ndname = tbl.isKafkaEngine() ? tbl.getDatabaseName() : tbl.getSparkCatalogName();
-                    const auto & ntname = tbl.getTableName(false);
-                    const bool async = fuzz_config->allow_async_requests && rg.nextSmallNumber() < 4;
-
-                    chassert(tbl.isAnyIcebergEngine() || tbl.isAnyDeltaLakeEngine() || tbl.isKafkaEngine());
-                    fuzz_config->outf << external_cmd << (async ? "async " : "") << "with seed " << nseed << " to " << engine << " table "
-                                      << ndname << "." << ntname << std::endl;
-                    runExternalCommand(external_integrations, nseed, async, engine, ndname, ntname);
-                }
-                else if (
-                    health_check
-                    && nopt
-                        < (correctness_oracle + settings_oracle + dump_oracle + peer_oracle + restart_client + external_call + health_check
-                           + 1))
-                {
-                    fuzz_config->outf << health_check_cmd << std::endl;
-                    fuzz_config->validateDatastoreHealth();
-                }
-                else if (
-                    run_query
-                    && nopt
-                        < (correctness_oracle + settings_oracle + dump_oracle + peer_oracle + restart_client + external_call + health_check
-                           + run_query + 1))
-                {
-                    gen.generateNextStatement(rg, sq1);
-                    BuzzHouse::SQLQueryToString(full_query, sq1);
-                    fuzz_config->outf << full_query << std::endl;
-                    server_up &= processBuzzHouseQuery(full_query);
-                    gen.updateGenerator(sq1, *external_integrations, !have_error);
-                }
-                else
-                {
-                    UNREACHABLE();
-                }
-=======
                          full_query.resize(0);
                          BuzzHouse::SQLQueryToString(full_query, sq2);
                          fuzz_config->outf << full_query << std::endl;
@@ -1013,7 +904,7 @@ bool Client::buzzHouse()
                          server_up &= processBuzzHouseQuery(full_query);
                          qo.processSecondOracleQueryResult(error_code, *external_integrations, "Count distinct oracle");
                      }},
-                    {0 /// Disable row policy oracle for now, because of https://github.com/ClickHouse/ClickHouse/issues/99572
+                    {0 /// Disable row policy oracle for now, because of https://github.com/hanzoai/datastore/issues/99572
                          * static_cast<uint32_t>(
                              fuzz_config->allow_query_oracles && gen.collectionHas<BuzzHouse::SQLPolicy>(gen.row_policies_for_oracle)),
                      [&]()
@@ -1068,7 +959,7 @@ bool Client::buzzHouse()
                      [&]()
                      {
                          fuzz_config->outf << health_check_cmd << std::endl;
-                         fuzz_config->validateClickHouseHealth();
+                         fuzz_config->validateDatastoreHealth();
                      }},
                     {910,
                      [&]()
@@ -1080,7 +971,6 @@ bool Client::buzzHouse()
                          gen.updateGenerator(sq1, *external_integrations, !have_error);
                      }},
                 });
->>>>>>> v26.3.10.62-lts
             }
         }
     }
@@ -1106,7 +996,7 @@ bool Client::buzzHouse()
 #else
 bool Client::buzzHouse()
 {
-    throw Exception(ErrorCodes::NOT_IMPLEMENTED, "Clickhouse was compiled without BuzzHouse enabled");
+    throw Exception(ErrorCodes::NOT_IMPLEMENTED, "Datastore was compiled without BuzzHouse enabled");
 }
 #endif
 

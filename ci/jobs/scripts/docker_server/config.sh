@@ -9,13 +9,6 @@ clickhouseDistrolessTests=$( find "$currentDir"/tests/ -maxdepth 1 -name 'clickh
 keeperTests=$( find "$currentDir"/tests/ -maxdepth 1 -name 'keeper-*' -type d -exec basename {} \; )
 
 imageTests+=(
-<<<<<<< HEAD
 	['hanzoai/datastore']="${clickhouseTests}"
 	['hanzoai/datastore-keeper']="${keeperTests}"
-=======
-	['clickhouse/clickhouse-server']="${clickhouseTests}"
-	['clickhouse/clickhouse-server:distroless']="${clickhouseTests} ${clickhouseDistrolessTests}"
-	['clickhouse/clickhouse-keeper']="${keeperTests}"
-	['clickhouse/clickhouse-keeper:distroless']="${keeperTests}"
->>>>>>> v26.3.10.62-lts
 )

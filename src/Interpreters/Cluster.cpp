@@ -178,14 +178,10 @@ Cluster::Address::Address(
     secure = params.secure ? Protocol::Secure::Enable : Protocol::Secure::Disable;
     bind_host = params.bind_host;
     priority = params.priority;
-<<<<<<< HEAD
-    is_local = can_be_local && isLocal(params.datastore_port);
-=======
     if (info.is_local.has_value())
         is_local = *info.is_local;
     else
-        is_local = can_be_local && isLocal(params.clickhouse_port);
->>>>>>> v26.3.10.62-lts
+        is_local = can_be_local && isLocal(params.datastore_port);
     shard_index = shard_index_;
     replica_index = replica_index_;
     cluster = params.cluster_name;

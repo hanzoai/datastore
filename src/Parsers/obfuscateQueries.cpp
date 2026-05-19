@@ -89,12 +89,9 @@ const std::unordered_set<std::string> & getObfuscateKeywords()
             "LOADING", "ENABLE", "DISABLE", "NOTIFY", "QUERIES", "SIMILARITY", "VECTOR",
             "POSTINGS", "HEADER", "METADATA", "ALLOCATE", "FREE", "LOAD", "UNLOAD", "UNKNOWN",
             "CLIENT", "MODEL",
-<<<<<<< HEAD
             /// Dictionary layout/source keywords
             "FLAT", "HASHED", "IP_TRIE", "REGEXP_TREE", "DIRECT", "DATASTORE", "EXECUTABLE",
             "LIBRARY",
-=======
->>>>>>> v26.3.10.62-lts
             /// Special SQL functions/types parsed by special rules
             "EXTRACT", "TRIM", "DECIMAL",
             /// Multi-word data type constituents not registered as standalone keywords

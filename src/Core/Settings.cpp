@@ -6461,13 +6461,9 @@ Only has an effect in Datastore Cloud. Number of tries to do distributed cache r
 Only has an effect in Datastore Cloud. Wait time in milliseconds to receive data for request from distributed cache
 )", 0) \
     DECLARE(UInt64, distributed_cache_receive_timeout_milliseconds, 10000, R"(
-<<<<<<< HEAD
 Only has an effect in Datastore Cloud. Wait time in milliseconds to receive any kind of response from distributed cache
-=======
-Only has an effect in ClickHouse Cloud. Wait time in milliseconds to receive any kind of response from distributed cache
 
 Cloud default value: `20000`.
->>>>>>> v26.3.10.62-lts
 )", 0) \
     DECLARE(UInt64, distributed_cache_wait_connection_from_pool_milliseconds, 100, R"(
 Only has an effect in Datastore Cloud. Wait time in milliseconds to receive connection from connection pool if distributed_cache_pool_behaviour_on_limit is wait

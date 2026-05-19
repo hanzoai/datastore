@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 # docker build -t hanzoai/datastore-arrowflight-server-test .
-=======
-# docker build -t clickhouse/arrowflight-server-test .
-# Rebuild to enable SBOM/provenance attestations (see #97903, #98511)
->>>>>>> v26.3.10.62-lts
 FROM python:3.9-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1

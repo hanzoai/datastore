@@ -203,13 +203,8 @@ void attachSystemTablesServer(ContextPtr context, IDatabase & system_database, b
     attachNoDescription<StorageSystemDroppedTablesParts>(context, system_database, "dropped_tables_parts", "Contains parts of system.dropped_tables tables ");
     attach<StorageSystemScheduler>(context, system_database, "scheduler", "Contains information and status for scheduling nodes residing on the local server.");
     attach<StorageSystemDNSCache>(context, system_database, "dns_cache", "Contains information about cached DNS records.");
-<<<<<<< HEAD
-#if defined(__ELF__) && !defined(OS_FREEBSD)
-    attachNoDescription<StorageSystemSymbols>(context, system_database, "symbols", "Contains information for introspection of Datastore binary. This table is only useful for C++ experts and Datastore engineers.");
-=======
 #if (defined(__ELF__) && !defined(OS_FREEBSD)) || defined(OS_DARWIN)
-    attachNoDescription<StorageSystemSymbols>(context, system_database, "symbols", "Contains information for introspection of ClickHouse binary. This table is only useful for C++ experts and ClickHouse engineers.");
->>>>>>> v26.3.10.62-lts
+    attachNoDescription<StorageSystemSymbols>(context, system_database, "symbols", "Contains information for introspection of Datastore binary. This table is only useful for C++ experts and Datastore engineers.");
 #endif
 #if USE_RDKAFKA
     attach<StorageSystemKafkaConsumers>(context, system_database, "kafka_consumers", "Contains information about Kafka consumers. Applicable for Kafka table engine (native Datastore integration).");

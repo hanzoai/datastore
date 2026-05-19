@@ -1,23 +1,13 @@
 include("${Datastore_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
 
-<<<<<<< HEAD
 add_headers_and_sources(datastore_parsers .)
 add_headers_and_sources(datastore_parsers ./Access)
 add_headers_and_sources(datastore_parsers ./MySQL)
 add_headers_and_sources(datastore_parsers ./Kusto)
 add_headers_and_sources(datastore_parsers ./PRQL)
+add_headers_and_sources(datastore_parsers ./Polyglot)
 add_headers_and_sources(datastore_parsers ./Kusto/KustoFunctions)
 add_headers_and_sources(datastore_parsers ./Prometheus)
-=======
-add_headers_and_sources(clickhouse_parsers .)
-add_headers_and_sources(clickhouse_parsers ./Access)
-add_headers_and_sources(clickhouse_parsers ./MySQL)
-add_headers_and_sources(clickhouse_parsers ./Kusto)
-add_headers_and_sources(clickhouse_parsers ./PRQL)
-add_headers_and_sources(clickhouse_parsers ./Polyglot)
-add_headers_and_sources(clickhouse_parsers ./Kusto/KustoFunctions)
-add_headers_and_sources(clickhouse_parsers ./Prometheus)
->>>>>>> v26.3.10.62-lts
 
 add_library(datastore_parsers ${datastore_parsers_headers} ${datastore_parsers_sources})
 target_link_libraries(datastore_parsers PUBLIC datastore_common_io datastore_common_access)

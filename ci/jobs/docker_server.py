@@ -405,22 +405,8 @@ def main():
                     "hanzo-datastore-server",
                     "hanzo-datastore-common-static",
                 ]
-<<<<<<< HEAD
             elif "datastore-keeper" in image_repo:
                 PACKAGES = ["hanzo-datastore-keeper"]
-=======
-            elif "clickhouse-keeper" in image_repo:
-                # Both packages are needed to cover all three keeper image variants:
-                #   distroless: installs from .deb via dpkg; clickhouse-common-static
-                #               provides the clickhouse multi-tool binary (clickhouse-keeper
-                #               is a symlink to it). clickhouse-keeper .deb is not published
-                #               separately, so the common-static .deb is the only source.
-                #   alpine/ubuntu: installs from .tgz; clickhouse-keeper provides the
-                #               standalone keeper binary and its symlinks. The common-static
-                #               .tgz is implicitly excluded because the url filter below
-                #               keeps only urls containing "clickhouse-keeper" in the name.
-                PACKAGES = ["clickhouse-common-static", "clickhouse-keeper"]
->>>>>>> v26.3.10.62-lts
             else:
                 assert False, "BUG"
             urls = read_build_urls(build_name)

@@ -690,13 +690,8 @@ bool StatementGenerator::joinedTableOrFunction(
     /// queryMask[static_cast<size_t>(QueryOp::DerivatedTable)] = true;
     queryMask[static_cast<size_t>(QueryOp::CTE)] = !under_remote && !this->ctes.empty();
     queryMask[static_cast<size_t>(QueryOp::Table)] = has_table;
-<<<<<<< HEAD
     queryMask[static_cast<size_t>(QueryOp::View)] = this->peer_query != PeerQuery::DatastoreOnly && has_view;
-    queryMask[static_cast<size_t>(QueryOp::RemoteUDF)] = this->allow_engine_udf && can_recurse;
-=======
-    queryMask[static_cast<size_t>(QueryOp::View)] = this->peer_query != PeerQuery::ClickHouseOnly && has_view;
     queryMask[static_cast<size_t>(QueryOp::RemoteUDF)] = !under_remote && this->allow_engine_udf && can_recurse;
->>>>>>> v26.3.10.62-lts
     /// queryMask[static_cast<size_t>(QueryOp::NumbersUDF)] = true;
     queryMask[static_cast<size_t>(QueryOp::SystemTable)] = this->allow_not_deterministic && !systemTables.empty();
     queryMask[static_cast<size_t>(QueryOp::MergeUDF)] = this->allow_engine_udf;

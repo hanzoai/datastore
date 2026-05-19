@@ -771,9 +771,6 @@ String FuzzConfig::tableGetRandomPartitionOrPart(
     return res;
 }
 
-<<<<<<< HEAD
-void FuzzConfig::validateDatastoreHealth()
-=======
 uint32_t FuzzConfig::tableCountSystemRows(const String & system_table, const String & database, const String & table)
 {
     String buf;
@@ -847,8 +844,7 @@ String FuzzConfig::tableGetRandomProjection(const uint64_t rand_val, const Strin
     return tableGetRandomSystemName(rand_val, "projections", database, table);
 }
 
-void FuzzConfig::validateClickHouseHealth()
->>>>>>> v26.3.10.62-lts
+void FuzzConfig::validateDatastoreHealth()
 {
     if (processServerQuery(
             false,
@@ -920,9 +916,6 @@ void FuzzConfig::validateClickHouseHealth()
             const uint32_t val = static_cast<uint32_t>(std::stoul(buf));
             if (val != 0)
             {
-<<<<<<< HEAD
-                throw DB::Exception(DB::ErrorCodes::BUZZHOUSE, "Datastore health check: found {} {}", val, health_errors[i]);
-=======
                 String details;
                 if (i < detail_queries.size() && !detail_queries[i].empty()
                     && processServerQuery(
@@ -940,13 +933,12 @@ void FuzzConfig::validateClickHouseHealth()
                 }
                 throw DB::Exception(
                     DB::ErrorCodes::BUZZHOUSE,
-                    "ClickHouse health check on {}:{}: found {} {}{}",
+                    "Datastore health check on {}:{}: found {} {}{}",
                     host,
                     port,
                     val,
                     health_errors[i],
                     details.empty() ? "" : "\nDetails:" + details);
->>>>>>> v26.3.10.62-lts
             }
             i++;
             buf.resize(0);
