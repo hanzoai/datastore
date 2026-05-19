@@ -70,6 +70,7 @@ namespace
             {"days_in_month",
              {
                  /// Returned values should be from 28 to 31.
+<<<<<<< HEAD
                  [](ASTPtr t) -> ASTPtr
                  {
                      /// TODO: Consider adding function toDaysInMonth() to Datastore.
@@ -82,6 +83,9 @@ namespace
                              makeASTFunction("toLastDayOfMonth", t->clone())),
                          make_intrusive<ASTLiteral>(1u));
                  },
+=======
+                 [](ASTPtr t) -> ASTPtr { return makeASTFunction("toDaysInMonth", std::move(t)); },
+>>>>>>> v26.3.10.62-lts
              }},
 
             {"day_of_year",
