@@ -295,17 +295,10 @@ void SignalListener::run()
     }
     else
     {
-<<<<<<< HEAD
         /// This is the case of datastore-client and datastore-local.
-#if defined(__ELF__) && !defined(OS_FREEBSD)
+#if (defined(__ELF__) && !defined(OS_FREEBSD)) || defined(OS_DARWIN)
         /// This operation is heavy (0.5 sec under TSan) - we don't do it in constructor to not slow-down datastore-client,
         /// Do it lazily to not slow-down the termination of datastore-client.
-=======
-        /// This is the case of clickhouse-client and clickhouse-local.
-#if (defined(__ELF__) && !defined(OS_FREEBSD)) || defined(OS_DARWIN)
-        /// This operation is heavy (0.5 sec under TSan) - we don't do it in constructor to not slow-down clickhouse-client,
-        /// Do it lazily to not slow-down the termination of clickhouse-client.
->>>>>>> v26.3.10.62-lts
         build_id = []{ return SymbolIndex::instance().getBuildIDHex(); };
 #else
         build_id = [] { return String("<unknown>"); };

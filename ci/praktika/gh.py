@@ -814,16 +814,6 @@ class GH:
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    # test
-    GH.post_updateable_comment(
-        comment_tags_and_bodies={
-            "test": "foobar4",
-            "test3": "foobar33",
-        },
-        pr=81471,
-        repo="hanzoai/datastore",
-=======
     import argparse
     import sys
 
@@ -833,7 +823,6 @@ if __name__ == "__main__":
     post_parser = subparsers.add_parser(
         "post-or-update",
         help="Post a new PR comment or update an existing one with the given tag",
->>>>>>> v26.3.10.62-lts
     )
     post_parser.add_argument(
         "--tag",

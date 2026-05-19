@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 # docker build -t hanzoai/datastore-mysql_dotnet_client .
-=======
-# docker build -t clickhouse/mysql_dotnet_client .
-# Rebuild to enable SBOM/provenance attestations (see #97903, #98511)
->>>>>>> v26.3.10.62-lts
 
 FROM ubuntu:22.04
 

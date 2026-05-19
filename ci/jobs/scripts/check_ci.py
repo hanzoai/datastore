@@ -805,27 +805,11 @@ def main():
         mergeable_check_status, sha=head_sha
     )
 
-<<<<<<< HEAD
     if Shell.check(f"gh pr merge {pr_number} --auto --repo hanzoai/datastore"):
-        # Check if PR was successfully added to the merge queue
-        # uncomment/fix if GH misses became regular
-        # merge_status = Shell.check(
-        #     f"gh pr view {pr_number} --json mergeStateStatus -q '.mergeStateStatus'",
-        #     capture_output=True,
-        # )
-        # if merge_status != "QUEUED":
-        #     print(
-        #         f"⚠ PR #{pr_number} auto-merge enabled but merge queue status unclear [{merge_status}]. "
-        #         f"If PR is not in queue, try redoing 'Merge when ready' button on GitHub."
-        #     )
-        # else:
-        print(f"✓ PR #{pr_number} added to the merge queue")
-=======
-    if Shell.check(f"gh pr merge {pr_number} --auto --repo ClickHouse/ClickHouse"):
         # Give GitHub a moment to process auto-merge and update merge state
         time.sleep(5)
         merge_status = Shell.get_output(
-            f"gh pr view {pr_number} --json mergeStateStatus --jq '.mergeStateStatus' --repo ClickHouse/ClickHouse"
+            f"gh pr view {pr_number} --json mergeStateStatus --jq '.mergeStateStatus' --repo hanzoai/datastore"
         )
         if merge_status == "CLEAN":
             # PR checks already passed but GitHub didn't enqueue it — the
@@ -836,12 +820,12 @@ def main():
                 f"Retoggling auto-merge to fix..."
             )
             Shell.check(
-                f"gh pr merge {pr_number} --disable-auto --repo ClickHouse/ClickHouse",
+                f"gh pr merge {pr_number} --disable-auto --repo hanzoai/datastore",
                 verbose=True,
             )
             time.sleep(2)
             if Shell.check(
-                f"gh pr merge {pr_number} --auto --repo ClickHouse/ClickHouse",
+                f"gh pr merge {pr_number} --auto --repo hanzoai/datastore",
                 verbose=True,
             ):
                 print(f"OK: Auto-merge retoggled for PR #{pr_number}")
@@ -856,7 +840,6 @@ def main():
             print(
                 f"OK: PR #{pr_number} auto-merge enabled (mergeStateStatus={merge_status})"
             )
->>>>>>> v26.3.10.62-lts
 
 
 if __name__ == "__main__":

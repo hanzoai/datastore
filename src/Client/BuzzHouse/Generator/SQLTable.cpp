@@ -2660,52 +2660,6 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
                       std::uniform_int_distribution<uint32_t> op_range(
                           1, static_cast<uint32_t>(DictionarySourceDetails::RedisStorageType_MAX));
 
-<<<<<<< HEAD
-                dsd->set_redis_storage(static_cast<DictionarySourceDetails_RedisStorageType>(op_range(rg.generator)));
-            }
-            dsd->set_source(DictionarySourceDetails::REDIS);
-        }
-        else
-        {
-            t.setName(dsd->mutable_est(), false);
-            dsd->set_source(DictionarySourceDetails::DATASTORE);
-        }
-    }
-    else if (dict_system_table && nopt < (dict_table + dict_system_table + 1))
-    {
-        DictionarySourceDetails * dsd = cd->mutable_source()->mutable_source();
-        ExprSchemaTable * est = dsd->mutable_est();
-        const auto & ntable = rg.pickRandomly(systemTables);
-
-        est->mutable_database()->set_database(ntable.schema_name);
-        est->mutable_table()->set_table(ntable.table_name);
-        dsd->set_source(DictionarySourceDetails::DATASTORE);
-    }
-    else if (dict_view && nopt < (dict_table + dict_system_table + dict_view + 1))
-    {
-        DictionarySourceDetails * dsd = cd->mutable_source()->mutable_source();
-        const SQLView & v = rg.pickRandomly(filterCollection<SQLView>(dictionary_view_lambda));
-
-        v.setName(dsd->mutable_est(), false);
-        dsd->set_source(DictionarySourceDetails::DATASTORE);
-    }
-    else if (dict_dict && nopt < (dict_table + dict_system_table + dict_view + dict_dict + 1))
-    {
-        DictionarySourceDetails * dsd = cd->mutable_source()->mutable_source();
-        const SQLDictionary & d = rg.pickRandomly(filterCollection<SQLDictionary>(dictionary_dictionary_lambda));
-
-        d.setName(dsd->mutable_est(), false);
-        dsd->set_source(DictionarySourceDetails::DATASTORE);
-    }
-    else if (null_src && nopt < (dict_table + dict_system_table + dict_view + dict_dict + null_src + 1))
-    {
-        cd->mutable_source()->set_null_src(true);
-    }
-    else
-    {
-        UNREACHABLE();
-    }
-=======
                       dsd->set_redis_storage(static_cast<DictionarySourceDetails_RedisStorageType>(op_range(rg.generator)));
                   }
                   dsd->set_source(DictionarySourceDetails::REDIS);
@@ -2713,7 +2667,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               else
               {
                   t.setName(dsd->mutable_est(), false);
-                  dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+                  dsd->set_source(DictionarySourceDetails::DATASTORE);
               }
           }},
          {dict_system_table,
@@ -2725,7 +2679,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
 
               est->mutable_database()->set_database(ntable.schema_name);
               est->mutable_table()->set_table(ntable.table_name);
-              dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+              dsd->set_source(DictionarySourceDetails::DATASTORE);
           }},
          {dict_view,
           [&]
@@ -2734,7 +2688,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               const SQLView & v = rg.pickRandomly(filterCollection<SQLView>(dictionary_view_lambda));
 
               v.setName(dsd->mutable_est(), false);
-              dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+              dsd->set_source(DictionarySourceDetails::DATASTORE);
           }},
          {dict_dict,
           [&]
@@ -2743,10 +2697,9 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               const SQLDictionary & d = rg.pickRandomly(filterCollection<SQLDictionary>(dictionary_dictionary_lambda));
 
               d.setName(dsd->mutable_est(), false);
-              dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+              dsd->set_source(DictionarySourceDetails::DATASTORE);
           }},
          {null_src, [&] { cd->mutable_source()->set_null_src(true); }}});
->>>>>>> v26.3.10.62-lts
 
     /// Set columns
     for (uint32_t i = 0; i < dictionary_ncols; i++)

@@ -64,7 +64,6 @@ const char * __ubsan_default_options()
 #pragma clang diagnostic pop
 #endif
 
-<<<<<<< HEAD
 /// Universal executable for various datastore applications
 int mainEntryDatastoreBenchmark(int argc, char ** argv);
 int mainEntryDatastoreCheckMarks(int argc, char ** argv);
@@ -72,6 +71,7 @@ int mainEntryDatastoreChecksumForCompressedBlock(int, char **);
 int mainEntryDatastoreClient(int argc, char ** argv);
 int mainEntryDatastoreCompressor(int argc, char ** argv);
 int mainEntryDatastoreDisks(int argc, char ** argv);
+int mainEntryDatastoreDockerInit(int argc, char ** argv);
 int mainEntryDatastoreExtractFromConfig(int argc, char ** argv);
 int mainEntryDatastoreFormat(int argc, char ** argv);
 int mainEntryDatastoreFstDumpTree(int argc, char ** argv);
@@ -83,27 +83,6 @@ int mainEntryDatastoreServer(int argc, char ** argv);
 int mainEntryDatastoreStaticFilesDiskUploader(int argc, char ** argv);
 int mainEntryDatastoreZooKeeperDumpTree(int argc, char ** argv);
 int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv);
-=======
-/// Universal executable for various clickhouse applications
-int mainEntryClickHouseBenchmark(int argc, char ** argv);
-int mainEntryClickHouseCheckMarks(int argc, char ** argv);
-int mainEntryClickHouseChecksumForCompressedBlock(int, char **);
-int mainEntryClickHouseClient(int argc, char ** argv);
-int mainEntryClickHouseCompressor(int argc, char ** argv);
-int mainEntryClickHouseDisks(int argc, char ** argv);
-int mainEntryClickHouseDockerInit(int argc, char ** argv);
-int mainEntryClickHouseExtractFromConfig(int argc, char ** argv);
-int mainEntryClickHouseFormat(int argc, char ** argv);
-int mainEntryClickHouseFstDumpTree(int argc, char ** argv);
-int mainEntryClickHouseGitImport(int argc, char ** argv);
-int mainEntryClickHouseLocal(int argc, char ** argv);
-int mainEntryClickHouseObfuscator(int argc, char ** argv);
-int mainEntryClickHouseSU(int argc, char ** argv);
-int mainEntryClickHouseServer(int argc, char ** argv);
-int mainEntryClickHouseStaticFilesDiskUploader(int argc, char ** argv);
-int mainEntryClickHouseZooKeeperDumpTree(int argc, char ** argv);
-int mainEntryClickHouseZooKeeperRemoveByList(int argc, char ** argv);
->>>>>>> v26.3.10.62-lts
 
 int mainEntryDatastoreHashBinary(int, char **)
 {
@@ -162,7 +141,6 @@ std::pair<std::string_view, MainFunc> datastore_applications[] =
     {"chdig", mainEntryDatastoreChdig},
     {"dig", mainEntryDatastoreChdig},
 #endif
-<<<<<<< HEAD
     {"benchmark", mainEntryDatastoreBenchmark},
     {"server", mainEntryDatastoreServer},
     {"extract-from-config", mainEntryDatastoreExtractFromConfig},
@@ -174,28 +152,11 @@ std::pair<std::string_view, MainFunc> datastore_applications[] =
     {"su", mainEntryDatastoreSU},
     {"hash-binary", mainEntryDatastoreHashBinary},
     {"disks", mainEntryDatastoreDisks},
+    {"docker-init", mainEntryDatastoreDockerInit},
     {"check-marks", mainEntryDatastoreCheckMarks},
     {"checksum-for-compressed-block", mainEntryDatastoreChecksumForCompressedBlock},
     {"zookeeper-dump-tree", mainEntryDatastoreZooKeeperDumpTree},
     {"zookeeper-remove-by-list", mainEntryDatastoreZooKeeperRemoveByList},
-=======
-    {"benchmark", mainEntryClickHouseBenchmark},
-    {"server", mainEntryClickHouseServer},
-    {"extract-from-config", mainEntryClickHouseExtractFromConfig},
-    {"compressor", mainEntryClickHouseCompressor},
-    {"format", mainEntryClickHouseFormat},
-    {"obfuscator", mainEntryClickHouseObfuscator},
-    {"git-import", mainEntryClickHouseGitImport},
-    {"static-files-disk-uploader", mainEntryClickHouseStaticFilesDiskUploader},
-    {"su", mainEntryClickHouseSU},
-    {"hash-binary", mainEntryClickHouseHashBinary},
-    {"disks", mainEntryClickHouseDisks},
-    {"docker-init", mainEntryClickHouseDockerInit},
-    {"check-marks", mainEntryClickHouseCheckMarks},
-    {"checksum-for-compressed-block", mainEntryClickHouseChecksumForCompressedBlock},
-    {"zookeeper-dump-tree", mainEntryClickHouseZooKeeperDumpTree},
-    {"zookeeper-remove-by-list", mainEntryClickHouseZooKeeperRemoveByList},
->>>>>>> v26.3.10.62-lts
 
     // keeper
 #if ENABLE_DATASTORE_KEEPER

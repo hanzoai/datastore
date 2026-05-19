@@ -1,10 +1,5 @@
 #include "config.h"
 
-<<<<<<< HEAD
-/// Interposing these symbols explicitly. The idea works like this: malloc.cpp compiles to a
-/// dedicated object (namely datastore_malloc.o), and it will show earlier in the link command
-/// than malloc libs like libjemalloc.a. As a result, these symbols get picked in time right after.
-=======
 #if USE_JEMALLOC && (defined(OS_LINUX) || defined(OS_FREEBSD))
 
 #include <cerrno>
@@ -20,7 +15,7 @@
 /// and delegate to jemalloc via je_* prefixed functions.
 ///
 /// This replaces the previous --wrap linker approach with direct symbol
-/// interposition: malloc.cpp compiles to a dedicated object (clickhouse_malloc.o)
+/// interposition: malloc.cpp compiles to a dedicated object (datastore_malloc.o)
 /// that appears before libjemalloc.a in the link order.
 ///
 /// jemalloc with je_ prefix does not export valloc/memalign/pvalloc,
@@ -28,7 +23,6 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wreserved-identifier"
->>>>>>> v26.3.10.62-lts
 
 extern "C"
 {

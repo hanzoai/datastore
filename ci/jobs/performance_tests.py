@@ -321,18 +321,10 @@ def main():
 
     if Utils.is_arm():
         if compare_against_master:
-<<<<<<< HEAD
-            if info.git_branch == "master":
-                link_for_ref_ch = find_prev_build(info, "build_arm_release")
-                assert link_for_ref_ch, "previous clickhouse build has not been found"
-            else:
-                link_for_ref_ch = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
-=======
             link_for_ref_ch = find_prev_build(info, "build_arm_release")
             if not link_for_ref_ch:
                 print("WARNING: No build found for master track commits, falling back to latest master build")
-                link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
->>>>>>> v26.3.10.62-lts
+                link_for_ref_ch = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/datastore"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_arm_release")
             assert link_for_ref_ch, "reference clickhouse build has not been found"
@@ -340,18 +332,10 @@ def main():
             assert False
     elif Utils.is_amd():
         if compare_against_master:
-<<<<<<< HEAD
-            if info.git_branch == "master":
-                link_for_ref_ch = find_prev_build(info, "build_amd_release")
-                assert link_for_ref_ch, "previous clickhouse build has not been found"
-            else:
-                link_for_ref_ch = "https://hanzo-datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
-=======
             link_for_ref_ch = find_prev_build(info, "build_amd_release")
             if not link_for_ref_ch:
                 print("WARNING: No build found for master track commits, falling back to latest master build")
-                link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
->>>>>>> v26.3.10.62-lts
+                link_for_ref_ch = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/datastore"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_amd_release")
             assert link_for_ref_ch, "reference clickhouse build has not been found"

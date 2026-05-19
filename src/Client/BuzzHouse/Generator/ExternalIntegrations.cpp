@@ -2093,12 +2093,8 @@ int ExternalIntegrations::performQuery(const PeerTableDatabase pt, const String 
 
 std::filesystem::path ExternalIntegrations::getDatabaseDataDir(const PeerTableDatabase pt, const bool server) const
 {
-<<<<<<< HEAD
     const DatastoreIntegratedDatabase * next = getPeerPtr(pt);
-=======
-    const ClickHouseIntegratedDatabase * next = getPeerPtr(pt);
     const auto path = next ? next->sc.user_files_dir : (server ? fc.server_file_path : fc.client_file_path);
->>>>>>> v26.3.10.62-lts
 
     return path / "fuzz.data";
 }
