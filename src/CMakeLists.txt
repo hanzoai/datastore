@@ -234,6 +234,9 @@ set_source_files_properties(Common/ThreadFuzzer.cpp PROPERTIES COMPILE_FLAGS "-f
 
 add_library (datastore_malloc OBJECT Common/malloc.cpp)
 set_source_files_properties(Common/malloc.cpp PROPERTIES COMPILE_FLAGS "-fno-builtin")
+if (TARGET ch_contrib::jemalloc)
+    target_link_libraries (datastore_malloc PRIVATE ch_contrib::jemalloc datastore_common_io)
+endif()
 
 add_library (datastore_new_delete STATIC Common/AllocationInterceptors.cpp)
 target_link_libraries (datastore_new_delete PRIVATE datastore_common_io)
@@ -381,6 +384,7 @@ if ("${CMAKE_BUILD_TYPE_UC}" STREQUAL "DEBUG")
     set_source_files_properties(
             Common/Elf.cpp
             Common/Dwarf.cpp
+            Common/MachO.cpp
             Common/SymbolIndex.cpp
             Common/ThreadFuzzer.cpp
             PROPERTIES COMPILE_FLAGS "-O2 ${WITHOUT_COVERAGE_FLAGS}")

@@ -5,6 +5,7 @@ add_headers_and_sources(datastore_parsers ./Access)
 add_headers_and_sources(datastore_parsers ./MySQL)
 add_headers_and_sources(datastore_parsers ./Kusto)
 add_headers_and_sources(datastore_parsers ./PRQL)
+add_headers_and_sources(datastore_parsers ./Polyglot)
 add_headers_and_sources(datastore_parsers ./Kusto/KustoFunctions)
 add_headers_and_sources(datastore_parsers ./Prometheus)
 
@@ -13,6 +14,10 @@ target_link_libraries(datastore_parsers PUBLIC datastore_common_io datastore_com
 
 if (TARGET ch_rust::prql)
     target_link_libraries(datastore_parsers PRIVATE ch_rust::prql)
+endif ()
+
+if (TARGET ch_rust::polyglot)
+    target_link_libraries(clickhouse_parsers PRIVATE ch_rust::polyglot)
 endif ()
 
 if (TARGET ch_contrib::antlr4_grammars)
