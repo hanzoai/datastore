@@ -1,5 +1,6 @@
 # docker build -t hanzoai/datastore-mysql-java-client .
 # MySQL Java client docker container
+# Rebuild to enable SBOM/provenance attestations (see #97903, #98511)
 
 FROM eclipse-temurin:21-jdk-alpine
 
