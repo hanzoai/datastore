@@ -31,6 +31,8 @@ struct DPJoinEntry
     std::optional<UInt64> estimated_rows = {};
     std::unordered_map<String, ColumnStats> column_stats = {};
 
+    bool imprecise_estimate = false;
+
     /// For join nodes
     JoinOperator join_operator;
     JoinMethod join_method = JoinMethod::None;
@@ -39,7 +41,7 @@ struct DPJoinEntry
     int relation_id = -1;
 
     /// Constructor for a leaf node (base relation)
-    DPJoinEntry(size_t id, std::optional<UInt64> rows, std::unordered_map<String, ColumnStats> column_stats_ = {});
+    DPJoinEntry(size_t id, std::optional<UInt64> rows, std::unordered_map<String, ColumnStats> column_stats_ = {}, bool imprecise_estimate_ = false);
 
     /// Constructor for a join node
     DPJoinEntry(DPJoinEntryPtr lhs,
@@ -60,6 +62,8 @@ struct RelationStats
     std::unordered_map<String, ColumnStats> column_stats = {};
 
     String table_name;
+
+    bool imprecise_estimate = false;
 };
 
 struct QueryGraph
