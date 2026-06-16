@@ -1,0 +1,12 @@
+-- no column statistics, use_statistics=1: estimation is imprecise --
+Join: a[no_statistics~1000] ⋈ b[no_statistics~100]
+ResultRows: 100
+-- column statistics present, use_statistics=1: estimation is precise (no label) --
+Join: a[1000] ⋈ b[100]
+ResultRows: no_statistics~100
+-- mixed: one side without statistics: top join is imprecise --
+Join: a[1000] ⋈ b[no_statistics~100]
+ResultRows: 100
+-- use_statistics=0: index estimate is expected, no imprecise label --
+Join: a[1000] ⋈ b[100]
+ResultRows: no_statistics~100
