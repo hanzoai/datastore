@@ -37,11 +37,12 @@ namespace ErrorCodes
     extern const int EXPERIMENTAL_FEATURE_ERROR;
 }
 
-DPJoinEntry::DPJoinEntry(size_t id, std::optional<UInt64> rows, std::unordered_map<String, ColumnStats> column_stats_)
+DPJoinEntry::DPJoinEntry(size_t id, std::optional<UInt64> rows, std::unordered_map<String, ColumnStats> column_stats_, bool imprecise_estimate_)
     : relations()
     , cost(0.0)
     , estimated_rows(rows)
     , column_stats(std::move(column_stats_))
+    , imprecise_estimate(imprecise_estimate_)
     , relation_id(static_cast<int>(id))
 {
     relations.set(id);
@@ -61,6 +62,8 @@ DPJoinEntry::DPJoinEntry(DPJoinEntryPtr lhs,
     , join_operator(std::move(join_operator_))
     , join_method(join_method_)
 {
+    imprecise_estimate = left->imprecise_estimate || right->imprecise_estimate;
+
     /// Merge column stats from both children, then update NDVs for equi-join key columns.
     column_stats = left->column_stats;
     column_stats.insert(right->column_stats.begin(), right->column_stats.end());
@@ -565,7 +568,7 @@ std::shared_ptr<DPJoinEntry> JoinOrderOptimizer::solveGreedy()
     for (size_t i = 0; i < query_graph.relation_stats.size(); ++i)
     {
         const auto & rel = query_graph.relation_stats[i];
-        components.push_back(std::make_shared<DPJoinEntry>(i, rel.estimated_rows, rel.column_stats));
+        components.push_back(std::make_shared<DPJoinEntry>(i, rel.estimated_rows, rel.column_stats, rel.imprecise_estimate));
     }
 
     std::vector<JoinActionRef *> applied_edge;
@@ -702,7 +705,7 @@ std::shared_ptr<DPJoinEntry> JoinOrderOptimizer::solveDPsize()
     for (size_t i = 0; i < total_relations_count; ++i)
     {
         const auto & rel = query_graph.relation_stats[i];
-        auto entry = std::make_shared<DPJoinEntry>(i, rel.estimated_rows, rel.column_stats);
+        auto entry = std::make_shared<DPJoinEntry>(i, rel.estimated_rows, rel.column_stats, rel.imprecise_estimate);
         components[1][entry->relations] = entry;
         dp_table[entry->relations] = entry;
     }

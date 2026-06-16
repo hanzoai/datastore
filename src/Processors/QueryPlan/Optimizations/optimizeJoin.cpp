@@ -307,7 +307,8 @@ RelationStats estimateReadRowsCount(QueryPlan::Node & node, const ActionsDAG::No
     {
         String table_display_name = reading->getStorageID().getTableName();
 
-        if (reading->getContext()->getSettingsRef()[Setting::use_statistics])
+        const bool use_statistics = reading->getContext()->getSettingsRef()[Setting::use_statistics];
+        if (use_statistics)
         {
             if (auto estimator = reading->getConditionSelectivityEstimator(reading->getAllColumnNames()))
             {
@@ -324,11 +325,13 @@ RelationStats estimateReadRowsCount(QueryPlan::Node & node, const ActionsDAG::No
         if (auto dummy_stats = getDummyStats(reading->getContext(), table_display_name); !dummy_stats.table_name.empty())
             return dummy_stats;
 
+        const bool imprecise_estimate = use_statistics;
+
         ReadFromMergeTree::AnalysisResultPtr analyzed_result = nullptr;
         analyzed_result = analyzed_result ? analyzed_result : reading->getAnalyzedResult();
         analyzed_result = analyzed_result ? analyzed_result : reading->selectRangesToRead();
         if (!analyzed_result)
-            return RelationStats{.estimated_rows = {}, .table_name = table_display_name};
+            return RelationStats{.estimated_rows = {}, .table_name = table_display_name, .imprecise_estimate = imprecise_estimate};
 
         bool is_filtered_by_index = false;
         UInt64 total_parts = 0;
@@ -356,9 +359,9 @@ RelationStats estimateReadRowsCount(QueryPlan::Node & node, const ActionsDAG::No
         /// If any conditions are pushed down to storage but not used in the index,
         /// we cannot precisely estimate the row count
         if (has_filter && !is_filtered_by_index)
-            return RelationStats{.estimated_rows = {}, .table_name = table_display_name};
+            return RelationStats{.estimated_rows = {}, .table_name = table_display_name, .imprecise_estimate = imprecise_estimate};
 
-        return RelationStats{.estimated_rows = analyzed_result->selected_rows, .table_name = table_display_name};
+        return RelationStats{.estimated_rows = analyzed_result->selected_rows, .table_name = table_display_name, .imprecise_estimate = imprecise_estimate};
     }
 
     if (typeid_cast<const ReadFromObjectStorageStep *>(step))
@@ -416,7 +419,8 @@ RelationStats estimateReadRowsCount(QueryPlan::Node & node, const ActionsDAG::No
         return RelationStats{
             .estimated_rows = join_step->getResultRowsEstimation(),
             .column_stats = join_step->getResultColumnStats(),
-            .table_name = join_step->getReadableRelationName()};
+            .table_name = join_step->getReadableRelationName(),
+            .imprecise_estimate = join_step->hasImpreciseEstimate()};
     }
 
     if (const auto * sorting_step = typeid_cast<const SortingStep *>(step))
@@ -986,16 +990,30 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
     LOG_DEBUG(&Poco::Logger::get("QueryPlanOptimizations"), "Optimizing join order for query graph with {} relations", query_graph.relation_stats.size());
 
     std::unordered_map<BitSet, String> relation_names;
+    Strings relations_without_statistics;
     for (size_t i = 0; i < query_graph.relation_stats.size(); ++i)
     {
         const auto & table_name = query_graph.relation_stats[i].table_name;
         auto estimated_count = query_graph.relation_stats[i].estimated_rows;
-        String estimation = estimated_count ? fmt::format("[{}]", estimated_count.value()) : "";
+        const bool imprecise = query_graph.relation_stats[i].imprecise_estimate;
+        String estimation = estimated_count ? fmt::format("[{}{}]", imprecise ? "no_statistics~" : "", estimated_count.value()) : "";
         if (!table_name.empty())
             relation_names[BitSet().set(i)] = fmt::format("{}{}", table_name, estimation);
         else
             relation_names[BitSet().set(i)] = fmt::format("R{}{}", i, estimation);
+
+        if (imprecise)
+            relations_without_statistics.push_back(table_name.empty() ? fmt::format("R{}", i) : table_name);
     }
+
+    if (!relations_without_statistics.empty())
+        LOG_WARNING(
+            getLogger("optimizeJoin"),
+            "Join order optimization uses imprecise row count estimates derived from the primary index "
+            "because the following table(s) have no column statistics while setting 'use_statistics' is enabled: {}. "
+            "The chosen join order may be suboptimal. Consider creating statistics, for example: "
+            "ALTER TABLE <table> MATERIALIZE STATISTICS",
+            fmt::join(relations_without_statistics, ", "));
 
     auto global_expression_actions = std::move(query_graph_builder.expression_actions);
     auto global_actions_dag = global_expression_actions.getActionsDAG();
@@ -1286,7 +1304,7 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
             join_step->setInputLabels(std::move(left_label), std::move(right_label));
             relation_names[entry->relations] = join_step->getReadableRelationName();
 
-            join_step->setOptimized(entry->estimated_rows, lhs_estimation, rhs_estimation, entry->column_stats);
+            join_step->setOptimized(entry->estimated_rows, lhs_estimation, rhs_estimation, entry->column_stats, entry->imprecise_estimate);
 
             auto & new_node = nodes.emplace_back();
 
