@@ -299,7 +299,7 @@ std::vector<std::pair<String, String>> JoinStepLogical::describeJoinProperties()
         description.emplace_back("Join", std::move(readable_relation_name));
 
     if (imprecise_estimate)
-        description.emplace_back("ResultRows", result_rows_estimation ? fmt::format("no_stats~{}", result_rows_estimation.value()) : "unknown");
+        description.emplace_back("ResultRows", result_rows_estimation ? fmt::format("~~{}", result_rows_estimation.value()) : "unknown");
     else
         description.emplace_back("ResultRows", result_rows_estimation ? toString(result_rows_estimation.value()) : "unknown");
 
