@@ -267,6 +267,7 @@ static RelationStats estimateAggregatingStepStats(const AggregatingStep & aggreg
     const auto & aggregator_params = aggregating_step.getAggregatorParameters();
     std::optional<Float64> total_number_of_distinct_values = 1;
     RelationStats aggregation_stats;
+    aggregation_stats.imprecise_estimate = input_stats.imprecise_estimate;
     for (const auto & key : aggregator_params.keys)
     {
         auto key_stats = input_stats.column_stats.find(key);
@@ -1003,7 +1004,7 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
             relation_names[BitSet().set(i)] = fmt::format("R{}{}", i, estimation);
 
         if (imprecise)
-            relations_without_statistics.push_back(table_name.empty() ? fmt::format("R{}", i) : table_name);
+            relations_without_statistics.push_back(table_name.empty() ? fmt::format("table{}", i) : table_name);
     }
 
     if (!relations_without_statistics.empty())
@@ -1012,8 +1013,8 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
             "Join order optimization uses imprecise row count estimates derived from the primary index "
             "because the following table(s) have no column statistics while setting 'use_statistics' is enabled: {}. "
             "The chosen join order may be suboptimal. Consider creating statistics, for example: "
-            "ALTER TABLE <table> MATERIALIZE STATISTICS",
-            fmt::join(relations_without_statistics, ", "));
+            "ALTER TABLE {} MATERIALIZE STATISTICS ALL",
+            fmt::join(relations_without_statistics, ", "), relations_without_statistics.front());
 
     auto global_expression_actions = std::move(query_graph_builder.expression_actions);
     auto global_actions_dag = global_expression_actions.getActionsDAG();
