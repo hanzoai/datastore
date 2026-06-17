@@ -1007,7 +1007,7 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
     }
 
     if (!relations_without_statistics.empty())
-        LOG_WARNING(
+        LOG_DEBUG(
             getLogger("optimizeJoin"),
             "Join order optimization uses imprecise row count estimates derived from the primary index "
             "because the following table(s) have no column statistics while setting 'use_statistics' is enabled: {}. "
