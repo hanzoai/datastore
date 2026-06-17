@@ -61,7 +61,7 @@ WHERE explain LIKE '%Join:%' OR explain LIKE '%ResultRows%';
 
 SET use_statistics = 0;
 
-SELECT '-- use_statistics=0: index estimate is expected, no imprecise label --';
+SELECT '-- use_statistics=0: index estimate is still labeled, it is not derived from column statistics --';
 SELECT trimLeft(explain) FROM
 (
     EXPLAIN keep_logical_steps = 1, actions = 1
