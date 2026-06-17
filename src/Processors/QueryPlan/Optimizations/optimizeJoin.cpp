@@ -998,11 +998,13 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
 
     std::unordered_map<BitSet, String> relation_names;
     Strings relations_without_statistics;
+    std::vector<UInt8> leaf_imprecise(query_graph.relation_stats.size());
     for (size_t i = 0; i < query_graph.relation_stats.size(); ++i)
     {
         const auto & rel = query_graph.relation_stats[i];
         const auto & table_name = rel.table_name;
         auto estimated_count = rel.estimated_rows;
+        leaf_imprecise[i] = rel.imprecise_estimate;
 
         /// A derived sub-join keeps `Statistics` but may still be imprecise; fall back to the bool.
         std::string_view source_tag = rowEstimateSourceTag(rel.source);
@@ -1322,11 +1324,11 @@ static QueryPlan::Node chooseJoinOrder(QueryGraphBuilder query_graph_builder, Qu
             join_step->setInputLabels(std::move(left_label), std::move(right_label));
             relation_names[entry->relations] = join_step->getReadableRelationName();
 
-            /// Diagnostic only: a join is imprecise if any of its leaves was. Computed from the leaf set, not the DP.
+            /// Diagnostic only: a join is imprecise if any of its leaves was (see `leaf_imprecise` above).
             bool imprecise_estimate = false;
-            for (size_t i = 0; i < query_graph.relation_stats.size(); ++i)
+            for (size_t i = 0; i < leaf_imprecise.size(); ++i)
                 if (entry->relations.test(i))
-                    imprecise_estimate |= query_graph.relation_stats[i].imprecise_estimate;
+                    imprecise_estimate |= leaf_imprecise[i];
 
             join_step->setOptimized(entry->estimated_rows, lhs_estimation, rhs_estimation, entry->column_stats, imprecise_estimate);
 
