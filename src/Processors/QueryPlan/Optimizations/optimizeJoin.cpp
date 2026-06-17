@@ -722,7 +722,7 @@ static size_t addChildQueryGraph(QueryGraphBuilder & graph, QueryPlan::Node * no
         && (!stats.estimated_rows || num_rows_from_cache.value() < stats.estimated_rows.value()))
     {
         /// A measured row count beats statistics: take the minimum and mark it a precise cache value.
-        stats.estimated_rows = num_rows_from_cache.value();
+        stats.estimated_rows = num_rows_from_cache;
         stats.imprecise_estimate = false;
         stats.source = RowEstimateSource::HashTableCache;
     }
