@@ -274,8 +274,14 @@ static RelationStats estimateAggregatingStepStats(const AggregatingStep & aggreg
         auto key_stats = input_stats.column_stats.find(key);
         if (key_stats == input_stats.column_stats.end())
         {
-            /// Cannot calculate total number of groups if we don't know NDV of any of the aggregation columns
+            /// Cannot calculate total number of groups if we don't know NDV of any of the aggregation columns.
+            /// The estimate then falls back to the input row count (an over-count of groups), so it is no longer
+            /// precise. Flag it and surface a missing-statistics source so the EXPLAIN label and the
+            /// join-reordering diagnostic reflect that the fallback was caused by missing column statistics.
             total_number_of_distinct_values.reset();
+            aggregation_stats.imprecise_estimate = true;
+            if (aggregation_stats.source == RowEstimateSource::Statistics)
+                aggregation_stats.source = RowEstimateSource::NoStatistics;
             continue;
         }
 
