@@ -1,0 +1,31 @@
+[hanzo-datastore-stable]
+name=Hanzo Datastore - Stable Repository
+baseurl=https://packages.hanzo.ai/rpm/stable/
+gpgkey=https://packages.hanzo.ai/rpm/stable/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=0
+
+[hanzo-datastore-lts]
+name=Hanzo Datastore - LTS Repository
+baseurl=https://packages.hanzo.ai/rpm/lts/
+gpgkey=https://packages.hanzo.ai/rpm/lts/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=0
+
+[hanzo-datastore-prestable]
+name=Hanzo Datastore - Pre-stable Repository
+baseurl=https://packages.hanzo.ai/rpm/prestable/
+gpgkey=https://packages.hanzo.ai/rpm/prestable/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=0
+
+[hanzo-datastore-testing]
+name=Hanzo Datastore - Testing Repository
+baseurl=https://packages.hanzo.ai/rpm/testing/
+gpgkey=https://packages.hanzo.ai/rpm/testing/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=1

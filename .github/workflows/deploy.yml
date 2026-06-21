@@ -1,0 +1,25 @@
+name: Docker
+on:
+  workflow_dispatch:
+  push:
+    branches: [master, main, dev, test]
+    tags: ['v*']
+    paths:
+      - 'Dockerfile*'
+      - 'docker/server/**'
+      - 'programs/**'
+      - 'src/**'
+      - 'cmd/zap-bridge/**'
+      - '.github/workflows/deploy.yml'
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+jobs:
+  docker:
+    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
+    with:
+      image: ghcr.io/hanzoai/datastore
+      # Hanzo overlay: ClickHouse fork + native ZAP bridge in cmd/zap-bridge.
+      dockerfile: Dockerfile.hanzo
+    secrets: inherit

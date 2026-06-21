@@ -1,0 +1,48 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "hanzo-datastore-common-static"
+description: |
+  Common files for Hanzo Datastore
+    Hanzo Datastore is a column-oriented database management system
+    that allows generating analytical data reports in real time.
+    This package provides common files for both datastore server and client
+
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${HANZO_DATASTORE_VERSION_STRING}"
+vendor: "Hanzo AI Inc."
+homepage: "https://hanzo.ai"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Hanzo AI Dev Team <packages@hanzo.ai>"
+deb:
+  fields:
+    Source: hanzo-datastore
+
+# Package specific content
+provides:
+- hanzo-datastore-common
+- hanzo-datastore-server-base
+suggests:
+- hanzo-datastore-common-static-dbg
+
+contents:
+- src: root/usr/bin/hanzo-datastore
+  dst: /usr/bin/hanzo-datastore
+- src: root/usr/bin/hanzo-datastore-extract-from-config
+  dst: /usr/bin/hanzo-datastore-extract-from-config
+- src: root/usr/share/bash-completion/completions
+  dst: /usr/share/bash-completion/completions
+- src: root/usr/share/hanzo-datastore
+  dst: /usr/share/hanzo-datastore
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/hanzo-datastore-common-static/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/hanzo-datastore-common-static/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/hanzo-datastore-common-static/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/hanzo-datastore-common-static/README.md

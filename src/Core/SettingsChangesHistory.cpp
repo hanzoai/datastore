@@ -18,6 +18,9 @@ static void addSettingsChanges(
     SettingsChangesHistory::SettingsChanges && changes)
 {
     /// Forbid duplicate versions
+    auto [_, inserted] = settings_changes_history.emplace(DatastoreVersion(version), std::move(changes));
+    if (!inserted)
+        throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", DatastoreVersion(version).toString()};
     auto [_, inserted] = settings_changes_history.emplace(ClickHouseVersion(version), std::move(changes));
     if (!inserted)
         throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", ClickHouseVersion(version).toString()};
@@ -31,12 +34,23 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
     {
         // clang-format off
         /// History of settings changes that controls some backward incompatible changes
+        /// across all Datastore versions. It maps Datastore version to settings changes that were done
         /// across all ClickHouse versions. It maps ClickHouse version to settings changes that were done
         /// in this version. This history contains both changes to existing settings and newly added settings.
         /// Settings changes is a vector of structs
         ///     {setting_name, previous_value, new_value, reason}.
         /// For newly added setting choose the most appropriate previous_value (for example, if new setting
         /// controls new feature and it's 'true' by default, use 'false' as previous_value).
+        /// It's used to implement `compatibility` setting (see https://github.com/Datastore/Datastore/issues/35972)
+        /// Note: please check if the key already exists to prevent duplicate entries.
+        addSettingsChanges(settings_changes_history, "26.3",
+        {
+            {"optimize_syntax_fuse_functions", false, true, "The optimization is production-ready"},
+            {"allow_calculating_subcolumns_sizes_for_merge_tree_reading", false, true, "Allow calculating subcolumns sizes for merge tree reading to improve read tasks splitting"},
+            {"delta_lake_reload_schema_for_consistency", false, false, "New setting to control whether DeltaLake reloads schema before each query for consistency."},
+            {"use_partition_pruning", true, true, "New setting controlling whether MergeTree uses partition key for pruning. 'use_partition_key' is an alias for this setting."},
+            {"use_partition_key", true, true, "Alias for setting 'use_partition_pruning'."},
+            {"mysql_datatypes_support_level", "", "decimal,datetime64,date2Date32", "Enable modern MySQL type mappings by default."},
         /// It's used to implement `compatibility` setting (see https://github.com/ClickHouse/ClickHouse/issues/35972)
         /// Note: please check if the key already exists to prevent duplicate entries.
         addSettingsChanges(settings_changes_history, "26.5",
@@ -189,6 +203,20 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"ast_fuzzer_runs", 0, 0, "New setting to enable server-side AST fuzzer."},
             {"ast_fuzzer_any_query", false, false, "New setting to allow fuzzing all query types, not just read-only."},
             {"check_named_collection_dependencies", true, true, "New setting to check if dropping a named collection would break dependent tables."},
+            {"deduplicate_blocks_in_dependent_materialized_views", false, true, "Enable deduplication for dependent materialized views by default."},
+            {"deduplicate_insert", "backward_compatible_choice", "enable", "Enable deduplication for all sync and async inserts by default."},
+            {"deduplicate_insert", "backward_compatible_choice", "backward_compatible_choice", "New setting to control deduplication for INSERT queries."},
+            {"enable_join_runtime_filters", false, true, "Enabled this optimization"},
+            {"parallel_replicas_filter_pushdown", false, false, "New setting"},
+            {"optimize_dry_run_check_part", true, true, "New setting"},
+            {"parallel_non_joined_rows_processing", true, true, "New setting to enable parallel processing of non-joined rows in RIGHT/FULL parallel_hash joins."},
+            {"enable_automatic_decision_for_merging_across_partitions_for_final", true, true, "New setting"},
+            {"enable_full_text_index", false, true, "The text index is now GA"},
+            {"allow_experimental_full_text_index", false, true, "The text index is now GA"},
+            {"use_page_cache_for_local_disks", false, false, "New setting to use userspace page cache for local disks"},
+            {"use_page_cache_for_object_storage", false, false, "New setting to use userspace page cache for object storage table functions"},
+            {"use_statistics_cache", false, true, "Enable statistics cache"},
+            {"apply_row_policy_after_final", false, true, "Enabling apply_row_policy_after_final by default, as if was in 25.8 before #87303"},
             {"async_insert", false, true, "Enable async inserts by default."},
             {"deduplicate_blocks_in_dependent_materialized_views", false, true, "Enable deduplication for dependent materialized views by default."},
             {"deduplicate_insert", "backward_compatible_choice", "enable", "Enable deduplication for all sync and async inserts by default."},
@@ -241,6 +269,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"join_runtime_bloom_filter_max_ratio_of_set_bits", 0.7, 0.7, "New setting"},
             {"check_conversion_from_numbers_to_enum", false, true, "New setting"},
             {"allow_experimental_nullable_tuple_type", false, false, "New experimental setting"},
+            {"use_skip_indexes_on_data_read", false, true, "Default enable"},
             {"use_skip_indexes_on_data_read", true, true, "Default enable"},
             {"check_conversion_from_numbers_to_enum", false, false, "New setting"},
             {"archive_adaptive_buffer_max_size_bytes", 8 * 1024 * 1024, 8 * 1024 * 1024, "New setting"},
@@ -282,6 +311,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"aggregate_function_input_format", "state", "state", "New setting to control AggregateFunction input format during INSERT operations. Setting Value set to state by default"},
             {"delta_lake_snapshot_start_version", -1, -1, "New setting."},
             {"delta_lake_snapshot_end_version", -1, -1, "New setting."},
+            {"apply_row_policy_after_final", false, false, "New setting to control if row policies and PREWHERE are applied after FINAL processing for *MergeTree tables"},
             {"apply_row_policy_after_final", true, true, "New setting to control if row policies and PREWHERE are applied after FINAL processing for *MergeTree tables"},
             {"apply_prewhere_after_final", false, false, "New setting. When enabled, PREWHERE conditions are applied after FINAL processing."},
             {"compatibility_s3_presigned_url_query_in_path", false, false, "New setting."},
@@ -297,6 +327,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"distributed_cache_use_clients_cache_for_read", true, true, "New setting"},
             {"distributed_cache_use_clients_cache_for_write", false, false, "New setting"},
             {"enable_positional_arguments_for_projections", true, false, "New setting to control positional arguments in projections."},
+            {"enable_full_text_index", false, false, "Text index was moved to Beta."},
             {"enable_full_text_index", true, false, "Text index was moved to Beta."},
             {"enable_shared_storage_snapshot_in_query", false, true, "Enable share storage snapshot in query by default"},
             {"insert_select_deduplicate", Field{"auto"}, Field{"auto"}, "New setting"},
@@ -326,6 +357,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"optimize_const_name_size", -1, 256, "Replace with scalar and use hash as a name for large constants (size is estimated by name length)"},
             {"enable_lazy_columns_replication", false, true, "Enable lazy columns replication in JOIN and ARRAY JOIN by default"},
             {"allow_special_serialization_kinds_in_output_formats", false, true, "Enable direct output of special columns representations like Sparse/Replicated in some output formats"},
+            {"allow_experimental_alias_table_engine", false, false, "New setting"},
             {"input_format_parquet_local_time_as_utc", false, true, "Use more appropriate type DateTime64(..., 'UTC') for parquet 'local time without timezone' type."},
             {"input_format_parquet_verify_checksums", true, true, "New setting."},
             {"output_format_parquet_write_checksums", false, true, "New setting."},
@@ -375,6 +407,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
         {
             {"input_format_protobuf_oneof_presence", false, false, "New setting"},
             {"iceberg_delete_data_on_drop", false, false, "New setting"},
+            {"use_skip_indexes_on_data_read", false, false, "New setting"},
             {"use_skip_indexes_on_data_read", true, false, "New setting"},
             {"s3_slow_all_threads_after_retryable_error", false, false, "Added an alias for setting `backup_slow_all_threads_after_retryable_s3_error`"},
             {"iceberg_metadata_log_level", "none", "none", "New setting."},
@@ -504,6 +537,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"allow_experimental_time_time64_type", false, false, "New settings. Allows to use a new experimental Time and Time64 data types."},
             {"enable_time_time64_type", false, false, "New settings. Allows to use a new experimental Time and Time64 data types."},
             {"optimize_use_projection_filtering", false, true, "New setting"},
+            {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as Datastore JSON Column."},
             {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as ClickHouse JSON Column."},
             {"use_skip_indexes_if_final", 0, 1, "Change in default value of setting"},
             {"use_skip_indexes_if_final_exact_mode", 0, 1, "Change in default value of setting"},
@@ -524,6 +558,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             /// Release closed. Please use 25.6
             {"geotoh3_argument_order", "lon_lat", "lat_lon", "A new setting for legacy behaviour to set lon and lat argument order"},
             {"secondary_indices_enable_bulk_filtering", false, true, "A new algorithm for filtering by data skipping indices"},
+            {"implicit_table_at_top_level", "", "", "A new setting, used in datastore-local"},
             {"implicit_table_at_top_level", "", "", "A new setting, used in clickhouse-local"},
             {"use_skip_indexes_if_final_exact_mode", 0, 0, "This setting was introduced to help FINAL query return correct results with skip indexes"},
             {"parsedatetime_e_requires_space_padding", true, false, "Improved compatibility with MySQL DATE_FORMAT/STR_TO_DATE"},
@@ -575,6 +610,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"low_priority_query_wait_time_ms", 1000, 1000, "New setting."},
             {"allow_experimental_correlated_subqueries", false, false, "Added new setting to allow correlated subqueries execution."},
             {"serialize_query_plan", false, false, "NewSetting"},
+            {"allow_experimental_shared_set_join", 0, 1, "A setting for Datastore Cloud to enable SharedSet and SharedJoin"},
             {"allow_experimental_shared_set_join", 0, 1, "A setting for ClickHouse Cloud to enable SharedSet and SharedJoin"},
             {"allow_special_bool_values_inside_variant", true, false, "Don't allow special bool values during Variant type parsing"},
             {"cast_string_to_variant_use_inference", true, true, "New setting to enable/disable types inference during CAST from String to Variant"},
@@ -750,6 +786,22 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"min_free_disk_ratio_to_perform_insert", 0.0, 0.0, "New setting."},
             {"parallel_replicas_local_plan", false, true, "Use local plan for local replica in a query with parallel replicas"},
             {"enable_named_columns_in_function_tuple", false, false, "Disabled pending usability improvements"},
+            {"cloud_mode_database_engine", 1, 1, "A setting for Datastore Cloud"},
+            {"allow_experimental_shared_set_join", 0, 0, "A setting for Datastore Cloud"},
+            {"read_through_distributed_cache", 0, 0, "A setting for Datastore Cloud"},
+            {"write_through_distributed_cache", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_throw_on_error", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_log_mode", "on_error", "on_error", "A setting for Datastore Cloud"},
+            {"distributed_cache_fetch_metrics_only_from_current_az", 1, 1, "A setting for Datastore Cloud"},
+            {"distributed_cache_connect_max_tries", 20, 20, "A setting for Datastore Cloud"},
+            {"distributed_cache_receive_response_wait_milliseconds", 60000, 60000, "A setting for Datastore Cloud"},
+            {"distributed_cache_receive_timeout_milliseconds", 10000, 10000, "A setting for Datastore Cloud"},
+            {"distributed_cache_wait_connection_from_pool_milliseconds", 100, 100, "A setting for Datastore Cloud"},
+            {"distributed_cache_bypass_connection_pool", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_pool_behaviour_on_limit", "allocate_bypassing_pool", "allocate_bypassing_pool", "A setting for Datastore Cloud"},
+            {"distributed_cache_read_alignment", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_max_unacked_inflight_packets", 10, 10, "A setting for Datastore Cloud"},
+            {"distributed_cache_data_packet_ack_window", 5, 5, "A setting for Datastore Cloud"},
             {"cloud_mode_database_engine", 1, 1, "A setting for ClickHouse Cloud"},
             {"allow_experimental_shared_set_join", 0, 0, "A setting for ClickHouse Cloud"},
             {"read_through_distributed_cache", 0, 0, "A setting for ClickHouse Cloud"},
@@ -810,6 +862,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"input_format_json_max_depth", 1000000, 1000, "It was unlimited in previous versions, but that was unsafe."},
             {"merge_tree_min_bytes_per_task_for_remote_reading", 4194304, 2097152, "Value is unified with `filesystem_prefetch_min_bytes_for_single_read_task`"},
             {"use_hive_partitioning", false, false, "Allows to use hive partitioning for File, URL, S3, AzureBlobStorage and HDFS engines."},
+            {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in Datastore Keeper"},
             {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in ClickHouse Keeper"},
             {"allow_archive_path_syntax", true, true, "Added new setting to allow disabling archive path syntax."},
             {"query_cache_tag", "", "", "New setting for labeling query cache settings."},
@@ -854,6 +907,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"hdfs_throw_on_zero_files_match", false, false, "Allow to throw an error when ListObjects request cannot match any files in HDFS engine instead of empty query result"},
             {"azure_throw_on_zero_files_match", false, false, "Allow to throw an error when ListObjects request cannot match any files in AzureBlobStorage engine instead of empty query result"},
             {"s3_validate_request_settings", true, true, "Allow to disable S3 request settings validation"},
+            {"allow_experimental_full_text_index", false, false, "Enable experimental text index"},
             {"allow_experimental_full_text_index", true, false, "Enable experimental text index"},
             {"azure_skip_empty_files", false, false, "Allow to skip empty files in azure table engine"},
             {"hdfs_ignore_file_doesnt_exist", false, false, "Allow to return 0 rows when the requested files don't exist instead of throwing an exception in HDFS table engine"},
@@ -938,6 +992,11 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"allow_get_client_http_header", false, false, "Introduced a new function."},
             {"output_format_pretty_row_numbers", false, true, "It is better for usability."},
             {"output_format_pretty_max_value_width_apply_for_single_value", true, false, "Single values in Pretty formats won't be cut."},
+            {"output_format_parquet_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
+            {"output_format_orc_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
+            {"output_format_arrow_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
+            {"output_format_parquet_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. Datastore supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
+            {"output_format_orc_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. Datastore supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
             {"output_format_parquet_string_as_string", false, true, "ClickHouse allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the ClickHouse String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
             {"output_format_orc_string_as_string", false, true, "ClickHouse allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the ClickHouse String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
             {"output_format_arrow_string_as_string", false, true, "ClickHouse allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the ClickHouse String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
@@ -983,6 +1042,8 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"default_view_definer", "CURRENT_USER", "CURRENT_USER", "Allows to set default `DEFINER` option while creating a view"},
             {"default_materialized_view_sql_security", "DEFINER", "DEFINER", "Allows to set a default value for SQL SECURITY option when creating a materialized view"},
             {"default_normal_view_sql_security", "INVOKER", "INVOKER", "Allows to set default `SQL SECURITY` option while creating a normal view"},
+            {"mysql_map_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect Datastore with BI tools."},
+            {"mysql_map_fixed_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect Datastore with BI tools."},
             {"mysql_map_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect ClickHouse with BI tools."},
             {"mysql_map_fixed_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect ClickHouse with BI tools."},
         });
@@ -1122,6 +1183,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
         });
         addSettingsChanges(settings_changes_history, "22.4",
         {
+            {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because Datastore interpret SETTINGS as some values, which is misleading"}
             {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because ClickHouse interpret SETTINGS as some values, which is misleading"}
         });
         addSettingsChanges(settings_changes_history, "22.3",
@@ -1209,6 +1271,10 @@ const VersionToSettingsChangesMap & getMergeTreeSettingsChangesHistory()
     static std::once_flag initialized_flag;
     std::call_once(initialized_flag, [&]
     {
+        addSettingsChanges(merge_tree_settings_changes_history, "26.3",
+        {
+            {"shared_merge_tree_replica_set_max_lifetime_seconds", 300, 300, "New setting"},
+            {"table_readonly", false, false, "New setting to mark table as read-only, preventing inserts and modifications"},
         addSettingsChanges(merge_tree_settings_changes_history, "26.5",
         {
             {"part_minmax_index_columns", "partition_key_only", "partition_key_only", "New setting."},

@@ -1,0 +1,62 @@
+#!/bin/sh
+set -e
+
+PROGRAM=hanzo-datastore-server
+HANZO_USER=${HANZO_USER:-hanzo-datastore}
+HANZO_GROUP=${HANZO_GROUP:-${HANZO_USER}}
+HANZO_CONFDIR=${HANZO_CONFDIR:-/etc/hanzo-datastore-server}
+HANZO_DATADIR=${HANZO_DATADIR:-/var/lib/hanzo-datastore}
+HANZO_LOGDIR=${HANZO_LOGDIR:-/var/log/hanzo-datastore-server}
+HANZO_BINDIR=${HANZO_BINDIR:-/usr/bin}
+HANZO_GENERIC_PROGRAM=${HANZO_GENERIC_PROGRAM:-hanzo-datastore}
+HANZO_PIDDIR=/var/run/$PROGRAM
+
+# Provide hanzo-datastore-keeper
+KEEPER_CONFDIR=${KEEPER_CONFDIR:-/etc/hanzo-datastore-keeper}
+KEEPER_DATADIR=${KEEPER_DATADIR:-/var/lib/hanzo-datastore}
+KEEPER_LOGDIR=${KEEPER_LOGDIR:-/var/log/hanzo-datastore-keeper}
+
+[ -f /usr/share/debconf/confmodule ] && . /usr/share/debconf/confmodule
+[ -f /etc/default/hanzo-datastore-server ] && . /etc/default/hanzo-datastore-server
+
+if [ ! -f "/etc/debian_version" ]; then
+    not_deb_os=1
+fi
+
+if [ "$1" = configure ] || [ -n "$not_deb_os" ]; then
+
+    ${HANZO_GENERIC_PROGRAM} install --user "${HANZO_USER}" --group "${HANZO_GROUP}" --pid-path "${HANZO_PIDDIR}" --config-path "${HANZO_CONFDIR}" --binary-path "${HANZO_BINDIR}" --log-path "${HANZO_LOGDIR}" --data-path "${HANZO_DATADIR}"
+
+    if [ -x "/bin/systemctl" ] && [ -f /lib/systemd/system/hanzo-datastore-server.service ] && [ -d /run/systemd/system ]; then
+        if [ -x "/etc/init.d/hanzo-datastore-server" ] && [ -x "/usr/sbin/update-rc.d" ]; then
+            /usr/sbin/update-rc.d hanzo-datastore-server remove
+        fi
+
+        /bin/systemctl daemon-reload
+        /bin/systemctl enable hanzo-datastore-server
+    else
+        if [ -x "/etc/init.d/hanzo-datastore-server" ]; then
+            if [ -x "/usr/sbin/update-rc.d" ]; then
+                /usr/sbin/update-rc.d hanzo-datastore-server defaults 19 19 >/dev/null || exit $?
+            else
+                echo # Other OS
+            fi
+        fi
+    fi
+
+    # Setup hanzo-datastore-keeper directories
+    chown -R "${HANZO_USER}:${HANZO_GROUP}" "${KEEPER_CONFDIR}"
+    chmod 0755 "${KEEPER_CONFDIR}"
+
+    if ! [ -d "${KEEPER_DATADIR}" ]; then
+        mkdir -p "${KEEPER_DATADIR}"
+        chown -R "${HANZO_USER}:${HANZO_GROUP}" "${KEEPER_DATADIR}"
+        chmod 0700 "${KEEPER_DATADIR}"
+    fi
+
+    if ! [ -d "${KEEPER_LOGDIR}" ]; then
+        mkdir -p "${KEEPER_LOGDIR}"
+        chown -R "${HANZO_USER}:${HANZO_GROUP}" "${KEEPER_LOGDIR}"
+        chmod 0770 "${KEEPER_LOGDIR}"
+    fi
+fi
