@@ -9,8 +9,7 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 ## Stack
 
 - **Server**: C++ (the ClickHouse codebase under `programs/`, `src/`, `base/`)
-- **Bridge**: Go (`cmd/zap-bridge/`) — ZAP duplex listener on `:9999` that proxies to ClickHouse native protocol on `127.0.0.1:9000`. Baked into the same image as the server. Single container, two processes.
-- **Build**: CMake → `clickhouse` binary; Go → `zap-bridge` binary
+- **Build**: CMake → `hanzo-datastore` binary
 
 ## Ports
 
@@ -19,15 +18,13 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 | 8123 | HTTP | ClickHouse HTTP interface |
 | 9000 | TCP | ClickHouse native binary protocol |
 | 9009 | TCP | ClickHouse interserver replication |
-| **9999** | **TCP** | **ZAP duplex (Hanzo canonical service port)** |
-| 9181 | TCP | hanzo-datastore-keeper client port (separate image) |
+| 9181 | TCP | embedded keeper client port (when `<keeper_server>` is configured) |
 
 ## Layout
 
 ```
 datastore/
 ├── programs/, src/, base/, contrib/  ← upstream ClickHouse C++
-├── cmd/zap-bridge/                    ← Go ZAP→ClickHouse bridge
 ├── hanzo/                             ← Hanzo overlay: compose, config.xml, schema.sql
 ├── packages/, pkg/                    ← RPM/deb packaging
 ├── docker/, Dockerfile          ← Hanzo image build
@@ -54,10 +51,10 @@ markers intact and the draft PR is labelled `upstream-sync,conflict`.
 
 There is exactly one upstream sync workflow. Do not add a second.
 
-The Hanzo overlay (`hanzo/`, `cmd/zap-bridge/`, `Dockerfile`) is kept
-disjoint from upstream paths to minimize collisions, so most syncs land
-clean. Watch areas for conflicts: `docker/`, `programs/server/config.xml`,
-top-level `CMakeLists.txt`, and any upstream rename of `cmd/`.
+The Hanzo overlay (`hanzo/`, `Dockerfile`) is kept disjoint from upstream
+paths to minimize collisions, so most syncs land clean. Watch areas for
+conflicts: `docker/`, `programs/server/config.xml`, and top-level
+`CMakeLists.txt`.
 
 ## Phase 1 — Single Binary (Embedded Coordination)
 
@@ -190,6 +187,4 @@ Per the rule "If cmake configure fails after deletion, revert that group and rep
 
 ## Related
 
-- Native ZAP transport: `~/work/hanzo/base/network/transport_zap.go` (canonical reference)
 - Used by: `hanzo/insights` (insights-datastore deployment in `~/work/hanzo/universe/infra/k8s/insights/`)
-- ZAP port standard: 9999 across all Hanzo services (see `~/work/hanzo/CLAUDE.md`)

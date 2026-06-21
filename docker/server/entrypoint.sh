@@ -264,31 +264,6 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
     manage_user
     init_db
 
-    # Native ZAP bridge — single container, two processes.
-    #
-    # The bridge listens on :9999 and proxies to 127.0.0.1:9000 (ClickHouse
-    # native TCP). It always runs — there is no opt-out. The server stays
-    # PID 1 so SIGTERM propagates correctly; the bridge installs its own
-    # SIGTERM handler and drains in-flight requests on shutdown.
-    #
-    # Requires DATASTORE_BRIDGE_HMAC_KEY (base64-encoded ≥32 bytes). The
-    # bridge refuses to start without it; the warning surfaces in container
-    # logs so misconfiguration is obvious.
-    if command -v zap-bridge >/dev/null 2>&1; then
-        ZAP_LISTEN="${ZAP_LISTEN:-:9999}" \
-        DATASTORE_NATIVE_ADDR="${DATASTORE_NATIVE_ADDR:-127.0.0.1:9000}" \
-        DATASTORE_DB="${DATASTORE_DB:-insights}" \
-        DATASTORE_USER="${DATASTORE_USER:-insights_writer}" \
-        DATASTORE_PASSWORD="${DATASTORE_PASSWORD:-}" \
-        DATASTORE_BRIDGE_HMAC_KEY="${DATASTORE_BRIDGE_HMAC_KEY:-}" \
-        ZAP_NODE_ID="${ZAP_NODE_ID:-${HOSTNAME:-datastore}}" \
-        ZAP_SERVICE_TYPE="${ZAP_SERVICE_TYPE:-_hanzo._tcp}" \
-        zap-bridge >>/var/log/hanzo-datastore-server/zap-bridge.log 2>&1 &
-        echo "$0: zap-bridge started (pid=$!) listening on ${ZAP_LISTEN:-:9999}"
-    else
-        echo "$0: warning: zap-bridge binary not found — port 9999 will not be served"
-    fi
-
     # This replaces the shell script with the server:
     # NOTE: must use subcommand syntax — the upstream binary's multicall dispatch only
     # recognises "clickhouse-*" prefixed symlinks, so "hanzo-datastore-server" falls
