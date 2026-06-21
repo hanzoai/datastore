@@ -1,0 +1,36 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "hanzo-datastore-keeper-dbg"
+description: |
+  debugging symbols for hanzo-datastore-keeper
+    This package contains the debugging symbols for hanzo-datastore-keeper.
+
+
+#
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${HANZO_DATASTORE_VERSION_STRING}"
+vendor: "Hanzo AI Inc."
+homepage: "https://hanzo.ai"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Hanzo AI Dev Team <packages@hanzo.ai>"
+deb:
+  fields:
+    Source: hanzo-datastore
+
+# Package specific content
+contents:
+- src: root/usr/lib/debug/usr/bin/hanzo-datastore-keeper.debug
+  dst: /usr/lib/debug/usr/bin/hanzo-datastore-keeper.debug
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/hanzo-datastore-keeper-dbg/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/hanzo-datastore-keeper-dbg/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/hanzo-datastore-keeper-dbg/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/hanzo-datastore-keeper-dbg/README.md

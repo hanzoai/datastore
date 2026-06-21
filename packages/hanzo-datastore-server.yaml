@@ -1,0 +1,78 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "hanzo-datastore-server"
+description: |
+  Server binary for Hanzo Datastore
+    Hanzo Datastore is a column-oriented database management system
+    that allows generating analytical data reports in real time.
+    This package provides hanzo-datastore common configuration files
+
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${HANZO_DATASTORE_VERSION_STRING}"
+vendor: "Hanzo AI Inc."
+homepage: "https://hanzo.ai"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Hanzo AI Dev Team <packages@hanzo.ai>"
+deb:
+  fields:
+    Source: hanzo-datastore
+
+# Package specific content
+provides:
+- hanzo-datastore-keeper
+- hanzo-datastore-server-common
+recommends:
+- libcap2-bin
+
+overrides:
+  deb:
+    depends:
+    - hanzo-datastore-common-static (= ${HANZO_DATASTORE_VERSION_STRING})
+  rpm:
+    depends:
+    - hanzo-datastore-common-static = ${HANZO_DATASTORE_VERSION_STRING}
+
+contents:
+- src: root/etc/hanzo-datastore-server/config.xml
+  dst: /etc/hanzo-datastore-server/config.xml
+  type: config|noreplace
+- src: root/etc/hanzo-datastore-server/users.xml
+  dst: /etc/hanzo-datastore-server/users.xml
+  type: config|noreplace
+- src: hanzo-datastore-server.init
+  dst: /etc/init.d/hanzo-datastore-server
+- src: hanzo-datastore-server.service
+  dst: /lib/systemd/system/hanzo-datastore-server.service
+- src: root/usr/bin/hanzo-datastore-server
+  dst: /usr/bin/hanzo-datastore-server
+# hanzo-datastore-keeper part (embedded in server package)
+- src: root/etc/hanzo-datastore-keeper/keeper_config.xml
+  dst: /etc/hanzo-datastore-keeper/keeper_config.xml
+  type: config|noreplace
+- src: hanzo-datastore-keeper.service
+  dst: /lib/systemd/system/hanzo-datastore-keeper.service
+- src: hanzo-datastore
+  dst: /usr/bin/hanzo-datastore-keeper
+  type: symlink
+- src: hanzo-datastore
+  dst: /usr/bin/hanzo-datastore-keeper-client
+  type: symlink
+- src: hanzo-datastore
+  dst: /usr/bin/hanzo-datastore-keeper-converter
+  type: symlink
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/hanzo-datastore-server/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/hanzo-datastore-server/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/hanzo-datastore-server/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/hanzo-datastore-server/README.md
+
+scripts:
+  postinstall: ./hanzo-datastore-server.postinstall

@@ -4,18 +4,18 @@ set -eo pipefail
 shopt -s nullglob
 
 DO_CHOWN=1
-if [[ "${CLICKHOUSE_RUN_AS_ROOT:=0}" = "1" || "${CLICKHOUSE_DO_NOT_CHOWN:-0}" = "1" ]]; then
+if [[ "${HANZO_RUN_AS_ROOT:=0}" = "1" || "${HANZO_DO_NOT_CHOWN:-0}" = "1" ]]; then
     DO_CHOWN=0
 fi
 
 # support `docker run --user=xxx:xxxx`
 if [[ "$(id -u)" = "0" ]]; then
-    if [[ "$CLICKHOUSE_RUN_AS_ROOT" = 1 ]]; then
+    if [[ "$HANZO_RUN_AS_ROOT" = 1 ]]; then
         USER=0
         GROUP=0
     else
-        USER="${CLICKHOUSE_UID:-"$(id -u clickhouse)"}"
-        GROUP="${CLICKHOUSE_GID:-"$(id -g clickhouse)"}"
+        USER="${HANZO_UID:-"$(id -u hanzo-datastore)"}"
+        GROUP="${HANZO_GID:-"$(id -g hanzo-datastore)"}"
     fi
     if command -v gosu &> /dev/null; then
         gosu="gosu $USER:$GROUP"
@@ -32,19 +32,19 @@ else
     DO_CHOWN=0
 fi
 
-KEEPER_CONFIG="${KEEPER_CONFIG:-/etc/clickhouse-keeper/keeper_config.xml}"
+KEEPER_CONFIG="${KEEPER_CONFIG:-/etc/hanzo-datastore-keeper/keeper_config.xml}"
 
 if [ -f "$KEEPER_CONFIG" ] && ! $gosu test -f "$KEEPER_CONFIG" -a -r "$KEEPER_CONFIG"; then
     echo "Configuration file '$KEEPER_CONFIG' isn't readable by user with id '$USER'"
     exit 1
 fi
 
-DATA_DIR="${CLICKHOUSE_DATA_DIR:-/var/lib/clickhouse}"
-LOG_DIR="${LOG_DIR:-/var/log/clickhouse-keeper}"
+DATA_DIR="${HANZO_DATA_DIR:-/var/lib/hanzo-datastore}"
+LOG_DIR="${LOG_DIR:-/var/log/hanzo-datastore-keeper}"
 COORDINATION_DIR="${DATA_DIR}/coordination"
 COORDINATION_LOG_DIR="${DATA_DIR}/coordination/log"
 COORDINATION_SNAPSHOT_DIR="${DATA_DIR}/coordination/snapshots"
-CLICKHOUSE_WATCHDOG_ENABLE=${CLICKHOUSE_WATCHDOG_ENABLE:-0}
+HANZO_WATCHDOG_ENABLE=${HANZO_WATCHDOG_ENABLE:-0}
 
 for dir in "$DATA_DIR" \
   "$LOG_DIR" \
@@ -73,21 +73,21 @@ do
     fi
 done
 
-# if no args passed to `docker run` or first argument start with `--`, then the user is passing clickhouse-server arguments
+# if no args passed to `docker run` or first argument start with `--`, then the user is passing server arguments
 if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
     # Watchdog is launched by default, but does not send SIGINT to the main process,
     # so the container can't be finished by ctrl+c
-    export CLICKHOUSE_WATCHDOG_ENABLE
+    export HANZO_WATCHDOG_ENABLE
 
     cd "${DATA_DIR}"
 
     # There is a config file. It is already tested with gosu (if it is readably by keeper user)
     if [ -f "$KEEPER_CONFIG" ]; then
-        exec $gosu clickhouse-keeper --config-file="$KEEPER_CONFIG" "$@"
+        exec $gosu hanzo-datastore-keeper --config-file="$KEEPER_CONFIG" "$@"
     fi
 
     # There is no config file. Will use embedded one
-    exec $gosu clickhouse-keeper --log-file="$LOG_PATH" --errorlog-file="$ERROR_LOG_PATH" "$@"
+    exec $gosu hanzo-datastore-keeper --log-file="$LOG_PATH" --errorlog-file="$ERROR_LOG_PATH" "$@"
 fi
 
 # Otherwise, we assume the user want to run his own process, for example a `bash` shell to explore this image

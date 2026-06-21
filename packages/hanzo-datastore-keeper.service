@@ -1,0 +1,21 @@
+[Unit]
+Description=Hanzo Datastore Keeper - distributed coordination server
+Requires=network-online.target
+After=time-sync.target network-online.target
+Wants=time-sync.target
+
+[Service]
+Type=simple
+User=hanzo-datastore
+Group=hanzo-datastore
+Restart=always
+RestartSec=30
+RuntimeDirectory=%p
+ExecStart=/usr/bin/hanzo-datastore-keeper --config=/etc/hanzo-datastore-keeper/keeper_config.xml --pid-file=%t/%p/%p.pid
+EnvironmentFile=-/etc/default/%p
+LimitCORE=infinity
+LimitNOFILE=500000
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_IPC_LOCK CAP_SYS_NICE CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target

@@ -20,18 +20,18 @@ jobs:
         run: |
           cat >> "$GITHUB_ENV" << 'EOF'
           TEMP_PATH=${{runner.temp}}/cherry_pick
-          ROBOT_CLICKHOUSE_SSH_KEY<<RCSK
-          ${{secrets.ROBOT_CLICKHOUSE_SSH_KEY}}
+          ROBOT_HANZO_SSH_KEY<<RCSK
+          ${{secrets.ROBOT_HANZO_SSH_KEY}}
           RCSK
-          REPO_OWNER=ClickHouse
-          REPO_NAME=ClickHouse
+          REPO_OWNER=hanzoai
+          REPO_NAME=datastore
           REPO_TEAM=core
           EOF
       - name: Check out repository code
-        uses: ClickHouse/checkout@v1
+        uses: actions/checkout@v4
         with:
           clear-repository: true
-          token: ${{secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN}}
+          token: ${{secrets.ROBOT_HANZO_COMMIT_TOKEN}}
           fetch-depth: 0
       - name: Debug Info
         uses: ./.github/actions/debug

@@ -1,0 +1,8 @@
+# Self-hosted runner labels served by the Hanzo arcd JIT runner fleet.
+# Without this, actionlint reports `runs-on: hanzo-*` as an "unknown label".
+self-hosted-runner:
+  labels:
+    - hanzo-build-linux-amd64
+    - hanzo-build-linux-arm64
+    - hanzo-deploy-linux-amd64
+    - hanzo-deploy-linux-arm64

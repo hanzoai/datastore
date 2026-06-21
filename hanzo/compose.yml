@@ -1,0 +1,62 @@
+services:
+  datastore:
+    image: hanzoai/datastore:latest
+    container_name: hanzo-datastore
+    ports:
+      - "8123:8123"  # HTTP interface
+      - "9000:9000"  # Native TCP
+      - "9009:9009"  # Interserver
+    volumes:
+      - datastore-data:/var/lib/hanzo-datastore
+      - datastore-logs:/var/log/hanzo-datastore-server
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ./config.xml:/etc/hanzo-datastore-server/config.d/hanzo.xml:ro
+    environment:
+      HANZO_DATASTORE_DB: hanzo
+      HANZO_DATASTORE_USER: hanzo
+      HANZO_DATASTORE_PASSWORD: ${HANZO_DATASTORE_PASSWORD:-hanzo_dev}
+      HANZO_DATASTORE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  keeper:
+    image: hanzoai/datastore-keeper:latest
+    container_name: hanzo-datastore-keeper
+    ports:
+      - "9181:9181"  # Keeper client port
+    volumes:
+      - keeper-data:/var/lib/hanzo-datastore-keeper
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: hanzo-grafana
+    ports:
+      - "3030:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
+    depends_on:
+      - datastore
+    restart: unless-stopped
+
+volumes:
+  datastore-data:
+  datastore-logs:
+  keeper-data:
+  grafana-data:
+
+networks:
+  default:
+    name: hanzo-datastore
