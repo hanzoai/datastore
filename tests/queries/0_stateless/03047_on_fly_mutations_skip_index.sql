@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS t_lightweight_mut_3;
 SET mutations_sync = 0;
 
 CREATE TABLE t_lightweight_mut_3 (id UInt64, v UInt64, INDEX idx v TYPE minmax GRANULARITY 1)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lightweight_mut_3', '1') ORDER BY id;
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lightweight_mut_3', '1') ORDER BY id;
 
 SYSTEM STOP MERGES t_lightweight_mut_3;
 

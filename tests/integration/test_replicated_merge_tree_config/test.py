@@ -33,7 +33,7 @@ def drop_table(start_cluster):
 def test_replicated_merge_tree_settings(start_cluster):
     node.query("CREATE TABLE test1 (id Int64) ENGINE MergeTree ORDER BY id")
     node.query(
-        "CREATE TABLE test2 (id Int64) ENGINE ReplicatedMergeTree('/clickhouse/test', 'test') ORDER BY id"
+        "CREATE TABLE test2 (id Int64) ENGINE ReplicatedMergeTree('/datastore/test', 'test') ORDER BY id"
     )
 
     assert "index_granularity = 100" in node.query("SHOW CREATE test1")

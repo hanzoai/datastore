@@ -24,7 +24,7 @@ def reset_to_normal_settings_after_test():
     try:
         node.copy_file_to_container(
             os.path.join(SCRIPT_DIR, "configs/empty_settings.xml"),
-            "/etc/clickhouse-server/config.d/z.xml",
+            "/etc/datastore-server/config.d/z.xml",
         )
         node.query("SYSTEM RELOAD CONFIG")
         yield
@@ -34,7 +34,7 @@ def reset_to_normal_settings_after_test():
 
 # @pytest.mark.parametrize("reload_strategy", ["force", "timeout"])
 def test_reload_query_masking_rules():
-    # At first, empty configuration is fed to ClickHouse. The query
+    # At first, empty configuration is fed to Datastore. The query
     # "SELECT 'TOPSECRET.TOPSECRET'" will not be redacted, and the new masking
     # event will not be registered
     node.query("SELECT 'TOPSECRET.TOPSECRET'")
@@ -44,7 +44,7 @@ def test_reload_query_masking_rules():
 
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/changed_settings.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
 
     node.query("SYSTEM RELOAD CONFIG")

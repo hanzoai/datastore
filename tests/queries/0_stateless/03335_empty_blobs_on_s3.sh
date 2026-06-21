@@ -10,7 +10,7 @@ set -e
 
 # Create a table on S3 disk with Array column and wide parts
 # Insert a row with empty Array-s so that arr.bin file is empty
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP TABLE IF EXISTS test_empty_blobs;
 
     CREATE TABLE test_empty_blobs (key Int, arr Array(UInt32)) ENGINE=MergeTree() ORDER BY tuple()
@@ -24,12 +24,12 @@ $CLICKHOUSE_CLIENT -m -q "
 "
 
 # Find table UUID for non-Ordinary database or use 'database_name/test_empty_blobs'
-UUID=`$CLICKHOUSE_CLIENT -q "
+UUID=`$DATASTORE_CLIENT -q "
     SELECT if (uuid != '00000000-0000-0000-0000-000000000000', uuid::String, currentDatabase() || '/test_empty_blobs')
     FROM system.tables
     WHERE database = currentDatabase() AND table = 'test_empty_blobs'"`;
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     SYSTEM FLUSH LOGS blob_storage_log, text_log;
 
     -- Check that there were no empty blobs written to S3
@@ -65,7 +65,7 @@ $CLICKHOUSE_CLIENT -m -q "
 
 BACKUP_NAME="test_empty_blobs_backup_$UUID"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     -- Backup and restore the table
     BACKUP TABLE test_empty_blobs TO Disk('backups', '$BACKUP_NAME');
 
@@ -74,7 +74,7 @@ $CLICKHOUSE_CLIENT -m -q "
     RESTORE TABLE test_empty_blobs FROM Disk('backups', '$BACKUP_NAME');
 " >/dev/null && echo 'Backup-restore succeeded';
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     -- Read after restore
     SELECT * FROM test_empty_blobs ORDER BY key;
 

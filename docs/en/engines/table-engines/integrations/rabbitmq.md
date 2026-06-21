@@ -1,5 +1,5 @@
 ---
-description: 'This engine allows integrating ClickHouse with RabbitMQ.'
+description: 'This engine allows integrating Datastore with RabbitMQ.'
 sidebar_label: 'RabbitMQ'
 sidebar_position: 170
 slug: /engines/table-engines/integrations/rabbitmq
@@ -7,7 +7,7 @@ title: 'RabbitMQ table engine'
 doc_type: 'guide'
 ---
 
-This engine allows integrating ClickHouse with [RabbitMQ](https://www.rabbitmq.com).
+This engine allows integrating Datastore with [RabbitMQ](https://www.rabbitmq.com).
 
 `RabbitMQ` lets you:
 
@@ -102,14 +102,14 @@ Example:
                             date_time_input_format = 'best_effort';
 ```
 
-The RabbitMQ server configuration should be added using the ClickHouse config file.
+The RabbitMQ server configuration should be added using the Datastore config file.
 
 Required configuration:
 
 ```xml
  <rabbitmq>
     <username>root</username>
-    <password>clickhouse</password>
+    <password>datastore</password>
  </rabbitmq>
 ```
 
@@ -117,7 +117,7 @@ Additional configuration:
 
 ```xml
  <rabbitmq>
-    <vhost>clickhouse</vhost>
+    <vhost>datastore</vhost>
  </rabbitmq>
 ```
 
@@ -204,7 +204,7 @@ Even though you may specify [default column expressions](/sql-reference/statemen
 
 ## Data formats support {#data-formats-support}
 
-RabbitMQ engine supports all [formats](../../../interfaces/formats.md) supported in ClickHouse.
+RabbitMQ engine supports all [formats](../../../interfaces/formats.md) supported in Datastore.
 The number of rows in one RabbitMQ message depends on whether the format is row-based or block-based:
 
 - For row-based formats the number of rows in one RabbitMQ message can be controlled by setting `rabbitmq_max_rows_per_message`.

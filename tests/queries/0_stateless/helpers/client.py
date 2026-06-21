@@ -18,7 +18,7 @@ class client(object):
         if command is None:
             options = "--enable-progress-table-toggle=0"
             command = (
-                os.environ.get("CLICKHOUSE_BINARY", "clickhouse") + " client " + options
+                os.environ.get("DATASTORE_BINARY", "datastore") + " client " + options
             )
         self.client.command = command
         self.client.eol("\r")

@@ -7,8 +7,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 function has_used_parallel_replicas () {
-    # Not using current_database = '$CLICKHOUSE_DATABASE' as nested parallel queries aren't run with it
-    $CLICKHOUSE_CLIENT --query "
+    # Not using current_database = '$DATASTORE_DATABASE' as nested parallel queries aren't run with it
+    $DATASTORE_CLIENT --query "
         SELECT
             initial_query_id,
             if(count() != 2, 'Used parallel', 'Not parallel'),
@@ -22,13 +22,13 @@ function has_used_parallel_replicas () {
 }
 
 function run_query_with_pure_parallel_replicas () {
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query "$2" \
         --query_id "${1}_disabled" \
         --max_parallel_replicas 1 \
         --optimize_trivial_count_query 1
 
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query "$2" \
         --query_id "${1}_pure" \
         --max_parallel_replicas 3 \
@@ -40,7 +40,7 @@ function run_query_with_pure_parallel_replicas () {
         --parallel_replicas_only_with_analyzer 0 \
         --optimize_trivial_count_query 1
 
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query "$2" \
         --query_id "${1}_pure_analyzer" \
         --max_parallel_replicas 3 \
@@ -53,12 +53,12 @@ function run_query_with_pure_parallel_replicas () {
 }
 
 function run_query_with_custom_key_parallel_replicas () {
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query "$2" \
         --query_id "${1}_disabled" \
         --max_parallel_replicas 1
 
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query "$2" \
         --query_id "${1}_custom_key" \
         --max_parallel_replicas 3 \
@@ -66,7 +66,7 @@ function run_query_with_custom_key_parallel_replicas () {
         --parallel_replicas_custom_key "$2" \
         --enable_analyzer 0
 
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query "$2" \
         --query_id "${1}_custom_key_analyzer" \
         --max_parallel_replicas 3 \
@@ -75,17 +75,17 @@ function run_query_with_custom_key_parallel_replicas () {
         --enable_analyzer 1
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE replicated_numbers
     (
         number Int64,
     )
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/{database}/replicated_numbers', 'r1')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/{database}/replicated_numbers', 'r1')
     ORDER BY (number)
     AS SELECT number FROM numbers(100000);
 "
 
-query_id_base="02783_count-$CLICKHOUSE_DATABASE"
+query_id_base="02783_count-$DATASTORE_DATABASE"
 
 run_query_with_pure_parallel_replicas "${query_id_base}_0" "SELECT count() FROM replicated_numbers"
 run_query_with_pure_parallel_replicas "${query_id_base}_1" "SELECT * FROM (SELECT count() FROM replicated_numbers) LIMIT 20"
@@ -95,5 +95,5 @@ run_query_with_pure_parallel_replicas "${query_id_base}_1" "SELECT * FROM (SELEC
 #run_query_with_custom_key_parallel_replicas "${query_id_base}_3" "SELECT * FROM (SELECT count() FROM cluster(test_cluster_one_shard_three_replicas_localhost, currentDatabase(), replicated_numbers)) LIMIT 20" "sipHash64(number)"
 
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
 has_used_parallel_replicas "${query_id_base}"

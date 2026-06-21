@@ -1,6 +1,6 @@
 -- Regression test: Bad cast from ConstantNode to ListNode when JOIN USING
 -- resolves identifier from a projection alias (with analyzer_compatibility_join_using_top_level_identifier).
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=2d046da0e9520c48cd6d1c01eda29f76dcc4f93c&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_tsan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=2d046da0e9520c48cd6d1c01eda29f76dcc4f93c&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_tsan%29
 
 DROP TABLE IF EXISTS t1;
 DROP TABLE IF EXISTS t2;

@@ -1,6 +1,6 @@
 SET enable_analyzer = 1;
 
--- https://github.com/ClickHouse/ClickHouse/issues/45804
+-- https://github.com/ClickHouse/Datastore/issues/45804
 
 CREATE TABLE myRMT(
   key Int64,

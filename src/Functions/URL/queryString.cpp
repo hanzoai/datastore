@@ -23,7 +23,7 @@ Returns the query string of a URL without the initial question mark, `#` and eve
     {
         "Usage example",
         R"(
-SELECT queryString('https://clickhouse.com/docs?query=value&param=123#section');
+SELECT queryString('https://datastore.com/docs?query=value&param=123#section');
         )",
         R"(
 ┌─queryString(⋯3#section')─┐

@@ -12,6 +12,6 @@ i=0 retries=100
 while [[ $i -lt $retries ]]; do
     query="SELECT sleepEachRow(1) FROM remote('127.{2,3}', system.one) FORMAT Null"
     # 1.8 less then 2 seconds, but long enough to cover possible load peaks
-    timeout 1.8s ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_distributed_connections=2&max_threads=1" -d "$query" && break
+    timeout 1.8s ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_distributed_connections=2&max_threads=1" -d "$query" && break
     ((++i))
 done

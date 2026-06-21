@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS t_lwu_on_fly SYNC;
 SET enable_lightweight_update = 1;
 
 CREATE TABLE t_lwu_on_fly (id UInt64, a UInt64, b UInt64, c UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lwu_on_fly', '1') ORDER BY id
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lwu_on_fly', '1') ORDER BY id
 SETTINGS enable_block_number_column = 1, enable_block_offset_column = 1;
 
 SYSTEM STOP MERGES t_lwu_on_fly;

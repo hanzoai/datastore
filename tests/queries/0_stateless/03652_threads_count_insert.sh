@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-cat <<EOF | $CLICKHOUSE_CLIENT -n $SETTINGS
+cat <<EOF | $DATASTORE_CLIENT -n $SETTINGS
 drop table if exists testX;
 drop table if exists testXA;
 drop table if exists testXB;
@@ -36,11 +36,11 @@ for max_threads in 1 7; do
         SETTINGS="$SETTINGS --log_queries=1 "
         SETTINGS="$SETTINGS --send_logs_level=error "
 
-        $CLICKHOUSE_CLIENT -q 'select * from numbers(200) format TSV' | $CLICKHOUSE_CLIENT $SETTINGS -q 'insert into testX FORMAT TSV'
+        $DATASTORE_CLIENT -q 'select * from numbers(200) format TSV' | $DATASTORE_CLIENT $SETTINGS -q 'insert into testX FORMAT TSV'
 
-        $CLICKHOUSE_CLIENT -q 'system flush logs system.query_log;'
+        $DATASTORE_CLIENT -q 'system flush logs system.query_log;'
 
-        cat <<EOF | $CLICKHOUSE_CLIENT
+        cat <<EOF | $DATASTORE_CLIENT
 select
     if(peak_threads_usage >= 6, 7, peak_threads_usage),
 from system.query_log where event_date >= yesterday() AND event_time >= now() - 600 AND

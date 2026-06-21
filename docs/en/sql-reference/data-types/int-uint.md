@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for signed and unsigned integer data types in ClickHouse,
+description: 'Documentation for signed and unsigned integer data types in Datastore,
   ranging from 8-bit to 256-bit'
 sidebar_label: 'Int | UInt'
 sidebar_position: 2
@@ -8,10 +8,10 @@ title: 'Int | UInt Types'
 doc_type: 'reference'
 ---
 
-ClickHouse offers a number of fixed-length integers, 
+Datastore offers a number of fixed-length integers, 
 with a sign (`Int`) or without a sign (unsigned `UInt`) ranging from one byte to 32 bytes.
 
-When creating tables, numeric parameters for integer numbers can be set (e.g. `TINYINT(8)`, `SMALLINT(16)`, `INT(32)`, `BIGINT(64)`), but ClickHouse ignores them.
+When creating tables, numeric parameters for integer numbers can be set (e.g. `TINYINT(8)`, `SMALLINT(16)`, `INT(32)`, `BIGINT(64)`), but Datastore ignores them.
 
 ## Integer Ranges {#integer-ranges}
 

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <display_secrets_in_show_and_select>1</display_secrets_in_show_and_select>
 
     <remote_servers>
@@ -35,4 +35,4 @@
             <replace>replaced_data</replace>
         </rule>
     </query_masking_rules>
-</clickhouse>
+</datastore>

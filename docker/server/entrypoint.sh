@@ -189,7 +189,7 @@ function init_db() {
 
             # Listen only on localhost until the initialization is done
             # NOTE: must use subcommand "hanzo-datastore server" not symlink "hanzo-datastore-server"
-            # because the upstream binary only recognizes "clickhouse-*" prefixed symlinks for multicall dispatch
+            # because the upstream binary only recognizes "datastore-*" prefixed symlinks for multicall dispatch
             hanzo-datastore su "${USER}:${GROUP}" /usr/bin/hanzo-datastore server --config-file="$HANZO_CONFIG" -- --listen_host=127.0.0.1 &
             pid="$!"
 
@@ -266,7 +266,7 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
 
     # Native ZAP bridge — single container, two processes.
     #
-    # The bridge listens on :9999 and proxies to 127.0.0.1:9000 (ClickHouse
+    # The bridge listens on :9999 and proxies to 127.0.0.1:9000 (Datastore
     # native TCP). It always runs — there is no opt-out. The server stays
     # PID 1 so SIGTERM propagates correctly; the bridge installs its own
     # SIGTERM handler and drains in-flight requests on shutdown.
@@ -291,7 +291,7 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
 
     # This replaces the shell script with the server:
     # NOTE: must use subcommand syntax — the upstream binary's multicall dispatch only
-    # recognises "clickhouse-*" prefixed symlinks, so "hanzo-datastore-server" falls
+    # recognises "datastore-*" prefixed symlinks, so "hanzo-datastore-server" falls
     # through to the default "local" mode. Using "hanzo-datastore server" works correctly.
     exec hanzo-datastore su "${USER}:${GROUP}" /usr/bin/hanzo-datastore server --config-file="$HANZO_CONFIG" "$@"
 fi

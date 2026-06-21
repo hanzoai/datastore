@@ -109,7 +109,7 @@ class RepoCodenames(metaclass=WithIter):
 
 class DebianArtifactory:
     _TEST_REPO_URL = "https://pub-73dd1910f4284a81a02a67018967e028.r2.dev/deb"
-    _PROD_REPO_URL = "https://packages.clickhouse.com/deb"
+    _PROD_REPO_URL = "https://packages.datastore.com/deb"
 
     def __init__(self, release_info: ReleaseInfo, dry_run: bool):
         self.release_info = release_info
@@ -126,9 +126,9 @@ class DebianArtifactory:
             version=release_info.version,
         )
 
-    # Fingerprint of the GPG key used to sign the ClickHouse Debian repository.
+    # Fingerprint of the GPG key used to sign the Datastore Debian repository.
     _SIGN_KEY = "8919F6BD2B48D754"
-    _KEYRING_PATH = "/etc/apt/keyrings/clickhouse-keyring.gpg"
+    _KEYRING_PATH = "/etc/apt/keyrings/datastore-keyring.gpg"
 
     def export_packages(self):
         assert self.pd.local_deb_packages_ready(), "BUG: Packages are not downloaded"
@@ -184,8 +184,8 @@ class DebianArtifactory:
         )
         debian_command = (
             f"echo 'deb [signed-by={self._KEYRING_PATH}] {self.repo_url} stable main' | "
-            "tee /etc/apt/sources.list.d/clickhouse.list; apt update -y; "
-            f"apt-get install -y clickhouse-common-static={self.version} clickhouse-client={self.version}"
+            "tee /etc/apt/sources.list.d/datastore.list; apt update -y; "
+            f"apt-get install -y datastore-common-static={self.version} datastore-client={self.version}"
         )
         cmd = (
             "docker run --rm ubuntu:latest bash -c "
@@ -197,8 +197,8 @@ class DebianArtifactory:
         print("Test packages installation, version [latest]")
         debian_command_2 = (
             f"echo 'deb [signed-by={self._KEYRING_PATH}] {self.repo_url} stable main' | "
-            "tee /etc/apt/sources.list.d/clickhouse.list; apt update -y; "
-            "apt-get install -y clickhouse-common-static clickhouse-client"
+            "tee /etc/apt/sources.list.d/datastore.list; apt update -y; "
+            "apt-get install -y datastore-common-static datastore-client"
         )
         cmd = (
             "docker run --rm ubuntu:latest bash -c "
@@ -223,9 +223,9 @@ def _copy_if_not_exists(src: Path, dst: Path) -> Path:
 
 class RpmArtifactory:
     _TEST_REPO_URL = (
-        "https://pub-73dd1910f4284a81a02a67018967e028.r2.dev/rpm/clickhouse.repo"
+        "https://pub-73dd1910f4284a81a02a67018967e028.r2.dev/rpm/datastore.repo"
     )
-    _PROD_REPO_URL = "https://packages.clickhouse.com/rpm/clickhouse.repo"
+    _PROD_REPO_URL = "https://packages.datastore.com/rpm/datastore.repo"
     _SIGN_KEY = "885E2BDCF96B0B45ABF058453E4AD4719DDE9A38"
     FEDORA_VERSION = 40
 
@@ -286,13 +286,13 @@ class RpmArtifactory:
     def test_packages(self):
         Shell.check(f"docker pull fedora:{self.FEDORA_VERSION}", strict=True, verbose=True)
         print(f"Test package installation, version [{self.version}]")
-        rpm_command = f"dnf config-manager --add-repo={self.repo_url} && dnf makecache && dnf -y install clickhouse-client-{self.version}-1"
+        rpm_command = f"dnf config-manager --add-repo={self.repo_url} && dnf makecache && dnf -y install datastore-client-{self.version}-1"
         cmd = f'docker run --rm fedora:{self.FEDORA_VERSION} /bin/bash -c "dnf -y install dnf-plugins-core && dnf config-manager --add-repo={self.repo_url} && {rpm_command}"'
         print("Running test command:")
         print(f"  {cmd}")
         assert Shell.check(cmd, verbose=True)
         print("Test package installation, version [latest]")
-        rpm_command_2 = f"dnf config-manager --add-repo={self.repo_url} && dnf makecache && dnf -y install clickhouse-client"
+        rpm_command_2 = f"dnf config-manager --add-repo={self.repo_url} && dnf makecache && dnf -y install datastore-client"
         cmd = f'docker run --rm fedora:{self.FEDORA_VERSION} /bin/bash -c "dnf -y install dnf-plugins-core && dnf config-manager --add-repo={self.repo_url} && {rpm_command_2}"'
         print("Running test command:")
         print(f"  {cmd}")
@@ -303,7 +303,7 @@ class RpmArtifactory:
 
 class TgzArtifactory:
     _TEST_REPO_URL = "https://pub-73dd1910f4284a81a02a67018967e028.r2.dev/tgz"
-    _PROD_REPO_URL = "https://packages.clickhouse.com/tgz"
+    _PROD_REPO_URL = "https://packages.datastore.com/tgz"
 
     def __init__(self, release_info: ReleaseInfo, dry_run: bool):
         self.release_info = release_info
@@ -342,14 +342,14 @@ class TgzArtifactory:
     def test_packages(self):
         tgz_file = "/tmp/tmp.tgz"
         tgz_sha_file = "/tmp/tmp.tgz.sha512"
-        cmd = f"curl -o {tgz_file} -f0 {self.repo_url}/stable/clickhouse-client-{self.version}-arm64.tgz"
+        cmd = f"curl -o {tgz_file} -f0 {self.repo_url}/stable/datastore-client-{self.version}-arm64.tgz"
         Shell.check(
             cmd,
             strict=True,
             verbose=True,
         )
         Shell.check(
-            f"curl -o {tgz_sha_file} -f0 {self.repo_url}/stable/clickhouse-client-{self.version}-arm64.tgz.sha512",
+            f"curl -o {tgz_sha_file} -f0 {self.repo_url}/stable/datastore-client-{self.version}-arm64.tgz.sha512",
             strict=True,
             verbose=True,
         )

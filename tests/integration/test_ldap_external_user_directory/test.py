@@ -6,7 +6,7 @@ from helpers.cluster import ClickHouseCluster
 from helpers.test_tools import TSV
 
 LDAP_ADMIN_BIND_DN = "cn=admin,dc=example,dc=org"
-LDAP_ADMIN_PASSWORD = "clickhouse"
+LDAP_ADMIN_PASSWORD = "datastore"
 
 cluster = ClickHouseCluster(__file__)
 
@@ -117,8 +117,8 @@ def test_role_mapping(ldap_cluster):
     instance1.query("DROP ROLE IF EXISTS role_3", user="common_user", password="qwerty")
     instance1.query("CREATE ROLE role_1", user="common_user", password="qwerty")
     instance1.query("CREATE ROLE role_2", user="common_user", password="qwerty")
-    add_ldap_group(ldap_cluster, group_cn="clickhouse-role_1", member_cn="johndoe")
-    add_ldap_group(ldap_cluster, group_cn="clickhouse-role_2", member_cn="johndoe")
+    add_ldap_group(ldap_cluster, group_cn="datastore-role_1", member_cn="johndoe")
+    add_ldap_group(ldap_cluster, group_cn="datastore-role_2", member_cn="johndoe")
 
     assert instance1.query(
         "select currentUser()", user="johndoe", password="qwertz"
@@ -131,10 +131,10 @@ def test_role_mapping(ldap_cluster):
     ) == TSV([["role_1"], ["role_2"]])
 
     instance1.query("CREATE ROLE role_3", user="common_user", password="qwerty")
-    add_ldap_group(ldap_cluster, group_cn="clickhouse-role_3", member_cn="johndoe")
-    # Check that non-existing role in ClickHouse is ignored during role update
-    # See https://github.com/ClickHouse/ClickHouse/issues/54318
-    add_ldap_group(ldap_cluster, group_cn="clickhouse-role_4", member_cn="johndoe")
+    add_ldap_group(ldap_cluster, group_cn="datastore-role_3", member_cn="johndoe")
+    # Check that non-existing role in Datastore is ignored during role update
+    # See https://github.com/ClickHouse/Datastore/issues/54318
+    add_ldap_group(ldap_cluster, group_cn="datastore-role_4", member_cn="johndoe")
 
     assert instance1.query(
         "select role_name from system.current_roles ORDER BY role_name",
@@ -146,14 +146,14 @@ def test_role_mapping(ldap_cluster):
     instance1.query("DROP ROLE role_2", user="common_user", password="qwerty")
     instance1.query("DROP ROLE role_3", user="common_user", password="qwerty")
 
-    delete_ldap_group(ldap_cluster, group_cn="clickhouse-role_1")
-    delete_ldap_group(ldap_cluster, group_cn="clickhouse-role_2")
-    delete_ldap_group(ldap_cluster, group_cn="clickhouse-role_3")
-    delete_ldap_group(ldap_cluster, group_cn="clickhouse-role_4")
+    delete_ldap_group(ldap_cluster, group_cn="datastore-role_1")
+    delete_ldap_group(ldap_cluster, group_cn="datastore-role_2")
+    delete_ldap_group(ldap_cluster, group_cn="datastore-role_3")
+    delete_ldap_group(ldap_cluster, group_cn="datastore-role_4")
 
 
 def test_push_role_to_other_nodes(ldap_cluster):
-    add_ldap_group(ldap_cluster, group_cn="clickhouse-role_read", member_cn="johndoe")
+    add_ldap_group(ldap_cluster, group_cn="datastore-role_read", member_cn="johndoe")
 
     instance2.query("DROP USER IF EXISTS remote_user", user="common_user", password="qwerty")
     instance2.query("CREATE USER remote_user IDENTIFIED WITH plaintext_password BY 'qwerty'", user="common_user", password="qwerty")
@@ -205,7 +205,7 @@ def test_push_role_to_other_nodes(ldap_cluster):
     instance1.query("DROP TABLE IF EXISTS local_table SYNC", user="common_user", password="qwerty")
     instance2.query("DROP TABLE IF EXISTS local_table SYNC", user="common_user", password="qwerty")
     instance1.query("DROP ROLE IF EXISTS role_read", user="common_user", password="qwerty")
-    delete_ldap_group(ldap_cluster, group_cn="clickhouse-role_read")
+    delete_ldap_group(ldap_cluster, group_cn="datastore-role_read")
 
 
 def test_remote_query_user_does_not_exist_locally(ldap_cluster):

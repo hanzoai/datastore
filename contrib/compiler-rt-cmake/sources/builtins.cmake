@@ -139,7 +139,7 @@ set(BUILTINS_GENERIC_SOURCES
     umoddi3.c
     umodsi3.c
     umodti3.c
-    # Non-fuchsia, non-baremetal additions (always true for ClickHouse)
+    # Non-fuchsia, non-baremetal additions (always true for Datastore)
     emutls.c
     enable_execute_stack.c
     eprintf.c

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
@@ -6,7 +6,7 @@
     <users>
         <kuser>
             <kerberos>
-                <realm>TEST.CLICKHOUSE.TECH</realm>
+                <realm>TEST.DATASTORE.TECH</realm>
             </kerberos>
             <access_management>1</access_management>
             <networks replace="replace">
@@ -16,4 +16,4 @@
             <quota>default</quota>
         </kuser>
     </users>
-</clickhouse>
+</datastore>

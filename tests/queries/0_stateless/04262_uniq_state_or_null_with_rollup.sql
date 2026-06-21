@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/105462
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/105462
 -- Server segfaults on `uniqStateOrNull(Nullable) ... GROUP BY ... WITH ROLLUP`
 -- (and the CUBE / TOTALS / OrDefault variants).
 -- The synthesised "all-grouped-up" row holds an `-OrNull`/`-OrDefault`-wrapped

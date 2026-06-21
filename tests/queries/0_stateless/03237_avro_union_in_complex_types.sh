@@ -9,10 +9,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 DATA_DIR=$CUR_DIR/data_avro
 
-CH_CLIENT="$CLICKHOUSE_CLIENT --allow_experimental_variant_type=1"
+CH_CLIENT="$DATASTORE_CLIENT --allow_experimental_variant_type=1"
 
-file_name="$CLICKHOUSE_DATABASE"_union_in_complex_types.avro
-cp $DATA_DIR/union_in_complex_types.avro $CLICKHOUSE_USER_FILES/$file_name
+file_name="$DATASTORE_DATABASE"_union_in_complex_types.avro
+cp $DATA_DIR/union_in_complex_types.avro $DATASTORE_USER_FILES/$file_name
 
 echo "== DESCRIBE =="
 $CH_CLIENT -q "desc file('$file_name')"
@@ -164,8 +164,8 @@ echo "== SELECT * FROM avro_union_test_03237 =="
 $CH_CLIENT -q "SELECT * FROM avro_union_test_03237"
 echo
 
-file_name_2="$CLICKHOUSE_DATABASE"_union_in_complex_types_2.avro
-rm -f $CLICKHOUSE_USER_FILES/$file_name_2
+file_name_2="$DATASTORE_DATABASE"_union_in_complex_types_2.avro
+rm -f $DATASTORE_USER_FILES/$file_name_2
 
 echo "== insert into table function file('union_in_complex_types_2.avro') select * from file('union_in_complex_types.avro') =="
 $CH_CLIENT -q "insert into table function file('$file_name_2') select * from file('$file_name') format Avro"

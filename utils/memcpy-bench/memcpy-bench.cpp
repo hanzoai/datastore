@@ -941,7 +941,7 @@ uint64_t dispatchMemcpyVariants(size_t memcpy_variant, uint8_t * dst, uint8_t * 
 {
     memcpy_type memcpy_libc_old = reinterpret_cast<memcpy_type>(dlsym(RTLD_NEXT, "memcpy"));
 
-    VARIANT(1, memcpy) /// Current ClickHouse memcpy
+    VARIANT(1, memcpy) /// Current Datastore memcpy
     VARIANT(2, memcpy_trivial)
     VARIANT(3, memcpy_libc_old)
     VARIANT(4, memcpy_erms)
@@ -1020,7 +1020,7 @@ for size in 4096 16384 50000 65536 100000 1000000 10000000 100000000; do
     done;
 done | tee result.tsv
 
-clickhouse-local --structure '
+datastore-local --structure '
     name String,
     size UInt64,
     iterations UInt64,

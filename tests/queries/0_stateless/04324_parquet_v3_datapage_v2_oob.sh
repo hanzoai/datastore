@@ -18,7 +18,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-WORK_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORK_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 trap 'rm -rf "$WORK_DIR"' EXIT
@@ -163,7 +163,7 @@ PYEOF
 
 # Each crafted file must be rejected with INCORRECT_DATA (code 117), not crash or leak.
 for f in nint_wrap nstr_wrap arr_wrap nint_negdef nint_neguncomp nint_badtype nint_badenc nint_negnumvals strdict_negnumvals multipage_negnrows; do
-    out=$(${CLICKHOUSE_LOCAL} --query "
+    out=$(${DATASTORE_LOCAL} --query "
         SELECT * FROM file('${WORK_DIR}/${f}_evil.parquet', Parquet) FORMAT Null
         SETTINGS input_format_parquet_use_native_reader_v3 = 1" 2>&1)
     if echo "$out" | grep -q "INCORRECT_DATA"; then

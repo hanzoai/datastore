@@ -52,7 +52,7 @@ def test_simple_add_replica(started_cluster):
     create_query = (
         f"CREATE TABLE {table_name} "
         "(a Int8, d Date) "
-        "Engine = ReplicatedMergeTree('/clickhouse/tables/{shard}/{table}', '{replica}') "
+        "Engine = ReplicatedMergeTree('/datastore/tables/{shard}/{table}', '{replica}') "
         "PARTITION BY d ORDER BY a"
     )
 
@@ -91,7 +91,7 @@ def test_drop_replica_and_achieve_quorum(started_cluster):
     create_query = (
         f"CREATE TABLE {table_name} "
         "(a Int8, d Date) "
-        "Engine = ReplicatedMergeTree('/clickhouse/tables/{shard}/{table}', '{replica}') "
+        "Engine = ReplicatedMergeTree('/datastore/tables/{shard}/{table}', '{replica}') "
         "PARTITION BY d ORDER BY a"
     )
     print("Create Replicated table with two replicas")
@@ -117,7 +117,7 @@ def test_drop_replica_and_achieve_quorum(started_cluster):
             settings={"select_sequential_consistency": 1},
         )
     )
-    # TODO:(Mikhaylov) begin; maybe delete this lines. I want clickhouse to fetch parts and update quorum.
+    # TODO:(Mikhaylov) begin; maybe delete this lines. I want datastore to fetch parts and update quorum.
     print("START FETCHES first replica")
     first.query(f"SYSTEM START FETCHES {table_name}")
     print("SYNC first replica")
@@ -178,7 +178,7 @@ def test_insert_quorum_with_drop_partition(started_cluster, add_new_data):
     assert "20110101" not in first.query(
         f"""
     WITH (SELECT toString(uuid) FROM system.tables WHERE name = '{table_name}') AS uuid,
-         '/clickhouse/tables/' || uuid || '/0/quorum/last_part' AS p
+         '/datastore/tables/' || uuid || '/0/quorum/last_part' AS p
     SELECT * FROM system.zookeeper WHERE path = p FORMAT Vertical
     """
     )
@@ -274,7 +274,7 @@ def test_insert_quorum_with_move_partition(started_cluster, add_new_data):
     assert "20110101" not in first.query(
         f"""
     WITH (SELECT toString(uuid) FROM system.tables WHERE name = '{source_table_name}') AS uuid,
-         '/clickhouse/tables/' || uuid || '/0/quorum/last_part' AS p
+         '/datastore/tables/' || uuid || '/0/quorum/last_part' AS p
     SELECT * FROM system.zookeeper WHERE path = p FORMAT Vertical
     """
     )
@@ -319,7 +319,7 @@ def test_insert_quorum_with_ttl(started_cluster):
     create_query = (
         f"CREATE TABLE {table_name} "
         "(a Int8, d Date) "
-        "Engine = ReplicatedMergeTree('/clickhouse/tables/{table}', '{replica}') "
+        "Engine = ReplicatedMergeTree('/datastore/tables/{table}', '{replica}') "
         "PARTITION BY d ORDER BY a "
         "TTL d + INTERVAL 5 second DELETE WHERE toYear(d) = 2011 "
         "SETTINGS merge_with_ttl_timeout=2 "
@@ -389,7 +389,7 @@ def test_insert_quorum_with_keeper_loss_connection(started_cluster):
     create_query = (
         f"CREATE TABLE {table_name} "
         "(a Int8, d Date) "
-        "Engine = ReplicatedMergeTree('/clickhouse/tables/{table}', '{replica}') "
+        "Engine = ReplicatedMergeTree('/datastore/tables/{table}', '{replica}') "
         "ORDER BY a "
     )
 
@@ -415,7 +415,7 @@ def test_insert_quorum_with_keeper_loss_connection(started_cluster):
         retries = 0
         while True:
             if zk.exists(
-                f"/clickhouse/tables/{table_name}/replicas/zero/parts/all_0_0_0"
+                f"/datastore/tables/{table_name}/replicas/zero/parts/all_0_0_0"
             ):
                 break
             print("replica still did not create all_0_0_0")
@@ -431,7 +431,7 @@ def test_insert_quorum_with_keeper_loss_connection(started_cluster):
             while True:
                 if (
                     zk.exists(
-                        f"/clickhouse/tables/{table_name}/replicas/zero/is_active"
+                        f"/datastore/tables/{table_name}/replicas/zero/is_active"
                     )
                     is None
                 ):

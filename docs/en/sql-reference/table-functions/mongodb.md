@@ -27,7 +27,7 @@ mongodb(named_collection_name[, <arg>=<value>...]);
 | `collection`  | Remote collection name.                                                                                |
 | `user`        | MongoDB user.                                                                                          |
 | `password`    | User password.                                                                                         |
-| `structure`   | The schema for the ClickHouse table returned from this function.                                       |
+| `structure`   | The schema for the Datastore table returned from this function.                                       |
 | `options`     | MongoDB connection string options (optional parameter).                                                |
 | `oid_columns` | Comma-separated list of columns that should be treated as `oid` in the WHERE clause. `_id` by default. |
 
@@ -49,7 +49,7 @@ mongodb(uri, collection, structure[, oid_columns])
 |---------------|--------------------------------------------------------------------------------------------------------|
 | `uri`         | Connection string.                                                                                     |
 | `collection`  | Remote collection name.                                                                                |
-| `structure`   | The schema for the ClickHouse table returned from this function.                                       |
+| `structure`   | The schema for the Datastore table returned from this function.                                       |
 | `oid_columns` | Comma-separated list of columns that should be treated as `oid` in the WHERE clause. `_id` by default. |
 :::
 

@@ -92,7 +92,7 @@ def _run_case(node, mode: str, case: str, special: bool = False) -> None:
             "bash",
             "-lc",
             (
-                "/usr/bin/clickhouse client "
+                "/usr/bin/datastore client "
                 f"--queries-file {container_sql_file} "
                 f"> {container_out_file} 2> {container_err_file}; "
                 f"echo -n $? > {container_rc_file}"

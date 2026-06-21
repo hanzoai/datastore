@@ -6,11 +6,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS t_lwu_bytes_limits_2 SYNC;
 
     CREATE TABLE t_lwu_bytes_limits_2 (id UInt64, s String)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lwu_bytes_limits_2', '1') ORDER BY id
+    ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lwu_bytes_limits_2', '1') ORDER BY id
     SETTINGS
         enable_block_number_column = 1,
         enable_block_offset_column = 1,
@@ -47,14 +47,14 @@ $CLICKHOUSE_CLIENT -q "
 "
 
 for _ in {0..50}; do
-    res=`$CLICKHOUSE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_lwu_bytes_limits_2' AND active AND startsWith(name, 'patch')"`
+    res=`$DATASTORE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_lwu_bytes_limits_2' AND active AND startsWith(name, 'patch')"`
     if [[ $res == "0" ]]; then
         break
     fi
     sleep 1.0
 done
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SET enable_lightweight_update = 1;
     UPDATE t_lwu_bytes_limits_2 SET s = 'cccddd' WHERE 1;
 

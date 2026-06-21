@@ -53,7 +53,7 @@ def prepare_cluster():
         node.query(
             """
         CREATE TABLE test_mutations(d Date, x UInt32, i UInt32)
-        ENGINE ReplicatedMergeTree('/clickhouse/{cluster}/tables/test/test_mutations', '{instance}')
+        ENGINE ReplicatedMergeTree('/datastore/{cluster}/tables/test/test_mutations', '{instance}')
         ORDER BY x
         PARTITION BY toYYYYMM(d)
         SETTINGS number_of_free_entries_in_pool_to_execute_mutation=0

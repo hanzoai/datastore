@@ -1,8 +1,8 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
-                <path>/var/lib/clickhouse/disk0/</path>
+                <path>/var/lib/datastore/disk0/</path>
             </disk0>
         </disks>
         <policies>
@@ -25,4 +25,4 @@
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>

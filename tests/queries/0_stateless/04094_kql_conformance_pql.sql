@@ -183,7 +183,7 @@ print '-- pql::WhereTrue --';
 StormEvents
 | where true;
 
-set dialect='clickhouse';
+set dialect='datastore';
 DROP TABLE IF EXISTS StormEvents;
 DROP TABLE IF EXISTS SourceFiles;
 DROP TABLE IF EXISTS Tokens;

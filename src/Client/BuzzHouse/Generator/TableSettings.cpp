@@ -342,7 +342,7 @@ static std::unordered_map<String, CHSetting> mergeTreeTableSettings = {
     {"min_delay_to_insert_ms", highRangeSetting},
     {"min_delay_to_mutate_ms", highRangeSetting},
     {"min_index_granularity_bytes", bytesRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"min_level_for_full_part_storage",
      CHSetting(
          [](RandomGenerator & rg, FuzzConfig &) { return std::to_string(rg.thresholdGenerator<uint64_t>(0.2, 0.2, 0, 10)); },
@@ -377,7 +377,7 @@ static std::unordered_map<String, CHSetting> mergeTreeTableSettings = {
          {"0", "1"},
          false)},
     {"non_replicated_deduplication_window", rowsRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"notify_newest_block_number", trueOrFalseSetting},
     {"number_of_free_entries_in_pool_to_execute_mutation",
      CHSetting(
@@ -505,101 +505,101 @@ static std::unordered_map<String, CHSetting> mergeTreeTableSettings = {
          {"'basic'", "'with_types'"},
          false)},
     {"share_nested_offsets", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_activate_coordinated_merges_tasks", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_create_per_replica_metadata_nodes", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_disable_merges_and_mutations_assignment", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_enable_automatic_empty_partitions_cleanup", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_enable_coordinated_merges", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_enable_keeper_parts_extra_data", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_enable_outdated_parts_check", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_idle_parts_update_seconds", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_initial_parts_update_backoff_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_interserver_http_connection_timeout_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_interserver_http_timeout_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_leader_update_period_random_add_seconds", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_leader_update_period_seconds", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_max_outdated_parts_to_process_at_once", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_max_parts_update_backoff_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_max_parts_update_leaders_in_total", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_max_parts_update_leaders_per_az", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_max_suspicious_broken_parts", rowsRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_max_suspicious_broken_parts_bytes", bytesRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_memo_ids_remove_timeout_seconds", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_election_check_period_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_factor", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_fetch_fresh_metadata_period_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_max_merge_request_size", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_max_period_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_merges_prepare_count", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_coordinator_min_period_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_worker_fast_timeout_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_merge_worker_regular_timeout_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_outdated_parts_group_size", rowsRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_partitions_hint_ratio_to_reload_merge_pred_for_mutations", probRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_parts_load_batch_size",
      CHSetting(
          [](RandomGenerator & rg, FuzzConfig &) { return std::to_string(rg.thresholdGenerator<uint64_t>(0.2, 0.2, 0, 128)); },
          {"0", "1", "2", "8", "10", "100"},
          false)},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_postpone_next_merge_for_locally_merged_parts_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_postpone_next_merge_for_locally_merged_parts_rows_threshold", rowsRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_range_for_merge_window_size", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_read_virtual_parts_from_leader", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_replica_set_max_lifetime_seconds",
      CHSetting(
          [](RandomGenerator & rg, FuzzConfig &) { return std::to_string(rg.thresholdGenerator<uint64_t>(0.2, 0.2, 0, 600)); },
          {"0", "60", "300"},
          false)},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_try_fetch_part_in_memory_data_from_replicas", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_update_replica_flags_delay_ms", highRangeSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_use_metadata_hints_cache", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_use_outdated_parts_compact_format", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_use_too_many_parts_count_from_virtual_parts", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_use_zookeeper_connection_pool", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"shared_merge_tree_virtual_parts_discovery_batch", rowsRangeSetting},
     {"simultaneous_parts_removal_limit",
      CHSetting(
@@ -779,7 +779,7 @@ static std::unordered_map<String, CHSetting> paimonSettings = {
      CHSetting(
          [](RandomGenerator & rg, FuzzConfig &)
          {
-             static const DB::Strings choices = {"'/clickhouse/paimon/{database}/{table}'", "'/clickhouse/paimon/{uuid}'"};
+             static const DB::Strings choices = {"'/datastore/paimon/{database}/{table}'", "'/datastore/paimon/{uuid}'"};
              return rg.pickRandomly(choices);
          },
          {},
@@ -1019,7 +1019,7 @@ void loadFuzzerTableSettings(const FuzzConfig & fc)
                     String key;
                     for (size_t i = 0; i < alg.hex_len / 16; i++)
                         key += fmt::format("{:016x}", rg.randomInt<uint64_t>(0, std::numeric_limits<uint64_t>::max()));
-                    return "disk(type = encrypted, disk = '" + enc_it->name + "', path = '/var/lib/clickhouse/disks/encrypted_"
+                    return "disk(type = encrypted, disk = '" + enc_it->name + "', path = '/var/lib/datastore/disks/encrypted_"
                         + enc_it->name + "/', algorithm = " + alg.algo + ", key_hex = " + key + ")";
                 }
                 /// Inline cache disk wrapping a non-cached local disk
@@ -1029,7 +1029,7 @@ void loadFuzzerTableSettings(const FuzzConfig & fc)
                     [&](const DiskInfo & d) { return !d.is_cached && d.type == "Local" && d.name != di.name; });
                 if (!di.is_cached && cache_it != fc.disks.end() && rg.nextSmallNumber() < 3)
                 {
-                    String res = "disk(type = cache, disk = '" + cache_it->name + "', path = '/var/lib/clickhouse/disks/inline_cache_"
+                    String res = "disk(type = cache, disk = '" + cache_it->name + "', path = '/var/lib/datastore/disks/inline_cache_"
                         + cache_it->name + "/'";
                     res += ", max_size = '"
                         + std::to_string(rg.thresholdGenerator<uint64_t>(

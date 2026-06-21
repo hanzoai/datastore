@@ -6,8 +6,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test;"
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test;"
+${DATASTORE_CLIENT} -q "
 CREATE TABLE test
 (
 n0 UInt64,
@@ -24,18 +24,18 @@ n9 UInt64
 ENGINE = MergeTree
 ORDER BY n0 SETTINGS min_bytes_for_wide_part = 1, index_granularity = 8192, index_granularity_bytes = '10Mi';"
 
-${CLICKHOUSE_CLIENT} -q "INSERT INTO test select number, number % 3, number % 5, number % 10, number % 13, number % 15, number % 17, number % 18, number % 22, number % 25 from numbers(1000000)"
-${CLICKHOUSE_CLIENT} -q "SYSTEM STOP MERGES test"
+${DATASTORE_CLIENT} -q "INSERT INTO test select number, number % 3, number % 5, number % 10, number % 13, number % 15, number % 17, number % 18, number % 22, number % 25 from numbers(1000000)"
+${DATASTORE_CLIENT} -q "SYSTEM STOP MERGES test"
 
 function test
 {
-    QUERY_ID=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
+    QUERY_ID=$(${DATASTORE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
 
-    ${CLICKHOUSE_CLIENT} -q "SYSTEM CLEAR MARK CACHE"
-    ${CLICKHOUSE_CLIENT} --query_id "${QUERY_ID}" -q "SELECT * FROM test SETTINGS load_marks_asynchronously=$1 FORMAT Null"
-    ${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS query_log"
+    ${DATASTORE_CLIENT} -q "SYSTEM CLEAR MARK CACHE"
+    ${DATASTORE_CLIENT} --query_id "${QUERY_ID}" -q "SELECT * FROM test SETTINGS load_marks_asynchronously=$1 FORMAT Null"
+    ${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS query_log"
 
-    result=$(${CLICKHOUSE_CLIENT} -q "SELECT ProfileEvents['BackgroundLoadingMarksTasks'] FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '${QUERY_ID}' AND type = 'QueryFinish' AND current_database = currentDatabase()")
+    result=$(${DATASTORE_CLIENT} -q "SELECT ProfileEvents['BackgroundLoadingMarksTasks'] FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '${QUERY_ID}' AND type = 'QueryFinish' AND current_database = currentDatabase()")
     if [[ $result -ne 0 ]]; then
         echo 'Ok'
     else

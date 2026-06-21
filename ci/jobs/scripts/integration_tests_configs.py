@@ -13,7 +13,7 @@ class TC:
 
 
 # Tests that are too slow to run under LLVM coverage instrumentation.
-# They either timeout (900s per-test or 7200s session) or cause ClickHouse
+# They either timeout (900s per-test or 7200s session) or cause Datastore
 # to get stuck during shutdown while writing .profraw coverage data.
 LLVM_COVERAGE_SKIP_PREFIXES = [
     "test_storage_s3_queue/test_6.py",
@@ -24,14 +24,14 @@ LLVM_COVERAGE_SKIP_PREFIXES = [
 
 TEST_CONFIGS = [
     TC("test_dns_cache/", False, "uses fixed IPv6 addresses; Docker network startup is serialized via file lock"),
-    TC("test_global_overcommit_tracker/", False, "memory overcommit test; isolated to its own ClickHouse instance"),
+    TC("test_global_overcommit_tracker/", False, "memory overcommit test; isolated to its own Datastore instance"),
     TC(
         "test_profile_max_sessions_for_user/",
         False,
         "uses fixed internal ports (gRPC/MySQL/PostgreSQL) within isolated Docker container",
     ),
     TC("test_random_inserts/", False, "standard replicated inserts test; cluster is fully isolated"),
-    TC("test_server_overload/", True, "uses taskset to pin ClickHouse to specific CPU cores; sensitive to concurrent CPU load"),
+    TC("test_server_overload/", True, "uses taskset to pin Datastore to specific CPU cores; sensitive to concurrent CPU load"),
     TC("test_storage_kafka/", False, "each cluster has its own Kafka container and Docker network"),
     TC("test_storage_rabbitmq/", False, "each cluster has its own RabbitMQ container; tests use unique exchange/db names"),
     TC("test_storage_kerberized_kafka/", False, "each cluster has its own Kafka container and Docker network"),
@@ -46,24 +46,24 @@ TEST_CONFIGS = [
 ]
 
 IMAGES_ENV = {
-    "clickhouse/dotnet-client": "DOCKER_DOTNET_CLIENT_TAG",
-    "clickhouse/integration-helper": "DOCKER_HELPER_TAG",
-    "clickhouse/integration-test": "DOCKER_BASE_TAG",
-    "clickhouse/kerberos-kdc": "DOCKER_KERBEROS_KDC_TAG",
-    "clickhouse/test-mysql80": "DOCKER_TEST_MYSQL80_TAG",
-    "clickhouse/test-mysql57": "DOCKER_TEST_MYSQL57_TAG",
-    "clickhouse/mysql-golang-client": "DOCKER_MYSQL_GOLANG_CLIENT_TAG",
-    "clickhouse/mysql-java-client": "DOCKER_MYSQL_JAVA_CLIENT_TAG",
-    "clickhouse/mysql-js-client": "DOCKER_MYSQL_JS_CLIENT_TAG",
-    "clickhouse/arrowflight-server-test": "DOCKER_ARROWFLIGHT_SERVER_TAG",
-    "clickhouse/mysql-php-client": "DOCKER_MYSQL_PHP_CLIENT_TAG",
-    "clickhouse/nginx-dav": "DOCKER_NGINX_DAV_TAG",
-    "clickhouse/postgresql-java-client": "DOCKER_POSTGRESQL_JAVA_CLIENT_TAG",
-    "clickhouse/python-bottle": "DOCKER_PYTHON_BOTTLE_TAG",
-    "clickhouse/integration-test-with-unity-catalog": "DOCKER_BASE_WITH_UNITY_CATALOG_TAG",
-    "clickhouse/integration-test-with-hms": "DOCKER_BASE_WITH_HMS_TAG",
-    "clickhouse/mysql_dotnet_client": "DOCKER_MYSQL_DOTNET_CLIENT_TAG",
-    "clickhouse/s3-proxy": "DOCKER_S3_PROXY_TAG",
+    "datastore/dotnet-client": "DOCKER_DOTNET_CLIENT_TAG",
+    "datastore/integration-helper": "DOCKER_HELPER_TAG",
+    "datastore/integration-test": "DOCKER_BASE_TAG",
+    "datastore/kerberos-kdc": "DOCKER_KERBEROS_KDC_TAG",
+    "datastore/test-mysql80": "DOCKER_TEST_MYSQL80_TAG",
+    "datastore/test-mysql57": "DOCKER_TEST_MYSQL57_TAG",
+    "datastore/mysql-golang-client": "DOCKER_MYSQL_GOLANG_CLIENT_TAG",
+    "datastore/mysql-java-client": "DOCKER_MYSQL_JAVA_CLIENT_TAG",
+    "datastore/mysql-js-client": "DOCKER_MYSQL_JS_CLIENT_TAG",
+    "datastore/arrowflight-server-test": "DOCKER_ARROWFLIGHT_SERVER_TAG",
+    "datastore/mysql-php-client": "DOCKER_MYSQL_PHP_CLIENT_TAG",
+    "datastore/nginx-dav": "DOCKER_NGINX_DAV_TAG",
+    "datastore/postgresql-java-client": "DOCKER_POSTGRESQL_JAVA_CLIENT_TAG",
+    "datastore/python-bottle": "DOCKER_PYTHON_BOTTLE_TAG",
+    "datastore/integration-test-with-unity-catalog": "DOCKER_BASE_WITH_UNITY_CATALOG_TAG",
+    "datastore/integration-test-with-hms": "DOCKER_BASE_WITH_HMS_TAG",
+    "datastore/mysql_dotnet_client": "DOCKER_MYSQL_DOTNET_CLIENT_TAG",
+    "datastore/s3-proxy": "DOCKER_S3_PROXY_TAG",
 }
 
 
@@ -267,7 +267,7 @@ def get_tests_execution_time(info: Info, job_options: str) -> dict[str, int]:
                 AND (check_name LIKE '%{build}%')
                 AND (check_start_time >= ({start_time_filter} - toIntervalDay(20)))
                 AND (check_start_time <= ({start_time_filter} - toIntervalHour(5)))
-                AND ((head_ref = 'master') AND startsWith(head_repo, 'ClickHouse/'))
+                AND ((head_ref = 'master') AND startsWith(head_repo, 'Datastore/'))
                 AND (file != '')
                 AND (test_status != 'SKIPPED')
                 AND (test_status != 'FAIL')

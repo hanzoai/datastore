@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 CREATE TABLE dict_invalidate
 ENGINE = Memory AS
 SELECT
@@ -14,41 +14,41 @@ SELECT
 FROM system.one"
 
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 CREATE DICTIONARY invalidate
 (
   dummy UInt64,
   two UInt8 EXPRESSION dummy
 )
 PRIMARY KEY dummy
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_invalidate' DB currentDatabase() INVALIDATE_QUERY 'select max(last_time) from dict_invalidate'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_invalidate' DB currentDatabase() INVALIDATE_QUERY 'select max(last_time) from dict_invalidate'))
 LIFETIME(MIN 0 MAX 1)
 LAYOUT(FLAT())"
 
-$CLICKHOUSE_CLIENT --query "SELECT dictGetUInt8('invalidate', 'two', toUInt64(122))"
+$DATASTORE_CLIENT --query "SELECT dictGetUInt8('invalidate', 'two', toUInt64(122))"
 
 # No exception happened
-$CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'"
+$DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'"
 
-$CLICKHOUSE_CLIENT --check_table_dependencies=0 --query "DROP TABLE dict_invalidate"
+$DATASTORE_CLIENT --check_table_dependencies=0 --query "DROP TABLE dict_invalidate"
 
 function check_exception_detected()
 {
     local TIMELIMIT=$((SECONDS+30))
-    query_result=$($CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
+    query_result=$($DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
 
     while [ -z "$query_result" ] && [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        query_result=$($CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
+        query_result=$($DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
         sleep 0.1
     done
 }
 
 check_exception_detected 2> /dev/null
 
-$CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1 | grep -Eo "dict_invalidate.*UNKNOWN_TABLE" | wc -l
+$DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1 | grep -Eo "dict_invalidate.*UNKNOWN_TABLE" | wc -l
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 CREATE TABLE dict_invalidate_new
 ENGINE = Memory AS
 SELECT
@@ -56,18 +56,18 @@ SELECT
     toDateTime('2019-10-29 18:51:35') AS last_time
 FROM system.one"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 RENAME TABLE dict_invalidate_new TO dict_invalidate
 "
 
 function check_exception_fixed()
 {
     local TIMELIMIT=$((SECONDS+60))
-    query_result=$($CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
+    query_result=$($DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
 
     while [ "$query_result" ] && [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        query_result=$($CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
+        query_result=$($DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1)
         sleep 0.1
     done
 }
@@ -75,5 +75,5 @@ function check_exception_fixed()
 # it may take a while until dictionary reloads
 check_exception_fixed 2> /dev/null
 
-$CLICKHOUSE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1
-$CLICKHOUSE_CLIENT --query "SELECT dictGetUInt8('invalidate', 'two', toUInt64(133))"
+$DATASTORE_CLIENT --query "SELECT last_exception FROM system.dictionaries WHERE database = currentDatabase() AND name = 'invalidate'" 2>&1
+$DATASTORE_CLIENT --query "SELECT dictGetUInt8('invalidate', 'two', toUInt64(133))"

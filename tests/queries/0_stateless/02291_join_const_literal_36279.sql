@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS test_local;
 
 SET prefer_localhost_replica = 1;
 
--- https://github.com/ClickHouse/ClickHouse/issues/36279
+-- https://github.com/ClickHouse/Datastore/issues/36279
 CREATE TABLE test_local (text String, text2 String) ENGINE = MergeTree() ORDER BY text;
 CREATE TABLE test_distributed (text String, text2 String) ENGINE = Distributed('test_shard_localhost', currentDatabase(), test_local);
 INSERT INTO test_distributed SELECT randomString(100) AS text, randomString(100) AS text2 FROM system.numbers LIMIT 1;
@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS user_local;
 DROP TABLE IF EXISTS user_all;
 DROP TABLE IF EXISTS event;
 
--- https://github.com/ClickHouse/ClickHouse/issues/36300
+-- https://github.com/ClickHouse/Datastore/issues/36300
 CREATE TABLE user_local ( id Int64, name String, age Int32 )
 ENGINE = MergeTree ORDER BY name;
 

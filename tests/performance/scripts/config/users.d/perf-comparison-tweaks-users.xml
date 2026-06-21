@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <allow_introspection_functions>1</allow_introspection_functions>
@@ -26,7 +26,7 @@
             <!--
                 When a test opts back into JIT, force compilation on the first call
                 so the prewarm run populates the JIT cache and the measured runs are
-                not skewed by compilation cost. See https://github.com/ClickHouse/ClickHouse/issues/100759.
+                not skewed by compilation cost. See https://github.com/ClickHouse/Datastore/issues/100759.
             -->
             <min_count_to_compile_expression>0</min_count_to_compile_expression>
             <min_count_to_compile_aggregate_expression>0</min_count_to_compile_aggregate_expression>
@@ -46,4 +46,4 @@
             <memory_profiler_step>0</memory_profiler_step>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

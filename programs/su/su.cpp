@@ -16,7 +16,7 @@
 /// In fact, this program can set Unix user and group.
 ///
 /// Usage:
-/// clickhouse su user[:group] args...
+/// datastore su user[:group] args...
 ///
 /// - will set user and, optionally, group and exec the remaining args.
 ///   user and group can be numeric identifiers or strings.
@@ -30,8 +30,8 @@
 /// But it would be very strange to use 3rd-party software only to do two-three syscalls.
 /// That's why we provide this tool.
 ///
-/// Note: ClickHouse does not need Docker at all and works better without Docker.
-/// ClickHouse has no dependencies, it is packaged and distributed in single binary.
+/// Note: Datastore does not need Docker at all and works better without Docker.
+/// Datastore has no dependencies, it is packaged and distributed in single binary.
 /// There is no reason to use Docker unless you are already running all your software in Docker.
 
 namespace DB
@@ -123,7 +123,7 @@ try
     if (argc < 3)
     {
         std::cout << "A tool similar to 'su'" << std::endl;
-        std::cout << "Usage: clickhouse su user:group ..." << std::endl;
+        std::cout << "Usage: datastore su user:group ..." << std::endl;
         exit(0); // NOLINT(concurrency-mt-unsafe)
     }
 

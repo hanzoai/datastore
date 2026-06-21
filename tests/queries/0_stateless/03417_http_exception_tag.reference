@@ -1,5 +1,5 @@
-Test 1: Check that X-ClickHouse-Exception-Tag header is present
-X-ClickHouse-Exception-Tag:
+Test 1: Check that X-Datastore-Exception-Tag header is present
+X-Datastore-Exception-Tag:
 Test 2: Verify exception tag is alphanumeric
 Tag is 16-char alphanumeric: OK
 Test 3: Check exception marker format on error

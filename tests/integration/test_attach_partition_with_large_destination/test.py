@@ -18,7 +18,7 @@ def started_cluster():
 
 
 def create_force_drop_flag(node):
-    force_drop_flag_path = "/var/lib/clickhouse/flags/force_drop_table"
+    force_drop_flag_path = "/var/lib/datastore/flags/force_drop_table"
     node.exec_in_container(
         [
             "bash",

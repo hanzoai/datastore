@@ -49,7 +49,7 @@ When data is written to a `Log` table:
 
 ## Reading the data {#table_engines-log-reading-the-data}
 
-The file with marks allows ClickHouse to parallelize the reading of data. This means that a `SELECT` query returns rows in an unpredictable order. Use the `ORDER BY` clause to sort rows.
+The file with marks allows Datastore to parallelize the reading of data. This means that a `SELECT` query returns rows in an unpredictable order. Use the `ORDER BY` clause to sort rows.
 
 ## Example of use {#table_engines-log-example-of-use}
 
@@ -74,7 +74,7 @@ INSERT INTO log_table VALUES (now(),'REGULAR','The second regular message'),(now
 
 We used two `INSERT` queries to create two data blocks inside the `<column>.bin` files.
 
-ClickHouse uses multiple threads when selecting data. Each thread reads a separate data block and returns resulting rows independently as it finishes. As a result, the order of blocks of rows in the output may not match the order of the same blocks in the input. For example:
+Datastore uses multiple threads when selecting data. Each thread reads a separate data block and returns resulting rows independently as it finishes. As a result, the order of blocks of rows in the output may not match the order of the same blocks in the input. For example:
 
 ```sql
 SELECT * FROM log_table

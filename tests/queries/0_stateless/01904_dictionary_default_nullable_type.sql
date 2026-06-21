@@ -24,7 +24,7 @@ CREATE DICTIONARY flat_dictionary
     value Nullable(Int64) DEFAULT NULL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 
@@ -44,7 +44,7 @@ CREATE DICTIONARY hashed_dictionary
     value Nullable(Int64) DEFAULT NULL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(HASHED());
 
@@ -64,7 +64,7 @@ CREATE DICTIONARY cache_dictionary
     value Nullable(Int64) DEFAULT NULL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(CACHE(SIZE_IN_CELLS 10));
 
@@ -84,7 +84,7 @@ CREATE DICTIONARY direct_dictionary
     value Nullable(Int64) DEFAULT NULL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Direct dictionary';
@@ -103,7 +103,7 @@ CREATE DICTIONARY ip_trie_dictionary
     value Nullable(Int64) DEFAULT NULL
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(HOST 'localhost' port tcpPort() TABLE 'dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' port tcpPort() TABLE 'dictionary_nullable_source_table'))
 LIFETIME(MIN 10 MAX 1000)
 LAYOUT(IP_TRIE());
 
@@ -141,7 +141,7 @@ CREATE DICTIONARY polygon_dictionary
     value Nullable(UInt64) DEFAULT NULL
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'polygon_dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'polygon_dictionary_nullable_source_table'))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(POLYGON());
 
@@ -186,7 +186,7 @@ CREATE DICTIONARY range_dictionary
   value Nullable(UInt64) DEFAULT NULL
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'range_dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'range_dictionary_nullable_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start_date MAX end_date);

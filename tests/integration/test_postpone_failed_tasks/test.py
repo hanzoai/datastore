@@ -37,7 +37,7 @@ def prepare_cluster(use_replicated_table):
         node.query("DROP TABLE IF EXISTS test_table SYNC")
 
     engine = (
-        "ReplicatedMergeTree('/clickhouse/{cluster}/tables/test/test_table', '{instance}')"
+        "ReplicatedMergeTree('/datastore/{cluster}/tables/test/test_table', '{instance}')"
         if use_replicated_table
         else "MergeTree()"
     )

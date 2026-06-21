@@ -48,7 +48,7 @@ Returns the part of the domain that includes top-level subdomains up to the firs
 **Configuration example**
 
 ```yaml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -60,7 +60,7 @@ Returns the part of the domain that includes top-level subdomains up to the firs
     FunctionDocumentation::Arguments cutToFirstSignificantSubdomainCustom_arguments =
     {
         {"url", "URL or domain string to process.", {"String"}},
-        {"tld_list_name", "Name of the custom TLD list configured in ClickHouse.", {"const String"}}
+        {"tld_list_name", "Name of the custom TLD list configured in Datastore.", {"const String"}}
     };
     FunctionDocumentation::ReturnedValue cutToFirstSignificantSubdomainCustom_returned_value =
     {
@@ -86,7 +86,7 @@ Returns the part of the domain that includes top-level subdomains up to the firs
 **Configuration example**
 
 ```yaml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -97,7 +97,7 @@ Returns the part of the domain that includes top-level subdomains up to the firs
     FunctionDocumentation::Arguments cutToFirstSignificantSubdomainCustomWithWWW_arguments =
     {
         {"url", "URL or domain string to process."},
-        {"tld_list_name", "Name of the custom TLD list configured in ClickHouse."}
+        {"tld_list_name", "Name of the custom TLD list configured in Datastore."}
     };
     FunctionDocumentation::ReturnedValue cutToFirstSignificantSubdomainCustomWithWWW_returned_value =
     {
@@ -133,7 +133,7 @@ Similar to [cutToFirstSignificantSubdomainCustom](#cutToFirstSignificantSubdomai
 **Configuration example**
 
 ```xml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -145,7 +145,7 @@ Similar to [cutToFirstSignificantSubdomainCustom](#cutToFirstSignificantSubdomai
     FunctionDocumentation::Arguments cutToFirstSignificantSubdomainCustomRFC_arguments =
     {
         {"url", "URL or domain string to process according to RFC 3986."},
-        {"tld_list_name", "Name of the custom TLD list configured in ClickHouse."}
+        {"tld_list_name", "Name of the custom TLD list configured in Datastore."}
     };
     FunctionDocumentation::ReturnedValue cutToFirstSignificantSubdomainCustomRFC_returned_value =
     {
@@ -181,7 +181,7 @@ Similar to [cutToFirstSignificantSubdomainCustomWithWWW](#cutToFirstSignificantS
 **Configuration example**
 
 ```xml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -192,7 +192,7 @@ Similar to [cutToFirstSignificantSubdomainCustomWithWWW](#cutToFirstSignificantS
     FunctionDocumentation::Arguments cutToFirstSignificantSubdomainCustomWithWWWRFC_arguments =
     {
         {"url", "URL or domain string to process according to RFC 3986."},
-        {"tld_list_name", "Name of the custom TLD list configured in ClickHouse."}
+        {"tld_list_name", "Name of the custom TLD list configured in Datastore."}
     };
     FunctionDocumentation::ReturnedValue cutToFirstSignificantSubdomainCustomWithWWWRFC_returned_value =
     {

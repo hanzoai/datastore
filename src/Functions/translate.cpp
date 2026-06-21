@@ -431,7 +431,7 @@ Non-ASCII characters in `s` are not modified by the function.
     },
     {
         "Different lengths",
-        "SELECT translate('clickhouse', 'clickhouse', 'CLICK') AS res",
+        "SELECT translate('datastore', 'datastore', 'CLICK') AS res",
         R"(
 ┌─res───┐
 │ CLICK │

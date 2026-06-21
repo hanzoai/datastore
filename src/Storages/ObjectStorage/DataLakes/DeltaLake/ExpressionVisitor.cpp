@@ -741,7 +741,7 @@ private:
             /// "The 128bit integer
             /// is split into the most significant 64 bits in `value_ms`, and the least significant 64
             /// bits in `value_ls`"
-            /// Also in clickhouse decimal is in little endian, so we switch the order for Decimal128.
+            /// Also in datastore decimal is in little endian, so we switch the order for Decimal128.
 
             DB::Field value;
             if (precision <= DB::DecimalUtils::max_precision<DB::Decimal32>)

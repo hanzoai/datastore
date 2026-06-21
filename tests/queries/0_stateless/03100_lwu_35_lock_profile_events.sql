@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS t_lwu_lock_profile_events SYNC;
 
 CREATE TABLE t_lwu_lock_profile_events (id UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lwu_lock_profile_events', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lwu_lock_profile_events', '1')
 ORDER BY id
 SETTINGS enable_block_number_column = 1, enable_block_offset_column = 1;
 

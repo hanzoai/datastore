@@ -7,7 +7,7 @@ services:
             LDAP_ROOT: dc=referral,dc=org
             LDAP_ADMIN_DN: cn=admin,dc=referral,dc=org
             LDAP_ADMIN_USERNAME: admin
-            LDAP_ADMIN_PASSWORD: clickhouse
+            LDAP_ADMIN_PASSWORD: datastore
             LDAP_USER_DC: users
             LDAP_USERS: janedoe,johndoe
             LDAP_PASSWORDS: qwerty,qwertz
@@ -17,7 +17,7 @@ services:
         healthcheck:
             test: >
                 test -f /tmp/.openldap-initialized
-                && ldapsearch -x -H ldap://localhost:$$LDAP_PORT_NUMBER -D cn=admin,dc=referral,dc=org -w clickhouse -b dc=referral,dc=org
+                && ldapsearch -x -H ldap://localhost:$$LDAP_PORT_NUMBER -D cn=admin,dc=referral,dc=org -w datastore -b dc=referral,dc=org
                 | grep -c -E "^dn: cn=j(ohn|ane)doe,ou=users,dc=referral,dc=org$$"
                 | grep 2 >> /dev/null
             interval: 10s

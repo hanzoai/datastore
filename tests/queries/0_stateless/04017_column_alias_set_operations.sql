@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/90205
+-- https://github.com/ClickHouse/Datastore/issues/90205
 SET enable_analyzer = 1;
 SELECT c0 FROM ((SELECT 1) UNION ALL (SELECT 2)) tx(c0) ORDER BY c0;
 SELECT '-';

@@ -11,16 +11,16 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 NUM_REPLICAS=6
 
 for i in $(seq 1 $NUM_REPLICAS); do
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         DROP TABLE IF EXISTS r$i SYNC;
-        CREATE TABLE r$i (x UInt64) ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/parallel_quorum_many', 'r$i') ORDER BY x;
+        CREATE TABLE r$i (x UInt64) ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/parallel_quorum_many', 'r$i') ORDER BY x;
     "
 done
 
 function thread {
     i=0 retries=300
     while [[ $i -lt $retries ]]; do # server can be dead
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d "INSERT INTO r$1 SELECT $2 SETTINGS insert_quorum=3, insert_quorum_parallel=1" && break
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d "INSERT INTO r$1 SELECT $2 SETTINGS insert_quorum=3, insert_quorum_parallel=1" && break
         ((++i))
         sleep 0.1
     done
@@ -39,12 +39,12 @@ done
 wait
 
 for i in $(seq 1 $NUM_REPLICAS); do
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         SYSTEM SYNC REPLICA r$i;
         SELECT count(), min(x), max(x), sum(x) FROM r$i;
     "
 done
 
 for i in $(seq 1 $NUM_REPLICAS); do
-    $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS r$i SYNC;"
+    $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS r$i SYNC;"
 done

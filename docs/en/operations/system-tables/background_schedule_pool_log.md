@@ -44,7 +44,7 @@ SELECT * FROM system.background_schedule_pool_log LIMIT 1 FORMAT Vertical;
 ```text
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2025-12-18
 event_time:              2025-12-18 10:30:15
 event_time_microseconds: 2025-12-18 10:30:15.123456

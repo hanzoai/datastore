@@ -40,7 +40,7 @@ opts=(
 N=1000000
 T1="reordered_t1"; T2="reordered_t2"; T3="reordered_t3"; T4="reordered_t4"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   DROP TABLE IF EXISTS $T1;
   DROP TABLE IF EXISTS $T2;
   DROP TABLE IF EXISTS $T3;
@@ -69,13 +69,13 @@ SQL="SELECT count() FROM $T1 INNER JOIN $T2 ON $T1.a = $T2.a INNER JOIN $T3 ON $
 cold_id="hash_table_sizes_stats_joins_reordered_cold_$RANDOM$RANDOM"
 hot_id="hash_table_sizes_stats_joins_reordered_hot_$RANDOM$RANDOM"
 
-$CLICKHOUSE_CLIENT "${opts[@]}" --query_id="$cold_id" -q "$SQL" --format Null
-$CLICKHOUSE_CLIENT "${opts[@]}" --query_id="$hot_id"  -q "$SQL" --format Null
+$DATASTORE_CLIENT "${opts[@]}" --query_id="$cold_id" -q "$SQL" --format Null
+$DATASTORE_CLIENT "${opts[@]}" --query_id="$hot_id"  -q "$SQL" --format Null
 
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
 
 # Cold run: nothing in the cache yet -> no preallocation expected.
-$CLICKHOUSE_CLIENT --param_query_id="$cold_id" -q "
+$DATASTORE_CLIENT --param_query_id="$cold_id" -q "
   SELECT if(any(ProfileEvents['HashJoinPreallocatedElementsInHashTables']) = 0, '1', 'Error: ' || any(query_id) || ' got prealloc=' || toString(any(ProfileEvents['HashJoinPreallocatedElementsInHashTables'])))
     FROM system.query_log
    WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = {query_id:String} AND current_database = currentDatabase() AND type = 'QueryFinish'
@@ -85,13 +85,13 @@ $CLICKHOUSE_CLIENT --param_query_id="$cold_id" -q "
 # rows and joins on the same key range, every preallocated hash table is exactly N entries,
 # so the sum is 3*N when the fix is in place. Any partial fix that leaves one sub-join's
 # right side without a hint would yield 2*N or N, which does not satisfy the equality.
-$CLICKHOUSE_CLIENT --param_query_id="$hot_id" --param_expected_prealloc=$((3 * N)) -q "
+$DATASTORE_CLIENT --param_query_id="$hot_id" --param_expected_prealloc=$((3 * N)) -q "
   SELECT if(any(ProfileEvents['HashJoinPreallocatedElementsInHashTables']) = {expected_prealloc:UInt64}, '1', 'Error: ' || any(query_id) || ' got prealloc=' || toString(any(ProfileEvents['HashJoinPreallocatedElementsInHashTables'])))
     FROM system.query_log
    WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = {query_id:String} AND current_database = currentDatabase() AND type = 'QueryFinish'
 "
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   DROP TABLE $T1;
   DROP TABLE $T2;
   DROP TABLE $T3;

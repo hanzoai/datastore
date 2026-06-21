@@ -48,7 +48,7 @@ ColumnsDescription TextLogElement::getColumnsDescription()
         {"logger_name", std::make_shared<DataTypeLowCardinality>(std::make_shared<DataTypeString>()), "Name of the logger (e.g., DDLWorker)."},
         {"message", std::make_shared<DataTypeString>(), "The message itself."},
 
-        {"revision", std::make_shared<DataTypeUInt32>(), "ClickHouse revision."},
+        {"revision", std::make_shared<DataTypeUInt32>(), "Datastore revision."},
 
         {"source_file", std::make_shared<DataTypeLowCardinality>(std::make_shared<DataTypeString>()), "Source file from which the logging was done."},
         {"source_line", std::make_shared<DataTypeUInt64>(), "Source line from which the logging was done."},

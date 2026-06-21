@@ -4,7 +4,7 @@ CREATE DICTIONARY default.currency_conversion_dict
     `b` Decimal(18, 8)
 )
 PRIMARY KEY a
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     TABLE ''
     STRUCTURE (
         a String

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/99134
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/99134
 -- SAMPLE on a Buffer table backed by a MergeTree without SAMPLE BY used to crash the server.
 
 DROP TABLE IF EXISTS t0;

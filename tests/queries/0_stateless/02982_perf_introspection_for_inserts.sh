@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q """
+$DATASTORE_CLIENT -q """
 CREATE TABLE t02982
 (
     n UInt64,
@@ -27,15 +27,15 @@ ORDER BY n;
 
 query_id=$RANDOM
 
-$CLICKHOUSE_CLIENT --query_id $query_id -q """
+$DATASTORE_CLIENT --query_id $query_id -q """
 INSERT INTO t02982 SELECT
     number,
     'a'
 FROM numbers_mt(1000000);
 """
 
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
-$CLICKHOUSE_CLIENT -q """
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT -q """
 SELECT
     ProfileEvents['MergeTreeDataProjectionWriterMergingBlocksMicroseconds'] = 0,
     ProfileEvents['MergeTreeDataProjectionWriterSortingBlocksMicroseconds'] > 0,

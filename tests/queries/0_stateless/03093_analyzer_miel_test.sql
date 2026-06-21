@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/58985
+-- https://github.com/ClickHouse/Datastore/issues/58985
 
 DROP TABLE IF EXISTS test_03093;
 

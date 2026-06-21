@@ -15,28 +15,28 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+    $DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
 }
 
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+$DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SYSTEM INSTRUMENT ADD 'QueryMetricLog::startQuery' LOG ENTRY 'marker_start';
     SYSTEM INSTRUMENT ADD 'QueryMetricLog::finishQuery' LOG ENTRY 'marker_finish';
 "
 
-query_id="${CLICKHOUSE_DATABASE}_dispatch_bug"
-$CLICKHOUSE_CLIENT --query-id="$query_id" -q "SELECT 1 FORMAT Null;"
+query_id="${DATASTORE_DATABASE}_dispatch_bug"
+$DATASTORE_CLIENT --query-id="$query_id" -q "SELECT 1 FORMAT Null;"
 
-$CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS system.trace_log;"
+$DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS system.trace_log;"
 
 # The key assertion: each function should have its handler called EXACTLY ONCE.
 # With the bug, if one function has a lower function_id than another,
 # calling the lower one also triggers the higher one's handler.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT '-- Each function handler should be called exactly once:';
     SELECT 'startQuery count:', count()
     FROM system.trace_log

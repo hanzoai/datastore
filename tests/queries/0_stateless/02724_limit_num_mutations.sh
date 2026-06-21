@@ -15,7 +15,7 @@ function wait_for_alter()
     type=$1
     for i in {1..100}; do
         sleep 0.1
-        ${CLICKHOUSE_CLIENT} --query "SHOW CREATE TABLE t_limit_mutations" | grep -q "\`v\` $type" && break;
+        ${DATASTORE_CLIENT} --query "SHOW CREATE TABLE t_limit_mutations" | grep -q "\`v\` $type" && break;
 
         if [[ $i -eq 100 ]]; then
             echo "Timed out while waiting for alter to execute"
@@ -23,11 +23,11 @@ function wait_for_alter()
     done
 }
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 DROP TABLE IF EXISTS t_limit_mutations SYNC;
 
 CREATE TABLE t_limit_mutations (id UInt64, v UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_limit_mutations', '1') ORDER BY id
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_limit_mutations', '1') ORDER BY id
 SETTINGS number_of_mutations_to_throw = 2;
 
 SET mutations_sync = 0;
@@ -48,24 +48,24 @@ SELECT count() FROM system.mutations WHERE database = currentDatabase() AND tabl
 SHOW CREATE TABLE t_limit_mutations;
 "
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 ALTER TABLE t_limit_mutations UPDATE v = 6 WHERE 1 SETTINGS number_of_mutations_to_throw = 100;
 ALTER TABLE t_limit_mutations MODIFY COLUMN v String SETTINGS number_of_mutations_to_throw = 100, alter_sync = 0;
 "
 
 wait_for_alter "String"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 SELECT * FROM t_limit_mutations ORDER BY id;
 SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_limit_mutations' AND NOT is_done;
 SHOW CREATE TABLE t_limit_mutations;
 "
 
-${CLICKHOUSE_CLIENT} --query "SYSTEM START MERGES t_limit_mutations"
+${DATASTORE_CLIENT} --query "SYSTEM START MERGES t_limit_mutations"
 
 wait_for_mutation "t_limit_mutations" "0000000003"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 SELECT * FROM t_limit_mutations ORDER BY id;
 SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_limit_mutations' AND NOT is_done;
 SHOW CREATE TABLE t_limit_mutations;

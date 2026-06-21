@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tags: zookeeper, no-parallel, no-fasttest
 
-# Regression test for https://github.com/ClickHouse/ClickHouse/pull/63353
+# Regression test for https://github.com/ClickHouse/Datastore/pull/63353
 # A LOGICAL_ERROR "Unexpected return type from materialize" could occur during SELECT
 # after concurrent ALTERs, because `IMergeTreeReader::evaluateMissingDefaults` used the
 # column type from storage metadata instead of from the data part. During concurrent
@@ -19,18 +19,18 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPLICAS=3
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS concurrent_alter_add_drop_steroids_$i"
+    $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS concurrent_alter_add_drop_steroids_$i"
 done
 
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "CREATE TABLE concurrent_alter_add_drop_steroids_$i (key UInt64, value0 UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/concurrent_alter_add_drop_steroids_column', '$i') ORDER BY key SETTINGS max_replicated_mutations_in_queue = 1000, number_of_free_entries_in_pool_to_execute_mutation = 0, max_replicated_merges_in_queue = 1000, index_granularity = 8192, index_granularity_bytes = '10Mi'"
+    $DATASTORE_CLIENT --query "CREATE TABLE concurrent_alter_add_drop_steroids_$i (key UInt64, value0 UInt8) ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/concurrent_alter_add_drop_steroids_column', '$i') ORDER BY key SETTINGS max_replicated_mutations_in_queue = 1000, number_of_free_entries_in_pool_to_execute_mutation = 0, max_replicated_merges_in_queue = 1000, index_granularity = 8192, index_granularity_bytes = '10Mi'"
 done
 
-$CLICKHOUSE_CLIENT --query "INSERT INTO concurrent_alter_add_drop_steroids_1 SELECT number, number + 10 from numbers(100000)"
+$DATASTORE_CLIENT --query "INSERT INTO concurrent_alter_add_drop_steroids_1 SELECT number, number + 10 from numbers(100000)"
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_alter_add_drop_steroids_$i"
+    $DATASTORE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_alter_add_drop_steroids_$i"
 done
 
 
@@ -40,9 +40,9 @@ function alter_thread()
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         REPLICA=$(($RANDOM % 3 + 1))
         ADD=$(($RANDOM % 5 + 1))
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE concurrent_alter_add_drop_steroids_$REPLICA ADD COLUMN value$ADD UInt32 DEFAULT 42 SETTINGS replication_alter_partitions_sync=0"; # additionally we don't wait anything for more heavy concurrency
+        $DATASTORE_CLIENT --query "ALTER TABLE concurrent_alter_add_drop_steroids_$REPLICA ADD COLUMN value$ADD UInt32 DEFAULT 42 SETTINGS replication_alter_partitions_sync=0"; # additionally we don't wait anything for more heavy concurrency
         DROP=$(($RANDOM % 5 + 1))
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE concurrent_alter_add_drop_steroids_$REPLICA DROP COLUMN value$DROP SETTINGS replication_alter_partitions_sync=0"; # additionally we don't wait anything for more heavy concurrency
+        $DATASTORE_CLIENT --query "ALTER TABLE concurrent_alter_add_drop_steroids_$REPLICA DROP COLUMN value$DROP SETTINGS replication_alter_partitions_sync=0"; # additionally we don't wait anything for more heavy concurrency
         sleep 0.$RANDOM
     done
 }
@@ -52,9 +52,9 @@ function alter_thread_1()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         REPLICA=$(($RANDOM % 3 + 1))
-        ${CLICKHOUSE_CLIENT} --query "ALTER TABLE concurrent_alter_add_drop_steroids_1 MODIFY COLUMN value0 String SETTINGS mutations_sync = 0, replication_alter_partitions_sync = 0"
+        ${DATASTORE_CLIENT} --query "ALTER TABLE concurrent_alter_add_drop_steroids_1 MODIFY COLUMN value0 String SETTINGS mutations_sync = 0, replication_alter_partitions_sync = 0"
         sleep 1.$RANDOM
-        ${CLICKHOUSE_CLIENT} --query "ALTER TABLE concurrent_alter_add_drop_steroids_1 MODIFY COLUMN value0 UInt8 SETTINGS mutations_sync = 0, replication_alter_partitions_sync = 0"
+        ${DATASTORE_CLIENT} --query "ALTER TABLE concurrent_alter_add_drop_steroids_1 MODIFY COLUMN value0 UInt8 SETTINGS mutations_sync = 0, replication_alter_partitions_sync = 0"
         sleep 1.$RANDOM
     done
 
@@ -65,7 +65,7 @@ function optimize_thread()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         REPLICA=$(($RANDOM % 3 + 1))
-        $CLICKHOUSE_CLIENT --query "OPTIMIZE TABLE concurrent_alter_add_drop_steroids_$REPLICA FINAL SETTINGS replication_alter_partitions_sync=0";
+        $DATASTORE_CLIENT --query "OPTIMIZE TABLE concurrent_alter_add_drop_steroids_$REPLICA FINAL SETTINGS replication_alter_partitions_sync=0";
         sleep 0.$RANDOM
     done
 }
@@ -75,7 +75,7 @@ function insert_thread()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         REPLICA=$(($RANDOM % 3 + 1))
-        $CLICKHOUSE_CLIENT --query "INSERT INTO concurrent_alter_add_drop_steroids_$REPLICA VALUES($RANDOM, 7)"
+        $DATASTORE_CLIENT --query "INSERT INTO concurrent_alter_add_drop_steroids_$REPLICA VALUES($RANDOM, 7)"
         sleep 0.$RANDOM
     done
 }
@@ -85,7 +85,7 @@ function select_thread()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         REPLICA=$(($RANDOM % 3 + 1))
-        $CLICKHOUSE_CLIENT --query "SELECT * FROM merge(currentDatabase(), 'concurrent_alter_add_drop_steroids_') FORMAT Null"
+        $DATASTORE_CLIENT --query "SELECT * FROM merge(currentDatabase(), 'concurrent_alter_add_drop_steroids_') FORMAT Null"
         sleep 0.$RANDOM
     done
 }
@@ -120,12 +120,12 @@ echo "Finishing alters"
 
 # Sync replicas to help them process pending ALTER_METADATA entries from the alter storm
 for i in $(seq $REPLICAS); do
-    timeout 120 $CLICKHOUSE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_alter_add_drop_steroids_$i" 2>/dev/null ||:
+    timeout 120 $DATASTORE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_alter_add_drop_steroids_$i" 2>/dev/null ||:
 done
 
-columns1=$($CLICKHOUSE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_1' and database='$CLICKHOUSE_DATABASE'" 2> /dev/null)
-columns2=$($CLICKHOUSE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_2' and database='$CLICKHOUSE_DATABASE'" 2> /dev/null)
-columns3=$($CLICKHOUSE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_3' and database='$CLICKHOUSE_DATABASE'" 2> /dev/null)
+columns1=$($DATASTORE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_1' and database='$DATASTORE_DATABASE'" 2> /dev/null)
+columns2=$($DATASTORE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_2' and database='$DATASTORE_DATABASE'" 2> /dev/null)
+columns3=$($DATASTORE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_3' and database='$DATASTORE_DATABASE'" 2> /dev/null)
 
 CONVERGE_TIMEOUT=$((SECONDS + 300))
 while [ "$columns1" != "$columns2" ] || [ "$columns2" != "$columns3" ]; do
@@ -133,9 +133,9 @@ while [ "$columns1" != "$columns2" ] || [ "$columns2" != "$columns3" ]; do
         echo "Columns did not converge after 300 seconds: $columns1 $columns2 $columns3"
         break
     fi
-    columns1=$($CLICKHOUSE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_1' and database='$CLICKHOUSE_DATABASE'" 2> /dev/null)
-    columns2=$($CLICKHOUSE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_2' and database='$CLICKHOUSE_DATABASE'" 2> /dev/null)
-    columns3=$($CLICKHOUSE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_3' and database='$CLICKHOUSE_DATABASE'" 2> /dev/null)
+    columns1=$($DATASTORE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_1' and database='$DATASTORE_DATABASE'" 2> /dev/null)
+    columns2=$($DATASTORE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_2' and database='$DATASTORE_DATABASE'" 2> /dev/null)
+    columns3=$($DATASTORE_CLIENT --query "select count() from system.columns where table='concurrent_alter_add_drop_steroids_3' and database='$DATASTORE_DATABASE'" 2> /dev/null)
 
     sleep 1
 done
@@ -144,7 +144,7 @@ echo "Equal number of columns"
 
 # This alter will finish all previous, but replica 1 maybe still not up-to-date
 SYNC_TIMELIMIT=$((SECONDS + 300))
-while [[ $(timeout 120 ${CLICKHOUSE_CLIENT} --query "ALTER TABLE concurrent_alter_add_drop_steroids_1 MODIFY COLUMN value0 String SETTINGS replication_alter_partitions_sync=2" 2>&1) ]]; do
+while [[ $(timeout 120 ${DATASTORE_CLIENT} --query "ALTER TABLE concurrent_alter_add_drop_steroids_1 MODIFY COLUMN value0 String SETTINGS replication_alter_partitions_sync=2" 2>&1) ]]; do
     if [ $SECONDS -ge "$SYNC_TIMELIMIT" ]; then
         break
     fi
@@ -154,14 +154,14 @@ done
 check_replication_consistency "concurrent_alter_add_drop_steroids_" "count(), sum(key), sum(cityHash64(value0))"
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_alter_add_drop_steroids_$i"
-    $CLICKHOUSE_CLIENT --query "SELECT COUNT() FROM system.mutations WHERE is_done = 0 and table = 'concurrent_alter_add_drop_steroids_$i'"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM system.mutations WHERE is_done = 0 and table = 'concurrent_alter_add_drop_steroids_$i'"
-    $CLICKHOUSE_CLIENT --query "SELECT COUNT() FROM system.replication_queue WHERE table = 'concurrent_alter_add_drop_steroids_$i'"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM system.replication_queue WHERE table = 'concurrent_alter_add_drop_steroids_$i' and (type = 'ALTER_METADATA' or type = 'MUTATE_PART')"
+    $DATASTORE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_alter_add_drop_steroids_$i"
+    $DATASTORE_CLIENT --query "SELECT COUNT() FROM system.mutations WHERE is_done = 0 and table = 'concurrent_alter_add_drop_steroids_$i'"
+    $DATASTORE_CLIENT --query "SELECT * FROM system.mutations WHERE is_done = 0 and table = 'concurrent_alter_add_drop_steroids_$i'"
+    $DATASTORE_CLIENT --query "SELECT COUNT() FROM system.replication_queue WHERE table = 'concurrent_alter_add_drop_steroids_$i'"
+    $DATASTORE_CLIENT --query "SELECT * FROM system.replication_queue WHERE table = 'concurrent_alter_add_drop_steroids_$i' and (type = 'ALTER_METADATA' or type = 'MUTATE_PART')"
 
-    $CLICKHOUSE_CLIENT --query "DETACH TABLE concurrent_alter_add_drop_steroids_$i"
-    $CLICKHOUSE_CLIENT --query "ATTACH TABLE concurrent_alter_add_drop_steroids_$i"
+    $DATASTORE_CLIENT --query "DETACH TABLE concurrent_alter_add_drop_steroids_$i"
+    $DATASTORE_CLIENT --query "ATTACH TABLE concurrent_alter_add_drop_steroids_$i"
 
-    $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS concurrent_alter_add_drop_steroids_$i"
+    $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS concurrent_alter_add_drop_steroids_$i"
 done

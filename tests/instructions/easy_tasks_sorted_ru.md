@@ -4,7 +4,7 @@
 
 `programs/client/Client.cpp`
 
-Делаем `chmod 000 /etc/clickhouse-client/config.xml` и смотрим, что получится.
+Делаем `chmod 000 /etc/datastore-client/config.xml` и смотрим, что получится.
 
 ## + Уменьшать max_memory_usage, если на сервере мало оперативки.
 
@@ -40,7 +40,7 @@ void memoryBitAnd(const char * a, const char * b, char * result, size_t size);
 
 ## + COLLATE должно работать для Nullable(String).
 
-В ClickHouse есть возможность указать collation для сортировки строк. Это не работает для `Nullable(String)`.
+В Datastore есть возможность указать collation для сортировки строк. Это не работает для `Nullable(String)`.
 
 ## + Запретить чтение значений типа AggregateFunction по-умолчанию и добавить настройку.
 
@@ -64,9 +64,9 @@ Upd: сделали по-другому: теперь всё безопасно.
 
 ## + Функции создания и обновления состояния агрегатной функции по одному кортежу аргументов.
 
-В ClickHouse есть понятие - состояние вычисления агрегатной функции. Состояния агрегатных функций можно записывать в таблицы, складывать, финализировать и т. п. https://clickhouse.com/docs/ru/data_types/nested_data_structures/aggregatefunction/
+В Datastore есть понятие - состояние вычисления агрегатной функции. Состояния агрегатных функций можно записывать в таблицы, складывать, финализировать и т. п. https://datastore.com/docs/ru/data_types/nested_data_structures/aggregatefunction/
 
-Получить состояние агрегатной функции можно с помощью комбинатора State: https://clickhouse.com/docs/ru/query_language/agg_functions/combinators/#-state Но хотелось бы добавить ещё более простой способ получения состояния агрегатной функции.
+Получить состояние агрегатной функции можно с помощью комбинатора State: https://datastore.com/docs/ru/query_language/agg_functions/combinators/#-state Но хотелось бы добавить ещё более простой способ получения состояния агрегатной функции.
 
 Например:
 
@@ -87,7 +87,7 @@ Upd: сделали по-другому: теперь всё безопасно.
 
 `changeYear(datetime, 2019)`
 
-## + Исправить мерцание прогресс-бара в clickhouse-client.
+## + Исправить мерцание прогресс-бара в datastore-client.
 
 Это заметно при работе с серверами с большим пингом.
 Прогресс бар не должен мерцать.
@@ -119,7 +119,7 @@ position с конца строки.
 
 ## + Добавить Lizard, LZSSE и density в качестве вариантов алгоритмов сжатия.
 
-Экспериментальные алгоритмы сжатия. Сейчас ClickHouse поддерживает только lz4 и zstd.
+Экспериментальные алгоритмы сжатия. Сейчас Datastore поддерживает только lz4 и zstd.
 
 ## + Запрос CREATE OR REPLACE TABLE
 
@@ -137,7 +137,7 @@ position с конца строки.
 
 ## Возможность использовать ALIAS столбцы при INSERT.
 
-https://clickhouse.com/docs/query_language/create/#create-table
+https://datastore.com/docs/query_language/create/#create-table
 
 `INSERT INTO table (column1, column2, ...)`
 
@@ -179,9 +179,9 @@ world │ 123 │
 
 ## Работоспособность внешних данных на время сессии.
 
-https://clickhouse.com/docs/operations/table_engines/external_data/
+https://datastore.com/docs/operations/table_engines/external_data/
 
-Не работает, если открыть clickhouse-client в интерактивном режиме и делать несколько запросов.
+Не работает, если открыть datastore-client в интерактивном режиме и делать несколько запросов.
 
 ## Настройка для возможности получить частичный результат при cancel-е.
 

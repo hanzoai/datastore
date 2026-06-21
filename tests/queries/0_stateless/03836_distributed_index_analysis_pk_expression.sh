@@ -3,7 +3,7 @@
 # - no-random-merge-tree-settings -- may change number of parts
 
 # There will be warnings in logs for unavailable replicas that we have in parallel_replicas cluster.
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=error
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=error
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -13,7 +13,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # expressions over columns (e.g. toStartOfMinute(timestamp)), not just
 # plain column references.
 
-$CLICKHOUSE_CLIENT -nm -q "
+$DATASTORE_CLIENT -nm -q "
   drop table if exists test_pk_expr;
   create table test_pk_expr (timestamp DateTime64(9), value Int)
     engine=MergeTree()
@@ -40,7 +40,7 @@ function jq_pk_filter()
 }
 
 echo "distributed_index_analysis=0"
-$CLICKHOUSE_CLIENT --format=LineAsString -q "
+$DATASTORE_CLIENT --format=LineAsString -q "
   explain indexes=1, json=1
   select * from test_pk_expr
   where timestamp = toDateTime64('2024-01-01 00:05:00', 9)
@@ -53,7 +53,7 @@ explain_opts=(
   --distributed_index_analysis=1
   --max_parallel_replicas=11
 )
-$CLICKHOUSE_CLIENT "${explain_opts[@]}" -q "
+$DATASTORE_CLIENT "${explain_opts[@]}" -q "
   explain indexes=1, json=1
   select * from test_pk_expr
   where timestamp = toDateTime64('2024-01-01 00:05:00', 9)

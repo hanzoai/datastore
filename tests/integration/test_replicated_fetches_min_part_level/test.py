@@ -94,14 +94,14 @@ def test_merged_parts_are_fetched(started_cluster):
     node1.query(
         """
         CREATE TABLE test_min_level_merge (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_min_level_merge', '1')
+        ENGINE = ReplicatedMergeTree('/datastore/test_min_level_merge', '1')
         ORDER BY x
         """
     )
     node2.query(
         """
         CREATE TABLE test_min_level_merge (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_min_level_merge', '2')
+        ENGINE = ReplicatedMergeTree('/datastore/test_min_level_merge', '2')
         ORDER BY x
         SETTINGS
             replicated_fetches_min_part_level = 1,
@@ -168,14 +168,14 @@ def test_default_setting_fetches_all(started_cluster):
     node1.query(
         """
         CREATE TABLE test_default_fetch (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_default_fetch', '1')
+        ENGINE = ReplicatedMergeTree('/datastore/test_default_fetch', '1')
         ORDER BY x
         """
     )
     node2.query(
         """
         CREATE TABLE test_default_fetch (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_default_fetch', '2')
+        ENGINE = ReplicatedMergeTree('/datastore/test_default_fetch', '2')
         ORDER BY x
         """
     )
@@ -202,14 +202,14 @@ def test_level0_parts_fetched_after_timeout(started_cluster):
     node1.query(
         """
         CREATE TABLE test_timeout_fetch (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_timeout_fetch', '1')
+        ENGINE = ReplicatedMergeTree('/datastore/test_timeout_fetch', '1')
         ORDER BY x
         """
     )
     node2.query(
         """
         CREATE TABLE test_timeout_fetch (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_timeout_fetch', '2')
+        ENGINE = ReplicatedMergeTree('/datastore/test_timeout_fetch', '2')
         ORDER BY x
         SETTINGS
             replicated_fetches_min_part_level = 1,
@@ -249,14 +249,14 @@ def test_permanent_skip_with_zero_timeout(started_cluster):
     node1.query(
         """
         CREATE TABLE test_permanent_skip (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_permanent_skip', '1')
+        ENGINE = ReplicatedMergeTree('/datastore/test_permanent_skip', '1')
         ORDER BY x
         """
     )
     node2.query(
         """
         CREATE TABLE test_permanent_skip (x UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/test_permanent_skip', '2')
+        ENGINE = ReplicatedMergeTree('/datastore/test_permanent_skip', '2')
         ORDER BY x
         SETTINGS
             replicated_fetches_min_part_level = 1,

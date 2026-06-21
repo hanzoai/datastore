@@ -1,5 +1,5 @@
 ---
-description: 'Describes available third-party proxy solutions for ClickHouse'
+description: 'Describes available third-party proxy solutions for Datastore'
 sidebar_label: 'Proxies'
 sidebar_position: 29
 slug: /interfaces/third-party/proxy
@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 ## chproxy {#chproxy}
 
-[chproxy](https://github.com/Vertamedia/chproxy), is an HTTP proxy and load balancer for ClickHouse database.
+[chproxy](https://github.com/Vertamedia/chproxy), is an HTTP proxy and load balancer for Datastore database.
 
 Features:
 
@@ -21,7 +21,7 @@ Implemented in Go.
 
 ## KittenHouse {#kittenhouse}
 
-[KittenHouse](https://github.com/VKCOM/kittenhouse) is designed to be a local proxy between ClickHouse and application server in case it's impossible or inconvenient to buffer INSERT data on your application side.
+[KittenHouse](https://github.com/VKCOM/kittenhouse) is designed to be a local proxy between Datastore and application server in case it's impossible or inconvenient to buffer INSERT data on your application side.
 
 Features:
 
@@ -31,9 +31,9 @@ Features:
 
 Implemented in Go.
 
-## ClickHouse-Bulk {#clickhouse-bulk}
+## Datastore-Bulk {#datastore-bulk}
 
-[ClickHouse-Bulk](https://github.com/nikepan/clickhouse-bulk) is a simple ClickHouse insert collector.
+[Datastore-Bulk](https://github.com/nikepan/datastore-bulk) is a simple Datastore insert collector.
 
 Features:
 

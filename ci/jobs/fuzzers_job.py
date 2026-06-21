@@ -15,18 +15,18 @@ def main():
     info = Info()
 
     if res:
-        print("Install ClickHouse")
+        print("Install Datastore")
 
         def install():
             return ch.fuzzer_config_tweaks()
 
         results.append(
-            Result.from_commands_run(name="Install ClickHouse", command=install)
+            Result.from_commands_run(name="Install Datastore", command=install)
         )
         res = results[-1].is_ok()
 
     if res:
-        print("Start ClickHouse")
+        print("Start Datastore")
 
         def start():
             return ch.start()
@@ -42,7 +42,7 @@ def main():
         commands = ["./ci/jobs/scripts/fuzzer/runner.sh"]
         results.append(
             Result.from_commands_run(
-                name="Start ClickHouse",
+                name="Start Datastore",
                 command=commands,
             )
         )

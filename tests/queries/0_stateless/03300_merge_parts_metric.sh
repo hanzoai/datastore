@@ -19,6 +19,6 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # We sample the metric before and after reading system.merges, and check if the sum
 # falls within that range. This should significantly reduce false negatives.
 
-yes "WITH metric_before AS (SELECT value FROM system.metrics WHERE name = 'MergeParts'), merges_sum AS (SELECT sum(length(source_part_names)) AS total FROM system.merges), metric_after AS (SELECT value FROM system.metrics WHERE name = 'MergeParts') SELECT merges_sum.total BETWEEN least(metric_before.value, metric_after.value) AND greatest(metric_before.value, metric_after.value) FROM metric_before, merges_sum, metric_after;" | head -n1000 | $CLICKHOUSE_CLIENT | {
+yes "WITH metric_before AS (SELECT value FROM system.metrics WHERE name = 'MergeParts'), merges_sum AS (SELECT sum(length(source_part_names)) AS total FROM system.merges), metric_after AS (SELECT value FROM system.metrics WHERE name = 'MergeParts') SELECT merges_sum.total BETWEEN least(metric_before.value, metric_after.value) AND greatest(metric_before.value, metric_after.value) FROM metric_before, merges_sum, metric_after;" | head -n1000 | $DATASTORE_CLIENT | {
   sort | uniq -cd | awk '$1 > 100 && $NF == "1" { print $NF }'
 }

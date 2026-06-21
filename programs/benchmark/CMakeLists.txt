@@ -1,6 +1,6 @@
-set (CLICKHOUSE_BENCHMARK_SOURCES Benchmark.cpp)
+set (DATASTORE_BENCHMARK_SOURCES Benchmark.cpp)
 
-set (CLICKHOUSE_BENCHMARK_LINK
+set (DATASTORE_BENCHMARK_LINK
     PRIVATE
         boost::program_options
         clickhouse_aggregate_functions
@@ -10,4 +10,4 @@ set (CLICKHOUSE_BENCHMARK_LINK
 
 clickhouse_program_add(benchmark)
 
-target_link_libraries (clickhouse-benchmark-lib PRIVATE clickhouse-client-lib)
+target_link_libraries (datastore-benchmark-lib PRIVATE datastore-client-lib)

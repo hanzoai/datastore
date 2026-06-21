@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 create_table () {
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
             CREATE TABLE join_block_test
             (
                 id String,
@@ -19,14 +19,14 @@ create_table () {
 drop_table () {
     # Force a sync drop to free the memory before ending the test
     # Otherwise things get interesting if you run the test many times before the database is finally dropped
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
             DROP TABLE join_block_test SYNC
         "
 }
 
 populate_table_bg () {
     (
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
             INSERT INTO join_block_test
             SELECT toString(number) as id, number * number as num
             FROM system.numbers LIMIT 500000
@@ -36,7 +36,7 @@ populate_table_bg () {
 
 read_table_bg () {
     (
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
             SELECT *
             FROM
             (

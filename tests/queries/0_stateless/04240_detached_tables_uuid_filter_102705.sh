@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regression for https://github.com/ClickHouse/ClickHouse/issues/102705
+# Regression for https://github.com/ClickHouse/Datastore/issues/102705
 #
 # `SELECT ... FROM system.detached_tables WHERE uuid = ...` used to throw
 # `Code: 49. DB::Exception: Expected the argument №1 ('uuid' of type UUID) to have 1 rows, but it has 0`
@@ -9,13 +9,13 @@
 # filtered on `uuid`, producing a `Block` with mismatched column lengths.
 # The fix mirrors the non-detached branch's `uuid_column->insert(...)` call.
 #
-# The reproducer runs in `clickhouse local` (rather than against the test
+# The reproducer runs in `datastore local` (rather than against the test
 # server) because the underlying `LOGICAL_ERROR` is a `chassert` that aborts
-# the process in debug and sanitizer builds. With `clickhouse-client` the
+# the process in debug and sanitizer builds. With `datastore-client` the
 # abort lands inside the long-running test server, which causes the test
 # runner's hung-check to terminate the runner before any test result is
 # recorded, so the `Bugfix validation` framework cannot invert the result
-# to `OK`. Running the reproducer in `clickhouse local` contains the abort
+# to `OK`. Running the reproducer in `datastore local` contains the abort
 # to a single short-lived subprocess: the test runner observes a non-zero
 # exit and an empty stdout, both of which are diff'd against the
 # `.reference` file and reported as a normal `FAIL`.
@@ -24,11 +24,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-WORKING_FOLDER="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORKING_FOLDER="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "${WORKING_FOLDER}"
 mkdir -p "${WORKING_FOLDER}"
 
-${CLICKHOUSE_LOCAL} --multiquery --path="${WORKING_FOLDER}" -q "
+${DATASTORE_LOCAL} --multiquery --path="${WORKING_FOLDER}" -q "
 CREATE DATABASE db_104240 ENGINE = Atomic;
 
 CREATE TABLE db_104240.t (key Int) ENGINE = MergeTree ORDER BY key;

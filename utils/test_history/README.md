@@ -1,4 +1,4 @@
-## Script for ClickHouse tests history
+## Script for Datastore tests history
 
 Allows to view test-suite history for master branch.
 

@@ -1,6 +1,6 @@
 """Tests for AvroConfluent format with the Kafka table engine and Schema Registry.
 
-Verifies that ClickHouse can produce AvroConfluent-framed messages into Kafka
+Verifies that Datastore can produce AvroConfluent-framed messages into Kafka
 (registering schemas automatically) and consume them back, round-tripping data
 through the Confluent Schema Registry.
 """
@@ -53,7 +53,7 @@ def kafka_setup_teardown():
 
 
 def schema_registry_url_internal(kafka_cluster):
-    """Registry URL reachable from inside the Docker network (for ClickHouse)."""
+    """Registry URL reachable from inside the Docker network (for Datastore)."""
     return "http://{}:{}".format(
         kafka_cluster.schema_registry_host, kafka_cluster.schema_registry_port
     )
@@ -78,7 +78,7 @@ def test_kafka_produce_consume_avro_confluent(kafka_cluster):
     sr_url = schema_registry_url_internal(kafka_cluster)
 
     with k.kafka_topic(admin_client, topic_name):
-        # Writer table: ClickHouse -> Kafka in AvroConfluent format.
+        # Writer table: Datastore -> Kafka in AvroConfluent format.
         instance.query(f"""
             CREATE TABLE test.kafka_avro_writer (id Int64, name String)
                 ENGINE = Kafka
@@ -97,7 +97,7 @@ def test_kafka_produce_consume_avro_confluent(kafka_cluster):
             "(1, 'Alice'), (2, 'Bob'), (3, 'Charlie')"
         )
 
-        # Reader table: Kafka -> ClickHouse in AvroConfluent format.
+        # Reader table: Kafka -> Datastore in AvroConfluent format.
         instance.query(f"""
             CREATE TABLE test.kafka_avro_reader (id Int64, name String)
                 ENGINE = Kafka

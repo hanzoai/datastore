@@ -1,6 +1,6 @@
 -- Functions returning Array (or other types that can't be Nullable) must accept
 -- Nullable inputs and return their non-Nullable result type unchanged.
--- See https://github.com/ClickHouse/ClickHouse/issues/56977
+-- See https://github.com/ClickHouse/Datastore/issues/56977
 
 -- extractAll on a Nullable column with a non-null value
 SELECT extractAll(toNullable('Hello, world'), '(\\w+)');

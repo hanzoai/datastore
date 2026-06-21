@@ -14,7 +14,7 @@ System tables provide information about:
 
 - Server states, processes, and environment.
 - Server's internal processes.
-- Options used when the ClickHouse binary was built.
+- Options used when the Datastore binary was built.
 
 System tables:
 
@@ -22,11 +22,11 @@ System tables:
 - Available only for reading data.
 - Can't be dropped or altered, but can be detached.
 
-Most of the system tables store their data in RAM. A ClickHouse server creates such system tables at the start.
+Most of the system tables store their data in RAM. A Datastore server creates such system tables at the start.
 
-Unlike other system tables, the system log tables [metric_log](../../operations/system-tables/metric_log.md), [query_log](../../operations/system-tables/query_log.md), [query_thread_log](../../operations/system-tables/query_thread_log.md), [trace_log](../../operations/system-tables/trace_log.md), [part_log](../../operations/system-tables/part_log.md), [crash_log](../../operations/system-tables/crash_log.md), [text_log](../../operations/system-tables/text_log.md) and [backup_log](../../operations/system-tables/backup_log.md) are served by [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) table engine and store their data in a filesystem by default. If you remove a table from a filesystem, the ClickHouse server creates the empty one again at the time of the next data writing. If system table schema changed in a new release, then ClickHouse renames the current table and creates a new one.
+Unlike other system tables, the system log tables [metric_log](../../operations/system-tables/metric_log.md), [query_log](../../operations/system-tables/query_log.md), [query_thread_log](../../operations/system-tables/query_thread_log.md), [trace_log](../../operations/system-tables/trace_log.md), [part_log](../../operations/system-tables/part_log.md), [crash_log](../../operations/system-tables/crash_log.md), [text_log](../../operations/system-tables/text_log.md) and [backup_log](../../operations/system-tables/backup_log.md) are served by [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) table engine and store their data in a filesystem by default. If you remove a table from a filesystem, the Datastore server creates the empty one again at the time of the next data writing. If system table schema changed in a new release, then Datastore renames the current table and creates a new one.
 
-System log tables can be customized by creating a config file with the same name as the table under `/etc/clickhouse-server/config.d/`, or setting corresponding elements in `/etc/clickhouse-server/config.xml`. Elements can be customized are:
+System log tables can be customized by creating a config file with the same name as the table under `/etc/datastore-server/config.d/`, or setting corresponding elements in `/etc/datastore-server/config.xml`. Elements can be customized are:
 
 - `database`: database the system log table belongs to. This option is deprecated now. All system log tables are under database `system`.
 - `table`: table to insert data.
@@ -38,7 +38,7 @@ System log tables can be customized by creating a config file with the same name
 An example:
 
 ```xml
-<clickhouse>
+<datastore>
     <query_log>
         <database>system</database>
         <table>query_log</table>
@@ -53,23 +53,23 @@ An example:
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </query_log>
-</clickhouse>
+</datastore>
 ```
 
 By default, table growth is unlimited. To control a size of a table, you can use [TTL](/sql-reference/statements/alter/ttl) settings for removing outdated log records. Also you can use the partitioning feature of `MergeTree`-engine tables.
 
 ## Sources of System Metrics {#system-tables-sources-of-system-metrics}
 
-For collecting system metrics ClickHouse server uses:
+For collecting system metrics Datastore server uses:
 
 - `CAP_NET_ADMIN` capability.
 - [procfs](https://en.wikipedia.org/wiki/Procfs) (only in Linux).
 
 **procfs**
 
-If ClickHouse server does not have `CAP_NET_ADMIN` capability, it tries to fall back to `ProcfsMetricsProvider`. `ProcfsMetricsProvider` allows collecting per-query system metrics (for CPU and I/O).
+If Datastore server does not have `CAP_NET_ADMIN` capability, it tries to fall back to `ProcfsMetricsProvider`. `ProcfsMetricsProvider` allows collecting per-query system metrics (for CPU and I/O).
 
-If procfs is supported and enabled on the system, ClickHouse server collects these metrics:
+If procfs is supported and enabled on the system, Datastore server collects these metrics:
 
 - `OSCPUVirtualTimeMicroseconds`
 - `OSCPUWaitMicroseconds`
@@ -84,9 +84,9 @@ If procfs is supported and enabled on the system, ClickHouse server collects the
 You can enable it using `sudo sysctl kernel.task_delayacct=1` or by creating a `.conf` file in `/etc/sysctl.d/` with `kernel.task_delayacct = 1`
 :::
 
-## System tables in ClickHouse Cloud {#system-tables-in-clickhouse-cloud}
+## System tables in Datastore Cloud {#system-tables-in-datastore-cloud}
 
-In ClickHouse Cloud, system tables provide critical insights into the state and performance of the service, just as they do in self-managed deployments. Some system tables operate at the cluster-wide level, especially those that derive their data from Keeper nodes, which manage distributed metadata. These tables reflect the collective state of the cluster and should be consistent when queried on individual nodes. For example, the [`parts`](/operations/system-tables/parts) should be consistent irrespective of the node it is queried from:
+In Datastore Cloud, system tables provide critical insights into the state and performance of the service, just as they do in self-managed deployments. Some system tables operate at the cluster-wide level, especially those that derive their data from Keeper nodes, which manage distributed metadata. These tables reflect the collective state of the cluster and should be consistent when queried on individual nodes. For example, the [`parts`](/operations/system-tables/parts) should be consistent irrespective of the node it is queried from:
 
 ```sql
 SELECT hostname(), count()
@@ -184,10 +184,10 @@ Importantly, these tables are still **local to each node**.
 
 To comprehensively view the entire cluster, users can leverage the [`clusterAllReplicas`](/sql-reference/table-functions/cluster) function in combination with the `merge` function. The `clusterAllReplicas` function allows querying system tables across all replicas within the "default" cluster, consolidating node-specific data into a unified result. When combined with the `merge` function this can be used to target all system data for a specific table in a cluster. 
 
-This approach is particularly valuable for monitoring and debugging cluster-wide operations, ensuring users can effectively analyze the health and performance of their ClickHouse Cloud deployment.
+This approach is particularly valuable for monitoring and debugging cluster-wide operations, ensuring users can effectively analyze the health and performance of their Datastore Cloud deployment.
 
 :::note
-ClickHouse Cloud provides clusters of multiple replicas for redundancy and failover. This enables its features, such as dynamic autoscaling and zero-downtime upgrades. At a certain moment in time, new nodes could be in the process of being added to the cluster or removed from the cluster. To skip these nodes, add `SETTINGS skip_unavailable_shards = 1` to queries using `clusterAllReplicas` as shown below.
+Datastore Cloud provides clusters of multiple replicas for redundancy and failover. This enables its features, such as dynamic autoscaling and zero-downtime upgrades. At a certain moment in time, new nodes could be in the process of being added to the cluster or removed from the cluster. To skip these nodes, add `SETTINGS skip_unavailable_shards = 1` to queries using `clusterAllReplicas` as shown below.
 :::
 
 For example, consider the difference when querying the `query_log` table - often essential to analysis.
@@ -245,6 +245,6 @@ GROUP BY host SETTINGS skip_unavailable_shards = 1
 
 ## Related content {#related-content}
 
-- Blog: [System Tables and a window into the internals of ClickHouse](https://clickhouse.com/blog/clickhouse-debugging-issues-with-system-tables)
-- Blog: [Essential monitoring queries - part 1 - INSERT queries](https://clickhouse.com/blog/monitoring-troubleshooting-insert-queries-clickhouse)
-- Blog: [Essential monitoring queries - part 2 - SELECT queries](https://clickhouse.com/blog/monitoring-troubleshooting-select-queries-clickhouse)
+- Blog: [System Tables and a window into the internals of Datastore](https://datastore.com/blog/datastore-debugging-issues-with-system-tables)
+- Blog: [Essential monitoring queries - part 1 - INSERT queries](https://datastore.com/blog/monitoring-troubleshooting-insert-queries-datastore)
+- Blog: [Essential monitoring queries - part 2 - SELECT queries](https://datastore.com/blog/monitoring-troubleshooting-select-queries-datastore)

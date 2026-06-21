@@ -2,7 +2,7 @@
 -- because GLOBAL IN sets are populated via external tables attached by ReadFromRemote
 -- and cannot be built synchronously during PREWHERE evaluation.
 -- Also covers null-aware variants (globalNullIn/globalNotNullIn) via transform_null_in.
--- https://github.com/ClickHouse/ClickHouse/pull/100375
+-- https://github.com/ClickHouse/Datastore/pull/100375
 
 -- Pin the optimizer settings that drive PREWHERE assignment so that randomized
 -- runs which disable them do not bypass the `cannotBeMoved` guard under test.

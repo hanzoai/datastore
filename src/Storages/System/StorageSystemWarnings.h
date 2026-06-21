@@ -9,7 +9,7 @@ namespace DB
 class Context;
 
 /** Implements system.warnings table that contains warnings about server configuration
-  * to be displayed in clickhouse-client.
+  * to be displayed in datastore-client.
   */
 class StorageSystemWarnings final : public IStorageSystemOneBlock
 {

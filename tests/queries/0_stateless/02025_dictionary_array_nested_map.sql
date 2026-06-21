@@ -19,7 +19,7 @@ CREATE DICTIONARY dict_nested_map_dictionary
 	ncp UInt8
 )
 PRIMARY KEY test_id
-SOURCE(CLICKHOUSE(TABLE 'dict_nested_map_test_table'))
+SOURCE(DATASTORE(TABLE 'dict_nested_map_test_table'))
 LAYOUT(HASHED())
 LIFETIME(MIN 1 MAX 1000000);
 

@@ -19,7 +19,7 @@ instance = cluster.add_instance(
     with_remote_database_disk=False,
 )
 q = instance.query
-path_to_data = "/var/lib/clickhouse/"
+path_to_data = "/var/lib/datastore/"
 
 
 @pytest.fixture(scope="module")

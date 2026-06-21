@@ -60,7 +60,7 @@ def cluster():
             node.stop_clickhouse()
             node.copy_file_to_container(
                 os.path.join(CONFIG_DIR, "config.d", "storage_conf.xml"),
-                "/etc/clickhouse-server/config.d/storage_conf.xml",
+                "/etc/datastore-server/config.d/storage_conf.xml",
             )
             node.start_clickhouse()
         yield cluster
@@ -786,7 +786,7 @@ def test_cache_with_full_disk_space(cluster, node_name):
     )
     out = node.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "benchmark",
             "--iterations",
             "10",
@@ -927,7 +927,7 @@ def test_s3_engine_heavy_write_check_mem(
     cluster, broken_s3, node_name, in_flight_memory
 ):
     pytest.skip(
-        "Disabled, will be fixed after https://github.com/ClickHouse/ClickHouse/issues/51152"
+        "Disabled, will be fixed after https://github.com/ClickHouse/Datastore/issues/51152"
     )
 
     in_flight = in_flight_memory[0]
@@ -1043,7 +1043,7 @@ def test_metadata_path_works_correctly(cluster, node_name):
     data_paths = ast.literal_eval(response)
     assert len(data_paths) >= 1, list
 
-    # Verifies that trailing slash is added correctly: https://github.com/ClickHouse/ClickHouse/issues/80647
+    # Verifies that trailing slash is added correctly: https://github.com/ClickHouse/Datastore/issues/80647
     found = False
     for path in data_paths:
         found = found or "/custom_path/" in path

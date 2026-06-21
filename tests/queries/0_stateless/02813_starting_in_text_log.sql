@@ -6,5 +6,5 @@ WHERE event_date >= yesterday()
     AND event_time >= now() - INTERVAL uptime() SECOND - INTERVAL 10 MINUTE
     AND event_time <= now() - INTERVAL uptime() SECOND + INTERVAL 10 MINUTE
     AND logger_name = 'Application'
-    AND message LIKE '%Starting ClickHouse%'
+    AND message LIKE '%Starting Datastore%'
 LIMIT 1;

@@ -1,4 +1,4 @@
--- Issue: https://github.com/ClickHouse/ClickHouse/issues/15995
+-- Issue: https://github.com/ClickHouse/Datastore/issues/15995
 
 DROP TABLE IF EXISTS outer;
 DROP TABLE IF EXISTS inner;

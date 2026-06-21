@@ -23,7 +23,7 @@ fn set_output(result: String, out: *mut *mut u8, out_size: *mut u64) {
     }
 }
 
-/// Transpiles SQL from one dialect to ClickHouse SQL.
+/// Transpiles SQL from one dialect to Datastore SQL.
 unsafe fn polyglot_transpile_impl(
     query: *const u8,
     query_size: u64,
@@ -53,7 +53,7 @@ unsafe fn polyglot_transpile_impl(
         return 1;
     };
 
-    match polyglot_sql::transpile_by_name(query_str, dialect_str, "clickhouse") {
+    match polyglot_sql::transpile_by_name(query_str, dialect_str, "datastore") {
         Ok(statements) if statements.len() == 1 => {
             set_output(statements.into_iter().next().unwrap(), out, out_size);
             0

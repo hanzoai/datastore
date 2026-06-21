@@ -16,7 +16,7 @@ CREATE DICTIONARY dict
     children Array(Int64),
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(QUERY 'SELECT 1 id, [1] children'))
+SOURCE(DATASTORE(QUERY 'SELECT 1 id, [1] children'))
 LAYOUT(DIRECT());
 
 SELECT iid IN (SELECT DISTINCT arrayJoin(dictGet(dict, 'children', id)) FROM ids)

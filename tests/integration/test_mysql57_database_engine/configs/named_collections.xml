@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <mysql1>
             <user>root</user>
@@ -17,7 +17,7 @@
             <password>ClickHouse_MySQL_P@ssw0rd</password>
             <host>mysql57</host>
             <port>1111</port>
-            <database>clickhouse</database>
+            <database>datastore</database>
         </mysql3>
     </named_collections>
-</clickhouse>
+</datastore>

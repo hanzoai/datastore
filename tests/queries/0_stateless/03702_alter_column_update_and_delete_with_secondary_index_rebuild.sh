@@ -7,12 +7,12 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_table;"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_table;"
 
 wait_for_mutations() {
     while : ;
     do
-        count=$(${CLICKHOUSE_CLIENT} --query="SELECT count() FROM system.mutations WHERE database = '$CLICKHOUSE_DATABASE' AND table = 'test_table' and is_done = 0")
+        count=$(${DATASTORE_CLIENT} --query="SELECT count() FROM system.mutations WHERE database = '$DATASTORE_DATABASE' AND table = 'test_table' and is_done = 0")
         [[ $count != 0 ]] || break
         sleep 0.1
     done
@@ -21,7 +21,7 @@ wait_for_mutations() {
 client() {
     # SET enable_analyzer=1; -- Different EXPLAIN output
     # SET use_query_condition_cache = 0; -- Need it because we rerun some queries (with different settings) and we want to execute the full analysis
-    $CLICKHOUSE_CLIENT --echo --enable-analyzer=1 --use_query_condition_cache=0 --mutations_sync=2 --alter_sync=2 -q "$1"
+    $DATASTORE_CLIENT --echo --enable-analyzer=1 --use_query_condition_cache=0 --mutations_sync=2 --alter_sync=2 -q "$1"
 }
 
 declare -a table_settings=("min_bytes_for_wide_part = 0, min_bytes_for_full_part_storage=0" "min_bytes_for_full_part_storage ='1G'")

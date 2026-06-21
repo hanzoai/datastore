@@ -57,7 +57,7 @@ def create_table(node, table_name, replicated, additional_settings):
     settings.update(additional_settings)
 
     table_engine = (
-        f"ReplicatedMergeTree('/clickhouse/tables/0/{table_name}', '{node.name}')"
+        f"ReplicatedMergeTree('/datastore/tables/0/{table_name}', '{node.name}')"
         if replicated
         else "MergeTree()"
     )

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/97771
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/97771
 -- (Invalid number of rows in Chunk with lazy materialization when an ALIAS column
 -- shares its underlying expression with another selected column).
 -- The bug fired for v25.8..v25.11 and surfaced as:
@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS t_97771_5;
 
 -- { echoOn }
 
--- 1. Exact reproducer from the issue (https://fiddle.clickhouse.com/ba83d480-7fb5-4b7a-afbf-b1ca1d9f7aa9):
+-- 1. Exact reproducer from the issue (https://fiddle.datastore.com/ba83d480-7fb5-4b7a-afbf-b1ca1d9f7aa9):
 --    selecting both the underlying column and its ALIAS together with ORDER BY + LIMIT
 --    on a tiny single-row table used to throw `Invalid number of rows in Chunk`.
 CREATE TABLE t_97771_1 (c0 UInt64, c1 String, c2 String ALIAS c1) ENGINE = MergeTree() ORDER BY c0;

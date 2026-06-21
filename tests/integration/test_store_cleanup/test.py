@@ -11,7 +11,7 @@ node1 = cluster.add_instance(
     with_remote_database_disk=False,  # The test checks data on the local disk
 )
 
-path_to_data = "/var/lib/clickhouse/"
+path_to_data = "/var/lib/datastore/"
 
 
 @pytest.fixture(scope="module")

@@ -13,7 +13,7 @@
 /** This program tests merge-selecting algorithm.
   * Usage:
   * ./merge_selector <<< "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20"
-  * clickhouse-client --query="SELECT 100 + round(10 * rand() / 0xFFFFFFFF) FROM system.numbers LIMIT 105" | tr "\n" ' ' | ./merge_selector
+  * datastore-client --query="SELECT 100 + round(10 * rand() / 0xFFFFFFFF) FROM system.numbers LIMIT 105" | tr "\n" ' ' | ./merge_selector
   */
 
 int mainEntryExampleMergeSelector(int, char **)

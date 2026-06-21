@@ -1,13 +1,13 @@
 ---
 description: 'Documentation for Odbc Bridge'
 slug: /operations/utilities/odbc-bridge
-title: 'clickhouse-odbc-bridge'
+title: 'datastore-odbc-bridge'
 doc_type: 'reference'
 ---
 
 Simple HTTP-server which works like a proxy for ODBC driver. The main motivation
 was possible segfaults or another faults in ODBC implementations, which can
-crash whole clickhouse-server process.
+crash whole datastore-server process.
 
 This tool works via HTTP, not via pipes, shared memory, or TCP because:
 - It's simpler to implement
@@ -16,11 +16,11 @@ This tool works via HTTP, not via pipes, shared memory, or TCP because:
 
 ## Usage {#usage}
 
-`clickhouse-server` use this tool inside odbc table function and StorageODBC.
+`datastore-server` use this tool inside odbc table function and StorageODBC.
 However it can be used as standalone tool from command line with the following
 parameters in POST-request URL:
 - `connection_string` -- ODBC connection string.
-- `sample_block` -- columns description in ClickHouse NamesAndTypesList format, name in backticks,
+- `sample_block` -- columns description in Datastore NamesAndTypesList format, name in backticks,
   type as string. Name and type are space separated, rows separated with
   newline.
 - `max_block_size` -- optional parameter, sets maximum size of single block.
@@ -29,9 +29,9 @@ Query is send in post body. Response is returned in RowBinary format.
 ## Example: {#example}
 
 ```bash
-$ clickhouse-odbc-bridge --http-port 9018 --daemon
+$ datastore-odbc-bridge --http-port 9018 --daemon
 
-$ curl -d "query=SELECT PageID, ImpID, AdType FROM Keys ORDER BY PageID, ImpID" --data-urlencode "connection_string=DSN=ClickHouse;DATABASE=stat" --data-urlencode "sample_block=columns format version: 1
+$ curl -d "query=SELECT PageID, ImpID, AdType FROM Keys ORDER BY PageID, ImpID" --data-urlencode "connection_string=DSN=Datastore;DATABASE=stat" --data-urlencode "sample_block=columns format version: 1
 3 columns:
 \`PageID\` String
 \`ImpID\` String

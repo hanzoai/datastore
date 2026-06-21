@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/pull/62457
+-- https://github.com/ClickHouse/Datastore/pull/62457
 
 drop table if exists t;
 

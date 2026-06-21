@@ -9,13 +9,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 table_id="$(random_str 10)"
 
 # Does additional index analysis round and affects profile events
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --automatic_parallel_replicas_mode 0 --enable_parallel_replicas 0"
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --optimize_use_projections 1 --optimize_use_implicit_projections 1"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --automatic_parallel_replicas_mode 0 --enable_parallel_replicas 0"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --optimize_use_projections 1 --optimize_use_implicit_projections 1"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS table_$table_id;"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     CREATE TABLE table_$table_id (
         pk Int64,
         col1 Int64,
@@ -23,21 +23,21 @@ $CLICKHOUSE_CLIENT -q "
         INDEX idx(col2) TYPE minmax
     ) ENGINE = MergeTree ORDER BY pk PARTITION BY (pk % 2);";
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     ALTER TABLE table_$table_id ADD PROJECTION proj (SELECT * ORDER BY col1);"
 
 # Populate two partitions with 50k rows each. Each partition has >1 granules.
 # We want SelectQueriesWithPrimaryKeyUsage to increase by +1 in each query, not by +1 per partition or by +1 per granule.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     INSERT INTO table_$table_id SELECT number, number, number FROM numbers(100000);"
 
 # Run SELECTs
 
 # -- No filter
 query_id="$(random_str 10)"
-$CLICKHOUSE_CLIENT --query_id "$query_id" -q "
+$DATASTORE_CLIENT --query_id "$query_id" -q "
     SELECT count(*) FROM table_$table_id FORMAT Null;"
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     SYSTEM FLUSH LOGS query_log;
     SELECT
         ProfileEvents['SelectQueriesWithPrimaryKeyUsage'] AS selects_with_pk_usage
@@ -53,9 +53,9 @@ $CLICKHOUSE_CLIENT -m -q "
 
 # -- Filter on non-PK column. However, it has a minmax-index defined. We expect the profile event to not increase.
 query_id="$(random_str 10)"
-$CLICKHOUSE_CLIENT --query_id "$query_id" -q "
+$DATASTORE_CLIENT --query_id "$query_id" -q "
     SELECT count(*) FROM table_$table_id WHERE col2 >= 50000 FORMAT Null;"
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     SYSTEM FLUSH LOGS query_log;
     SELECT
         ProfileEvents['SelectQueriesWithPrimaryKeyUsage'] AS selects_with_pk_usage
@@ -71,9 +71,9 @@ $CLICKHOUSE_CLIENT -m -q "
 
 # Filter on PK
 query_id="$(random_str 10)"
-$CLICKHOUSE_CLIENT --query_id "$query_id" -q "
+$DATASTORE_CLIENT --query_id "$query_id" -q "
     SELECT count(*) FROM table_$table_id WHERE pk >= 50000 FORMAT Null;"
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     SYSTEM FLUSH LOGS query_log;
     SELECT
         ProfileEvents['SelectQueriesWithPrimaryKeyUsage'] AS selects_with_pk_usage
@@ -89,9 +89,9 @@ $CLICKHOUSE_CLIENT -m -q "
 
 # Filter on PK in projection
 query_id="$(random_str 10)"
-$CLICKHOUSE_CLIENT --query_id "$query_id" -q "
+$DATASTORE_CLIENT --query_id "$query_id" -q "
     SELECT count(*) FROM table_$table_id WHERE col1 >= 50000 FORMAT Null;"
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     SYSTEM FLUSH LOGS query_log;
     SELECT
         ProfileEvents['SelectQueriesWithPrimaryKeyUsage'] AS selects_with_pk_usage
@@ -105,5 +105,5 @@ $CLICKHOUSE_CLIENT -m -q "
     FORMAT TSVWithNames;
 "
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE table_$table_id;"

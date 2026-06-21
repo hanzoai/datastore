@@ -1,7 +1,7 @@
--- https://github.com/ClickHouse/ClickHouse/issues/67042
+-- https://github.com/ClickHouse/Datastore/issues/67042
 -- Reference generated using percent_rank() and dense_rank()
 
--- From ClickHouse/tests/queries/0_stateless/01591_window_functions.sql  (for deterministic query)
+-- From Datastore/tests/queries/0_stateless/01591_window_functions.sql  (for deterministic query)
 SELECT '---- denseRank() ----';
 select number, p, o,
     count(*) over w,
@@ -14,7 +14,7 @@ window w as (partition by p order by o, number)
 order by p, o, number
 settings max_block_size = 2;
 
--- Modifed from ClickHouse/tests/queries/0_stateless/01592_window_functions.sql (for deterministic query)
+-- Modifed from Datastore/tests/queries/0_stateless/01592_window_functions.sql (for deterministic query)
 SELECT '---- percentRank() ----';
 
 drop table if exists product_groups;

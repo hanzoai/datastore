@@ -116,7 +116,7 @@ class KeeperBench:
         self._error = None
 
     def _bench_base_cmd(self, cfg_path):
-        ch = os.environ.get("CLICKHOUSE_BINARY")
+        ch = os.environ.get("DATASTORE_BINARY")
         bench = f"{ch} keeper-bench"
         if self.replay_path:
             replay_abs = os.path.abspath(self.replay_path) if not os.path.isabs(self.replay_path) else self.replay_path

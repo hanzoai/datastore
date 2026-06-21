@@ -4,15 +4,15 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-USER1="u1_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-USER2="u2_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-ROLE1="r1_${CLICKHOUSE_TEST_UNIQUE_NAME}"
+USER1="u1_${DATASTORE_TEST_UNIQUE_NAME}"
+USER2="u2_${DATASTORE_TEST_UNIQUE_NAME}"
+ROLE1="r1_${DATASTORE_TEST_UNIQUE_NAME}"
 
 # Test that AST formatting is consistent for a wide variety of SQL constructs.
 # In debug builds, the server verifies that format(parse(query)) == format(parse(format(parse(query)))),
 # and aborts on inconsistency. This test simply runs many SQL constructs to trigger that check.
 
-${CLICKHOUSE_CLIENT} -n -q "
+${DATASTORE_CLIENT} -n -q "
 -- Basic SELECT
 SELECT 1;
 SELECT 1 AS x;
@@ -278,8 +278,8 @@ DROP USER IF EXISTS ${USER1};
 DROP USER IF EXISTS ${USER2};
 
 -- Database
-CREATE DATABASE IF NOT EXISTS ${CLICKHOUSE_DATABASE}_1;
-DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE}_1;
+CREATE DATABASE IF NOT EXISTS ${DATASTORE_DATABASE}_1;
+DROP DATABASE IF EXISTS ${DATASTORE_DATABASE}_1;
 
 -- FORMAT
 SELECT 1 FORMAT Null;

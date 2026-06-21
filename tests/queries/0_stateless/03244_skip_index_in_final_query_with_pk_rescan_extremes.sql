@@ -44,7 +44,7 @@ SELECT id FROM tab1 FINAL WHERE v = 9999;
 
 -- Test for repeated PK range. Rows will have PK like this -
 --    (1,1,1,<v>), (1,1,2,<v>), (1,1,3,<v>), ...
--- Test for PR https://github.com/ClickHouse/ClickHouse/pull/82667
+-- Test for PR https://github.com/ClickHouse/Datastore/pull/82667
 
 DROP TABLE IF EXISTS tab2;
 CREATE TABLE tab2 (id1 Int32, id2 Int32, id3 Int32, v Int32, INDEX secondaryidx v TYPE minmax) ENGINE=ReplacingMergeTree ORDER BY (id1, id2, id3) SETTINGS index_granularity=64;
@@ -66,7 +66,7 @@ SELECT id1, id2, id3 FROM tab2 FINAL WHERE v = rand() % 10000;
 SELECT id1, id2, id3 FROM tab2 FINAL WHERE v = rand() % 10000;
 SELECT id1, id2, id3 FROM tab2 FINAL WHERE v = rand() % 10000;
 
--- Tests with single range parts (https://github.com/ClickHouse/ClickHouse/issues/82792)
+-- Tests with single range parts (https://github.com/ClickHouse/Datastore/issues/82792)
 DROP TABLE IF EXISTS tab3;
 
 CREATE TABLE tab3(

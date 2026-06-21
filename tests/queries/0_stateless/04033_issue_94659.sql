@@ -1,4 +1,4 @@
--- Issue: https://github.com/ClickHouse/ClickHouse/issues/94659
+-- Issue: https://github.com/ClickHouse/Datastore/issues/94659
 -- ROW POLICY + ALIAS column with dictGet should not cause LOGICAL_ERROR
 
 SET enable_analyzer = 1;
@@ -17,7 +17,7 @@ INSERT INTO t2_94659 VALUES (11, 21);
 CREATE DICTIONARY d1_94659 (a Int64, b Int64)
 PRIMARY KEY a
 LIFETIME(MIN 0 MAX 0)
-SOURCE(CLICKHOUSE(TABLE 't2_94659'))
+SOURCE(DATASTORE(TABLE 't2_94659'))
 LAYOUT(COMPLEX_KEY_HASHED());
 
 -- Setup table with dictGet ALIAS column

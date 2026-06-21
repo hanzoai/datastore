@@ -22,7 +22,7 @@ def generate_cluster_def(port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <storage_configuration>
         <disks>
             <blob_storage_disk>
@@ -56,7 +56,7 @@ def generate_cluster_def(port):
             </blob_storage_policy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
         )
     return path

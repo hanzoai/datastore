@@ -15,7 +15,7 @@ Logging is enabled by specifying `dead_letter_queue` for the engine specific `ha
 
 The flushing period of data is set in `flush_interval_milliseconds` parameter of the [dead_letter_queue](../../operations/server-configuration-parameters/settings.md#dead_letter_queue) server settings section. To force flushing, use the [SYSTEM FLUSH LOGS](/sql-reference/statements/system#flush-logs) query.
 
-ClickHouse does not delete data from the table automatically. See [Introduction](../../operations/system-tables/overview.md#system-tables-introduction) for more details.
+Datastore does not delete data from the table automatically. See [Introduction](../../operations/system-tables/overview.md#system-tables-introduction) for more details.
 
 ## Columns {#columns}
 
@@ -24,8 +24,8 @@ ClickHouse does not delete data from the table automatically. See [Introduction]
 - `event_date` ([Date](/sql-reference/data-types/date)) — Message consuming date.
 - `event_time` ([DateTime](/sql-reference/data-types/datetime)) — Message consuming date and time.
 - `event_time_microseconds` ([DateTime64(6)](/sql-reference/data-types/datetime64)) — Query starting time with microseconds precision.
-- `database` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — ClickHouse database Kafka table belongs to.
-- `table` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — ClickHouse table name.
+- `database` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Datastore database Kafka table belongs to.
+- `table` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Datastore table name.
 - `error` ([String](/sql-reference/data-types/string)) — Error text.
 - `raw_message` ([String](/sql-reference/data-types/string)) — Message body.
 - `kafka_topic_name` ([String](/sql-reference/data-types/string)) — Kafka topic name.

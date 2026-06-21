@@ -14,7 +14,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-WORK_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORK_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 trap 'rm -rf "$WORK_DIR"' EXIT
@@ -35,7 +35,7 @@ PYEOF
 
 # The oversized reserve must be charged to the memory tracker and rejected under a 100 MB limit,
 # instead of allocating ~1.6 GB outside the tracker.
-out=$(${CLICKHOUSE_LOCAL} --query "
+out=$(${DATASTORE_LOCAL} --query "
     SELECT g FROM file('${WORK_DIR}/geo_bomb.parquet', Parquet) FORMAT Null
     SETTINGS input_format_parquet_use_native_reader_v3 = 1,
              input_format_parquet_allow_geoparquet_parser = 1,

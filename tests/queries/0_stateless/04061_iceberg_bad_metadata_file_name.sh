@@ -9,6 +9,6 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # The exact query from the fuzzer report.
-${CLICKHOUSE_CLIENT} -q "
-    SELECT * FROM icebergS3('http://localhost:11111/test/est', 'clickhouse', 'clickhouse', SETTINGS iceberg_metadata_file_path = '.*')
+${DATASTORE_CLIENT} -q "
+    SELECT * FROM icebergS3('http://localhost:11111/test/est', 'datastore', 'datastore', SETTINGS iceberg_metadata_file_path = '.*')
 " 2>&1 | grep -o "BAD_ARGUMENTS" | head -1

@@ -5,7 +5,7 @@ from helpers.cluster import ClickHouseCluster
 cluster = ClickHouseCluster(__file__)
 node = cluster.add_instance(
     "node",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="25.8",
     with_installed_binary=True,
     stay_alive=True,

@@ -6,15 +6,15 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Test that internal queries are logged correctly
 
-$CLICKHOUSE_CLIENT --query "SHOW TABLES FORMAT Null"
-$CLICKHOUSE_CLIENT --query "SHOW ENGINES FORMAT Null"
-$CLICKHOUSE_CLIENT --query "SHOW FUNCTIONS LIKE 'plus' FORMAT Null"
-$CLICKHOUSE_CLIENT --query "SHOW SETTING max_threads FORMAT Null"
-$CLICKHOUSE_CLIENT --query "KILL QUERY WHERE query_id = 'nonexistent' SYNC" &>/dev/null
+$DATASTORE_CLIENT --query "SHOW TABLES FORMAT Null"
+$DATASTORE_CLIENT --query "SHOW ENGINES FORMAT Null"
+$DATASTORE_CLIENT --query "SHOW FUNCTIONS LIKE 'plus' FORMAT Null"
+$DATASTORE_CLIENT --query "SHOW SETTING max_threads FORMAT Null"
+$DATASTORE_CLIENT --query "KILL QUERY WHERE query_id = 'nonexistent' SYNC" &>/dev/null
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 SELECT
     countIf(query LIKE '%system.tables%' AND type = 'QueryStart'),
     countIf(query LIKE '%system.tables%' AND type = 'QueryFinish'),

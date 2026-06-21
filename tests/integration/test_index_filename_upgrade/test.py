@@ -9,7 +9,7 @@ def started_cluster():
         # Until 25.12 index filenames weren't escaped
         cluster.add_instance(
             "old_node",
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="25.12.3.21",
             with_installed_binary=True,
             stay_alive=True,

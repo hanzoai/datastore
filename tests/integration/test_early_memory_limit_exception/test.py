@@ -34,7 +34,7 @@ def test_early_memory_limit():
     assert "(total) memory limit exceeded" in instance.exec_in_container(["bash", "-c", f"curl {endpoint}"])
 
     instance.replace_in_config(
-        "/etc/clickhouse-server/config.d/users_to_ignore_early_memory_limit_check.xml",
+        "/etc/datastore-server/config.d/users_to_ignore_early_memory_limit_check.xml",
         "default",
         "default , Alex ",
     )
@@ -49,7 +49,7 @@ def test_early_memory_limit():
     instance.query("DROP USER IF EXISTS Bob")
 
     instance.replace_in_config(
-        "/etc/clickhouse-server/config.d/users_to_ignore_early_memory_limit_check.xml",
+        "/etc/datastore-server/config.d/users_to_ignore_early_memory_limit_check.xml",
         "default , Alex ",
         "default",
     )

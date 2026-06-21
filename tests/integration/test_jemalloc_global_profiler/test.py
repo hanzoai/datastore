@@ -23,7 +23,7 @@ def started_cluster():
 
 def set_config(config, value):
     node1.replace_in_config(
-        "/etc/clickhouse-server/config.d/jemalloc_global_profiler.xml",
+        "/etc/datastore-server/config.d/jemalloc_global_profiler.xml",
         f"{config}>.",
         f"{config}>{value}",
     )

@@ -170,7 +170,7 @@ name = "chcache"
 version = "1.0.0"
 dependencies = [
  "blake3",
- "clickhouse",
+ "datastore",
  "env_logger",
  "log",
  "memmap2",
@@ -201,7 +201,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clickhouse"
+name = "datastore"
 version = "0.13.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a9a81a1dffadd762ee662635ce409232258ce9beebd7cc0fa227df0b5e7efc0"
@@ -209,7 +209,7 @@ dependencies = [
  "bstr",
  "bytes",
  "cityhash-rs",
- "clickhouse-derive",
+ "datastore-derive",
  "futures",
  "futures-channel",
  "http-body-util",
@@ -228,7 +228,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clickhouse-derive"
+name = "datastore-derive"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d70f3e2893f7d3e017eeacdc9a708fbc29a10488e3ebca21f9df6a5d2b616dbb"

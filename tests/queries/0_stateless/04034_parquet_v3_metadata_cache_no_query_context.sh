@@ -14,28 +14,28 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-S3_PATH="test/${CLICKHOUSE_DATABASE}_04034"
+S3_PATH="test/${DATASTORE_DATABASE}_04034"
 
 # Write a Parquet file to S3
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     INSERT INTO FUNCTION s3(s3_conn, url = 'http://localhost:11111/${S3_PATH}/data.parquet', format = Parquet)
     SELECT number AS id, toString(number) AS name FROM numbers(100)
     SETTINGS s3_truncate_on_insert = 1
 "
 
 # Create destination table
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_DATABASE}.dest (id UInt64, name String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_DATABASE}.dest (id UInt64, name String)
     ENGINE = MergeTree ORDER BY id
 "
 
 # Create S3Queue table reading Parquet with metadata cache + native reader v3.
 # The background processing thread has no query context on CurrentThread.
-$CLICKHOUSE_CLIENT --send_logs_level=error -q "
-    CREATE TABLE ${CLICKHOUSE_DATABASE}.queue (id UInt64, name String)
+$DATASTORE_CLIENT --send_logs_level=error -q "
+    CREATE TABLE ${DATASTORE_DATABASE}.queue (id UInt64, name String)
     ENGINE = S3Queue('http://localhost:11111/${S3_PATH}/*.parquet', 'Parquet')
     SETTINGS
-        keeper_path = '/clickhouse/${CLICKHOUSE_DATABASE}/04034_s3queue',
+        keeper_path = '/datastore/${DATASTORE_DATABASE}/04034_s3queue',
         mode = 'unordered',
         after_processing = 'keep',
         s3queue_processing_threads_num = 1,
@@ -45,23 +45,23 @@ $CLICKHOUSE_CLIENT --send_logs_level=error -q "
 "
 
 # Create MV to trigger background reads from S3Queue into dest table
-$CLICKHOUSE_CLIENT -q "
-    CREATE MATERIALIZED VIEW ${CLICKHOUSE_DATABASE}.mv TO ${CLICKHOUSE_DATABASE}.dest
-    AS SELECT id, name FROM ${CLICKHOUSE_DATABASE}.queue
+$DATASTORE_CLIENT -q "
+    CREATE MATERIALIZED VIEW ${DATASTORE_DATABASE}.mv TO ${DATASTORE_DATABASE}.dest
+    AS SELECT id, name FROM ${DATASTORE_DATABASE}.queue
 "
 
 # Wait for S3Queue to process the file (up to 30 seconds)
 for _ in {1..60}; do
-    count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM ${CLICKHOUSE_DATABASE}.dest")
+    count=$($DATASTORE_CLIENT -q "SELECT count() FROM ${DATASTORE_DATABASE}.dest")
     if [ "$count" -ge 100 ]; then
         break
     fi
     sleep 0.5
 done
 
-$CLICKHOUSE_CLIENT -q "SELECT count(), sum(id) FROM ${CLICKHOUSE_DATABASE}.dest"
+$DATASTORE_CLIENT -q "SELECT count(), sum(id) FROM ${DATASTORE_DATABASE}.dest"
 
 # Cleanup
-$CLICKHOUSE_CLIENT -q "DROP VIEW IF EXISTS ${CLICKHOUSE_DATABASE}.mv SYNC"
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.queue SYNC"
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.dest SYNC"
+$DATASTORE_CLIENT -q "DROP VIEW IF EXISTS ${DATASTORE_DATABASE}.mv SYNC"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.queue SYNC"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.dest SYNC"

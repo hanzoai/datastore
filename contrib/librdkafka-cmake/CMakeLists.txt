@@ -168,12 +168,12 @@ configure_file(
 )
 
 # -----------------------------------------------------------------------------
-# Adjust to avoid the ClickHouse runtime trap for harmful functions:
+# Adjust to avoid the Datastore runtime trap for harmful functions:
 #
 # librdkafka uses the tinycthreads library for threading primitives.
 # Note that tinycthreads is not actually using the C11 threads API,
 # yet it defines and uses functions with the same names (e.g. mtx_lock,
-# thrd_create, etc.). ClickHouse’s runtime trap monitors for these names
+# thrd_create, etc.). Datastore’s runtime trap monitors for these names
 # and will immediately terminate the program if they are present.
 #
 # To avoid triggering this runtime trap, we replace these symbols via compile

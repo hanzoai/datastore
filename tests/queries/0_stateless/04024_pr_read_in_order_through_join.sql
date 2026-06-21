@@ -2,7 +2,7 @@
 -- The optimization can produce different results on the initiator and remote replicas
 -- (due to differences in plan construction), leading to "Replica decided to read in Default
 -- mode, not in WithOrder" LOGICAL_ERROR.
--- https://github.com/ClickHouse/ClickHouse/issues/94076
+-- https://github.com/ClickHouse/Datastore/issues/94076
 
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS payloads;

@@ -40,7 +40,7 @@ def started_cluster():
 
             CREATE TABLE replica_1.replicated_local
             ON CLUSTER cross_3shards_2replicas (part_key Date, id UInt32, shard_id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/replicated', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/replicated', '{replica}')
             partition by part_key order by id;
 
             CREATE TABLE replica_1.replicated
@@ -49,7 +49,7 @@ def started_cluster():
 
             CREATE TABLE replica_2.replicated_local
             ON CLUSTER cross_3shards_2replicas (part_key Date, id UInt32, shard_id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard_bk}/replicated', '{replica_bk}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/{shard_bk}/replicated', '{replica_bk}')
             partition by part_key order by id;
 
             CREATE TABLE replica_2.replicated

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/36963
+-- https://github.com/ClickHouse/Datastore/issues/36963
 
 DROP TABLE IF EXISTS mt1;
 DROP TABLE IF EXISTS mt2;

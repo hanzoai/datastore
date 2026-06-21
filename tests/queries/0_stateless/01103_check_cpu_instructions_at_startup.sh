@@ -8,9 +8,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # If we run sanitized binary under qemu, it will try to slowly allocate 20 TiB until OOM.
 # Don't even try to do that. This test should be disabled for sanitizer builds.
-${CLICKHOUSE_LOCAL} --query "SELECT max(value LIKE '%sanitize%') FROM system.build_options" | grep -q '1' && echo '@@SKIP@@: Sanitizer build' && exit
+${DATASTORE_LOCAL} --query "SELECT max(value LIKE '%sanitize%') FROM system.build_options" | grep -q '1' && echo '@@SKIP@@: Sanitizer build' && exit
 
-if [ "$( ${CLICKHOUSE_LOCAL} -q "SELECT value FROM system.build_options where name = 'USE_OPENSSL_FIPS' LIMIT 1")" == "1" ]; then
+if [ "$( ${DATASTORE_LOCAL} -q "SELECT value FROM system.build_options where name = 'USE_OPENSSL_FIPS' LIMIT 1")" == "1" ]; then
     echo "@@SKIP@@: FIPS build"
     exit 0
 fi
@@ -20,7 +20,7 @@ if ! hash qemu-x86_64-static 2>/dev/null; then
     exit 0
 fi
 
-command=$(command -v ${CLICKHOUSE_LOCAL})
+command=$(command -v ${DATASTORE_LOCAL})
 
 function run_with_cpu()
 {

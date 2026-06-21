@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <opentelemetry_span_log>
         <engine>
             engine = MergeTree
@@ -8,4 +8,4 @@
         <database>system</database>
         <table>opentelemetry_span_log</table>
     </opentelemetry_span_log>
-</clickhouse>
+</datastore>

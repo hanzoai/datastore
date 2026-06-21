@@ -101,12 +101,12 @@ def test_start_non_existing(started_cluster):
         node3.stop_clickhouse()
 
         node1.replace_in_config(
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
             "node3",
             "non_existing_node",
         )
         node2.replace_in_config(
-            "/etc/clickhouse-server/config.d/enable_keeper2.xml",
+            "/etc/datastore-server/config.d/enable_keeper2.xml",
             "node3",
             "non_existing_node",
         )
@@ -125,12 +125,12 @@ def test_start_non_existing(started_cluster):
         node2_zk.create("/test_non_exising", b"data")
     finally:
         node1.replace_in_config(
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
             "non_existing_node",
             "node3",
         )
         node2.replace_in_config(
-            "/etc/clickhouse-server/config.d/enable_keeper2.xml",
+            "/etc/datastore-server/config.d/enable_keeper2.xml",
             "non_existing_node",
             "node3",
         )

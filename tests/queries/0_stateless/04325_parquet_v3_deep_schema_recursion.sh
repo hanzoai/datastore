@@ -13,7 +13,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-WORK_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORK_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 trap 'rm -rf "$WORK_DIR"' EXIT
@@ -76,7 +76,7 @@ open(f"{work}/shallow.parquet", "wb").write(build(8))
 PYEOF
 
 # Deeply nested schema must be rejected with a catchable error (not crash the process).
-out=$(${CLICKHOUSE_LOCAL} --query "
+out=$(${DATASTORE_LOCAL} --query "
     DESC file('${WORK_DIR}/deep.parquet', Parquet)
     SETTINGS input_format_parquet_use_native_reader_v3 = 1" 2>&1)
 if echo "$out" | grep -q "TOO_DEEP_RECURSION"; then
@@ -86,7 +86,7 @@ else
 fi
 
 # A reasonably nested schema must still work.
-shallow=$(${CLICKHOUSE_LOCAL} --query "
+shallow=$(${DATASTORE_LOCAL} --query "
     DESC file('${WORK_DIR}/shallow.parquet', Parquet)
     SETTINGS input_format_parquet_use_native_reader_v3 = 1" 2>&1)
 if echo "$shallow" | grep -q "Tuple"; then

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/70356
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/70356
 -- `NOT_FOUND_COLUMN_IN_BLOCK` on distributed table queries under the analyzer.
 
 DROP TABLE IF EXISTS shard_table_70356;

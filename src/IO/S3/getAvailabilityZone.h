@@ -10,7 +10,7 @@ enum class AZFacilities
     AWS_ZONE_ID,
     AWS_ZONE_NAME,
     GCP_ZONE,
-    CLICKHOUSE
+    DATASTORE
 };
 
 /// getRunningAvailabilityZone returns the availability zone of the underlying compute resources where the current process runs.

@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT -nm -q "
+$DATASTORE_CLIENT -nm -q "
     drop table if exists in_dist;
     drop table if exists in;
     drop table if exists mv;
@@ -23,13 +23,13 @@ $CLICKHOUSE_CLIENT -nm -q "
     create materialized view mv to proxy as select * from in;
 "
 
-tmp_file=$(mktemp "$CUR_DIR/clickhouse.XXXXXX.tsv")
+tmp_file=$(mktemp "$CUR_DIR/datastore.XXXXXX.tsv")
 trap 'rm $tmp_file' EXIT
 yes 1 | head -n 10 > "$tmp_file"
 
 iterations=10
 for _ in $(seq 1 $iterations); do
-    errors_before=$($CLICKHOUSE_CLIENT -q "select value from system.errors where name = 'UNEXPECTED_PACKET_FROM_CLIENT'")
+    errors_before=$($DATASTORE_CLIENT -q "select value from system.errors where name = 'UNEXPECTED_PACKET_FROM_CLIENT'")
     opts=(
         # split file into blocks of 1 row
         # (NOTE: cannot be set in a query, since INFILE uses client context)
@@ -43,10 +43,10 @@ for _ in $(seq 1 $iterations); do
         --prefer_localhost_replica=1
         --distributed_foreground_insert=0
     )
-    $CLICKHOUSE_CLIENT "${opts[@]}" -nm -q "
+    $DATASTORE_CLIENT "${opts[@]}" -nm -q "
         insert into in_dist from infile '$tmp_file'; -- { serverError NOT_IMPLEMENTED }
     "
-    errors_after=$($CLICKHOUSE_CLIENT -q "select value from system.errors where name = 'UNEXPECTED_PACKET_FROM_CLIENT'")
+    errors_after=$($DATASTORE_CLIENT -q "select value from system.errors where name = 'UNEXPECTED_PACKET_FROM_CLIENT'")
     if [[ "$errors_before" != "$errors_after" ]]; then
         # retry
         continue

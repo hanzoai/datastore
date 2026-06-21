@@ -386,7 +386,7 @@
 	url = https://github.com/paolostivanin/libcotp.git
 [submodule "contrib/clickstack"]
 	path = contrib/clickstack
-	url = https://github.com/ClickHouse/clickhouse-clickstack.git
+	url = https://github.com/ClickHouse/datastore-clickstack.git
 [submodule "contrib/zmij"]
 	path = contrib/zmij
 	url = https://github.com/vitaut/zmij.git

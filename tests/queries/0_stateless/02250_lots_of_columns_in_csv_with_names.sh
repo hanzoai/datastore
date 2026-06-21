@@ -4,9 +4,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_02250"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_02250"
 
-$CLICKHOUSE_CLIENT -q "CREATE TABLE test_02250
+$DATASTORE_CLIENT -q "CREATE TABLE test_02250
 (
     field_1 Int32,
     field_2 Int32,
@@ -269,6 +269,6 @@ $CLICKHOUSE_CLIENT -q "CREATE TABLE test_02250
 ENGINE = MergeTree
 ORDER BY tuple()"
 
-echo -e "field_1\n42" | $CLICKHOUSE_CLIENT -q "INSERT INTO test_02250 FORMAT CSVWithNames" --input_format_with_names_use_header 1
-$CLICKHOUSE_CLIENT -q "SELECT * FROM test_02250" 
-$CLICKHOUSE_CLIENT -q "DROP TABLE test_02250"
+echo -e "field_1\n42" | $DATASTORE_CLIENT -q "INSERT INTO test_02250 FORMAT CSVWithNames" --input_format_with_names_use_header 1
+$DATASTORE_CLIENT -q "SELECT * FROM test_02250" 
+$DATASTORE_CLIENT -q "DROP TABLE test_02250"

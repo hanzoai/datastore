@@ -19,7 +19,7 @@ To start logging configure parameters in the [asynchronous_insert_log](../../ope
 
 The flushing period of data is set in `flush_interval_milliseconds` parameter of the [asynchronous_insert_log](../../operations/server-configuration-parameters/settings.md#asynchronous_insert_log) server settings section. To force flushing, use the [SYSTEM FLUSH LOGS](/sql-reference/statements/system#flush-logs) query.
 
-ClickHouse does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
+Datastore does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
 
 ## Columns {#columns}
 
@@ -51,7 +51,7 @@ SELECT * FROM system.asynchronous_insert_log LIMIT 1 \G;
 ```
 
 ```text title="Response"
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2023-06-08
 event_time:              2023-06-08 10:08:53
 event_time_microseconds: 2023-06-08 10:08:53.199516

@@ -2,14 +2,14 @@
 -- no-parallel: creates own database
 -- no-shared-merge-tree: doesn't support databases without UUID
 
--- Testcase for https://github.com/ClickHouse/ClickHouse/issues/92863
+-- Testcase for https://github.com/ClickHouse/Datastore/issues/92863
 -- Tables/parts without UUID should not enter into the query condition cache.
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
 
-CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier} ENGINE = Memory;
+CREATE DATABASE {DATASTORE_DATABASE_1:Identifier} ENGINE = Memory;
 
-USE {CLICKHOUSE_DATABASE_1:Identifier};
+USE {DATASTORE_DATABASE_1:Identifier};
 
 CREATE TABLE tab
 (
@@ -35,4 +35,4 @@ SELECT count(*) from system.query_condition_cache; -- still no entry
 
 DROP TABLE tab;
 
-DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE {DATASTORE_DATABASE_1:Identifier};

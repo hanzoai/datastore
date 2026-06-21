@@ -5,11 +5,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-DB_PATH="${CLICKHOUSE_TMP}/test_${CLICKHOUSE_DATABASE}_sqlite_datetime.db"
+DB_PATH="${DATASTORE_TMP}/test_${DATASTORE_DATABASE}_sqlite_datetime.db"
 
 rm -f "${DB_PATH}"
 
-# Test DateTime type - SQLite stores TEXT, ClickHouse reads as DateTime
+# Test DateTime type - SQLite stores TEXT, Datastore reads as DateTime
 sqlite3 "${DB_PATH}" 'CREATE TABLE tx_datetime (c0 TEXT);'
 sqlite3 "${DB_PATH}" "INSERT INTO tx_datetime VALUES ('2024-01-01 12:00:00');"
 
@@ -54,8 +54,8 @@ sqlite3 "${DB_PATH}" "INSERT INTO tx_decimal256 VALUES ('12345678901234567890123
 sqlite3 "${DB_PATH}" 'CREATE TABLE tx_fixedstring (c0 TEXT);'
 sqlite3 "${DB_PATH}" "INSERT INTO tx_fixedstring VALUES ('abc');"
 
-${CLICKHOUSE_LOCAL} --query="
-CREATE DATABASE ${CLICKHOUSE_DATABASE_1} ENGINE = SQLite('${DB_PATH}');
+${DATASTORE_LOCAL} --query="
+CREATE DATABASE ${DATASTORE_DATABASE_1} ENGINE = SQLite('${DB_PATH}');
 
 -- Test DateTime: this triggers the bug - Bad cast from ColumnVector<unsigned int> to ColumnString
 CREATE TABLE t_datetime (c0 DateTime) ENGINE = SQLite('${DB_PATH}', 'tx_datetime');

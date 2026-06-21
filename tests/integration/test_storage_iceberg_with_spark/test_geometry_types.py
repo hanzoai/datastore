@@ -22,7 +22,7 @@ from shapely.wkb import dumps as wkb_dumps
 from helpers.test_tools import TSV
 
 
-ICEBERG_WAREHOUSE = "/var/lib/clickhouse/user_files/iceberg_data"
+ICEBERG_WAREHOUSE = "/var/lib/datastore/user_files/iceberg_data"
 
 
 def _wkb_hex(geom) -> str:

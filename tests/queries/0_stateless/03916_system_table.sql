@@ -39,7 +39,7 @@ SYSTEM DISABLE FAILPOINT replicated_merge_tree_insert_retry_pause;
 SELECT name, enabled FROM system.fail_points WHERE name = 'replicated_merge_tree_insert_retry_pause';
 -- Expected: replicated_merge_tree_insert_retry_pause 0
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103403
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103403
 -- Querying system.fail_points must NOT consume ONCE / PAUSEABLE_ONCE failpoints.
 -- Previously fillData called fiu_fail() which triggered and consumed ONETIME points.
 

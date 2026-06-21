@@ -53,9 +53,9 @@ select changed from system.settings where name = 'format_csv_delimiter';
 ---SettingFieldURI
 
 select changed from system.settings where name = 'format_avro_schema_registry_url';
-set format_avro_schema_registry_url = 'https://github.com/ClickHouse/ClickHouse/tree/master/src/Core';
+set format_avro_schema_registry_url = 'https://github.com/ClickHouse/Datastore/tree/master/src/Core';
 select changed from system.settings where name = 'format_avro_schema_registry_url';
-set format_avro_schema_registry_url = 'https://github.com/ClickHouse/ClickHouse/tree/master/src/Core';
+set format_avro_schema_registry_url = 'https://github.com/ClickHouse/Datastore/tree/master/src/Core';
 select changed from system.settings where name = 'format_avro_schema_registry_url';
 set format_avro_schema_registry_url = '';
 select changed from system.settings where name = 'format_avro_schema_registry_url';

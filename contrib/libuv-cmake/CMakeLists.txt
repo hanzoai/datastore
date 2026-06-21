@@ -120,7 +120,7 @@ foreach(file ${uv_sources})
 endforeach(file)
 set(uv_sources "${uv_sources_tmp}")
 
-list(APPEND uv_defines CLICKHOUSE_GLIBC_COMPATIBILITY)
+list(APPEND uv_defines DATASTORE_GLIBC_COMPATIBILITY)
 
 add_library(_uv ${uv_sources})
 add_library(ch_contrib::uv ALIAS _uv)

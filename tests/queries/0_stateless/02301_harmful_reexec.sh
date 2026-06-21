@@ -5,5 +5,5 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # NOTE: we can do a better test with strace, but I don't think that it is worth it.
-$CLICKHOUSE_LOCAL -q "SELECT 1"
-LD_LIBRARY_PATH=/tmp $CLICKHOUSE_LOCAL -q "SELECT 1"
+$DATASTORE_LOCAL -q "SELECT 1"
+LD_LIBRARY_PATH=/tmp $DATASTORE_LOCAL -q "SELECT 1"

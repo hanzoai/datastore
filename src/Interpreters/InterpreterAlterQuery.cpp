@@ -38,7 +38,7 @@
 #include <Functions/UserDefined/UserDefinedSQLFunctionFactory.h>
 #include <Functions/UserDefined/UserDefinedSQLFunctionVisitor.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -411,7 +411,7 @@ BlockIO InterpreterAlterQuery::executeToTable(const ASTAlterQuery & alter)
         return database->tryEnqueueReplicatedDDL(query_ptr, getContext(), {}, std::move(guard));
     }
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (SharedDatabaseCatalog::shouldReplicateQuery(getContext(), query_ptr))
     {
         return SharedDatabaseCatalog::instance().tryExecuteDDLQuery(query_ptr, getContext());
@@ -425,7 +425,7 @@ BlockIO InterpreterAlterQuery::executeToTable(const ASTAlterQuery & alter)
     if (table->isStaticStorage())
         throw Exception(ErrorCodes::TABLE_IS_READ_ONLY, "Table is read-only");
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (alter.isUnlockSnapshot())
     {
         ContextPtr context = getContext();
@@ -482,7 +482,7 @@ BlockIO InterpreterAlterQuery::executeToDatabase(const ASTAlterQuery & alter)
         return executeDDLQueryOnCluster(query_ptr, getContext(), params);
     }
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     bool managed_by_shared_catalog = SharedDatabaseCatalog::initialized() && SharedDatabaseCatalog::isDatabaseEngineSupported(database->getEngineName());
     if (managed_by_shared_catalog && !getContext()->getClientInfo().is_shared_catalog_internal)
     {

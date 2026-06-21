@@ -22,7 +22,7 @@ CREATE TABLE sqllt.table
 ENGINE = MergeTree PARTITION BY tuple() ORDER BY tuple();
 
 CREATE VIEW sqllt.view AS SELECT i, s FROM sqllt.table;
-CREATE DICTIONARY sqllt.dictionary (key UInt64, value UInt64) PRIMARY KEY key SOURCE(CLICKHOUSE(DB 'sqllt' TABLE 'table' HOST 'localhost' PORT 9001)) LIFETIME(0) LAYOUT(FLAT());
+CREATE DICTIONARY sqllt.dictionary (key UInt64, value UInt64) PRIMARY KEY key SOURCE(DATASTORE(DB 'sqllt' TABLE 'table' HOST 'localhost' PORT 9001)) LIFETIME(0) LAYOUT(FLAT());
 
 CREATE USER sqllt_user IDENTIFIED WITH PLAINTEXT_PASSWORD BY 'password';
 CREATE ROLE sqllt_role;

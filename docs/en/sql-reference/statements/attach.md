@@ -100,14 +100,14 @@ SELECT replica_name, zookeeper_path FROM system.replicas WHERE table='test';
 ```
 ```sql title="Response"
 ┌─replica_name─┬─zookeeper_path─────────────────────────────────────────────┐
-│ r1           │ /clickhouse/tables/401e6a1f-9bf2-41a3-a900-abb7e94dff98/s1 │
+│ r1           │ /datastore/tables/401e6a1f-9bf2-41a3-a900-abb7e94dff98/s1 │
 └──────────────┴────────────────────────────────────────────────────────────┘
 ```
 Attach table as not replicated and delete replica's data from ZooKeeper:
 ```sql title="Query"
 DETACH TABLE test;
 ATTACH TABLE test AS NOT REPLICATED;
-SYSTEM DROP REPLICA 'r1' FROM ZKPATH '/clickhouse/tables/401e6a1f-9bf2-41a3-a900-abb7e94dff98/s1';
+SYSTEM DROP REPLICA 'r1' FROM ZKPATH '/datastore/tables/401e6a1f-9bf2-41a3-a900-abb7e94dff98/s1';
 ```
 
 ## Attach Existing Dictionary {#attach-existing-dictionary}

@@ -4,9 +4,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-data_path="$CLICKHOUSE_TMP/local"
+data_path="$DATASTORE_TMP/local"
 
-$CLICKHOUSE_LOCAL --path "$data_path" -m -q "
+$DATASTORE_LOCAL --path "$data_path" -m -q "
     create table ttl_02335 (
         date Date,
         key Int,

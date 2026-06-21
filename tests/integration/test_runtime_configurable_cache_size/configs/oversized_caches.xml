@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 
     <!-- 999 TiB - much larger than any real machine's RAM -->
     <mark_cache_size>1098437885952000</mark_cache_size>
@@ -6,4 +6,4 @@
         <max_size_in_bytes>1098437885952000</max_size_in_bytes>
     </query_cache>
 
-</clickhouse>
+</datastore>

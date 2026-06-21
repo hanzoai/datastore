@@ -24,7 +24,7 @@ def drop_after_test():
         yield
     finally:
         node.query("DROP TABLE IF EXISTS tbl SYNC")
-        node.exec_in_container(["bash", "-c", f"rm -fr /var/lib/clickhouse/shadow/"])
+        node.exec_in_container(["bash", "-c", f"rm -fr /var/lib/datastore/shadow/"])
 
 
 # Test that FREEZE operation can be cancelled with KILL QUERY.
@@ -42,7 +42,7 @@ def test_cancel_backup():
     )
 
     uuid = node.query("SELECT uuid FROM system.tables WHERE name='tbl'").strip()
-    shadow_path = f"/var/lib/clickhouse/shadow/test/store/{uuid[:3]}/{uuid}"
+    shadow_path = f"/var/lib/datastore/shadow/test/store/{uuid[:3]}/{uuid}"
 
     freeze = node.get_query_request("ALTER TABLE tbl FREEZE WITH NAME 'test'")
 
@@ -50,7 +50,7 @@ def test_cancel_backup():
         shadow_dir_exists = (
             len(
                 node.exec_in_container(
-                    ["bash", "-c", f"ls /var/lib/clickhouse/shadow/"], nothrow=True
+                    ["bash", "-c", f"ls /var/lib/datastore/shadow/"], nothrow=True
                 )
             )
             > 0

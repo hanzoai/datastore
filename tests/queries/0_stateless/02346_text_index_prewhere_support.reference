@@ -1,9 +1,9 @@
-SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse')
+SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore')
 9
 9
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 0
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['clickhouse', 'database'])
+SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['datastore', 'database'])
 12
 12
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasAnyTokens_12c047f4b3dd26289deedcb3914ac50f UInt8 : 0
@@ -28,12 +28,12 @@ SELECT count() FROM tab PREWHERE hasAllTokens(text2, ['merge', 'tree'])
 2
 Actions: INPUT : 0 -> __text_index_inv_idx2_hasAllTokens_518cab706843eae694663ae410afb96a UInt8 : 0
 Name: inv_idx2
-SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') AND a > 0
+SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') AND a > 0
 9
 9
 INPUT : 1 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 2
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['clickhouse', 'database']) AND id BETWEEN 10 AND 100
+SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['datastore', 'database']) AND id BETWEEN 10 AND 100
 9
 9
 INPUT : 1 -> __text_index_inv_idx1_hasAnyTokens_12c047f4b3dd26289deedcb3914ac50f UInt8 : 3
@@ -62,13 +62,13 @@ INPUT : 1 -> __text_index_inv_idx1_hasToken_fa43ee0e78013d1beccc5ea73a314542 UIn
 INPUT : 2 -> __text_index_inv_idx2_hasAnyTokens_f72df8660da2ff9863231cc88793beec UInt8 : 3
 Name: inv_idx2
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') AND hasAnyTokens(text1, ['clickhouse', 'database'])
+SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') AND hasAnyTokens(text1, ['datastore', 'database'])
 9
 9
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 0
 INPUT : 1 -> __text_index_inv_idx1_hasAnyTokens_12c047f4b3dd26289deedcb3914ac50f UInt8 : 1
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['clickhouse', 'database']) AND NOT hasToken(text1, 'mysql')
+SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['datastore', 'database']) AND NOT hasToken(text1, 'mysql')
 12
 12
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasAnyTokens_12c047f4b3dd26289deedcb3914ac50f UInt8 : 0
@@ -80,7 +80,7 @@ SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store']) OR has
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasAllTokens_67ce908c110da22e8dfabdc5b2461e7e UInt8 : 0
 INPUT : 1 -> __text_index_inv_idx1_hasAnyTokens_778991886a3005f3baf85723d2df46a2 UInt8 : 1
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') AND hasToken(text2, 'fastio')
+SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') AND hasToken(text2, 'fastio')
 3
 3
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 0
@@ -122,7 +122,7 @@ INPUT : 1 -> __text_index_inv_idx1_hasAnyTokens_152811574e204e114891a456fa3549eb
 INPUT : 2 -> __text_index_inv_idx2_hasToken_c9480586a627a4e19f67999f849c5bbf UInt8 : 3
 Name: inv_idx2
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE (a > 10 AND hasToken(text1, 'clickhouse')) OR (a <= 10 AND hasAnyTokens(text2, ['mysql', 'postgres']))
+SELECT count() FROM tab PREWHERE (a > 10 AND hasToken(text1, 'datastore')) OR (a <= 10 AND hasAnyTokens(text2, ['mysql', 'postgres']))
 8
 8
 INPUT : 1 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 2
@@ -143,7 +143,7 @@ INPUT : 2 -> __text_index_inv_idx1_hasToken_eb33dfc4c4a7b6c38aa8ac853b4c155f UIn
 INPUT : 3 -> __text_index_inv_idx2_hasAnyTokens_3048c776cfda056f6a2e9f7c7b18e6c4 UInt8 : 5
 Name: inv_idx2
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') WHERE a > 0
+SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') WHERE a > 0
 9
 9
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 0
@@ -153,7 +153,7 @@ SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store']) WHERE 
 4
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasAllTokens_67ce908c110da22e8dfabdc5b2461e7e UInt8 : 0
 Name: inv_idx1
-SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') WHERE hasToken(text2, 'fastio')
+SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') WHERE hasToken(text2, 'fastio')
 3
 3
 Actions: INPUT : 0 -> __text_index_inv_idx1_hasToken_41322c936a4537f9edab965eabbbc82b UInt8 : 0

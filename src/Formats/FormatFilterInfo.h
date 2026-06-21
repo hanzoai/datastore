@@ -16,7 +16,7 @@ using PrewhereInfoPtr = std::shared_ptr<PrewhereInfo>;
 struct FilterDAGInfo;
 using FilterDAGInfoPtr = std::shared_ptr<FilterDAGInfo>;
 
-/// Some formats needs to custom mapping between columns in file and clickhouse columns.
+/// Some formats needs to custom mapping between columns in file and datastore columns.
 class ColumnMapper
 {
 public:

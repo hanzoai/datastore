@@ -12,7 +12,7 @@ SET mutations_sync = 0;
 DROP TABLE IF EXISTS test_chained_rename_1;
 
 CREATE TABLE test_chained_rename_1 (c0 String)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_chained_rename_1', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_chained_rename_1', 'r1')
 ORDER BY tuple()
 PARTITION BY tuple()
 SETTINGS min_bytes_for_wide_part = 1;
@@ -35,7 +35,7 @@ DROP TABLE test_chained_rename_1;
 DROP TABLE IF EXISTS test_chained_rename_2;
 
 CREATE TABLE test_chained_rename_2 (c0 String)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_chained_rename_2', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_chained_rename_2', 'r1')
 ORDER BY tuple()
 PARTITION BY tuple()
 SETTINGS min_bytes_for_wide_part = 1;
@@ -59,7 +59,7 @@ DROP TABLE test_chained_rename_2;
 DROP TABLE IF EXISTS test_chained_rename_3;
 
 CREATE TABLE test_chained_rename_3 (c0 String)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_chained_rename_3', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_chained_rename_3', 'r1')
 ORDER BY tuple()
 PARTITION BY tuple()
 SETTINGS min_bytes_for_wide_part = 1;
@@ -85,7 +85,7 @@ DROP TABLE test_chained_rename_3;
 DROP TABLE IF EXISTS test_chained_rename_4;
 
 CREATE TABLE test_chained_rename_4 (a String, b String)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_chained_rename_4', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_chained_rename_4', 'r1')
 ORDER BY tuple()
 PARTITION BY tuple()
 SETTINGS min_bytes_for_wide_part = 1;

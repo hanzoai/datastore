@@ -7,12 +7,12 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-NC_URI="test_mongo_nc_uri_${CLICKHOUSE_DATABASE}"
-NC_HOST="test_mongo_nc_host_${CLICKHOUSE_DATABASE}"
-DICT_URI="test_mongo_dict_uri_${CLICKHOUSE_DATABASE}"
-DICT_HOST="test_mongo_dict_host_${CLICKHOUSE_DATABASE}"
+NC_URI="test_mongo_nc_uri_${DATASTORE_DATABASE}"
+NC_HOST="test_mongo_nc_host_${DATASTORE_DATABASE}"
+DICT_URI="test_mongo_dict_uri_${DATASTORE_DATABASE}"
+DICT_HOST="test_mongo_dict_host_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 CREATE NAMED COLLECTION ${NC_URI} AS uri = 'mongodb://localhost:27017/testdb';
 
 CREATE DICTIONARY ${DICT_URI}
@@ -31,7 +31,7 @@ DROP DICTIONARY IF EXISTS ${DICT_URI};
 DROP NAMED COLLECTION IF EXISTS ${NC_URI};
 "
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 CREATE NAMED COLLECTION ${NC_HOST} AS host = 'localhost', port = '27017', db = 'testdb', user = '', password = '';
 
 CREATE DICTIONARY ${DICT_HOST}
@@ -51,10 +51,10 @@ DROP NAMED COLLECTION IF EXISTS ${NC_HOST};
 "
 
 # Verify that 'options' is rejected when 'uri' is used, since options are part of the URI.
-NC_OPT="test_mongo_nc_opt_${CLICKHOUSE_DATABASE}"
-DICT_OPT="test_mongo_dict_opt_${CLICKHOUSE_DATABASE}"
+NC_OPT="test_mongo_nc_opt_${DATASTORE_DATABASE}"
+DICT_OPT="test_mongo_dict_opt_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 CREATE NAMED COLLECTION ${NC_OPT} AS uri = 'mongodb://localhost:27017/testdb', options = 'ssl=false';
 
 CREATE DICTIONARY ${DICT_OPT}

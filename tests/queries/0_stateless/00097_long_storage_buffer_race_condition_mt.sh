@@ -14,4 +14,4 @@ done
 
 wait
 
-$CLICKHOUSE_CLIENT -q "SELECT 'Still alive'";
+$DATASTORE_CLIENT -q "SELECT 'Still alive'";

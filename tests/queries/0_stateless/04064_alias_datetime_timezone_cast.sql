@@ -1,7 +1,7 @@
 -- Tags: no-random-settings
 
 -- Test that ALIAS columns with DateTime/DateTime64 types correctly apply timezone conversion.
--- https://github.com/ClickHouse/ClickHouse/issues/76787
+-- https://github.com/ClickHouse/Datastore/issues/76787
 
 SET session_timezone = 'UTC';
 

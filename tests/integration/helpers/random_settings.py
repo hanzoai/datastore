@@ -13,7 +13,7 @@ def write_random_settings_config(destination):
     with open(destination, "w") as f:
         f.write(
             """
-<clickhouse>
+<datastore>
     <profiles>
         <default>
 """
@@ -25,6 +25,6 @@ def write_random_settings_config(destination):
             """
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 """
         )

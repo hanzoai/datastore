@@ -47,7 +47,7 @@ ORDER BY campaign_id
 SETTINGS index_granularity = 8192;
 
 SELECT 'INSERT INTO main_table_01818';
-INSERT INTO main_table_01818 SELECT 1 as `id`, 'ClickHouse' as `advertiser_id`, * EXCEPT (`id`, `advertiser_id`)
+INSERT INTO main_table_01818 SELECT 1 as `id`, 'Datastore' as `advertiser_id`, * EXCEPT (`id`, `advertiser_id`)
 FROM generateRandom(
     '`id` UInt32,
     `advertiser_id` String,
@@ -85,7 +85,7 @@ FROM generateRandom(
 LIMIT 100;
 
 SELECT 'INSERT INTO tmp_table_01818';
-INSERT INTO tmp_table_01818 SELECT 3 as `id`, 'ClickHouse' as `advertiser_id`, * EXCEPT (`id`, `advertiser_id`)
+INSERT INTO tmp_table_01818 SELECT 3 as `id`, 'Datastore' as `advertiser_id`, * EXCEPT (`id`, `advertiser_id`)
 FROM generateRandom(
     '`id` UInt32,
     `advertiser_id` String,
@@ -105,17 +105,17 @@ LIMIT 100;
 
 SELECT 'ALL tmp_table_01818', count() FROM tmp_table_01818;
 SELECT 'ALL main_table_01818', count() FROM main_table_01818;
-SELECT 'tmp_table_01818', count() FROM tmp_table_01818 WHERE `advertiser_id` = 'ClickHouse';
-SELECT 'main_table_01818', count() FROM main_table_01818 WHERE `advertiser_id` = 'ClickHouse';
+SELECT 'tmp_table_01818', count() FROM tmp_table_01818 WHERE `advertiser_id` = 'Datastore';
+SELECT 'main_table_01818', count() FROM main_table_01818 WHERE `advertiser_id` = 'Datastore';
 
 SELECT 'Executing ALTER TABLE MOVE PARTITION...';
-ALTER TABLE tmp_table_01818 MOVE PARTITION 'ClickHouse' TO TABLE main_table_01818;
+ALTER TABLE tmp_table_01818 MOVE PARTITION 'Datastore' TO TABLE main_table_01818;
 
 
 SELECT 'ALL tmp_table_01818', count() FROM tmp_table_01818;
 SELECT 'ALL main_table_01818', count() FROM main_table_01818;
-SELECT 'tmp_table_01818', count() FROM tmp_table_01818 WHERE `advertiser_id` = 'ClickHouse';
-SELECT 'main_table_01818', count() FROM main_table_01818 WHERE `advertiser_id` = 'ClickHouse';
+SELECT 'tmp_table_01818', count() FROM tmp_table_01818 WHERE `advertiser_id` = 'Datastore';
+SELECT 'main_table_01818', count() FROM main_table_01818 WHERE `advertiser_id` = 'Datastore';
 
 
 DROP TABLE IF EXISTS main_table_01818;

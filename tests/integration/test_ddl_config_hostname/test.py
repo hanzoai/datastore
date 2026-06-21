@@ -35,12 +35,12 @@ def test_ddl_queue_delete_add_replica(started_cluster):
 
     # There's no easy way to change hostname of a container, so let's update values in zk
     query_znode = node1.query(
-        "select max(name) from system.zookeeper where path='/clickhouse/task_queue/ddl'"
+        "select max(name) from system.zookeeper where path='/datastore/task_queue/ddl'"
     )[:-1]
 
     value = (
         node1.query(
-            f"select value from system.zookeeper where path='/clickhouse/task_queue/ddl' and name='{query_znode}' format TSVRaw"
+            f"select value from system.zookeeper where path='/datastore/task_queue/ddl' and name='{query_znode}' format TSVRaw"
         )[:-1]
         .replace(
             "hosts: ['node1:9000']", "hosts: ['finished_node:9000','deleted_node:9000']"
@@ -53,20 +53,20 @@ def test_ddl_queue_delete_add_replica(started_cluster):
     )
 
     finished_znode = node1.query(
-        f"select name from system.zookeeper where path='/clickhouse/task_queue/ddl/{query_znode}/finished' and name like '%node1%'"
+        f"select name from system.zookeeper where path='/datastore/task_queue/ddl/{query_znode}/finished' and name like '%node1%'"
     )[:-1]
 
     node1.query(
-        f"insert into system.zookeeper (name, path, value) values ('{query_znode}', '/clickhouse/task_queue/ddl', '{value}')"
+        f"insert into system.zookeeper (name, path, value) values ('{query_znode}', '/datastore/task_queue/ddl', '{value}')"
     )
     started_cluster.get_kazoo_client("zoo1").delete(
-        f"/clickhouse/task_queue/ddl/{query_znode}/finished/{finished_znode}"
+        f"/datastore/task_queue/ddl/{query_znode}/finished/{finished_znode}"
     )
 
     finished_znode = finished_znode.replace("node1", "finished_node")
 
     node1.query(
-        f"insert into system.zookeeper (name, path, value) values ('{finished_znode}', '/clickhouse/task_queue/ddl/{query_znode}/finished', '0\\n')"
+        f"insert into system.zookeeper (name, path, value) values ('{finished_znode}', '/datastore/task_queue/ddl/{query_znode}/finished', '0\\n')"
     )
 
     node1.restart_clickhouse(kill=True)

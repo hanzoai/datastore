@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <kerberos>
-        <realm>TEST.CLICKHOUSE.TECH</realm>
-        <keytab>/tmp/keytab/clickhouse.keytab</keytab>
+        <realm>TEST.DATASTORE.TECH</realm>
+        <keytab>/tmp/keytab/datastore.keytab</keytab>
     </kerberos>
-</clickhouse>
+</datastore>

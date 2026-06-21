@@ -8,14 +8,14 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # In [1] PREALLOCATE attribute had been added for HASHED dictionaries,
 # but it had been removed in [2].
 #
-#   [1]: https://github.com/ClickHouse/ClickHouse/pull/23979
-#   [2]: https://github.com/ClickHouse/ClickHouse/pull/45388
+#   [1]: https://github.com/ClickHouse/Datastore/pull/23979
+#   [2]: https://github.com/ClickHouse/Datastore/pull/45388
 #
 # This is a backward compatibility test that you can create dictionary with
 # PREALLOCATE attribute (and also for the history/greppability, that it was
 # such).
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP TABLE IF EXISTS data_01509;
     DROP DICTIONARY IF EXISTS dict_01509;
     CREATE TABLE data_01509
@@ -33,7 +33,7 @@ $CLICKHOUSE_CLIENT -m -q "
       value String DEFAULT '-'
     )
     PRIMARY KEY key
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'data_01509'))
+    SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'data_01509'))
     LAYOUT(SPARSE_HASHED(PREALLOCATE 1))
     LIFETIME(0);
     SYSTEM RELOAD DICTIONARY dict_01509;

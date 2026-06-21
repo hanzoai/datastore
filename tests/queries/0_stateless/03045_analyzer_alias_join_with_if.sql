@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/13210
+-- https://github.com/ClickHouse/Datastore/issues/13210
 SET enable_analyzer=1;
 CREATE TABLE test_a_table (
     name String,

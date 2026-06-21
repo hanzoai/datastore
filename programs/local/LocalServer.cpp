@@ -410,12 +410,12 @@ void LocalServer::tryInitPath()
             LOG_DEBUG(log, "Will create working directory inside current directory: {}", parent_folder.string());
         }
 
-        /// we can have another clickhouse-local running simultaneously, even with the same PID (for ex. - several dockers mounting the same folder)
-        /// or it can be some leftovers from other clickhouse-local runs
+        /// we can have another datastore-local running simultaneously, even with the same PID (for ex. - several dockers mounting the same folder)
+        /// or it can be some leftovers from other datastore-local runs
         /// as we can't accurately distinguish those situations we don't touch any existent folders
         /// we just try to pick some free name for our working folder
 
-        default_path = parent_folder / fmt::format("clickhouse-local-{}", UUIDHelpers::generateV4());
+        default_path = parent_folder / fmt::format("datastore-local-{}", UUIDHelpers::generateV4());
 
         if (fs::exists(default_path))
             throw Exception(ErrorCodes::FILE_ALREADY_EXISTS, "Unsuccessful attempt to set up the working directory: {} already exists.", default_path.string());
@@ -555,7 +555,7 @@ static ConfigurationPtr getConfigurationFromXMLString(const char * xml_data)
 void LocalServer::setupUsers()
 {
     static const char * minimal_default_user_xml =
-        "<clickhouse>"
+        "<datastore>"
         "    <profiles>"
         "        <default></default>"
         "    </profiles>"
@@ -574,7 +574,7 @@ void LocalServer::setupUsers()
         "    <quotas>"
         "        <default></default>"
         "    </quotas>"
-        "</clickhouse>";
+        "</datastore>";
 
     ConfigurationPtr users_config;
     auto & access_control = global_context->getAccessControl();
@@ -594,7 +594,7 @@ void LocalServer::setupUsers()
     access_control.setThrowOnInvalidReplicatedAccessEntities(config.getBool("access_control_improvements.throw_on_invalid_replicated_access_entities", true));
 
     /// Apply user-level configuration from a loaded config file (including those
-    /// auto-discovered via `getLocalConfigPath`, e.g. `~/.clickhouse-local/config.xml`).
+    /// auto-discovered via `getLocalConfigPath`, e.g. `~/.datastore-local/config.xml`).
     if (!loaded_config_path.empty())
     {
         const auto config_dir = fs::path{loaded_config_path}.remove_filename().string();
@@ -815,7 +815,7 @@ void LocalServer::processConfig()
     }
 
     print_stack_trace = getClientConfiguration().getBool("stacktrace", false);
-    const std::string clickhouse_dialect{"clickhouse"};
+    const std::string clickhouse_dialect{"datastore"};
     load_suggestions = (is_interactive || delayed_interactive) && !getClientConfiguration().getBool("disable_suggestion", false)
         && getClientConfiguration().getString("dialect", clickhouse_dialect) == clickhouse_dialect;
     wait_for_suggestions_to_load = getClientConfiguration().getBool("wait_for_suggestions_to_load", false);
@@ -839,7 +839,7 @@ void LocalServer::processConfig()
     {
         getClientConfiguration().setString("logger", "logger");
         getClientConfiguration().setString("logger.level", logging ? level : "fatal");
-        buildLoggers(getClientConfiguration(), logger(), "clickhouse-local");
+        buildLoggers(getClientConfiguration(), logger(), "datastore-local");
     }
 
     shared_context = Context::createShared();
@@ -1181,7 +1181,7 @@ void LocalServer::processConfig()
     }
 
     /// Initialize system logs only when explicitly configured (e.g. `query_log`, `processors_profile_log`).
-    /// Default `clickhouse-local` invocations have no system log sections in the config, and skipping
+    /// Default `datastore-local` invocations have no system log sections in the config, and skipping
     /// initialization avoids a TSan-visible race between background pool task logging and `Context`
     /// teardown that would otherwise be triggered for short-lived processes.
     /// Also skip in `--only-system-tables` mode, which is intended for reading existing persisted
@@ -1243,10 +1243,10 @@ void LocalServer::printHelpMessage(const OptionsDescription & options_descriptio
     output_stream << getHelpHeader() << "\n";
     if (options_description.main_description.has_value())
         output_stream << options_description.main_description.value() << "\n";
-    output_stream << "All settings are documented at https://clickhouse.com/docs/operations/settings/settings.\n\n";
+    output_stream << "All settings are documented at https://datastore.com/docs/operations/settings/settings.\n\n";
     output_stream << getHelpFooter() << "\n";
     output_stream << "In addition, --param_name=value can be specified for substitution of parameters for parameterized queries.\n";
-    output_stream << "\nSee also: https://clickhouse.com/docs/en/operations/utilities/clickhouse-local/\n";
+    output_stream << "\nSee also: https://datastore.com/docs/en/operations/utilities/datastore-local/\n";
 }
 
 

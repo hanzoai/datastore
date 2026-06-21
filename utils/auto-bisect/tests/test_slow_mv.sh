@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-CH_PATH=${CH_PATH:=clickhouse}
+CH_PATH=${CH_PATH:=datastore}
 
 WORK_TREE="$1"
 
@@ -66,12 +66,12 @@ SYSTEM FLUSH LOGS;"
 # PushingToViews: Pushing from default.input (b0b95661-0bd7-4d42-a288-b6d7efb1bf4f) to default.mv_statistics (a230f10f-92a0-4b7b-9e3c-18acab44ff28) took 1430 ms
 
 # log is missing in 25.5
-grep 'PushingToViews: Pushing from' $SCRIPT_DIR/data/clickhouse.log \
+grep 'PushingToViews: Pushing from' $SCRIPT_DIR/data/datastore.log \
   | grep -oE '[0-9]+ ms\.' \
   | grep -oE '[0-9]+' \
   | $CH_PATH local --structure 'ms UInt32' --input-format TSV --query "SELECT medianExact(ms), round(avg(ms)), count() FROM table"
 
-median=$(grep 'PushingToViews: Pushing from' $SCRIPT_DIR/data/clickhouse.log \
+median=$(grep 'PushingToViews: Pushing from' $SCRIPT_DIR/data/datastore.log \
   | grep -oE '[0-9]+ ms\.' \
   | grep -oE '[0-9]+' \
   | $CH_PATH local --structure 'ms UInt32' --input-format TSV --query "SELECT medianExact(ms) FROM table")

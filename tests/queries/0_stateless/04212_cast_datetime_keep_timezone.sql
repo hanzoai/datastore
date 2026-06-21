@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/55072
+-- https://github.com/ClickHouse/Datastore/issues/55072
 -- CAST to DateTime/DateTime64 without an explicit time zone should preserve
 -- the time zone of the source DateTime/DateTime64 argument, matching the
 -- behavior of toDateTime / toDateTime64.

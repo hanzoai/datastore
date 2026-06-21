@@ -1,5 +1,5 @@
 -- Tags: no-replicated-database
--- Reproducer for https://github.com/ClickHouse/ClickHouse/issues/93906
+-- Reproducer for https://github.com/ClickHouse/Datastore/issues/93906
 -- CREATE OR REPLACE TABLE ... CLONE AS triggered LOGICAL_ERROR
 -- "Query pipeline requires output, but no output buffer provided"
 -- when `alter_partition_verbose_result` was enabled.

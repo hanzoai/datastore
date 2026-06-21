@@ -1,5 +1,5 @@
 ---
-description: 'Overview of the ClickHouse backport policy and automation'
+description: 'Overview of the Datastore backport policy and automation'
 sidebar_label: 'Backport System'
 sidebar_position: 56
 slug: /development/backports
@@ -7,11 +7,11 @@ title: 'Backport System'
 doc_type: 'reference'
 ---
 
-This document describes the ClickHouse backport policy and the automated system that implements it.
+This document describes the Datastore backport policy and the automated system that implements it.
 
 ## Release Model {#release-model}
 
-ClickHouse versions follow the scheme `YY.M.patch.build-type`, where `YY` is the two-digit year, `M` is the release month (no leading zero), `patch` is the patch number within the branch, `build` is a monotonically increasing build number, and `type` is either `stable` or `lts`.
+Datastore versions follow the scheme `YY.M.patch.build-type`, where `YY` is the two-digit year, `M` is the release month (no leading zero), `patch` is the patch number within the branch, `build` is a monotonically increasing build number, and `type` is either `stable` or `lts`.
 
 Example: `25.3.8.23-lts` — March 2025 LTS, patch 8, build 23.
 
@@ -38,12 +38,12 @@ The label `pr-must-backport` is the manual override used by maintainers to mark 
 
 ## Backport Tool {#backport-tool}
 
-The backport policy described above is implemented by the automated tool in `tests/ci/cherry_pick.py`. The tool runs as a GitHub Actions workflow on ClickHouse infrastructure and covers all the requirements: discovering active release branches, selecting PRs that qualify for backporting, performing the two-stage cherry-pick and backport procedure, managing conflicts, enforcing the delay policy, and keeping labels in sync.
+The backport policy described above is implemented by the automated tool in `tests/ci/cherry_pick.py`. The tool runs as a GitHub Actions workflow on Datastore infrastructure and covers all the requirements: discovering active release branches, selecting PRs that qualify for backporting, performing the two-stage cherry-pick and backport procedure, managing conflicts, enforcing the delay policy, and keeping labels in sync.
 
 The long-term goal is to extract this implementation into a standalone open-source Python tool that other projects can adopt. The target design is:
 
 - **Configurable** — all policy parameters (qualifying labels, delay window, stale PR thresholds, rolling-out behaviour, etc.) expressed as a configuration file so the tool can be adapted to match any project's backport requirements without code changes.
-- **Distributable** — packaged as a self-contained Python wheel installable from PyPI, with no dependency on ClickHouse's CI infrastructure.
+- **Distributable** — packaged as a self-contained Python wheel installable from PyPI, with no dependency on Datastore's CI infrastructure.
 - **Programmable** — exposing a clean object model for pull requests, labels, and release branches so that users can script custom workflows on top of the core engine.
 
 ### Testing {#testing}
@@ -182,7 +182,7 @@ Backport PRs target release branches, so they use a dedicated CI workflow (`Back
 
 ### Authentication {#authentication}
 
-The workflow uses an SSH key (`ROBOT_CLICKHOUSE_SSH_KEY`) for git push operations. GitHub API calls are authenticated via `get_best_robot_token`, which selects the token with the most remaining quota from a pool stored in SSM (`/github-tokens`). `ROBOT_CLICKHOUSE_COMMIT_TOKEN` is used by the checkout step in the Actions workflow, not for API calls. Robot accounts (`robot-clickhouse`, `clickhouse-gh`) are excluded when assigning a responsible person.
+The workflow uses an SSH key (`ROBOT_DATASTORE_SSH_KEY`) for git push operations. GitHub API calls are authenticated via `get_best_robot_token`, which selects the token with the most remaining quota from a pool stored in SSM (`/github-tokens`). `ROBOT_DATASTORE_COMMIT_TOKEN` is used by the checkout step in the Actions workflow, not for API calls. Robot accounts (`robot-datastore`, `datastore-gh`) are excluded when assigning a responsible person.
 
 ### GitHub API Cache {#github-api-cache}
 

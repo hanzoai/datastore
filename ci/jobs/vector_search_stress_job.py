@@ -20,25 +20,25 @@ def main():
 
     # Get link to the latest CH binary
     if Utils.is_arm():
-        latest_ch_master_url = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+        latest_ch_master_url = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/datastore"
     elif Utils.is_amd():
-        latest_ch_master_url = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
+        latest_ch_master_url = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/datastore"
     else:
         assert False, f"Unknown processor architecture"
 
     if res and not info.is_local_run:
-        step_name = "Download ClickHouse"
+        step_name = "Download Datastore"
         print(step_name)
         commands = [
             f"wget -nv -P {temp_dir} {latest_ch_master_url}",
-            f"chmod +x {temp_dir}/clickhouse",
-            f"{temp_dir}/clickhouse --version",
+            f"chmod +x {temp_dir}/datastore",
+            f"{temp_dir}/datastore --version",
         ]
         results.append(Result.from_commands_run(name=step_name, command=commands))
         res = results[-1].is_ok()
 
     if res:
-        step_name = "Install ClickHouse"
+        step_name = "Install Datastore"
         print(step_name)
 
         def install():
@@ -51,7 +51,7 @@ def main():
         res = results[-1].is_ok()
 
     if res:
-        step_name = "Start ClickHouse"
+        step_name = "Start Datastore"
         print(step_name)
 
         def start():
@@ -73,7 +73,7 @@ def main():
 
         def do():
             res = S3.copy_file_from_s3(
-                s3_path="clickhouse-datasets/hits/partitions/hits_v1.tar",
+                s3_path="datastore-datasets/hits/partitions/hits_v1.tar",
                 local_path=temp_dir,
             )
             return res
@@ -96,7 +96,7 @@ def main():
         test_results.append(
             Result.from_commands_run(
                 name="select 1",
-                command=f"{temp_dir}/clickhouse-client --query 'select 1'",
+                command=f"{temp_dir}/datastore-client --query 'select 1'",
             )
         )  # success if exit code is 0
         test_results.append(Result(name="test 2", status=Result.Status.OK))

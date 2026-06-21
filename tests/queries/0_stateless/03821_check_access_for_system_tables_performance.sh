@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 NUM_DATABASES=300
-user="user_03821_$CLICKHOUSE_DATABASE"
+user="user_03821_$DATASTORE_DATABASE"
 
 # Build PARALLEL WITH compound queries for create/drop
 query_create=""
@@ -22,15 +22,15 @@ done
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT --query "$query_drop" 2>/dev/null
-    $CLICKHOUSE_CLIENT --query "DROP USER IF EXISTS $user" 2>/dev/null
+    $DATASTORE_CLIENT --query "$query_drop" 2>/dev/null
+    $DATASTORE_CLIENT --query "DROP USER IF EXISTS $user" 2>/dev/null
 }
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT --query "$query_create"
+$DATASTORE_CLIENT --query "$query_create"
 
-$CLICKHOUSE_CLIENT --query "DROP USER IF EXISTS $user"
-$CLICKHOUSE_CLIENT --query "CREATE USER $user"
-$CLICKHOUSE_CLIENT --query "GRANT SHOW DATABASES ON test_03821_db_1.*, SHOW DATABASES ON test_03821_db_2.*, SHOW DATABASES ON test_03821_db_3.*, SHOW DATABASES ON test_03821_db_4.*, SHOW DATABASES ON test_03821_db_5.* TO $user"
+$DATASTORE_CLIENT --query "DROP USER IF EXISTS $user"
+$DATASTORE_CLIENT --query "CREATE USER $user"
+$DATASTORE_CLIENT --query "GRANT SHOW DATABASES ON test_03821_db_1.*, SHOW DATABASES ON test_03821_db_2.*, SHOW DATABASES ON test_03821_db_3.*, SHOW DATABASES ON test_03821_db_4.*, SHOW DATABASES ON test_03821_db_5.* TO $user"
 
-$CLICKHOUSE_CLIENT --user "$user" --query "SELECT count() FROM system.databases WHERE name LIKE 'test\_03821\_db\_%'"
+$DATASTORE_CLIENT --user "$user" --query "SELECT count() FROM system.databases WHERE name LIKE 'test\_03821\_db\_%'"

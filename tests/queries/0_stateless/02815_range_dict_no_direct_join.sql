@@ -22,7 +22,7 @@ CREATE DICTIONARY discounts_dict
     amount Float64
 )
 PRIMARY KEY advertiser_id
-SOURCE(CLICKHOUSE(TABLE discounts))
+SOURCE(DATASTORE(TABLE discounts))
 LIFETIME(MIN 600 MAX 900)
 LAYOUT(RANGE_HASHED(RANGE_LOOKUP_STRATEGY 'max'))
 RANGE(MIN discount_start_date MAX discount_end_date);

@@ -1,4 +1,4 @@
--- Regression for https://github.com/ClickHouse/ClickHouse/issues/102911
+-- Regression for https://github.com/ClickHouse/Datastore/issues/102911
 -- JSONHas on native JSON must return UInt8 0/1, not the extracted value
 -- cast to UInt8.
 

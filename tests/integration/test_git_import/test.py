@@ -41,7 +41,7 @@ def clone_git_repository(repo, dir, commit=None):
 
 
 def run_git_import(dir):
-    command = f"cd {dir} && /usr/bin/clickhouse git-import 2>&1"
+    command = f"cd {dir} && /usr/bin/datastore git-import 2>&1"
     return node.exec_in_container(["bash", "-c", command])
 
 
@@ -148,13 +148,13 @@ def create_tables():
 
 
 def insert_into_tables(dir):
-    command = f'/usr/bin/clickhouse client --query="INSERT INTO commits FORMAT TSV" < {dir}/commits.tsv'
+    command = f'/usr/bin/datastore client --query="INSERT INTO commits FORMAT TSV" < {dir}/commits.tsv'
     node.exec_in_container(["bash", "-c", command])
 
-    command = f'/usr/bin/clickhouse client --query="INSERT INTO file_changes FORMAT TSV" < {dir}/file_changes.tsv'
+    command = f'/usr/bin/datastore client --query="INSERT INTO file_changes FORMAT TSV" < {dir}/file_changes.tsv'
     node.exec_in_container(["bash", "-c", command])
 
-    command = f'/usr/bin/clickhouse client --query="INSERT INTO line_changes FORMAT TSV" < {dir}/line_changes.tsv'
+    command = f'/usr/bin/datastore client --query="INSERT INTO line_changes FORMAT TSV" < {dir}/line_changes.tsv'
     node.exec_in_container(["bash", "-c", command])
 
 

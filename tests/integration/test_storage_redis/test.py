@@ -26,7 +26,7 @@ def started_cluster():
 
 def get_redis_connection(db_id=0):
     client = redis.Redis(
-        host="localhost", port=cluster.redis_port, password="clickhouse", db=db_id
+        host="localhost", port=cluster.redis_port, password="datastore", db=db_id
     )
     return client
 
@@ -93,7 +93,7 @@ def test_simple_select(started_cluster):
         CREATE TABLE test_simple_select(
             k String, 
             v String
-        ) Engine=Redis('{address}', 0, 'clickhouse') PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore') PRIMARY KEY (k)
         """
     )
 
@@ -132,7 +132,7 @@ def test_select_int(started_cluster):
         CREATE TABLE test_select_int(
             k UInt32, 
             v UInt32
-        ) Engine=Redis('{address}', 0, 'clickhouse') PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore') PRIMARY KEY (k)
         """
     )
 
@@ -170,7 +170,7 @@ def test_create_table(started_cluster):
         CREATE TABLE test_create_table(
             k String,
             v UInt32
-        ) Engine=Redis('{address}', 0, 'clickhouse', 10) PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore', 10) PRIMARY KEY (k)
         """
     )
 
@@ -181,7 +181,7 @@ def test_create_table(started_cluster):
             k String,
             f String,
             v UInt32
-        ) Engine=Redis('{address}', 0, 'clickhouse', 10) PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore', 10) PRIMARY KEY (k)
         """
     )
 
@@ -193,7 +193,7 @@ def test_create_table(started_cluster):
                 k String,
                 f String,
                 v UInt32
-            ) Engine=Redis('{address}', 0, 'clickhouse', 10) PRIMARY KEY ()
+            ) Engine=Redis('{address}', 0, 'datastore', 10) PRIMARY KEY ()
             """
         )
 
@@ -205,7 +205,7 @@ def test_create_table(started_cluster):
                 k String,
                 f String,
                 v UInt32
-            ) Engine=Redis('{address}', 0, 'clickhouse', 10)
+            ) Engine=Redis('{address}', 0, 'datastore', 10)
             """
         )
 
@@ -224,7 +224,7 @@ def test_simple_insert(started_cluster):
             k UInt32, 
             m DateTime,
             n String
-        ) Engine=Redis('{address}', 0, 'clickhouse') PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore') PRIMARY KEY (k)
         """
     )
 
@@ -272,7 +272,7 @@ def test_update(started_cluster):
             k UInt32, 
             m DateTime,
             n String
-        ) Engine=Redis('{address}', 0, 'clickhouse') PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore') PRIMARY KEY (k)
         """
     )
 
@@ -320,7 +320,7 @@ def test_delete(started_cluster):
             k UInt32, 
             m DateTime,
             n String
-        ) Engine=Redis('{address}', 0, 'clickhouse') PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore') PRIMARY KEY (k)
         """
     )
 
@@ -366,7 +366,7 @@ def test_truncate(started_cluster):
             k UInt32, 
             m DateTime,
             n String
-        ) Engine=Redis('{address}', 0, 'clickhouse') PRIMARY KEY (k)
+        ) Engine=Redis('{address}', 0, 'datastore') PRIMARY KEY (k)
         """
     )
 
@@ -415,7 +415,7 @@ def test_direct_join(started_cluster):
     # create table
     node.query(
         f"""
-            CREATE TABLE test_direct_join(k Int) Engine=Redis('{address}', 1, 'clickhouse') PRIMARY KEY (k);
+            CREATE TABLE test_direct_join(k Int) Engine=Redis('{address}', 1, 'datastore') PRIMARY KEY (k);
             CREATE TABLE test_mt (k Int) ENGINE = MergeTree() ORDER BY tuple();
             INSERT INTO TABLE test_direct_join VALUES (1);
             INSERT INTO TABLE test_mt VALUES (1);
@@ -435,7 +435,7 @@ def test_direct_join(started_cluster):
 
 def test_get_keys(started_cluster):
     """
-    Checks that ClickHouse reads by key instead of full scan if possible.
+    Checks that Datastore reads by key instead of full scan if possible.
     """
     address = get_address_for_ch()
 
@@ -444,7 +444,7 @@ def test_get_keys(started_cluster):
 
     # create table
     node.query(f"""
-               CREATE TABLE test_get_keys(k Int) Engine=Redis('{address}', 2, 'clickhouse') PRIMARY KEY (k);
+               CREATE TABLE test_get_keys(k Int) Engine=Redis('{address}', 2, 'datastore') PRIMARY KEY (k);
                INSERT INTO test_get_keys VALUES (1), (2), (3);
                """)
 

@@ -41,8 +41,8 @@ class LogCluster:
             print("ERROR: failed to retrive password for LogCluster")
             return False
         self._auth = {
-            "X-ClickHouse-User": self.USER,
-            "X-ClickHouse-Key": passwd,
+            "X-Datastore-User": self.USER,
+            "X-Datastore-Key": passwd,
         }
         params = {
             "query": f"SELECT 1",

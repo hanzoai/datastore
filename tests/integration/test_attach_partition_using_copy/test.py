@@ -33,7 +33,7 @@ def cleanup(nodes):
 def create_source_table(node, table_name, replicated):
     replica = node.name
     engine = (
-        f"ReplicatedMergeTree('/clickhouse/tables/1/{table_name}', '{replica}')"
+        f"ReplicatedMergeTree('/datastore/tables/1/{table_name}', '{replica}')"
         if replicated
         else "MergeTree()"
     )
@@ -58,7 +58,7 @@ def create_source_table(node, table_name, replicated):
         )
         ENGINE = {engine}
         ORDER BY (postcode1, postcode2, addr1, addr2)
-        SETTINGS disk = disk(type = web, endpoint = 'https://raw.githubusercontent.com/ClickHouse/web-tables-demo/main/web/')
+        SETTINGS disk = disk(type = web, endpoint = 'https://raw.githubusercontent.com/Datastore/web-tables-demo/main/web/')
         """.format(
             table_name=table_name, engine=engine
         )
@@ -68,7 +68,7 @@ def create_source_table(node, table_name, replicated):
 def create_destination_table(node, table_name, replicated):
     replica = node.name
     engine = (
-        f"ReplicatedMergeTree('/clickhouse/tables/1/{table_name}', '{replica}')"
+        f"ReplicatedMergeTree('/datastore/tables/1/{table_name}', '{replica}')"
         if replicated
         else "MergeTree()"
     )

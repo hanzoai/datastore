@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Boolean data type in ClickHouse'
+description: 'Documentation for the Boolean data type in Datastore'
 sidebar_label: 'Boolean'
 sidebar_position: 33
 slug: /sql-reference/data-types/boolean

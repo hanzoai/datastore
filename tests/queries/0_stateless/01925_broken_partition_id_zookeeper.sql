@@ -7,7 +7,7 @@ CREATE TABLE broken_partition
     date Date,
     key UInt64
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/test_01925_{database}/rmt', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/test_01925_{database}/rmt', 'r1')
 ORDER BY tuple()
 PARTITION BY date;
 

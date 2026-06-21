@@ -9,7 +9,7 @@ namespace DB
 class Context;
 
 
-/** System table "build_options" with many params used for clickhouse building
+/** System table "build_options" with many params used for datastore building
   */
 class StorageSystemBuildOptions final : public IStorageSystemOneBlock
 {

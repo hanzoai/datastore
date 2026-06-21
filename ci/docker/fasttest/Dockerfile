@@ -1,4 +1,4 @@
-# docker build -t clickhouse/fasttest .
+# docker build -t datastore/fasttest .
 FROM ubuntu:22.04
 
 # ARG for quick switch to a given ubuntu mirror
@@ -110,7 +110,7 @@ RUN ARCH=$(uname -m) && \
     rustup target add riscv64gc-unknown-linux-gnu
 
 # Note, libmpfr6 is also a requirement for gdb
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+COPY --from=datastore/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 # Give suid to gdb to grant it attach permissions
 RUN chmod u+s /opt/gdb/bin/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
@@ -140,14 +140,14 @@ COPY requirements.txt /
 RUN pip3 install --no-cache-dir -r /requirements.txt
 
 # chmod 777 to make the container user independent
-RUN mkdir -p /var/lib/clickhouse \
-  && chmod 777 /var/lib/clickhouse
+RUN mkdir -p /var/lib/datastore \
+  && chmod 777 /var/lib/datastore
 
 ENV TZ=Europe/Amsterdam
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN groupadd --system --gid 1000 clickhouse \
-    && useradd --system --gid 1000 --uid 1000 -m clickhouse \
+RUN groupadd --system --gid 1000 datastore \
+    && useradd --system --gid 1000 --uid 1000 -m datastore \
     && mkdir -p /.cache/sccache && chmod 777 /.cache/sccache
 
 

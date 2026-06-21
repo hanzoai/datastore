@@ -27,11 +27,11 @@ def started_cluster():
 
 def check_hardlinks(table, part_path, column_file, count):
     column_path = os.path.join(
-        "/var/lib/clickhouse/data/default", table, part_path, column_file
+        "/var/lib/datastore/data/default", table, part_path, column_file
     )
     script = """
         export INODE=`ls -i {column_path} | awk '{{print $1}}'`
-        export COUNT=`find /var/lib/clickhouse -inum $INODE | wc -l`
+        export COUNT=`find /var/lib/datastore -inum $INODE | wc -l`
         test $COUNT = {count}
     """.format(
         column_path=column_path, count=count
@@ -42,7 +42,7 @@ def check_hardlinks(table, part_path, column_file, count):
 
 def check_exists(table, part_path, column_file):
     column_path = os.path.join(
-        "/var/lib/clickhouse/data/default", table, part_path, column_file
+        "/var/lib/datastore/data/default", table, part_path, column_file
     )
 
     node1.exec_in_container(["bash", "-c", "test -f {}".format(column_path)])

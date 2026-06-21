@@ -62,7 +62,7 @@ def create_table(
                     num UInt32,
                     num2 UInt32 DEFAULT num + 1{extra_columns}
                 )
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table_name}', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table_name}', '{replica}')
                 ORDER BY num PARTITION BY num % 100
             """
         if with_ttl_move:
@@ -103,7 +103,7 @@ def create_distributed_table(node, table_name):
                 num UInt32,
                 num2 UInt32 DEFAULT num + 1
             )
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{shard}/%(table_name)s_replicated', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/{shard}/%(table_name)s_replicated', '{replica}')
             ORDER BY num PARTITION BY num %% 100;
         """ % dict(
         table_name=table_name

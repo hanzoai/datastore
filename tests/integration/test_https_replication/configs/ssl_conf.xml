@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <openSSL>
         <server>
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
-            <dhParamsFile>/etc/clickhouse-server/config.d/dhparam.pem</dhParamsFile>
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
+            <dhParamsFile>/etc/datastore-server/config.d/dhparam.pem</dhParamsFile>
             <verificationMode>none</verificationMode>
             <cacheSessions>true</cacheSessions>
         </server>
@@ -17,4 +17,4 @@
     </openSSL>
     <interserver_https_port>9010</interserver_https_port>
     <interserver_http_port remove="1"/>
-</clickhouse>
+</datastore>

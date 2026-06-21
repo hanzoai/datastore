@@ -325,7 +325,7 @@ FROM input(
      side String, trace_type String, stack String, samples UInt64'
 ) FORMAT TSV"""
 
-# clickhouse-local query that merges report/stacks.left.tsv and
+# datastore-local query that merges report/stacks.left.tsv and
 # report/stacks.right.tsv into a single upload-ready TSV with an explicit
 # `side` column.
 BUILD_FLAMEGRAPH_UPLOAD_QUERY = """
@@ -443,7 +443,7 @@ order by denorm.test, denorm.query_index, denorm.metric_name, denorm.version, de
 
 class JobStages(metaclass=MetaClasses.WithIter):
     INSTALL_CLICKHOUSE = "install"
-    INSTALL_CLICKHOUSE_REFERENCE = "install_reference"
+    INSTALL_DATASTORE_REFERENCE = "install_reference"
     DOWNLOAD_DATASETS = "download"
     CONFIGURE = "configure"
     RESTART = "restart"
@@ -473,7 +473,7 @@ def get_perf_arch():
 
 
 def build_perf_query_history_link(test_name, check_name):
-    """Build a ClickHouse Play link showing performance history for a query on master."""
+    """Build a Datastore Play link showing performance history for a query on master."""
     table = Settings.CI_DB_TABLE_NAME or "checks"
     tn = (test_name or "").replace("'", "''")
     cn = (check_name or "").replace("'", "''")
@@ -514,7 +514,7 @@ def get_insert_metadata(info, compare_against_release):
 def build_raw_query_metrics_tsv():
     Path(raw_query_metrics_path).unlink(missing_ok=True)
     result = subprocess.run(
-        ["clickhouse-local", "--query", BUILD_RAW_QUERY_METRICS_QUERY],
+        ["datastore-local", "--query", BUILD_RAW_QUERY_METRICS_QUERY],
         cwd=perf_wd,
         text=True,
         capture_output=True,
@@ -539,7 +539,7 @@ def build_flamegraph_upload_tsv():
     """Merge report/stacks.{left,right}.tsv into analyze/ch-uploads/flamegraph-stacks.tsv.
 
     Returns False (and logs a warning) if either input file is missing or
-    clickhouse-local fails, so the caller can skip the upload.
+    datastore-local fails, so the caller can skip the upload.
     """
     left_stacks = Path(perf_wd) / "report/stacks.left.tsv"
     right_stacks = Path(perf_wd) / "report/stacks.right.tsv"
@@ -554,7 +554,7 @@ def build_flamegraph_upload_tsv():
     Path(ch_uploads_dir).mkdir(parents=True, exist_ok=True)
     Path(flamegraph_upload_path).unlink(missing_ok=True)
     result = subprocess.run(
-        ["clickhouse-local", "--query", BUILD_FLAMEGRAPH_UPLOAD_QUERY],
+        ["datastore-local", "--query", BUILD_FLAMEGRAPH_UPLOAD_QUERY],
         cwd=perf_wd,
         text=True,
         capture_output=True,
@@ -707,14 +707,14 @@ class CHServer:
             serever_path = f"{temp_dir}/perf_wd/right"
             log_file = f"{serever_path}/server.log"
 
-        self.preconfig_start_cmd = f"{serever_path}/clickhouse-server --config-file={serever_path}/config/config.xml -- --path {db_path} --user_files_path {db_path}/user_files --top_level_domains_path {perf_wd}/top_level_domains --keeper_server.storage_path {temp_dir}/coordination0 --tcp_port {server_port}"
+        self.preconfig_start_cmd = f"{serever_path}/datastore-server --config-file={serever_path}/config/config.xml -- --path {db_path} --user_files_path {db_path}/user_files --top_level_domains_path {perf_wd}/top_level_domains --keeper_server.storage_path {temp_dir}/coordination0 --tcp_port {server_port}"
         self.log_fd = None
         self.log_file = log_file
         self.port = server_port
         self.server_path = serever_path
         self.name = "Reference" if is_left else "Patched"
 
-        self.start_cmd = f"{serever_path}/clickhouse-server --config-file={serever_path}/config/config.xml \
+        self.start_cmd = f"{serever_path}/datastore-server --config-file={serever_path}/config/config.xml \
             -- --path {serever_path}/db --user_files_path {serever_path}/db/user_files \
             --top_level_domains_path {serever_path}/top_level_domains --tcp_port {server_port} \
             --keeper_server.tcp_port {keeper_port} --keeper_server.raft_configuration.server.port {raft_port} \
@@ -722,7 +722,7 @@ class CHServer:
             --interserver_http_port {inter_server_port}"
 
     def start_preconfig(self):
-        print("Starting ClickHouse server")
+        print("Starting Datastore server")
         print("Command: ", self.preconfig_start_cmd)
         self.log_fd = open(self.log_file, "w")
         self.proc = subprocess.Popen(
@@ -737,23 +737,23 @@ class CHServer:
         if retcode is not None:
             stdout = self.proc.stdout.read().strip() if self.proc.stdout else ""
             stderr = self.proc.stderr.read().strip() if self.proc.stderr else ""
-            Utils.print_formatted_error("Failed to start ClickHouse", stdout, stderr)
+            Utils.print_formatted_error("Failed to start Datastore", stdout, stderr)
             return False
-        print(f"ClickHouse server process started -> wait ready")
+        print(f"Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print(f"ClickHouse server ready")
+            print(f"Datastore server ready")
         else:
-            print(f"ClickHouse server NOT ready")
+            print(f"Datastore server NOT ready")
 
         Shell.check(
-            f"clickhouse-client --port {self.port} --query 'create database IF NOT EXISTS test' && clickhouse-client --port {self.port} --query 'rename table datasets.hits_v1 to test.hits'",
+            f"datastore-client --port {self.port} --query 'create database IF NOT EXISTS test' && datastore-client --port {self.port} --query 'rename table datasets.hits_v1 to test.hits'",
             verbose=True,
         )
         return res
 
     def start(self):
-        print(f"Starting [{self.name}] ClickHouse server")
+        print(f"Starting [{self.name}] Datastore server")
         print("Command: ", self.start_cmd)
         self.log_fd = open(self.log_file, "w")
         self.proc = subprocess.Popen(
@@ -768,14 +768,14 @@ class CHServer:
         if retcode is not None:
             stdout = self.proc.stdout.read().strip() if self.proc.stdout else ""
             stderr = self.proc.stderr.read().strip() if self.proc.stderr else ""
-            Utils.print_formatted_error("Failed to start ClickHouse", stdout, stderr)
+            Utils.print_formatted_error("Failed to start Datastore", stdout, stderr)
             return False
-        print(f"ClickHouse server process started -> wait ready")
+        print(f"Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print(f"ClickHouse server ready")
+            print(f"Datastore server ready")
         else:
-            print(f"ClickHouse server NOT ready")
+            print(f"Datastore server NOT ready")
         return res
 
     def wait_ready(self):
@@ -784,7 +784,7 @@ class CHServer:
         delay = 2
         for attempt in range(attempts):
             res, out, err = Shell.get_res_stdout_stderr(
-                f'clickhouse-client --port {self.port} --query "select 1"', verbose=True
+                f'datastore-client --port {self.port} --query "select 1"', verbose=True
             )
             if out.strip() == "1":
                 print("Server ready")
@@ -801,7 +801,7 @@ class CHServer:
 
     def ask(self, query):
         return Shell.get_output(
-            f'{self.server_path}/clickhouse-client --port {self.port} --query "{query}"'
+            f'{self.server_path}/datastore-client --port {self.port} --query "{query}"'
         )
 
     @classmethod
@@ -829,7 +829,7 @@ class CHServer:
             f.write(f"{test_name}\t{duration}\n")
 
     def terminate(self):
-        print("Terminate ClickHouse process")
+        print("Terminate Datastore process")
         timeout = 10
         if self.proc:
             Utils.terminate_process_group(self.proc.pid)
@@ -850,8 +850,8 @@ class CHServer:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Performance Tests Job")
-    parser.add_argument("--ch-path", help="Path to clickhouse binary", default=temp_dir)
+    parser = argparse.ArgumentParser(description="Datastore Performance Tests Job")
+    parser.add_argument("--ch-path", help="Path to datastore binary", default=temp_dir)
     parser.add_argument(
         "--test-options",
         help="Comma separated option(s) BATCH_NUM/BTATCH_TOT|?",
@@ -865,7 +865,7 @@ def parse_args():
 def find_prev_build(info, build_type):
     commits = info.get_kv_data("master_track_commits_sha") or []
     for sha in commits:
-        link = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/clickhouse"
+        link = f"https://datastore-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/datastore"
         if Shell.check(f"curl -sfI {link} > /dev/null"):
             return link
     return None
@@ -875,7 +875,7 @@ def find_base_release_build(info, build_type):
     commits = info.get_kv_data("release_branch_base_sha_with_predecessors") or []
     assert commits, "No commits found to fetch reference build"
     for sha in commits:
-        link = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/clickhouse"
+        link = f"https://datastore-builds.s3.us-east-1.amazonaws.com/REFs/master/{sha}/{build_type}/datastore"
         if Shell.check(f"curl -sfI {link} > /dev/null"):
             return link
     return None
@@ -911,10 +911,10 @@ def main():
             link_for_ref_ch = find_prev_build(info, "build_arm_release")
             if not link_for_ref_ch:
                 print("WARNING: No build found for master track commits, falling back to latest master build")
-                link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+                link_for_ref_ch = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/datastore"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_arm_release")
-            assert link_for_ref_ch, "reference clickhouse build has not been found"
+            assert link_for_ref_ch, "reference datastore build has not been found"
         else:
             assert False
     elif Utils.is_amd():
@@ -922,10 +922,10 @@ def main():
             link_for_ref_ch = find_prev_build(info, "build_amd_release")
             if not link_for_ref_ch:
                 print("WARNING: No build found for master track commits, falling back to latest master build")
-                link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
+                link_for_ref_ch = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/datastore"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_amd_release")
-            assert link_for_ref_ch, "reference clickhouse build has not been found"
+            assert link_for_ref_ch, "reference datastore build has not been found"
         else:
             assert False
     else:
@@ -951,9 +951,9 @@ def main():
 
     ch_path = args.ch_path
     assert (
-        Path(ch_path + "/clickhouse").is_file()
-        or Path(ch_path + "/clickhouse").is_symlink()
-    ), f"clickhouse binary not found in [{ch_path}]"
+        Path(ch_path + "/datastore").is_file()
+        or Path(ch_path + "/datastore").is_symlink()
+    ), f"datastore binary not found in [{ch_path}]"
 
     stop_watch = Utils.Stopwatch()
     stages = list(JobStages)
@@ -982,7 +982,7 @@ def main():
     # export PYTHONIOENCODING=utf-8
 
     if res and JobStages.INSTALL_CLICKHOUSE in stages:
-        print("Install ClickHouse")
+        print("Install Datastore")
         commands = [
             f"mkdir -p {perf_right_config}",
             f"cp ./programs/server/config.xml {perf_right_config}",
@@ -992,39 +992,39 @@ def main():
             f"cp -r ./tests/performance/scripts/config/users.d {perf_right_config}/users.d",
             f"cp -r ./tests/config/top_level_domains {perf_wd}",
             f"rm {perf_right_config}/config.d/storage_conf_local.xml",  # Avoid conflicts on the filesystem cache dirs
-            f"chmod +x {ch_path}/clickhouse",
-            f"ln -sf {ch_path}/clickhouse {perf_right}/clickhouse-server",
-            f"ln -sf {ch_path}/clickhouse {perf_right}/clickhouse-local",
-            f"ln -sf {ch_path}/clickhouse {perf_right}/clickhouse-client",
-            f"ln -sf {ch_path}/clickhouse {perf_right}/clickhouse-keeper",
-            "clickhouse-local --version",
+            f"chmod +x {ch_path}/datastore",
+            f"ln -sf {ch_path}/datastore {perf_right}/datastore-server",
+            f"ln -sf {ch_path}/datastore {perf_right}/datastore-local",
+            f"ln -sf {ch_path}/datastore {perf_right}/datastore-client",
+            f"ln -sf {ch_path}/datastore {perf_right}/datastore-keeper",
+            "datastore-local --version",
         ]
         results.append(
-            Result.from_commands_run(name="Install ClickHouse", command=commands)
+            Result.from_commands_run(name="Install Datastore", command=commands)
         )
         res = results[-1].is_ok()
 
     reference_sha = ""
-    if res and JobStages.INSTALL_CLICKHOUSE_REFERENCE in stages:
+    if res and JobStages.INSTALL_DATASTORE_REFERENCE in stages:
         print("Install Reference")
         if not Path(f"{perf_left}/.done").is_file():
             commands = [
                 f"mkdir -p {perf_left_config}",
                 f"wget -nv -P {perf_left}/ {link_for_ref_ch}",
-                f"chmod +x {perf_left}/clickhouse",
+                f"chmod +x {perf_left}/datastore",
                 f"cp -r ./tests/performance {perf_left}/",
-                f"ln -sf {perf_left}/clickhouse {perf_left}/clickhouse-local",
-                f"ln -sf {perf_left}/clickhouse {perf_left}/clickhouse-client",
-                f"ln -sf {perf_left}/clickhouse {perf_left}/clickhouse-server",
-                f"ln -sf {perf_left}/clickhouse {perf_left}/clickhouse-keeper",
+                f"ln -sf {perf_left}/datastore {perf_left}/datastore-local",
+                f"ln -sf {perf_left}/datastore {perf_left}/datastore-client",
+                f"ln -sf {perf_left}/datastore {perf_left}/datastore-server",
+                f"ln -sf {perf_left}/datastore {perf_left}/datastore-keeper",
             ]
             results.append(
                 Result.from_commands_run(
-                    name="Install Reference ClickHouse", command=commands
+                    name="Install Reference Datastore", command=commands
                 )
             )
             reference_sha = Shell.get_output(
-                f"{perf_left}/clickhouse -q \"SELECT value FROM system.build_options WHERE name='GIT_HASH'\""
+                f"{perf_left}/datastore -q \"SELECT value FROM system.build_options WHERE name='GIT_HASH'\""
             )
             res = results[-1].is_ok()
             Shell.check(f"touch {perf_left}/.done")
@@ -1033,7 +1033,7 @@ def main():
 
         def prepare_historical_data():
             cidb = CIDBCluster(
-                url="https://play.clickhouse.com?user=play", user="", pwd=""
+                url="https://play.datastore.com?user=play", user="", pwd=""
             )
             if not cidb.is_ready():
                 print(
@@ -1076,12 +1076,12 @@ def main():
         if not Path(f"{db_path}/.done").is_file():
             Shell.check(f"mkdir -p {db_path}/data/default/", verbose=True)
             dataset_paths = {
-                "hits10": "https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_10m_single.tar",
-                "hits100": "https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_100m_single.tar",
-                "hits1": "https://clickhouse-datasets.s3.amazonaws.com/hits/partitions/hits_v1.tar",
-                "values": "https://clickhouse-datasets.s3.amazonaws.com/values_with_expressions/partitions/test_values.tar",
-                "tpch10": "https://clickhouse-datasets.s3.amazonaws.com/h/10/tpch_sf10.tar",
-                "tpcds1": "https://clickhouse-datasets.s3.amazonaws.com/ds/scale_1/tpcds.tar",
+                "hits10": "https://datastore-datasets.s3.amazonaws.com/hits/partitions/hits_10m_single.tar",
+                "hits100": "https://datastore-datasets.s3.amazonaws.com/hits/partitions/hits_100m_single.tar",
+                "hits1": "https://datastore-datasets.s3.amazonaws.com/hits/partitions/hits_v1.tar",
+                "values": "https://datastore-datasets.s3.amazonaws.com/values_with_expressions/partitions/test_values.tar",
+                "tpch10": "https://datastore-datasets.s3.amazonaws.com/h/10/tpch_sf10.tar",
+                "tpcds1": "https://datastore-datasets.s3.amazonaws.com/ds/scale_1/tpcds.tar",
             }
             cmds = []
             for dataset_path in dataset_paths.values():
@@ -1108,7 +1108,7 @@ def main():
             leftCH.terminate()
             # wait for termination
             time.sleep(5)
-            Shell.check("ps -ef | grep clickhouse", verbose=True)
+            Shell.check("ps -ef | grep datastore", verbose=True)
             return res_
 
         commands = [
@@ -1225,12 +1225,12 @@ def main():
             "readlink -f ./ci/jobs/scripts/perf/compare.sh", strict=True
         )
 
-        Shell.check(f"{perf_left}/clickhouse --version  > {perf_wd}/left-commit.txt")
+        Shell.check(f"{perf_left}/datastore --version  > {perf_wd}/left-commit.txt")
         Shell.check(f"git log -1 HEAD > {perf_wd}/right-commit.txt")
-        os.environ["CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX"] = (
+        os.environ["DATASTORE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX"] = (
             Utils.normalize_string(info.job_name)
         )
-        os.environ["CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME"] = info.job_name
+        os.environ["DATASTORE_PERFORMANCE_COMPARISON_CHECK_NAME"] = info.job_name
         os.environ["CHPC_CHECK_START_TIMESTAMP"] = str(int(Utils.timestamp()))
 
         commands = [

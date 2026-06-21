@@ -20,7 +20,7 @@ The [stochasticLogisticRegression](/sql-reference/aggregate-functions/reference/
 
 ## naiveBayesClassifier {#naivebayesclassifier}
 
-Classifies input text using a Naive Bayes model with n-grams and Laplace smoothing. The model must be configured in ClickHouse before use.
+Classifies input text using a Naive Bayes model with n-grams and Laplace smoothing. The model must be configured in Datastore before use.
 
 **Syntax**
 
@@ -31,7 +31,7 @@ naiveBayesClassifier(model_name, input_text);
 **Arguments**
 
 - `model_name` — Name of the pre-configured model. [String](../data-types/string.md)
-  The model must be defined in ClickHouse's configuration files (see below).
+  The model must be defined in Datastore's configuration files (see below).
 - `input_text` — Text to classify. [String](../data-types/string.md)
   Input is processed exactly as provided (case/punctuation preserved).
 
@@ -70,18 +70,18 @@ Uses Naive Bayes classification algorithm with [Laplace smoothing](https://en.wi
 
 ### Model Configuration {#model-configuration}
 
-You can find sample source code for creating a Naive Bayes model for language detection [here](https://github.com/nihalzp/ClickHouse-NaiveBayesClassifier-Models).
+You can find sample source code for creating a Naive Bayes model for language detection [here](https://github.com/nihalzp/Datastore-NaiveBayesClassifier-Models).
 
-Additionally, sample models and their associated config files are available [here](https://github.com/nihalzp/ClickHouse-NaiveBayesClassifier-Models/tree/main/models).
+Additionally, sample models and their associated config files are available [here](https://github.com/nihalzp/Datastore-NaiveBayesClassifier-Models/tree/main/models).
 
-Here is an example configuration for a naive Bayes model in ClickHouse:
+Here is an example configuration for a naive Bayes model in Datastore:
 
 ```xml
-<clickhouse>
+<datastore>
     <nb_models>
         <model>
             <name>sentiment</name>
-            <path>/etc/clickhouse-server/config.d/sentiment.bin</path>
+            <path>/etc/datastore-server/config.d/sentiment.bin</path>
             <n>2</n>
             <mode>token</mode>
             <alpha>1.0</alpha>
@@ -97,7 +97,7 @@ Here is an example configuration for a naive Bayes model in ClickHouse:
             </priors>
         </model>
     </nb_models>
-</clickhouse>
+</datastore>
 ```
 
 **Configuration Parameters**
@@ -105,7 +105,7 @@ Here is an example configuration for a naive Bayes model in ClickHouse:
 | Parameter  | Description                                                                                                     | Example                                                  | Default            |
 | ---------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------ |
 | **name**   | Unique model identifier                                                                                         | `language_detection`                                     | *Required*         |
-| **path**   | Full path to model binary                                                                                       | `/etc/clickhouse-server/config.d/language_detection.bin` | *Required*         |
+| **path**   | Full path to model binary                                                                                       | `/etc/datastore-server/config.d/language_detection.bin` | *Required*         |
 | **mode**   | Tokenization method:<br/>- `byte`: Byte sequences<br/>- `codepoint`: Unicode characters<br/>- `token`: Word tokens | `token`                                                  | *Required*         |
 | **n**      | N-gram size (`token` mode):<br/>- `1`=single word<br/>- `2`=word pairs<br/>- `3`=word triplets                     | `2`                                                      | *Required*         |
 | **alpha**  | Laplace smoothing factor used during classification to address n-grams that do not appear in the model          | `0.5`                                                    | `1.0`              |
@@ -128,7 +128,7 @@ For `n=3` and `codepoint` mode, it might look like:
 1 ref 28
 ```
 
-Human-readable format is not used by ClickHouse directly; it must be converted to the binary format described below.
+Human-readable format is not used by Datastore directly; it must be converted to the binary format described below.
 
 **Binary Format Details**
 Each n-gram stored as:
@@ -148,12 +148,12 @@ Before the model is being created from the document corpus, the documents must b
 
 2. **Example for `n=3` in `token` mode:**
 
-   - **Document:** `"ClickHouse is fast"`
-   - **Processed as:** `<s> <s> ClickHouse is fast </s> </s>`
+   - **Document:** `"Datastore is fast"`
+   - **Processed as:** `<s> <s> Datastore is fast </s> </s>`
    - **Generated trigrams:**
-     - `<s> <s> ClickHouse`
-     - `<s> ClickHouse is`
-     - `ClickHouse is fast`
+     - `<s> <s> Datastore`
+     - `<s> Datastore is`
+     - `Datastore is fast`
      - `is fast </s>`
      - `fast </s> </s>`
 
@@ -165,7 +165,7 @@ To simplify model creation for `byte` and `codepoint` modes, it may be convenien
 <!-- 
 The inner content of the tags below are replaced at doc framework build time with 
 docs generated from system.functions. Please do not modify or remove the tags.
-See: https://github.com/ClickHouse/clickhouse-docs/blob/main/contribute/autogenerated-documentation-from-source.md
+See: https://github.com/ClickHouse/datastore-docs/blob/main/contribute/autogenerated-documentation-from-source.md
 -->
 
 <!--AUTOGENERATED_START-->

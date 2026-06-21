@@ -53,7 +53,7 @@ namespace ErrorCodes
     DECLARE(UInt64, cache_hits_threshold, 0, "Deprecated setting", 0) \
     DECLARE(Bool, enable_bypass_cache_with_threshold, false, "Undocumented. Not recommended for use", 0) \
     DECLARE(UInt64, bypass_cache_threshold, FILECACHE_BYPASS_THRESHOLD, "Undocumented. Not recommended for use", 0) \
-    DECLARE(Bool, write_cache_per_user_id_directory, false, "Internal ClickHouse Cloud setting", 0) \
+    DECLARE(Bool, write_cache_per_user_id_directory, false, "Internal Datastore Cloud setting", 0) \
     DECLARE(Bool, allow_dynamic_cache_resize, false, "Allow dynamic resize of filesystem cache", 0) \
     DECLARE(UInt64, dynamic_resize_lock_wait_ms, 1000, "Timeout in milliseconds to acquire the dynamic resize exclusive lock before skipping the resize attempt", 0) \
     DECLARE(Double, max_size_ratio_to_total_space, 0, "Ratio of `max_size` to total disk space", 0) \

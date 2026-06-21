@@ -125,7 +125,7 @@ WRITE_SETTINGS = {
 
 @pytest.fixture(scope="package")
 def iceberg_db(started_cluster_with_trino):
-    """Create the ClickHouse DataLakeCatalog database once per test session."""
+    """Create the Datastore DataLakeCatalog database once per test session."""
     node = started_cluster_with_trino.instances["node1"]
     _create_clickhouse_iceberg_database(node, CATALOG_DATABASE)
     return started_cluster_with_trino

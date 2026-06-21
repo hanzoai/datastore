@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <named_collections_storage>
     <type>zookeeper</type>
     <path>/named_collections_path/</path>
@@ -28,4 +28,4 @@
           <allow_distributed_ddl_queries>true</allow_distributed_ddl_queries>
       </replicated_nc_nodes_cluster>
   </remote_servers>
-</clickhouse>
+</datastore>

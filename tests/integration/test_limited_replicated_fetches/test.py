@@ -44,10 +44,10 @@ def test_limited_fetches(started_cluster):
     Test checks that that we utilize all available threads for fetches
     """
     node1.query(
-        "CREATE TABLE t (key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/test/t', '1') ORDER BY tuple() PARTITION BY key"
+        "CREATE TABLE t (key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/test/t', '1') ORDER BY tuple() PARTITION BY key"
     )
     node2.query(
-        "CREATE TABLE t (key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/test/t', '2') ORDER BY tuple() PARTITION BY key"
+        "CREATE TABLE t (key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/test/t', '2') ORDER BY tuple() PARTITION BY key"
     )
 
     with PartitionManager() as pm:

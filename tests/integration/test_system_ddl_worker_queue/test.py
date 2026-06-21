@@ -41,7 +41,7 @@ def maintain_test_table(test_table):
 
         node.query("CREATE DATABASE testdb")
         node.query(
-            f"CREATE TABLE testdb.{test_table}(id UInt32, val String) ENGINE = ReplicatedMergeTree('/clickhouse/test/{test_table}1-{tmark}', '{i}') ORDER BY id;"
+            f"CREATE TABLE testdb.{test_table}(id UInt32, val String) ENGINE = ReplicatedMergeTree('/datastore/test/{test_table}1-{tmark}', '{i}') ORDER BY id;"
         )
     for i, node in enumerate([node3, node4]):
         node.query(f"DROP TABLE IF EXISTS testdb.{test_table} SYNC")
@@ -49,7 +49,7 @@ def maintain_test_table(test_table):
 
         node.query("CREATE DATABASE testdb")
         node.query(
-            f"CREATE TABLE testdb.{test_table}(id UInt32, val String) ENGINE = ReplicatedMergeTree('/clickhouse/test/{test_table}2-{tmark}', '{i}') ORDER BY id;"
+            f"CREATE TABLE testdb.{test_table}(id UInt32, val String) ENGINE = ReplicatedMergeTree('/datastore/test/{test_table}2-{tmark}', '{i}') ORDER BY id;"
         )
 
 
@@ -96,7 +96,7 @@ def test_distributed_ddl_rubbish(started_cluster):
     )
 
     zk_content = node1.query(
-        "SELECT name, value, path FROM system.zookeeper WHERE path LIKE '/clickhouse/task_queue/ddl%' SETTINGS allow_unrestricted_reads_from_keeper=true",
+        "SELECT name, value, path FROM system.zookeeper WHERE path LIKE '/datastore/task_queue/ddl%' SETTINGS allow_unrestricted_reads_from_keeper=true",
         parse=True,
     ).to_dict("records")
 

@@ -35,9 +35,9 @@ def start_clickhouse():
 def test_keeper_log_gap_before_committed(started_cluster):
     try:
         node1.stop_clickhouse()
-        node1.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/log"])
+        node1.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/log"])
         node1.exec_in_container(
-            ["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"]
+            ["rm", "-rf", "/var/lib/datastore/coordination/snapshots"]
         )
         start_clickhouse()
 
@@ -59,13 +59,13 @@ def test_keeper_log_gap_before_committed(started_cluster):
 
         # Check what files we have
         log_files = (
-            node1.exec_in_container(["ls", "/var/lib/clickhouse/coordination/log"])
+            node1.exec_in_container(["ls", "/var/lib/datastore/coordination/log"])
             .strip()
             .split("\n")
         )
         snapshot_files = (
             node1.exec_in_container(
-                ["ls", "/var/lib/clickhouse/coordination/snapshots"]
+                ["ls", "/var/lib/datastore/coordination/snapshots"]
             )
             .strip()
             .split("\n")
@@ -107,12 +107,12 @@ def test_keeper_log_gap_before_committed(started_cluster):
 
         logging.info(f"Deleting changelog: {changelog_to_delete}")
         node1.exec_in_container(
-            ["rm", f"/var/lib/clickhouse/coordination/log/{changelog_to_delete}"]
+            ["rm", f"/var/lib/datastore/coordination/log/{changelog_to_delete}"]
         )
 
         # Verify the file was deleted
         log_files_after_delete = (
-            node1.exec_in_container(["ls", "/var/lib/clickhouse/coordination/log"])
+            node1.exec_in_container(["ls", "/var/lib/datastore/coordination/log"])
             .strip()
             .split("\n")
         )
@@ -146,7 +146,7 @@ def test_keeper_log_gap_before_committed(started_cluster):
         verify_data()
 
         log_files = (
-            node1.exec_in_container(["ls", "/var/lib/clickhouse/coordination/log"])
+            node1.exec_in_container(["ls", "/var/lib/datastore/coordination/log"])
             .strip()
             .split("\n")
         )

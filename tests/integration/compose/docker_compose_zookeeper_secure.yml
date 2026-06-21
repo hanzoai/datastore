@@ -18,7 +18,7 @@ services:
               target: /zookeeper-ssl-entrypoint.sh
             - type: bind
               source: /misc/client.crt
-              target: /clickhouse-config/client.crt
+              target: /datastore-config/client.crt
             - type: ${ZK_FS:-tmpfs}
               source: ${ZK_DATA1:-}
               target: /data
@@ -46,7 +46,7 @@ services:
               target: /zookeeper-ssl-entrypoint.sh
             - type: bind
               source: /misc/client.crt
-              target: /clickhouse-config/client.crt
+              target: /datastore-config/client.crt
             - type: ${ZK_FS:-tmpfs}
               source: ${ZK_DATA2:-}
               target: /data
@@ -73,7 +73,7 @@ services:
               target: /zookeeper-ssl-entrypoint.sh
             - type: bind
               source: /misc/client.crt
-              target: /clickhouse-config/client.crt
+              target: /datastore-config/client.crt
             - type: ${ZK_FS:-tmpfs}
               source: ${ZK_DATA3:-}
               target: /data

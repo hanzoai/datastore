@@ -25,7 +25,7 @@ def started_cluster():
 
 def get_redis_connection(db_id=0):
     client = redis.Redis(
-        host="localhost", port=cluster.redis_port, password="clickhouse", db=db_id
+        host="localhost", port=cluster.redis_port, password="datastore", db=db_id
     )
     return client
 
@@ -87,7 +87,7 @@ def test_simple_select(started_cluster):
             SELECT
                 key, value
             FROM
-                redis('{address}', 'key', 'key String, value String', 0, 'clickhouse', 10)
+                redis('{address}', 'key', 'key String, value String', 0, 'datastore', 10)
             WHERE
                 key='0'
             FORMAT TSV
@@ -104,7 +104,7 @@ def test_simple_select(started_cluster):
             SELECT
                 *
             FROM
-                redis('{address}', 'key', 'key String, value String', 0, 'clickhouse', 10)
+                redis('{address}', 'key', 'key String, value String', 0, 'datastore', 10)
             ORDER BY
                 key
             FORMAT TSV
@@ -129,7 +129,7 @@ def test_create_table(started_cluster):
         SELECT
             *
         FROM
-            redis('{address}', 'k', 'k String, v UInt32', 0, 'clickhouse', 10)
+            redis('{address}', 'k', 'k String, v UInt32', 0, 'datastore', 10)
         """
     )
 
@@ -140,7 +140,7 @@ def test_create_table(started_cluster):
             SELECT
                 *
             FROM
-                redis('{address}', 'k', 'k not_exist_type, v String', 0, 'clickhouse', 10)
+                redis('{address}', 'k', 'k not_exist_type, v String', 0, 'datastore', 10)
             """
         )
 
@@ -151,7 +151,7 @@ def test_create_table(started_cluster):
             SELECT
                 *
             FROM
-                redis('{address}', 'not_exist_key', 'k not_exist_type, v String', 0, 'clickhouse', 10)
+                redis('{address}', 'not_exist_key', 'k not_exist_type, v String', 0, 'datastore', 10)
             """
         )
 
@@ -171,7 +171,7 @@ def test_data_type(started_cluster):
             SELECT
                 *
             FROM
-                redis('{address}', 'k', 'k String, v String', 0, 'clickhouse', 10)
+                redis('{address}', 'k', 'k String, v String', 0, 'datastore', 10)
             WHERE
                 k='0'
             FORMAT TSV
@@ -193,7 +193,7 @@ def test_data_type(started_cluster):
             SELECT
                 *
             FROM
-                redis('{address}', 'k', 'k UInt32, v UInt32', 0, 'clickhouse', 10)
+                redis('{address}', 'k', 'k UInt32, v UInt32', 0, 'datastore', 10)
             WHERE
                 k=0
             FORMAT TSV
@@ -206,7 +206,7 @@ def test_data_type(started_cluster):
 
     # datetime
     client.flushall()
-    # clickhouse store datetime as uint32 in internal
+    # datastore store datetime as uint32 in internal
     dt = datetime.datetime(2023, 6, 1, 0, 0, 0)
     seconds_since_epoch = dt.timestamp()
     value = serialize_binary_for_uint32(int(seconds_since_epoch))
@@ -218,7 +218,7 @@ def test_data_type(started_cluster):
             SELECT
                 *
             FROM
-                redis('{address}', 'k', 'k DateTime, v DateTime', 0, 'clickhouse', 10)
+                redis('{address}', 'k', 'k DateTime, v DateTime', 0, 'datastore', 10)
             WHERE
                 k='2023-06-01 00:00:00'
             FORMAT TSV

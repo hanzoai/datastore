@@ -8,7 +8,7 @@
 
 
 /// How to test:
-/// for i in ~/work/ClickHouse/tests/queries/0_stateless/*.sql; do echo $i; grep -q 'FORMAT' $i || ./lexer < $i || break; done
+/// for i in ~/work/Datastore/tests/queries/0_stateless/*.sql; do echo $i; grep -q 'FORMAT' $i || ./lexer < $i || break; done
 ///
 
 

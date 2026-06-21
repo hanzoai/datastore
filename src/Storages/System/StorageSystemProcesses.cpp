@@ -25,7 +25,7 @@ ColumnsDescription StorageSystemProcesses::getColumnsDescription()
 
     auto description = ColumnsDescription
     {
-        {"is_initial_query", std::make_shared<DataTypeUInt8>(), "Whether this query comes directly from user or was issues by ClickHouse server in a scope of distributed query execution."},
+        {"is_initial_query", std::make_shared<DataTypeUInt8>(), "Whether this query comes directly from user or was issues by Datastore server in a scope of distributed query execution."},
 
         {"user", std::make_shared<DataTypeString>(), "The user who made the query. Keep in mind that for distributed processing, queries are sent to remote servers under the default user. The field contains the username for a specific query, not for a query that this query initiated."},
         {"query_id", std::make_shared<DataTypeString>(), "Query ID, if defined."},
@@ -39,13 +39,13 @@ ColumnsDescription StorageSystemProcesses::getColumnsDescription()
 
         {"interface", std::make_shared<DataTypeUInt8>(), "The interface which was used to send the query. TCP = 1, HTTP = 2, GRPC = 3, MYSQL = 4, POSTGRESQL = 5, LOCAL = 6, TCP_INTERSERVER = 7."},
 
-        {"os_user", std::make_shared<DataTypeString>(), "Operating system username who runs clickhouse-client."},
-        {"client_hostname", std::make_shared<DataTypeString>(), "Hostname of the client machine where the clickhouse-client or another TCP client is run."},
-        {"client_name", std::make_shared<DataTypeString>(), "The clickhouse-client or another TCP client name."},
-        {"client_revision", std::make_shared<DataTypeUInt64>(), "Revision of the clickhouse-client or another TCP client."},
-        {"client_version_major", std::make_shared<DataTypeUInt64>(), "Major version of the clickhouse-client or another TCP client."},
-        {"client_version_minor", std::make_shared<DataTypeUInt64>(), "Minor version of the clickhouse-client or another TCP client."},
-        {"client_version_patch", std::make_shared<DataTypeUInt64>(), "Patch component of the clickhouse-client or another TCP client version."},
+        {"os_user", std::make_shared<DataTypeString>(), "Operating system username who runs datastore-client."},
+        {"client_hostname", std::make_shared<DataTypeString>(), "Hostname of the client machine where the datastore-client or another TCP client is run."},
+        {"client_name", std::make_shared<DataTypeString>(), "The datastore-client or another TCP client name."},
+        {"client_revision", std::make_shared<DataTypeUInt64>(), "Revision of the datastore-client or another TCP client."},
+        {"client_version_major", std::make_shared<DataTypeUInt64>(), "Major version of the datastore-client or another TCP client."},
+        {"client_version_minor", std::make_shared<DataTypeUInt64>(), "Minor version of the datastore-client or another TCP client."},
+        {"client_version_patch", std::make_shared<DataTypeUInt64>(), "Patch component of the datastore-client or another TCP client version."},
 
         {"http_method", std::make_shared<DataTypeUInt8>(), "HTTP method that initiated the query. Possible values: 0 — The query was launched from the TCP interface. 1 — GET method was used. 2 — POST method was used."},
         {"http_user_agent", std::make_shared<DataTypeString>(), "HTTP header UserAgent passed in the HTTP query."},

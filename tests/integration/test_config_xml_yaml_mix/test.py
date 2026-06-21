@@ -41,7 +41,7 @@ def test_extra_yaml_mix():
         with_zookeeper=False,
         users_config_name="users.yaml",
         copy_common_configs=False,
-        config_root_name="clickhouse",
+        config_root_name="datastore",
         env_variables={"CONFIG_TEST_ENV": "8956"},
     )
 

@@ -33,7 +33,7 @@ See a detailed description of the [CREATE TABLE](/sql-reference/statements/creat
 The table structure can differ from the original MySQL table structure:
 
 - Column names should be the same as in the original MySQL table, but you can use just some of these columns and in any order.
-- Column types may differ from those in the original MySQL table. ClickHouse tries to [cast](../../../engines/database-engines/mysql.md#data_types-support) values to the ClickHouse data types.
+- Column types may differ from those in the original MySQL table. Datastore tries to [cast](../../../engines/database-engines/mysql.md#data_types-support) values to the Datastore data types.
 - The [external_table_functions_use_nulls](/operations/settings/settings#external_table_functions_use_nulls) setting defines how to handle Nullable columns. Default value: 1. If 0, the table function does not make Nullable columns and inserts default values instead of nulls. This is also applicable for NULL values inside arrays.
 
 **Engine Parameters**
@@ -46,18 +46,18 @@ The table structure can differ from the original MySQL table structure:
 - `replace_query` — Flag that converts `INSERT INTO` queries to `REPLACE INTO`. If `replace_query=1`, the query is substituted.
 - `on_duplicate_clause` — The `ON DUPLICATE KEY on_duplicate_clause` expression that is added to the `INSERT` query.
     Example: `INSERT INTO t (c1,c2) VALUES ('a', 2) ON DUPLICATE KEY UPDATE c2 = c2 + 1`, where `on_duplicate_clause` is `UPDATE c2 = c2 + 1`. See the [MySQL documentation](https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html) to find which `on_duplicate_clause` you can use with the `ON DUPLICATE KEY` clause.
-    To specify `on_duplicate_clause` you need to pass `0` to the `replace_query` parameter. If you simultaneously pass `replace_query = 1` and `on_duplicate_clause`, ClickHouse generates an exception.
+    To specify `on_duplicate_clause` you need to pass `0` to the `replace_query` parameter. If you simultaneously pass `replace_query = 1` and `on_duplicate_clause`, Datastore generates an exception.
 
 Arguments also can be passed using [named collections](/operations/named-collections.md). In this case `host` and `port` should be specified separately. This approach is recommended for production environment.
 
 Simple `WHERE` clauses such as `=, !=, >, >=, <, <=` are executed on the MySQL server.
 
-The rest of the conditions and the `LIMIT` sampling constraint are executed in ClickHouse only after the query to MySQL finishes.
+The rest of the conditions and the `LIMIT` sampling constraint are executed in Datastore only after the query to MySQL finishes.
 
 Supports multiple replicas that must be listed by `|`. For example:
 
 ```sql
-CREATE TABLE test_replicas (id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL(`mysql{2|3|4}:3306`, 'clickhouse', 'test_replicas', 'root', 'clickhouse');
+CREATE TABLE test_replicas (id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL(`mysql{2|3|4}:3306`, 'datastore', 'test_replicas', 'root', 'datastore');
 ```
 
 ## Usage example {#usage-example}
@@ -85,7 +85,7 @@ mysql> select * from test;
 1 row in set (0,00 sec)
 ```
 
-Create table in ClickHouse using plain arguments:
+Create table in Datastore using plain arguments:
 
 ```sql
 CREATE TABLE mysql_table

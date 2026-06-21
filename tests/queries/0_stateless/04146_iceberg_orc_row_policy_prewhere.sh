@@ -25,16 +25,16 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-ICEBERG_PATH="${CLICKHOUSE_USER_FILES}/lakehouses/${CLICKHOUSE_DATABASE}_orc_rp_pw"
-TEST_USER="${CLICKHOUSE_DATABASE}_user"
-TEST_POLICY="${CLICKHOUSE_DATABASE}_policy"
+ICEBERG_PATH="${DATASTORE_USER_FILES}/lakehouses/${DATASTORE_DATABASE}_orc_rp_pw"
+TEST_USER="${DATASTORE_DATABASE}_user"
+TEST_POLICY="${DATASTORE_DATABASE}_policy"
 TEST_TABLE="t_ice_orc_rp_pw"
 
 rm -rf "${ICEBERG_PATH}"
 
 # Create an Iceberg table with format=Parquet (so the table-level PREWHERE check
 # passes) but write a mix of ORC and Parquet data files into it.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_experimental_insert_into_iceberg = 1;
 
     CREATE TABLE ${TEST_TABLE} (c0 Int64, c1 String)
@@ -47,11 +47,11 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 # Set up a user and a row policy on c0. The policy keeps rows where c0 > 5.
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
-${CLICKHOUSE_CLIENT} --query "CREATE USER ${TEST_USER} IDENTIFIED WITH plaintext_password BY 'rp_pwd'"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON *.* TO ${TEST_USER}"
-${CLICKHOUSE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
-${CLICKHOUSE_CLIENT} --query "CREATE ROW POLICY ${TEST_POLICY} ON ${TEST_TABLE} FOR SELECT USING c0 > 5 TO ${TEST_USER}"
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
+${DATASTORE_CLIENT} --query "CREATE USER ${TEST_USER} IDENTIFIED WITH plaintext_password BY 'rp_pwd'"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON *.* TO ${TEST_USER}"
+${DATASTORE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
+${DATASTORE_CLIENT} --query "CREATE ROW POLICY ${TEST_POLICY} ON ${TEST_TABLE} FOR SELECT USING c0 > 5 TO ${TEST_USER}"
 
 # 1) Query with PREWHERE on c0, where c0 is NOT in the SELECT list. This is the
 #    case that triggers `remove_prewhere_column = true`. With the bug (PREWHERE
@@ -59,7 +59,7 @@ ${CLICKHOUSE_CLIENT} --query "CREATE ROW POLICY ${TEST_POLICY} ON ${TEST_TABLE} 
 #    already gone from the block. With the fix (row-level filter first, PREWHERE
 #    second), both filters apply correctly. Expected: rows where c0 in (10..149]
 #    where the policy `c0 > 5` is automatically satisfied; total = 139.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
     SELECT count()
     FROM ${TEST_TABLE}
     PREWHERE c0 > 10
@@ -69,7 +69,7 @@ ${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
 # 2) Same but with PREWHERE that overlaps the policy boundary (c0 > 3 < 5). The
 #    policy is the tighter filter — count must reflect c0 > 5 (intersection),
 #    not c0 > 3.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
     SELECT count()
     FROM ${TEST_TABLE}
     PREWHERE c0 > 3
@@ -79,7 +79,7 @@ ${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
 # 3) Sanity: read c1 with PREWHERE on c0 (c0 in PREWHERE only; the column is
 #    removed after PREWHERE). Row policy c0 > 5 still applies. Output is sum of
 #    integer values of c1 for rows where c0 in (10..149]: sum(11..149) = 11120.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
     SELECT sum(toInt64(c1))
     FROM ${TEST_TABLE}
     PREWHERE c0 > 10
@@ -87,7 +87,7 @@ ${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd --query "
 "
 
 # Cleanup
-${CLICKHOUSE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS ${TEST_TABLE}"
+${DATASTORE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS ${TEST_TABLE}"
 rm -rf "${ICEBERG_PATH}"

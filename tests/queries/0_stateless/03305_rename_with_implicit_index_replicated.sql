@@ -5,7 +5,7 @@
 DROP TABLE IF EXISTS t_column_ops SYNC;
 
 CREATE TABLE t_column_ops (a UInt64, b UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_column_ops', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_column_ops', '1')
 ORDER BY a
 SETTINGS add_minmax_index_for_numeric_columns = 1;
 
@@ -67,7 +67,7 @@ DROP TABLE t_column_ops SYNC;
 DROP TABLE IF EXISTS t_type_ops SYNC;
 
 CREATE TABLE t_type_ops (a UInt64, b UInt32)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_type_ops', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_type_ops', '1')
 ORDER BY a
 SETTINGS add_minmax_index_for_numeric_columns = 1, add_minmax_index_for_string_columns=0;
 
@@ -95,7 +95,7 @@ DROP TABLE t_type_ops SYNC;
 DROP TABLE IF EXISTS t_explicit_ops SYNC;
 
 CREATE TABLE t_explicit_ops (a UInt64, b UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_explicit_ops', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_explicit_ops', '1')
 ORDER BY a
 SETTINGS add_minmax_index_for_numeric_columns = 1;
 

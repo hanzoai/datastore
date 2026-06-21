@@ -8,7 +8,7 @@ CREATE TABLE checks
     `test_name` LowCardinality(String),
     `test_status` LowCardinality(String),
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/checks', '{replica}')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/checks', '{replica}')
 ORDER BY check_start_time;
 
 SYSTEM STOP MERGES checks;

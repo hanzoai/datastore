@@ -3,7 +3,7 @@ CREATE DICTIONARY `test_dictionary0` (
     `n2` UInt32
 )
 PRIMARY KEY n1
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
+SOURCE(DATASTORE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
 LIFETIME(MIN 1 MAX 10)
 LAYOUT(FLAT());
 
@@ -14,7 +14,7 @@ CREATE DICTIONARY `test_dictionary1` (
     `n2` UInt32
 )
 PRIMARY KEY n1
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
+SOURCE(DATASTORE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
 LIFETIME(MIN 1 MAX 10)
 LAYOUT(FLAT());  -- { serverError BAD_ARGUMENTS }
 
@@ -23,7 +23,7 @@ CREATE DICTIONARY `test_dictionary2` (
     `n2` UInt32
 )
 PRIMARY KEY n1
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
+SOURCE(DATASTORE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
 LIFETIME(MIN 1 MAX 10)
 LAYOUT(FLAT()); -- { serverError BAD_ARGUMENTS }
 
@@ -32,7 +32,7 @@ CREATE DICTIONARY `test_dictionary3` (
     `n2` UInt32
 )
 PRIMARY KEY n1
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
+SOURCE(DATASTORE(HOST 'localhost' PORT 9000 DB 'test_db' TABLE 'table_01' USER 'default'))
 LIFETIME(MIN 1 MAX 10)
 LAYOUT(FLAT());
 

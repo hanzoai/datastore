@@ -278,14 +278,14 @@ def test_implicit_macros(test_cluster):
         instance,
         """
 CREATE TABLE IF NOT EXISTS test_db.test_macro ON CLUSTER '{cluster}' (p Date, i Int32)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/{layer}-{shard}/{table}', '{replica}', p, p, 1)
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/{layer}-{shard}/{table}', '{replica}', p, p, 1)
 """,
     )
 
     # Check that table was created at correct path in zookeeper
     assert (
         test_cluster.get_kazoo_client("zoo1").exists(
-            "/clickhouse/tables/test_db/0-1/test_macro"
+            "/datastore/tables/test_db/0-1/test_macro"
         )
         is not None
     )
@@ -418,7 +418,7 @@ def test_rename(test_cluster):
 
     test_cluster.ddl_check_query(
         instance,
-        "CREATE TABLE IF NOT EXISTS rename_shard ON CLUSTER cluster (id Int64, sid String DEFAULT concat('old', toString(id))) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/staging/test_shard', '{replica}') ORDER BY (id)",
+        "CREATE TABLE IF NOT EXISTS rename_shard ON CLUSTER cluster (id Int64, sid String DEFAULT concat('old', toString(id))) ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/staging/test_shard', '{replica}') ORDER BY (id)",
     )
     test_cluster.ddl_check_query(
         instance,
@@ -532,7 +532,7 @@ def test_replicated_without_arguments(test_cluster):
     )
     assert (
         instance.query("SHOW CREATE test_atomic.rmt FORMAT TSVRaw")
-        == "CREATE TABLE test_atomic.rmt\n(\n    `n` UInt64,\n    `s` String\n)\nENGINE = ReplicatedMergeTree('/clickhouse/tables/{uuid}/{shard}', '{replica}')\nORDER BY n\nSETTINGS index_granularity = 8192\n"
+        == "CREATE TABLE test_atomic.rmt\n(\n    `n` UInt64,\n    `s` String\n)\nENGINE = ReplicatedMergeTree('/datastore/tables/{uuid}/{shard}', '{replica}')\nORDER BY n\nSETTINGS index_granularity = 8192\n"
     )
     test_cluster.ddl_check_query(
         instance,
@@ -540,7 +540,7 @@ def test_replicated_without_arguments(test_cluster):
     )
     test_cluster.ddl_check_query(
         instance,
-        "CREATE TABLE IF NOT EXISTS test_atomic.rmt ON CLUSTER cluster (n UInt64, s String) ENGINE=ReplicatedMergeTree('/clickhouse/tables/{uuid}/{shard}', '{replica}') ORDER BY n",
+        "CREATE TABLE IF NOT EXISTS test_atomic.rmt ON CLUSTER cluster (n UInt64, s String) ENGINE=ReplicatedMergeTree('/datastore/tables/{uuid}/{shard}', '{replica}') ORDER BY n",
     )
     test_cluster.ddl_check_query(
         instance,

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <insecure>
             <node>
@@ -37,4 +37,4 @@
             </node>
         </secure_backward>
     </remote_servers>
-</clickhouse>
+</datastore>

@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>test</level>
         <rotateOnOpen>false</rotateOnOpen>
     </logger>
-</clickhouse>
+</datastore>

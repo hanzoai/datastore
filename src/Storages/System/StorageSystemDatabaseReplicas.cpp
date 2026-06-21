@@ -262,14 +262,14 @@ StorageSystemDatabaseReplicas::StorageSystemDatabaseReplicas(const StorageID & t
         = {{"database", std::make_shared<DataTypeString>(), "The name of the Replicated database is in."},
            {"is_readonly", std::make_shared<DataTypeUInt8>(), "Whether the database replica is in read-only mode."},
            {"max_log_ptr", std::make_shared<DataTypeInt32>(), "Maximum entry number in the log of general activity."},
-           {"replica_name", std::make_shared<DataTypeString>(), "Replica name in ClickHouse Keeper."},
-           {"replica_path", std::make_shared<DataTypeString>(), "Path to replica data in ClickHouse Keeper."},
-           {"zookeeper_path", std::make_shared<DataTypeString>(), "Path to database data in ClickHouse Keeper."},
+           {"replica_name", std::make_shared<DataTypeString>(), "Replica name in Datastore Keeper."},
+           {"replica_path", std::make_shared<DataTypeString>(), "Path to replica data in Datastore Keeper."},
+           {"zookeeper_path", std::make_shared<DataTypeString>(), "Path to database data in Datastore Keeper."},
            {"shard_name", std::make_shared<DataTypeString>(), "The name of the shard in the cluster."},
            {"log_ptr", std::make_shared<DataTypeInt32>(), "Maximum entry number in the log of general activity that the replica copied to its execution queue, plus one."},
            {"total_replicas", std::make_shared<DataTypeUInt32>(), "The total number of known replicas of this database."},
-           {"zookeeper_exception", std::make_shared<DataTypeString>(), "The last exception message, got if the error happened when fetching the info from ClickHouse Keeper."},
-           {"is_session_expired", std::make_shared<DataTypeUInt8>(), "The session with ClickHouse Keeper has expired. Basically the same as `is_readonly`."}};
+           {"zookeeper_exception", std::make_shared<DataTypeString>(), "The last exception message, got if the error happened when fetching the info from Datastore Keeper."},
+           {"is_session_expired", std::make_shared<DataTypeUInt8>(), "The session with Datastore Keeper has expired. Basically the same as `is_readonly`."}};
 
     StorageInMemoryMetadata storage_metadata;
     storage_metadata.setColumns(description);

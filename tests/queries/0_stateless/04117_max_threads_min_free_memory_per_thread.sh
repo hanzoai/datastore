@@ -7,21 +7,21 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Test for `max_threads_min_free_memory_per_thread` and
 # `max_insert_threads_min_free_memory_per_thread`.
 #
-# Use `clickhouse-local` with a constrained `max_server_memory_usage` so the
+# Use `datastore-local` with a constrained `max_server_memory_usage` so the
 # free-memory limiter actually kicks in, then count parallel stages from the
 # `EXPLAIN PIPELINE` output.
 
-CONFIG_FILE=$(mktemp -p "${CLICKHOUSE_TMP:-.}" 04117_config.XXXXXX.xml)
+CONFIG_FILE=$(mktemp -p "${DATASTORE_TMP:-.}" 04117_config.XXXXXX.xml)
 trap 'rm -f "$CONFIG_FILE"' EXIT
 
 cat > "$CONFIG_FILE" <<'EOF'
-<clickhouse>
+<datastore>
     <max_server_memory_usage>4G</max_server_memory_usage>
-</clickhouse>
+</datastore>
 EOF
 
 run_local() {
-    ${CLICKHOUSE_LOCAL} --config-file "$CONFIG_FILE" "$@"
+    ${DATASTORE_LOCAL} --config-file "$CONFIG_FILE" "$@"
 }
 
 # `EXPLAIN PIPELINE SELECT ...` produces text output where the source stage

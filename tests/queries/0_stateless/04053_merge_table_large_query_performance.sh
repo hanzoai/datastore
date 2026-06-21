@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Tags: long, no-sanitizers, no-flaky-check
-# Test for https://github.com/ClickHouse/ClickHouse/issues/32465
+# Test for https://github.com/ClickHouse/Datastore/issues/32465
 # Enormously large query is slow when run from a Merge table with many underlying tables.
 # Pre-fix, the query tree was cloned per underlying table, so planning was O(N * query_complexity).
 # Post-fix, planning on the Merge table is close to single-underlying-table planning,
@@ -15,15 +15,15 @@ NUM_TABLES=200
 # Create underlying tables (batched in a single connection to avoid 200 client startups).
 CREATE_QUERIES=""
 for i in $(seq 0 $((NUM_TABLES - 1))); do
-    CREATE_QUERIES+="CREATE TABLE ${CLICKHOUSE_DATABASE}.t_merge_perf_${i} (date Date, category String, value Int64, customer_id String) ENGINE = MergeTree ORDER BY (date, category);"
+    CREATE_QUERIES+="CREATE TABLE ${DATASTORE_DATABASE}.t_merge_perf_${i} (date Date, category String, value Int64, customer_id String) ENGINE = MergeTree ORDER BY (date, category);"
 done
-$CLICKHOUSE_CLIENT -nm -q "$CREATE_QUERIES"
+$DATASTORE_CLIENT -nm -q "$CREATE_QUERIES"
 
 # Create Merge table
-$CLICKHOUSE_CLIENT -q "CREATE TABLE ${CLICKHOUSE_DATABASE}.t_merge_perf_all (date Date, category String, value Int64, customer_id String) ENGINE = Merge('${CLICKHOUSE_DATABASE}', '^t_merge_perf_\\\\d+\$')"
+$DATASTORE_CLIENT -q "CREATE TABLE ${DATASTORE_DATABASE}.t_merge_perf_all (date Date, category String, value Int64, customer_id String) ENGINE = Merge('${DATASTORE_DATABASE}', '^t_merge_perf_\\\\d+\$')"
 
 # Insert a small amount of data into one table (we care about planning time, not data processing)
-$CLICKHOUSE_CLIENT -q "INSERT INTO ${CLICKHOUSE_DATABASE}.t_merge_perf_0 SELECT
+$DATASTORE_CLIENT -q "INSERT INTO ${DATASTORE_DATABASE}.t_merge_perf_0 SELECT
     toDate('2021-10-04') + number % 70,
     ['auto', 'appliances', 'garden', 'children', 'home', 'hobbies', 'electronics', 'books'][number % 8 + 1],
     number,
@@ -94,7 +94,7 @@ QUERY="SELECT
         ${MULTIIF_CAT} >= 'd', value * 5,
         0
     )))
-FROM ${CLICKHOUSE_DATABASE}.t_merge_perf_all
+FROM ${DATASTORE_DATABASE}.t_merge_perf_all
 WHERE
     date >= '2021-10-04' AND date <= '2021-12-13'
     AND ${MULTIIF_CAT} >= 'a'
@@ -152,15 +152,15 @@ FORMAT Null"
 QUERY_SINGLE_TIMING="${QUERY/t_merge_perf_all/t_merge_perf_0}"
 
 # Warm up the data-side cache with a small query so the timed runs measure planning.
-$CLICKHOUSE_CLIENT -q "SELECT count() FROM ${CLICKHOUSE_DATABASE}.t_merge_perf_0 FORMAT Null"
+$DATASTORE_CLIENT -q "SELECT count() FROM ${DATASTORE_DATABASE}.t_merge_perf_0 FORMAT Null"
 
 T_START=$(date +%s%N)
-$CLICKHOUSE_CLIENT --max_query_size 1048576 --max_execution_time 30 -q "$QUERY" >/dev/null || { echo "FAIL: query on merge table timed out" >&2; exit 1; }
+$DATASTORE_CLIENT --max_query_size 1048576 --max_execution_time 30 -q "$QUERY" >/dev/null || { echo "FAIL: query on merge table timed out" >&2; exit 1; }
 T_END=$(date +%s%N)
 TIME_MERGE_NS=$((T_END - T_START))
 
 T_START=$(date +%s%N)
-$CLICKHOUSE_CLIENT --max_query_size 1048576 --max_execution_time 30 -q "$QUERY_SINGLE_TIMING" >/dev/null || { echo "FAIL: query on single table timed out" >&2; exit 1; }
+$DATASTORE_CLIENT --max_query_size 1048576 --max_execution_time 30 -q "$QUERY_SINGLE_TIMING" >/dev/null || { echo "FAIL: query on single table timed out" >&2; exit 1; }
 T_END=$(date +%s%N)
 TIME_SINGLE_NS=$((T_END - T_START))
 
@@ -175,7 +175,7 @@ QUERY_RESULT="SELECT
     count(),
     sum(value),
     uniqExact(customer_id)
-FROM ${CLICKHOUSE_DATABASE}.t_merge_perf_all
+FROM ${DATASTORE_DATABASE}.t_merge_perf_all
 WHERE
     date >= '2021-10-04' AND date <= '2021-12-13'
     AND multiIf(
@@ -188,8 +188,8 @@ WHERE
 
 QUERY_SINGLE="${QUERY_RESULT/t_merge_perf_all/t_merge_perf_0}"
 
-RESULT_MERGE=$($CLICKHOUSE_CLIENT -q "$QUERY_RESULT")
-RESULT_SINGLE=$($CLICKHOUSE_CLIENT -q "$QUERY_SINGLE")
+RESULT_MERGE=$($DATASTORE_CLIENT -q "$QUERY_RESULT")
+RESULT_SINGLE=$($DATASTORE_CLIENT -q "$QUERY_SINGLE")
 
 if [ "$RESULT_MERGE" = "$RESULT_SINGLE" ]; then
     echo "OK"
@@ -201,8 +201,8 @@ else
 fi
 
 # Cleanup (batched in a single connection).
-DROP_QUERIES="DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.t_merge_perf_all;"
+DROP_QUERIES="DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.t_merge_perf_all;"
 for i in $(seq 0 $((NUM_TABLES - 1))); do
-    DROP_QUERIES+="DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.t_merge_perf_${i};"
+    DROP_QUERIES+="DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.t_merge_perf_${i};"
 done
-$CLICKHOUSE_CLIENT -nm -q "$DROP_QUERIES"
+$DATASTORE_CLIENT -nm -q "$DROP_QUERIES"

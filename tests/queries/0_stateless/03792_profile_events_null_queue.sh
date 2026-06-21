@@ -10,16 +10,16 @@
 # with a null profile_queue pointer.
 #
 # NOTE: This bug is TCP protocol specific. HTTP doesn't send profile events.
-# NOTE: clickhouse-client cannot reproduce this because it parses the query
+# NOTE: datastore-client cannot reproduce this because it parses the query
 # client-side and merges SQL SETTINGS into protocol settings before sending
 # (see ClientBase.cpp:2337 - InterpreterSetQuery::applySettingsFromQuery).
-# We use Python clickhouse-driver which sends settings and query separately.
+# We use Python datastore-driver which sends settings and query separately.
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-# Check if clickhouse-driver is available
+# Check if datastore-driver is available
 if ! python3 -c "import clickhouse_driver" 2>/dev/null; then
     echo "1"
     echo "OK"
@@ -34,8 +34,8 @@ python3 << EOF
 from clickhouse_driver import Client
 
 client = Client(
-    host='${CLICKHOUSE_HOST:-localhost}',
-    port=${CLICKHOUSE_PORT_TCP:-9000},
+    host='${DATASTORE_HOST:-localhost}',
+    port=${DATASTORE_PORT_TCP:-9000},
     settings={'send_profile_events': False},
     send_receive_timeout=5
 )

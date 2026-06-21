@@ -34,7 +34,7 @@ def started_cluster():
 
 
 def ensure_node_alive(node):
-    """Restart ClickHouse if the process died (e.g. OOM-killed in a previous run)."""
+    """Restart Datastore if the process died (e.g. OOM-killed in a previous run)."""
     try:
         node.query("SELECT 1")
     except Exception:

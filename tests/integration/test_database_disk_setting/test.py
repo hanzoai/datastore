@@ -50,7 +50,7 @@ def start_cluster():
 def directory_exists(node, disk_name: str, dir_path: str):
     path = Path(dir_path.rstrip("/"))
     parent_dir = path.parent
-    disk_cmd_prefix = f"/usr/bin/clickhouse disks -C /tmp/disk_app_config.xml --save-logs --disk {disk_name} --query "
+    disk_cmd_prefix = f"/usr/bin/datastore disks -C /tmp/disk_app_config.xml --save-logs --disk {disk_name} --query "
     file_list = node.exec_in_container(
         [
             "bash",
@@ -89,7 +89,7 @@ def test_db_disk_setting(start_cluster, engine: str, db_disk_name: str):
 
     disk_setting = f"disk='{db_disk_name}'"
     if len(db_disk_name) == 0:
-        disk_setting = "disk=disk(type='local', path='/var/lib/clickhouse/disks/custom_db_disk/')"
+        disk_setting = "disk=disk(type='local', path='/var/lib/datastore/disks/custom_db_disk/')"
         db_disk_name = "custom_db_disk"
 
     node1.query(
@@ -119,7 +119,7 @@ def test_db_disk_setting(start_cluster, engine: str, db_disk_name: str):
     node1.query(f"DROP DATABASE IF EXISTS {db_name}_rename SYNC")
 
 def replace_text_in_metadata(node, disk_name: str, metadata_path: str, old_value: str, new_value: str):
-    disk_cmd_prefix = f"/usr/bin/clickhouse disks -C {disk_config_file_path} --disk {disk_name} --save-logs --query "
+    disk_cmd_prefix = f"/usr/bin/datastore disks -C {disk_config_file_path} --disk {disk_name} --save-logs --query "
 
     old_metadata = node.exec_in_container(
         ["bash", "-c", f"{disk_cmd_prefix} 'read --path-from {metadata_path}'"]
@@ -129,7 +129,7 @@ def replace_text_in_metadata(node, disk_name: str, metadata_path: str, old_value
     write_to_file(node, disk_name, metadata_path, new_metadata)
 
 def read_file(node, disk_name: str, metadata_path: str):
-    disk_cmd_prefix = f"/usr/bin/clickhouse disks -C {disk_config_file_path} --disk {disk_name} --save-logs --query "
+    disk_cmd_prefix = f"/usr/bin/datastore disks -C {disk_config_file_path} --disk {disk_name} --save-logs --query "
 
     return node.exec_in_container(
         ["bash", "-c", f"{disk_cmd_prefix} 'read --path-from {metadata_path}'"]
@@ -138,7 +138,7 @@ def read_file(node, disk_name: str, metadata_path: str):
 def write_to_file(node, disk_name: str, file_path: str, content: str):
     # Escape backticks to avoid command substitution
     escaped_content = content.replace('"', r"\"").replace("`", r"\`")
-    disk_cmd_prefix = f"/usr/bin/clickhouse disks -C {disk_config_file_path} --save-logs --disk {disk_name} --query "
+    disk_cmd_prefix = f"/usr/bin/datastore disks -C {disk_config_file_path} --save-logs --disk {disk_name} --query "
     node.exec_in_container(
         [
             "bash",
@@ -149,7 +149,7 @@ def write_to_file(node, disk_name: str, file_path: str, content: str):
 
 def remove_file(node, disk_name: str, file_path: str):
     # Escape backticks to avoid command substitution
-    disk_cmd_prefix = f"/usr/bin/clickhouse disks -C {disk_config_file_path} --save-logs --disk {disk_name} --query "
+    disk_cmd_prefix = f"/usr/bin/datastore disks -C {disk_config_file_path} --save-logs --disk {disk_name} --query "
     node.exec_in_container(
         ["bash", "-c", f"{disk_cmd_prefix} 'remove {file_path}'"]
     )

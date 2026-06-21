@@ -18,7 +18,7 @@ create dictionary dict
     `float64Field` Float64
 )
 PRIMARY KEY strField, dateField
-SOURCE (CLICKHOUSE(TABLE 'dict_table'))
+SOURCE (DATASTORE(TABLE 'dict_table'))
 LIFETIME(MIN 300 MAX 360)
 LAYOUT (COMPLEX_KEY_HASHED());
 

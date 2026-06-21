@@ -5,11 +5,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-DATA_FILE=$CLICKHOUSE_TEST_UNIQUE_NAME.data
+DATA_FILE=$DATASTORE_TEST_UNIQUE_NAME.data
 
 echo '{"a" : 42}' > $DATA_FILE
-$CLICKHOUSE_LOCAL -q "desc table \`$DATA_FILE\`"
-$CLICKHOUSE_LOCAL -q "select * from \`$DATA_FILE\`"
+$DATASTORE_LOCAL -q "desc table \`$DATA_FILE\`"
+$DATASTORE_LOCAL -q "select * from \`$DATA_FILE\`"
 
 rm $DATA_FILE
 

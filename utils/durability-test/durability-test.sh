@@ -1,8 +1,8 @@
 #!/bin/bash
 
 : '
-A simple test for durability. It starts up clickhouse server in qemu VM and runs
-inserts via clickhouse benchmark tool. Then it kills VM in random moment and
+A simple test for durability. It starts up datastore server in qemu VM and runs
+inserts via datastore benchmark tool. Then it kills VM in random moment and
 checks whether table contains broken parts. With enabled fsync no broken parts
 should be appeared.
 
@@ -58,10 +58,10 @@ function wait_vm_for_start()
 
 function wait_clickhouse_for_start()
 {
-    echo "Waiting until ClickHouse started..."
+    echo "Waiting until Datastore started..."
     started=0
     for _ in {0..30}; do
-        if run "clickhouse client --query 'select 1'" > /dev/null; then
+        if run "datastore client --query 'select 1'" > /dev/null; then
             started=1
             break
         fi
@@ -69,10 +69,10 @@ function wait_clickhouse_for_start()
     done
 
     if ((started == 0)); then
-        echo "Can't start ClickHouse."
+        echo "Can't start Datastore."
     fi
 
-    echo "Started ClickHouse"
+    echo "Started Datastore"
 }
 
 echo "Downloading image"
@@ -94,34 +94,34 @@ echo "Preparing VM"
 # Resize partition
 run "growpart /dev/sda 1 && resize2fs /dev/sda1"
 
-if [[ -z $CLICKHOUSE_BINARY ]]; then
-    CLICKHOUSE_BINARY=/usr/bin/clickhouse
+if [[ -z $DATASTORE_BINARY ]]; then
+    DATASTORE_BINARY=/usr/bin/datastore
 fi
 
-if [[ -z $CLICKHOUSE_CONFIG_DIR ]]; then
-    CLICKHOUSE_CONFIG_DIR=/etc/clickhouse-server
+if [[ -z $DATASTORE_CONFIG_DIR ]]; then
+    DATASTORE_CONFIG_DIR=/etc/datastore-server
 fi
 
-echo "Using ClickHouse binary: $CLICKHOUSE_BINARY"
-echo "Using ClickHouse config from: $CLICKHOUSE_CONFIG_DIR"
+echo "Using Datastore binary: $DATASTORE_BINARY"
+echo "Using Datastore config from: $DATASTORE_CONFIG_DIR"
 
-copy "$CLICKHOUSE_BINARY" /usr/bin
-copy "$CLICKHOUSE_CONFIG_DIR" /etc
-run "mv /etc/$CLICKHOUSE_CONFIG_DIR /etc/clickhouse-server"
+copy "$DATASTORE_BINARY" /usr/bin
+copy "$DATASTORE_CONFIG_DIR" /etc
+run "mv /etc/$DATASTORE_CONFIG_DIR /etc/datastore-server"
 
 echo "Prepared VM"
-echo "Starting ClickHouse"
+echo "Starting Datastore"
 
-run "clickhouse server --config-file=/etc/clickhouse-server/config.xml > clickhouse-server.log 2>&1" &
+run "datastore server --config-file=/etc/datastore-server/config.xml > datastore-server.log 2>&1" &
 wait_clickhouse_for_start
 
 query=$(cat "$CREATE_QUERY")
 echo "Executing query: $query"
-run "clickhouse client --query '$query'"
+run "datastore client --query '$query'"
 
 query=$(cat "$INSERT_QUERY")
 echo "Will run in a loop query:  $query"
-run "clickhouse benchmark <<< '$query' -c 8" &
+run "datastore benchmark <<< '$query' -c 8" &
 echo "Running queries"
 
 pid=$(pidof qemu-system-x86_64)
@@ -141,11 +141,11 @@ sleep 5s
 wait_vm_for_start
 
 run "rm -r *data/system"
-run "clickhouse server --config-file=/etc/clickhouse-server/config.xml > clickhouse-server.log 2>&1" &
+run "datastore server --config-file=/etc/datastore-server/config.xml > datastore-server.log 2>&1" &
 wait_clickhouse_for_start
 
 pid=$(pidof qemu-system-x86_64)
-result=$(run "grep $TABLE_NAME clickhouse-server.log | grep 'Caught exception while loading metadata'")
+result=$(run "grep $TABLE_NAME datastore-server.log | grep 'Caught exception while loading metadata'")
 if [[ -n $result ]]; then
     echo "FAIL. Can't attach table:"
     echo "$result"
@@ -153,7 +153,7 @@ if [[ -n $result ]]; then
     exit 1
 fi
 
-result=$(run "grep $TABLE_NAME clickhouse-server.log | grep 'Considering to remove broken part'")
+result=$(run "grep $TABLE_NAME datastore-server.log | grep 'Considering to remove broken part'")
 if [[ -n $result ]]; then
     echo "FAIL. Have broken parts:"
     echo "$result"

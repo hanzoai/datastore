@@ -478,7 +478,7 @@ TEST(DeleteBitmapTest, FileNameRoundtrip)
 ///
 /// Reference numbers (Graviton-class AArch64,
 ///   armv8.2-a+simd+crypto+dotprod+ssbs+rcpc+bf16,
-///   ClickHouse release build, 10-iteration averages):
+///   Datastore release build, 10-iteration averages):
 ///
 ///   shape               serialize   deserialize   contains (10 M probes)   wire size
 ///   ---------------------------------------------------------------------------------

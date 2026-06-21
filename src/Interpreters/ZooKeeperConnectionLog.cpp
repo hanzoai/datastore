@@ -45,12 +45,12 @@ ColumnsDescription ZooKeeperConnectionLogElement::getColumnsDescription()
         {"event_time", std::make_shared<DataTypeDateTime>(), "Time of the entry"},
         {"event_time_microseconds", std::make_shared<DataTypeDateTime64>(6), "Time of the entry with microseconds precision."},
         {"name", std::make_shared<DataTypeString>(), "ZooKeeper cluster's name."},
-        {"host", std::make_shared<DataTypeString>(), "The hostname/IP of the ZooKeeper node that ClickHouse connected to or disconnected from."},
-        {"port", std::make_shared<DataTypeUInt16>(), "The port of the ZooKeeper node that ClickHouse connected to or disconnected from."},
-        {"index", std::make_shared<DataTypeUInt8>(), "The index of the ZooKeeper node that ClickHouse connected to or disconnected from. The index is from ZooKeeper config."},
+        {"host", std::make_shared<DataTypeString>(), "The hostname/IP of the ZooKeeper node that Datastore connected to or disconnected from."},
+        {"port", std::make_shared<DataTypeUInt16>(), "The port of the ZooKeeper node that Datastore connected to or disconnected from."},
+        {"index", std::make_shared<DataTypeUInt8>(), "The index of the ZooKeeper node that Datastore connected to or disconnected from. The index is from ZooKeeper config."},
         {"client_id", std::make_shared<DataTypeInt64>(), "Session id of the connection."},
         {"keeper_api_version", std::make_shared<DataTypeUInt8>(), "Keeper API version."},
-        {"enabled_feature_flags", std::make_shared<DataTypeArray>(std::move(feature_flags_enum)), "Feature flags which are enabled. Only applicable to ClickHouse Keeper."},
+        {"enabled_feature_flags", std::make_shared<DataTypeArray>(std::move(feature_flags_enum)), "Feature flags which are enabled. Only applicable to Datastore Keeper."},
         {"availability_zone", std::make_shared<DataTypeString>(), "Availability zone"},
         {"reason", std::make_shared<DataTypeLowCardinality>(std::make_shared<DataTypeString>()), "Reason for the connection or disconnection."}, // Updated field
     };

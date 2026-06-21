@@ -449,7 +449,7 @@ def test_oid(started_cluster):
     mongo_connection = get_mongo_connection(started_cluster)
     db = mongo_connection["test_oid"]
     db.command("dropAllUsersFromDatabase")
-    db.command("createUser", "root", pwd="clickhouse", roles=["readWrite"])
+    db.command("createUser", "root", pwd="datastore", roles=["readWrite"])
     oid_mongo_table = db["oid_table"]
     inserted_result = oid_mongo_table.insert_many(
         [
@@ -462,8 +462,8 @@ def test_oid(started_cluster):
 
     node = started_cluster.instances["node"]
     table_definitions = [
-        "mongodb('mongo1:27017', 'test_oid', 'oid_table', 'root', 'clickhouse', '_id String, key String')",
-        "mongodb('mongodb://root:clickhouse@mongo1:27017/test_oid', 'oid_table', '_id String, key String')",
+        "mongodb('mongo1:27017', 'test_oid', 'oid_table', 'root', 'datastore', '_id String, key String')",
+        "mongodb('mongodb://root:datastore@mongo1:27017/test_oid', 'oid_table', '_id String, key String')",
     ]
 
     for table_definition in table_definitions:
@@ -495,12 +495,12 @@ def test_oid(started_cluster):
         with pytest.raises(QueryRuntimeException):
             node.query(f"SELECT key FROM {table_definition} WHERE _id not in ['nope', 'not-oid']")
 
-    table_definition = ("mongodb('mongo1:27017', 'test_oid', 'oid_table', 'root', 'clickhouse', '_id String, key String', "
+    table_definition = ("mongodb('mongo1:27017', 'test_oid', 'oid_table', 'root', 'datastore', '_id String, key String', "
                         "'', 'key)")
     with pytest.raises(QueryRuntimeException):
         node.query(f"SELECT * FROM {table_definition} WHERE key = 'not-oid'")
 
-    table_definition = ("mongodb('mongodb://root:clickhouse@mongo1:27017/test_oid', 'oid_table', '_id String, key String', "
+    table_definition = ("mongodb('mongodb://root:datastore@mongo1:27017/test_oid', 'oid_table', '_id String, key String', "
                         "'key')")
     with pytest.raises(QueryRuntimeException):
         node.query(f"SELECT * FROM {table_definition} WHERE key = 'not-oid'")

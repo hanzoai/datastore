@@ -37,7 +37,7 @@ def start_cluster():
             for db in ("test", "test_ordinary"):
                 node.query(
                     "CREATE DICTIONARY {}.dict(x UInt64, y UInt64) PRIMARY KEY x "
-                    "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'source' DB 'test')) "
+                    "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'source' DB 'test')) "
                     "LAYOUT(FLAT()) LIFETIME(0)".format(db)
                 )
         yield cluster
@@ -71,7 +71,7 @@ def test_dependency_via_implicit_table(node):
     for d_name in d_names:
         node.query(
             "CREATE DICTIONARY {}(x UInt64, y UInt64) PRIMARY KEY x "
-            "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'dict' DB 'test')) "
+            "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'dict' DB 'test')) "
             "LAYOUT(FLAT()) LIFETIME(0)".format(d_name)
         )
 
@@ -104,7 +104,7 @@ def test_dependency_via_explicit_table(node):
         )
         node.query(
             "CREATE DICTIONARY {}(x UInt64, y UInt64) PRIMARY KEY x "
-            "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE '{}' DB '{}')) "
+            "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE '{}' DB '{}')) "
             "LAYOUT(FLAT()) LIFETIME(0)".format(d_name, tbl_shortname, tbl_database)
         )
 
@@ -134,7 +134,7 @@ def test_dependency_via_dictionary_database(node):
     for d_name in d_names:
         node.query(
             "CREATE DICTIONARY {}(x UInt64, y UInt64) PRIMARY KEY x "
-            "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'test_ordinary.dict' DB 'dict_db')) "
+            "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'test_ordinary.dict' DB 'dict_db')) "
             "LAYOUT(FLAT()) LIFETIME(0)".format(d_name)
         )
 
@@ -182,7 +182,7 @@ def test_dependent_dict_table_distr(node):
 
     query(
         "CREATE DICTIONARY test_db.mdict (key1 UInt8,key2 UInt8, value UInt8) PRIMARY KEY key1,key2"
-        " SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB 'test_db' TABLE 'dictback'))"
+        " SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB 'test_db' TABLE 'dictback'))"
         " LIFETIME(MIN 100 MAX 100)  LAYOUT(COMPLEX_KEY_CACHE(SIZE_IN_CELLS 1000));"
     )
 
@@ -211,7 +211,7 @@ def test_no_lazy_load():
     node2.query("insert into no_lazy.src select number, number from numbers(100, 99)")
     node2.query(
         "create dictionary no_lazy.dict (n int, mm int) primary key n "
-        "source(clickhouse(query 'select n, m + sleepEachRow(0.1) as mm from no_lazy.src')) "
+        "source(datastore(query 'select n, m + sleepEachRow(0.1) as mm from no_lazy.src')) "
         "lifetime(min 0 max 0) layout(complex_key_hashed_array(shards 10))"
     )
 

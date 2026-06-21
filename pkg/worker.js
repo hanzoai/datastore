@@ -4,20 +4,20 @@
  * Proxies and rebrands upstream datastore packages.
  * Routes:
  *   /datastore/tgz/{channel}/{package}-{version}-{arch}.tgz
- *     → packages.clickhouse.com/tgz/{channel}/clickhouse-{component}-{version}-{arch}.tgz
+ *     → packages.datastore.com/tgz/{channel}/datastore-{component}-{version}-{arch}.tgz
  *
  *   /datastore/deb/pool/main/{package}-{version}_{arch}.deb
- *     → packages.clickhouse.com/deb/pool/main/c/clickhouse/clickhouse-{component}-{version}_{arch}.deb
+ *     → packages.datastore.com/deb/pool/main/c/datastore/datastore-{component}-{version}_{arch}.deb
  */
 
-const UPSTREAM_BASE = 'https://packages.clickhouse.com';
+const UPSTREAM_BASE = 'https://packages.datastore.com';
 
 // Map our package names to upstream
 const PACKAGE_MAP = {
-  'datastore-client': 'clickhouse-client',
-  'datastore-server': 'clickhouse-server',
-  'datastore-common-static': 'clickhouse-common-static',
-  'datastore-keeper': 'clickhouse-keeper',
+  'datastore-client': 'datastore-client',
+  'datastore-server': 'datastore-server',
+  'datastore-common-static': 'datastore-common-static',
+  'datastore-keeper': 'datastore-keeper',
 };
 
 export default {
@@ -52,9 +52,9 @@ export default {
       for (const [ours, upstream] of Object.entries(PACKAGE_MAP)) {
         subpath = subpath.replace(ours, upstream);
       }
-      // Fix the path structure for deb (upstream uses /c/clickhouse/ prefix)
-      if (!subpath.includes('/c/clickhouse/')) {
-        subpath = subpath.replace('pool/main/', 'pool/main/c/clickhouse/');
+      // Fix the path structure for deb (upstream uses /c/datastore/ prefix)
+      if (!subpath.includes('/c/datastore/')) {
+        subpath = subpath.replace('pool/main/', 'pool/main/c/datastore/');
       }
       const upstreamUrl = `${UPSTREAM_BASE}/deb/${subpath}`;
       return proxyUpstream(upstreamUrl, request);

@@ -30,7 +30,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_DIR = os.path.join(SCRIPT_DIR, "configs")
 
 
-# temporarily disabled due to https://github.com/ClickHouse/ClickHouse/pull/51446#issuecomment-1687066351
+# temporarily disabled due to https://github.com/ClickHouse/Datastore/pull/51446#issuecomment-1687066351
 # def test_mark_cache_size_is_runtime_configurable(start_cluster):
 #     # the initial config specifies the mark cache size as 496 bytes, just enough to hold two marks
 #     node.query("SYSTEM CLEAR MARK CACHE")
@@ -58,7 +58,7 @@ CONFIG_DIR = os.path.join(SCRIPT_DIR, "configs")
 #     # switch to a config with a mark cache size of 248 bytes
 #     node.copy_file_to_container(
 #         os.path.join(CONFIG_DIR, "smaller_mark_cache.xml"),
-#         "/etc/clickhouse-server/config.d/default.xml",
+#         "/etc/datastore-server/config.d/default.xml",
 #     )
 #
 #     node.query("SYSTEM RELOAD CONFIG")
@@ -91,7 +91,7 @@ CONFIG_DIR = os.path.join(SCRIPT_DIR, "configs")
 #     # restore the original config
 #     node.copy_file_to_container(
 #         os.path.join(CONFIG_DIR, "default.xml"),
-#         "/etc/clickhouse-server/config.d/default.xml",
+#         "/etc/datastore-server/config.d/default.xml",
 #     )
 
 
@@ -112,7 +112,7 @@ def test_query_cache_size_is_runtime_configurable(start_cluster):
     # switch to a config with a maximum query cache size of _0_
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "empty_query_cache.xml"),
-        "/etc/clickhouse-server/config.d/default.xml",
+        "/etc/datastore-server/config.d/default.xml",
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -143,7 +143,7 @@ def test_query_cache_size_is_runtime_configurable(start_cluster):
     # Restore the original config
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "default.xml"),
-        "/etc/clickhouse-server/config.d/default.xml",
+        "/etc/datastore-server/config.d/default.xml",
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -168,7 +168,7 @@ def test_cache_size_capped_by_ram_ratio(start_cluster):
 
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "oversized_caches.xml"),
-        "/etc/clickhouse-server/config.d/oversized_caches.xml",
+        "/etc/datastore-server/config.d/oversized_caches.xml",
     )
     node.query("SYSTEM RELOAD CONFIG")
 
@@ -192,6 +192,6 @@ def test_cache_size_capped_by_ram_ratio(start_cluster):
         )
     finally:
         node.exec_in_container(
-            ["rm", "-f", "/etc/clickhouse-server/config.d/oversized_caches.xml"]
+            ["rm", "-f", "/etc/datastore-server/config.d/oversized_caches.xml"]
         )
         node.query("SYSTEM RELOAD CONFIG")

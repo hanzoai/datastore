@@ -1,7 +1,7 @@
 -- Regression test: has() with LowCardinality column in ORDER BY with CAST
 -- caused "Bad cast from ColumnVector to ColumnLowCardinality" exception
 -- in applyDeterministicDagToColumn when building key condition for has().
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=97568&sha=9785d6ea5d327f0a7671c45dada310eb44e63044&name_0=PR&name_1=AST%20fuzzer%20%28amd_msan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?PR=97568&sha=9785d6ea5d327f0a7671c45dada310eb44e63044&name_0=PR&name_1=AST%20fuzzer%20%28amd_msan%29
 
 SET allow_suspicious_low_cardinality_types = 1;
 

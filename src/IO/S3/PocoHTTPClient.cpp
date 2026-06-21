@@ -478,12 +478,12 @@ void PocoHTTPClient::makeRequestInternalImpl(
     if (!first_attempt)
         LOG_DEBUG(
             log,
-            "Retrying S3 request to: {}, aws sdk attempt: {}, clickhouse attempt: {}, kind: {}",
+            "Retrying S3 request to: {}, aws sdk attempt: {}, datastore attempt: {}, kind: {}",
             uri, sdk_attempt, ch_attempt, getMetricKind(request) == S3MetricKind::Read ? "Read" : "Write");
     else // if (enable_s3_requests_logging)
         LOG_TEST(
             log,
-            "Make S3 request to: {}, aws sdk attempt: {}, clickhouse attempt: {}, kind: {}",
+            "Make S3 request to: {}, aws sdk attempt: {}, datastore attempt: {}, kind: {}",
             uri, sdk_attempt, ch_attempt, getMetricKind(request) == S3MetricKind::Read ? "Read" : "Write");
 
     switch (request.GetMethod())
@@ -547,7 +547,7 @@ void PocoHTTPClient::makeRequestInternalImpl(
             Poco::URI target_uri(uri);
 
             if (enable_s3_requests_logging && !proxy_configuration.isEmpty())
-                LOG_TEST(log, "Due to reverse proxy host name ({}) won't be resolved on ClickHouse side", uri);
+                LOG_TEST(log, "Due to reverse proxy host name ({}) won't be resolved on Datastore side", uri);
 
             auto group = for_disk_s3 ? HTTPConnectionGroupType::DISK : HTTPConnectionGroupType::STORAGE;
 
@@ -600,7 +600,7 @@ void PocoHTTPClient::makeRequestInternalImpl(
             for (const auto & [header_name, header_value] : extra_headers)
             {
                 // AWS S3 canonical headers must include `Host`, `Content-Type` and any `x-amz-*`.
-                // These headers will be signed. Custom S3 headers specified in ClickHouse storage conf are added in `extra_headers`.
+                // These headers will be signed. Custom S3 headers specified in Datastore storage conf are added in `extra_headers`.
                 // At this point in the stack trace, request has already been signed and any `x-amz-*` extra headers was already added
                 // to the canonical headers list. Therefore, we should not add them again to the request.
                 // https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html

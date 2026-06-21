@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the AggregateFunction data type in ClickHouse, which
+description: 'Documentation for the AggregateFunction data type in Datastore, which
 stores intermediate states of aggregate functions'
 keywords: ['AggregateFunction', 'Type']
 sidebar_label: 'AggregateFunction'
@@ -11,7 +11,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-All [Aggregate functions](/sql-reference/aggregate-functions) in ClickHouse have
+All [Aggregate functions](/sql-reference/aggregate-functions) in Datastore have
 an implementation-specific intermediate state that can be serialized to an
 `AggregateFunction` data type and stored in a table. This is usually done by 
 means of a [materialized view](../../sql-reference/statements/create/view.md).
@@ -71,7 +71,7 @@ In contrast to functions `uniq` and `quantiles`, `uniqState` and `quantilesState
 In other words, they return a value of `AggregateFunction` type.
 
 In the results of the `SELECT` query, values of type `AggregateFunction` have 
-implementation-specific binary representations for all of the ClickHouse output
+implementation-specific binary representations for all of the Datastore output
 formats.
 
 There is a special Session level setting `aggregate_function_input_format` that allows to build state from the input values.
@@ -106,7 +106,7 @@ See [AggregatingMergeTree](../../engines/table-engines/mergetree-family/aggregat
 
 ## Related Content {#related-content}
 
-- Blog: [Using Aggregate Combinators in ClickHouse](https://clickhouse.com/blog/aggregate-functions-combinators-in-clickhouse-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
 - [MergeState](/sql-reference/aggregate-functions/combinators#-mergestate)
   combinator.
 - [State](/sql-reference/aggregate-functions/combinators#-state) combinator.

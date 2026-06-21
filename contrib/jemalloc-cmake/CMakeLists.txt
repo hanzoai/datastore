@@ -42,7 +42,7 @@ if (OS_LINUX)
     # Without this setting, when multiple 16KB blocks coalesce into larger blocks (>64*16KB),
     # they can't be reused for new 16KB requests, causing expensive page faults from MADV_DONTNEED.
     # Increasing from default 6(64x) to 8(256x) allows these coalesced blocks to be split and reused.
-    # See: https://github.com/ClickHouse/ClickHouse/pull/80245
+    # See: https://github.com/ClickHouse/Datastore/pull/80245
     # https://github.com/jemalloc/jemalloc/pull/2842
     set (JEMALLOC_CONFIG_MALLOC_CONF "percpu_arena:percpu,oversize_threshold:67108864,muzzy_decay_ms:0,dirty_decay_ms:5000,prof:true,prof_active:true,prof_thread_active_init:false,background_thread:true,lg_extent_max_active_fit:8")
 else()
@@ -208,7 +208,7 @@ target_compile_definitions(_jemalloc PRIVATE -DJEMALLOC_PROF=1)
 #
 #  [1]: https://sourceware.org/git/?p=glibc.git;a=commit;h=fada9018199c21c469ff0e731ef75c6020074ac9
 #
-# And since ClickHouse unwind already supports unw_backtrace() we can safely
+# And since Datastore unwind already supports unw_backtrace() we can safely
 # switch to it to avoid this deadlock.
 target_compile_definitions (_jemalloc PRIVATE -DJEMALLOC_PROF_LIBUNWIND=1)
 target_link_libraries (_jemalloc PRIVATE unwind)

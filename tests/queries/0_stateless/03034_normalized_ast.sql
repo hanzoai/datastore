@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/49472
+-- https://github.com/ClickHouse/Datastore/issues/49472
 SET enable_analyzer=1;
 SELECT
     concat(database, table) AS name,

@@ -10,21 +10,21 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # In this test we restore from "/tests/queries/0_stateless/backups/old_backup_without_access_entities_dependents.zip"
 backup_name="$($CURDIR/helpers/install_predefined_backup.sh old_backup_without_access_entities_dependents.zip)"
 
-${CLICKHOUSE_CLIENT} -m --query "
+${DATASTORE_CLIENT} -m --query "
 DROP USER IF EXISTS user_03231;
 DROP ROLE IF EXISTS role_a_03231, role_b_03231;
 "
 
-${CLICKHOUSE_CLIENT} --query "RESTORE ALL FROM Disk('backups', '${backup_name}') FORMAT Null"
+${DATASTORE_CLIENT} --query "RESTORE ALL FROM Disk('backups', '${backup_name}') FORMAT Null"
 
-${CLICKHOUSE_CLIENT} --query "SHOW CREATE USER user_03231"
-${CLICKHOUSE_CLIENT} --query "SHOW GRANTS FOR user_03231"
-${CLICKHOUSE_CLIENT} --query "SHOW CREATE ROLE role_a_03231"
-${CLICKHOUSE_CLIENT} --query "SHOW GRANTS FOR role_a_03231"
-${CLICKHOUSE_CLIENT} --query "SHOW CREATE ROLE role_b_03231"
-${CLICKHOUSE_CLIENT} --query "SHOW GRANTS FOR role_b_03231"
+${DATASTORE_CLIENT} --query "SHOW CREATE USER user_03231"
+${DATASTORE_CLIENT} --query "SHOW GRANTS FOR user_03231"
+${DATASTORE_CLIENT} --query "SHOW CREATE ROLE role_a_03231"
+${DATASTORE_CLIENT} --query "SHOW GRANTS FOR role_a_03231"
+${DATASTORE_CLIENT} --query "SHOW CREATE ROLE role_b_03231"
+${DATASTORE_CLIENT} --query "SHOW GRANTS FOR role_b_03231"
 
-${CLICKHOUSE_CLIENT} -m --query "
+${DATASTORE_CLIENT} -m --query "
 DROP USER user_03231;
 DROP ROLE role_a_03231, role_b_03231;
 "

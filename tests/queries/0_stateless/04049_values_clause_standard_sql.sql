@@ -1,5 +1,5 @@
 -- Test SQL standard VALUES clause: FROM (VALUES (...), ...) AS t(col, ...)
--- https://github.com/ClickHouse/ClickHouse/issues/99605
+-- https://github.com/ClickHouse/Datastore/issues/99605
 
 SET enable_analyzer = 1;
 

@@ -1,6 +1,6 @@
 -- Tags: distributed
 
--- https://github.com/ClickHouse/ClickHouse/issues/77468
+-- https://github.com/ClickHouse/Datastore/issues/77468
 
 DROP TABLE IF EXISTS t0;
 DROP TABLE IF EXISTS t1;

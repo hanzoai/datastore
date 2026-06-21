@@ -28,7 +28,7 @@ Contains information about storage policies and volumes which are defined in [se
 
 ## Volume selection on `INSERT` {#volume-selection-on-insert}
 
-When `INSERT` creates a new data part, ClickHouse picks a destination disk
+When `INSERT` creates a new data part, Datastore picks a destination disk
 by trying the rules below in order. The first rule that matches **and can
 reserve space for the part** wins; otherwise (rule does not apply, no free
 space, or `max_data_part_size` exceeded) evaluation continues with the next

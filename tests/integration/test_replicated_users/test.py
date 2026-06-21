@@ -93,16 +93,16 @@ def test_create_replicated_on_cluster(started_cluster, entity):
 @pytest.mark.parametrize("entity", entities, ids=get_entity_id)
 def test_create_replicated_on_cluster_ignore(started_cluster, entity):
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
             f"""
-            <clickhouse>
+            <datastore>
                 <profiles>
                     <default>
                         <ignore_on_cluster_for_replicated_access_entities_queries>true</ignore_on_cluster_for_replicated_access_entities_queries>
                     </default>
                 </profiles>
-            </clickhouse>
+            </datastore>
             """
         ),
     )
@@ -121,14 +121,14 @@ def test_create_replicated_on_cluster_ignore(started_cluster, entity):
     node1.query(f"DROP {entity.keyword} {entity.name} {entity.options}")
 
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
             f"""
-            <clickhouse>
+            <datastore>
                 <profiles>
                     <default/>
                 </profiles>
-            </clickhouse>
+            </datastore>
             """
         ),
     )
@@ -144,16 +144,16 @@ def test_create_replicated_on_cluster_ignore(started_cluster, entity):
 )
 def test_grant_revoke_replicated(started_cluster, use_on_cluster: bool):
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
             f"""
-            <clickhouse>
+            <datastore>
                 <profiles>
                     <default>
                         <ignore_on_cluster_for_replicated_access_entities_queries>{int(use_on_cluster)}</ignore_on_cluster_for_replicated_access_entities_queries>
                     </default>
                 </profiles>
-            </clickhouse>
+            </datastore>
             """
         ),
     )
@@ -170,14 +170,14 @@ def test_grant_revoke_replicated(started_cluster, use_on_cluster: bool):
     node1.query(f"DROP USER theuser2 {on_cluster}")
 
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
             f"""
-            <clickhouse>
+            <datastore>
                 <profiles>
                     <default/>
                 </profiles>
-            </clickhouse>
+            </datastore>
             """
         ),
     )
@@ -214,7 +214,7 @@ def test_reload_zookeeper(started_cluster):
     replace_zookeeper_config(
         (node1, node2),
         """
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo1</host>
@@ -222,7 +222,7 @@ def test_reload_zookeeper(started_cluster):
         </node>
         <session_timeout_ms>2000</session_timeout_ms>
     </zookeeper>
-</clickhouse>
+</datastore>
 """,
     )
 
@@ -253,7 +253,7 @@ def test_reload_zookeeper(started_cluster):
     replace_zookeeper_config(
         (node1, node2),
         """
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo2</host>
@@ -261,7 +261,7 @@ def test_reload_zookeeper(started_cluster):
         </node>
         <session_timeout_ms>2000</session_timeout_ms>
     </zookeeper>
-</clickhouse>
+</datastore>
 """,
     )
 

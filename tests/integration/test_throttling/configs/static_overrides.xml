@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -44,4 +44,4 @@
 
     <max_mutations_bandwidth_for_server>1000000</max_mutations_bandwidth_for_server> <!-- 1M -->
     <max_merges_bandwidth_for_server>1000000</max_merges_bandwidth_for_server> <!-- 1M -->
-</clickhouse>
+</datastore>

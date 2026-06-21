@@ -46,7 +46,7 @@ def remove_part_from_disk(node, table, part_name):
         ["bash", "-c", "rm -r {p}/*".format(p=part_path)], privileged=True
     )
 
-# TODO: move to the end and fix https://github.com/ClickHouse/ClickHouse/issues/87916
+# TODO: move to the end and fix https://github.com/ClickHouse/Datastore/issues/87916
 def test_check_all_tables(started_cluster):
     def _create_table(database, table, engine=None):
         if engine is None:
@@ -214,7 +214,7 @@ def test_check_replicated_table_simple(
         node.query(
             """
         CREATE TABLE replicated_mt(date Date, id UInt32, value Int32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/replicated_mt_{zk_path_suffix}', '{replica}')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/replicated_mt_{zk_path_suffix}', '{replica}')
         PARTITION BY toYYYYMM(date) ORDER BY id
         {merge_tree_settings}
             """.format(
@@ -312,7 +312,7 @@ def test_check_replicated_table_corruption(
         node.query_with_retry(
             """
         CREATE TABLE replicated_mt_1(date Date, id UInt32, value Int32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/replicated_mt_1_{zk_path_suffix}', '{replica}')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/replicated_mt_1_{zk_path_suffix}', '{replica}')
         PARTITION BY toYYYYMM(date) ORDER BY id
         {merge_tree_settings}
             """.format(
@@ -377,7 +377,7 @@ def test_check_replicated_does_not_block_shutdown(started_cluster, engine):
     node1.query(
         f"""
             CREATE TABLE {table_name}(id UInt32, value Int32)
-            ENGINE = {engine}('/clickhouse/tables/{{database}}/{table_name}', '{node1.name}')
+            ENGINE = {engine}('/datastore/tables/{{database}}/{table_name}', '{node1.name}')
             PARTITION BY id
             ORDER BY tuple()
             AS SELECT number, number FROM numbers({part_count})

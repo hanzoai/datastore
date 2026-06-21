@@ -6,7 +6,7 @@ title: 'WITH Clause'
 doc_type: 'reference'
 ---
 
-ClickHouse supports Common Table Expressions ([CTE](https://en.wikipedia.org/wiki/Hierarchical_and_recursive_queries_in_SQL)), Common Scalar Expressions and Recursive Queries.
+Datastore supports Common Table Expressions ([CTE](https://en.wikipedia.org/wiki/Hierarchical_and_recursive_queries_in_SQL)), Common Scalar Expressions and Recursive Queries.
 
 ## Common Table Expressions {#common-table-expressions}
 
@@ -47,8 +47,8 @@ However, due to the fact that we are referring `cte_numbers` twice, random numbe
 
 ## Materialized Common Table Expressions {#materialized-common-table-expressions}
 
-By default, ClickHouse inlines the subquery of a CTE at each point of reference, re-executing it every time.
-Adding the `MATERIALIZED` keyword instructs ClickHouse to execute the CTE subquery **exactly once**, store the results in a temporary table, and serve all references from that table.
+By default, Datastore inlines the subquery of a CTE at each point of reference, re-executing it every time.
+Adding the `MATERIALIZED` keyword instructs Datastore to execute the CTE subquery **exactly once**, store the results in a temporary table, and serve all references from that table.
 This is especially useful when the same CTE is referenced multiple times in a query (e.g., in self-joins or multiple `IN` subqueries), because the underlying computation only happens once.
 
 :::note
@@ -74,7 +74,7 @@ Materializing ensures all references see the same data.
 - The CTE involves **expensive computations** (aggregations, joins, large scans) that should not be repeated.
 
 :::tip
-If a materialized CTE is only referenced once, ClickHouse automatically inlines it back into a regular subquery to avoid unnecessary overhead.
+If a materialized CTE is only referenced once, Datastore automatically inlines it back into a regular subquery to avoid unnecessary overhead.
 :::
 
 ### Examples {#materialized-common-table-expressions-examples}
@@ -125,7 +125,7 @@ Because both references read from the same materialized data, the result is alwa
 **Example 3:** Chaining materialized CTEs
 
 Materialized CTEs can reference other materialized CTEs.
-ClickHouse resolves dependencies and materializes them in the correct order:
+Datastore resolves dependencies and materializes them in the correct order:
 
 ```sql
 SET enable_materialized_cte = 1;
@@ -168,12 +168,12 @@ SELECT count() FROM b AS l LEFT SEMI JOIN b AS r ON l.uid = r.uid;
 
 ## Common Scalar Expressions {#common-scalar-expressions}
 
-ClickHouse allows you to declare aliases to arbitrary scalar expressions in the `WITH` clause.
+Datastore allows you to declare aliases to arbitrary scalar expressions in the `WITH` clause.
 Common scalar expressions can be referenced in any place in the query.
 
 :::note
 If a common scalar expression references something other than a constant literal, the expression may lead to the presence of [free variables](https://en.wikipedia.org/wiki/Free_variables_and_bound_variables).
-ClickHouse resolves any identifier in the closest scope possible, meaning that free variables can reference unexpected entities in case of name clashes or may lead to a correlated subquery.
+Datastore resolves any identifier in the closest scope possible, meaning that free variables can reference unexpected entities in case of name clashes or may lead to a correlated subquery.
 It is recommended to define CSE as a [lambda function](/sql-reference/functions/overview#arrow-operator-and-lambda) (possible only with the [analyzer](/operations/analyzer) enabled) binding all the used identifiers to achieve a more predictable behavior of expression identifiers resolution.
 :::
 

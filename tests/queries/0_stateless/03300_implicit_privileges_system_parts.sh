@@ -4,10 +4,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-user="user03300_$CLICKHOUSE_DATABASE"
-db=${CLICKHOUSE_DATABASE}
+user="user03300_$DATASTORE_DATABASE"
+db=${DATASTORE_DATABASE}
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 DROP TABLE IF EXISTS test;
 DROP TABLE IF EXISTS test_1;
 DROP TABLE IF EXISTS test_2;
@@ -19,11 +19,11 @@ CREATE TABLE test_2 (s Int) ENGINE = MergeTree() ORDER BY s AS SELECT * FROM num
 "
 
 echo "system.parts via default"
-$CLICKHOUSE_CLIENT -q "SELECT DISTINCT table FROM system.parts WHERE database = currentDatabase() AND table LIKE 'test%' ORDER BY 1"
+$DATASTORE_CLIENT -q "SELECT DISTINCT table FROM system.parts WHERE database = currentDatabase() AND table LIKE 'test%' ORDER BY 1"
 
 # system.parts requires SHOW_TABLES, that is granted implicitly to user due to
 # SELECT privilege
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 DROP USER IF EXISTS $user;
 CREATE USER $user;
 
@@ -31,9 +31,9 @@ GRANT SELECT ON $db.test TO $user;
 GRANT SELECT ON system.parts TO $user;
 "
 echo "system.parts via restricted user"
-$CLICKHOUSE_CLIENT --user "$user" -q "SELECT DISTINCT table FROM system.parts WHERE database = currentDatabase() AND table LIKE 'test%' ORDER BY 1"
+$DATASTORE_CLIENT --user "$user" -q "SELECT DISTINCT table FROM system.parts WHERE database = currentDatabase() AND table LIKE 'test%' ORDER BY 1"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 DROP TABLE test;
 DROP TABLE test_1;
 DROP TABLE test_2;

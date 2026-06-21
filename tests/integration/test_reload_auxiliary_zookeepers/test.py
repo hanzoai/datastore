@@ -22,16 +22,16 @@ def start_cluster():
 
 def test_reload_auxiliary_zookeepers(start_cluster):
     node.query(
-        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
     node.query("INSERT INTO simple VALUES ('2020-08-27', 1)")
 
     node.query(
-        "CREATE TABLE simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
 
     # Add an auxiliary zookeeper
-    new_config = """<clickhouse>
+    new_config = """<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo1</host>
@@ -59,9 +59,9 @@ def test_reload_auxiliary_zookeepers(start_cluster):
             </node>
         </zookeeper2>
     </auxiliary_zookeepers>
-</clickhouse>"""
+</datastore>"""
     node.replace_config(
-        "/etc/clickhouse-server/conf.d/zookeeper_config.xml", new_config
+        "/etc/datastore-server/conf.d/zookeeper_config.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -69,12 +69,12 @@ def test_reload_auxiliary_zookeepers(start_cluster):
     time.sleep(5)
 
     node.query(
-        "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zookeeper2:/clickhouse/tables/0/simple';"
+        "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zookeeper2:/datastore/tables/0/simple';"
     )
     node.query("ALTER TABLE simple2 ATTACH PARTITION '2020-08-27';")
     assert node.query("SELECT id FROM simple2").strip() == "1"
 
-    new_config = """<clickhouse>
+    new_config = """<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo2</host>
@@ -82,15 +82,15 @@ def test_reload_auxiliary_zookeepers(start_cluster):
         </node>
         <session_timeout_ms>2000</session_timeout_ms>
     </zookeeper>
-</clickhouse>"""
+</datastore>"""
     node.replace_config(
-        "/etc/clickhouse-server/conf.d/zookeeper_config.xml", new_config
+        "/etc/datastore-server/conf.d/zookeeper_config.xml", new_config
     )
     node.query("SYSTEM RELOAD CONFIG")
     time.sleep(5)
 
     with pytest.raises(QueryRuntimeException):
         node.query(
-            "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zookeeper2:/clickhouse/tables/0/simple';"
+            "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zookeeper2:/datastore/tables/0/simple';"
         )
     assert node.query("SELECT id FROM simple2").strip() == "1"

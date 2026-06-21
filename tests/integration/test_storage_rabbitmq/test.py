@@ -125,7 +125,7 @@ def check_expected_result_polling(expected, query, instance=instance, timeout=DE
 def test_rabbitmq_select(rabbitmq_cluster, secure, db, unique):
     if secure and instance.is_built_with_thread_sanitizer():
         pytest.skip(
-            "Data races: see https://github.com/ClickHouse/ClickHouse/issues/56866"
+            "Data races: see https://github.com/ClickHouse/Datastore/issues/56866"
         )
 
     port = cluster.rabbitmq_port
@@ -151,7 +151,7 @@ def test_rabbitmq_select(rabbitmq_cluster, secure, db, unique):
         in instance.query("SELECT * FROM system.warnings")
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -217,7 +217,7 @@ def test_rabbitmq_json_without_delimiter(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -275,7 +275,7 @@ def test_rabbitmq_csv_with_delimiter(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -331,7 +331,7 @@ def test_rabbitmq_tsv_with_delimiter(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -362,7 +362,7 @@ def test_rabbitmq_tsv_with_delimiter(rabbitmq_cluster, db, unique):
 
 
 def test_rabbitmq_macros(rabbitmq_cluster, db, unique):
-    # Uses ClickHouse macros for host/port/format (defined in macros.xml).
+    # Uses Datastore macros for host/port/format (defined in macros.xml).
     # Exchange name uses unique prefix directly since macros can't be dynamic per-test.
     instance.query(
         f"""
@@ -377,7 +377,7 @@ def test_rabbitmq_macros(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -434,7 +434,7 @@ def test_rabbitmq_materialized_view(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -499,7 +499,7 @@ def test_rabbitmq_materialized_view_with_subquery(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -564,7 +564,7 @@ def test_rabbitmq_many_materialized_views(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -627,7 +627,7 @@ def test_rabbitmq_big_message(rabbitmq_cluster, db, unique):
         for i in range(rabbitmq_messages)
     ]
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -686,7 +686,7 @@ def test_rabbitmq_sharding_between_queues_publish(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 10000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -768,7 +768,7 @@ def test_rabbitmq_mv_combo(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 10000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -831,7 +831,7 @@ def test_rabbitmq_mv_combo(rabbitmq_cluster, db, unique):
 
     assert (
         int(result) == messages_num * threads_num * NUM_MV
-    ), "ClickHouse lost some messages: {}".format(result)
+    ), "Datastore lost some messages: {}".format(result)
 
 
 def test_rabbitmq_insert(rabbitmq_cluster, db, unique):
@@ -850,7 +850,7 @@ def test_rabbitmq_insert(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -913,7 +913,7 @@ def test_rabbitmq_insert_headers_exchange(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1175,7 +1175,7 @@ def test_rabbitmq_direct_exchange(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 1000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1256,7 +1256,7 @@ def test_rabbitmq_fanout_exchange(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 1000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1355,7 +1355,7 @@ def test_rabbitmq_topic_exchange(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 1000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1440,7 +1440,7 @@ def test_rabbitmq_hash_exchange(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 500
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1527,7 +1527,7 @@ def test_rabbitmq_multiple_bindings(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 500
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1635,7 +1635,7 @@ def test_rabbitmq_headers_exchange(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 1000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1694,7 +1694,7 @@ def test_rabbitmq_virtual_columns(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1756,7 +1756,7 @@ def test_rabbitmq_virtual_columns_with_materialized_view(rabbitmq_cluster, db, u
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1832,7 +1832,7 @@ def test_rabbitmq_many_consumers_to_each_queue(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 1000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -1909,7 +1909,7 @@ def test_rabbitmq_commit_on_block_write(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2021,7 +2021,7 @@ def test_rabbitmq_format_factory_settings(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2096,7 +2096,7 @@ def test_rabbitmq_vhost(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2133,7 +2133,7 @@ def test_rabbitmq_drop_table_properly(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2184,7 +2184,7 @@ def test_rabbitmq_queue_settings(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2216,7 +2216,7 @@ def test_rabbitmq_queue_settings(rabbitmq_cluster, db, unique):
 
 
 def test_rabbitmq_queue_consume(rabbitmq_cluster, db, unique):
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2320,7 +2320,7 @@ def test_rabbitmq_produce_consume_avro(rabbitmq_cluster, db, unique):
 
 
 def test_rabbitmq_bad_args(rabbitmq_cluster, db, unique):
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2353,7 +2353,7 @@ def test_rabbitmq_issue_30691(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2430,7 +2430,7 @@ def test_rabbitmq_drop_mv(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2511,7 +2511,7 @@ def test_rabbitmq_random_detach(rabbitmq_cluster, db, unique):
     i = [0]
     messages_num = 10000
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2552,7 +2552,7 @@ def test_rabbitmq_random_detach(rabbitmq_cluster, db, unique):
 
 
 def test_rabbitmq_predefined_configuration(rabbitmq_cluster, db, unique):
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2657,14 +2657,14 @@ def test_rabbitmq_address(rabbitmq_cluster, db, unique):
                      rabbitmq_format = 'CSV',
                      rabbitmq_num_consumers = 1,
                      rabbitmq_flush_interval_ms=1000,
-                     rabbitmq_address='amqp://root:clickhouse@rabbitmq1:5672/';
+                     rabbitmq_address='amqp://root:datastore@rabbitmq1:5672/';
         create table
             {db}.rabbit_out (val String) engine=RabbitMQ
             SETTINGS rabbitmq_exchange_name = '{unique}_rxhep',
                      rabbitmq_format = 'CSV',
                      rabbitmq_num_consumers = 1,
                      rabbitmq_flush_interval_ms=1000,
-                     rabbitmq_address='amqp://root:clickhouse@rabbitmq1:5672/';
+                     rabbitmq_address='amqp://root:datastore@rabbitmq1:5672/';
         set stream_like_engine_allow_direct_select=1;
         insert into {db}.rabbit_out select 'kek';
     """
@@ -2700,7 +2700,7 @@ def test_format_with_prefix_and_suffix(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2760,7 +2760,7 @@ def test_max_rows_per_message(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2843,7 +2843,7 @@ def test_row_based_formats(rabbitmq_cluster, db, unique):
         """
         )
 
-        credentials = pika.PlainCredentials("root", "clickhouse")
+        credentials = pika.PlainCredentials("root", "datastore")
         parameters = pika.ConnectionParameters(
             rabbitmq_cluster.rabbitmq_ip,
             rabbitmq_cluster.rabbitmq_port,
@@ -2902,7 +2902,7 @@ def test_block_based_formats_1(rabbitmq_cluster, db, unique):
     """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -2981,7 +2981,7 @@ def test_block_based_formats_2(rabbitmq_cluster, db, unique):
         """
         )
 
-        credentials = pika.PlainCredentials("root", "clickhouse")
+        credentials = pika.PlainCredentials("root", "datastore")
         parameters = pika.ConnectionParameters(
             rabbitmq_cluster.rabbitmq_ip,
             rabbitmq_cluster.rabbitmq_port,
@@ -3053,7 +3053,7 @@ def test_rabbitmq_flush_by_block_size(rabbitmq_cluster, db, unique):
     cancel = threading.Event()
 
     def produce():
-        credentials = pika.PlainCredentials("root", "clickhouse")
+        credentials = pika.PlainCredentials("root", "datastore")
         parameters = pika.ConnectionParameters(
             rabbitmq_cluster.rabbitmq_ip,
             rabbitmq_cluster.rabbitmq_port,
@@ -3139,7 +3139,7 @@ def test_rabbitmq_flush_by_time(rabbitmq_cluster, db, unique):
     cancel = threading.Event()
 
     def produce():
-        credentials = pika.PlainCredentials("root", "clickhouse")
+        credentials = pika.PlainCredentials("root", "datastore")
         parameters = pika.ConnectionParameters(
             rabbitmq_cluster.rabbitmq_ip,
             rabbitmq_cluster.rabbitmq_port,
@@ -3243,7 +3243,7 @@ def test_rabbitmq_handle_error_mode_stream(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -3308,7 +3308,7 @@ def test_rabbitmq_nack_failed_insert(rabbitmq_cluster, db, unique):
     table_name = f"nack_failed_insert_{uuid.uuid4().hex}"
     exchange = f"{table_name}_exchange"
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -3399,7 +3399,7 @@ def dead_letter_queue_test(expected_num_messages, exchange_name, _db):
 def rabbitmq_reject_broken_messages(
     rabbitmq_cluster, db, unique, handle_error_mode, additional_dml, check_method, broken_messages_rejected
 ):
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -3544,7 +3544,7 @@ def test_rabbitmq_json_type(rabbitmq_cluster, db, unique):
         """
     )
 
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )
@@ -3592,9 +3592,9 @@ def test_hiding_credentials(rabbitmq_cluster, db, unique):
             SETTINGS rabbitmq_host_port = '{rabbitmq_cluster.rabbitmq_host}:{cluster.rabbitmq_port}',
                      rabbitmq_exchange_name = '{exchange}',
                      rabbitmq_format = 'JSONEachRow',
-                     rabbitmq_username = 'clickhouse',
+                     rabbitmq_username = 'datastore',
                      rabbitmq_password = 'rabbitmq',
-                     rabbitmq_address = 'amqp://root:clickhouse@rabbitmq1:5672/';
+                     rabbitmq_address = 'amqp://root:datastore@rabbitmq1:5672/';
         """
     )
 
@@ -3607,9 +3607,9 @@ def test_hiding_credentials(rabbitmq_cluster, db, unique):
 def test_rabbitmq_default_mode_nack_on_parse_error(rabbitmq_cluster, db, unique):
     """When rabbitmq_handle_error_mode = 'default' and a message fails to parse,
     the message must be properly nack'd (not left permanently unacked).
-    Regression test for https://github.com/ClickHouse/ClickHouse/issues/73541
+    Regression test for https://github.com/ClickHouse/Datastore/issues/73541
     """
-    credentials = pika.PlainCredentials("root", "clickhouse")
+    credentials = pika.PlainCredentials("root", "datastore")
     parameters = pika.ConnectionParameters(
         rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials
     )

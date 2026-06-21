@@ -481,7 +481,7 @@ WITH
 SELECT
     x;
 
--- https://github.com/ClickHouse/ClickHouse/issues/56357
+-- https://github.com/ClickHouse/Datastore/issues/56357
 WITH
     extractKeyValuePairs('{"a":"1", "b":"2"}', ':', '{, }') as s_map,
     CAST(

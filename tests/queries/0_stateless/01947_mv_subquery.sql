@@ -4,7 +4,7 @@ SET log_profile_events=true;
 CREATE TABLE src Engine=MergeTree ORDER BY id AS SELECT number as id, toInt32(1) as value FROM numbers(1);
 CREATE TABLE dst (id UInt64, delta Int64) Engine=MergeTree ORDER BY id;
 
--- First we try with default values (https://github.com/ClickHouse/ClickHouse/issues/9587)
+-- First we try with default values (https://github.com/ClickHouse/Datastore/issues/9587)
 SET use_index_for_in_with_subqueries = 1;
 
 CREATE MATERIALIZED VIEW src2dst_true TO dst AS

@@ -64,7 +64,7 @@ Before using cache, add it to `config.xml`
 </local_cache_for_remote_fs>
 ```
 
-- enable: ClickHouse will maintain local cache for remote filesystem(HDFS) after startup if true.
+- enable: Datastore will maintain local cache for remote filesystem(HDFS) after startup if true.
 - root_dir: Required. The root directory to store local cache files for remote filesystem.
 - limit_size: Required. The maximum size(in bytes) of local cache files.
 - bytes_read_before_flush: Control bytes before flush to local filesystem when downloading file from remote filesystem. The default value is 1MB.
@@ -119,9 +119,9 @@ OK
 Time taken: 0.295 seconds, Fetched: 1 row(s)
 ```
 
-#### Create Table in ClickHouse  {#create-table-in-clickhouse}
+#### Create Table in Datastore  {#create-table-in-datastore}
 
-Table in ClickHouse, retrieving data from the Hive table created above:
+Table in Datastore, retrieving data from the Hive table created above:
 ```sql
 CREATE TABLE test.test_orc
 (
@@ -242,9 +242,9 @@ OK
 Time taken: 0.766 seconds, Fetched: 1 row(s)
 ```
 
-#### Create Table in ClickHouse {#create-table-in-clickhouse-1}
+#### Create Table in Datastore {#create-table-in-datastore-1}
 
-Table in ClickHouse, retrieving data from the Hive table created above:
+Table in Datastore, retrieving data from the Hive table created above:
 ```sql
 CREATE TABLE test.test_parquet
 (
@@ -365,9 +365,9 @@ OK
 Time taken: 0.624 seconds, Fetched: 1 row(s)
 ```
 
-#### Create Table in ClickHouse {#create-table-in-clickhouse-2}
+#### Create Table in Datastore {#create-table-in-datastore-2}
 
-Table in ClickHouse, retrieving data from the Hive table created above:
+Table in Datastore, retrieving data from the Hive table created above:
 ```sql
 CREATE TABLE test.test_text
 (

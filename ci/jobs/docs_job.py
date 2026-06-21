@@ -9,11 +9,11 @@ if __name__ == "__main__":
     stop_watch = Utils.Stopwatch()
     temp_dir = f"{Utils.cwd()}/ci/tmp/"
 
-    testname = "Fetch latest ClickHouse/clickhouse-docs changes"
+    testname = "Fetch latest Datastore/datastore-docs changes"
     results.append(
         Result.from_commands_run(
             name=testname,
-            command=["git clone https://github.com/ClickHouse/clickhouse-docs.git"],
+            command=["git clone https://github.com/ClickHouse/datastore-docs.git"],
             workdir="/opt",
         )
     )
@@ -23,16 +23,16 @@ if __name__ == "__main__":
         Result.from_commands_run(
             name=testname,
             command=["yarn install"],
-            workdir="/opt/clickhouse-docs",
+            workdir="/opt/datastore-docs",
         )
     )
 
-    testname = "Get ClickHouse/ClickHouse docs"
+    testname = "Get Datastore/Datastore docs"
     results.append(
         Result.from_commands_run(
             name=testname,
-            command=[f"yarn copy-clickhouse-repo-docs -l {os.getcwd()}"],
-            workdir="/opt/clickhouse-docs",
+            command=[f"yarn copy-datastore-repo-docs -l {os.getcwd()}"],
+            workdir="/opt/datastore-docs",
         )
     )
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         Result.from_commands_run(
             name=testname,
             command=["yarn check-markdown"],
-            workdir="/opt/clickhouse-docs",
+            workdir="/opt/datastore-docs",
         )
     )
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         Result.from_commands_run(
             name=testname,
             command=["yarn generate-changelog"],
-            workdir="/opt/clickhouse-docs",
+            workdir="/opt/datastore-docs",
         )
     )
 
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     results.append(
         Result.from_commands_run(
             name=testname,
-            command=[f"yarn autogenerate-settings -b {temp_dir}clickhouse"],
-            workdir="/opt/clickhouse-docs",
+            command=[f"yarn autogenerate-settings -b {temp_dir}datastore"],
+            workdir="/opt/datastore-docs",
         )
     )
 
@@ -69,8 +69,8 @@ if __name__ == "__main__":
             name=testname,
             command=[
                 f"python3 {os.getcwd()}/utils/generate-system-tables-docs"
-                f" --binary {temp_dir}clickhouse"
-                f" --docs-dir /opt/clickhouse-docs/docs/operations/system-tables/"
+                f" --binary {temp_dir}datastore"
+                f" --docs-dir /opt/datastore-docs/docs/operations/system-tables/"
             ],
             workdir=os.getcwd(),
         )
@@ -81,14 +81,14 @@ if __name__ == "__main__":
         Result.from_commands_run(
             name=testname,
             command=["yarn autogenerate-table-of-contents"],
-            workdir="/opt/clickhouse-docs",
+            workdir="/opt/datastore-docs",
         )
     )
 
-    # The /opt/clickhouse-docs is a git directory owned by user 999
+    # The /opt/datastore-docs is a git directory owned by user 999
     # We must add it to the trusted directories to avoid git warnings during the build
     Shell.check(
-        "git config --global --add safe.directory /opt/clickhouse-docs", strict=True
+        "git config --global --add safe.directory /opt/datastore-docs", strict=True
     )
 
     testname = "Build docusaurus"
@@ -98,7 +98,7 @@ if __name__ == "__main__":
             command=[
                 "export DOCUSAURUS_IGNORE_SSG_WARNINGS=true && yarn build-docs",
             ],
-            workdir="/opt/clickhouse-docs",
+            workdir="/opt/datastore-docs",
         )
     )
 

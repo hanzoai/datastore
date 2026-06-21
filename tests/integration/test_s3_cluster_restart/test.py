@@ -200,14 +200,14 @@ def createTable(table, missing_table):
     node1.query(
         f"""
     CREATE TABLE {table} (a String, b UInt64)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/f15b1936-ae89-416b-8626-7c88d9fbe6a3/{table}', '{{replica}}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/f15b1936-ae89-416b-8626-7c88d9fbe6a3/{table}', '{{replica}}')
     ORDER BY (a, b);
         """
     )
     node2.query(
         f"""
     CREATE TABLE {table} (a String, b UInt64)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/f15b1936-ae89-416b-8626-7c88d9fbe6a3/{table}', '{{replica}}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/f15b1936-ae89-416b-8626-7c88d9fbe6a3/{table}', '{{replica}}')
     ORDER BY (a, b);
         """
     )
@@ -215,7 +215,7 @@ def createTable(table, missing_table):
         node3.query(
             f"""
         CREATE TABLE {table} (a String, b UInt64)
-        ENGINE=ReplicatedMergeTree('/clickhouse/tables/f15b1936-ae89-416b-8626-7c88d9fbe6a3/{table}', '{{replica}}')
+        ENGINE=ReplicatedMergeTree('/datastore/tables/f15b1936-ae89-416b-8626-7c88d9fbe6a3/{table}', '{{replica}}')
         ORDER BY (a, b);
             """
         )

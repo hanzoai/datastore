@@ -15,14 +15,14 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-[Apache Arrow](https://arrow.apache.org/) comes with two built-in columnar storage formats. ClickHouse supports read and write operations for these formats.
+[Apache Arrow](https://arrow.apache.org/) comes with two built-in columnar storage formats. Datastore supports read and write operations for these formats.
 `Arrow` is Apache Arrow's "file mode" format. It is designed for in-memory random access.
 
 ## Data types matching {#data-types-matching}
 
-The table below shows the supported data types and how they correspond to ClickHouse [data types](/sql-reference/data-types/index.md) in `INSERT` and `SELECT` queries.
+The table below shows the supported data types and how they correspond to Datastore [data types](/sql-reference/data-types/index.md) in `INSERT` and `SELECT` queries.
 
-| Arrow data type (`INSERT`)              | ClickHouse data type                                                                                       | Arrow data type (`SELECT`) |
+| Arrow data type (`INSERT`)              | Datastore data type                                                                                       | Arrow data type (`SELECT`) |
 |-----------------------------------------|------------------------------------------------------------------------------------------------------------|----------------------------|
 | `BOOL`                                  | [Bool](/sql-reference/data-types/boolean.md)                                                       | `BOOL`                     |
 | `UINT8`, `BOOL`                         | [UInt8](/sql-reference/data-types/int-uint.md)                                                     | `UINT8`                    |
@@ -61,24 +61,24 @@ Unsupported Arrow data types:
 - `UUID`
 - `ENUM`.
 
-The data types of ClickHouse table columns do not have to match the corresponding Arrow data fields. When inserting data, ClickHouse interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to the data type set for the ClickHouse table column.
+The data types of Datastore table columns do not have to match the corresponding Arrow data fields. When inserting data, Datastore interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to the data type set for the Datastore table column.
 
 ## Example usage {#example-usage}
 
 ### Inserting data {#inserting-data}
 
-You can insert Arrow data from a file into ClickHouse table using the following command:
+You can insert Arrow data from a file into Datastore table using the following command:
 
 ```bash
-$ cat filename.arrow | clickhouse-client --query="INSERT INTO some_table FORMAT Arrow"
+$ cat filename.arrow | datastore-client --query="INSERT INTO some_table FORMAT Arrow"
 ```
 
 ### Selecting data {#selecting-data}
 
-You can select data from a ClickHouse table and save it into some file in the Arrow format using the following command:
+You can select data from a Datastore table and save it into some file in the Arrow format using the following command:
 
 ```bash
-$ clickhouse-client --query="SELECT * FROM {some_table} FORMAT Arrow" > {filename.arrow}
+$ datastore-client --query="SELECT * FROM {some_table} FORMAT Arrow" > {filename.arrow}
 ```
 
 ## Format settings {#format-settings}

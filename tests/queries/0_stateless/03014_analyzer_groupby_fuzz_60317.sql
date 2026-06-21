@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/60317
+-- https://github.com/ClickHouse/Datastore/issues/60317
 SELECT
     toNullable(materialize(_CAST(30, 'LowCardinality(UInt8)'))) as a,
     _CAST(30, 'LowCardinality(UInt8)') as b,

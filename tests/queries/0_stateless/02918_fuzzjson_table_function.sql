@@ -5,7 +5,7 @@ DROP NAMED COLLECTION IF EXISTS 02918_json_fuzzer;
 CREATE NAMED COLLECTION 02918_json_fuzzer AS json_str='{}';
 
 SELECT * FROM fuzzJSON(02918_json_fuzzer, random_seed=54321) LIMIT 10;
-SELECT * FROM fuzzJSON(02918_json_fuzzer, json_str='{"ClickHouse":"Is Fast"}', random_seed=1337) LIMIT 20;
+SELECT * FROM fuzzJSON(02918_json_fuzzer, json_str='{"Datastore":"Is Fast"}', random_seed=1337) LIMIT 20;
 SELECT * FROM fuzzJSON(02918_json_fuzzer, json_str='{"students":[{"name":"Alice"}, {"name":"Bob"}]}', random_seed=1337) LIMIT 20;
 SELECT * FROM fuzzJSON(02918_json_fuzzer, json_str='{"schedule":[{"breakfast":"7am"}, {"lunch":"12pm"}]}', random_seed=123456, reuse_output=true) LIMIT 20;
 SELECT * FROM fuzzJSON(02918_json_fuzzer, json_str='{"schedule":[{"breakfast":"7am"}, {"lunch":"12pm"}]}', random_seed=123456, reuse_output=false) LIMIT 20;

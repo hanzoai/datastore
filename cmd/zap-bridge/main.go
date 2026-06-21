@@ -28,7 +28,7 @@
 //
 // Sub-methods (path):
 //
-//	/health  liveness probe — returns 200 iff ClickHouse responds to SELECT 1.
+//	/health  liveness probe — returns 200 iff Datastore responds to SELECT 1.
 //	/query   {sql, args?, database?} — runs SELECT, returns NDJSON.
 //	/exec    {sql, args?, database?} — runs a non-SELECT, returns {ok:true}.
 //	/insert  {table, database?, rows:[{...}]} — bulk insert via JSONEachRow.
@@ -70,8 +70,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ClickHouse/clickhouse-go/v2"
-	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/ClickHouse/datastore-go/v2"
+	"github.com/ClickHouse/datastore-go/v2/lib/driver"
 	"github.com/luxfi/zap"
 )
 
@@ -128,7 +128,7 @@ const (
 	// for in-cluster RTT plus modest clock skew.
 	hmacReplayWindow = 60 * time.Second
 
-	// handlerTimeout caps every request's ClickHouse work. Bridge ctx
+	// handlerTimeout caps every request's Datastore work. Bridge ctx
 	// is bound to the node lifetime (no caller deadline propagation
 	// from luxfi/zap); without this, slow CH queries pin connections
 	// indefinitely after the caller has given up.
@@ -140,7 +140,7 @@ const (
 	// matches the wire ceiling.
 	maxInsertRows = 10_000
 
-	// chMaxOpenConns is the ClickHouse connection-pool size. Two are
+	// chMaxOpenConns is the Datastore connection-pool size. Two are
 	// reserved for /health (semaphore admit gate is set to N-2).
 	chMaxOpenConns = 10
 )
@@ -149,7 +149,7 @@ const (
 // invocation is the production path.
 type config struct {
 	listen      string // ZAP listen, default :9999
-	clickhouse  string // ClickHouse native TCP, default 127.0.0.1:9000
+	datastore  string // Datastore native TCP, default 127.0.0.1:9000
 	user        string // CH username, default "insights_writer"
 	password    string // CH password, default ""
 	database    string // default DB, default "insights"
@@ -161,7 +161,7 @@ type config struct {
 func loadConfig() (config, error) {
 	cfg := config{
 		listen:      env("ZAP_LISTEN", ":9999"),
-		clickhouse:  env("DATASTORE_NATIVE_ADDR", "127.0.0.1:9000"),
+		datastore:  env("DATASTORE_NATIVE_ADDR", "127.0.0.1:9000"),
 		user:        env("DATASTORE_USER", "insights_writer"),
 		password:    env("DATASTORE_PASSWORD", ""),
 		database:    env("DATASTORE_DB", "insights"),
@@ -169,10 +169,10 @@ func loadConfig() (config, error) {
 		serviceType: env("ZAP_SERVICE_TYPE", "_hanzo._tcp"),
 	}
 	flag.StringVar(&cfg.listen, "listen", cfg.listen, "ZAP listen address (host:port)")
-	flag.StringVar(&cfg.clickhouse, "clickhouse", cfg.clickhouse, "ClickHouse native TCP address")
-	flag.StringVar(&cfg.user, "user", cfg.user, "ClickHouse username")
-	flag.StringVar(&cfg.password, "password", cfg.password, "ClickHouse password")
-	flag.StringVar(&cfg.database, "database", cfg.database, "ClickHouse default database")
+	flag.StringVar(&cfg.datastore, "datastore", cfg.datastore, "Datastore native TCP address")
+	flag.StringVar(&cfg.user, "user", cfg.user, "Datastore username")
+	flag.StringVar(&cfg.password, "password", cfg.password, "Datastore password")
+	flag.StringVar(&cfg.database, "database", cfg.database, "Datastore default database")
 	flag.StringVar(&cfg.nodeID, "node-id", cfg.nodeID, "ZAP NodeID (default: $HOSTNAME or 'datastore')")
 	flag.StringVar(&cfg.serviceType, "service-type", cfg.serviceType, "ZAP service type")
 	flag.Parse()
@@ -228,7 +228,7 @@ func main() {
 
 	logger.Info("zap-bridge ready",
 		"listen", cfg.listen,
-		"clickhouse", cfg.clickhouse,
+		"datastore", cfg.datastore,
 		"db", cfg.database,
 		"user", cfg.user,
 	)
@@ -245,9 +245,9 @@ func main() {
 	br.shutdown(5 * time.Second)
 }
 
-// executor is the narrow surface of clickhouse-go/v2/lib/driver.Conn that
+// executor is the narrow surface of datastore-go/v2/lib/driver.Conn that
 // the bridge actually uses. Defined here so unit tests can substitute a
-// fake without standing up a live ClickHouse instance. We intentionally
+// fake without standing up a live Datastore instance. We intentionally
 // do NOT widen this — the philosophy is that abstractions exist only
 // where there are at least two concrete implementations (driver.Conn in
 // production, fakeExec in tests).
@@ -259,7 +259,7 @@ type executor interface {
 }
 
 // bridge is the running zap-bridge process — owns the ZAP node and the
-// ClickHouse connection pool.
+// Datastore connection pool.
 type bridge struct {
 	logger *slog.Logger
 	cfg    config
@@ -282,12 +282,12 @@ type bridge struct {
 	closeOnce sync.Once
 }
 
-// newBridge connects to ClickHouse with retry, registers the ZAP handler,
+// newBridge connects to Datastore with retry, registers the ZAP handler,
 // and starts the ZAP listener. Returns once the listener is bound.
 func newBridge(ctx context.Context, logger *slog.Logger, cfg config) (*bridge, error) {
 	conn, err := openClickHouse(ctx, logger, cfg)
 	if err != nil {
-		return nil, fmt.Errorf("clickhouse: %w", err)
+		return nil, fmt.Errorf("datastore: %w", err)
 	}
 
 	port, err := portFromListen(cfg.listen)
@@ -328,7 +328,7 @@ func newBridge(ctx context.Context, logger *slog.Logger, cfg config) (*bridge, e
 }
 
 // shutdown waits for in-flight handlers to drain (up to grace), then stops
-// the ZAP node and closes ClickHouse. Idempotent.
+// the ZAP node and closes Datastore. Idempotent.
 func (b *bridge) shutdown(grace time.Duration) {
 	deadline := time.Now().Add(grace)
 	for b.inflight.Load() > 0 && time.Now().Before(deadline) {
@@ -351,14 +351,14 @@ func (b *bridge) close() {
 	})
 }
 
-// openClickHouse opens a clickhouse-go connection with native-TCP transport
+// openClickHouse opens a datastore-go connection with native-TCP transport
 // and retries until the server is reachable. Retries are bounded — Docker
 // orchestration ordering may bring the bridge up before the server is
 // listening, so we wait up to 60s on cold starts.
 func openClickHouse(ctx context.Context, logger *slog.Logger, cfg config) (driver.Conn, error) {
-	opts := &clickhouse.Options{
-		Addr: []string{cfg.clickhouse},
-		Auth: clickhouse.Auth{
+	opts := &datastore.Options{
+		Addr: []string{cfg.datastore},
+		Auth: datastore.Auth{
 			Database: cfg.database,
 			Username: cfg.user,
 			Password: cfg.password,
@@ -367,7 +367,7 @@ func openClickHouse(ctx context.Context, logger *slog.Logger, cfg config) (drive
 		MaxOpenConns:     chMaxOpenConns,
 		MaxIdleConns:     5,
 		ConnMaxLifetime:  time.Hour,
-		ConnOpenStrategy: clickhouse.ConnOpenInOrder,
+		ConnOpenStrategy: datastore.ConnOpenInOrder,
 	}
 
 	const maxAttempts = 30
@@ -376,7 +376,7 @@ func openClickHouse(ctx context.Context, logger *slog.Logger, cfg config) (drive
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
-		conn, err := clickhouse.Open(opts)
+		conn, err := datastore.Open(opts)
 		if err == nil {
 			pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 			err = conn.Ping(pingCtx)
@@ -387,14 +387,14 @@ func openClickHouse(ctx context.Context, logger *slog.Logger, cfg config) (drive
 			_ = conn.Close()
 		}
 		lastErr = err
-		logger.Warn("clickhouse not ready", "attempt", attempt, "err", err)
+		logger.Warn("datastore not ready", "attempt", attempt, "err", err)
 		select {
 		case <-ctx.Done():
 			return nil, ctx.Err()
 		case <-time.After(2 * time.Second):
 		}
 	}
-	return nil, fmt.Errorf("clickhouse unreachable after %d attempts: %w", maxAttempts, lastErr)
+	return nil, fmt.Errorf("datastore unreachable after %d attempts: %w", maxAttempts, lastErr)
 }
 
 // handle dispatches a ZAP message to the right sub-method based on the
@@ -566,7 +566,7 @@ func (b *bridge) query(ctx context.Context, body []byte) *zap.Message {
 
 	qctx := ctx
 	if req.Database != "" {
-		qctx = clickhouse.Context(qctx, clickhouse.WithSettings(clickhouse.Settings{
+		qctx = datastore.Context(qctx, datastore.WithSettings(datastore.Settings{
 			"database": req.Database,
 		}))
 	}
@@ -625,7 +625,7 @@ func (b *bridge) exec(ctx context.Context, body []byte) *zap.Message {
 	}
 	qctx := ctx
 	if req.Database != "" {
-		qctx = clickhouse.Context(qctx, clickhouse.WithSettings(clickhouse.Settings{
+		qctx = datastore.Context(qctx, datastore.WithSettings(datastore.Settings{
 			"database": req.Database,
 		}))
 	}

@@ -9,7 +9,7 @@ doc_type: 'landing-page'
 |--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
 | [Overview](/sql-reference/functions/overview)    | Overview of all functions.                                                                                                      |
 | [Machine Learning](/sql-reference/functions/machine-learning-functions) | Functions for machine learning.                                                                                                 |
-| [Introspection](/sql-reference/functions/introspection) | Functions for introspection of ClickHouse.                                                                                      |
+| [Introspection](/sql-reference/functions/introspection) | Functions for introspection of Datastore.                                                                                      |
 | [arrayJoin](/sql-reference/functions/array-join) | The arrayJoin function which takes each row and generates a set of rows (unfold)                                                |
 | [Searching in Strings](/sql-reference/functions/string-search-functions) | Functions for searching within strings.                                                                                         |
 | [Hash](/sql-reference/functions/hash-functions)  | Hashing functions.                                                                                                              |

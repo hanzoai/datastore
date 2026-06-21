@@ -126,10 +126,10 @@ private:
     /// The number of attempts to collect the metadata before sleeping.
     const unsigned int attempts_to_collect_metadata_before_sleep;
 
-    /// The minimum time clickhouse will wait after unsuccessful attempt before trying to collect the metadata again.
+    /// The minimum time datastore will wait after unsuccessful attempt before trying to collect the metadata again.
     const std::chrono::milliseconds min_sleep_before_next_attempt_to_collect_metadata;
 
-    /// The maximum time clickhouse will wait after unsuccessful attempt before trying to collect the metadata again.
+    /// The maximum time datastore will wait after unsuccessful attempt before trying to collect the metadata again.
     const std::chrono::milliseconds max_sleep_before_next_attempt_to_collect_metadata;
 
     /// Whether we should collect the metadata after a successful attempt one more time and check that nothing has changed.

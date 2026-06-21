@@ -1,13 +1,13 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 
 node_old = cluster.add_instance(
     "node1",
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
     with_zookeeper=True,
@@ -45,7 +45,7 @@ def test_vertical_merges_from_compact_parts(start_cluster):
         node.query(
             """
             CREATE TABLE t_vertical_merges (id UInt64, v1 UInt64, v2 UInt64)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/t_vertical_merges', '{}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/0/t_vertical_merges', '{}')
             ORDER BY id
             SETTINGS
                 index_granularity = 50,

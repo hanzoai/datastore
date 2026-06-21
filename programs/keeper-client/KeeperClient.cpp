@@ -346,7 +346,7 @@ void KeeperClient::defineOptions(Poco::Util::OptionSet & options)
             .binding("use-xid-64"));
 
     options.addOption(
-        Poco::Util::Option("config-file", "c", "if set, will try to get a connection string from clickhouse config. default `config.xml`")
+        Poco::Util::Option("config-file", "c", "if set, will try to get a connection string from datastore config. default `config.xml`")
             .argument("<file>")
             .binding("config-file"));
 
@@ -438,11 +438,11 @@ void KeeperClient::initialize(Poco::Util::Application & /* self */)
 
     EventNotifier::init();
 
-    const char * env_password = getenv("CLICKHOUSE_KEEPER_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_password = getenv("DATASTORE_KEEPER_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
     if (env_password && !config().has("password"))
         config().setString("password", env_password);
 
-    const char * env_identity = getenv("CLICKHOUSE_KEEPER_IDENTITY"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_identity = getenv("DATASTORE_KEEPER_IDENTITY"); // NOLINT(concurrency-mt-unsafe)
     if (env_identity && !config().has("identity"))
         config().setString("identity", env_identity);
 }
@@ -652,8 +652,8 @@ void KeeperClient::connectToKeeper()
 
     ConfigProcessor config_processor(config().getString("config-file", "config.xml"));
 
-    /// This will handle a situation when clickhouse is running on the embedded config, but config.d folder is also present.
-    ConfigProcessor::registerEmbeddedConfig("config.xml", "<clickhouse/>");
+    /// This will handle a situation when datastore is running on the embedded config, but config.d folder is also present.
+    ConfigProcessor::registerEmbeddedConfig("config.xml", "<datastore/>");
     auto clickhouse_config = config_processor.loadConfig();
 
     Poco::Util::AbstractConfiguration::Keys keys;

@@ -6,9 +6,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-echo '[{"number":"0"} ,{"number":"1"} , {"number":"2"}]' > $CLICKHOUSE_TMP/02182_data
-$CLICKHOUSE_LOCAL -q "SELECT * FROM table" --file $CLICKHOUSE_TMP/02182_data --input-format JSONEachRow
+echo '[{"number":"0"} ,{"number":"1"} , {"number":"2"}]' > $DATASTORE_TMP/02182_data
+$DATASTORE_LOCAL -q "SELECT * FROM table" --file $DATASTORE_TMP/02182_data --input-format JSONEachRow
 
-echo '["0"] ,["1"] ; ["2"]' > $CLICKHOUSE_TMP/02182_data
-$CLICKHOUSE_LOCAL -q "SELECT * FROM table" --file $CLICKHOUSE_TMP/02182_data --input-format JSONCompactEachRow
+echo '["0"] ,["1"] ; ["2"]' > $DATASTORE_TMP/02182_data
+$DATASTORE_LOCAL -q "SELECT * FROM table" --file $DATASTORE_TMP/02182_data --input-format JSONCompactEachRow
 

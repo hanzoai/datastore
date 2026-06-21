@@ -9,4 +9,4 @@ set -o errexit
 set -o pipefail
 
 TIMELIMIT=$((SECONDS + 100))
-while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 100 | sed 's/.*/SELECT count() FROM (SELECT * FROM (SELECT * FROM system.numbers_mt LIMIT 111) LIMIT 55);/' | $CLICKHOUSE_CLIENT -n --max_block_size=1 | grep -vE '^55$' && echo 'Fail!' && break; done; echo 'OK'
+while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 100 | sed 's/.*/SELECT count() FROM (SELECT * FROM (SELECT * FROM system.numbers_mt LIMIT 111) LIMIT 55);/' | $DATASTORE_CLIENT -n --max_block_size=1 | grep -vE '^55$' && echo 'Fail!' && break; done; echo 'OK'

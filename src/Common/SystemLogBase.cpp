@@ -19,7 +19,7 @@
 #include <Interpreters/IcebergMetadataLog.h>
 #include <Interpreters/DeltaMetadataLog.h>
 #include <Common/MemoryTrackerUntrackedAllocationsBlockerInThread.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/DistributedCacheLog.h>
 #include <Interpreters/DistributedCacheServerLog.h>
 #endif
@@ -328,14 +328,14 @@ void SystemLogBase<LogElement>::add(LogElement element)
 
 #define INSTANTIATE_SYSTEM_LOG_BASE(ELEMENT) template class SystemLogBase<ELEMENT>;
 SYSTEM_LOG_ELEMENTS(INSTANTIATE_SYSTEM_LOG_BASE)
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     SYSTEM_LOG_ELEMENTS_CLOUD(INSTANTIATE_SYSTEM_LOG_BASE)
 #endif
 SYSTEM_PERIODIC_LOG_ELEMENTS(INSTANTIATE_SYSTEM_LOG_BASE)
 
 #define INSTANTIATE_SYSTEM_LOG_QUEUE(ELEMENT) template class SystemLogQueue<ELEMENT>;
 SYSTEM_LOG_ELEMENTS(INSTANTIATE_SYSTEM_LOG_QUEUE)
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 SYSTEM_LOG_ELEMENTS_CLOUD(INSTANTIATE_SYSTEM_LOG_QUEUE)
 #endif
 SYSTEM_PERIODIC_LOG_ELEMENTS(INSTANTIATE_SYSTEM_LOG_QUEUE)

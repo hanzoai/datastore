@@ -18,21 +18,21 @@ function hard_reset_table()
 {
     # Merges aren;t blocked, when they runs they left parts which are removed after old_parts_lifetime
     # Test have to set old_parts_lifetime in low value in order to be able to wait deleting empty parts
-    $CLICKHOUSE_CLIENT -q "drop table if exists test"
-    $CLICKHOUSE_CLIENT -q "create table test (id int, value int) engine=MergeTree order by id SETTINGS old_parts_lifetime = 5"
-    $CLICKHOUSE_CLIENT -q "insert into test (id, value) values (1, 10);"
-    $CLICKHOUSE_CLIENT -q "insert into test (id, value) values (2, 20);"
+    $DATASTORE_CLIENT -q "drop table if exists test"
+    $DATASTORE_CLIENT -q "create table test (id int, value int) engine=MergeTree order by id SETTINGS old_parts_lifetime = 5"
+    $DATASTORE_CLIENT -q "insert into test (id, value) values (1, 10);"
+    $DATASTORE_CLIENT -q "insert into test (id, value) values (2, 20);"
 }
 
 function reset_table()
 {
-    $CLICKHOUSE_CLIENT -q "truncate table test;"
-    $CLICKHOUSE_CLIENT -q "insert into test (id, value) values (1, 10);"
-    $CLICKHOUSE_CLIENT -q "insert into test (id, value) values (2, 20);"
+    $DATASTORE_CLIENT -q "truncate table test;"
+    $DATASTORE_CLIENT -q "insert into test (id, value) values (1, 10);"
+    $DATASTORE_CLIENT -q "insert into test (id, value) values (2, 20);"
 
     # The is a chance that old parts are held by the oldest snapshot existed on a node
     # In order not to wait too long (>60s) there is used a fallback to table recreation
-    wait_for_delete_empty_parts "test" $CLICKHOUSE_DATABASE 1>/dev/null 2>&1 || hard_reset_table
+    wait_for_delete_empty_parts "test" $DATASTORE_DATABASE 1>/dev/null 2>&1 || hard_reset_table
 }
 
 # TODO update test after implementing Read Committed
@@ -48,7 +48,7 @@ tx 1 "commit"
 tx 2                                            "alter table test update value=22 where id=2" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 2                                            "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 2                                            "rollback"
-$CLICKHOUSE_CLIENT -q "select 1, * from test order by id"
+$DATASTORE_CLIENT -q "select 1, * from test order by id"
 
 # G1a
 reset_table
@@ -62,7 +62,7 @@ tx_async 4                                           "select 3, * from test orde
 tx_async 4                                           "commit"
 tx_wait 3
 tx_wait 4
-$CLICKHOUSE_CLIENT -q "select 4, * from test order by id"
+$DATASTORE_CLIENT -q "select 4, * from test order by id"
 
 # G1b
 reset_table
@@ -76,7 +76,7 @@ tx_async 6                                           "select 6, * from test orde
 tx_async 6                                           "commit"
 tx_wait 5
 tx_wait 6
-$CLICKHOUSE_CLIENT -q "select 7, * from test order by id"
+$DATASTORE_CLIENT -q "select 7, * from test order by id"
 
 # G1c
 # NOTE both transactions will succeed if we implement skipping of unaffected partitions/parts
@@ -90,7 +90,7 @@ tx 8                                            "select 9, * from test order by 
 tx 7 "commit"
 tx 8                                            "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 8                                            "rollback"
-$CLICKHOUSE_CLIENT -q "select 10, * from test order by id"
+$DATASTORE_CLIENT -q "select 10, * from test order by id"
 
 # OTV
 reset_table
@@ -107,7 +107,7 @@ tx 11                                         "select 12, * from test order by i
 tx 10                     "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 10                     "rollback"
 tx 11                                         "commit"
-$CLICKHOUSE_CLIENT -q "select 13, * from test order by id"
+$DATASTORE_CLIENT -q "select 13, * from test order by id"
 
 # PMP
 reset_table
@@ -120,7 +120,7 @@ tx_async 12 "select 15, * from test where value = 30 settings use_query_conditio
 tx_async 12 "commit"
 tx_wait 12
 tx_wait 13
-$CLICKHOUSE_CLIENT -q "select 16, * from test order by id"
+$DATASTORE_CLIENT -q "select 16, * from test order by id"
 # ^^ The query condition cache (QCC) is disabled for one specific query.
 #    With QCC, the test fails with parallel replicas. For some reason, the issue does also not reproduce locally for me.
 #    Since transactions are experimental, we disable the QCC for now.
@@ -136,7 +136,7 @@ tx 14 "commit"
 tx 15                                              "select 17, * from test order by id" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 15                                              "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 15                                              "rollback"
-$CLICKHOUSE_CLIENT -q "select 18, * from test order by id"
+$DATASTORE_CLIENT -q "select 18, * from test order by id"
 
 # P4
 reset_table
@@ -149,7 +149,7 @@ tx 17                                              "alter table test update valu
 tx 16 "commit"
 tx 17                                              "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 tx 17                                              "rollback"
-$CLICKHOUSE_CLIENT -q "select 21, * from test order by id"
+$DATASTORE_CLIENT -q "select 21, * from test order by id"
 
 # G-single
 reset_table
@@ -165,7 +165,7 @@ tx_async 18 "select 25, * from test where id = 2"
 tx_async 18 "commit"
 tx_wait 18
 tx_wait 19
-$CLICKHOUSE_CLIENT -q "select 26, * from test order by id"
+$DATASTORE_CLIENT -q "select 26, * from test order by id"
 
 # G2
 reset_table
@@ -179,5 +179,5 @@ tx_async 20 "commit"
 tx_async 21                                              "commit"
 tx_wait 20
 tx_wait 21
-$CLICKHOUSE_CLIENT -q "select 29, * from test order by id"
+$DATASTORE_CLIENT -q "select 29, * from test order by id"
 

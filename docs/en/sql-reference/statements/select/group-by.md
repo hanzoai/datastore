@@ -20,7 +20,7 @@ There's an additional way to run aggregation over a table. If a query contains t
 
 ## NULL Processing {#null-processing}
 
-For grouping, ClickHouse interprets [NULL](/sql-reference/syntax#null) as a value, and `NULL==NULL`. It differs from `NULL` processing in most other contexts.
+For grouping, Datastore interprets [NULL](/sql-reference/syntax#null) as a value, and `NULL==NULL`. It differs from `NULL` processing in most other contexts.
 
 Here's an example to show what this means.
 
@@ -361,7 +361,7 @@ GROUPING SETS
 
 ## Implementation Details {#implementation-details}
 
-Aggregation is one of the most important features of a column-oriented DBMS, and thus it's implementation is one of the most heavily optimized parts of ClickHouse. By default, aggregation is done in memory using a hash-table. It has 40+ specializations that are chosen automatically depending on "grouping key" data types.
+Aggregation is one of the most important features of a column-oriented DBMS, and thus it's implementation is one of the most heavily optimized parts of Datastore. By default, aggregation is done in memory using a hash-table. It has 40+ specializations that are chosen automatically depending on "grouping key" data types.
 
 ### GROUP BY Optimization Depending on Table Sorting Key {#group-by-optimization-depending-on-table-sorting-key}
 

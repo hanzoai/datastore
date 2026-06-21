@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/95299
+-- https://github.com/ClickHouse/Datastore/issues/95299
 -- These previously crashed with `Block structure mismatch ... LowCardinality(UInt16) vs LowCardinality(Nullable(UInt16))`
 -- in `AggregatingStep::transformPipeline` (GROUPING SETS path, missing-keys DAG)
 -- and `CubeStep::transformPipeline` (`addGroupingSetForTotals`).

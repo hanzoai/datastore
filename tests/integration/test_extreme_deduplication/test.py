@@ -43,7 +43,7 @@ def test_deduplication_window_in_seconds(started_cluster):
         """
         DROP TABLE IF EXISTS simple ON CLUSTER test_cluster SYNC;
         CREATE TABLE simple ON CLUSTER test_cluster (date Date, id UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/simple', '{replica}') PARTITION BY toYYYYMM(date) ORDER BY id"""
+        ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/simple', '{replica}') PARTITION BY toYYYYMM(date) ORDER BY id"""
     )
 
     node.query("INSERT INTO simple VALUES (0, 0)")
@@ -59,7 +59,7 @@ def test_deduplication_window_in_seconds(started_cluster):
         if (
             TSV.toMat(
                 node.query(
-                    "SELECT count() FROM system.zookeeper WHERE path = '/clickhouse/tables/0/simple/blocks'"
+                    "SELECT count() FROM system.zookeeper WHERE path = '/datastore/tables/0/simple/blocks'"
                 )
             )[0][0]
             <= "1"

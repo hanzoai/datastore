@@ -1,5 +1,5 @@
 ---
-description: 'Guide for building ClickHouse from source for the s390x architecture'
+description: 'Guide for building Datastore from source for the s390x architecture'
 sidebar_label: 'Build on Linux for s390x (zLinux)'
 sidebar_position: 30
 slug: /development/build-cross-s390x
@@ -7,9 +7,9 @@ title: 'Build on Linux for s390x (zLinux)'
 doc_type: 'guide'
 ---
 
-ClickHouse has experimental support for s390x.
+Datastore has experimental support for s390x.
 
-## Building ClickHouse for s390x {#building-clickhouse-for-s390x}
+## Building Datastore for s390x {#building-datastore-for-s390x}
 
 s390x, as other platforms, builds OpenSSL as a static library. If you want to build with dynamic OpenSSL, you need to pass `-DENABLE_OPENSSL_DYNAMIC=1` to CMake.
 
@@ -40,7 +40,7 @@ apt-get install binfmt-support binutils-s390x-linux-gnu qemu-user-static
 Once built, the binary can be run with, e.g.:
 
 ```bash
-qemu-s390x-static -L /usr/s390x-linux-gnu ./programs/clickhouse local --query "Select 2"
+qemu-s390x-static -L /usr/s390x-linux-gnu ./programs/datastore local --query "Select 2"
 2
 ```
 
@@ -52,19 +52,19 @@ Install LLDB:
 apt-get install lldb-21
 ```
 
-To Debug a s390x executable, run clickhouse using QEMU in debug mode:
+To Debug a s390x executable, run datastore using QEMU in debug mode:
 
 ```bash
-qemu-s390x-static -g 31338 -L /usr/s390x-linux-gnu ./clickhouse
+qemu-s390x-static -g 31338 -L /usr/s390x-linux-gnu ./datastore
 ```
 
 In another shell run LLDB and attach, replace `<Clickhouse Parent Directory>` and `<build directory>` with the values corresponding to your environment.
 
 ```bash
 lldb-15
-(lldb) target create ./clickhouse
-Current executable set to '/<Clickhouse Parent Directory>/ClickHouse/<build directory>/programs/clickhouse' (s390x).
-(lldb) settings set target.source-map <build directory> /<Clickhouse Parent Directory>/ClickHouse
+(lldb) target create ./datastore
+Current executable set to '/<Clickhouse Parent Directory>/Datastore/<build directory>/programs/datastore' (s390x).
+(lldb) settings set target.source-map <build directory> /<Clickhouse Parent Directory>/Datastore
 (lldb) gdb-remote 31338
 Process 1 stopped
 * thread #1, stop reason = signal SIGTRAP
@@ -79,7 +79,7 @@ Breakpoint 1: 9 locations.
 Process 1 resuming
 Process 1 stopped
 * thread #1, stop reason = breakpoint 1.1
-    frame #0: 0x0000004005cd9fc0 clickhouse`main(argc_=1, argv_=0x0000004020e594a8) at main.cpp:450:17
+    frame #0: 0x0000004005cd9fc0 datastore`main(argc_=1, argv_=0x0000004020e594a8) at main.cpp:450:17
    447  #if !defined(FUZZING_MODE)
    448  int main(int argc_, char ** argv_)
    449  {
@@ -94,7 +94,7 @@ Process 1 stopped
 - [CodeLLDB](https://github.com/vadimcn/vscode-lldb) extension is required for visual debugging.
 - [Command Variable](https://github.com/rioj7/command-variable) extension can help dynamic launches if using [CMake Variants](https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/variants.md).
 - Make sure to set the backend to your LLVM installation eg. `"lldb.library": "/usr/lib/x86_64-linux-gnu/liblldb-21.so"`
-- Make sure to run the clickhouse executable in debug mode prior to launch. (It is also possible to create a `preLaunchTask` that automates this)
+- Make sure to run the datastore executable in debug mode prior to launch. (It is also possible to create a `preLaunchTask` that automates this)
 
 ### Example configurations {#example-configurations}
 #### cmake-variants.yaml {#cmake-variantsyaml}
@@ -144,7 +144,7 @@ toolchain:
             "name": "(lldb) Launch s390x with qemu",
             "targetCreateCommands": ["target create ${command:cmake.launchTargetPath}"],
             "processCreateCommands": ["gdb-remote 2159"],
-            "preLaunchTask": "Run ClickHouse"
+            "preLaunchTask": "Run Datastore"
         }
     ]
 }
@@ -174,7 +174,7 @@ Defines a task to run the compiled executable in `server` mode under a `tmp` fol
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run ClickHouse",
+            "label": "Run Datastore",
             "type": "shell",
             "isBackground": true,
             "command": "${workspaceFolder}/.vscode/run-debug.sh",

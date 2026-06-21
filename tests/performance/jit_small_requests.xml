@@ -25,7 +25,7 @@
             compile_expressions = 1
     </query>
 
-    <!-- The same expression written as ClickHouse builtin function. -->
+    <!-- The same expression written as Datastore builtin function. -->
     <query>
         SELECT count() FROM numbers(100000000) WHERE NOT ignore(intHash64(number))
     </query>

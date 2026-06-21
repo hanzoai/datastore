@@ -59,14 +59,14 @@ def set_default_configs():
             [
                 "bash",
                 "-c",
-                "cp /etc/clickhouse-server/config.d/resources.xml.default /etc/clickhouse-server/config.d/resources.xml",
+                "cp /etc/datastore-server/config.d/resources.xml.default /etc/datastore-server/config.d/resources.xml",
             ]
         )
         n.exec_in_container(
             [
                 "bash",
                 "-c",
-                "cp /etc/clickhouse-server/config.d/workloads.xml.default /etc/clickhouse-server/config.d/workloads.xml",
+                "cp /etc/datastore-server/config.d/workloads.xml.default /etc/datastore-server/config.d/workloads.xml",
             ]
         )
         n.query("system reload config")
@@ -101,7 +101,7 @@ def update_workloads_config(*nodes, **settings):
             [
                 "bash",
                 "-c",
-                f"echo '<clickhouse>{xml}</clickhouse>' > /etc/clickhouse-server/config.d/workloads.xml",
+                f"echo '<datastore>{xml}</datastore>' > /etc/datastore-server/config.d/workloads.xml",
             ]
         )
         n.query("system reload config")

@@ -4,8 +4,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "drop table if exists minmax_index_point_in_polygon"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "drop table if exists minmax_index_point_in_polygon"
+$DATASTORE_CLIENT -q "
 CREATE TABLE minmax_index_point_in_polygon
 (
   x UInt32,
@@ -16,7 +16,7 @@ ENGINE = MergeTree()
 ORDER BY x 
 SETTINGS index_granularity = 3"
 
-$CLICKHOUSE_CLIENT -q "Insert into minmax_index_point_in_polygon values
+$DATASTORE_CLIENT -q "Insert into minmax_index_point_in_polygon values
   (4, 4),
   (6 ,6),
   (8, 8),
@@ -27,8 +27,8 @@ $CLICKHOUSE_CLIENT -q "Insert into minmax_index_point_in_polygon values
 function query_and_check()
 {
     query="$1"
-    $CLICKHOUSE_CLIENT -q "$query"
-    $CLICKHOUSE_CLIENT -q "$query FORMAT JSON" | grep "rows_read"
+    $DATASTORE_CLIENT -q "$query"
+    $DATASTORE_CLIENT -q "$query FORMAT JSON" | grep "rows_read"
 }
 
 # 1/2 marks filtered by minmax index, read_rows should be 3
@@ -39,4 +39,4 @@ query_and_check "select * from minmax_index_point_in_polygon where pointInPolygo
 # 2/2 marks filtered by minmax index, read_rows should be 0
 query_and_check "select * from minmax_index_point_in_polygon where pointInPolygon((x, y), [(0., 0.), (2., 2.), (2., 0.)])"
 
-$CLICKHOUSE_CLIENT -q "drop table if exists minmax_index_point_in_polygon"
+$DATASTORE_CLIENT -q "drop table if exists minmax_index_point_in_polygon"

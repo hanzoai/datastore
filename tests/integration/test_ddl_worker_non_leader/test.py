@@ -33,12 +33,12 @@ def test_non_leader_replica(started_cluster):
 
     node1.query(
         """CREATE TABLE IF NOT EXISTS sometable(id UInt32, value String)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/sometable', '1') ORDER BY tuple()"""
+    ENGINE = ReplicatedMergeTree('/datastore/tables/0/sometable', '1') ORDER BY tuple()"""
     )
 
     node2.query(
         """CREATE TABLE IF NOT EXISTS sometable(id UInt32, value String)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/sometable', '2') ORDER BY tuple() SETTINGS replicated_can_become_leader = 0"""
+    ENGINE = ReplicatedMergeTree('/datastore/tables/0/sometable', '2') ORDER BY tuple() SETTINGS replicated_can_become_leader = 0"""
     )
 
     node1.query(

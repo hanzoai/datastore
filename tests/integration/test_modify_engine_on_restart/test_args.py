@@ -64,7 +64,7 @@ def check_tables():
         )
         .strip()
         .startswith(
-            "ReplicatedReplacingMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\', D)"
+            "ReplicatedReplacingMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\', D)"
         )
     )
     assert (
@@ -74,7 +74,7 @@ def check_tables():
         )
         .strip()
         .startswith(
-            "ReplicatedVersionedCollapsingMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\', Sign, Version)"
+            "ReplicatedVersionedCollapsingMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\', Sign, Version)"
         )
     )
 

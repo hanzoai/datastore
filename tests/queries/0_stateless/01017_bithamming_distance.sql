@@ -29,7 +29,7 @@ CREATE TABLE test_string
 	s4 FixedString(10),
 ) ENGINE = Memory;
 
-INSERT INTO test_string VALUES ('hello', 'hello', 'hello', 'hello') ('hello', 'hellow', 'hello', 'hellow') ('clickhouse', '012345', 'clickhouse', '012345');
+INSERT INTO test_string VALUES ('hello', 'hello', 'hello', 'hello') ('hello', 'hellow', 'hello', 'hellow') ('datastore', '012345', 'datastore', '012345');
 
 SELECT bitHammingDistance('hello', 'hello');
 SELECT bitHammingDistance('hello', 'hellow');

@@ -104,7 +104,7 @@ namespace DB::Iceberg
 
 using namespace DB;
 
-/// Best-effort heuristic based on ClickHouse naming conventions.
+/// Best-effort heuristic based on Datastore naming conventions.
 /// Files produced by other engines (Spark, Flink, Trino) may use different
 /// patterns and fall through to DATA_FILE; this only affects per-category
 /// reporting metrics, not deletion safety.

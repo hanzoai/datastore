@@ -13,7 +13,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-In this format, ClickHouse outputs each row as a separated, newline-delimited JSON Object.
+In this format, Datastore outputs each row as a separated, newline-delimited JSON Object.
 
 ## Example usage {#example-usage}
 

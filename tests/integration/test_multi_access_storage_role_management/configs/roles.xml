@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <roles>
         <default_role>
             <grants>
@@ -6,4 +6,4 @@
             </grants>
         </default_role>
     </roles>
-</clickhouse>
+</datastore>

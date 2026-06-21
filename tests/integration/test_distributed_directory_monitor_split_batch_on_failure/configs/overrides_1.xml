@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <!-- always send via network -->
@@ -10,4 +10,4 @@
             <distributed_background_insert_max_sleep_time_ms>86400</distributed_background_insert_max_sleep_time_ms>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

@@ -63,7 +63,7 @@ def new_backup_name():
 
 def test_replicated_database_async():
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
 
     node1.query("CREATE TABLE mydb.tbl(x UInt8) ENGINE=ReplicatedMergeTree ORDER BY x")

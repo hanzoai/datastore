@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Tags: no-sanitizers, long
-# It's not clear why distributed aggregation is much slower with sanitizers (https://github.com/ClickHouse/ClickHouse/issues/60625)
+# It's not clear why distributed aggregation is much slower with sanitizers (https://github.com/ClickHouse/Datastore/issues/60625)
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-CLICKHOUSE_CLIENT_TRACE=${CLICKHOUSE_CLIENT/"--send_logs_level=${CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL}"/"--send_logs_level=trace"}
+DATASTORE_CLIENT_TRACE=${DATASTORE_CLIENT/"--send_logs_level=${DATASTORE_CLIENT_SERVER_LOGS_LEVEL}"/"--send_logs_level=trace"}
 
 function were_parallel_replicas_used () {
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         SELECT
             initial_query_id,
             concat('Used parallel replicas: ', (ProfileEvents['ParallelReplicasUsedCount'] > 0)::bool::String) as used
@@ -18,12 +18,12 @@ function were_parallel_replicas_used () {
       AND initial_query_id LIKE '$1%'
       AND query_id = initial_query_id
       AND type = 'QueryFinish'
-      AND current_database = '$CLICKHOUSE_DATABASE'
+      AND current_database = '$DATASTORE_DATABASE'
     ORDER BY event_time_microseconds ASC
     FORMAT TSV"
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE IF NOT EXISTS test_parallel_replicas_automatic_left_side
     (
         number Int64,
@@ -39,7 +39,7 @@ $CLICKHOUSE_CLIENT --query "
       SELECT number, 3 AS p FROM numbers(10_000_000, 8_000_000)
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE IF NOT EXISTS test_parallel_replicas_automatic_count_right_side
     (
         number Int64,
@@ -60,7 +60,7 @@ function run_query_with_pure_parallel_replicas () {
     # might decide to use N replicas, one of them might be fast and do all the work before others start up. This means
     # that those replicas wouldn't log into the system.query_log and the test would be flaky
 
-    $CLICKHOUSE_CLIENT_TRACE \
+    $DATASTORE_CLIENT_TRACE \
         --query "$3" \
         --query_id "${1}_pure" \
         --max_parallel_replicas 3 \
@@ -74,13 +74,13 @@ function run_query_with_pure_parallel_replicas () {
     |& grep "It is enough work for" | awk '{ print substr($7, 2, length($7) - 2) "\t" $20 " estimated parallel replicas" }' | sort -n -k2 -b | grep -Pv "\t0 estimated parallel replicas"
 }
 
-query_id_base="02784_automatic_parallel_replicas_join-$CLICKHOUSE_DATABASE"
+query_id_base="02784_automatic_parallel_replicas_join-$DATASTORE_DATABASE"
 
 
 #### JOIN (left side 10M, right side 1M)
 #### As the right side of the JOIN is a table and not a subquery, ideally the right side should be left untouched and
 #### pushed down into each replica. This isn't implemented yet and the right side of the join is being transformed into
-#### a subquery, which then is executed in parallel (https://github.com/ClickHouse/ClickHouse/issues/49301#issuecomment-1619897920)
+#### a subquery, which then is executed in parallel (https://github.com/ClickHouse/Datastore/issues/49301#issuecomment-1619897920)
 #### This is why when we print estimation it happens twice, once for each side of the join
 simple_join_query="SELECT sum(value) FROM test_parallel_replicas_automatic_left_side INNER JOIN test_parallel_replicas_automatic_count_right_side USING number format Null"
 
@@ -93,8 +93,8 @@ run_query_with_pure_parallel_replicas "${query_id_base}_simple_join_5M" 5000000 
 run_query_with_pure_parallel_replicas "${query_id_base}_simple_join_1M" 1000000 "$simple_join_query" # Right: 1->0. Left: 10->3
 run_query_with_pure_parallel_replicas "${query_id_base}_simple_join_300k" 300000 "$simple_join_query" # Right: 2. Left: 33->3
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
 were_parallel_replicas_used "${query_id_base}"
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test_parallel_replicas_automatic_left_side"
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test_parallel_replicas_automatic_count_right_side"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test_parallel_replicas_automatic_left_side"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test_parallel_replicas_automatic_count_right_side"

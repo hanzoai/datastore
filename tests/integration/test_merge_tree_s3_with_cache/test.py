@@ -110,7 +110,7 @@ def test_read_after_cache_is_wiped(
     # Wipe cache
     cluster.exec_in_container(
         cluster.get_container_id("node"),
-        ["rm", "-rf", "/var/lib/clickhouse/disks/s3/cache/"],
+        ["rm", "-rf", "/var/lib/datastore/disks/s3/cache/"],
     )
 
     select_query = "SELECT * FROM s3_test"

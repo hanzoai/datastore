@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <stream_like_engine_allow_direct_select>1</stream_like_engine_allow_direct_select>
@@ -11,4 +11,4 @@
             <named_collection_control>1</named_collection_control>
         </default>
     </users>
-</clickhouse>
+</datastore>

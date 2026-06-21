@@ -8,7 +8,7 @@ title: 'SummingMergeTree table engine'
 doc_type: 'reference'
 ---
 
-The engine inherits from [MergeTree](/engines/table-engines/mergetree-family/versionedcollapsingmergetree). The difference is that when merging data parts for `SummingMergeTree` tables ClickHouse replaces all the rows with the same primary key (or more accurately, with the same [sorting key](../../../engines/table-engines/mergetree-family/mergetree.md)) with one row which contains summed values for the columns with the numeric data type. If the sorting key is composed in a way that a single key value corresponds to large number of rows, this significantly reduces storage volume and speeds up data selection.
+The engine inherits from [MergeTree](/engines/table-engines/mergetree-family/versionedcollapsingmergetree). The difference is that when merging data parts for `SummingMergeTree` tables Datastore replaces all the rows with the same primary key (or more accurately, with the same [sorting key](../../../engines/table-engines/mergetree-family/mergetree.md)) with one row which contains summed values for the columns with the numeric data type. If the sorting key is composed in a way that a single key value corresponds to large number of rows, this significantly reduces storage volume and speeds up data selection.
 
 We recommend using the engine together with `MergeTree`. Store complete data in `MergeTree` table, and use `SummingMergeTree` for aggregated data storing, for example, when preparing reports. Such an approach will prevent you from losing valuable data due to an incorrectly composed primary key.
 
@@ -36,7 +36,7 @@ For a description of request parameters, see [request description](../../../sql-
 `columns` - a tuple with the names of columns where values will be summed. Optional parameter.
     The columns must be of a numeric type and must not be in the partition or sorting key.
 
- If `columns` is not specified, ClickHouse summarizes the values in all columns with a numeric data type that are not in the sorting key.
+ If `columns` is not specified, Datastore summarizes the values in all columns with a numeric data type that are not in the sorting key.
 
 ### Query clauses {#query-clauses}
 
@@ -85,7 +85,7 @@ Insert data to it:
 INSERT INTO summtt VALUES(1,1),(1,2),(2,1)
 ```
 
-ClickHouse may sum all the rows not completely ([see below](#data-processing)), so we use an aggregate function `sum` and `GROUP BY` clause in the query.
+Datastore may sum all the rows not completely ([see below](#data-processing)), so we use an aggregate function `sum` and `GROUP BY` clause in the query.
 
 ```sql
 SELECT key, sum(value) FROM summtt GROUP BY key
@@ -100,9 +100,9 @@ SELECT key, sum(value) FROM summtt GROUP BY key
 
 ## Data processing {#data-processing}
 
-When data are inserted into a table, they are saved as-is. ClickHouse merges the inserted parts of data periodically and this is when rows with the same primary key are summed and replaced with one for each resulting part of data.
+When data are inserted into a table, they are saved as-is. Datastore merges the inserted parts of data periodically and this is when rows with the same primary key are summed and replaced with one for each resulting part of data.
 
-ClickHouse can merge the data parts so that different resulting parts of data can consist rows with the same primary key, i.e. the summation will be incomplete. Therefore (`SELECT`) an aggregate function [sum()](/sql-reference/aggregate-functions/reference/sum) and `GROUP BY` clause should be used in a query as described in the example above.
+Datastore can merge the data parts so that different resulting parts of data can consist rows with the same primary key, i.e. the summation will be incomplete. Therefore (`SELECT`) an aggregate function [sum()](/sql-reference/aggregate-functions/reference/sum) and `GROUP BY` clause should be used in a query as described in the example above.
 
 ### Common rules for summation {#common-rules-for-summation}
 
@@ -116,7 +116,7 @@ The values are not summed for columns in the primary key.
 
 ### The summation in the AggregateFunction columns {#the-summation-in-the-aggregatefunction-columns}
 
-For columns of [AggregateFunction type](../../../sql-reference/data-types/aggregatefunction.md) ClickHouse behaves as [AggregatingMergeTree](../../../engines/table-engines/mergetree-family/aggregatingmergetree.md) engine aggregating according to the function.
+For columns of [AggregateFunction type](../../../sql-reference/data-types/aggregatefunction.md) Datastore behaves as [AggregatingMergeTree](../../../engines/table-engines/mergetree-family/aggregatingmergetree.md) engine aggregating according to the function.
 
 ### Nested structures {#nested-structures}
 
@@ -191,4 +191,4 @@ For nested data structure, you do not need to specify its columns in the tuple o
 
 ## Related content {#related-content}
 
-- Blog: [Using Aggregate Combinators in ClickHouse](https://clickhouse.com/blog/aggregate-functions-combinators-in-clickhouse-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)

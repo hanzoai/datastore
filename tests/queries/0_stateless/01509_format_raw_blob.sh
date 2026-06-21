@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 DROP TABLE IF EXISTS t;
 CREATE TABLE t (a LowCardinality(Nullable(String))) ENGINE = Memory;
 "
@@ -17,11 +17,11 @@ Nisi ut aliquip ex ea commodo consequat.
 EOF
 )
 
-echo "$LOREM_IPSUM" | ${CLICKHOUSE_CLIENT} --query "INSERT INTO t FORMAT RawBLOB"
+echo "$LOREM_IPSUM" | ${DATASTORE_CLIENT} --query "INSERT INTO t FORMAT RawBLOB"
 
 echo "$LOREM_IPSUM" | md5sum
-${CLICKHOUSE_CLIENT} --query "SELECT * FROM t FORMAT RawBLOB" | md5sum
+${DATASTORE_CLIENT} --query "SELECT * FROM t FORMAT RawBLOB" | md5sum
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 DROP TABLE t;
 "

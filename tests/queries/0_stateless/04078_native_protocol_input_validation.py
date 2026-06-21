@@ -15,8 +15,8 @@ import struct
 import sys
 import time
 
-CLICKHOUSE_PORT = int(os.environ.get("CLICKHOUSE_PORT_TCP", 9000))
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST", "127.0.0.1")
+DATASTORE_PORT = int(os.environ.get("DATASTORE_PORT_TCP", 9000))
+DATASTORE_HOST = os.environ.get("DATASTORE_HOST", "127.0.0.1")
 
 
 # -- Minimal native protocol implementation ----------------------------------
@@ -92,7 +92,7 @@ INTERFACE_TCP = 1
 def send_hello(sock, user="default", password=""):
     pkt = bytearray()
     pkt += write_varuint(CLIENT_HELLO)
-    pkt += write_string("ClickHouse test")
+    pkt += write_string("Datastore test")
     pkt += write_varuint(25)
     pkt += write_varuint(1)
     pkt += write_varuint(CLIENT_REVISION)
@@ -132,7 +132,7 @@ def build_client_info(query_kind=QUERY_KIND_INITIAL, user="default"):
     buf += write_uint8(INTERFACE_TCP)
     buf += write_string("testuser")         # os_user
     buf += write_string("testhost")         # client_hostname
-    buf += write_string("ClickHouse test")  # client_name
+    buf += write_string("Datastore test")  # client_name
     buf += write_varuint(25)                # version_major
     buf += write_varuint(1)                 # version_minor
     buf += write_varuint(CLIENT_REVISION)   # client_tcp_protocol_version
@@ -270,8 +270,8 @@ def test_invalid_compression(host, port):
 
 
 def main():
-    host = CLICKHOUSE_HOST
-    port = CLICKHOUSE_PORT
+    host = DATASTORE_HOST
+    port = DATASTORE_PORT
 
     test_valid_queries_still_work(host, port)
     test_invalid_stage(host, port)

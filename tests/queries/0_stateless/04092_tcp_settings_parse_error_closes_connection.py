@@ -7,7 +7,7 @@ flag, it throws without consuming the setting value from the buffer. This
 leaves the read buffer in an inconsistent state. If the server tried to
 reuse the connection, subsequent reads would misinterpret leftover bytes as
 new packets — the specific null-dereference path this caused was fixed in
-https://github.com/ClickHouse/ClickHouse/pull/94434, but the underlying
+https://github.com/ClickHouse/Datastore/pull/94434, but the underlying
 buffer desynchronization remained.
 
 This fix makes `TCPHandler` detect that `query_context` was never created
@@ -22,9 +22,9 @@ import struct
 import subprocess
 import sys
 
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST", "127.0.0.1")
-CLICKHOUSE_PORT = int(os.environ.get("CLICKHOUSE_PORT_TCP", 9000))
-CLICKHOUSE_CLIENT = os.environ.get("CLICKHOUSE_CLIENT", "clickhouse-client")
+DATASTORE_HOST = os.environ.get("DATASTORE_HOST", "127.0.0.1")
+DATASTORE_PORT = int(os.environ.get("DATASTORE_PORT_TCP", 9000))
+DATASTORE_CLIENT = os.environ.get("DATASTORE_CLIENT", "datastore-client")
 
 # -- Minimal native protocol helpers -----------------------------------------
 
@@ -72,7 +72,7 @@ def recv_exact(sock, n):
     return data
 
 CLIENT_REVISION = 54440
-CLIENT_NAME = "ClickHouse test"
+CLIENT_NAME = "Datastore test"
 
 def send_hello(sock):
     pkt = bytearray()
@@ -155,7 +155,7 @@ def read_exception(sock):
 
 
 def clickhouse_query(query):
-    cmd = CLICKHOUSE_CLIENT.split() + ["--query", query]
+    cmd = DATASTORE_CLIENT.split() + ["--query", query]
     return subprocess.run(cmd, capture_output=True, text=True, check=True).stdout.strip()
 
 
@@ -175,7 +175,7 @@ def test_connection_closed_after_bad_settings():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(10)
-    sock.connect((CLICKHOUSE_HOST, CLICKHOUSE_PORT))
+    sock.connect((DATASTORE_HOST, DATASTORE_PORT))
 
     try:
         send_hello(sock)

@@ -44,7 +44,7 @@ def create_postgres_table(cursor, table_name):
 
 def create_and_fill_postgres_table(cursor, table_name, port, host):
     create_postgres_table(cursor, table_name)
-    # Fill postgres table using clickhouse postgres table function and check
+    # Fill postgres table using datastore postgres table function and check
     table_func = f"""postgresql('{host}:{port}', 'postgres_database', '{table_name}', 'postgres', '{pg_pass}')"""
     node1.query(
         f"""INSERT INTO TABLE FUNCTION {table_func} SELECT number, number, number from numbers(10000)"""

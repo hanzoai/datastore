@@ -5,7 +5,7 @@
 -- assertBlocksHaveEqualStructure to fail in debug builds.
 -- The fix syncs the parent's input header with the child's output header when column names match
 -- but representations differ.
--- See https://github.com/ClickHouse/ClickHouse/issues/92845
+-- See https://github.com/ClickHouse/Datastore/issues/92845
 
 -- Minimal reproducer: a nullable expression referencing columns from both sides of the join
 -- becomes Const after constant folding when the WHERE clause makes the inner comparison always true.

@@ -201,9 +201,9 @@ The entire backup process is performed without stopping the server.
 
 Note that for old-styled tables you can specify the prefix of the partition name (for example, `2019`) - then the query creates the backup for all the corresponding partitions. Read about setting the partition expression in a section [How to set the partition expression](#how-to-set-partition-expression).
 
-At the time of execution, for a data snapshot, the query creates hardlinks to a table data. Hardlinks are placed in the directory `/var/lib/clickhouse/shadow/N/...`, where:
+At the time of execution, for a data snapshot, the query creates hardlinks to a table data. Hardlinks are placed in the directory `/var/lib/datastore/shadow/N/...`, where:
 
-- `/var/lib/clickhouse/` is the working ClickHouse directory specified in the config.
+- `/var/lib/datastore/` is the working Datastore directory specified in the config.
 - `N` is the incremental number of the backup.
 - if the `WITH NAME` parameter is specified, then the value of the `'backup_name'` parameter is used instead of the incremental number.
 
@@ -211,25 +211,25 @@ At the time of execution, for a data snapshot, the query creates hardlinks to a 
 If you use [a set of disks for data storage in a table](/engines/table-engines/mergetree-family/mergetree.md/#table_engine-mergetree-multiple-volumes), the `shadow/N` directory appears on every disk, storing data parts that matched by the `PARTITION` expression.
 :::
 
-The same structure of directories is created inside the backup as inside `/var/lib/clickhouse/`. The query performs `chmod` for all files, forbidding writing into them.
+The same structure of directories is created inside the backup as inside `/var/lib/datastore/`. The query performs `chmod` for all files, forbidding writing into them.
 
-After creating the backup, you can copy the data from `/var/lib/clickhouse/shadow/` to the remote server and then delete it from the local server. Note that the `ALTER t FREEZE PARTITION` query is not replicated. It creates a local backup only on the local server.
+After creating the backup, you can copy the data from `/var/lib/datastore/shadow/` to the remote server and then delete it from the local server. Note that the `ALTER t FREEZE PARTITION` query is not replicated. It creates a local backup only on the local server.
 
 The query creates backup almost instantly (but first it waits for the current queries to the corresponding table to finish running).
 
-`ALTER TABLE t FREEZE PARTITION` copies only the data, not table metadata. To make a backup of table metadata, copy the file `/var/lib/clickhouse/metadata/database/table.sql`
+`ALTER TABLE t FREEZE PARTITION` copies only the data, not table metadata. To make a backup of table metadata, copy the file `/var/lib/datastore/metadata/database/table.sql`
 
 To restore data from a backup, do the following:
 
 1.  Create the table if it does not exist. To view the query, use the .sql file (replace `ATTACH` in it with `CREATE`).
-2.  Copy the data from the `data/database/table/` directory inside the backup to the `/var/lib/clickhouse/data/database/table/detached/` directory.
+2.  Copy the data from the `data/database/table/` directory inside the backup to the `/var/lib/datastore/data/database/table/detached/` directory.
 3.  Run `ALTER TABLE t ATTACH PARTITION` queries to add the data to a table.
 
 Restoring from a backup does not require stopping the server.
 
 The query processes parts in parallel, the number of threads is regulated by the `max_threads` setting.
 
-For more information about backups and restoring data, see section ["Backup and Restore in ClickHouse"](/operations/backup/overview) section.
+For more information about backups and restoring data, see section ["Backup and Restore in Datastore"](/operations/backup/overview) section.
 
 ## UNFREEZE PARTITION {#unfreeze-partition}
 
@@ -264,12 +264,12 @@ For example:
 
 1. FETCH PARTITION
 ```sql
-ALTER TABLE users FETCH PARTITION 201902 FROM '/clickhouse/tables/01-01/visits';
+ALTER TABLE users FETCH PARTITION 201902 FROM '/datastore/tables/01-01/visits';
 ALTER TABLE users ATTACH PARTITION 201902;
 ```
 2. FETCH PART
 ```sql
-ALTER TABLE users FETCH PART 201901_2_2_0 FROM '/clickhouse/tables/01-01/visits';
+ALTER TABLE users FETCH PART 201901_2_2_0 FROM '/datastore/tables/01-01/visits';
 ALTER TABLE users ATTACH PART 201901_2_2_0;
 ```
 
@@ -382,4 +382,4 @@ OPTIMIZE TABLE table_not_partitioned PARTITION tuple() FINAL;
 
 `IN PARTITION` specifies the partition to which the [UPDATE](/sql-reference/statements/alter/update) or [DELETE](/sql-reference/statements/alter/delete) expressions are applied as a result of the `ALTER TABLE` query. New parts are created only from the specified partition. In this way, `IN PARTITION` helps to reduce the load when the table is divided into many partitions, and you only need to update the data point-by-point.
 
-The examples of `ALTER ... PARTITION` queries are demonstrated in the tests [`00502_custom_partitioning_local`](https://github.com/ClickHouse/ClickHouse/blob/master/tests/queries/0_stateless/00502_custom_partitioning_local.sql) and [`00502_custom_partitioning_replicated_zookeeper`](https://github.com/ClickHouse/ClickHouse/blob/master/tests/queries/0_stateless/00502_custom_partitioning_replicated_zookeeper.sql).
+The examples of `ALTER ... PARTITION` queries are demonstrated in the tests [`00502_custom_partitioning_local`](https://github.com/ClickHouse/Datastore/blob/master/tests/queries/0_stateless/00502_custom_partitioning_local.sql) and [`00502_custom_partitioning_replicated_zookeeper`](https://github.com/ClickHouse/Datastore/blob/master/tests/queries/0_stateless/00502_custom_partitioning_replicated_zookeeper.sql).

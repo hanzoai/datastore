@@ -1,4 +1,4 @@
--- Fixes issue: https://github.com/ClickHouse/ClickHouse/issues/95440
+-- Fixes issue: https://github.com/ClickHouse/Datastore/issues/95440
 
 SET allow_experimental_variant_type = 1;
 SET use_variant_as_common_type = 1;

@@ -5,9 +5,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-database=$($CLICKHOUSE_CLIENT -q 'SELECT currentDatabase()')
+database=$($DATASTORE_CLIENT -q 'SELECT currentDatabase()')
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 DROP TABLE IF EXISTS test_02480_table;
 DROP VIEW IF EXISTS test_02480_view;
 CREATE TABLE test_02480_table (id Int64) ENGINE=MergeTree ORDER BY id;

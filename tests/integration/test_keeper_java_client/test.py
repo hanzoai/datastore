@@ -1,5 +1,5 @@
 """
-Test ClickHouse Keeper compatibility with the Java ZooKeeper client.
+Test Datastore Keeper compatibility with the Java ZooKeeper client.
 
 Specifically tests all watch-related request types that require correct
 response serialization:
@@ -9,7 +9,7 @@ response serialization:
   - setWatches (OpCode 101): re-establish watches (data/exist/child)
   - setWatches2 (OpCode 105): re-establish watches including persistent
 
-See https://github.com/ClickHouse/ClickHouse/issues/98079
+See https://github.com/ClickHouse/Datastore/issues/98079
 """
 
 import os

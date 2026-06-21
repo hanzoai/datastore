@@ -609,7 +609,7 @@ def test_roles_cache():
             modify()
             modify()
 
-    # Sleeping is necessary in this test because the role cache in ClickHouse has expiration timeout.
+    # Sleeping is necessary in this test because the role cache in Datastore has expiration timeout.
     def maybe_sleep():
         if random.random() < 0.1:
             # "role_cache_expiration_time_seconds" is set to 2 seconds in the test configuration.

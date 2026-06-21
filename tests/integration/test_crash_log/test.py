@@ -25,7 +25,7 @@ def started_node():
 
 def send_signal(started_node, signal):
     started_node.exec_in_container(
-        ["bash", "-c", f"pkill -{signal} clickhouse"], user="root"
+        ["bash", "-c", f"pkill -{signal} datastore"], user="root"
     )
 
 
@@ -38,11 +38,11 @@ def wait_for_clickhouse_stop(started_node):
     ## sleep_in_logs_flush failpoint adding 30s per log flush.
     for attempt in range(360):
         time.sleep(1)
-        pid = started_node.get_process_pid("clickhouse")
+        pid = started_node.get_process_pid("datastore")
         if pid is None:
             result = "OK"
             break
-    assert result == "OK", "ClickHouse process is still running"
+    assert result == "OK", "Datastore process is still running"
 
 
 def test_crash_log_synchronous(started_node):

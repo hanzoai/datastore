@@ -38,7 +38,7 @@ echo "== Work dir:   $WORK_DIR"
 echo "== ts window:  >= $TS_FILTER  AND  < $TS_FILTER_END"
 echo
 
-PLAY_URL='https://play.clickhouse.com/?user=play'
+PLAY_URL='https://play.datastore.com/?user=play'
 fetch() {
   local sql_file="$1"
   local out_file="$2"

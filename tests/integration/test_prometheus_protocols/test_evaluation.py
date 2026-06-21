@@ -19,7 +19,7 @@ node = cluster.add_instance(
 
 
 # Sends data [ ({'label_name1': 'label_value1], ...}, {timestamp1: value1, ...} ), ... ]
-# to the "protobuf_receiver" service and also to ClickHouse via the RemoteWrite protocol.
+# to the "protobuf_receiver" service and also to Datastore via the RemoteWrite protocol.
 def send_data(time_series):
     protobuf = convert_time_series_to_protobuf(time_series)
     send_protobuf_to_remote_write(
@@ -31,7 +31,7 @@ def send_data(time_series):
     send_protobuf_to_remote_write(node.ip_address, 9093, "/write", protobuf)
 
 
-# Executes a query in the "prometheus_reader" service. This service uses the RemoteRead protocol to get data from ClickHouse.
+# Executes a query in the "prometheus_reader" service. This service uses the RemoteRead protocol to get data from Datastore.
 def execute_query_in_prometheus_reader(query, timestamp=None, expect_error=False):
     return execute_query_via_http_api(
         cluster.prometheus_ip["reader"],
@@ -65,7 +65,7 @@ def execute_query_in_prometheus(query, timestamp, expect_error=False):
     return r1
 
 
-# Executes a prometheus query in ClickHouse via HTTP API
+# Executes a prometheus query in Datastore via HTTP API
 def execute_query_in_clickhouse_http_api(query, timestamp, expect_error=False):
     return execute_query_via_http_api(
         node.ip_address,
@@ -77,7 +77,7 @@ def execute_query_in_clickhouse_http_api(query, timestamp, expect_error=False):
     )
 
 
-# Executes a prometheus query in ClickHouse via SQL query
+# Executes a prometheus query in Datastore via SQL query
 def execute_query_in_clickhouse_sql(query, timestamp, expect_error=False):
     quoted_query = "'" + query.replace("'", "''") + "'"
     sql_query = (
@@ -112,7 +112,7 @@ def execute_range_query_in_prometheus(query, start_time, end_time, step):
     return r1
 
 
-# Executes a range query in ClickHouse via HTTP API
+# Executes a range query in Datastore via HTTP API
 def execute_range_query_in_clickhouse_http_api(query, start_time, end_time, step):
     return execute_range_query_via_http_api(
         node.ip_address,
@@ -125,14 +125,14 @@ def execute_range_query_in_clickhouse_http_api(query, start_time, end_time, step
     )
 
 
-# Executes a range query in ClickHouse via SQL query
+# Executes a range query in Datastore via SQL query
 def execute_range_query_in_clickhouse_sql(query, start_time, end_time, step):
     return node.query(
         f"SELECT * FROM prometheusQueryRange(prometheus, '{query}', {start_time}, {end_time}, {step})"
     )
 
 
-# Sends all test data to the "protobuf_receiver" service and also to ClickHouse via the RemoteWrite protocol.
+# Sends all test data to the "protobuf_receiver" service and also to Datastore via the RemoteWrite protocol.
 def send_test_data():
     send_data([({"__name__": "up", "job": "prometheus"}, {1753176654.832: 1})])
 
@@ -256,7 +256,7 @@ def start_cluster():
         cluster.shutdown()
 
 
-# Evaluates the same query in Prometheus and in ClickHouse and compare the results.
+# Evaluates the same query in Prometheus and in Datastore and compare the results.
 def do_query_test(
     query,
     timestamp,
@@ -299,7 +299,7 @@ def do_query_test_expect_error(
     )
 
 
-# Evaluates the same range query in Prometheus and in ClickHouse and compare the results.
+# Evaluates the same range query in Prometheus and in Datastore and compare the results.
 def do_range_query_test(
     query,
     start_time,
@@ -330,7 +330,7 @@ def do_range_query_test(
     ), f"actual_result_from_http_api: {actual_result_from_http_api}, expected: {result}"
 
 
-# Evaluates a query in ClickHouse only (no comparison with Prometheus) and checks the result.
+# Evaluates a query in Datastore only (no comparison with Prometheus) and checks the result.
 # Used to verify deterministic behavior of our implementation in cases where Prometheus is expected
 # to provide a different result.
 def do_clickhouse_only_query_test(
@@ -1061,7 +1061,7 @@ def test_math_functions():
         500,
         '{"resultType": "vector", "result": [{"metric": {}, "value": [500, "7.38905609893065"]}]}',
         [["[]", "1970-01-01 00:08:20.000", 7.389056098924109]],
-        eps=1e-11,  # See https://github.com/ClickHouse/ClickHouse/issues/30340
+        eps=1e-11,  # See https://github.com/ClickHouse/Datastore/issues/30340
     )
 
     do_query_test(
@@ -1074,7 +1074,7 @@ def test_math_functions():
                 "[('1970-01-01 00:01:40.000',0.13533528323672805),('1970-01-01 00:03:20.000',0.3678794411711252),('1970-01-01 00:05:00.000',0.6065306597123097),('1970-01-01 00:06:40.000',1),('1970-01-01 00:08:20.000',1.6487212707014907),('1970-01-01 00:10:00.000',2.7182818284606256),('1970-01-01 00:11:40.000',7.389056098924109)]",
             ]
         ],
-        eps=1e-11,  # See https://github.com/ClickHouse/ClickHouse/issues/30340
+        eps=1e-11,  # See https://github.com/ClickHouse/Datastore/issues/30340
     )
 
     do_query_test(
@@ -1334,7 +1334,7 @@ def test_math_functions():
         500,
         '{"resultType": "vector", "result": [{"metric": {}, "value": [500, "0.7615941559557649"]}]}',
         [["[]", "1970-01-01 00:08:20.000", 0.7615946626193841]],
-        eps=1e-6,  # See https://github.com/ClickHouse/ClickHouse/issues/62390
+        eps=1e-6,  # See https://github.com/ClickHouse/Datastore/issues/62390
     )
 
     do_query_test(
@@ -1347,7 +1347,7 @@ def test_math_functions():
                 "[('1970-01-01 00:01:40.000',-0.964027555388663),('1970-01-01 00:03:20.000',-0.7615947917469623),('1970-01-01 00:05:00.000',-0.46211751165947257),('1970-01-01 00:06:40.000',0),('1970-01-01 00:08:20.000',0.46211811616870957),('1970-01-01 00:10:00.000',0.7615946626193841),('1970-01-01 00:11:40.000',0.9640275074014772)]",
             ]
         ],
-        eps=1e-6,  # See https://github.com/ClickHouse/ClickHouse/issues/62390
+        eps=1e-6,  # See https://github.com/ClickHouse/Datastore/issues/62390
     )
 
     do_query_test(
@@ -2974,7 +2974,7 @@ def test_aggregation_operators():
 
     # Our implementation of limitk() picks k time series deterministically after sorting them by CityHash64(tags).
     # Prometheus uses its own fingerprint (xxhash.Sum64), so limitk() in Prometheus picks different time series.
-    # That's why these tests check only ClickHouse results, and don't compare with Prometheus.
+    # That's why these tests check only Datastore results, and don't compare with Prometheus.
     do_clickhouse_only_query_test(
         "limitk(1, last_over_time(foo[10]))[50:10]",
         150,

@@ -4,7 +4,7 @@
 -- passing them to APPLY, but aggregate function arguments should use
 -- pre-aggregation (non-Nullable) types. The Nullable wrapping is handled
 -- post-aggregation by Rollup/Cube/GroupingSets transforms.
--- https://github.com/ClickHouse/ClickHouse/issues/100450
+-- https://github.com/ClickHouse/Datastore/issues/100450
 
 SET group_by_use_nulls = 1;
 

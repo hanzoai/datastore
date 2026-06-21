@@ -18,7 +18,7 @@ CREATE DICTIONARY `01945.db`.test_dictionary
 )
 PRIMARY KEY id
 LAYOUT(DIRECT())
-SOURCE(CLICKHOUSE(DB '01945.db' TABLE 'test_dictionary_values'));
+SOURCE(DATASTORE(DB '01945.db' TABLE 'test_dictionary_values'));
 
 SELECT * FROM `01945.db`.test_dictionary;
 DROP DICTIONARY `01945.db`.test_dictionary;
@@ -30,7 +30,7 @@ CREATE DICTIONARY `01945.db`.`test_dictionary.test`
 )
 PRIMARY KEY id
 LAYOUT(DIRECT())
-SOURCE(CLICKHOUSE(DB '01945.db' TABLE 'test_dictionary_values'));
+SOURCE(DATASTORE(DB '01945.db' TABLE 'test_dictionary_values'));
 
 SELECT * FROM `01945.db`.`test_dictionary.test`;
 DROP DICTIONARY `01945.db`.`test_dictionary.test`;

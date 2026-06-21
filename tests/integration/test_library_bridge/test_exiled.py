@@ -28,7 +28,7 @@ def ch_cluster():
             os.path.join(
                 os.path.dirname(os.path.realpath(__file__)), "configs/dict_lib.cpp"
             ),
-            "/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.cpp",
+            "/etc/datastore-server/config.d/dictionaries_lib/dict_lib.cpp",
         )
 
         instance.query("SYSTEM RELOAD CONFIG")
@@ -37,7 +37,7 @@ def ch_cluster():
             [
                 "bash",
                 "-c",
-                "/usr/bin/g++ -shared -o /etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so -fPIC /etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.cpp",
+                "/usr/bin/g++ -shared -o /etc/datastore-server/config.d/dictionaries_lib/dict_lib.so -fPIC /etc/datastore-server/config.d/dictionaries_lib/dict_lib.cpp",
             ],
             user="root",
         )
@@ -52,14 +52,14 @@ def test_bridge_dies_with_parent(ch_cluster):
         pytest.skip("Memory Sanitizer cannot work with third-party shared libraries")
     if instance.is_built_with_address_sanitizer():
         pytest.skip(
-            "Leak sanitizer falsely reports about a leak of 16 bytes in clickhouse-odbc-bridge"
+            "Leak sanitizer falsely reports about a leak of 16 bytes in datastore-odbc-bridge"
         )
 
     create_dict_simple(instance)
     result = instance.query("""select dictGet(lib_dict_c, 'value1', toUInt64(1));""")
     assert result.strip() == "101"
 
-    clickhouse_pid = instance.get_process_pid("clickhouse server")
+    clickhouse_pid = instance.get_process_pid("datastore server")
     bridge_pid = instance.get_process_pid("library-bridge")
     assert clickhouse_pid is not None
     assert bridge_pid is not None
@@ -73,7 +73,7 @@ def test_bridge_dies_with_parent(ch_cluster):
 
     for i in range(60):
         time.sleep(1)
-        clickhouse_pid = instance.get_process_pid("clickhouse server")
+        clickhouse_pid = instance.get_process_pid("datastore server")
         if clickhouse_pid is None:
             break
 

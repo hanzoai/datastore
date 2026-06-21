@@ -13,7 +13,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SELECT DISTINCT x
     FROM remote('127.0.0.{1,2}', view(
         SELECT 1 AS x GROUP BY 'a' WITH TOTALS

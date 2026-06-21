@@ -4,7 +4,7 @@ import uuid
 import pytest
 
 import helpers.client as client
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.test_tools import TSV, assert_eq_with_retry, exec_query_with_retry
 from helpers.wait_for_helpers import (
     wait_for_delete_empty_parts,
@@ -19,8 +19,8 @@ node3 = cluster.add_instance("node3", with_zookeeper=True)
 node4 = cluster.add_instance(
     "node4",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
     main_configs=[
@@ -31,8 +31,8 @@ node4 = cluster.add_instance(
 node5 = cluster.add_instance(
     "node5",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
     main_configs=[
@@ -42,8 +42,8 @@ node5 = cluster.add_instance(
 node6 = cluster.add_instance(
     "node6",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
     main_configs=[
@@ -73,7 +73,7 @@ def test_ttl_columns(started_cluster):
         node.query(
             """
                 CREATE TABLE {table_name}(date DateTime, id UInt32, a Int32 TTL date + INTERVAL 1 DAY, b Int32 TTL date + INTERVAL 1 MONTH)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/test_ttl_columns', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/test_ttl_columns', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date)
                 SETTINGS merge_with_ttl_timeout=0, min_bytes_for_wide_part=0, max_merge_selecting_sleep_ms=6000;
             """.format(
@@ -109,7 +109,7 @@ def test_merge_with_ttl_timeout(started_cluster):
         node.query(
             """
                 CREATE TABLE {table}(date DateTime, id UInt32, a Int32 TTL date + INTERVAL 1 DAY, b Int32 TTL date + INTERVAL 1 MONTH)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date)
                 SETTINGS min_bytes_for_wide_part=0, max_merge_selecting_sleep_ms=6000;
             """.format(
@@ -168,7 +168,7 @@ def test_ttl_many_columns(started_cluster):
                     _idx Int32 TTL date,
                     _offset Int32 TTL date,
                     _partition Int32 TTL date)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/test_ttl_2', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/test_ttl_2', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date) SETTINGS merge_with_ttl_timeout=0, max_merge_selecting_sleep_ms=6000;
             """.format(
                 table=table, replica=node.name
@@ -225,7 +225,7 @@ def test_ttl_table(started_cluster, delete_suffix):
         node.query(
             """
                 CREATE TABLE {table}(date DateTime, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date)
                 TTL date + INTERVAL 1 DAY {delete_suffix} SETTINGS merge_with_ttl_timeout=0, max_merge_selecting_sleep_ms=6000;
             """.format(
@@ -252,7 +252,7 @@ def test_modify_ttl(started_cluster):
         node.query(
             """
                 CREATE TABLE {table}(d DateTime, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}', '{replica}')
                 ORDER BY id
             """.format(
                 table=table, replica=node.name
@@ -290,7 +290,7 @@ def test_modify_column_ttl(started_cluster):
         node.query(
             """
                 CREATE TABLE {table}(d DateTime, id UInt32 DEFAULT 42)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}', '{replica}')
                 ORDER BY d
             """.format(
                 table=table, replica=node.name
@@ -328,7 +328,7 @@ def test_ttl_double_delete_rule_returns_error(started_cluster):
         node1.query(
             """
             CREATE TABLE {table}(date DateTime, id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}', '{replica}')
             ORDER BY id PARTITION BY toDayOfMonth(date)
             TTL date + INTERVAL 1 DAY, date + INTERVAL 2 DAY SETTINGS merge_with_ttl_timeout=0, max_merge_selecting_sleep_ms=6000
         """.format(
@@ -364,7 +364,7 @@ def optimize_with_retry(node, table_name, retry=20):
         ),
         pytest.param(
             "test_replicated_ttl_alter_delete",
-            "ReplicatedMergeTree('/clickhouse/test_replicated_ttl_alter_delete', '1')",
+            "ReplicatedMergeTree('/datastore/test_replicated_ttl_alter_delete', '1')",
             id="test_ttl_alter_delete_replicated",
         ),
     ],
@@ -446,7 +446,7 @@ def test_ttl_empty_parts(started_cluster):
         node.query(
             """
             CREATE TABLE test_ttl_empty_parts(date Date, id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/test_ttl_empty_parts', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/test_ttl_empty_parts', '{replica}')
             ORDER BY id
             SETTINGS max_bytes_to_merge_at_min_space_in_pool = 1, max_bytes_to_merge_at_max_space_in_pool = 1,
                 cleanup_delay_period = 1, cleanup_delay_period_random_add = 0,
@@ -555,7 +555,7 @@ def test_ttl_compatibility(started_cluster, node_left, node_right, num_run):
             """
                 DROP TABLE IF EXISTS {table}_delete SYNC;
                 CREATE TABLE {table}_delete(date DateTime, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}_delete', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}_delete', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date)
                 TTL date + INTERVAL 3 SECOND;
             """.format(
@@ -567,7 +567,7 @@ def test_ttl_compatibility(started_cluster, node_left, node_right, num_run):
             """
                 DROP TABLE IF EXISTS {table}_group_by SYNC;
                 CREATE TABLE {table}_group_by(date DateTime, id UInt32, val UInt64)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}_group_by', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}_group_by', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date)
                 TTL date + INTERVAL 3 SECOND GROUP BY id SET val = sum(val);
             """.format(
@@ -579,7 +579,7 @@ def test_ttl_compatibility(started_cluster, node_left, node_right, num_run):
             """
                 DROP TABLE IF EXISTS {table}_where SYNC;
                 CREATE TABLE {table}_where(date DateTime, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{table}_where', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{table}_where', '{replica}')
                 ORDER BY id PARTITION BY toDayOfMonth(date)
                 TTL date + INTERVAL 3 SECOND DELETE WHERE id % 2 = 1;
             """.format(

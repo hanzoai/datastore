@@ -184,8 +184,8 @@ def make_storage_policy_with_keys(
         [
             "bash",
             "-c",
-            """cat > /etc/clickhouse-server/config.d/storage_policy_{policy_name}.xml << EOF
-<clickhouse>
+            """cat > /etc/datastore-server/config.d/storage_policy_{policy_name}.xml << EOF
+<datastore>
 <storage_configuration>
     <disks>
         <{policy_name}_disk>
@@ -205,7 +205,7 @@ def make_storage_policy_with_keys(
         </{policy_name}>
         </policies>
 </storage_configuration>
-</clickhouse>
+</datastore>
 EOF""".format(
                 policy_name=policy_name, keys=keys
             ),

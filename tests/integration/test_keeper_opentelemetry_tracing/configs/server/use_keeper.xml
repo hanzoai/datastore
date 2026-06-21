@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>clickHouseKeeper2</host>
@@ -6,4 +6,4 @@
         </node>
         <pass_opentelemetry_tracing_context>1</pass_opentelemetry_tracing_context>
     </zookeeper>
-</clickhouse>
+</datastore>

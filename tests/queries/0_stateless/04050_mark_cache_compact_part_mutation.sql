@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/98579
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/98579
 -- Segfault in readBits when reading marks from a compact part during mutation
 
 DROP TABLE IF EXISTS t0;

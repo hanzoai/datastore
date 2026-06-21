@@ -55,12 +55,12 @@ def test_nodes_add(started_cluster):
         node2.stop_clickhouse()
         node2.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_two_nodes_2.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper2.xml",
+            "/etc/datastore-server/config.d/enable_keeper2.xml",
         )
         waiter = p.apply_async(start, (node2,))
         node1.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_two_nodes_1.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
         node1.query("SYSTEM RELOAD CONFIG")
         waiter.wait()
@@ -83,16 +83,16 @@ def test_nodes_add(started_cluster):
 
         node3.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_three_nodes_3.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper3.xml",
+            "/etc/datastore-server/config.d/enable_keeper3.xml",
         )
         waiter = p.apply_async(start, (node3,))
         node2.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_three_nodes_2.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper2.xml",
+            "/etc/datastore-server/config.d/enable_keeper2.xml",
         )
         node1.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_three_nodes_1.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
 
         node1.query("SYSTEM RELOAD CONFIG")
@@ -107,7 +107,7 @@ def test_nodes_add(started_cluster):
 
         # configs which change endpoints of server should not be allowed
         node1.replace_in_config(
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
             "node3",
             "non_existing_node",
         )

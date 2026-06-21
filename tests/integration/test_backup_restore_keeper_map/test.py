@@ -111,11 +111,11 @@ def test_on_cluster(deduplicate_files):
 
     def change_keeper_map_prefix(node):
         node.replace_config(
-            "/etc/clickhouse-server/config.d/keeper_map_path_prefix.xml",
+            "/etc/datastore-server/config.d/keeper_map_path_prefix.xml",
             """
-<clickhouse>
+<datastore>
     <keeper_map_path_prefix>/different_path/keeper_map</keeper_map_path_prefix>
-</clickhouse>
+</datastore>
 """,
         )
 

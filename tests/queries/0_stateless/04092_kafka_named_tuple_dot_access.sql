@@ -1,5 +1,5 @@
 -- Tags: no-fasttest
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/52121
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/52121
 -- Named tuple element access via dot notation should work for Kafka tables.
 -- Previously, `foo.a` on a Kafka table with Tuple(a String, b String) column
 -- failed with UNKNOWN_IDENTIFIER.

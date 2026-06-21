@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# script allows to install configs for clickhouse server and clients required
+# script allows to install configs for datastore server and clients required
 # for testing (stateless and stateful tests)
 
 set -x -e
 
-DEST_SERVER_PATH="${1:-/etc/clickhouse-server}"
-DEST_CLIENT_PATH="${2:-/etc/clickhouse-client}"
+DEST_SERVER_PATH="${1:-/etc/datastore-server}"
+DEST_CLIENT_PATH="${2:-/etc/datastore-client}"
 SRC_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 if [ $# -ge 2 ]; then
     shift 2
@@ -54,21 +54,21 @@ done
 function check_clickhouse_version()
 {
     local required_version=$1 && shift
-    # ClickHouse local version 25.4.1.1.
-    # ClickHouse local version 25.4.1.1 (official build).
-    current_version=$(clickhouse --version | awk '{print $4}')
+    # Datastore local version 25.4.1.1.
+    # Datastore local version 25.4.1.1 (official build).
+    current_version=$(datastore --version | awk '{print $4}')
 
     if [ "$(printf '%s\n' "$required_version" "$current_version" | sort -V | head -n1)" = "$required_version" ]; then
-        echo "ClickHouse version $current_version is OK (>= $required_version)"
+        echo "Datastore version $current_version is OK (>= $required_version)"
     else
-        echo "ClickHouse version $current_version is too old. Required >= $required_version"
+        echo "Datastore version $current_version is too old. Required >= $required_version"
         return 1
     fi
 }
 
 function is_fast_build()
 {
-    return $(clickhouse local --query "SELECT value NOT LIKE '%-fsanitize=%' AND value LIKE '%-DNDEBUG%' FROM system.build_options WHERE name = 'CXX_FLAGS'")
+    return $(datastore local --query "SELECT value NOT LIKE '%-fsanitize=%' AND value LIKE '%-DNDEBUG%' FROM system.build_options WHERE name = 'CXX_FLAGS'")
 }
 
 echo "Going to install test configs from $SRC_PATH into $DEST_SERVER_PATH"
@@ -77,8 +77,8 @@ mkdir -p $DEST_SERVER_PATH/users.d/
 mkdir -p $DEST_CLIENT_PATH
 
 # When adding a new config or changing the existing one,
-# you should check clickhouse version so that you won't
-# break validations using previous ClickHouse version (like bugfix validation).
+# you should check datastore version so that you won't
+# break validations using previous Datastore version (like bugfix validation).
 
 # Patching configs which are symbolic links can affect source files,
 # need to delete links created by previous script versions
@@ -181,7 +181,7 @@ fi
 # SSH protocol support (not supported with fasttest or OpenSSL FIPS).
 function is_openssl_fips_build()
 {
-    [ "$(clickhouse local --query "SELECT value FROM system.build_options where name = 'USE_OPENSSL_FIPS' LIMIT 1")" -eq 1 ]
+    [ "$(datastore local --query "SELECT value FROM system.build_options where name = 'USE_OPENSSL_FIPS' LIMIT 1")" -eq 1 ]
 }
 if [ "$FAST_TEST" != "1" ] && ! is_openssl_fips_build; then
     ln -sf $SRC_PATH/config.d/ssh.xml $DEST_SERVER_PATH/config.d/
@@ -275,7 +275,7 @@ else
     rm -f $DEST_SERVER_PATH/config.d/cannot_allocate_thread_injection.xml ||:
 fi
 
-if [[ -n "$CLICKHOUSE_FAILPOINTS_INJECTION" ]] && [[ "$CLICKHOUSE_FAILPOINTS_INJECTION" -eq 1 ]]; then
+if [[ -n "$DATASTORE_FAILPOINTS_INJECTION" ]] && [[ "$DATASTORE_FAILPOINTS_INJECTION" -eq 1 ]]; then
     ln -sf $SRC_PATH/config.d/fail_points_active.xml $DEST_SERVER_PATH/config.d/
 else
     rm -f $DEST_SERVER_PATH/config.d/fail_points_active.xml ||:
@@ -400,14 +400,14 @@ if [[ "$USE_DATABASE_REPLICATED" == "1" ]]; then
 
     # There is a bug in config reloading, so we cannot override macros using --macros.replica r2
     # And we have to copy configs...
-    ch_server_1_path=$DEST_SERVER_PATH/../clickhouse-server1
-    ch_server_2_path=$DEST_SERVER_PATH/../clickhouse-server2
+    ch_server_1_path=$DEST_SERVER_PATH/../datastore-server1
+    ch_server_2_path=$DEST_SERVER_PATH/../datastore-server2
     mkdir -p $ch_server_1_path
     mkdir -p $ch_server_2_path
-#    chown clickhouse $ch_server_1_path
-#    chown clickhouse $ch_server_2_path
-#    chgrp clickhouse $ch_server_1_path
-#    chgrp clickhouse $ch_server_2_path
+#    chown datastore $ch_server_1_path
+#    chown datastore $ch_server_2_path
+#    chgrp datastore $ch_server_1_path
+#    chgrp datastore $ch_server_2_path
     cp -r $DEST_SERVER_PATH/* $ch_server_1_path
     cp -r $DEST_SERVER_PATH/* $ch_server_2_path
 
@@ -418,19 +418,19 @@ if [[ "$USE_DATABASE_REPLICATED" == "1" ]]; then
     if [[ -z "$USE_ENCRYPTED_STORAGE" ]] || [[ "$USE_ENCRYPTED_STORAGE" == "0" ]]; then
         rm $ch_server_1_path/config.d/transactions.xml
         rm $ch_server_2_path/config.d/transactions.xml
-        cat $DEST_SERVER_PATH/config.d/transactions.xml | sed "s|/test/clickhouse/txn|/test/clickhouse/txn1|" > $ch_server_1_path/config.d/transactions.xml
-        cat $DEST_SERVER_PATH/config.d/transactions.xml | sed "s|/test/clickhouse/txn|/test/clickhouse/txn2|" > $ch_server_2_path/config.d/transactions.xml
+        cat $DEST_SERVER_PATH/config.d/transactions.xml | sed "s|/test/datastore/txn|/test/datastore/txn1|" > $ch_server_1_path/config.d/transactions.xml
+        cat $DEST_SERVER_PATH/config.d/transactions.xml | sed "s|/test/datastore/txn|/test/datastore/txn2|" > $ch_server_2_path/config.d/transactions.xml
     fi
 
 #    ch_server_lib_1=$DEST_SERVER_PATH/../../var/lib/clickhouse1
 #    ch_server_lib_2=$DEST_SERVER_PATH/../../var/lib/clickhouse2
 #    mkdir -p $ch_server_lib_1 $ch_server_lib_2
-#    chown clickhouse $ch_server_lib_1 $ch_server_lib_2
-#    chgrp clickhouse $ch_server_lib_1 $ch_server_lib_2
-    sed -i "s|<filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>|<filesystem_caches_path>/var/lib/clickhouse/filesystem_caches_1/</filesystem_caches_path>|" $ch_server_1_path/config.d/filesystem_caches_path.xml
-    sed -i "s|<filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>|<filesystem_caches_path>/var/lib/clickhouse/filesystem_caches_2/</filesystem_caches_path>|" $ch_server_2_path/config.d/filesystem_caches_path.xml
-    sed -i "s|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/clickhouse/filesystem_caches/</custom_cached_disks_base_directory>|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/clickhouse/filesystem_caches_1/</custom_cached_disks_base_directory>|" $ch_server_1_path/config.d/filesystem_caches_path.xml
-    sed -i "s|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/clickhouse/filesystem_caches/</custom_cached_disks_base_directory>|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/clickhouse/filesystem_caches_2/</custom_cached_disks_base_directory>|" $ch_server_2_path/config.d/filesystem_caches_path.xml
+#    chown datastore $ch_server_lib_1 $ch_server_lib_2
+#    chgrp datastore $ch_server_lib_1 $ch_server_lib_2
+    sed -i "s|<filesystem_caches_path>/var/lib/datastore/filesystem_caches/</filesystem_caches_path>|<filesystem_caches_path>/var/lib/datastore/filesystem_caches_1/</filesystem_caches_path>|" $ch_server_1_path/config.d/filesystem_caches_path.xml
+    sed -i "s|<filesystem_caches_path>/var/lib/datastore/filesystem_caches/</filesystem_caches_path>|<filesystem_caches_path>/var/lib/datastore/filesystem_caches_2/</filesystem_caches_path>|" $ch_server_2_path/config.d/filesystem_caches_path.xml
+    sed -i "s|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/datastore/filesystem_caches/</custom_cached_disks_base_directory>|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/datastore/filesystem_caches_1/</custom_cached_disks_base_directory>|" $ch_server_1_path/config.d/filesystem_caches_path.xml
+    sed -i "s|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/datastore/filesystem_caches/</custom_cached_disks_base_directory>|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/datastore/filesystem_caches_2/</custom_cached_disks_base_directory>|" $ch_server_2_path/config.d/filesystem_caches_path.xml
 
     # Remove SSH config from replicas to avoid port conflicts on tcp_ssh_port.
     rm -f $ch_server_1_path/config.d/ssh.xml $ch_server_1_path/config.d/ssh_host_rsa_key

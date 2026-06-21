@@ -8,7 +8,7 @@ CREATE DICTIONARY dict
   val UInt64 DEFAULT 10
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_data' PASSWORD '' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_data' PASSWORD '' DB currentDatabase()))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(FLAT());
 
@@ -23,6 +23,6 @@ SELECT dictGetUInt64('dict', 'val', toUInt64(0));
 SELECT query_count FROM system.dictionaries WHERE database = currentDatabase() AND name = 'dict';
 
 SELECT 'CREATE DATABASE';
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
-CREATE DATABASE IF NOT EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
+CREATE DATABASE IF NOT EXISTS {DATASTORE_DATABASE_1:Identifier};
 SELECT query_count FROM system.dictionaries WHERE database = currentDatabase() AND name = 'dict';

@@ -13,7 +13,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-In this format, ClickHouse outputs each row as a separated, newline-delimited JSON Object.
+In this format, Datastore outputs each row as a separated, newline-delimited JSON Object.
 
 This format is also known as `JSONEachRow`, `NDJSON` (Newline Delimited JSON), or `JSONL` (`JSONLines`). All these names are aliases for the same format and can be used interchangeably.
 

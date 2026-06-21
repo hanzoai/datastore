@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/23162
+-- https://github.com/ClickHouse/Datastore/issues/23162
 SET enable_analyzer=1;
 CREATE TABLE t1 ( k Int64, x Int64) ENGINE = Memory;
 

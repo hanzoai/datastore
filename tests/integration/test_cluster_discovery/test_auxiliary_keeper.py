@@ -77,7 +77,7 @@ def test_cluster_discovery_with_auxiliary_keeper_startup_and_stop(start_cluster)
 
     # test ON CLUSTER query
     nodes["node0"].query(
-        "CREATE TABLE tbl ON CLUSTER 'test_auto_cluster' (x UInt64) ENGINE = ReplicatedMergeTree('zookeeper2:/clickhouse/{shard}/tbl', '{replica}') ORDER BY x"
+        "CREATE TABLE tbl ON CLUSTER 'test_auto_cluster' (x UInt64) ENGINE = ReplicatedMergeTree('zookeeper2:/datastore/{shard}/tbl', '{replica}') ORDER BY x"
     )
     nodes["node0"].query("INSERT INTO tbl VALUES (1)")
     nodes["node1"].query("INSERT INTO tbl VALUES (2)")

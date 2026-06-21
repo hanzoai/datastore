@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <cluster>
             <shard>
@@ -20,4 +20,4 @@
         </cluster>
     </remote_servers>
     <display_secrets_in_show_and_select>1</display_secrets_in_show_and_select>
-</clickhouse>
+</datastore>

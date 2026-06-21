@@ -1,6 +1,6 @@
 -- Tags: no-random-merge-tree-settings, no-random-settings
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/99578
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/99578
 --
 -- A TOCTOU race between SYSTEM STOP MERGES / SYSTEM START MERGES could let a
 -- vertical merge continue after the horizontal stage processed zero rows,

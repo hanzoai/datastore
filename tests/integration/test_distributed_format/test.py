@@ -61,7 +61,7 @@ def test_single_file(started_cluster, cluster):
     path = get_dist_path(cluster, node, "distr_1", 1)
     query = f"select * from file('{path}/1.bin', 'Distributed')"
     out = node.exec_in_container(
-        ["/usr/bin/clickhouse", "local", "--stacktrace", "-q", query]
+        ["/usr/bin/datastore", "local", "--stacktrace", "-q", query]
     )
 
     assert out == "1\ta\n2\tbb\n3\tccc\n"
@@ -71,7 +71,7 @@ def test_single_file(started_cluster, cluster):
     select * from t;
     """
     out = node.exec_in_container(
-        ["/usr/bin/clickhouse", "local", "--stacktrace", "-q", query]
+        ["/usr/bin/datastore", "local", "--stacktrace", "-q", query]
     )
 
     assert out == "1\ta\n2\tbb\n3\tccc\n"
@@ -103,7 +103,7 @@ def test_two_files(started_cluster, cluster):
     path = get_dist_path(cluster, node, "distr_2", 1)
     query = f"select * from file('{path}/{{1,2,3,4}}.bin', 'Distributed') order by x"
     out = node.exec_in_container(
-        ["/usr/bin/clickhouse", "local", "--stacktrace", "-q", query]
+        ["/usr/bin/datastore", "local", "--stacktrace", "-q", query]
     )
 
     assert out == "0\t_\n1\ta\n2\tbb\n3\tccc\n"
@@ -113,7 +113,7 @@ def test_two_files(started_cluster, cluster):
     select * from t order by x;
     """
     out = node.exec_in_container(
-        ["/usr/bin/clickhouse", "local", "--stacktrace", "-q", query]
+        ["/usr/bin/datastore", "local", "--stacktrace", "-q", query]
     )
 
     assert out == "0\t_\n1\ta\n2\tbb\n3\tccc\n"
@@ -140,7 +140,7 @@ def test_single_file_old(started_cluster, cluster):
     path = get_dist_path(cluster, node, "distr_3", 0)
     query = f"select * from file('{path}/1.bin', 'Distributed')"
     out = node.exec_in_container(
-        ["/usr/bin/clickhouse", "local", "--stacktrace", "-q", query]
+        ["/usr/bin/datastore", "local", "--stacktrace", "-q", query]
     )
 
     assert out == "1\ta\n2\tbb\n3\tccc\n"
@@ -150,7 +150,7 @@ def test_single_file_old(started_cluster, cluster):
     select * from t;
     """
     out = node.exec_in_container(
-        ["/usr/bin/clickhouse", "local", "--stacktrace", "-q", query]
+        ["/usr/bin/datastore", "local", "--stacktrace", "-q", query]
     )
 
     assert out == "1\ta\n2\tbb\n3\tccc\n"
@@ -177,7 +177,7 @@ def test_remove_replica(started_cluster):
             "sed",
             "-i",
             "s/test_cluster_remove_replica1/test_cluster_remove_replica_tmp/g",
-            "/etc/clickhouse-server/config.d/another_remote_servers.xml",
+            "/etc/datastore-server/config.d/another_remote_servers.xml",
         ]
     )
     node.exec_in_container(
@@ -185,7 +185,7 @@ def test_remove_replica(started_cluster):
             "sed",
             "-i",
             "s/test_cluster_remove_replica2/test_cluster_remove_replica1/g",
-            "/etc/clickhouse-server/config.d/another_remote_servers.xml",
+            "/etc/datastore-server/config.d/another_remote_servers.xml",
         ]
     )
     node.query("SYSTEM RELOAD CONFIG")
@@ -202,7 +202,7 @@ def test_remove_replica(started_cluster):
             "sed",
             "-i",
             "s/test_cluster_remove_replica1/test_cluster_remove_replica2/g",
-            "/etc/clickhouse-server/config.d/another_remote_servers.xml",
+            "/etc/datastore-server/config.d/another_remote_servers.xml",
         ]
     )
     node.exec_in_container(
@@ -210,13 +210,13 @@ def test_remove_replica(started_cluster):
             "sed",
             "-i",
             "s/test_cluster_remove_replica_tmp/test_cluster_remove_replica1/g",
-            "/etc/clickhouse-server/config.d/another_remote_servers.xml",
+            "/etc/datastore-server/config.d/another_remote_servers.xml",
         ]
     )
 
 def test_invalid_shard_directory_format(started_cluster):
     """
-    Test that ClickHouse doesn't crash when it encounters
+    Test that Datastore doesn't crash when it encounters
     a malformed directory name like 'shard1_all_replicas_bkp'
     during distributed table initialization.
     """

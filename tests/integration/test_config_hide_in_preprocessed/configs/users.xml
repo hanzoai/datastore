@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <named_collection_control>1</named_collection_control>
@@ -1004,4 +1004,4 @@
         <default998><password></password></default998>
         <default999><password></password></default999>
     </users>
-</clickhouse>
+</datastore>

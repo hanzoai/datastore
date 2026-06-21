@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <prometheus>
         <endpoint>/metrics</endpoint>
         <port>9988</port>
     </prometheus>
-</clickhouse>
+</datastore>

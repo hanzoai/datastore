@@ -18,7 +18,7 @@ CREATE DICTIONARY range_hashed_dictionary
     value String
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start MAX end)
 LIFETIME(0);

@@ -90,7 +90,7 @@ class FTResultsProcessor:
 
                     if test_name == "+":
                         # TODO: investigate and remove
-                        # https://github.com/ClickHouse/ClickHouse/issues/81888
+                        # https://github.com/ClickHouse/Datastore/issues/81888
                         print(
                             f"ERROR: incorrect test name: {test_name} in line:\n{line}"
                         )
@@ -146,7 +146,7 @@ class FTResultsProcessor:
                 self.debug_files.append(self.tests_output_file)
                 if test[0] == "+":
                     # TODO: investigate and remove
-                    # https://github.com/ClickHouse/ClickHouse/issues/81888
+                    # https://github.com/ClickHouse/Datastore/issues/81888
                     continue
                 test_results_.append(
                     Result(
@@ -213,7 +213,7 @@ class FTResultsProcessor:
         else:
             pass
 
-        # The runner's exit code is the authoritative signal: if `clickhouse-test`
+        # The runner's exit code is the authoritative signal: if `datastore-test`
         # exited non-zero, the job must not report OK even when log parsing finds
         # nothing to blame. The synthetic leaf is added only when the parser
         # found nothing - otherwise the real failure already explains the result
@@ -223,9 +223,9 @@ class FTResultsProcessor:
                 state = Result.Status.FAIL
                 test_results.append(
                     Result(
-                        name="clickhouse-test",
+                        name="datastore-test",
                         status=Result.Status.FAIL,
-                        info=f"clickhouse-test exited with code {runner_exit_code}",
+                        info=f"datastore-test exited with code {runner_exit_code}",
                     )
                 )
 

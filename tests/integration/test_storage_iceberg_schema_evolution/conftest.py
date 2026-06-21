@@ -22,7 +22,7 @@ def get_spark(log_dir=None):
         )
         .config("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")
-        .config("spark.sql.catalog.spark_catalog.warehouse", "/var/lib/clickhouse/user_files/iceberg_data")
+        .config("spark.sql.catalog.spark_catalog.warehouse", "/var/lib/datastore/user_files/iceberg_data")
         .config(
             "spark.sql.extensions",
             "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",

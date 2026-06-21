@@ -132,14 +132,14 @@ sub main {
     $functions = [
         split /[\s;,]+/,
         $ENV{SQL_FUZZY_FUNCTIONS}
-          || file_read($ENV{SQL_FUZZY_FILE_FUNCTIONS} || 'clickhouse-functions')
+          || file_read($ENV{SQL_FUZZY_FILE_FUNCTIONS} || 'datastore-functions')
     ];
     # $functions = [grep { not $_ ~~ [qw( )] } @$functions];    # will be removed
     # select name from system.table_functions format TSV;
     $table_functions = [
         split /[\s;,]+/,
         $ENV{SQL_FUZZY_TABLE_FUNCTIONS}
-          || file_read($ENV{SQL_FUZZY_FILE_TABLE_FUNCTIONS} || 'clickhouse-table-functions')
+          || file_read($ENV{SQL_FUZZY_FILE_TABLE_FUNCTIONS} || 'datastore-table-functions')
     ];
     $table_functions = [grep { not $_ ~~ [qw(numbers)] } @$table_functions];    # too slow
     say one_of({}, $query), ';' for 1 .. ($ENV{SQL_FUZZY_LINES} || 100);

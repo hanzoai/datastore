@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <flight1>
             <host>localhost</host>
@@ -6,8 +6,8 @@
             <username>default</username>
             <password></password>
             <enable_ssl>1</enable_ssl>
-            <ssl_ca>/etc/clickhouse-server/config.d/ca-cert.pem</ssl_ca>
-            <ssl_override_hostname>integration-tests.clickhouse.com</ssl_override_hostname>
+            <ssl_ca>/etc/datastore-server/config.d/ca-cert.pem</ssl_ca>
+            <ssl_override_hostname>integration-tests.datastore.com</ssl_override_hostname>
         </flight1>
       </named_collections>
-</clickhouse>
+</datastore>

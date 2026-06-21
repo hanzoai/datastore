@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
    <dictionary>
       <name>dict0</name>
       <source>
@@ -7,7 +7,7 @@
             <host>mysql80</host>
             <port>3306</port>
             <user>root</user>
-            <password>clickhouse</password>
+            <password>datastore</password>
             <table>test0</table>
             <close_connection>true</close_connection>
             <share_connection>true</share_connection>
@@ -43,7 +43,7 @@
             <host>mysql80</host>
             <port>3306</port>
             <user>root</user>
-            <password>clickhouse</password>
+            <password>datastore</password>
             <table>test1</table>
             <close_connection>true</close_connection>
             <share_connection>true</share_connection>
@@ -71,4 +71,4 @@
       </structure>
       <lifetime>0</lifetime>
    </dictionary>
-</clickhouse>
+</datastore>

@@ -10,13 +10,13 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 cluster = ClickHouseCluster(__file__)
 
 ch_server = cluster.add_instance(
-    "clickhouse-server",
+    "datastore-server",
     main_configs=["configs/listen_host.xml"],
     user_configs=["configs/host_regexp.xml"],
 )
 
 client = cluster.add_instance(
-    "clickhouse-client",
+    "datastore-client",
 )
 
 
@@ -36,8 +36,8 @@ def started_cluster():
 
 
 def test_host_regexp_multiple_ptr_hosts_file_v4(started_cluster):
-    server_ip = cluster.get_instance_ip("clickhouse-server")
-    client_ip = cluster.get_instance_ip("clickhouse-client")
+    server_ip = cluster.get_instance_ip("datastore-server")
+    client_ip = cluster.get_instance_ip("datastore-client")
 
     ch_server.exec_in_container(
         (["bash", "-c", f"echo '{client_ip} test1.example.com' > /etc/hosts"])

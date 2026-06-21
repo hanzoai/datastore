@@ -55,14 +55,14 @@ def split_tsv(data):
 
 @pytest.mark.parametrize("replicated", ["", "replicated"])
 def test_merge_simple(started_cluster, replicated):
-    clickhouse_path = "/var/lib/clickhouse"
+    clickhouse_path = "/var/lib/datastore"
     db_name = "test"
     table_name = "merge_simple"
     name = db_name + "." + table_name
     table_path = "data/" + db_name + "/" + table_name
     nodes = [node1, node2] if replicated else [node1]
     engine = (
-        "ReplicatedMergeTree('/clickhouse/test_merge_simple', '{replica}')"
+        "ReplicatedMergeTree('/datastore/test_merge_simple', '{replica}')"
         if replicated
         else "MergeTree()"
     )
@@ -124,12 +124,12 @@ def test_merge_simple(started_cluster, replicated):
                     table_name,
                     "3",
                     "['{}','{}','{}']".format(*parts),
-                    "['{clickhouse}/{table_path}/{}/','{clickhouse}/{table_path}/{}/','{clickhouse}/{table_path}/{}/']".format(
-                        *parts, clickhouse=clickhouse_path, table_path=table_path
+                    "['{datastore}/{table_path}/{}/','{datastore}/{table_path}/{}/','{datastore}/{table_path}/{}/']".format(
+                        *parts, datastore=clickhouse_path, table_path=table_path
                     ),
                     result_part,
-                    "{clickhouse}/{table_path}/{}/".format(
-                        result_part, clickhouse=clickhouse_path, table_path=table_path
+                    "{datastore}/{table_path}/{}/".format(
+                        result_part, datastore=clickhouse_path, table_path=table_path
                     ),
                     "all",
                     "0",
@@ -159,14 +159,14 @@ def test_merge_simple(started_cluster, replicated):
 
 @pytest.mark.parametrize("replicated", ["", "replicated"])
 def test_mutation_simple(started_cluster, replicated):
-    clickhouse_path = "/var/lib/clickhouse"
+    clickhouse_path = "/var/lib/datastore"
     db_name = "test"
     table_name = "mutation_simple"
     name = db_name + "." + table_name
     table_path = "data/" + db_name + "/" + table_name
     nodes = [node1, node2] if replicated else [node1]
     engine = (
-        "ReplicatedMergeTree('/clickhouse/test_mutation_simple', '{replica}')"
+        "ReplicatedMergeTree('/datastore/test_mutation_simple', '{replica}')"
         if replicated
         else "MergeTree()"
     )
@@ -223,12 +223,12 @@ def test_mutation_simple(started_cluster, replicated):
                     table_name,
                     "1",
                     "['{}']".format(part),
-                    "['{clickhouse}/{table_path}/{}/']".format(
-                        part, clickhouse=clickhouse_path, table_path=table_path
+                    "['{datastore}/{table_path}/{}/']".format(
+                        part, datastore=clickhouse_path, table_path=table_path
                     ),
                     result_part,
-                    "{clickhouse}/{table_path}/{}/".format(
-                        result_part, clickhouse=clickhouse_path, table_path=table_path
+                    "{datastore}/{table_path}/{}/".format(
+                        result_part, datastore=clickhouse_path, table_path=table_path
                     ),
                     "all",
                     "1",

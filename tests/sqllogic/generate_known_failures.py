@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Extract known failures from a SQLLogicTest complete-clickhouse report.json.
+"""Extract known failures from a SQLLogicTest complete-datastore report.json.
 
 Usage:
     python3 generate_known_failures.py <report.json> [--output <file>]
 
-Reads the report.json produced by the complete-clickhouse stage and prints
+Reads the report.json produced by the complete-datastore stage and prints
 one failure ID per line (test_name:position), sorted. The output can be
 redirected to tests/sqllogic/known_failures.txt.
 """

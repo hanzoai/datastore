@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # test null
-$CLICKHOUSE_CLIENT --query_id="test_03714_1_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_1_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -54,7 +54,7 @@ toTimeZone(f_timestamp3_nn, 'Asia/Shanghai'),
 f_array,
 f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_boolean is not null order by f_int_nn
 "
-$CLICKHOUSE_CLIENT --query_id="test_03714_2_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_2_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -102,7 +102,7 @@ f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_boolean is not
 "
 
 # test date range
-$CLICKHOUSE_CLIENT --query_id="test_03714_3_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_3_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -148,7 +148,7 @@ toTimeZone(f_timestamp3_nn, 'Asia/Shanghai'),
 f_array,
 f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_date_nn >= '2023-01-01' and f_date_nn <= '2023-01-02' order by f_int_nn 
 "
-$CLICKHOUSE_CLIENT --query_id="test_03714_4_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_4_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -196,7 +196,7 @@ f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_date_nn >= '20
 "
 
 # test timestamp
-$CLICKHOUSE_CLIENT --query_id="test_03714_5_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_5_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -242,7 +242,7 @@ toTimeZone(f_timestamp3_nn, 'Asia/Shanghai'),
 f_array,
 f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_timestamp_nn >= '2025-01-01 00:00:00.001' and f_timestamp_nn <= '2025-01-03 02:02:02.001' order by f_int_nn 
 "
-$CLICKHOUSE_CLIENT --query_id="test_03714_6_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_6_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -290,7 +290,7 @@ f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_timestamp_nn >
 "
 
 # test multiple filters
-$CLICKHOUSE_CLIENT --query_id="test_03714_7_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_7_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -336,7 +336,7 @@ toTimeZone(f_timestamp3_nn, 'Asia/Shanghai'),
 f_array,
 f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_date_nn >= '2023-01-01' and f_date_nn <= '2023-01-02' and f_boolean is not null and f_string = '中文String1' order by f_int_nn 
 "
-$CLICKHOUSE_CLIENT --query_id="test_03714_8_$CLICKHOUSE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
+$DATASTORE_CLIENT --query_id="test_03714_8_$DATASTORE_TEST_UNIQUE_NAME" --enable_time_time64_type=1 --session_timezone="UTC" --query "
 select f_boolean,
 f_char,
 f_varchar,
@@ -384,13 +384,13 @@ f_map from paimonS3(s3_conn, filename='paimon_all_types') where f_date_nn >= '20
 "
 
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM FLUSH LOGS query_log;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
         SELECT sum(ProfileEvents['EngineFileLikeReadFiles']) FROM system.query_log 
-        WHERE event_date >= yesterday() AND event_time >= now() - 600 AND initial_query_id like '%test_03714%' and initial_query_id like '%$CLICKHOUSE_TEST_UNIQUE_NAME%' AND 
+        WHERE event_date >= yesterday() AND event_time >= now() - 600 AND initial_query_id like '%test_03714%' and initial_query_id like '%$DATASTORE_TEST_UNIQUE_NAME%' AND 
         current_database = currentDatabase() and type='QueryFinish' group by initial_query_id order by initial_query_id;"
 
 

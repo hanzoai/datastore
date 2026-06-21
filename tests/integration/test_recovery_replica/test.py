@@ -13,7 +13,7 @@ def fill_nodes(nodes):
         node.query(
             """
                 CREATE TABLE test_table(date Date, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/replicated', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date) 
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/replicated', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date) 
                 {settings};
             """.format(
                 replica=node.name, settings=SETTINGS

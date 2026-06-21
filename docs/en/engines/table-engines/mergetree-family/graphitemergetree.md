@@ -7,9 +7,9 @@ title: 'GraphiteMergeTree table engine'
 doc_type: 'guide'
 ---
 
-This engine is designed for thinning and aggregating/averaging (rollup) [Graphite](http://graphite.readthedocs.io/en/latest/index.html) data. It may be helpful to developers who want to use ClickHouse as a data store for Graphite.
+This engine is designed for thinning and aggregating/averaging (rollup) [Graphite](http://graphite.readthedocs.io/en/latest/index.html) data. It may be helpful to developers who want to use Datastore as a data store for Graphite.
 
-You can use any ClickHouse table engine to store the Graphite data if you do not need rollup, but if you need a rollup use `GraphiteMergeTree`. The engine reduces the volume of storage and increases the efficiency of queries from Graphite.
+You can use any Datastore table engine to store the Graphite data if you do not need rollup, but if you need a rollup use `GraphiteMergeTree`. The engine reduces the volume of storage and increases the efficiency of queries from Graphite.
 
 The engine inherits properties from [MergeTree](../../../engines/table-engines/mergetree-family/mergetree.md).
 
@@ -40,7 +40,7 @@ A table for the Graphite data should have the following columns for the followin
 
 - Value of the metric. Data type: `Float64`.
 
-- Version of the metric. Data type: any numeric (ClickHouse saves the rows with the highest version or the last written if versions are the same. Other rows are deleted during the merge of data parts).
+- Version of the metric. Data type: any numeric (Datastore saves the rows with the highest version or the last written if versions are the same. Other rows are deleted during the merge of data parts).
 
 The names of these columns should be set in the rollup configuration.
 
@@ -138,7 +138,7 @@ Patterns must be strictly ordered:
 1. Pattern `default`.
 :::
 
-When processing a row, ClickHouse checks the rules in the `pattern` sections. Each of `pattern` (including `default`) sections can contain `function` parameter for aggregation, `retention` parameters or both. If the metric name matches the `regexp`, the rules from the `pattern` section (or sections) are applied; otherwise, the rules from the `default` section are used.
+When processing a row, Datastore checks the rules in the `pattern` sections. Each of `pattern` (including `default`) sections can contain `function` parameter for aggregation, `retention` parameters or both. If the metric name matches the `regexp`, the rules from the `pattern` section (or sections) are applied; otherwise, the rules from the `default` section are used.
 
 Fields for `pattern` and `default` sections:
 

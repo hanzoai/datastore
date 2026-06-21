@@ -51,7 +51,7 @@ def prepare_db(db_name: str):
         node.query(
             f"""
                 CREATE DATABASE {db_name}
-                ENGINE=Replicated("/clickhouse/{db_name}", \'{{shard}}\', \'{{replica}}\')
+                ENGINE=Replicated("/datastore/{db_name}", \'{{shard}}\', \'{{replica}}\')
             """
         )
 
@@ -254,8 +254,8 @@ def test_query_after_restore_db_replica(
 
     zk = cluster.get_kazoo_client("zoo1")
 
-    zk_rmr_with_retries(zk, f"/clickhouse/{exclusive_database_name}")
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}") is None
+    zk_rmr_with_retries(zk, f"/datastore/{exclusive_database_name}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}") is None
 
     expected_tables = []
 
@@ -279,11 +279,11 @@ def test_query_after_restore_db_replica(
     )
 
     assert (
-        zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{exists_table_name}")
+        zk.exists(f"/datastore/{exclusive_database_name}/metadata/{exists_table_name}")
         is None
     )
     assert (
-        zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{process_table}")
+        zk.exists(f"/datastore/{exclusive_database_name}/metadata/{process_table}")
         is None
     )
 
@@ -293,18 +293,18 @@ def test_query_after_restore_db_replica(
         node_1.restart_clickhouse()
 
     assert (
-        zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{process_table}")
+        zk.exists(f"/datastore/{exclusive_database_name}/metadata/{process_table}")
         is None
     )
 
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}/replicas/shard1|replica1")
+    assert zk.exists(f"/datastore/{exclusive_database_name}/replicas/shard1|replica1")
     assert (
-        zk.exists(f"/clickhouse/{exclusive_database_name}/replicas/shard1|replica2")
+        zk.exists(f"/datastore/{exclusive_database_name}/replicas/shard1|replica2")
         is None
     )
 
     restore_database_and_wait(node_2, exclusive_database_name, None)
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}/replicas/shard1|replica2")
+    assert zk.exists(f"/datastore/{exclusive_database_name}/replicas/shard1|replica2")
 
     if exists_table:
         assert node_1.query_with_retry(
@@ -351,13 +351,13 @@ def test_query_after_restore_db_replica(
 
     if exists_table:
         assert zk.exists(
-            f"/clickhouse/{exclusive_database_name}/metadata/{exists_table_name}"
+            f"/datastore/{exclusive_database_name}/metadata/{exists_table_name}"
         )
 
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{process_table}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}/metadata/{process_table}")
 
-    zk_rmr_with_retries(zk, f"/clickhouse/{exclusive_database_name}")
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}") is None
+    zk_rmr_with_retries(zk, f"/datastore/{exclusive_database_name}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}") is None
 
     failed_change_table(
         node_1,
@@ -366,11 +366,11 @@ def test_query_after_restore_db_replica(
     )
 
     assert (
-        zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{exists_table_name}")
+        zk.exists(f"/datastore/{exclusive_database_name}/metadata/{exists_table_name}")
         is None
     )
     assert (
-        zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{process_table}")
+        zk.exists(f"/datastore/{exclusive_database_name}/metadata/{process_table}")
         is None
     )
 
@@ -382,9 +382,9 @@ def test_query_after_restore_db_replica(
 
     if exists_table:
         assert zk.exists(
-            f"/clickhouse/{exclusive_database_name}/metadata/{exists_table_name}"
+            f"/datastore/{exclusive_database_name}/metadata/{exists_table_name}"
         )
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{process_table}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}/metadata/{process_table}")
 
     change_table(
         node_1,
@@ -394,10 +394,10 @@ def test_query_after_restore_db_replica(
 
     if process_table != changed_table:
         assert (
-            zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{process_table}")
+            zk.exists(f"/datastore/{exclusive_database_name}/metadata/{process_table}")
             is None
         )
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}/metadata/{changed_table}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}/metadata/{changed_table}")
 
     expected_tables = [changed_table]
     if exists_table:
@@ -491,8 +491,8 @@ def test_restore_db_replica_with_diffrent_table_metadata(
 
     fill_table(node_2, f"{exclusive_database_name}.{test_table_2}", count_test_table_2)
 
-    zk_rmr_with_retries(zk, f"/clickhouse/{exclusive_database_name}")
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}") is None
+    zk_rmr_with_retries(zk, f"/datastore/{exclusive_database_name}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}") is None
 
     node_1.start_clickhouse()
 
@@ -598,14 +598,14 @@ def test_failed_restore_db_replica_on_normal_replica(
     fill_table(node_1, f"{exclusive_database_name}.{test_table}", count_test_table)
 
     assert (
-        f"Replica node '/clickhouse/{exclusive_database_name}/replicas/shard1|replica1/digest' in ZooKeeper already exists"
+        f"Replica node '/datastore/{exclusive_database_name}/replicas/shard1|replica1/digest' in ZooKeeper already exists"
         in node_1.query_and_get_error(
             f"SYSTEM RESTORE DATABASE REPLICA {exclusive_database_name}"
         )
     )
 
     assert (
-        f"Replica node '/clickhouse/{exclusive_database_name}/replicas/shard1|replica2/digest' in ZooKeeper already exists"
+        f"Replica node '/datastore/{exclusive_database_name}/replicas/shard1|replica2/digest' in ZooKeeper already exists"
         in node_2.query_and_get_error(
             f"SYSTEM RESTORE DATABASE REPLICA {exclusive_database_name}"
         )
@@ -647,8 +647,8 @@ def test_restore_db_replica_on_cluster(
         node_2, f"{exclusive_database_name}.{test_table_1}", count_test_table
     )
 
-    zk_rmr_with_retries(zk, f"/clickhouse/{exclusive_database_name}")
-    assert zk.exists(f"/clickhouse/{exclusive_database_name}") is None
+    zk_rmr_with_retries(zk, f"/datastore/{exclusive_database_name}")
+    assert zk.exists(f"/datastore/{exclusive_database_name}") is None
 
     restore_database_and_wait(node_1, exclusive_database_name, "test_cluster")
 

@@ -1,5 +1,5 @@
 ---
-description: 'Overview of domain types in ClickHouse, which extend base types with
+description: 'Overview of domain types in Datastore, which extend base types with
   additional features'
 sidebar_label: 'Domains'
 sidebar_position: 56
@@ -8,7 +8,7 @@ title: 'Domains'
 doc_type: 'reference'
 ---
 
-Domains are special-purpose types that add extra features on top of existing base types, while leaving the on-wire and on-disk format of the underlying data type intact. Currently, ClickHouse does not support user-defined domains.
+Domains are special-purpose types that add extra features on top of existing base types, while leaving the on-wire and on-disk format of the underlying data type intact. Currently, Datastore does not support user-defined domains.
 
 You can use domains anywhere corresponding base type can be used, for example:
 

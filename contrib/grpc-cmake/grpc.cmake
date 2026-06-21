@@ -1,4 +1,4 @@
-# This file was edited for ClickHouse.
+# This file was edited for Datastore.
 
 # GRPC global cmake file
 # This currently builds C and C++ code.

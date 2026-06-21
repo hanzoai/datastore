@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/75451
+-- https://github.com/ClickHouse/Datastore/issues/75451
 -- Decimal types should produce a clear error when converting to Interval, even on empty tables.
 
 SELECT toIntervalMillisecond(CAST(1 AS Decimal(18, 3))); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }

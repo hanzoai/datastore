@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103691
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103691
 --
 -- Logical error 'Arguments of `plus` have incorrect data types' was thrown when
 -- a `MergeTree` table had `Array(LowCardinality(...))` in its sort key and a

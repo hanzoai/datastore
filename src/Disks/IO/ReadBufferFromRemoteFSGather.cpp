@@ -56,7 +56,7 @@ void ReadBufferFromRemoteFSGather::initialize()
     if (blobs_to_read.empty())
         return;
 
-    /// One clickhouse file can be split into multiple files in remote fs.
+    /// One datastore file can be split into multiple files in remote fs.
     size_t start_offset = 0;
     for (size_t i = 0; i < blobs_to_read.size(); ++i)
     {

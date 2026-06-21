@@ -9,8 +9,8 @@ sys.path.append(".")
 from ci.praktika.utils import Shell
 
 REPOS = [
-    "ClickHouse/ClickHouse",
-    "ClickHouse/ClickHouse-private",
+    "Datastore/Datastore",
+    "Datastore/Datastore-private",
 ]
 
 INTERVAL_DAYS = 7

@@ -1,5 +1,5 @@
 ---
-description: 'Guide to configuring LDAP authentication for ClickHouse'
+description: 'Guide to configuring LDAP authentication for Datastore'
 slug: /operations/external-authenticators/ldap
 title: 'LDAP'
 doc_type: 'reference'
@@ -9,12 +9,12 @@ import SelfManaged from '@site/docs/_snippets/_self_managed_only_no_roadmap.md';
 
 <SelfManaged />
 
-LDAP server can be used to authenticate ClickHouse users. There are two different approaches for doing this:
+LDAP server can be used to authenticate Datastore users. There are two different approaches for doing this:
 
 - Use LDAP as an external authenticator for existing users, which are defined in `users.xml` or in local access control paths.
 - Use LDAP as an external user directory and allow locally undefined users to be authenticated if they exist on the LDAP server.
 
-For both of these approaches, an internally named LDAP server must be defined in the ClickHouse config so that other parts of the config can refer to it.
+For both of these approaches, an internally named LDAP server must be defined in the Datastore config so that other parts of the config can refer to it.
 
 ## LDAP server definition {#ldap-server-definition}
 
@@ -23,7 +23,7 @@ To define LDAP server you must add `ldap_servers` section to the `config.xml`.
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <ldap_servers>
         <!- Typical LDAP server. -->
@@ -55,7 +55,7 @@ To define LDAP server you must add `ldap_servers` section to the `config.xml`.
             <enable_tls>no</enable_tls>
         </my_ad_server>
     </ldap_servers>
-</clickhouse>
+</datastore>
 ```
 
 Note, that you can define multiple LDAP servers inside the `ldap_servers` section using distinct names.
@@ -95,12 +95,12 @@ Section with LDAP search parameters for detecting the actual user DN of the boun
 
 A remote LDAP server can be used as a method for verifying passwords for locally defined users (users defined in `users.xml` or in local access control paths). To achieve this, specify previously defined LDAP server name instead of `password` or similar sections in the user definition.
 
-At each login attempt, ClickHouse tries to "bind" to the specified DN defined by the `bind_dn` parameter in the [LDAP server definition](#ldap-server-definition) using the provided credentials, and if successful, the user is considered authenticated. This is often called a "simple bind" method.
+At each login attempt, Datastore tries to "bind" to the specified DN defined by the `bind_dn` parameter in the [LDAP server definition](#ldap-server-definition) using the provided credentials, and if successful, the user is considered authenticated. This is often called a "simple bind" method.
 
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <users>
         <!- ... -->
@@ -111,7 +111,7 @@ At each login attempt, ClickHouse tries to "bind" to the specified DN defined by
             </ldap>
         </my_user>
     </users>
-</clickhouse>
+</datastore>
 ```
 
 Note, that user `my_user` refers to `my_ldap_server`. This LDAP server must be configured in the main `config.xml` file as described previously.
@@ -126,14 +126,14 @@ CREATE USER my_user IDENTIFIED WITH ldap SERVER 'my_ldap_server';
 
 In addition to the locally defined users, a remote LDAP server can be used as a source of user definitions. To achieve this, specify previously defined LDAP server name (see [LDAP Server Definition](#ldap-server-definition)) in the `ldap` section inside the `users_directories` section of the `config.xml` file.
 
-At each login attempt, ClickHouse tries to find the user definition locally and authenticate it as usual. If the user is not defined, ClickHouse will assume the definition exists in the external LDAP directory and will try to "bind" to the specified DN at the LDAP server using the provided credentials. If successful, the user will be considered existing and authenticated. The user will be assigned roles from the list specified in the `roles` section. Additionally, LDAP "search" can be performed and results can be transformed and treated as role names and then be assigned to the user if the `role_mapping` section is also configured. All this implies that the SQL-driven [Access Control and Account Management](/operations/access-rights#access-control-usage) is enabled and roles are created using the [CREATE ROLE](/sql-reference/statements/create/role) statement.
+At each login attempt, Datastore tries to find the user definition locally and authenticate it as usual. If the user is not defined, Datastore will assume the definition exists in the external LDAP directory and will try to "bind" to the specified DN at the LDAP server using the provided credentials. If successful, the user will be considered existing and authenticated. The user will be assigned roles from the list specified in the `roles` section. Additionally, LDAP "search" can be performed and results can be transformed and treated as role names and then be assigned to the user if the `role_mapping` section is also configured. All this implies that the SQL-driven [Access Control and Account Management](/operations/access-rights#access-control-usage) is enabled and roles are created using the [CREATE ROLE](/sql-reference/statements/create/role) statement.
 
 **Example**
 
 Goes into `config.xml`.
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <user_directories>
         <!- Typical LDAP server. -->
@@ -164,7 +164,7 @@ Goes into `config.xml`.
             </role_mapping>
         </ldap>
     </user_directories>
-</clickhouse>
+</datastore>
 ```
 
 Note that `my_ldap_server` referred in the `ldap` section inside the `user_directories` section must be a previously defined LDAP server that is configured in the `config.xml` (see [LDAP Server Definition](#ldap-server-definition)).
@@ -178,7 +178,7 @@ Note that `my_ldap_server` referred in the `ldap` section inside the `user_direc
 
 **`role_mapping` sub-parameters**
 
-Section with LDAP search parameters and mapping rules. When a user authenticates, while still bound to LDAP, an LDAP search is performed using `search_filter` and the name of the logged-in user. For each entry found during that search, the value of the specified attribute is extracted. For each attribute value that has the specified prefix, the prefix is removed, and the rest of the value becomes the name of a local role defined in ClickHouse, which is expected to be created beforehand by the [CREATE ROLE](/sql-reference/statements/create/role) statement. There can be multiple `role_mapping` sections defined inside the same `ldap` section. All of them will be applied.
+Section with LDAP search parameters and mapping rules. When a user authenticates, while still bound to LDAP, an LDAP search is performed using `search_filter` and the name of the logged-in user. For each entry found during that search, the value of the specified attribute is extracted. For each attribute value that has the specified prefix, the prefix is removed, and the rest of the value becomes the name of a local role defined in Datastore, which is expected to be created beforehand by the [CREATE ROLE](/sql-reference/statements/create/role) statement. There can be multiple `role_mapping` sections defined inside the same `ldap` section. All of them will be applied.
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|

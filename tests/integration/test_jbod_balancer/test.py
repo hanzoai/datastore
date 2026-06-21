@@ -144,7 +144,7 @@ def test_replicated_balanced_merge_fetch(start_cluster):
             node.query(
                 """
                 CREATE TABLE tbl (p UInt8, d String)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tbl', '{}')
+                ENGINE = ReplicatedMergeTree('/datastore/tbl', '{}')
                 PARTITION BY p
                 ORDER BY tuple()
                 SETTINGS

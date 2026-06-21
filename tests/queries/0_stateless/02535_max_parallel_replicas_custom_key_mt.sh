@@ -17,23 +17,23 @@ function run_with_custom_key {
 , parallel_replicas_for_non_replicated_merge_tree=1 \
 , cluster_for_parallel_replicas='test_cluster_one_shard_three_replicas_localhost' \
 , serialize_query_plan=0"
-            $CLICKHOUSE_CLIENT --query="$query"
+            $DATASTORE_CLIENT --query="$query"
         done
     done
 }
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS 02535_custom_key_mt";
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS 02535_custom_key_mt";
 
-$CLICKHOUSE_CLIENT --query="CREATE TABLE 02535_custom_key_mt (x String) ENGINE = MergeTree ORDER BY x";
-$CLICKHOUSE_CLIENT --query="INSERT INTO 02535_custom_key_mt VALUES ('Hello')";
+$DATASTORE_CLIENT --query="CREATE TABLE 02535_custom_key_mt (x String) ENGINE = MergeTree ORDER BY x";
+$DATASTORE_CLIENT --query="INSERT INTO 02535_custom_key_mt VALUES ('Hello')";
 
 run_with_custom_key "SELECT * FROM cluster(test_cluster_one_shard_three_replicas_localhost, currentDatabase(), 02535_custom_key_mt)" "sipHash64(x)"
 run_with_custom_key "SELECT * FROM 02535_custom_key_mt" "sipHash64(x)"
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE 02535_custom_key_mt"
+$DATASTORE_CLIENT --query="DROP TABLE 02535_custom_key_mt"
 
-$CLICKHOUSE_CLIENT --query="CREATE TABLE 02535_custom_key_mt (x String, y UInt32) ENGINE = MergeTree ORDER BY cityHash64(x)"
-$CLICKHOUSE_CLIENT --query="INSERT INTO 02535_custom_key_mt SELECT toString(number), number % 3 FROM numbers(1000)"
+$DATASTORE_CLIENT --query="CREATE TABLE 02535_custom_key_mt (x String, y UInt32) ENGINE = MergeTree ORDER BY cityHash64(x)"
+$DATASTORE_CLIENT --query="INSERT INTO 02535_custom_key_mt SELECT toString(number), number % 3 FROM numbers(1000)"
 
 function run_count_with_custom_key_distributed {
     run_with_custom_key "SELECT y, count() FROM cluster(test_cluster_one_shard_three_replicas_localhost, currentDatabase(), 02535_custom_key_mt) GROUP BY y ORDER BY y" "$1"
@@ -52,6 +52,6 @@ run_count_with_custom_key_merge_tree "cityHash64(y)"
 run_count_with_custom_key_merge_tree "cityHash64(y) + 1"
 
 # check that at least one 'JOINs are not supported' trace is there
-$CLICKHOUSE_CLIENT --query="SELECT count() FROM cluster(test_cluster_one_shard_three_replicas_localhost, currentDatabase(), 02535_custom_key_mt) as t1 JOIN 02535_custom_key_mt USING y" --allow_repeated_settings --parallel_replicas_custom_key="y" --send_logs_level="trace" 2>&1 | grep -m 1 -Fa "JOINs are not supported with" | wc -l
+$DATASTORE_CLIENT --query="SELECT count() FROM cluster(test_cluster_one_shard_three_replicas_localhost, currentDatabase(), 02535_custom_key_mt) as t1 JOIN 02535_custom_key_mt USING y" --allow_repeated_settings --parallel_replicas_custom_key="y" --send_logs_level="trace" 2>&1 | grep -m 1 -Fa "JOINs are not supported with" | wc -l
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE 02535_custom_key_mt"
+$DATASTORE_CLIENT --query="DROP TABLE 02535_custom_key_mt"

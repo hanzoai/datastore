@@ -446,7 +446,7 @@ If the column has no text index defined, the `splitByNonAlpha` tokenizer is used
 If the `needle` argument is of type [Array(String)](../../sql-reference/data-types/array.md), each array element is treated as a token — no additional tokenization takes place.
 
 Duplicate tokens are ignored.
-For example, ['ClickHouse', 'ClickHouse'] is treated the same as ['ClickHouse'].
+For example, ['Datastore', 'Datastore'] is treated the same as ['Datastore'].
 
 :::note
 When a text index defines a [preprocessor](../../engines/table-engines/mergetree-family/textindexes#creating-a-text-index) (for example `lowerUTF8`), `hasAnyTokens` applies it to `input` and, when `needles` is a [String](../../sql-reference/data-types/string.md), to `needles` before tokenization. When `needles` is an [Array(String)](../../sql-reference/data-types/array.md), its elements are passed through as-is and the preprocessor is not applied to them.
@@ -522,7 +522,7 @@ ENGINE = MergeTree
 ORDER BY id;
 
 INSERT INTO log VALUES
-    (1, ['clickhouse', 'clickhouse cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
+    (1, ['datastore', 'datastore cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
     (2, ['chdb'], {'embedded': 'true', 'log_level': 'DEBUG'});
         )",
         ""
@@ -530,7 +530,7 @@ INSERT INTO log VALUES
     {
         "Example with an array column",
         R"(
-SELECT count() FROM log WHERE hasAnyTokens(tags, 'clickhouse');
+SELECT count() FROM log WHERE hasAnyTokens(tags, 'datastore');
         )",
         R"(
 ┌─count()─┐
@@ -587,7 +587,7 @@ If the column has no text index defined, the `splitByNonAlpha` tokenizer is used
 If the `needle` argument is of type [Array(String)](../../sql-reference/data-types/array.md), each array element is treated as a token — no additional tokenization takes place.
 
 Duplicate tokens are ignored.
-For example, needles = ['ClickHouse', 'ClickHouse'] is treated the same as ['ClickHouse'].
+For example, needles = ['Datastore', 'Datastore'] is treated the same as ['Datastore'].
 
 :::note
 When a text index defines a [preprocessor](../../engines/table-engines/mergetree-family/textindexes#creating-a-text-index) (for example `lowerUTF8`), `hasAllTokens` applies it to `input` and, when `needles` is a [String](../../sql-reference/data-types/string.md), to `needles` before tokenization. When `needles` is an [Array(String)](../../sql-reference/data-types/array.md), its elements are passed through as-is and the preprocessor is not applied to them.
@@ -674,7 +674,7 @@ ENGINE = MergeTree
 ORDER BY id;
 
 INSERT INTO log VALUES
-    (1, ['clickhouse', 'clickhouse cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
+    (1, ['datastore', 'datastore cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
     (2, ['chdb'], {'embedded': 'true', 'log_level': 'DEBUG'});
         )",
         ""
@@ -682,7 +682,7 @@ INSERT INTO log VALUES
     {
         "Example with an array column",
         R"(
-SELECT count() FROM log WHERE hasAllTokens(tags, 'clickhouse');
+SELECT count() FROM log WHERE hasAllTokens(tags, 'datastore');
         )",
         R"(
 ┌─count()─┐

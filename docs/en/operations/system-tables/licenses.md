@@ -1,6 +1,6 @@
 ---
 description: 'System table containing licenses of third-party libraries that are located
-  in the contrib directory of ClickHouse sources.'
+  in the contrib directory of Datastore sources.'
 keywords: ['system table', 'licenses']
 slug: /operations/system-tables/licenses
 title: 'system.licenses'
@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-Contains licenses of third-party libraries that are located in the [contrib](https://github.com/ClickHouse/ClickHouse/tree/master/contrib) directory of ClickHouse sources.
+Contains licenses of third-party libraries that are located in the [contrib](https://github.com/ClickHouse/Datastore/tree/master/contrib) directory of Datastore sources.
 
 ## Columns {#columns}
 

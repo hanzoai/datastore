@@ -1,1 +1,1 @@
-SELECT xxh3('ClickHouse');
+SELECT xxh3('Datastore');

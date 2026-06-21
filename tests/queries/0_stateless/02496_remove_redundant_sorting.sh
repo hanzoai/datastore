@@ -26,15 +26,15 @@ FROM
     ORDER BY number DESC
 )
 ORDER BY number ASC"
-$CLICKHOUSE_CLIENT -q "$DISABLE_OPTIMIZATION;EXPLAIN $query"
+$DATASTORE_CLIENT -q "$DISABLE_OPTIMIZATION;EXPLAIN $query"
 
 function run_query {
     echo "-- query"
     echo "$1"
     echo "-- explain"
-    $CLICKHOUSE_CLIENT -q "$ENABLE_OPTIMIZATION;EXPLAIN $1"
+    $DATASTORE_CLIENT -q "$ENABLE_OPTIMIZATION;EXPLAIN $1"
     echo "-- execute"
-    $CLICKHOUSE_CLIENT -q "$ENABLE_OPTIMIZATION;$1"
+    $DATASTORE_CLIENT -q "$ENABLE_OPTIMIZATION;$1"
 }
 
 echo "-- Enabled query_plan_remove_redundant_sorting"

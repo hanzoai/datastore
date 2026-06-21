@@ -1,9 +1,9 @@
 -- Tags: no-fasttest
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
 
-CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
-USE {CLICKHOUSE_DATABASE_1:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE_1:Identifier};
+USE {DATASTORE_DATABASE_1:Identifier};
 
 CREATE TABLE table_for_dict
 (
@@ -16,16 +16,16 @@ ORDER BY key_column;
 
 INSERT INTO table_for_dict VALUES (100500, 10000000, 'Hello world');
 
-DROP DICTIONARY IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier}.dict1;
+DROP DICTIONARY IF EXISTS {DATASTORE_DATABASE_1:Identifier}.dict1;
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.dict1
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.dict1
 (
   key_column UInt64 DEFAULT 0,
   second_column UInt64 DEFAULT 1,
   third_column String DEFAULT 'qqq'
 )
 PRIMARY KEY key_column
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB currentDatabase()))
 LIFETIME(MIN 1 MAX 10)
 LAYOUT(FLAT()) SETTINGS(max_result_bytes=1);
 
@@ -35,4 +35,4 @@ SELECT dictGetUInt64('dict1', 'second_column', toUInt64(100500)); -- { serverErr
 
 SELECT 'END';
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};

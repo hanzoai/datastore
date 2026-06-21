@@ -121,7 +121,7 @@ CREATE TABLE t4_r_error
 ENGINE = ReplicatedGraphiteMergeTree('/tables/{database}/t4/', 'r3', 'graphite_rollup_alternative')
 ORDER BY key; -- { serverError METADATA_MISMATCH }
 
--- https://github.com/ClickHouse/ClickHouse/issues/58451
+-- https://github.com/ClickHouse/Datastore/issues/58451
 CREATE TABLE t4_r_error_2
 (
     `key` UInt32,

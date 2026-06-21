@@ -7,7 +7,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT \
   --param_num="42" \
   --param_str="hello" \
   --param_date="2022-08-04 18:30:53" \
@@ -15,7 +15,7 @@ $CLICKHOUSE_CLIENT \
   -q "select {num:UInt64}, {str:String}, {date:DateTime}, {map:Map(UUID, Array(Float32))}"
 
 
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT \
   --param_num="42" \
   --param_str="hello" \
   --param_date="2022-08-04 18:30:53" \
@@ -24,7 +24,7 @@ $CLICKHOUSE_CLIENT \
 
 
 table_name="t_02377_extend_protocol_with_query_parameters_$RANDOM$RANDOM"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   create table $table_name(
     id Int64,
     arr Array(UInt8),
@@ -39,7 +39,7 @@ $CLICKHOUSE_CLIENT -q "
   SETTINGS map_serialization_version = 'basic', map_serialization_version_for_zero_level_parts = 'basic'"
 
 
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT \
   --param_id="42" \
   --param_arr="[1, 2, 3]" \
   --param_map="{'abc': 22, 'def': 33}" \
@@ -49,10 +49,10 @@ $CLICKHOUSE_CLIENT \
   -q "insert into $table_name values({id: Int64}, {arr: Array(UInt8)}, {map: Map(String, UInt8)}, {mul_arr: Array(Array(UInt8))}, {map_arr: Map(UInt8, Array(UInt8))}, {map_map_arr: Map(String, Map(String, Array(UInt8)))})"
 
 
-$CLICKHOUSE_CLIENT -q "select * from $table_name"
+$DATASTORE_CLIENT -q "select * from $table_name"
 
 
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT \
   --param_tbl="numbers" \
   --param_db="system" \
   --param_col="number" \
@@ -60,17 +60,17 @@ $CLICKHOUSE_CLIENT \
 
 
 # it is possible to set parameter for the current session
-$CLICKHOUSE_CLIENT -q "set param_n = 42; select {n: UInt8}"
+$DATASTORE_CLIENT -q "set param_n = 42; select {n: UInt8}"
 # and it will not be visible to other sessions
-$CLICKHOUSE_CLIENT -q "select {n: UInt8} -- { serverError 456 }"
+$DATASTORE_CLIENT -q "select {n: UInt8} -- { serverError 456 }"
 
 
 # the same parameter could be set multiple times within one session (new value overrides the previous one)
-$CLICKHOUSE_CLIENT -q "set param_n = 12; set param_n = 13; select {n: UInt8}"
+$DATASTORE_CLIENT -q "set param_n = 12; set param_n = 13; select {n: UInt8}"
 
 
 # multiple different parameters could be defined within each session
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   set param_a = 13, param_b = 'str';
   set param_c = '2022-08-04 18:30:53';
   set param_d = '{\'10\': [11, 12], \'13\': [14, 15]}';
@@ -78,12 +78,12 @@ $CLICKHOUSE_CLIENT -q "
 
 
 # empty parameter name is not allowed
-$CLICKHOUSE_CLIENT --param_="" -q "select 1" 2>&1 | grep -c 'Code: 36'
-$CLICKHOUSE_CLIENT -q "set param_ = ''" 2>&1 | grep -c 'Code: 36'
+$DATASTORE_CLIENT --param_="" -q "select 1" 2>&1 | grep -c 'Code: 36'
+$DATASTORE_CLIENT -q "set param_ = ''" 2>&1 | grep -c 'Code: 36'
 
 
 # parameters are also supported for DESCRIBE TABLE queries
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT \
   --param_id="42" \
   --param_arr="[1, 2, 3]" \
   --param_map="{'abc': 22, 'def': 33}" \
@@ -92,4 +92,4 @@ $CLICKHOUSE_CLIENT \
   --param_map_map_arr="{'ghj': {'klm': [16, 17]}, 'nop': {'rst': [18]}}" \
   -q "describe table(select {id: Int64}, {arr: Array(UInt8)}, {map: Map(String, UInt8)}, {mul_arr: Array(Array(UInt8))}, {map_arr: Map(UInt8, Array(UInt8))}, {map_map_arr: Map(String, Map(String, Array(UInt8)))})"
 
-$CLICKHOUSE_CLIENT --param_p=42 -q "describe table (select * from (select {p:Int8} as a group by a) order by a)"
+$DATASTORE_CLIENT --param_p=42 -q "describe table (select * from (select {p:Int8} as a group by a) order by a)"

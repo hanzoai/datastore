@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <database_atomic_delay_before_drop_table_sec>10</database_atomic_delay_before_drop_table_sec>
     <allow_moving_table_directory_to_trash>1</allow_moving_table_directory_to_trash>
     <merge_tree>
@@ -24,7 +24,7 @@
         </postgres2>
     </named_collections>
     <distributed_ddl>
-        <path>/clickhouse/queue/</path>
+        <path>/datastore/queue/</path>
     </distributed_ddl>
     <remote_servers>
         <default>
@@ -46,4 +46,4 @@
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>

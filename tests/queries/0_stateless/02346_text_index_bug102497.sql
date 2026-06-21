@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/102497
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/102497
 -- hasToken with separator-only needles should throw BAD_ARGUMENTS consistently,
 -- regardless of whether a text index is present.
 -- hasTokenOrNull with separator-only needles should return NULL per row,

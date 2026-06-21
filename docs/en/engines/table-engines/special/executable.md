@@ -161,7 +161,7 @@ Some comments about our Python script:
 - Each value of `row` is going to be a row in the result set of `SELECT id, comment FROM hackernews WHERE id > 0 AND comment != '' LIMIT 20`
 - The incoming row is tab-separated, so we parse out the `id` and `comment` using the Python `split` function
 - The result of `polarity_scores` is a JSON object with a handful of values. We decided to just grab the `compound` value of this JSON object
-- Recall that the `sentiment` table in ClickHouse uses the `TabSeparated` format and contains two columns, so our `print` function separates those columns with a tab
+- Recall that the `sentiment` table in Datastore uses the `TabSeparated` format and contains two columns, so our `print` function separates those columns with a tab
 
 Every time you write a query that selects rows from the `sentiment` table, the `SELECT id, comment FROM hackernews WHERE id > 0 AND comment != '' LIMIT 20` query is executed and the result is passed to `sentiment.py`. Let's test it out:
 
@@ -224,4 +224,4 @@ SETTINGS
     pool_size = 4;
 ```
 
-ClickHouse will maintain 4 processes on-demand when your client queries the `sentiment_pooled` table.
+Datastore will maintain 4 processes on-demand when your client queries the `sentiment_pooled` table.

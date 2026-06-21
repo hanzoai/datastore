@@ -10,7 +10,7 @@ create table src_table
     id   UInt32,
     name String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/table', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/table', 'replica1')
 order by id;
 
 create table table_join
@@ -18,7 +18,7 @@ create table table_join
     id   UInt32,
     surname String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/table_join', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/table_join', 'replica1')
 order by id;
 
 set max_block_size = 30000;
@@ -40,7 +40,7 @@ create table table_join_mv_dst
     name    String,
     surname String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/table_join_mv_dst', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/table_join_mv_dst', 'replica1')
 order by id;
 
 create materialized view table_join_mv

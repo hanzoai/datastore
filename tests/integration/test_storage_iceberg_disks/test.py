@@ -36,7 +36,7 @@ def get_spark(log_dir=None):
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")
         .config(
             "spark.sql.catalog.spark_catalog.warehouse",
-            "/var/lib/clickhouse/user_files/iceberg_data",
+            "/var/lib/datastore/user_files/iceberg_data",
         )
         .config(
             "spark.sql.extensions",
@@ -64,16 +64,16 @@ def generate_cluster_def(common_path, port, azure_container):
     with open(path, "w") as f:
         f.write(
             f"""
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_local_common>
                 <type>local</type>
-                <path>/var/lib/clickhouse/user_files/iceberg_data/default/</path>
+                <path>/var/lib/datastore/user_files/iceberg_data/default/</path>
             </disk_local_common>
             <disk_s3_common>
                 <type>s3</type>
-                <endpoint>http://minio1:9001/root/var/lib/clickhouse/user_files/iceberg_data/default/</endpoint>
+                <endpoint>http://minio1:9001/root/var/lib/datastore/user_files/iceberg_data/default/</endpoint>
                 <access_key_id>minio</access_key_id>
                 <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>
             </disk_s3_common>
@@ -89,7 +89,7 @@ def generate_cluster_def(common_path, port, azure_container):
         </disks>
     </storage_configuration>
     <allowed_disks_for_table_engines>disk_local_common,disk_s3_common,disk_azure_common</allowed_disks_for_table_engines>
-</clickhouse>
+</datastore>
 """
         )
     return path
@@ -184,13 +184,13 @@ def test_single_iceberg_file(started_cluster, format_version, storage_type):
     storage_path = (
         f"{TABLE_NAME}"
         if storage_type != "azure"
-        else f"var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}"
+        else f"var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}"
     )
     assert "Path suffixes" in instance.query_and_get_error(
         f"CREATE TABLE {table_name_1} ENGINE=Iceberg('../', 'Parquet') SETTINGS disk = 'disk_{storage_type}_common'"
     )
     assert "Path suffixes" in instance.query_and_get_error(
-        f"CREATE TABLE {table_name_1} ENGINE=Iceberg('/var/lib/clickhouse/user_files/default', 'Parquet') SETTINGS disk = 'disk_{storage_type}_common'"
+        f"CREATE TABLE {table_name_1} ENGINE=Iceberg('/var/lib/datastore/user_files/default', 'Parquet') SETTINGS disk = 'disk_{storage_type}_common'"
     )
 
     instance.query(
@@ -321,7 +321,7 @@ def test_cluster_table_function(started_cluster, storage_type):
     table_function_expr = (
         f"iceberg('{TABLE_NAME}', SETTINGS disk = 'disk_{storage_type}_common')"
         if storage_type == "s3"
-        else f"iceberg('var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}', SETTINGS disk = 'disk_{storage_type}_common')"
+        else f"iceberg('var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}', SETTINGS disk = 'disk_{storage_type}_common')"
     )
     select_regular = (
         instance.query(f"SELECT * FROM {table_function_expr}").strip().split()
@@ -331,7 +331,7 @@ def test_cluster_table_function(started_cluster, storage_type):
     table_function_expr_cluster = (
         f"icebergCluster('cluster_simple', '{TABLE_NAME}', SETTINGS disk = 'disk_{storage_type}_common')"
         if storage_type == "s3"
-        else f"icebergCluster('cluster_simple', 'var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}', SETTINGS disk = 'disk_{storage_type}_common')"
+        else f"icebergCluster('cluster_simple', 'var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}', SETTINGS disk = 'disk_{storage_type}_common')"
     )
     select_cluster = (
         instance.query(f"SELECT * FROM {table_function_expr_cluster}").strip().split()

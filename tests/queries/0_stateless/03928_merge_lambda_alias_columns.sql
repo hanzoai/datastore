@@ -2,7 +2,7 @@
 
 SET enable_analyzer = 1;
 
--- https://github.com/ClickHouse/ClickHouse/issues/94304
+-- https://github.com/ClickHouse/Datastore/issues/94304
 -- Lambda expressions in ALIAS columns should work correctly with `merge()` table function.
 
 DROP TABLE IF EXISTS test_lambda_a;

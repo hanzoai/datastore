@@ -101,7 +101,7 @@ print '--- error: missing `step` keyword ---';
 ms_num | make-series sum(v) on x from 0; -- { clientError SYNTAX_ERROR }
 
 -- These exercise aggregation names the parser accepts but whose underlying
--- SQL function doesn't exist in ClickHouse - they must parse OK and fail at
+-- SQL function doesn't exist in Datastore - they must parse OK and fail at
 -- analysis time. This keeps parseAggregationColumns' allowed set covered.
 print '--- server-side error: stdev resolves to unknown SQL function ---';
 ms_num | make-series stdev(v) on x step 1; -- { serverError UNKNOWN_FUNCTION }

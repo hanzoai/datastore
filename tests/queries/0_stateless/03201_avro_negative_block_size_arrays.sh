@@ -10,6 +10,6 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 DATA_DIR=$CUR_DIR/data_avro
 
-# See https://github.com/ClickHouse/ClickHouse/issues/60438
-$CLICKHOUSE_LOCAL -q "DESC file('$DATA_DIR/negative_block_size_arrays.avro')"
-$CLICKHOUSE_LOCAL -q "SELECT arraySum(arrayMap(x -> length(x), str_array)) AS res FROM file('$DATA_DIR/negative_block_size_arrays.avro')"
+# See https://github.com/ClickHouse/Datastore/issues/60438
+$DATASTORE_LOCAL -q "DESC file('$DATA_DIR/negative_block_size_arrays.avro')"
+$DATASTORE_LOCAL -q "SELECT arraySum(arrayMap(x -> length(x), str_array)) AS res FROM file('$DATA_DIR/negative_block_size_arrays.avro')"

@@ -17,7 +17,7 @@ def start_cluster():
 
         N = 1000
         client = redis.Redis(
-            host="localhost", port=cluster.redis_port, password="clickhouse", db=0
+            host="localhost", port=cluster.redis_port, password="datastore", db=0
         )
         client.flushdb()
         for i in range(N):
@@ -32,7 +32,7 @@ def start_cluster():
                 value UInt64
             )
             PRIMARY KEY date, id
-            SOURCE(REDIS(HOST '{}' PORT 6379 STORAGE_TYPE 'hash_map' DB_INDEX 0 PASSWORD 'clickhouse' POOL_SIZE '{}'))
+            SOURCE(REDIS(HOST '{}' PORT 6379 STORAGE_TYPE 'hash_map' DB_INDEX 0 PASSWORD 'datastore' POOL_SIZE '{}'))
             LAYOUT(COMPLEX_KEY_DIRECT())
             """.format(
                 cluster.redis_host, POOL_SIZE

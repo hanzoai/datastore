@@ -28,10 +28,10 @@ class CheckStatuses:
 
 FORCE_MERGE = True
 
-PUBLIC_REPO = "ClickHouse/ClickHouse"
-SYNC_REPO = "ClickHouse/clickhouse-private"
+PUBLIC_REPO = "Datastore/Datastore"
+SYNC_REPO = "Datastore/datastore-private"
 S3_PROXY_BASE_URL = "http://ci-reports:8080"
-S3_PRIVATE_REPORT_BUCKET = "clickhouse-test-reports-private"
+S3_PRIVATE_REPORT_BUCKET = "datastore-test-reports-private"
 
 
 pr_number = None
@@ -65,12 +65,12 @@ class CreateIssue:
         quoted_job_name = quote(job_name, safe="")
         if not pr_number:
             res = (
-                "https://s3.amazonaws.com/clickhouse-test-reports/json.html"
+                "https://s3.amazonaws.com/datastore-test-reports/json.html"
                 f"?REF=master&sha={head_sha}&name_0=MasterCI"
             )
         else:
             res = (
-                "https://s3.amazonaws.com/clickhouse-test-reports/json.html"
+                "https://s3.amazonaws.com/datastore-test-reports/json.html"
                 f"?PR={pr_number}&sha={head_sha}&name_0=PR"
             )
         if job_name:
@@ -394,9 +394,9 @@ class CommitStatusCheck:
     @staticmethod
     def get_ci_praktika_result(pr_number, commit_sha):
         if pr_number != 0:
-            report_url = f"https://s3.amazonaws.com/clickhouse-test-reports/PRs/{pr_number}/{commit_sha}/result_pr.json"
+            report_url = f"https://s3.amazonaws.com/datastore-test-reports/PRs/{pr_number}/{commit_sha}/result_pr.json"
         else:
-            report_url = f"https://s3.amazonaws.com/clickhouse-test-reports/REFs/master/{commit_sha}/result_masterci.json"
+            report_url = f"https://s3.amazonaws.com/datastore-test-reports/REFs/master/{commit_sha}/result_masterci.json"
         _ = Shell.check(f"curl {report_url} -o /tmp/result_pr.json > /dev/null 2>&1")
         return Result.from_file("/tmp/result_pr.json")
 
@@ -413,7 +413,7 @@ class CommitStatusCheck:
                 "Manually overridden",
                 "",
                 sha=sha,
-                repo="ClickHouse/ClickHouse",
+                repo="Datastore/Datastore",
             )
             return
         if commit_status_data.state in (Result.GHStatus.SUCCESS,):
@@ -430,7 +430,7 @@ class CommitStatusCheck:
                         "Ignored",
                         commit_status_data.url,
                         sha=sha,
-                        repo="ClickHouse/ClickHouse",
+                        repo="Datastore/Datastore",
                     )
                 else:
                     sys.exit(0)
@@ -451,7 +451,7 @@ class CommitStatusCheck:
                         "Ignored",
                         commit_status_data.url,
                         sha=sha,
-                        repo="ClickHouse/ClickHouse",
+                        repo="Datastore/Datastore",
                     )
                 else:
                     sys.exit(0)
@@ -486,7 +486,7 @@ class CommitStatusCheck:
                 "Manually overridden",
                 "",
                 sha=sha,
-                repo="ClickHouse/ClickHouse",
+                repo="Datastore/Datastore",
             )
 
     @classmethod
@@ -502,7 +502,7 @@ class CommitStatusCheck:
         """
         # Get commit statuses with pagination
         statuses_list = Shell.get_output(
-            f"gh api repos/ClickHouse/ClickHouse/commits/{head_sha}/statuses --paginate"
+            f"gh api repos/Datastore/Datastore/commits/{head_sha}/statuses --paginate"
         )
         statuses_list = json.loads(statuses_list)
 
@@ -575,7 +575,7 @@ def process_workflow_failures(workflow_result, repo, pr_num, sha, allow_infra_is
 
     Args:
         workflow_result: The workflow Result with failures (already filtered to failed)
-        repo: GitHub repository name (e.g., "ClickHouse/ClickHouse")
+        repo: GitHub repository name (e.g., "Datastore/Datastore")
         pr_num: PR number in the target repo
         sha: Commit SHA
         allow_infra_issues: Whether to allow creating infrastructure issues
@@ -772,7 +772,7 @@ def main():
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser(
-        description="Check CI status and process failures for ClickHouse PRs"
+        description="Check CI status and process failures for Datastore PRs"
     )
     parser.add_argument(
         "pr_number",
@@ -811,7 +811,7 @@ def main():
     else:
         # Interactive mode: show menu to select PR
         my_prs_number_and_title = Shell.get_output(
-            "gh pr list --author @me --json number,title --base master --limit 20 --repo ClickHouse/ClickHouse"
+            "gh pr list --author @me --json number,title --base master --limit 20 --repo Datastore/Datastore"
         )
         my_prs_number_and_title = json.loads(my_prs_number_and_title)
         pr_menu = []
@@ -848,18 +848,18 @@ def main():
             pr_number = selected_pr[1]
 
     if not is_master_commit:
-        pr_url = f"https://github.com/ClickHouse/ClickHouse/pull/{pr_number}"
+        pr_url = f"https://github.com/ClickHouse/Datastore/pull/{pr_number}"
         pr_data = Shell.get_output(
-            f"gh pr view {pr_number} --json headRefOid,headRefName --repo ClickHouse/ClickHouse"
+            f"gh pr view {pr_number} --json headRefOid,headRefName --repo Datastore/Datastore"
         )
         pr_data = json.loads(pr_data)
         head_sha = pr_data["headRefOid"]
-        if GH.pr_has_conflicts(pr_number, "ClickHouse/ClickHouse"):
+        if GH.pr_has_conflicts(pr_number, "Datastore/Datastore"):
             print("PR has conflicts, cannot merge")
             sys.exit(1)
     else:
         head_sha = commit_sha
-        pr_url = f"https://github.com/ClickHouse/ClickHouse/commit/{commit_sha}"
+        pr_url = f"https://github.com/ClickHouse/Datastore/commit/{commit_sha}"
 
     print(f"Change URL: {pr_url}")
     print(f"Commit SHA: {head_sha}")
@@ -1009,7 +1009,7 @@ def main():
             if not GH.post_updateable_comment(
                 comment_tags_and_bodies={"summary": summary_body},
                 pr=pr_number,
-                repo="ClickHouse/ClickHouse",
+                repo="Datastore/Datastore",
                 only_update=True,
                 verbose=False,
             ):
@@ -1024,11 +1024,11 @@ def main():
         sys.exit(0)
 
     if Shell.check(
-        f"gh pr view {pr_number} --json isDraft --jq '.isDraft' --repo ClickHouse/ClickHouse | grep -q true"
+        f"gh pr view {pr_number} --json isDraft --jq '.isDraft' --repo Datastore/Datastore | grep -q true"
     ):
         if UserPrompt.confirm(f"It's a draft PR. Do you want to undraft it?"):
             Shell.check(
-                f"gh pr ready {pr_number} --repo ClickHouse/ClickHouse",
+                f"gh pr ready {pr_number} --repo Datastore/Datastore",
                 strict=True,
                 verbose=True,
             )
@@ -1040,7 +1040,7 @@ def main():
         mergeable_check_status, sha=head_sha
     )
 
-    auto_merge_cmd = f"gh pr merge {pr_number} --auto --repo ClickHouse/ClickHouse"
+    auto_merge_cmd = f"gh pr merge {pr_number} --auto --repo Datastore/Datastore"
     if not Shell.check(auto_merge_cmd, verbose=True):
         print(
             f"ERROR: Failed to enable auto-merge for PR #{pr_number}. "
@@ -1053,7 +1053,7 @@ def main():
     # Give GitHub a moment to process auto-merge and update merge state
     time.sleep(5)
     merge_status = Shell.get_output(
-        f"gh pr view {pr_number} --json mergeStateStatus --jq '.mergeStateStatus' --repo ClickHouse/ClickHouse"
+        f"gh pr view {pr_number} --json mergeStateStatus --jq '.mergeStateStatus' --repo Datastore/Datastore"
     )
     if merge_status == "CLEAN":
         # PR checks already passed but GitHub didn't enqueue it — the
@@ -1064,12 +1064,12 @@ def main():
             f"Retoggling auto-merge to fix..."
         )
         Shell.check(
-            f"gh pr merge {pr_number} --disable-auto --repo ClickHouse/ClickHouse",
+            f"gh pr merge {pr_number} --disable-auto --repo Datastore/Datastore",
             verbose=True,
         )
         time.sleep(2)
         if Shell.check(
-            f"gh pr merge {pr_number} --auto --repo ClickHouse/ClickHouse",
+            f"gh pr merge {pr_number} --auto --repo Datastore/Datastore",
             verbose=True,
         ):
             print(f"OK: Auto-merge retoggled for PR #{pr_number}")

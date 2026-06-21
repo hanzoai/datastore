@@ -60,7 +60,7 @@ def test_parallel_inserts_generated_parts(started_cluster, parallel_inserts):
     # A unique table name is necessary for repeatable tests
     table_name = f"test_parallel_inserts_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     dst_table_name = f"{table_name}_dst"
     files_to_generate = 40
@@ -146,7 +146,7 @@ def test_parallel_inserts_with_failures(started_cluster, parallel_inserts):
     # A unique table name is necessary for repeatable tests
     table_name = f"test_parallel_inserts_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     dst_table_name = f"{table_name}_dst"
     files_to_generate = 40

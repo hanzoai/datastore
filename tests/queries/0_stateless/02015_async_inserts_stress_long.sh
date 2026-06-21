@@ -10,10 +10,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function insert1()
 {
-    url="${CLICKHOUSE_URL}&async_insert=1&wait_for_async_insert=0"
+    url="${DATASTORE_URL}&async_insert=1&wait_for_async_insert=0"
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CURL} -sS "$url" -d 'INSERT INTO async_inserts FORMAT CSV
+        ${DATASTORE_CURL} -sS "$url" -d 'INSERT INTO async_inserts FORMAT CSV
 1,"a"
 2,"b"
 '
@@ -22,19 +22,19 @@ function insert1()
 
 function insert2()
 {
-    url="${CLICKHOUSE_URL}&async_insert=1&wait_for_async_insert=0"
+    url="${DATASTORE_URL}&async_insert=1&wait_for_async_insert=0"
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CURL} -sS "$url" -d 'INSERT INTO async_inserts FORMAT JSONEachRow {"id": 5, "s": "e"} {"id": 6, "s": "f"}'
+        ${DATASTORE_CURL} -sS "$url" -d 'INSERT INTO async_inserts FORMAT JSONEachRow {"id": 5, "s": "e"} {"id": 6, "s": "f"}'
     done
 }
 
 function insert3()
 {
-    url="${CLICKHOUSE_URL}&async_insert=1&wait_for_async_insert=0"
+    url="${DATASTORE_URL}&async_insert=1&wait_for_async_insert=0"
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CURL} -sS "$url" -d "INSERT INTO FUNCTION remote('127.0.0.1', $CLICKHOUSE_DATABASE, async_inserts) VALUES (7, 'g') (8, 'h')"
+        ${DATASTORE_CURL} -sS "$url" -d "INSERT INTO FUNCTION remote('127.0.0.1', $DATASTORE_DATABASE, async_inserts) VALUES (7, 'g') (8, 'h')"
     done
 }
 
@@ -42,7 +42,7 @@ function select1()
 {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CLIENT} -q "SELECT * FROM async_inserts FORMAT Null"
+        ${DATASTORE_CLIENT} -q "SELECT * FROM async_inserts FORMAT Null"
     done
 }
 
@@ -50,7 +50,7 @@ function select2()
 {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CLIENT} -q "SELECT * FROM system.asynchronous_inserts FORMAT Null"
+        ${DATASTORE_CLIENT} -q "SELECT * FROM system.asynchronous_inserts FORMAT Null"
     done
 }
 
@@ -59,12 +59,12 @@ function truncate1()
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         sleep 0.1
-        ${CLICKHOUSE_CLIENT} -q "TRUNCATE TABLE async_inserts"
+        ${DATASTORE_CLIENT} -q "TRUNCATE TABLE async_inserts"
     done
 }
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS async_inserts"
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE async_inserts (id UInt32, s String) ENGINE = MergeTree ORDER BY id"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS async_inserts"
+${DATASTORE_CLIENT} -q "CREATE TABLE async_inserts (id UInt32, s String) ENGINE = MergeTree ORDER BY id"
 
 TIMEOUT=10
 
@@ -88,4 +88,4 @@ truncate1 $TIMEOUT &
 wait
 echo "OK"
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS async_inserts";
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS async_inserts";

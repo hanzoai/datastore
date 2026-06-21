@@ -14,7 +14,7 @@ doc_type: 'reference'
 This table engine is available from version 25.6 and higher in both OSS and Cloud.
 :::
 
-This engine inherits from [MergeTree](/engines/table-engines/mergetree-family/mergetree). The key difference is in how data parts are merged: for `CoalescingMergeTree` tables, ClickHouse replaces all rows with the same primary key (or more precisely, the same [sorting key](../../../engines/table-engines/mergetree-family/mergetree.md)) with a single row that contains the latest non-NULL values for each column.
+This engine inherits from [MergeTree](/engines/table-engines/mergetree-family/mergetree). The key difference is in how data parts are merged: for `CoalescingMergeTree` tables, Datastore replaces all rows with the same primary key (or more precisely, the same [sorting key](../../../engines/table-engines/mergetree-family/mergetree.md)) with a single row that contains the latest non-NULL values for each column.
 
 This enables column-level upserts, meaning you can update only specific columns rather than entire rows.
 
@@ -41,7 +41,7 @@ For a description of request parameters, see [request description](../../../sql-
 
 #### Columns {#columns}
 
-`columns` - Optional. A tuple with the names of columns where values will be united. The provided columns must not be in the partition or sorting key. If `columns` is not specified, ClickHouse unites the values in all columns that are not in the sorting key.
+`columns` - Optional. A tuple with the names of columns where values will be united. The provided columns must not be in the partition or sorting key. If `columns` is not specified, Datastore unites the values in all columns that are not in the sorting key.
 
 ### Query clauses {#query-clauses}
 
@@ -122,7 +122,7 @@ SELECT * FROM test_table FINAL ORDER BY key;
 └─────┴───────────┴──────────────┴────────────┘
 ```
 
-Using the `FINAL` modifier forces ClickHouse to apply merge logic at query time, ensuring you get the correct, coalesced "latest" value for each column. This is the safest and most accurate method when querying from a CoalescingMergeTree table.
+Using the `FINAL` modifier forces Datastore to apply merge logic at query time, ensuring you get the correct, coalesced "latest" value for each column. This is the safest and most accurate method when querying from a CoalescingMergeTree table.
 
 :::note
 

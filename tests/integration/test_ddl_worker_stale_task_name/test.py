@@ -5,7 +5,7 @@ from helpers.cluster import ClickHouseCluster
 from helpers.network import PartitionManager
 
 CLUSTER_NAME = "stale_task_name_cluster"
-QUEUE_PATH = "/clickhouse/test_ddl_worker_stale_task_name/ddl"
+QUEUE_PATH = "/datastore/test_ddl_worker_stale_task_name/ddl"
 ASYNC_SETTINGS = {
     "distributed_ddl_output_mode": "none",
     "distributed_ddl_task_timeout": 0,

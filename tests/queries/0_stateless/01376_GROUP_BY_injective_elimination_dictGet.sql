@@ -3,7 +3,7 @@
 SET optimize_injective_functions_in_group_by = 1;
 SET optimize_group_by_function_keys = 1;
 
--- https://github.com/ClickHouse/ClickHouse/issues/11469
+-- https://github.com/ClickHouse/Datastore/issues/11469
 SELECT dictGet('default.countryId', 'country', toUInt64(number)) AS country FROM numbers(2) GROUP BY country; -- { serverError BAD_ARGUMENTS }
 
 
@@ -29,7 +29,7 @@ CREATE DICTIONARY IF NOT EXISTS dictdb_01376.dict_exists
   value Float64 DEFAULT 77.77 INJECTIVE
 )
 PRIMARY KEY key_column
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' DB 'dictdb_01376'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' DB 'dictdb_01376'))
 LIFETIME(1)
 LAYOUT(FLAT());
 

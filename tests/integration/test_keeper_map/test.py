@@ -160,7 +160,7 @@ def test_keeper_drop_after_update(started_cluster):
 def test_keeper_map_create_without_drop_lock_version(started_cluster):
     """Test that CREATE TABLE succeeds when leftover ZK nodes from a failed drop
     are missing the drop_lock_version node (simulates pre-25.1 upgrade scenario).
-    Regression test for https://github.com/ClickHouse/ClickHouse/issues/101581"""
+    Regression test for https://github.com/ClickHouse/Datastore/issues/101581"""
 
     table_name = "test_keeper_map_create_without_drop_lock_version"
     zk_path = f"/test_keeper_map/{table_name}"

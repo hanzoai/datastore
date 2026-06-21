@@ -20,13 +20,13 @@ def started_cluster():
 
 
 def check_log_file():
-    assert node.path_exists("/var/log/clickhouse-server/clickhouse-server.log.lz4")
+    assert node.path_exists("/var/log/datastore-server/datastore-server.log.lz4")
 
     lz4_output = node.exec_in_container(
         [
             "bash",
             "-c",
-            "lz4 -t /var/log/clickhouse-server/clickhouse-server.log.lz4 2>&1",
+            "lz4 -t /var/log/datastore-server/datastore-server.log.lz4 2>&1",
         ],
         user="root",
     )
@@ -37,7 +37,7 @@ def check_log_file():
             [
                 "bash",
                 "-c",
-                "du -b /var/log/clickhouse-server/clickhouse-server.log.lz4 | awk {' print $1 '}",
+                "du -b /var/log/datastore-server/datastore-server.log.lz4 | awk {' print $1 '}",
             ],
             user="root",
         )

@@ -43,7 +43,7 @@ SETTINGS convert_query_to_cnf = 1, optimize_using_constraints = 1, enable_analyz
 DROP TABLE IF EXISTS 03161_table;
 
 -- Checking reproducer from GitHub issue
--- https://github.com/ClickHouse/ClickHouse/issues/57400
+-- https://github.com/ClickHouse/Datastore/issues/57400
 
 DROP TABLE IF EXISTS 03161_reproducer;
 

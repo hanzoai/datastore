@@ -1,6 +1,6 @@
 if (OS_FREEBSD)
     # Right nix/libc requires fspacectl and it had been added only since FreeBSD14.
-    # And since sysroot has older libraries you will got undefined reference for clickhouse binary.
+    # And since sysroot has older libraries you will got undefined reference for datastore binary.
     #
     # But likely everything should work without this syscall, however it is not
     # possible right now to gently override libraries versions for dependencies,

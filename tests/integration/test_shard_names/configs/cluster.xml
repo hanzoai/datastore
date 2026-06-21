@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_shard_names_literal>
             <shard>
@@ -45,4 +45,4 @@
             </node>
          </test_shard_names_with_nodes>
     </remote_servers>
-</clickhouse>
+</datastore>

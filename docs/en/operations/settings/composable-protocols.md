@@ -1,6 +1,6 @@
 ---
 description: 'Composable protocols allows more flexible configuration of TCP access
-  to the ClickHouse server.'
+  to the Datastore server.'
 sidebar_label: 'Composable protocols'
 sidebar_position: 64
 slug: /operations/settings/composable-protocols
@@ -11,7 +11,7 @@ doc_type: 'reference'
 ## Overview {#overview}
 
 Composable protocols allow more flexible configuration of TCP access to the 
-ClickHouse server. This configuration can co-exist alongside, or replace, 
+Datastore server. This configuration can co-exist alongside, or replace, 
 conventional configuration.
 
 ## Configuring composable protocols {#composable-protocols-section-is-denoted-as-protocols-in-configuration-xml}
@@ -45,14 +45,14 @@ Modules can be configured according to:
 - `plain_http` - name which can be referred to by another layer
 - `type` - denotes the protocol handler which will be instantiated to process data.
    It has the following set of predefined protocol handlers:
-  * `tcp` - native clickhouse protocol handler
-  * `http` - HTTP clickhouse protocol handler
+  * `tcp` - native datastore protocol handler
+  * `http` - HTTP datastore protocol handler
   * `tls` - TLS encryption layer
   * `proxy1` - PROXYv1 layer
   * `mysql` - MySQL compatibility protocol handler
   * `postgres` - PostgreSQL compatibility protocol handler
   * `prometheus` - Prometheus protocol handler
-  * `interserver` - clickhouse interserver handler
+  * `interserver` - datastore interserver handler
 
 :::note
 `gRPC` protocol handler is not implemented for `Composable protocols`

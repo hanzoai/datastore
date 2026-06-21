@@ -3,7 +3,7 @@
 # Tag no-fasttest -- requires Kafka
 
 # Regression test for proper StorageKafka shutdown
-# https://github.com/ClickHouse/ClickHouse/issues/80674
+# https://github.com/ClickHouse/Datastore/issues/80674
 #
 # NOTE: this test differs from 03522_storage_kafka_shutdown_smoke, since it creates topic w/o topic group (using named collections)
 
@@ -11,7 +11,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_LOCAL -nm -q "
+$DATASTORE_LOCAL -nm -q "
 CREATE NAMED COLLECTION kafka_config AS kafka_broker_list = '0.0.0.0:9092';
 
 CREATE TABLE dummy

@@ -79,7 +79,7 @@ def test_keeper_session_loss_during_coordinated_refresh(started_cluster):
     node1.query("DROP DATABASE IF EXISTS re ON CLUSTER default SYNC")
     node1.query(
         "CREATE DATABASE re ON CLUSTER default "
-        "ENGINE = Replicated('/clickhouse/databases/re', '{shard}', '{replica}')"
+        "ENGINE = Replicated('/datastore/databases/re', '{shard}', '{replica}')"
     )
 
     # Separate target table so we can SYSTEM SYNC REPLICA on it deterministically

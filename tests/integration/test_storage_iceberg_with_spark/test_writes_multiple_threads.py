@@ -23,10 +23,10 @@ def test_writes_multiple_threads(started_cluster_iceberg_with_spark, format_vers
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     spark = started_cluster_iceberg_with_spark.spark_session
-    df = spark.read.format("iceberg").load(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}").collect()
+    df = spark.read.format("iceberg").load(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}").collect()
     assert len(df) == 400

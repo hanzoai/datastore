@@ -1,5 +1,5 @@
 ---
-description: 'A comprehensive overview of ClickHouse architecture and its column-oriented
+description: 'A comprehensive overview of Datastore architecture and its column-oriented
   design'
 sidebar_label: 'Architecture Overview'
 sidebar_position: 50
@@ -8,7 +8,7 @@ title: 'Architecture Overview'
 doc_type: 'reference'
 ---
 
-ClickHouse is a true column-oriented DBMS. Data is stored by columns, and during the execution of arrays (vectors or chunks of columns).
+Datastore is a true column-oriented DBMS. Data is stored by columns, and during the execution of arrays (vectors or chunks of columns).
 Whenever possible, operations are dispatched on arrays, rather than on individual values.
 It is called "vectorized query execution" and it helps lower the cost of actual data processing.
 
@@ -16,7 +16,7 @@ This idea is not new.
 It dates back to the `APL` (A programming language, 1957) and its descendants: `A +` (APL dialect), `J` (1990), `K` (1993), and `Q` (programming language from Kx Systems, 2003).
 Array programming is used in scientific data processing. Neither is this idea something new in relational databases. For example, it is used in the `VectorWise` system (also known as Actian Vector Analytic Database by Actian Corporation).
 
-There are two different approaches for speeding up query processing: vectorized query execution and runtime code generation. The latter removes all indirection and dynamic dispatch. Neither of these approaches is strictly better than the other. Runtime code generation can be better when it fuses many operations, thus fully utilizing CPU execution units and the pipeline. Vectorized query execution can be less practical because it involves temporary vectors that must be written to the cache and read back. If the temporary data does not fit in the L2 cache, this becomes an issue. But vectorized query execution more easily utilizes the SIMD capabilities of the CPU. A [research paper](http://15721.courses.cs.cmu.edu/spring2016/papers/p5-sompolski.pdf) written by our friends shows that it is better to combine both approaches. ClickHouse uses vectorized query execution and has limited initial support for runtime code generation.
+There are two different approaches for speeding up query processing: vectorized query execution and runtime code generation. The latter removes all indirection and dynamic dispatch. Neither of these approaches is strictly better than the other. Runtime code generation can be better when it fuses many operations, thus fully utilizing CPU execution units and the pipeline. Vectorized query execution can be less practical because it involves temporary vectors that must be written to the cache and read back. If the temporary data does not fit in the L2 cache, this becomes an issue. But vectorized query execution more easily utilizes the SIMD capabilities of the CPU. A [research paper](http://15721.courses.cs.cmu.edu/spring2016/papers/p5-sompolski.pdf) written by our friends shows that it is better to combine both approaches. Datastore uses vectorized query execution and has limited initial support for runtime code generation.
 
 ## Columns {#columns}
 
@@ -56,7 +56,7 @@ Blocks are created for every processed chunk of data. Note that for the same typ
 
 ## Processors {#processors}
 
-See the description at [https://github.com/ClickHouse/ClickHouse/blob/master/src/Processors/IProcessor.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Processors/IProcessor.h).
+See the description at [https://github.com/ClickHouse/Datastore/blob/master/src/Processors/IProcessor.h](https://github.com/ClickHouse/Datastore/blob/master/src/Processors/IProcessor.h).
 
 ## Formats {#formats}
 
@@ -115,7 +115,7 @@ Interpreters are responsible for creating the query execution pipeline from an A
 
 The query execution pipeline is a combination of processors that can consume and produce chunks (sets of columns with specific types).
 A processor communicates via ports and can have multiple input ports and multiple output ports.
-A more detailed description can be found in [src/Processors/IProcessor.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Processors/IProcessor.h).
+A more detailed description can be found in [src/Processors/IProcessor.h](https://github.com/ClickHouse/Datastore/blob/master/src/Processors/IProcessor.h).
 
 For example, the result of interpreting the `SELECT` query is a "pulling" `QueryPipeline` which has a special output port to read the result set from.
 The result of the `INSERT` query is a "pushing" `QueryPipeline` with an input port to write data for insertion.
@@ -133,7 +133,7 @@ Ordinary functions do not change the number of rows – they work as if they are
 
 There are some miscellaneous functions, like [blockSize](/sql-reference/functions/other-functions#blockSize), [rowNumberInBlock](/sql-reference/functions/other-functions#rowNumberInBlock), and [runningAccumulate](/sql-reference/functions/other-functions#runningAccumulate), that exploit block processing and violate the independence of rows.
 
-ClickHouse has strong typing, so there's no implicit type conversion. If a function does not support a specific combination of types, it throws an exception. But functions can work (be overloaded) for many different combinations of types. For example, the `plus` function (to implement the `+` operator) works for any combination of numeric types: `UInt8` + `Float32`, `UInt16` + `Int8`, and so on. Also, some variadic functions can accept any number of arguments, such as the `concat` function.
+Datastore has strong typing, so there's no implicit type conversion. If a function does not support a specific combination of types, it throws an exception. But functions can work (be overloaded) for many different combinations of types. For example, the `plus` function (to implement the `+` operator) works for any combination of numeric types: `UInt8` + `Float32`, `UInt16` + `Int8`, and so on. Also, some variadic functions can accept any number of arguments, such as the `concat` function.
 
 Implementing a function may be slightly inconvenient because a function explicitly dispatches supported data types and supported `IColumns`. For example, the `plus` function has code generated by instantiation of a C++ template for each combination of numeric types, and constant or non-constant left and right arguments.
 
@@ -156,7 +156,7 @@ Aggregation states can be serialized and deserialized to pass over the network d
 The server implements several different interfaces:
 
 - An HTTP interface for any foreign clients.
-- A TCP interface for the native ClickHouse client and for cross-server communication during distributed query execution.
+- A TCP interface for the native Datastore client and for cross-server communication during distributed query execution.
 - An interface for transferring data for replication.
 
 Internally, it is just a primitive multithread server without coroutines or fibers. Since the server is not designed to process a high rate of simple queries but to process a relatively low rate of complex queries, each of them can process a vast amount of data for analytics.
@@ -166,12 +166,12 @@ The server initializes the `Context` class with the necessary environment for qu
 We maintain full backward and forward compatibility for the server TCP protocol: old clients can talk to new servers, and new clients can talk to old servers. But we do not want to maintain it eternally, and we are removing support for old versions after about one year.
 
 :::note
-For most external applications, we recommend using the HTTP interface because it is simple and easy to use. The TCP protocol is more tightly linked to internal data structures: it uses an internal format for passing blocks of data, and it uses custom framing for compressed data. We haven't released a C library for that protocol because it requires linking most of the ClickHouse codebase, which is not practical.
+For most external applications, we recommend using the HTTP interface because it is simple and easy to use. The TCP protocol is more tightly linked to internal data structures: it uses an internal format for passing blocks of data, and it uses custom framing for compressed data. We haven't released a C library for that protocol because it requires linking most of the Datastore codebase, which is not practical.
 :::
 
 ## Configuration {#configuration}
 
-ClickHouse Server is based on POCO C++ Libraries and uses `Poco::Util::AbstractConfiguration` to represent its configuration. Configuration is held by `Poco::Util::ServerApplication` class inherited by `DaemonBase` class, which in turn is inherited by `DB::Server` class, implementing clickhouse-server itself. So config can be accessed by `ServerApplication::config()` method.
+Datastore Server is based on POCO C++ Libraries and uses `Poco::Util::AbstractConfiguration` to represent its configuration. Configuration is held by `Poco::Util::ServerApplication` class inherited by `DaemonBase` class, which in turn is inherited by `DB::Server` class, implementing datastore-server itself. So config can be accessed by `ServerApplication::config()` method.
 
 Config is read from multiple files (in XML or YAML format) and merged into single `AbstractConfiguration` by `ConfigProcessor` class. Configuration is loaded at server startup and can be reloaded later if one of config files is updated, removed or added. `ConfigReloader` class is responsible for periodic monitoring of these changes and reload procedure as well. `SYSTEM RELOAD CONFIG` query also triggers config to be reloaded.
 
@@ -179,7 +179,7 @@ For queries and subsystems other than `Server` config is accessible using `Conte
 
 ### Context {#context}
 
-ClickHouse manages settings through the hierarchy of contexts:
+Datastore manages settings through the hierarchy of contexts:
 * **Global context** - server-wide settings defined via config files
 * **Session context** - user session settings from profiles, user configuration and SET commands
 * **Query context** - query-level settings from SETTINGS clause
@@ -199,7 +199,7 @@ Background operations can be configured via global and 'background' profile sett
 
 ## Threads and jobs {#threads-and-jobs}
 
-To execute queries and do side activities ClickHouse allocates threads from one of thread pools to avoid frequent thread creation and destruction. There are a few thread pools, which are selected depending on a purpose and structure of a job:
+To execute queries and do side activities Datastore allocates threads from one of thread pools to avoid frequent thread creation and destruction. There are a few thread pools, which are selected depending on a purpose and structure of a job:
 * Server pool for incoming client sessions.
 * Global thread pool for general purpose jobs, background activities and standalone threads.
 * IO thread pool for jobs that are mostly blocked on some IO and are not CPU-intensive.
@@ -264,7 +264,7 @@ Servers in a cluster setup are mostly independent. You can create a `Distributed
 
 Things become more complicated when you have subqueries in IN or JOIN clauses, and each of them uses a `Distributed` table. We have different strategies for the execution of these queries.
 
-There is no global query plan for distributed query execution. Each node has its local query plan for its part of the job. We only have simple one-pass distributed query execution: we send queries for remote nodes and then merge the results. But this is not feasible for complicated queries with high cardinality `GROUP BY`s or with a large amount of temporary data for JOIN. In such cases, we need to "reshuffle" data between servers, which requires additional coordination. ClickHouse does not support that kind of query execution, and we need to work on it.
+There is no global query plan for distributed query execution. Each node has its local query plan for its part of the job. We only have simple one-pass distributed query execution: we send queries for remote nodes and then merge the results. But this is not feasible for complicated queries with high cardinality `GROUP BY`s or with a large amount of temporary data for JOIN. In such cases, we need to "reshuffle" data between servers, which requires additional coordination. Datastore does not support that kind of query execution, and we need to work on it.
 
 ## Merge tree {#merge-tree}
 
@@ -272,7 +272,7 @@ There is no global query plan for distributed query execution. Each node has its
 
 The primary key itself is "sparse". It does not address every single row, but only some ranges of data. A separate `primary.idx` file has the value of the primary key for each N-th row, where N is called `index_granularity` (usually, N = 8192). Also, for each column, we have `column.mrk` files with "marks", which are offsets to each N-th row in the data file. Each mark is a pair: the offset in the file to the beginning of the compressed block, and the offset in the decompressed block to the beginning of data. Usually, compressed blocks are aligned by marks, and the offset in the decompressed block is zero. Data for `primary.idx` always resides in memory, and data for `column.mrk` files is cached.
 
-When we are going to read something from a part in `MergeTree`, we look at `primary.idx` data and locate ranges that could contain requested data, then look at `column.mrk` data and calculate offsets for where to start reading those ranges. Because of sparseness, excess data may be read. ClickHouse is not suitable for a high load of simple point queries, because the entire range with `index_granularity` rows must be read for each key, and the entire compressed block must be decompressed for each column. We made the index sparse because we must be able to maintain trillions of rows per single server without noticeable memory consumption for the index. Also, because the primary key is sparse, it is not unique: it cannot check the existence of the key in the table at INSERT time. You could have many rows with the same key in a table.
+When we are going to read something from a part in `MergeTree`, we look at `primary.idx` data and locate ranges that could contain requested data, then look at `column.mrk` data and calculate offsets for where to start reading those ranges. Because of sparseness, excess data may be read. Datastore is not suitable for a high load of simple point queries, because the entire range with `index_granularity` rows must be read for each key, and the entire compressed block must be decompressed for each column. We made the index sparse because we must be able to maintain trillions of rows per single server without noticeable memory consumption for the index. Also, because the primary key is sparse, it is not unique: it cannot check the existence of the key in the table at INSERT time. You could have many rows with the same key in a table.
 
 When you `INSERT` a bunch of data into `MergeTree`, that bunch is sorted by primary key order and forms a new part. There are background threads that periodically select some parts and merge them into a single sorted part to keep the number of parts relatively low. That's why it is called `MergeTree`. Of course, merging leads to "write amplification". All parts are immutable: they are only created and deleted, but not modified. When SELECT is executed, it holds a snapshot of the table (a set of parts). After merging, we also keep old parts for some time to make a recovery after failure easier, so if we see that some merged part is probably broken, we can replace it with its source parts.
 
@@ -282,18 +282,18 @@ There are MergeTree engines that are doing additional work during background mer
 
 ## Replication {#replication}
 
-Replication in ClickHouse can be configured on a per-table basis. You could have some replicated and some non-replicated tables on the same server. You could also have tables replicated in different ways, such as one table with two-factor replication and another with three-factor.
+Replication in Datastore can be configured on a per-table basis. You could have some replicated and some non-replicated tables on the same server. You could also have tables replicated in different ways, such as one table with two-factor replication and another with three-factor.
 
 Replication is implemented in the `ReplicatedMergeTree` storage engine. The path in `ZooKeeper` is specified as a parameter for the storage engine. All tables with the same path in `ZooKeeper` become replicas of each other: they synchronize their data and maintain consistency. Replicas can be added and removed dynamically simply by creating or dropping a table.
 
-Replication uses an asynchronous multi-master scheme. You can insert data into any replica that has a session with `ZooKeeper`, and data is replicated to all other replicas asynchronously. Because ClickHouse does not support UPDATEs, replication is conflict-free. As there is no quorum acknowledgment of inserts by default, just-inserted data might be lost if one node fails. The insert quorum can be enabled using `insert_quorum` setting.
+Replication uses an asynchronous multi-master scheme. You can insert data into any replica that has a session with `ZooKeeper`, and data is replicated to all other replicas asynchronously. Because Datastore does not support UPDATEs, replication is conflict-free. As there is no quorum acknowledgment of inserts by default, just-inserted data might be lost if one node fails. The insert quorum can be enabled using `insert_quorum` setting.
 
 Metadata for replication is stored in ZooKeeper. There is a replication log that lists what actions to do. Actions are: get part; merge parts; drop a partition, and so on. Each replica copies the replication log to its queue and then executes the actions from the queue. For example, on insertion, the "get the part" action is created in the log, and every replica downloads that part. Merges are coordinated between replicas to get byte-identical results. All parts are merged in the same way on all replicas. One of the leaders initiates a new merge first and writes "merge parts" actions to the log. Multiple replicas (or all) can be leaders at the same time. A replica can be prevented from becoming a leader using the `merge_tree` setting `replicated_can_become_leader`. The leaders are responsible for scheduling background merges.
 
 Replication is physical: only compressed parts are transferred between nodes, not queries. Merges are processed on each replica independently in most cases to lower the network costs by avoiding network amplification. Large merged parts are sent over the network only in cases of significant replication lag.
 
-Besides, each replica stores its state in ZooKeeper as the set of parts and its checksums. When the state on the local filesystem diverges from the reference state in ZooKeeper, the replica restores its consistency by downloading missing and broken parts from other replicas. When there is some unexpected or broken data in the local filesystem, ClickHouse does not remove it, but moves it to a separate directory and forgets it.
+Besides, each replica stores its state in ZooKeeper as the set of parts and its checksums. When the state on the local filesystem diverges from the reference state in ZooKeeper, the replica restores its consistency by downloading missing and broken parts from other replicas. When there is some unexpected or broken data in the local filesystem, Datastore does not remove it, but moves it to a separate directory and forgets it.
 
 :::note
-The ClickHouse cluster consists of independent shards, and each shard consists of replicas. The cluster is **not elastic**, so after adding a new shard, data is not rebalanced between shards automatically. Instead, the cluster load is supposed to be adjusted to be uneven. This implementation gives you more control, and it is ok for relatively small clusters, such as tens of nodes. But for clusters with hundreds of nodes that we are using in production, this approach becomes a significant drawback. We should implement a table engine that spans across the cluster with dynamically replicated regions that could be split and balanced between clusters automatically.
+The Datastore cluster consists of independent shards, and each shard consists of replicas. The cluster is **not elastic**, so after adding a new shard, data is not rebalanced between shards automatically. Instead, the cluster load is supposed to be adjusted to be uneven. This implementation gives you more control, and it is ok for relatively small clusters, such as tens of nodes. But for clusters with hundreds of nodes that we are using in production, this approach becomes a significant drawback. We should implement a table engine that spans across the cluster with dynamically replicated regions that could be split and balanced between clusters automatically.
 :::

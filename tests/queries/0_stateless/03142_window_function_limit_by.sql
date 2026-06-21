@@ -1,7 +1,7 @@
 SET enable_analyzer = 1;
 
 
--- https://github.com/ClickHouse/ClickHouse/issues/55965
+-- https://github.com/ClickHouse/Datastore/issues/55965
 
 CREATE TABLE error_win_func
 (
@@ -26,7 +26,7 @@ LIMIT 1 BY
 
 DROP TABLE error_win_func;
 
--- https://github.com/ClickHouse/ClickHouse/issues/47217
+-- https://github.com/ClickHouse/Datastore/issues/47217
 
 CREATE TABLE t(n String, st String) ENGINE = Memory as
 select * from values(('a', 'x'), ('b', 'y'), ('c', 'z'));

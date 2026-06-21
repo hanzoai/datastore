@@ -2,7 +2,7 @@
 -- ^ no-fasttest: needs MinIO + s3 endpoints from CI fixtures
 --   no-replicated-database: stateless test using `disk = '...'`
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/89300
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/89300
 -- Calling a data-lake table function with `SETTINGS disk = '<disk>'` used to throw
 -- a bad-cast assertion (from the wrapping decorator down to `S3ObjectStorage`)
 -- whenever the disk wrapped its underlying object storage (e.g. cache layer).

@@ -1,16 +1,16 @@
--- https://github.com/ClickHouse/ClickHouse/issues/23194
+-- https://github.com/ClickHouse/Datastore/issues/23194
 SET enable_analyzer = 1;
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE:Identifier};
-USE {CLICKHOUSE_DATABASE:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE:Identifier};
+USE {DATASTORE_DATABASE:Identifier};
 
 -- simple tuple access operator
 SELECT tuple(1, 'a').1;
 -- named tuple or complex column access operator - can be applied to Nested type as well as Array of named Tuple
 SELECT CAST(('hello', 1) AS Tuple(hello String, count UInt32)) AS t, t.hello;
 -- TODO: this doesn't work
--- https://github.com/ClickHouse/ClickHouse/issues/57361
+-- https://github.com/ClickHouse/Datastore/issues/57361
 -- SELECT CAST(('hello', 1) AS Tuple(hello String, count UInt32)).hello;
 
 -- expansion of a tuple or complex column with asterisk
@@ -24,7 +24,7 @@ SELECT untuple(CAST(('hello', 1) AS Tuple(name String, count UInt32))); -- will 
 
 SELECT '---';
 
-CREATE TABLE {CLICKHOUSE_DATABASE:Identifier}.t
+CREATE TABLE {DATASTORE_DATABASE:Identifier}.t
 (
     col String,
     hello String,
@@ -32,7 +32,7 @@ CREATE TABLE {CLICKHOUSE_DATABASE:Identifier}.t
 )
 ENGINE = Memory;
 
-CREATE TABLE {CLICKHOUSE_DATABASE:Identifier}.u
+CREATE TABLE {DATASTORE_DATABASE:Identifier}.u
 (
     cc String
 )
@@ -41,7 +41,7 @@ ENGINE = Memory;
 SELECT * EXCEPT('hello|world');
 -- TODO: Qualified matcher t.* EXCEPT 'hello|world' does not find table.
 -- SELECT t.* EXCEPT(hello, world);
--- SELECT {CLICKHOUSE_DATABASE:Identifier}.t.* REPLACE(x + 1 AS x);
+-- SELECT {DATASTORE_DATABASE:Identifier}.t.* REPLACE(x + 1 AS x);
 
 
 SELECT * EXCEPT(hello) REPLACE(x + 1 AS x);

@@ -6,6 +6,6 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT"
+format="$DATASTORE_FORMAT"
 
 echo "SELECT (x.1)[1], (x[1].1)[1].1, (NOT x)[1], -x[1], (-x)[1], (NOT x).1, -x.1, (-x).1" | $format

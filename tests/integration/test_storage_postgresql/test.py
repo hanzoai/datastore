@@ -68,7 +68,7 @@ def test_postgres_select_insert(started_cluster):
     assert (node1.query(check3)).rstrip() == "5000"
     assert (node1.query(check4)).rstrip() == "1"
 
-    # Triggers issue https://github.com/ClickHouse/ClickHouse/issues/26088
+    # Triggers issue https://github.com/ClickHouse/Datastore/issues/26088
     # for i in range(1, 1000):
     #     assert (node1.query(check1)).rstrip() == '10000', f"Failed on {i}"
 
@@ -915,7 +915,7 @@ def test_postgres_reading_clone(started_cluster):
 
 
 def test_postgres_insert_boolean_array(started_cluster):
-    """Test for https://github.com/ClickHouse/ClickHouse/issues/72754
+    """Test for https://github.com/ClickHouse/Datastore/issues/72754
     Inserting into PostgreSQL BOOLEAN[] was causing a logical error due to
     incorrect column type creation for Bool arrays.
     """
@@ -925,7 +925,7 @@ def test_postgres_insert_boolean_array(started_cluster):
 
     table_func = f"postgresql('{started_cluster.postgres_ip}:{started_cluster.postgres_port}', 'postgres', 'test_bool_array', 'postgres', '{pg_pass}')"
 
-    # Insert boolean arrays using ClickHouse Bool type
+    # Insert boolean arrays using Datastore Bool type
     node1.query(
         f"INSERT INTO TABLE FUNCTION {table_func} VALUES (1, [true, false, true])"
     )
@@ -943,7 +943,7 @@ def test_postgres_insert_boolean_array(started_cluster):
     assert result[1] == (2, [False, False])
     assert result[2] == (3, [])
 
-    # Verify we can read the data back through ClickHouse
+    # Verify we can read the data back through Datastore
     result = node1.query(f"SELECT * FROM {table_func} ORDER BY id")
     expected = "1\t[1,0,1]\n2\t[0,0]\n3\t[]\n"
     assert result == expected
@@ -954,8 +954,8 @@ def test_postgres_insert_boolean_array(started_cluster):
 def test_postgres_date32(started_cluster):
     """Test that PostgreSQL DATE values outside the Date (UInt16) range are correctly read.
 
-    This is a regression test for https://github.com/ClickHouse/ClickHouse/issues/73084
-    PostgreSQL DATE type supports a much wider range than ClickHouse Date (1970-2149).
+    This is a regression test for https://github.com/ClickHouse/Datastore/issues/73084
+    PostgreSQL DATE type supports a much wider range than Datastore Date (1970-2149).
     Large dates like '2276-11-21' must be read correctly using Date32.
     """
     cursor = started_cluster.postgres_conn.cursor()
@@ -1024,7 +1024,7 @@ def test_postgres_array_parser_dimension_underflow(started_cluster):
     unreachable via a column declared as `boolean[]`/`integer[]` on the
     PostgreSQL side. The reproducer below stores the malformed payload in a
     PostgreSQL `text` column and declares the same column as `Array(Int32)` on
-    the ClickHouse side via the `PostgreSQL` table engine. ClickHouse then
+    the Datastore side via the `PostgreSQL` table engine. Datastore then
     dispatches the raw `'}'` value through the `vtArray` branch of
     `insertPostgreSQLValue`, which calls `pqxx::array_parser` on it and
     reproduces the bug.

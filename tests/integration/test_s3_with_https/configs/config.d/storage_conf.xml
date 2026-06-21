@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3_secure>
@@ -36,4 +36,4 @@
             </s3_secure_with_proxy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

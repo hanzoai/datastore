@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/101271
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/101271
 -- Selecting a Tuple element whose name contains a dot (e.g. `a.b`) caused a
 -- server exception when another element named `a` has a JSON type, because the
 -- prefix match on `a` would set `res` before the exact match on `a.b` could.

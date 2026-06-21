@@ -27,7 +27,7 @@ cat > "$yaml" <<EOL
       version: '10'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 drop dictionary if exists regexp_dict1;
 create dictionary regexp_dict1
 (
@@ -69,7 +69,7 @@ cat > "$yaml" <<EOL
       lucky: 'abcde'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 system reload dictionary regexp_dict1; -- { serverError 489 }
 "
 
@@ -79,7 +79,7 @@ cat > "$yaml" <<EOL
   version: '\1'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 system reload dictionary regexp_dict1; -- { serverError 318 }
 "
 
@@ -92,7 +92,7 @@ cat > "$yaml" <<EOL
   version: '\2.\3'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 system reload dictionary regexp_dict1;
 select dictGet('regexp_dict1', ('name', 'version'), 'Mozilla/5.0 (BB10; Touch) AppleWebKit/537.3+ (KHTML, like Gecko) Version/10.0.9.388 Mobile Safari/537.3+');
 select dictGet('regexp_dict1', ('name', 'version'), 'Mozilla/5.0 (PlayBook; U; RIM Tablet OS 1.0.0; en-US) AppleWebKit/534.8+ (KHTML, like Gecko) Version/0.0.1 Safari/534.8+');
@@ -107,7 +107,7 @@ cat > "$yaml" <<EOL
   col_array: '[1,2,3,-1,-2,-3]'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 create dictionary regexp_dict2
 (
     regexp String,
@@ -126,15 +126,15 @@ select dictGet('regexp_dict2', ('col_bool','col_uuid', 'col_date', 'col_datetime
 "
 
 cat > "$yaml" <<EOL
-- regexp: 'clickhouse\.com'
-  tag: 'ClickHouse'
+- regexp: 'datastore\.com'
+  tag: 'Datastore'
   topological_index: 1
   paths:
-    - regexp: 'clickhouse\.com/docs(.*)'
-      tag: 'ClickHouse Documentation'
+    - regexp: 'datastore\.com/docs(.*)'
+      tag: 'Datastore Documentation'
       topological_index: 0
       captured: '\1'
-      parent: 'ClickHouse'
+      parent: 'Datastore'
 
 - regexp: '/docs(/|$)'
   tag: 'Documentation'
@@ -147,7 +147,7 @@ cat > "$yaml" <<EOL
 EOL
 
 # dictGetAll
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 drop dictionary if exists regexp_dict3;
 create dictionary regexp_dict3
 (
@@ -162,25 +162,25 @@ SOURCE(YAMLRegExpTree(PATH '$yaml'))
 LIFETIME(0)
 LAYOUT(regexp_tree);
 
-select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'clickhouse.com');
-select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'clickhouse.com', 2);
+select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'datastore.com');
+select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'datastore.com', 2);
 
-select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'clickhouse.com/docs/en');
-select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'clickhouse.com/docs/en', 2);
+select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'datastore.com/docs/en');
+select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'datastore.com/docs/en', 2);
 
-select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'github.com/clickhouse/tree/master/docs');
-select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'github.com/clickhouse/tree/master/docs', 2);
+select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'github.com/datastore/tree/master/docs');
+select dictGetAll('regexp_dict3', ('tag', 'topological_index', 'captured', 'parent'), 'github.com/datastore/tree/master/docs', 2);
 "
 
 # Test that things work the same for "simple" regexps that go through Hyperscan and "complex" regexps that go through RE2.
 # An easy way to force the use of RE2 is to disable Hyperscan.
 # This tree is constructed purposely so that text might (falsely) match leaf nodes without matching their corresponding parent nodes
 cat > "$yaml" <<EOL
-- regexp: 'clickhouse\.com'
-  tag: 'ClickHouse'
+- regexp: 'datastore\.com'
+  tag: 'Datastore'
   paths:
     - regexp: 'docs'
-      tag: 'ClickHouse Documentation'
+      tag: 'Datastore Documentation'
 
 - regexp: 'github\.com'
   tag: 'GitHub'
@@ -192,7 +192,7 @@ cat > "$yaml" <<EOL
   tag: 'Documentation'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 drop dictionary if exists regexp_dict3;
 create dictionary regexp_dict3
 (
@@ -205,10 +205,10 @@ LIFETIME(0)
 LAYOUT(regexp_tree)
 SETTINGS(regexp_dict_allow_hyperscan = true);
 
-select dictGet('regexp_dict3', 'tag', 'clickhouse.com');
-select dictGetAll('regexp_dict3', 'tag', 'clickhouse.com');
-select dictGet('regexp_dict3', 'tag', 'clickhouse.com/docs');
-select dictGetAll('regexp_dict3', 'tag', 'clickhouse.com/docs');
+select dictGet('regexp_dict3', 'tag', 'datastore.com');
+select dictGetAll('regexp_dict3', 'tag', 'datastore.com');
+select dictGet('regexp_dict3', 'tag', 'datastore.com/docs');
+select dictGetAll('regexp_dict3', 'tag', 'datastore.com/docs');
 select dictGet('regexp_dict3', 'tag', 'docs.github.com');
 select dictGetAll('regexp_dict3', 'tag', 'docs.github.com');
 select dictGet('regexp_dict3', 'tag', '/docs');
@@ -226,10 +226,10 @@ LIFETIME(0)
 LAYOUT(regexp_tree)
 SETTINGS(regexp_dict_allow_hyperscan = false);
 
-select dictGet('regexp_dict3', 'tag', 'clickhouse.com');
-select dictGetAll('regexp_dict3', 'tag', 'clickhouse.com');
-select dictGet('regexp_dict3', 'tag', 'clickhouse.com/docs');
-select dictGetAll('regexp_dict3', 'tag', 'clickhouse.com/docs');
+select dictGet('regexp_dict3', 'tag', 'datastore.com');
+select dictGetAll('regexp_dict3', 'tag', 'datastore.com');
+select dictGet('regexp_dict3', 'tag', 'datastore.com/docs');
+select dictGetAll('regexp_dict3', 'tag', 'datastore.com/docs');
 select dictGet('regexp_dict3', 'tag', 'docs.github.com');
 select dictGetAll('regexp_dict3', 'tag', 'docs.github.com');
 select dictGet('regexp_dict3', 'tag', '/docs');
@@ -252,7 +252,7 @@ cat > "$yaml" <<EOL
   pattern: '(?-i)hello.*world'
 EOL
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 drop dictionary if exists regexp_dict4;
 create dictionary regexp_dict4
 (
@@ -291,7 +291,7 @@ select dictGetAll('regexp_dict4', 'pattern', 'HELLO WORLD');
 select dictGetAll('regexp_dict4', 'pattern', 'HELLO\nWORLD');
 "
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 drop dictionary regexp_dict1;
 drop dictionary regexp_dict2;
 drop dictionary regexp_dict3;

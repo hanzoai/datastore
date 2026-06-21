@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
         DROP TABLE IF EXISTS matview_exception_a_to_c;
         DROP TABLE IF EXISTS matview_exception_a_to_b;
         DROP TABLE IF EXISTS table_exception_c;
@@ -17,7 +17,7 @@ function cleanup()
 
 function setup()
 {
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
         CREATE TABLE table_exception_a (a String, b Int64) ENGINE = MergeTree ORDER BY b;
         CREATE TABLE table_exception_b (a Float64, b Int64) ENGINE = MergeTree ORDER BY tuple();
         CREATE TABLE table_exception_c (a Float64) ENGINE = MergeTree ORDER BY a;
@@ -33,8 +33,8 @@ function test()
     query_id="$(random_str 10)"
     # We are going to insert an invalid number into table_exception_a. This will fail when inserting into
     # table_exception_b via matview_exception_a_to_b, and will work ok when inserting into table_exception_c
-    ${CLICKHOUSE_CLIENT} "$@" --log_queries=1 --log_query_views=1  --query_id="$query_id" -q "INSERT INTO table_exception_a VALUES ('0.Aa234', 22)" > /dev/null 2>&1 || true;
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} "$@" --log_queries=1 --log_query_views=1  --query_id="$query_id" -q "INSERT INTO table_exception_a VALUES ('0.Aa234', 22)" > /dev/null 2>&1 || true;
+    ${DATASTORE_CLIENT} -q "
         SELECT * FROM
         (
           SELECT 'table_exception_a' as name, count() AS c FROM table_exception_a UNION ALL
@@ -44,9 +44,9 @@ function test()
         ORDER BY name ASC
         FORMAT TSV";
 
-    ${CLICKHOUSE_CLIENT} -q 'SYSTEM FLUSH LOGS query_log, query_views_log';
+    ${DATASTORE_CLIENT} -q 'SYSTEM FLUSH LOGS query_log, query_views_log';
 
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
         SELECT
             replaceOne(CAST(type AS String), 'ExceptionWhileProcessing', 'Excep****WhileProcessing'),
             exception_code
@@ -58,7 +58,7 @@ function test()
         LIMIT 1
         FORMAT TSV";
 
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
         SELECT
             view_name,
             replaceOne(CAST(status AS String), 'ExceptionWhileProcessing', 'Excep****WhileProcessing'),

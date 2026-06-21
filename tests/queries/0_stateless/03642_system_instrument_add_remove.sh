@@ -10,12 +10,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+    $DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
 }
 
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SYSTEM INSTRUMENT REMOVE ALL;
     SELECT '-- Empty table';
     SELECT count() FROM system.instrumentation;
@@ -33,9 +33,9 @@ $CLICKHOUSE_CLIENT -q "
     SELECT function_name, handler, entry_type, symbol, parameters FROM system.instrumentation ORDER BY id ASC;
 "
 
-id=$($CLICKHOUSE_CLIENT -q "SELECT id FROM system.instrumentation WHERE function_name = 'QueryMetricLog::startQuery';")
+id=$($DATASTORE_CLIENT -q "SELECT id FROM system.instrumentation WHERE function_name = 'QueryMetricLog::startQuery';")
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT '-- Remove one specific id';
     SYSTEM INSTRUMENT REMOVE $id;
     SELECT function_name, handler, entry_type, symbol, parameters FROM system.instrumentation ORDER BY id ASC;
@@ -59,7 +59,7 @@ $CLICKHOUSE_CLIENT -q "
     SELECT count() FROM system.instrumentation;
 "
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT '-- Add several functions that match';
     SYSTEM INSTRUMENT ADD 'executeQuery' LOG ENTRY 'my log in executeQuery';
     SELECT count() > 10, function_name, handler, entry_type FROM system.instrumentation WHERE symbol ILIKE '%executeQuery%' GROUP BY function_name, handler, entry_type;

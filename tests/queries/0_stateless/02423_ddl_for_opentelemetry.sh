@@ -23,7 +23,7 @@ function execute_query()
         --distributed_ddl_output_mode "none"
         --distributed_ddl_entry_format_version "$ddl_version"
     )
-    ${CLICKHOUSE_CLIENT} "${opts[@]}" "$@"
+    ${DATASTORE_CLIENT} "${opts[@]}" "$@"
 }
 
 # This function takes following argument:
@@ -39,7 +39,7 @@ function check_span()
         extra_condition=""
     fi
 
-    ret=$(${CLICKHOUSE_CLIENT} -q "
+    ret=$(${DATASTORE_CLIENT} -q "
         SYSTEM FLUSH LOGS opentelemetry_span_log;
 
         SELECT count()
@@ -55,7 +55,7 @@ function check_span()
         echo "[operation_name like '${3}' ${extra_condition}]=$ret, expected: ${1}"
 
         # echo the span logs to help analyze
-        ${CLICKHOUSE_CLIENT} -q "
+        ${DATASTORE_CLIENT} -q "
             SELECT operation_name, attribute
             FROM system.opentelemetry_span_log
             WHERE finish_date >= yesterday()
@@ -69,12 +69,12 @@ function check_span()
 #
 # Set up
 #
-${CLICKHOUSE_CLIENT} -q "
-DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.ddl_test_for_opentelemetry;
+${DATASTORE_CLIENT} -q "
+DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.ddl_test_for_opentelemetry;
 "
 
 # Support Replicated database engine
-cluster_name=$($CLICKHOUSE_CLIENT -q "select if(engine = 'Replicated', name, 'test_shard_localhost')  from system.databases where name='$CLICKHOUSE_DATABASE'")
+cluster_name=$($DATASTORE_CLIENT -q "select if(engine = 'Replicated', name, 'test_shard_localhost')  from system.databases where name='$DATASTORE_DATABASE'")
 
 #
 # Only format_version 4 enables the tracing
@@ -83,15 +83,15 @@ for ddl_version in 3 4; do
     # Echo a separator so that the reference file is more clear for reading
     echo "===ddl_format_version ${ddl_version}===="
 
-    trace_id=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(generateUUIDv4()))");
-    execute_query $trace_id $ddl_version -q "CREATE TABLE ${CLICKHOUSE_DATABASE}.ddl_test_for_opentelemetry ON CLUSTER ${cluster_name} (id UInt64) Engine=MergeTree ORDER BY id"
+    trace_id=$(${DATASTORE_CLIENT} -q "select lower(hex(generateUUIDv4()))");
+    execute_query $trace_id $ddl_version -q "CREATE TABLE ${DATASTORE_DATABASE}.ddl_test_for_opentelemetry ON CLUSTER ${cluster_name} (id UInt64) Engine=MergeTree ORDER BY id"
 
     check_span 1 $trace_id "TCPHandler"
 
     if [ $cluster_name = "test_shard_localhost" ]; then
-        check_span 1 $trace_id "%executeDDLQueryOnCluster%" "attribute['clickhouse.cluster']='${cluster_name}'"
+        check_span 1 $trace_id "%executeDDLQueryOnCluster%" "attribute['datastore.cluster']='${cluster_name}'"
     else
-        check_span 1 $trace_id "%tryEnqueueAndExecuteEntry%" "attribute['clickhouse.cluster']='${cluster_name}'"
+        check_span 1 $trace_id "%tryEnqueueAndExecuteEntry%" "attribute['datastore.cluster']='${cluster_name}'"
     fi
     
     if [ $cluster_name = "test_shard_localhost" ]; then
@@ -124,8 +124,8 @@ for ddl_version in 3 4; do
 
     # Remove table
     # Under Replicated database engine, the DDL is executed as ON CLUSTER DDL, so distributed_ddl_output_mode is needed to supress output
-    ${CLICKHOUSE_CLIENT} --distributed_ddl_output_mode none -q "
-        DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.ddl_test_for_opentelemetry;
+    ${DATASTORE_CLIENT} --distributed_ddl_output_mode none -q "
+        DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.ddl_test_for_opentelemetry;
     "
 done
 
@@ -135,8 +135,8 @@ done
 # Echo a separator so that the reference file is more clear for reading
 echo "===exception===="
 
-trace_id=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(generateUUIDv4()))");
-execute_query $trace_id 4 -q "DROP TABLE ${CLICKHOUSE_DATABASE}.ddl_test_for_opentelemetry_non_exist ON CLUSTER ${cluster_name}" 2>&1 | grep 'DB::Exception ' | grep -Fv "UNKNOWN_TABLE"
+trace_id=$(${DATASTORE_CLIENT} -q "select lower(hex(generateUUIDv4()))");
+execute_query $trace_id 4 -q "DROP TABLE ${DATASTORE_DATABASE}.ddl_test_for_opentelemetry_non_exist ON CLUSTER ${cluster_name}" 2>&1 | grep 'DB::Exception ' | grep -Fv "UNKNOWN_TABLE"
 
 check_span 1 $trace_id "TCPHandler"
 
@@ -146,7 +146,7 @@ else
     # For Replicated database it will fail on initiator before enqueueing distributed DDL
     expected=0
 fi
-check_span $expected $trace_id "%executeDDLQueryOnCluster%" "attribute['clickhouse.cluster']='${cluster_name}' AND kind = 'PRODUCER'"
+check_span $expected $trace_id "%executeDDLQueryOnCluster%" "attribute['datastore.cluster']='${cluster_name}' AND kind = 'PRODUCER'"
 check_span $expected $trace_id "%DDLWorker::processTask%" "kind = 'CONSUMER'"
 
 if [ $cluster_name = "test_shard_localhost" ]; then
@@ -158,4 +158,4 @@ else
     expected=1
 fi
 # We don't case about the exact value of exception_code, just check it's there.
-check_span $expected $trace_id "query" "attribute['clickhouse.exception_code']<>''"
+check_span $expected $trace_id "query" "attribute['datastore.exception_code']<>''"

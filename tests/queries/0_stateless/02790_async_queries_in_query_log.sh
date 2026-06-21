@@ -6,10 +6,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function print_flush_query_logs()
 {
-    ${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS asynchronous_insert_log, query_log, query_views_log, part_log"
+    ${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS asynchronous_insert_log, query_log, query_views_log, part_log"
     echo ""
     echo "system.query_log"
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
       SELECT
           replace(type::String, 'Exception', 'Exc*****on') as type,
           read_rows,
@@ -35,7 +35,7 @@ function print_flush_query_logs()
 
     echo ""
     echo "system.query_views_log"
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
       SELECT
           view_name,
           view_type,
@@ -56,7 +56,7 @@ function print_flush_query_logs()
 
     echo ""
     echo "system.part_log"
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
       SELECT
           database,
           table,
@@ -71,22 +71,22 @@ function print_flush_query_logs()
 }
 
 
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE async_insert_landing (id UInt32) ENGINE = MergeTree ORDER BY id"
+${DATASTORE_CLIENT} -q "CREATE TABLE async_insert_landing (id UInt32) ENGINE = MergeTree ORDER BY id"
 
 query_id="$(random_str 10)"
-${CLICKHOUSE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=1, async_insert=1 values (1), (2), (3), (4);"
+${DATASTORE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=1, async_insert=1 values (1), (2), (3), (4);"
 print_flush_query_logs ${query_id}
 
 
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE async_insert_target (id UInt32) ENGINE = MergeTree ORDER BY id"
-${CLICKHOUSE_CLIENT} -q "CREATE MATERIALIZED VIEW async_insert_mv TO async_insert_target AS SELECT id + throwIf(id = 42) AS id FROM async_insert_landing"
+${DATASTORE_CLIENT} -q "CREATE TABLE async_insert_target (id UInt32) ENGINE = MergeTree ORDER BY id"
+${DATASTORE_CLIENT} -q "CREATE MATERIALIZED VIEW async_insert_mv TO async_insert_target AS SELECT id + throwIf(id = 42) AS id FROM async_insert_landing"
 
 query_id="$(random_str 10)"
-${CLICKHOUSE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=1, async_insert=1 values (11), (12), (13);"
+${DATASTORE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=1, async_insert=1 values (11), (12), (13);"
 print_flush_query_logs ${query_id}
 
 
 query_id="$(random_str 10)"
 # Use materialized_views_ignore_errors to guarantee it lands in the landing table, making the test stable
-${CLICKHOUSE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=1, async_insert=1, materialized_views_ignore_errors=1 values (42), (12), (13)" 2>/dev/null || true
+${DATASTORE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=1, async_insert=1, materialized_views_ignore_errors=1 values (42), (12), (13)" 2>/dev/null || true
 print_flush_query_logs ${query_id}

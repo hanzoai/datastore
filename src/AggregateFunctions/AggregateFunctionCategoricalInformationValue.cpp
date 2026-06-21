@@ -205,7 +205,7 @@ The result indicates how much each discrete (categorical) feature `[category1, c
     {
         "Basic usage analyzing age groups vs mobile usage",
         R"(
--- Using the metrica.hits dataset (available on https://sql.clickhouse.com/) to analyze age-mobile relationship
+-- Using the metrica.hits dataset (available on https://sql.datastore.com/) to analyze age-mobile relationship
 SELECT categoricalInformationValue(Age < 15, IsMobile)
 FROM metrica.hits;
         )",

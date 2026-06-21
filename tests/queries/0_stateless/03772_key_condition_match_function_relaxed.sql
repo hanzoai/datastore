@@ -13,12 +13,12 @@ SELECT 'http://example1.com/' AS url;
 -- { echo }
 SELECT count(*)
 FROM 03772_table_match
-WHERE NOT match(url, '^https?://clickhouse[.]com/');
+WHERE NOT match(url, '^https?://datastore[.]com/');
 
 EXPLAIN indexes = 1
 SELECT count(*)
 FROM 03772_table_match
-WHERE NOT match(url, '^https?://clickhouse[.]com/');
+WHERE NOT match(url, '^https?://datastore[.]com/');
 
 SELECT count(*)
 FROM 03772_table_match
@@ -40,9 +40,9 @@ WHERE match(url, '^abcd');
 
 SELECT count(*)
 FROM 03772_table_match
-WHERE match(url, '^https?://clickhouse[.]com/') = false;
+WHERE match(url, '^https?://datastore[.]com/') = false;
 
 EXPLAIN indexes = 1
 SELECT count(*)
 FROM 03772_table_match
-WHERE match(url, '^https?://clickhouse[.]com/') = false;
+WHERE match(url, '^https?://datastore[.]com/') = false;

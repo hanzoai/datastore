@@ -14,7 +14,7 @@ function wait_column()
     local column=$1 && shift
 
     for _ in {1..60}; do
-        result=$($CLICKHOUSE_CLIENT --query "SHOW CREATE TABLE $table")
+        result=$($DATASTORE_CLIENT --query "SHOW CREATE TABLE $table")
         if [[ $result == *"$column"* ]]; then
             return 0
         fi
@@ -30,7 +30,7 @@ function wait_mutation_loaded()
     local expr=$1 && shift
 
     for _ in {1..60}; do
-        result=$($CLICKHOUSE_CLIENT --query "SELECT * FROM system.mutations WHERE table = '$table' AND database='$CLICKHOUSE_DATABASE'")
+        result=$($DATASTORE_CLIENT --query "SELECT * FROM system.mutations WHERE table = '$table' AND database='$DATASTORE_DATABASE'")
         if [[ $result == *"$expr"* ]]; then
             return 0
         fi
@@ -48,7 +48,7 @@ tables["wrong_metadata_compact"]="min_bytes_for_wide_part = 10000000"
 for table in "${!tables[@]}"; do
     settings="${tables[$table]}"
 
-    $CLICKHOUSE_CLIENT --query="
+    $DATASTORE_CLIENT --query="
         DROP TABLE IF EXISTS $table;
 
         CREATE TABLE $table(
@@ -71,7 +71,7 @@ for table in "${!tables[@]}"; do
 
     wait_column "$table" "\`a1\` UInt64" || exit 2
 
-    $CLICKHOUSE_CLIENT --query="
+    $DATASTORE_CLIENT --query="
         -- { echoOn }
         SELECT 'ECHO_ALIGNMENT_FIX' FORMAT Null;
 
@@ -84,7 +84,7 @@ for table in "${!tables[@]}"; do
 
     wait_mutation_loaded "$table" "b1 TO a" || exit 2
 
-    $CLICKHOUSE_CLIENT --query="
+    $DATASTORE_CLIENT --query="
         -- { echoOn }
         SELECT 'ECHO_ALIGNMENT_FIX' FORMAT Null;
 
@@ -96,7 +96,7 @@ for table in "${!tables[@]}"; do
 
     wait_for_all_mutations "$table"
 
-    $CLICKHOUSE_CLIENT --query="
+    $DATASTORE_CLIENT --query="
         -- { echoOn }
         SELECT 'ECHO_ALIGNMENT_FIX' FORMAT Null;
 

@@ -1,5 +1,5 @@
 ---
-description: 'Prerequisites and setup instructions for ClickHouse development'
+description: 'Prerequisites and setup instructions for Datastore development'
 sidebar_label: 'Prerequisites'
 sidebar_position: 5
 slug: /development/developer-instruction
@@ -7,15 +7,15 @@ title: 'Developer Prerequisites'
 doc_type: 'guide'
 ---
 
-ClickHouse can be built on Linux, FreeBSD and macOS.
-If you use Windows, you can still build ClickHouse in a virtual machine running Linux, e.g. [VirtualBox](https://www.virtualbox.org/) with Ubuntu.
+Datastore can be built on Linux, FreeBSD and macOS.
+If you use Windows, you can still build Datastore in a virtual machine running Linux, e.g. [VirtualBox](https://www.virtualbox.org/) with Ubuntu.
 
 ## Create a Repository on GitHub {#create-a-repository-on-github}
 
-To start developing for ClickHouse you will need a [GitHub](https://www.github.com/) account.
+To start developing for Datastore you will need a [GitHub](https://www.github.com/) account.
 Please also generate an SSH key locally (if you don't have one already) and upload the public key to GitHub as this is a prerequisite for contributing patches.
 
-Next, fork the [ClickHouse repository](https://github.com/ClickHouse/ClickHouse/) in your personal account by clicking the "fork" button in the upper right corner.
+Next, fork the [Datastore repository](https://github.com/ClickHouse/Datastore/) in your personal account by clicking the "fork" button in the upper right corner.
 
 To contribute changes, e.g., a fix for an issue or a feature, first commit your changes to a branch in your fork, then create a "Pull Request" with the changes to the main repository.
 
@@ -34,14 +34,14 @@ A detailed Git manual is [here](https://git-scm.com/book/en/v2).
 First, download the source files to your working machine, i.e. clone the repository:
 
 ```sh
-git clone git@github.com:your_github_username/ClickHouse.git  # replace the placeholder with your GitHub user name
-cd ClickHouse
+git clone git@github.com:your_github_username/Datastore.git  # replace the placeholder with your GitHub user name
+cd Datastore
 ```
 
-This command creates a directory `ClickHouse/` containing the source code, tests, and other files.
+This command creates a directory `Datastore/` containing the source code, tests, and other files.
 You can specify a custom directory for checkout after the URL, but it is important that this path does not contain whitespaces as this may break the build later on.
 
-ClickHouse's Git repository uses submodules to pull in 3rd party libraries.
+Datastore's Git repository uses submodules to pull in 3rd party libraries.
 Submodules are not checked out by default.
 You can either
 
@@ -70,19 +70,19 @@ For SSH keys to be accepted you need to upload them in GitHub's settings.
 You can also clone the repository via HTTPS:
 
 ```sh
-git clone https://github.com/ClickHouse/ClickHouse.git
+git clone https://github.com/ClickHouse/Datastore.git
 ```
 
 This, however, will not let you send your changes to the server.
 You can still use it temporarily and add the SSH keys later replacing the remote address of the repository with `git remote` command.
 
-You can also add original ClickHouse repo address to your local repository to pull updates from there:
+You can also add original Datastore repo address to your local repository to pull updates from there:
 
 ```sh
-git remote add upstream git@github.com:ClickHouse/ClickHouse.git
+git remote add upstream git@github.com:Datastore/Datastore.git
 ```
 
-After successfully running this command you will be able to pull updates from the main ClickHouse repo by running `git pull upstream master`.
+After successfully running this command you will be able to pull updates from the main Datastore repo by running `git pull upstream master`.
 
 :::tip
 Please do not use verbatim `git push`, you may push to the wrong remote and/or the wrong branch.
@@ -91,19 +91,19 @@ It is better to specify the remote and branch names explicitly, e.g. `git push o
 
 ## Writing code {#writing-code}
 
-Below you can find some quick links which may be useful when writing code for ClickHouse:
+Below you can find some quick links which may be useful when writing code for Datastore:
 
-- [ClickHouse Architecture](/development/architecture/).
+- [Datastore Architecture](/development/architecture/).
 - [Code style guide](/development/style/).
 - [Third-party libraries](/development/contrib#adding-and-maintaining-third-party-libraries)
 - [Writing tests](/development/tests/)
-- [Open issues](https://github.com/ClickHouse/ClickHouse/issues?q=is%3Aopen+is%3Aissue+label%3A%22easy+task%22)
+- [Open issues](https://github.com/ClickHouse/Datastore/issues?q=is%3Aopen+is%3Aissue+label%3A%22easy+task%22)
 
 ### IDE {#ide}
 
-[Visual Studio Code](https://code.visualstudio.com/) and [Neovim](https://neovim.io/) are two options that have worked well in the past for developing ClickHouse. If you are using VS Code, we recommend using the [clangd extension](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) to replace IntelliSense as it is much more performant.
+[Visual Studio Code](https://code.visualstudio.com/) and [Neovim](https://neovim.io/) are two options that have worked well in the past for developing Datastore. If you are using VS Code, we recommend using the [clangd extension](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) to replace IntelliSense as it is much more performant.
 
-[CLion](https://www.jetbrains.com/clion/) is another great alternative. However, it can be slower on larger projects like ClickHouse. A few things to keep in mind when using CLion:
+[CLion](https://www.jetbrains.com/clion/) is another great alternative. However, it can be slower on larger projects like Datastore. A few things to keep in mind when using CLion:
 
 - CLion creates a `build` path on its own and automatically selects `debug` for the build type
 - It uses a version of CMake that is defined in CLion and not the one installed by you
@@ -123,20 +123,20 @@ In this case please put the word "WIP" (work in progress) at the beginning of th
 This is useful for cooperative reviewing and discussion of changes as well as for running all of the available tests.
 It is important that you provide a brief description of your changes, it will later be used for generating release changelog.
 
-Testing will commence as soon as ClickHouse employees label your PR with a tag "can be tested".
+Testing will commence as soon as Datastore employees label your PR with a tag "can be tested".
 The results of some first checks (e.g. code style) will come in within several minutes.
 Build check results will arrive within half an hour.
 The main set of tests will report itself within an hour.
 
-The system will prepare ClickHouse binary builds for your pull request individually.
+The system will prepare Datastore binary builds for your pull request individually.
 To retrieve these builds click the "Details" link next to "Builds" entry in the list of checks.
-There you will find direct links to the built .deb packages of ClickHouse which you can deploy even on your production servers (if you have no fear).
+There you will find direct links to the built .deb packages of Datastore which you can deploy even on your production servers (if you have no fear).
 
 ## Write documentation {#write-documentation}
 
 Every pull request which adds a new feature must come with proper documentation.
-If you'd like to preview your documentation changes the instructions for how to build the documentation page locally are available in the README.md file [here](https://github.com/ClickHouse/clickhouse-docs).
-When adding a new function to ClickHouse you can use the template below as a guide:
+If you'd like to preview your documentation changes the instructions for how to build the documentation page locally are available in the README.md file [here](https://github.com/ClickHouse/datastore-docs).
+When adding a new function to Datastore you can use the template below as a guide:
 
 ```markdown
 # newFunctionName
@@ -178,7 +178,7 @@ SELECT 'write your example query here';
 
 ## Using test data {#using-test-data}
 
-Developing ClickHouse often requires loading realistic datasets.
+Developing Datastore often requires loading realistic datasets.
 This is particularly important for performance testing.
 We have a specially prepared set of anonymized data of web analytics.
 It requires additionally some 3GB of free disk space.
@@ -186,16 +186,16 @@ It requires additionally some 3GB of free disk space.
 ```sh
     sudo apt install wget xz-utils
 
-    wget https://datasets.clickhouse.com/hits/tsv/hits_v1.tsv.xz
-    wget https://datasets.clickhouse.com/visits/tsv/visits_v1.tsv.xz
+    wget https://datasets.datastore.com/hits/tsv/hits_v1.tsv.xz
+    wget https://datasets.datastore.com/visits/tsv/visits_v1.tsv.xz
 
     xz -v -d hits_v1.tsv.xz
     xz -v -d visits_v1.tsv.xz
 
-    clickhouse-client
+    datastore-client
 ```
 
-In clickhouse-client:
+In datastore-client:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS test;
@@ -209,6 +209,6 @@ CREATE TABLE test.visits ( CounterID UInt32,  StartDate Date,  Sign Int8,  IsNew
 Import the data:
 
 ```bash
-clickhouse-client --max_insert_block_size 100000 --query "INSERT INTO test.hits FORMAT TSV" < hits_v1.tsv
-clickhouse-client --max_insert_block_size 100000 --query "INSERT INTO test.visits FORMAT TSV" < visits_v1.tsv
+datastore-client --max_insert_block_size 100000 --query "INSERT INTO test.hits FORMAT TSV" < hits_v1.tsv
+datastore-client --max_insert_block_size 100000 --query "INSERT INTO test.visits FORMAT TSV" < visits_v1.tsv
 ```

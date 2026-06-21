@@ -15,7 +15,7 @@ target_link_libraries (clickhouse_common_zookeeper_base
         common
 )
 
-# for clickhouse server
+# for datastore server
 add_library(clickhouse_common_zookeeper ZooKeeperImpl.cpp)
 target_compile_definitions (clickhouse_common_zookeeper PRIVATE -DZOOKEEPER_LOG)
 target_link_libraries (clickhouse_common_zookeeper

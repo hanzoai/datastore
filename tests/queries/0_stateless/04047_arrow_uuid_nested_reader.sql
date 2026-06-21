@@ -3,7 +3,7 @@
 -- HOW THIS BASE64 STRING WAS GENERATED:
 -- This is a perfectly formed Arrow IPC file containing a top-level Nullable(UUID)
 -- and a nested Array(Nullable(UUID)) using the official arrow.uuid extension type.
--- It proves the ClickHouse Reader can recursively unwrap and infer Arrow extension types.
+-- It proves the Datastore Reader can recursively unwrap and infer Arrow extension types.
 --
 -- import pyarrow as pa, uuid, base64, io
 -- uuid_type = pa.uuid()

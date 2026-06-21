@@ -90,14 +90,14 @@ REGISTER_FUNCTION(HighlightQuery)
 {
     factory.registerFunction<FunctionQueryTokenization<HighlightQueryImpl>>(FunctionDocumentation{
         .description = R"(
-Parses a ClickHouse SQL query string and returns an array of highlighted ranges for syntax highlighting.
+Parses a Datastore SQL query string and returns an array of highlighted ranges for syntax highlighting.
 Each range is a named tuple with the beginning position (in bytes), the end position, and the highlight type.
 The highlight types describe the syntactic role of the fragment (keyword, identifier, function, etc.)
 and can be used to assign colors in a UI. Inside LIKE and REGEXP string patterns, metacharacters
 and escape characters are highlighted separately.
 )",
         .syntax = "highlightQuery(query)",
-        .arguments = {{"query", "A ClickHouse SQL query string. String."}},
+        .arguments = {{"query", "A Datastore SQL query string. String."}},
         .returned_value = {"An array of named tuples `(begin UInt64, end UInt64, type Enum8(...))` representing highlighted ranges.", {"Array(Tuple(begin UInt64, end UInt64, type Enum8(...)))"}},
         .examples = {{"simple", "SELECT highlightQuery('SELECT 1')", R"([(0,6,'keyword'),(7,8,'number')])"}},
         .introduced_in = {26, 5},

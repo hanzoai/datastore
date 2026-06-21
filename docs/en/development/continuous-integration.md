@@ -1,5 +1,5 @@
 ---
-description: 'Overview of the ClickHouse continuous integration system'
+description: 'Overview of the Datastore continuous integration system'
 sidebar_label: 'Continuous Integration (CI)'
 sidebar_position: 55
 slug: /development/continuous-integration
@@ -7,8 +7,8 @@ title: 'Continuous Integration (CI)'
 doc_type: 'reference'
 ---
 
-When you submit a pull request, some automated checks are ran for your code by the ClickHouse [continuous integration (CI) system](tests.md#test-automation).
-This happens after a repository maintainer (someone from ClickHouse team) has screened your code and added the `can be tested` label to your pull request.
+When you submit a pull request, some automated checks are ran for your code by the Datastore [continuous integration (CI) system](tests.md#test-automation).
+This happens after a repository maintainer (someone from Datastore team) has screened your code and added the `can be tested` label to your pull request.
 The results of the checks are listed on the GitHub pull request page as described in the [GitHub checks documentation](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-status-checks).
 If a check is failing, you might be required to fix it.
 This page gives an overview of checks you may encounter, and what you can do to fix them.
@@ -31,27 +31,27 @@ To fix this check, resolve the conflict as described in the [GitHub documentatio
 
 ## Docs check {#docs-check}
 
-Tries to build the ClickHouse documentation website.
+Tries to build the Datastore documentation website.
 It can fail if you changed something in the documentation.
 Most probable reason is that some cross-link in the documentation is wrong.
 Go to the check report and look for `ERROR` and `WARNING` messages.
 
 ## Description check {#description-check}
 
-Check that the description of your pull request conforms to the template [PULL_REQUEST_TEMPLATE.md](https://github.com/ClickHouse/ClickHouse/blob/master/.github/PULL_REQUEST_TEMPLATE.md).
+Check that the description of your pull request conforms to the template [PULL_REQUEST_TEMPLATE.md](https://github.com/ClickHouse/Datastore/blob/master/.github/PULL_REQUEST_TEMPLATE.md).
 You have to specify a changelog category for your change (e.g., Bug Fix), and write a user-readable message describing the change for [CHANGELOG.md](../whats-new/changelog/index.md)
 
 ## Docker image {#docker-image}
 
-Builds the ClickHouse server and keeper Docker images to verify that they build correctly.
+Builds the Datastore server and keeper Docker images to verify that they build correctly.
 
 ### Official docker library tests {#official-docker-library-tests}
 
-Runs the tests from the [official Docker library](https://github.com/docker-library/official-images/tree/master/test#alternate-config-files) to verify that the `clickhouse/clickhouse-server` Docker image works correctly.
+Runs the tests from the [official Docker library](https://github.com/docker-library/official-images/tree/master/test#alternate-config-files) to verify that the `datastore/datastore-server` Docker image works correctly.
 
 To add new tests, create a directory `ci/jobs/scripts/docker_server/tests/$test_name` and the script `run.sh` there.
 
-Additional details about the tests can be found in the [CI jobs scripts documentation](https://github.com/ClickHouse/ClickHouse/tree/master/ci/jobs/scripts/docker_server).
+Additional details about the tests can be found in the [CI jobs scripts documentation](https://github.com/ClickHouse/Datastore/tree/master/ci/jobs/scripts/docker_server).
 
 ## Marker check {#marker-check}
 
@@ -66,7 +66,7 @@ Performs various style checks on the code base.
 Basic checks in the Style Check job:
 
 ##### cpp {#cpp}
-Performs simple regex-based code style checks using the [`ci/jobs/scripts/check_style/check_cpp.sh`](https://github.com/ClickHouse/ClickHouse/blob/master/ci/jobs/scripts/check_style/check_cpp.sh) script (which can also be run locally).  
+Performs simple regex-based code style checks using the [`ci/jobs/scripts/check_style/check_cpp.sh`](https://github.com/ClickHouse/Datastore/blob/master/ci/jobs/scripts/check_style/check_cpp.sh) script (which can also be run locally).  
 If it fails, fix the style issues according to the [code style guide](style.md).
 
 ##### codespell, aspell {#codespell}
@@ -88,12 +88,12 @@ To run a specific check (e.g., _cpp_ check):
 python -m ci.praktika run "Style check" --test cpp
 ```
 
-These commands pull the `clickhouse/style-test` Docker image and run the job in a containerized environment.
+These commands pull the `datastore/style-test` Docker image and run the job in a containerized environment.
 No dependencies other than Python 3 and Docker are required.
 
 ## Running stateless tests {#running-stateless-tests}
 
-A locally installed ClickHouse with default settings may work for specific test cases, but cannot run all test queries correctly. In CI, each job installs a specific ClickHouse configuration (e.g., S3 storage, Parallel Replicas) which can be cumbersome to reproduce manually. To avoid this, you can reproduce any CI job locally using the same orchestration as CI — no manual configuration needed.
+A locally installed Datastore with default settings may work for specific test cases, but cannot run all test queries correctly. In CI, each job installs a specific Datastore configuration (e.g., S3 storage, Parallel Replicas) which can be cumbersome to reproduce manually. To avoid this, you can reproduce any CI job locally using the same orchestration as CI — no manual configuration needed.
 
 #### Prerequisites {#ci-prerequisites}
 - Python 3 (standard library only)
@@ -118,16 +118,16 @@ Pick any job name from a CI report and run it locally:
 ```bash
 python -m ci.praktika run "<JOB_NAME>"
 ```
-- Always quote the job name exactly as it appears in the CI report (it may contain spaces and commas), e.g.: `"Stateless tests (amd_debug, parallel)"`. This sets up the same ClickHouse configuration and runs the same tests as in CI.
-- The architecture and build type in the job name (e.g., `amd_debug`) are CI-specific labels. When running locally, they have no effect — the job will use whatever binary you provide, on whatever architecture you are running. The job name only determines the ClickHouse configuration and the test set (unless overridden with `--test`).
+- Always quote the job name exactly as it appears in the CI report (it may contain spaces and commas), e.g.: `"Stateless tests (amd_debug, parallel)"`. This sets up the same Datastore configuration and runs the same tests as in CI.
+- The architecture and build type in the job name (e.g., `amd_debug`) are CI-specific labels. When running locally, they have no effect — the job will use whatever binary you provide, on whatever architecture you are running. The job name only determines the Datastore configuration and the test set (unless overridden with `--test`).
 - In CI, functional tests are split into batches for better resource utilization. For example, `"Stateless tests (amd_debug, parallel)"` and `"Stateless tests (amd_debug, sequential)"` together cover the entire scope: parallel-safe tests run concurrently, and the rest run sequentially. The split reduces total CI time by maximizing parallelism where possible. To reproduce the full test scope locally, run both batches.
-- There is also a `"Fast test"` CI job that runs a limited scope of functional tests to verify basic ClickHouse functionality — it uses a build without all optional modules and is the quickest way to catch regressions. You can run it locally the same way. Place your ClickHouse binary in one of the default search paths (`./ci/tmp/clickhouse`, `./build/programs/clickhouse`, or `./clickhouse`) — otherwise the job will attempt to build ClickHouse first:
+- There is also a `"Fast test"` CI job that runs a limited scope of functional tests to verify basic Datastore functionality — it uses a build without all optional modules and is the quickest way to catch regressions. You can run it locally the same way. Place your Datastore binary in one of the default search paths (`./ci/tmp/datastore`, `./build/programs/datastore`, or `./datastore`) — otherwise the job will attempt to build Datastore first:
   ```bash
   python -m ci.praktika run "Fast test"
   ```
 
 #### Run Specific Tests Within a CI Job {#run-specific-tests-within-ci-job}
-With `--test`, the job prepares an identical ClickHouse setup as used in CI but runs only the selected tests:
+With `--test`, the job prepares an identical Datastore setup as used in CI but runs only the selected tests:
 ```bash
 python -m ci.praktika run "Stateless tests (amd_debug, parallel)" \
   --test 00001_select1
@@ -137,19 +137,19 @@ python -m ci.praktika run "Stateless tests (amd_debug, parallel)" \
   python -m ci.praktika run "Stateless tests (amd_debug, parallel)" \
     --test 00001_select1 00002_log_and_exception_messages_formatting
   ```
-- Tip: If any ClickHouse configuration is acceptable and you just need to run specific tests, use the alias `functional` instead of the full job name:
+- Tip: If any Datastore configuration is acceptable and you just need to run specific tests, use the alias `functional` instead of the full job name:
   ```bash
   python -m ci.praktika run functional --test 00001_select1
   ```
 
 #### Additional Customization Options {#additional-customization-options}
-- `--path PATH` — custom path to the ClickHouse binary. By default, the runner searches in order: `./ci/tmp/clickhouse`, `./build/programs/clickhouse`, `./clickhouse`.
+- `--path PATH` — custom path to the Datastore binary. By default, the runner searches in order: `./ci/tmp/datastore`, `./build/programs/datastore`, `./datastore`.
 - `--count N` — repeat each test N times.
 - `--workers N` — override the automatic calculation of parallel workers derived from machine capacity.
 
 ## Build check {#build-check}
 
-Builds ClickHouse in various configurations for use in further steps.
+Builds Datastore in various configurations for use in further steps.
 
 ### Running Builds Locally {#running-builds-locally}
 
@@ -207,7 +207,7 @@ python -m ci.praktika run "Build (amd_debug)"
 If the above approach does not work for you, use the cmake options from the build log and follow the [general build process](../development/build.md).
 ## Functional stateless tests {#functional-stateless-tests}
 
-Runs [stateless functional tests](tests.md#functional-tests) for ClickHouse binaries built in various configurations -- release, debug, with sanitizers, etc.
+Runs [stateless functional tests](tests.md#functional-tests) for Datastore binaries built in various configurations -- release, debug, with sanitizers, etc.
 Look at the report to see which tests fail, then reproduce the failure locally as described [here](/development/tests#functional-tests).
 Note that you have to use the correct build configuration to reproduce -- a test might fail under AddressSanitizer but pass in Debug.
 Download the binary from [CI build checks page](/install/advanced), or build it locally.
@@ -231,7 +231,7 @@ Runs stateless functional tests concurrently from several clients to detect conc
 
 ## Compatibility check {#compatibility-check}
 
-Checks that `clickhouse` binary runs on distributions with old libc versions.
+Checks that `datastore` binary runs on distributions with old libc versions.
 If it fails, ask a maintainer for help.
 
 ## AST fuzzer {#ast-fuzzer}
@@ -243,4 +243,4 @@ If it fails, ask a maintainer for help.
 
 Measure changes in query performance.
 This is the longest check that takes just below 6 hours to run.
-The performance test report is described in detail [here](https://github.com/ClickHouse/ClickHouse/blob/master/tests/performance/scripts/README.md#how-to-read-the-report).
+The performance test report is described in detail [here](https://github.com/ClickHouse/Datastore/blob/master/tests/performance/scripts/README.md#how-to-read-the-report).

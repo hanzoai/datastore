@@ -70,10 +70,10 @@ Accepts arbitrary arguments and unconditionally returns `0`.
     {
         "Usage example",
         R"(
-SELECT ignore(0, 'ClickHouse', NULL)
+SELECT ignore(0, 'Datastore', NULL)
         )",
         R"(
-┌─ignore(0, 'ClickHouse', NULL)─┐
+┌─ignore(0, 'Datastore', NULL)─┐
 │                             0 │
 └───────────────────────────────┘
         )"

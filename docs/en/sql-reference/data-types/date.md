@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Date data type in ClickHouse'
+description: 'Documentation for the Date data type in Datastore'
 sidebar_label: 'Date'
 sidebar_position: 12
 slug: /sql-reference/data-types/date

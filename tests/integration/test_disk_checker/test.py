@@ -20,8 +20,8 @@ def started_cluster():
         cluster.start()
 
         node = cluster.instances["test_disk_checker"]
-        node.exec_in_container(["bash", "-c", "mkdir -p /var/lib/clickhouse/path1"])
-        node.exec_in_container(["bash", "-c", "mkdir -p /var/lib/clickhouse/path2"])
+        node.exec_in_container(["bash", "-c", "mkdir -p /var/lib/datastore/path1"])
+        node.exec_in_container(["bash", "-c", "mkdir -p /var/lib/datastore/path2"])
 
         yield cluster
     finally:
@@ -51,7 +51,7 @@ def test_disk_checker_started_log(started_cluster):
 def test_disk_readonly_status(started_cluster):
     try:
         node = cluster.instances["test_disk_checker"]
-        disk_path = "/var/lib/clickhouse/path1"
+        disk_path = "/var/lib/datastore/path1"
 
         # a hack to make disk readonly
         node.exec_in_container(["mount", "--bind", disk_path, disk_path])
@@ -94,7 +94,7 @@ def test_disk_readonly_status(started_cluster):
 def test_disk_broken_status(started_cluster):
     try:
         node = cluster.instances["test_disk_checker"]
-        disk_path = "/var/lib/clickhouse/path2"
+        disk_path = "/var/lib/datastore/path2"
 
         # move the directory to simulate a borken disk
         node.exec_in_container(["mv", disk_path, f"{disk_path}_broken"])
@@ -109,7 +109,7 @@ def test_disk_broken_status(started_cluster):
 
         # restore the previously moved directory
         node.exec_in_container(["mv", f"{disk_path}_broken", disk_path])
-        # it looks like clickhouse needs to be restarted to recover from broken disk
+        # it looks like datastore needs to be restarted to recover from broken disk
         node.restart_clickhouse()
 
         # again assert for metric with retries

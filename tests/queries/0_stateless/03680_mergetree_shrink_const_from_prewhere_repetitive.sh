@@ -16,7 +16,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # #90695 (const_node_2): The combination of "materialize()" with "and()" and "toNullable()" creates nested column and a chain, where double-free happened at shrinkToFit()
 
 setup() {
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         DROP TABLE IF EXISTS const_node_1;
         DROP TABLE IF EXISTS const_node_2;
         CREATE TABLE const_node_1 (v Nullable(UInt8)) ENGINE = MergeTree ORDER BY tuple();
@@ -34,7 +34,7 @@ run_queries() {
     # During 30 seconds we gonna hammer server with these SELECT queries. Before the fix, it'd crash with high probability. Not crashing is the expected success.
     local TIMELIMIT=$((SECONDS+30))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "
+        $DATASTORE_CLIENT -q "
             SELECT v FROM const_node_1 PREWHERE and(materialize(255), *) ORDER BY v FORMAT NULL;
             SELECT median(3) IGNORE NULLS FROM const_node_2 PREWHERE and(materialize(toNullable(materialize(1))), not(materialize(100) = *)) FORMAT NULL;
         "
@@ -42,7 +42,7 @@ run_queries() {
 }
 
 cleanup() {
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         DROP TABLE IF EXISTS const_node_1;
         DROP TABLE IF EXISTS const_node_2;
     "

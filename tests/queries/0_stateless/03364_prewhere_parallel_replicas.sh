@@ -18,16 +18,16 @@ opts=(
   --query_plan_optimize_prewhere=1
 )
 
-${CLICKHOUSE_CLIENT} -nq "
+${DATASTORE_CLIENT} -nq "
   CREATE TABLE t(a UInt32, b UInt32) ENGINE = MergeTree ORDER BY a;
   INSERT INTO t SELECT number, number FROM numbers_mt(1e7);
 "
 
-query_id="${CLICKHOUSE_DATABASE}_prewhere_parallel_replicas_$RANDOM"
+query_id="${DATASTORE_DATABASE}_prewhere_parallel_replicas_$RANDOM"
 
-${CLICKHOUSE_CLIENT} "${opts[@]}" --query_id="${query_id}" --query="SELECT * FROM t WHERE b < 100000" --format Null
+${DATASTORE_CLIENT} "${opts[@]}" --query_id="${query_id}" --query="SELECT * FROM t WHERE b < 100000" --format Null
 
-${CLICKHOUSE_CLIENT} -nq "
+${DATASTORE_CLIENT} -nq "
   SYSTEM FLUSH LOGS query_log;
 
   -- Check that all data was read during PREWHERE

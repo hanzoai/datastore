@@ -12,19 +12,19 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "CREATE TABLE test_empty_json_insert (x UInt32) ENGINE = MergeTree ORDER BY x"
+$DATASTORE_CLIENT -q "CREATE TABLE test_empty_json_insert (x UInt32) ENGINE = MergeTree ORDER BY x"
 
 # JSONColumnsWithMetadata with empty arrays produces a 0-row truthy chunk.
 # Before fix: 0-row chunk reaches MergeTreeSink and triggers assertion.
 echo '{"meta":[{"name":"x","type":"UInt32"}],"data":{"x":[]}}' | \
-    $CLICKHOUSE_CURL -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+test_empty_json_insert+FORMAT+JSONColumnsWithMetadata" --data-binary @-
+    $DATASTORE_CURL -sS "${DATASTORE_URL}&query=INSERT+INTO+test_empty_json_insert+FORMAT+JSONColumnsWithMetadata" --data-binary @-
 
-$CLICKHOUSE_CLIENT -q "SELECT count() FROM test_empty_json_insert"
+$DATASTORE_CLIENT -q "SELECT count() FROM test_empty_json_insert"
 
 # JSONColumns with empty arrays — same root cause, different format reader.
 echo '{"x":[]}' | \
-    $CLICKHOUSE_CURL -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+test_empty_json_insert+FORMAT+JSONColumns" --data-binary @-
+    $DATASTORE_CURL -sS "${DATASTORE_URL}&query=INSERT+INTO+test_empty_json_insert+FORMAT+JSONColumns" --data-binary @-
 
-$CLICKHOUSE_CLIENT -q "SELECT count() FROM test_empty_json_insert"
+$DATASTORE_CLIENT -q "SELECT count() FROM test_empty_json_insert"
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE test_empty_json_insert"
+$DATASTORE_CLIENT -q "DROP TABLE test_empty_json_insert"

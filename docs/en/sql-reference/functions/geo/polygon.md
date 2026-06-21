@@ -123,7 +123,7 @@ Polygon
 
 ## readWKTPoint {#readwktpoint}
 
-The `readWKTPoint` function in ClickHouse parses a Well-Known Text (WKT) representation of a Point geometry and returns a point in the internal ClickHouse format.
+The `readWKTPoint` function in Datastore parses a Well-Known Text (WKT) representation of a Point geometry and returns a point in the internal Datastore format.
 
 ### Syntax {#syntax}
 
@@ -137,7 +137,7 @@ readWKTPoint(wkt_string)
 
 ### Returned value {#returned-value-2}
 
-The function returns a ClickHouse internal representation of the Point geometry.
+The function returns a Datastore internal representation of the Point geometry.
 
 ### Example {#example-2}
 
@@ -151,7 +151,7 @@ SELECT readWKTPoint('POINT (1.2 3.4)');
 
 ## readWKTLineString {#readwktlinestring}
 
-Parses a Well-Known Text (WKT) representation of a LineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of a LineString geometry and returns it in the internal Datastore format.
 
 ### Syntax {#syntax-1}
 
@@ -165,7 +165,7 @@ readWKTLineString(wkt_string)
 
 ### Returned value {#returned-value-3}
 
-The function returns a ClickHouse internal representation of the linestring geometry.
+The function returns a Datastore internal representation of the linestring geometry.
 
 ### Example {#example-3}
 
@@ -179,7 +179,7 @@ SELECT readWKTLineString('LINESTRING (1 1, 2 2, 3 3, 1 1)');
 
 ## readWKTMultiLineString {#readwktmultilinestring}
 
-Parses a Well-Known Text (WKT) representation of a MultiLineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of a MultiLineString geometry and returns it in the internal Datastore format.
 
 ### Syntax {#syntax-2}
 
@@ -193,7 +193,7 @@ readWKTMultiLineString(wkt_string)
 
 ### Returned value {#returned-value-4}
 
-The function returns a ClickHouse internal representation of the multilinestring geometry.
+The function returns a Datastore internal representation of the multilinestring geometry.
 
 ### Example {#example-4}
 
@@ -207,7 +207,7 @@ SELECT readWKTMultiLineString('MULTILINESTRING ((1 1, 2 2, 3 3), (4 4, 5 5, 6 6)
 
 ## readWKTRing {#readwktring}
 
-Parses a Well-Known Text (WKT) representation of a Polygon geometry and returns a ring (closed linestring) in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of a Polygon geometry and returns a ring (closed linestring) in the internal Datastore format.
 
 ### Syntax {#syntax-3}
 
@@ -221,7 +221,7 @@ readWKTRing(wkt_string)
 
 ### Returned value {#returned-value-5}
 
-The function returns a ClickHouse internal representation of the ring (closed linestring) geometry.
+The function returns a Datastore internal representation of the ring (closed linestring) geometry.
 
 ### Example {#example-5}
 
@@ -296,7 +296,7 @@ Polygon
 
 ## readWKBPoint {#readwkbpoint}
 
-The `readWKBPoint` function in ClickHouse parses a Well-Known Binary (WKB) representation of a Point geometry and returns a point in the internal ClickHouse format.
+The `readWKBPoint` function in Datastore parses a Well-Known Binary (WKB) representation of a Point geometry and returns a point in the internal Datastore format.
 
 ### Syntax {#syntax-4}
 
@@ -310,7 +310,7 @@ readWKBPoint(wkb_string)
 
 ### Returned value {#returned-value-8}
 
-The function returns a ClickHouse internal representation of the Point geometry.
+The function returns a Datastore internal representation of the Point geometry.
 
 ### Example {#example-9}
 
@@ -324,7 +324,7 @@ SELECT readWKBPoint(unhex('0101000000333333333333f33f3333333333330b40'));
 
 ## readWKBLineString {#readwkblinestring}
 
-Parses a Well-Known Binary (WKB) representation of a LineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a LineString geometry and returns it in the internal Datastore format.
 
 ### Syntax {#syntax-5}
 
@@ -338,7 +338,7 @@ readWKBLineString(wkb_string)
 
 ### Returned value {#returned-value-9}
 
-The function returns a ClickHouse internal representation of the linestring geometry.
+The function returns a Datastore internal representation of the linestring geometry.
 
 ### Example {#example-10}
 
@@ -352,7 +352,7 @@ SELECT readWKBLineString(unhex('010200000004000000000000000000f03f000000000000f0
 
 ## readWKBMultiLineString {#readwkbmultilinestring}
 
-Parses a Well-Known Binary (WKB) representation of a MultiLineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a MultiLineString geometry and returns it in the internal Datastore format.
 
 ### Syntax {#syntax-6}
 
@@ -366,7 +366,7 @@ readWKBMultiLineString(wkb_string)
 
 ### Returned value {#returned-value-10}
 
-The function returns a ClickHouse internal representation of the multilinestring geometry.
+The function returns a Datastore internal representation of the multilinestring geometry.
 
 ### Example {#example-11}
 
@@ -749,5 +749,5 @@ Polygons
 
 MultiPolygon
 
-For more information on geometry systems, see this [presentation](https://archive.fosdem.org/2020/schedule/event/working_with_spatial_trajectories_in_boost_geometry/attachments/slides/3988/export/events/attachments/working_with_spatial_trajectories_in_boost_geometry/slides/3988/FOSDEM20_vissarion.pdf) about the Boost library, which is what ClickHouse uses.
+For more information on geometry systems, see this [presentation](https://archive.fosdem.org/2020/schedule/event/working_with_spatial_trajectories_in_boost_geometry/attachments/slides/3988/export/events/attachments/working_with_spatial_trajectories_in_boost_geometry/slides/3988/FOSDEM20_vissarion.pdf) about the Boost library, which is what Datastore uses.
 

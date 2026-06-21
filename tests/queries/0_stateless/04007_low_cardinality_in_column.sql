@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/92828
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/92828
 -- LowCardinality column with IN (column_ref) used to throw
 -- "Nested type LowCardinality(...) cannot be inside Nullable type"
 

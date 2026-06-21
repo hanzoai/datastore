@@ -52,16 +52,16 @@ StorageSystemReplicas::StorageSystemReplicas(const StorageID & table_id_)
                                                                                           "The leaders are responsible for scheduling background merges. "
                                                                                           "Note that writes can be performed to any replica that is available and has a session in ZK, regardless of whether it is a leader."},
         { "can_become_leader",                    std::make_shared<DataTypeUInt8>(),    "Whether the replica can be a leader."},
-        { "is_readonly",                          std::make_shared<DataTypeUInt8>(),    "Whether the replica is in read-only mode. This mode is turned on if the config does not have sections with ClickHouse Keeper, "
-                                                                                          "if an unknown error occurred when reinitializing sessions in ClickHouse Keeper, and during session reinitialization in ClickHouse Keeper."},
+        { "is_readonly",                          std::make_shared<DataTypeUInt8>(),    "Whether the replica is in read-only mode. This mode is turned on if the config does not have sections with Datastore Keeper, "
+                                                                                          "if an unknown error occurred when reinitializing sessions in Datastore Keeper, and during session reinitialization in Datastore Keeper."},
         { "readonly_start_time", std::make_shared<DataTypeNullable>(std::make_shared<DataTypeDateTime>()), "The timestamp when the replica transitioned into readonly mode. Null if the replica is not in readonly mode." },
-        { "is_session_expired",                   std::make_shared<DataTypeUInt8>(),    "Whether the session with ClickHouse Keeper has expired. Basically the same as `is_readonly`."},
+        { "is_session_expired",                   std::make_shared<DataTypeUInt8>(),    "Whether the session with Datastore Keeper has expired. Basically the same as `is_readonly`."},
         { "future_parts",                         std::make_shared<DataTypeUInt32>(),   "The number of data parts that will appear as the result of INSERTs or merges that haven't been done yet."},
         { "parts_to_check",                       std::make_shared<DataTypeUInt32>(),   "The number of data parts in the queue for verification. A part is put in the verification queue if there is suspicion that it might be damaged."},
         { "zookeeper_name",                       std::make_shared<DataTypeString>(),   "The name of the [Zoo]Keeper cluster (possibly auxiliary one) where the table's metadata is stored"},
-        { "zookeeper_path",                       std::make_shared<DataTypeString>(),   "Path to table data in ClickHouse Keeper."},
-        { "replica_name",                         std::make_shared<DataTypeString>(),   "Replica name in ClickHouse Keeper. Different replicas of the same table have different names."},
-        { "replica_path",                         std::make_shared<DataTypeString>(),   "Path to replica data in ClickHouse Keeper. The same as concatenating 'zookeeper_path/replicas/replica_path'."},
+        { "zookeeper_path",                       std::make_shared<DataTypeString>(),   "Path to table data in Datastore Keeper."},
+        { "replica_name",                         std::make_shared<DataTypeString>(),   "Replica name in Datastore Keeper. Different replicas of the same table have different names."},
+        { "replica_path",                         std::make_shared<DataTypeString>(),   "Path to replica data in Datastore Keeper. The same as concatenating 'zookeeper_path/replicas/replica_path'."},
         { "columns_version",                      std::make_shared<DataTypeInt32>(),    "Version number of the table structure. Indicates how many times ALTER was performed. "
                                                                                             "If replicas have different versions, it means some replicas haven't made all of the ALTERs yet."},
         { "queue_size",                           std::make_shared<DataTypeUInt32>(),   "Size of the queue for operations waiting to be performed. Operations include inserting blocks of data, merges, and certain other actions. It usually coincides with future_parts."},
@@ -75,16 +75,16 @@ StorageSystemReplicas::StorageSystemReplicas(const StorageID & table_id_)
         { "oldest_part_to_get",                   std::make_shared<DataTypeString>(),   "The name of the part to fetch from other replicas obtained from the oldest GET_PARTS entry in the replication queue."},
         { "oldest_part_to_merge_to",              std::make_shared<DataTypeString>(),   "The result part name to merge to obtained from the oldest MERGE_PARTS entry in the replication queue."},
         { "oldest_part_to_mutate_to",             std::make_shared<DataTypeString>(),   "The result part name to mutate to obtained from the oldest MUTATE_PARTS entry in the replication queue."},
-        { "log_max_index",                        std::make_shared<DataTypeUInt64>(),   "Maximum entry number in the log of general activity. This column and the next three (`log_pointer`, `total_replicas`, `active_replicas`) have a non-zero value only where there is an active session with ClickHouse Keeper."},
+        { "log_max_index",                        std::make_shared<DataTypeUInt64>(),   "Maximum entry number in the log of general activity. This column and the next three (`log_pointer`, `total_replicas`, `active_replicas`) have a non-zero value only where there is an active session with Datastore Keeper."},
         { "log_pointer",                          std::make_shared<DataTypeUInt64>(),   "Maximum entry number in the log of general activity that the replica copied to its execution queue, plus one. "
                                                                                              "If log_pointer is much smaller than log_max_index, something is wrong."},
         { "last_queue_update",                    std::make_shared<DataTypeDateTime>(), "When the queue was updated last time."},
         { "absolute_delay",                       std::make_shared<DataTypeUInt64>(),   "How big lag in seconds the current replica has."},
         { "total_replicas",                       std::make_shared<DataTypeUInt32>(),    "The total number of known replicas of this table."},
-        { "active_replicas",                      std::make_shared<DataTypeUInt32>(),    "The number of replicas of this table that have a session in ClickHouse Keeper (i.e., the number of functioning replicas)."},
-        { "lost_part_count",                      std::make_shared<DataTypeUInt64>(),   "The number of data parts lost in the table by all replicas in total since table creation. Value is persisted in ClickHouse Keeper and can only increase."},
-        { "last_queue_update_exception",          std::make_shared<DataTypeString>(),   "When the queue contains broken entries. Especially important when ClickHouse breaks backward compatibility between versions and log entries written by newer versions aren't parseable by old versions."},
-        { "zookeeper_exception",                  std::make_shared<DataTypeString>(),   "The last exception message, got if the error happened when fetching the info from ClickHouse Keeper."},
+        { "active_replicas",                      std::make_shared<DataTypeUInt32>(),    "The number of replicas of this table that have a session in Datastore Keeper (i.e., the number of functioning replicas)."},
+        { "lost_part_count",                      std::make_shared<DataTypeUInt64>(),   "The number of data parts lost in the table by all replicas in total since table creation. Value is persisted in Datastore Keeper and can only increase."},
+        { "last_queue_update_exception",          std::make_shared<DataTypeString>(),   "When the queue contains broken entries. Especially important when Datastore breaks backward compatibility between versions and log entries written by newer versions aren't parseable by old versions."},
+        { "zookeeper_exception",                  std::make_shared<DataTypeString>(),   "The last exception message, got if the error happened when fetching the info from Datastore Keeper."},
         { "replica_is_active",                    std::make_shared<DataTypeMap>(std::make_shared<DataTypeString>(), std::make_shared<DataTypeUInt8>()), "Map between replica name and is replica active."}
     };
 

@@ -17,7 +17,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -101,14 +101,14 @@ check() {
     fi
 }
 
-check bool         $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/bool.arrow', Arrow)"
+check bool         $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/bool.arrow', Arrow)"
 # Date32 slow path: no numeric type hint → check_date_range=true → Value() loop
-check date32_slow  $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/date32_slow.arrow', Arrow)"
-check date64       $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/date64.arrow', Arrow)"
-check timestamp    $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/timestamp.arrow', Arrow)"
-check time32       $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/time32.arrow', Arrow)"
-check time64       $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/time64.arrow', Arrow)"
-check float16      $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/float16.arrow', Arrow)"
-check decimal      $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/decimal.arrow', Arrow)"
+check date32_slow  $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/date32_slow.arrow', Arrow)"
+check date64       $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/date64.arrow', Arrow)"
+check timestamp    $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/timestamp.arrow', Arrow)"
+check time32       $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/time32.arrow', Arrow)"
+check time64       $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/time64.arrow', Arrow)"
+check float16      $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/float16.arrow', Arrow)"
+check decimal      $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/decimal.arrow', Arrow)"
 # UUID: explicit type hint routes through readColumnWithUUIDFromFixedBinaryData
-check uuid         $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/uuid.arrow', Arrow, 'x UUID')"
+check uuid         $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/uuid.arrow', Arrow, 'x UUID')"

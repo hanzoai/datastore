@@ -1,7 +1,7 @@
 #include <Planner/CollectSets.h>
 
 #include <Storages/StorageSet.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Storages/StorageSharedSetJoin.h>
 #endif
 
@@ -140,7 +140,7 @@ public:
                 return;
 
             auto ast = in_second_argument->toAST();
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
             if (storage_set->getName() == "SharedSet")
                 sets.addFromStorage(set_key, std::move(ast), static_cast<StorageSharedSet *>(storage_set)->getSet(planner_context.getQueryContext()), second_argument_table->getStorageID());
             else

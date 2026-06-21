@@ -181,8 +181,8 @@ def get_images_from_compose_files(compose_files: List[Path]) -> List[str]:
     """Parse compose files and return a deduplicated list of image references.
 
     Environment variable placeholders like `${DOCKER_NGINX_DAV_TAG:-latest}` are
-    resolved from `os.environ`.  For clickhouse images that appear without a tag
-    (e.g. `clickhouse/integration-test`) the tag is looked up from `IMAGES_ENV`.
+    resolved from `os.environ`.  For datastore images that appear without a tag
+    (e.g. `datastore/integration-test`) the tag is looked up from `IMAGES_ENV`.
     Images with still-unresolvable variables are silently skipped.
     """
     known_image_tags: dict[str, str] = {}
@@ -200,7 +200,7 @@ def get_images_from_compose_files(compose_files: List[Path]) -> List[str]:
         resolved = re.sub(r"\$\{(\w+)(?::-([^}]*))?\}", replace_var, raw)
         if "${" in resolved:
             return None  # Still-unresolvable variable — skip
-        # Append the correct tag for tagless known clickhouse images
+        # Append the correct tag for tagless known datastore images
         if ":" not in resolved and resolved in known_image_tags:
             resolved = f"{resolved}:{known_image_tags[resolved]}"
         return resolved
@@ -249,7 +249,7 @@ def prefetch_images(
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Build Job")
+    parser = argparse.ArgumentParser(description="Datastore Build Job")
     parser.add_argument("--options", help="Job parameters: ...")
     parser.add_argument(
         "--test",
@@ -272,7 +272,7 @@ def parse_args():
     )
     parser.add_argument(
         "--path",
-        help="Optional. Path to custom clickhouse binary",
+        help="Optional. Path to custom datastore binary",
         type=str,
         default="",
     )
@@ -641,7 +641,7 @@ tar -czf ./ci/tmp/logs.tar.gz \
         print("mem_gb:", mem_gb)
         workers = min(ncpu // MAX_CPUS_PER_WORKER, mem_gb // MAX_MEM_PER_WORKER) or 1
 
-    clickhouse_path = f"{Utils.cwd()}/ci/tmp/clickhouse"
+    clickhouse_path = f"{Utils.cwd()}/ci/tmp/datastore"
     clickhouse_server_config_dir = f"{Utils.cwd()}/programs/server"
     if info.is_local_run:
         if args.path:
@@ -649,8 +649,8 @@ tar -czf ./ci/tmp/logs.tar.gz \
         else:
             paths_to_check = [
                 clickhouse_path,  # it's set for CI runs, but we need to check it
-                f"{Utils.cwd()}/build/programs/clickhouse",
-                f"{Utils.cwd()}/clickhouse",
+                f"{Utils.cwd()}/build/programs/datastore",
+                f"{Utils.cwd()}/datastore",
             ]
             for path in paths_to_check:
                 if Path(path).is_file():
@@ -667,7 +667,7 @@ tar -czf ./ci/tmp/logs.tar.gz \
     assert Path(
         clickhouse_server_config_dir
     ), f"Clickhouse config dir does not exist [{clickhouse_server_config_dir}]"
-    print(f"Using ClickHouse binary at [{clickhouse_path}]")
+    print(f"Using Datastore binary at [{clickhouse_path}]")
 
     changed_test_modules = []
     if is_bugfix_validation or is_flaky_check or is_targeted_check:
@@ -700,10 +700,10 @@ tar -czf ./ci/tmp/logs.tar.gz \
 
     if is_bugfix_validation:
         if Utils.is_arm():
-            link_to_master_head_binary = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+            link_to_master_head_binary = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/datastore"
         else:
-            link_to_master_head_binary = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
-        if not info.is_local_run or not (Path(temp_path) / "clickhouse").exists():
+            link_to_master_head_binary = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/datastore"
+        if not info.is_local_run or not (Path(temp_path) / "datastore").exists():
             print(
                 f"NOTE: Clickhouse binary will be downloaded to [{temp_path}] from [{link_to_master_head_binary}]"
             )
@@ -821,13 +821,13 @@ tar -czf ./ci/tmp/logs.tar.gz \
         ).complete_job()
 
     test_env = {
-        "CLICKHOUSE_TESTS_BASE_CONFIG_DIR": clickhouse_server_config_dir,
-        "CLICKHOUSE_TESTS_SERVER_BIN_PATH": clickhouse_path,
-        "CLICKHOUSE_BINARY": clickhouse_path,  # some test cases support alternative binary location
-        "CLICKHOUSE_TESTS_CLIENT_BIN_PATH": clickhouse_path,
-        "CLICKHOUSE_USE_OLD_ANALYZER": "1" if use_old_analyzer else "0",
-        "CLICKHOUSE_USE_DISTRIBUTED_PLAN": "1" if use_distributed_plan else "0",
-        "CLICKHOUSE_USE_DATABASE_DISK": "1" if use_database_disk else "0",
+        "DATASTORE_TESTS_BASE_CONFIG_DIR": clickhouse_server_config_dir,
+        "DATASTORE_TESTS_SERVER_BIN_PATH": clickhouse_path,
+        "DATASTORE_BINARY": clickhouse_path,  # some test cases support alternative binary location
+        "DATASTORE_TESTS_CLIENT_BIN_PATH": clickhouse_path,
+        "DATASTORE_USE_OLD_ANALYZER": "1" if use_old_analyzer else "0",
+        "DATASTORE_USE_DISTRIBUTED_PLAN": "1" if use_distributed_plan else "0",
+        "DATASTORE_USE_DATABASE_DISK": "1" if use_database_disk else "0",
         "PYTEST_CLEANUP_CONTAINERS": "1",
         "JAVA_PATH": java_path,
         # PromQL compliance: deterministic JSON for post-hook (see promql_compliance_hook.py).

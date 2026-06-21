@@ -12,4 +12,4 @@ SELECT
    groupArray(toUInt8(1) ? toUInt8(1) : 1),
    sum(toUInt8(1) ? toUInt8(1) : 1)
 FROM (SELECT materialize(toUInt64(1)) as key FROM numbers(22))
-WHERE key = {b1:Int64}' | ${CLICKHOUSE_CURL} -sSg "${CLICKHOUSE_URL}&param_b1=1" -d @-
+WHERE key = {b1:Int64}' | ${DATASTORE_CURL} -sSg "${DATASTORE_URL}&param_b1=1" -d @-

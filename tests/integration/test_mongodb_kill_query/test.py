@@ -118,7 +118,7 @@ def test_cancel_query(setup_mongodb_users):
             [
                 "bash",
                 "-c",
-                f"""/usr/bin/clickhouse client --query "{SELECT_FROM_MONGODB}" --format Null""",
+                f"""/usr/bin/datastore client --query "{SELECT_FROM_MONGODB}" --format Null""",
             ]
         )
 

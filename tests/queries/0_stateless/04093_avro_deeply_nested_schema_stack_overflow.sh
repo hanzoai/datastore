@@ -10,8 +10,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 AVRO_FILE="${CURDIR}/data_avro/deeply_nested_schema.avro"
 
 # Should not crash (SIGSEGV). May succeed or fail with TOO_DEEP_RECURSION depending on build type.
-${CLICKHOUSE_LOCAL} -q "SELECT * FROM file('${AVRO_FILE}', 'Avro') FORMAT Null" > /dev/null 2>&1
+${DATASTORE_LOCAL} -q "SELECT * FROM file('${AVRO_FILE}', 'Avro') FORMAT Null" > /dev/null 2>&1
 [ $? -lt 128 ] || echo "CRASHED"
 
-${CLICKHOUSE_LOCAL} -q "DESC file('${AVRO_FILE}', 'Avro')" > /dev/null 2>&1
+${DATASTORE_LOCAL} -q "DESC file('${AVRO_FILE}', 'Avro')" > /dev/null 2>&1
 [ $? -lt 128 ] || echo "CRASHED"

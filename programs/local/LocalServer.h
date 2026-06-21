@@ -17,7 +17,7 @@
 namespace DB
 {
 
-/// Lightweight Application for clickhouse-local
+/// Lightweight Application for datastore-local
 /// No networking, no extra configs and working directories, no pid and status files, no dictionaries, no logging.
 /// Quiet mode by default
 class LocalServer : public ClientApplicationBase, public Loggers
@@ -74,8 +74,8 @@ private:
 
     /// Path of the config file actually loaded in `initialize`. Empty if no config file was loaded.
     /// Tracks loads from all sources: `--config-file` flag, `./config.xml`, and `getLocalConfigPath`
-    /// (`./clickhouse-local.{xml,yaml,yml}`, `~/.clickhouse-local/config.{xml,yaml,yml}`,
-    /// `/etc/clickhouse-local/config.{xml,yaml,yml}`). Needed by `setupUsers` to resolve relative
+    /// (`./datastore-local.{xml,yaml,yml}`, `~/.datastore-local/config.{xml,yaml,yml}`,
+    /// `/etc/datastore-local/config.{xml,yaml,yml}`). Needed by `setupUsers` to resolve relative
     /// paths in `user_directories.users_xml.path` against the config's own directory.
     String loaded_config_path;
 

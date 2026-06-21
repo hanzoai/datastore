@@ -26,7 +26,7 @@ See [Values table function](/sql-reference/table-functions/values#sql-standard-v
 
 The `FROM` can contain multiple data sources, separated by commas, which is equivalent of performing [CROSS JOIN](../../../sql-reference/statements/select/join.md) on them.
 
-`FROM` can optionally appear before a `SELECT` clause. This is a ClickHouse-specific extension of standard SQL which makes `SELECT` statements easier to read. Example:
+`FROM` can optionally appear before a `SELECT` clause. This is a Datastore-specific extension of standard SQL which makes `SELECT` statements easier to read. Example:
 
 ```sql
 FROM table
@@ -35,7 +35,7 @@ SELECT *
 
 ## FINAL Modifier {#final-modifier}
 
-When `FINAL` is specified, ClickHouse fully merges the data before returning the result. This also performs all data transformations that happen during merges for the given table engine.
+When `FINAL` is specified, Datastore fully merges the data before returning the result. This also performs all data transformations that happen during merges for the given table engine.
 
 It is applicable when selecting data from tables using the following table engines:
 - `ReplacingMergeTree`

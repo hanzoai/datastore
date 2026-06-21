@@ -27,10 +27,10 @@ do
 	echo $i$'\t'$i >> $USER_FILES_PATH/d1/d2/d3/text3.txt
 done
 
-${CLICKHOUSE_CLIENT} -q "SELECT * from file ('d1/*','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
-${CLICKHOUSE_CLIENT} -q "SELECT * from file ('d1/**','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
-${CLICKHOUSE_CLIENT} -q "SELECT * from file ('d1/*/tex*','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
-${CLICKHOUSE_CLIENT} -q "SELECT * from file ('d1/**/tex*','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
+${DATASTORE_CLIENT} -q "SELECT * from file ('d1/*','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
+${DATASTORE_CLIENT} -q "SELECT * from file ('d1/**','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
+${DATASTORE_CLIENT} -q "SELECT * from file ('d1/*/tex*','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
+${DATASTORE_CLIENT} -q "SELECT * from file ('d1/**/tex*','TSV', 'Index UInt8, Number UInt8')" | sort --numeric-sort
 
 
 rm $USER_FILES_PATH/d1/d2/d3/text3.txt

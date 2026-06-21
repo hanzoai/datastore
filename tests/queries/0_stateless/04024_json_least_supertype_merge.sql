@@ -4,7 +4,7 @@
 -- Verifies that two JSON columns with different parameters merge to a JSON
 -- (not Variant) in StorageMerge, fixing UNKNOWN_IDENTIFIER for ALIAS columns
 -- referencing JSON sub-paths.
--- https://github.com/ClickHouse/ClickHouse/issues/97812
+-- https://github.com/ClickHouse/Datastore/issues/97812
 
 SET enable_analyzer = 1;
 

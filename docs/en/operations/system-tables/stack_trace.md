@@ -35,7 +35,7 @@ Enabling introspection functions:
 SET allow_introspection_functions = 1;
 ```
 
-Getting symbols from ClickHouse object files:
+Getting symbols from Datastore object files:
 
 ```sql
 WITH arrayMap(x -> demangle(addressToSymbol(x)), trace) AS all SELECT thread_name, thread_id, query_id, arrayStringConcat(all, '\n') AS res FROM system.stack_trace LIMIT 1;
@@ -65,7 +65,7 @@ void std::__1::__function::__policy_invoker<void ()>::__call_impl<std::__1::__fu
 void* std::__1::__thread_proxy[abi:v15000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void ThreadPoolImpl<std::__1::thread>::scheduleImpl<void>(std::__1::function<void ()>, Priority, std::__1::optional<unsigned long>, bool)::'lambda0'()>>(void*)
 ```
 
-Getting filenames and line numbers in ClickHouse source code:
+Getting filenames and line numbers in Datastore source code:
 
 ```sql
 WITH arrayMap(x -> addressToLine(x), trace) AS all, arrayFilter(x -> x LIKE '%/dbms/%', all) AS dbms SELECT thread_name, thread_id, query_id, arrayStringConcat(notEmpty(dbms) ? dbms : all, '\n') AS res FROM system.stack_trace LIMIT 1;
@@ -74,7 +74,7 @@ WITH arrayMap(x -> addressToLine(x), trace) AS all, arrayFilter(x -> x LIKE '%/d
 ```text
 Row 1:
 ──────
-thread_name: clickhouse-serv
+thread_name: datastore-serv
 
 thread_id: 686
 query_id:  cad353e7-1c29-4b2e-949f-93e597ab7a54

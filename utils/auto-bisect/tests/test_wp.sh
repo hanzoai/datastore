@@ -6,7 +6,7 @@ export DATA_DIR="/home/nik/chdata"
 set -e
 
 #CH_PATH=../../clickhouse2412
-./env/replicated.sh /home/nik/work/clickhouse-private1/
+./env/replicated.sh /home/nik/work/datastore-private1/
 
 $CH_PATH client --query "
   SELECT version();
@@ -37,10 +37,10 @@ $CH_PATH client --query "SELECT count() FROM x.src;
   SELECT * FROM system.virtual_parts WHERE table='src';
 "
 
-# do not remove clickhouse data
+# do not remove datastore data
 export CLEAN_CH_DATA=0
 CH_PATH=$(realpath ../../clickhouse2412)
-./env/replicated.sh /home/nik/work/clickhouse-private1/
+./env/replicated.sh /home/nik/work/datastore-private1/
 
 head -c 1000 /dev/zero | $CH_PATH client --insert_deduplicate=0 --max_insert_block_size=1 --min_insert_block_size_rows=1 --min_insert_block_size_bytes=1 -q "INSERT INTO x.src FORMAT RowBinary"
 

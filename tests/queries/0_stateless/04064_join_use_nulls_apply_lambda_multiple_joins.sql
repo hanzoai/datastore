@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/75005
+-- https://github.com/ClickHouse/Datastore/issues/75005
 DROP TABLE IF EXISTS t1_04064;
 DROP TABLE IF EXISTS t2_04064;
 DROP TABLE IF EXISTS t3_04064;

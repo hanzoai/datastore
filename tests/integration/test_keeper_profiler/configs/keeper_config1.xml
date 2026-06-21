@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <s3_snapshot>
             <endpoint>http://minio1:9001/snapshots/</endpoint>
@@ -7,8 +7,8 @@
         </s3_snapshot>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
         <four_letter_word_white_list>*</four_letter_word_white_list>
 
         <coordination_settings>
@@ -41,4 +41,4 @@
     </keeper_server>
     <global_profiler_real_time_period_ns>1000000000</global_profiler_real_time_period_ns>
     <global_profiler_cpu_time_period_ns>1000000000</global_profiler_cpu_time_period_ns>
-</clickhouse>
+</datastore>

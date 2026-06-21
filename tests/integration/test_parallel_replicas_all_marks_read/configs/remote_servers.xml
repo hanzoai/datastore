@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <parallel_replicas_with_unavailable_nodes>
             <shard>
@@ -29,4 +29,4 @@
             </shard>
         </parallel_replicas_with_unavailable_nodes>
     </remote_servers>
-</clickhouse>
+</datastore>

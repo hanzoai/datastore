@@ -42,7 +42,7 @@
 #include <Client/ClientApplicationBaseParser.h>
 #include <Parsers/parseQuery.h>
 
-/** A tool for evaluating ClickHouse performance.
+/** A tool for evaluating Datastore performance.
   * The tool emulates a case with fixed amount of simultaneously executing queries.
   */
 
@@ -179,7 +179,7 @@ public:
             std::string default_host;
             if (connection_arguments.hosts.has_value())
                 default_host = connection_arguments.hosts->front();
-            else if (const char * env_host = getenv("CLICKHOUSE_HOST")) // NOLINT(concurrency-mt-unsafe)
+            else if (const char * env_host = getenv("DATASTORE_HOST")) // NOLINT(concurrency-mt-unsafe)
                 default_host = env_host;
             else
                 default_host = "localhost";
@@ -405,19 +405,19 @@ private:
         std::optional<std::string> env_host_str;
         std::optional<std::string> env_quota_key_str;
 
-        const char * env_user = getenv("CLICKHOUSE_USER"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_user = getenv("DATASTORE_USER"); // NOLINT(concurrency-mt-unsafe)
         if (env_user != nullptr)
             env_user_str.emplace(std::string(env_user));
 
-        const char * env_password = getenv("CLICKHOUSE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_password = getenv("DATASTORE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
         if (env_password != nullptr)
             env_password_str.emplace(std::string(env_password));
 
-        const char * env_host = getenv("CLICKHOUSE_HOST"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_host = getenv("DATASTORE_HOST"); // NOLINT(concurrency-mt-unsafe)
         if (env_host != nullptr)
             env_host_str.emplace(std::string(env_host));
 
-        const char * env_quota_key = getenv("CLICKHOUSE_QUOTA_KEY"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_quota_key = getenv("DATASTORE_QUOTA_KEY"); // NOLINT(concurrency-mt-unsafe)
         if (env_quota_key != nullptr)
             env_quota_key_str.emplace(std::string(env_quota_key));
 
@@ -977,22 +977,22 @@ int mainEntryClickHouseBenchmark(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: clickhouse benchmark [options] < queries.txt\n";
-            std::cout << "Usage: clickhouse benchmark [options] --query \"query text\"\n\n";
-            std::cout << "clickhouse-benchmark connects to ClickHouse server, repeatedly sends "
+            std::cout << "Usage: datastore benchmark [options] < queries.txt\n";
+            std::cout << "Usage: datastore benchmark [options] --query \"query text\"\n\n";
+            std::cout << "datastore-benchmark connects to Datastore server, repeatedly sends "
                          "specified queries and reports query statistics. "
                          "Multiple queries can be used if passed in TSV format.\n\n";
             if (options.contains("verbose"))
                 std::cout << options_description << "\n";
             else
                 std::cout << options_description_non_verbose << "\n";
-            std::cout << "\nSee also: https://clickhouse.com/docs/operations/utilities/clickhouse-benchmark/\n";
+            std::cout << "\nSee also: https://datastore.com/docs/operations/utilities/datastore-benchmark/\n";
             return 0;
         }
 
         print_stacktrace = options.contains("stacktrace");
 
-        /// NOTE Maybe clickhouse-benchmark should also respect .xml configuration of clickhouse-client.
+        /// NOTE Maybe datastore-benchmark should also respect .xml configuration of datastore-client.
 
         String proto_send_chunked {"notchunked"};
         String proto_recv_chunked {"notchunked"};

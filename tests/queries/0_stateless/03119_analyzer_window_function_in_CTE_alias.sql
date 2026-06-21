@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/47422
+-- https://github.com/ClickHouse/Datastore/issues/47422
 SET enable_analyzer=1;
 
 DROP TEMPORARY TABLE IF EXISTS test;

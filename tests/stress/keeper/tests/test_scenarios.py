@@ -227,10 +227,10 @@ def _build_bench_step(scenario, nodes, ctx, replay_path=""):
 
 
 def _ensure_clickhouse_binary_for_bench():
-    env_bin = os.environ.get("CLICKHOUSE_BINARY", "").strip()
+    env_bin = os.environ.get("DATASTORE_BINARY", "").strip()
     if not env_bin or not os.path.isfile(env_bin) or not os.access(env_bin, os.X_OK):
         raise AssertionError(
-            f"keeper-bench must run on host: CLICKHOUSE_BINARY must be an executable file (got: {env_bin or '<unset>'})"
+            f"keeper-bench must run on host: DATASTORE_BINARY must be an executable file (got: {env_bin or '<unset>'})"
         )
 
 
@@ -637,7 +637,7 @@ def _print_manual_znode_counts(nodes):
         try:
             r = sh(
                 n,
-                f"HOME=/tmp timeout 3s clickhouse keeper-client --host 127.0.0.1 --port {CLIENT_PORT} -q 'mntr' 2>&1 || true",
+                f"HOME=/tmp timeout 3s datastore keeper-client --host 127.0.0.1 --port {CLIENT_PORT} -q 'mntr' 2>&1 || true",
                 timeout=5,
             )
             out = (r or {}).get("out", "")
@@ -757,7 +757,7 @@ def test_scenario(scenario, cluster_factory, request, run_meta):
     faults_override = request.config.getoption("--faults")
     if not faults_override:
         fs_effective = []
-    # Fault injection (kill, stop, etc.) targets ClickHouse Keeper processes and is not supported for ZooKeeper/RaftKeeper backend.
+    # Fault injection (kill, stop, etc.) targets Datastore Keeper processes and is not supported for ZooKeeper/RaftKeeper backend.
     if backend in ("zookeeper", "raftkeeper") and fs_effective:
         pytest.skip(f"Fault injection not supported for {backend} backend; use no-fault scenarios only")
     if backend == "zookeeper" and _scenario_base_id(scenario) in ZOOKEEPER_SKIP_SCENARIO_IDS:

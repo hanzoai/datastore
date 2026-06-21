@@ -5,8 +5,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-query_id="$RANDOM-$CLICKHOUSE_DATABASE"
-${CLICKHOUSE_CLIENT} --query_id $query_id --query "SELECT 1 FORMAT Null SETTINGS trace_profile_events = 1, trace_profile_events_list = 'Query,SelectQuery'"
+query_id="$RANDOM-$DATASTORE_DATABASE"
+${DATASTORE_CLIENT} --query_id $query_id --query "SELECT 1 FORMAT Null SETTINGS trace_profile_events = 1, trace_profile_events_list = 'Query,SelectQuery'"
 
-${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS trace_log"
-${CLICKHOUSE_CLIENT} --query "SELECT event, count(), sum(empty(trace)) = 0 FROM system.trace_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '$query_id' AND trace_type = 'ProfileEvent' GROUP BY event ORDER BY count(), event"
+${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS trace_log"
+${DATASTORE_CLIENT} --query "SELECT event, count(), sum(empty(trace)) = 0 FROM system.trace_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '$query_id' AND trace_type = 'ProfileEvent' GROUP BY event ORDER BY count(), event"

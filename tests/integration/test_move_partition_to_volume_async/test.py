@@ -48,7 +48,7 @@ def cluster():
             node.stop_clickhouse()
             node.copy_file_to_container(
                 os.path.join(CONFIG_DIR, "storage_policy.xml"),
-                "/etc/clickhouse-server/config.d/storage_policy.xml",
+                "/etc/datastore-server/config.d/storage_policy.xml",
             )
             node.start_clickhouse()
 

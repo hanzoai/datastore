@@ -1,5 +1,5 @@
 -- Tags: distributed
--- https://github.com/ClickHouse/ClickHouse/issues/98203
+-- https://github.com/ClickHouse/Datastore/issues/98203
 
 -- Scalar doesn't exist with optimize_const_name_size + enable_scalar_subquery_optimization = 0
 SELECT ((NULL, 1))

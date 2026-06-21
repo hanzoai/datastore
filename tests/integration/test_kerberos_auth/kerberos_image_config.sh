@@ -3,8 +3,8 @@
 
 set -x # trace
 
-: "${REALM:=TEST.CLICKHOUSE.TECH}"
-: "${DOMAIN_REALM:=test.clickhouse.com}"
+: "${REALM:=TEST.DATASTORE.TECH}"
+: "${DOMAIN_REALM:=test.datastore.com}"
 : "${KERB_MASTER_KEY:=masterkey}"
 : "${KERB_ADMIN_USER:=admin}"
 : "${KERB_ADMIN_PASS:=admin}"

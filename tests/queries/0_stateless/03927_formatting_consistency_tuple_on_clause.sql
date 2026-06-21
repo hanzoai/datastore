@@ -5,7 +5,7 @@
 -- ParserCollectionOfLiterals), producing ON tuple((1, 0.648) AS a7), breaking the roundtrip.
 -- The fix skips the promotion when the element has an alias.
 -- Also fix position restoration in tryParseOperator when parseLambda fails after consuming '->'.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=a5e9d1c7da638871e8a4c99fda083c9d4dc9ffdc&name_0=MasterCI&name_1=BuzzHouse%20%28amd_debug%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=a5e9d1c7da638871e8a4c99fda083c9d4dc9ffdc&name_0=MasterCI&name_1=BuzzHouse%20%28amd_debug%29
 
 SELECT ((1), 0.648);
 SELECT (((1), 0.648) AS a7);

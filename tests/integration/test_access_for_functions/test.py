@@ -66,7 +66,7 @@ def test_ignore_obsolete_grant_on_database():
             "bash",
             "-c",
             f"""
-        cat > /var/lib/clickhouse/access/{user_id}.sql << 'EOF'
+        cat > /var/lib/datastore/access/{user_id}.sql << 'EOF'
 ATTACH USER `{user_id}`;
 ATTACH GRANT CREATE FUNCTION, SELECT ON mydb.* TO `{user_id}`;
 EOF""",
@@ -74,7 +74,7 @@ EOF""",
     )
 
     instance.exec_in_container(
-        ["bash", "-c", "touch /var/lib/clickhouse/access/need_rebuild_lists.mark"]
+        ["bash", "-c", "touch /var/lib/datastore/access/need_rebuild_lists.mark"]
     )
     instance.start_clickhouse()
 

@@ -41,7 +41,7 @@ def start_mock_servers(cluster, script_dir, mocks, timeout=100):
         logs_dir = (
             "/var/log/resolver"
             if container == "resolver"
-            else "/var/log/clickhouse-server"
+            else "/var/log/datastore-server"
         )
         log_file = os.path.join(logs_dir, os.path.splitext(server_name)[0] + ".log")
         err_log_file = os.path.join(

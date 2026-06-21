@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <s3_retry_attempts>5</s3_retry_attempts>
@@ -8,4 +8,4 @@
             <s3_validate_request_settings>0</s3_validate_request_settings>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

@@ -155,7 +155,7 @@ class Tester:
 def main():
     # Enable multiple prewhere read steps
     url = (
-        os.environ["CLICKHOUSE_URL"]
+        os.environ["DATASTORE_URL"]
         + "&enable_multiple_prewhere_read_steps=1&move_all_conditions_to_prewhere=0&max_threads=1"
     )
 

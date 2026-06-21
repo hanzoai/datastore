@@ -2,7 +2,7 @@
 set -e
 
 echo "$PWD"
-CH_PATH=${CH_PATH:=clickhouse}
+CH_PATH=${CH_PATH:=datastore}
 
 $CH_PATH client -q "SELECT version()"
 
@@ -18,7 +18,7 @@ RANDOM_ID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 echo "RANDOM_ID: $RANDOM_ID"
 
 $CH_PATH client -mn --query_id $RANDOM_ID -q "
-SELECT * FROM icebergS3('http://localhost:11111/test/warehouse/default/test_pruning_degradation_1', 'clickhouse', 'clickhouse')
+SELECT * FROM icebergS3('http://localhost:11111/test/warehouse/default/test_pruning_degradation_1', 'datastore', 'datastore')
 WHERE id IN (SELECT * FROM kek) SETTINGS use_iceberg_partition_pruning = 1;
 "
 

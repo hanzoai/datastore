@@ -51,7 +51,7 @@ def test_jbod_ha(start_cluster):
             node.query(
                 """
                 CREATE TABLE tbl (p UInt8, d String)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tbl', '{}')
+                ENGINE = ReplicatedMergeTree('/datastore/tbl', '{}')
                 PARTITION BY p
                 ORDER BY tuple()
                 SETTINGS
@@ -78,10 +78,10 @@ def test_jbod_ha(start_cluster):
         #
         # NOTE: you cannot do one of the following:
         # - chmod 000 - this will not block access to the owner of the namespace,
-        #   and running clickhouse from non-root user is very tricky in this
+        #   and running datastore from non-root user is very tricky in this
         #   sandbox.
         # - unmount it, to replace with something else because in this case you
-        #   will loose tmpfs and besides clickhouse works from root, so it will
+        #   will loose tmpfs and besides datastore works from root, so it will
         #   still be able to write/read from/to it.
         #
         # So it simply mounts over tmpfs, proc, and this will throw exception
@@ -135,7 +135,7 @@ def test_jbod_ha_fetch_partition(start_cluster):
             node.query(
                 """
                 CREATE TABLE tbl (p UInt8, d String)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tbl_{}', '{}')
+                ENGINE = ReplicatedMergeTree('/datastore/tbl_{}', '{}')
                 PARTITION BY p
                 ORDER BY tuple()""".format(
                     i + 1, i
@@ -154,7 +154,7 @@ def test_jbod_ha_fetch_partition(start_cluster):
 
         # FETCH PARTITION will check for detached parts with same name in all disks
         # It will throw exception if the check doesn't handle broken disk properly
-        node2.query("ALTER TABLE tbl FETCH PARTITION 0 FROM '/clickhouse/tbl_1'")
+        node2.query("ALTER TABLE tbl FETCH PARTITION 0 FROM '/datastore/tbl_1'")
         node2.query("ALTER TABLE tbl ATTACH PARTITION 0")
 
         assert int(node2.query("select count(p) from tbl")) == 10

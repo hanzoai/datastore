@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 drop table if exists num_1;
 drop table if exists num_2;
 
@@ -21,7 +21,7 @@ insert into num_2 select number * 3, -number from numbers(1.5e6);
 echo
 echo "simple join with analyzer"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
@@ -33,13 +33,13 @@ PARALLEL_REPLICAS_SETTINGS="enable_parallel_replicas = 2, automatic_parallel_rep
 echo
 echo "simple (global) join with analyzer and parallel replicas"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_local_plan=0"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
@@ -52,13 +52,13 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "simple (global) join with analyzer and parallel replicas with local plan"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_local_plan=1"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000

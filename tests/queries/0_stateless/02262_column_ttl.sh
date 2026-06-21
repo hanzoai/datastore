@@ -11,10 +11,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # regression test for columns TTLs
-# note, that this should be written in .sh since we need $CLICKHOUSE_DATABASE
+# note, that this should be written in .sh since we need $DATASTORE_DATABASE
 # not 'default' to catch text_log
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     drop table if exists ttl_02262;
     drop table if exists this_text_log;
 
@@ -29,9 +29,9 @@ $CLICKHOUSE_CLIENT -m -q "
     system flush logs text_log;
 "
 
-ttl_02262_uuid=$($CLICKHOUSE_CLIENT -q "select uuid from system.tables where database = '$CLICKHOUSE_DATABASE' and name = 'ttl_02262'")
+ttl_02262_uuid=$($DATASTORE_CLIENT -q "select uuid from system.tables where database = '$DATASTORE_DATABASE' and name = 'ttl_02262'")
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     -- OPTIMIZE TABLE x FINAL will be done in background
     -- attach to it's log, via table UUID in query_id (see merger/mutator code).
     create materialized view this_text_log engine=Memory() as

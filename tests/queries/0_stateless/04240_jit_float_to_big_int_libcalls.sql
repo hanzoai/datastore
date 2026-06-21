@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- no-fasttest: JIT compilation is not available in fasttest
 
--- https://github.com/ClickHouse/ClickHouse/issues/105031
+-- https://github.com/ClickHouse/Datastore/issues/105031
 
 SELECT '--- JIT ---';
 SET compile_expressions = 1, min_count_to_compile_expression = 0;

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ClickHouse.Client.ADO;
-using ClickHouse.Client.Utility;
+using Datastore.Client.ADO;
+using Datastore.Client.Utility;
 
-namespace clickhouse.test
+namespace datastore.test
 {
     class Program
     {

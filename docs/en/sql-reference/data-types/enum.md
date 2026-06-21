@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Enum data type in ClickHouse, which represents
+description: 'Documentation for the Enum data type in Datastore, which represents
   a set of named constant values'
 sidebar_label: 'Enum'
 sidebar_position: 20
@@ -10,14 +10,14 @@ doc_type: 'reference'
 
 Enumerated type consisting of named values.
 
-Named values can be declared as `'string' = integer` pairs or `'string'` names . ClickHouse stores only numbers, but supports operations with the values through their names.
+Named values can be declared as `'string' = integer` pairs or `'string'` names . Datastore stores only numbers, but supports operations with the values through their names.
 
-ClickHouse supports:
+Datastore supports:
 
 - 8-bit `Enum`. It can contain up to 256 values enumerated in the `[-128, 127]` range.
 - 16-bit `Enum`. It can contain up to 65536 values enumerated in the `[-32768, 32767]` range.
 
-ClickHouse automatically chooses the type of `Enum` when data is inserted. You can also use `Enum8` or `Enum16` types to be sure in the size of storage.
+Datastore automatically chooses the type of `Enum` when data is inserted. You can also use `Enum8` or `Enum16` types to be sure in the size of storage.
 
 ## Usage Examples {#usage-examples}
 
@@ -31,7 +31,7 @@ CREATE TABLE t_enum
 ENGINE = TinyLog
 ```
 
-Similarly, you could omit numbers. ClickHouse will assign consecutive numbers automatically. Numbers are assigned starting from 1 by default.
+Similarly, you could omit numbers. Datastore will assign consecutive numbers automatically. Numbers are assigned starting from 1 by default.
 
 ```sql
 CREATE TABLE t_enum
@@ -64,7 +64,7 @@ Exception on server:
 Code: 69. DB::Exception: Value -129 for element 'hello' exceeds range of Enum8.
 ```
 
-Column `x` can only store values that are listed in the type definition: `'hello'` or `'world'`. If you try to save any other value, ClickHouse will raise an exception. 8-bit size for this `Enum` is chosen automatically.
+Column `x` can only store values that are listed in the type definition: `'hello'` or `'world'`. If you try to save any other value, Datastore will raise an exception. 8-bit size for this `Enum` is chosen automatically.
 
 ```sql
 INSERT INTO t_enum VALUES ('hello'), ('world'), ('hello')
@@ -83,7 +83,7 @@ Exception on client:
 Code: 49. DB::Exception: Unknown element 'a' for type Enum('hello' = 1, 'world' = 2)
 ```
 
-When you query data from the table, ClickHouse outputs the string values from `Enum`.
+When you query data from the table, Datastore outputs the string values from `Enum`.
 
 ```sql
 SELECT * FROM t_enum
@@ -147,7 +147,7 @@ INSERT INTO t_enum_nullable VALUES('hello'),('world'),(NULL)
 
 In RAM, an `Enum` column is stored in the same way as `Int8` or `Int16` of the corresponding numerical values.
 
-When reading in text form, ClickHouse parses the value as a string and searches for the corresponding string from the set of Enum values. If it is not found, an exception is thrown. When reading in text format, the string is read and the corresponding numeric value is looked up. An exception will be thrown if it is not found.
+When reading in text form, Datastore parses the value as a string and searches for the corresponding string from the set of Enum values. If it is not found, an exception is thrown. When reading in text format, the string is read and the corresponding numeric value is looked up. An exception will be thrown if it is not found.
 When writing in text form, it writes the value as the corresponding string. If column data contains garbage (numbers that are not from the valid set), an exception is thrown. When reading and writing in binary form, it works the same way as for Int8 and Int16 data types.
 The implicit default value is the value with the lowest number.
 

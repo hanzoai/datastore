@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/22923
+-- https://github.com/ClickHouse/Datastore/issues/22923
 SET enable_analyzer=1;
 SET prefer_localhost_replica=0;
 

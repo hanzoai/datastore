@@ -2,7 +2,7 @@
 #include <Common/Macros.h>
 #include <Disks/DiskObjectStorage/MetadataStorages/MetadataStorageFactory.h>
 #include <Disks/DiskObjectStorage/MetadataStorages/Local/MetadataStorageFromDisk.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     #include <Disks/DiskObjectStorage/MetadataStorages/Keeper/MetadataStorageFromKeeper.h>
 #endif
 #include <Disks/DiskObjectStorage/MetadataStorages/Plain/MetadataStorageFromPlainObjectStorage.h>
@@ -141,7 +141,7 @@ void registerMetadataStorageFromDisk(MetadataStorageFactory & factory)
     });
 }
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 void registerMetadataStorageFromKeeper(MetadataStorageFactory & factory)
 {
     factory.registerMetadataStorageType("keeper", [](
@@ -229,7 +229,7 @@ void registerMetadataStorages()
     registerPlainMetadataStorage(factory);
     registerPlainRewritableMetadataStorage(factory);
     registerMetadataStorageFromStaticFilesWebServer(factory);
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     registerMetadataStorageFromKeeper(factory);
 #endif
 }

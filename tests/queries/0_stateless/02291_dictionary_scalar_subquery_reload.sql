@@ -21,7 +21,7 @@ CREATE DICTIONARY test_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_dictionary_view'))
+SOURCE(DATASTORE(TABLE 'test_dictionary_view'))
 LIFETIME(MIN 0 MAX 1)
 LAYOUT(FLAT());
 

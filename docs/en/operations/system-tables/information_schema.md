@@ -49,7 +49,7 @@ Case-insensitive equivalent views, e.g. `INFORMATION_SCHEMA.columns` are provide
 
 ## COLUMNS {#columns}
 
-Contains columns read from the [system.columns](../../operations/system-tables/columns.md) system table and columns that are not supported in ClickHouse or do not make sense (always `NULL`), but must be by the standard.
+Contains columns read from the [system.columns](../../operations/system-tables/columns.md) system table and columns that are not supported in Datastore or do not make sense (always `NULL`), but must be by the standard.
 
 Columns:
 
@@ -139,7 +139,7 @@ domain_name:              ᴺᵁᴸᴸ
 
 ## SCHEMATA {#schemata}
 
-Contains columns read from the [system.databases](../../operations/system-tables/databases.md) system table and columns that are not supported in ClickHouse or do not make sense (always `NULL`), but must be by the standard.
+Contains columns read from the [system.databases](../../operations/system-tables/databases.md) system table and columns that are not supported in Datastore or do not make sense (always `NULL`), but must be by the standard.
 
 Columns:
 

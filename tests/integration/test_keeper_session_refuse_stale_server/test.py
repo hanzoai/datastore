@@ -52,7 +52,7 @@ def test_session_refused_on_stale_keeper(started_cluster):
     t2 = randomize_table_name("t2")
 
     # sanity check the value of last_zxid_seen
-    node.query(f"CREATE DATABASE {t} ENGINE = Replicated('/clickhouse/databases/{t}', 's1', 'r1')")
+    node.query(f"CREATE DATABASE {t} ENGINE = Replicated('/datastore/databases/{t}', 's1', 'r1')")
     assert connection_loss_started_timestamp_metric() == 0
     assert 1 <= last_zxid_seen_column() <= 1000
     assert 1 <= last_zxid_seen_metric() <= 1000
@@ -62,18 +62,18 @@ def test_session_refused_on_stale_keeper(started_cluster):
         zookeeper_container_id = started_cluster.get_container_id(zookeeper_container)
         started_cluster.remove_directory_from_container(
             zookeeper_container_id,
-            "/var/lib/clickhouse-keeper/logs"
+            "/var/lib/datastore-keeper/logs"
         )
         started_cluster.remove_directory_from_container(
             zookeeper_container_id,
-            "/var/lib/clickhouse-keeper/snapshots"
+            "/var/lib/datastore-keeper/snapshots"
         )
     started_cluster.stop_zookeeper_nodes(ZOOKEEPER_CONTAINERS)
     started_cluster.start_zookeeper_nodes(ZOOKEEPER_CONTAINERS)
     started_cluster.wait_zookeeper_to_start()
 
     # all the connection attempts should fail because keeper client's last_zxid_seen is larger than the server's
-    error = node.query_and_get_error(f"CREATE DATABASE {t2} ENGINE = Replicated('/clickhouse/databases/{t2}', 's1', 'r1')")
+    error = node.query_and_get_error(f"CREATE DATABASE {t2} ENGINE = Replicated('/datastore/databases/{t2}', 's1', 'r1')")
     assert (
         "All connection tries failed while connecting to ZooKeeper" in error
     )
@@ -87,7 +87,7 @@ def test_session_refused_on_stale_keeper(started_cluster):
     # (b) introduce complexity
     node.restart_clickhouse()
 
-    node.query(f"CREATE DATABASE {t2} ENGINE = Replicated('/clickhouse/databases/{t2}', 's1', 'r1')")
+    node.query(f"CREATE DATABASE {t2} ENGINE = Replicated('/datastore/databases/{t2}', 's1', 'r1')")
 
     assert connection_loss_started_timestamp_metric() == 0
     assert 1 <= last_zxid_seen_metric() <= 1000

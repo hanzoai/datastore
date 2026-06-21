@@ -12,7 +12,7 @@ ENGINE = MergeTree()
 PRIMARY KEY (user_id, timestamp);
 
 INSERT INTO my_first_table (user_id, job_id, message, timestamp, metric) VALUES
-    (101, 101,'Hello, ClickHouse!',                                 now(),       1   ),
+    (101, 101,'Hello, Datastore!',                                 now(),       1   ),
     (101, 102,'Granules are the smallest chunks of data read',      now() + 5,   3 )
     (102, 101,'Insert a lot of rows per batch',                     yesterday(), 2 ),
     (102, 101,'Test1', today(),     1  ),

@@ -4,14 +4,14 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATA_FILE=${USER_FILES_PATH}/${CLICKHOUSE_DATABASE}_02103_null.data
+DATA_FILE=${USER_FILES_PATH}/${DATASTORE_DATABASE}_02103_null.data
 trap 'rm -rf ${DATA_FILE}' EXIT
 
-# Wrapper for clickhouse-client to always output in JSONEachRow format, that
+# Wrapper for datastore-client to always output in JSONEachRow format, that
 # way format settings will not affect output.
 function clickhouse_local()
 {
-    $CLICKHOUSE_LOCAL --output-format JSONEachRow "$@"
+    $DATASTORE_LOCAL --output-format JSONEachRow "$@"
 }
 
 echo -e "Custom true\nCustom false\nYes\nNo\nyes\nno\ny\nY\nN\nTrue\nFalse\ntrue\nfalse\nt\nf\nT\nF\nOn\nOff\non\noff\nenable\ndisable\nenabled\ndisabled" > $DATA_FILE

@@ -34,7 +34,7 @@ def test_acme_authorization(started_single_replica_cluster):
     # Let Pebble know where to find our server
     requests.post(
         'http://10.5.11.3:8055/add-a',
-        json={'host': 'single.integration-tests.clickhouse.com', 'addresses': ['10.5.11.11']}
+        json={'host': 'single.integration-tests.datastore.com', 'addresses': ['10.5.11.11']}
     )
 
     for _ in range(120):
@@ -56,12 +56,12 @@ def test_acme_authorization(started_single_replica_cluster):
         zk = started_single_replica_cluster.get_kazoo_client("zoo1")
         zk.start()
 
-        assert zk.exists("/clickhouse/acme")
-        assert zk.exists("/clickhouse/acme/10.5.11.2")
-        assert zk.exists("/clickhouse/acme/10.5.11.2/account_private_key")
-        assert zk.exists("/clickhouse/acme/10.5.11.2/challenges")
-        assert zk.exists("/clickhouse/acme/10.5.11.2/domains")
-        assert len(zk.get_children("/clickhouse/acme/10.5.11.2/domains")) == 1
+        assert zk.exists("/datastore/acme")
+        assert zk.exists("/datastore/acme/10.5.11.2")
+        assert zk.exists("/datastore/acme/10.5.11.2/account_private_key")
+        assert zk.exists("/datastore/acme/10.5.11.2/challenges")
+        assert zk.exists("/datastore/acme/10.5.11.2/domains")
+        assert len(zk.get_children("/datastore/acme/10.5.11.2/domains")) == 1
 
         return
 

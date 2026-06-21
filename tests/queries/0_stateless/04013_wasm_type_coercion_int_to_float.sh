@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --allow_experimental_analyzer=1 << EOF
+${DATASTORE_CLIENT} --allow_experimental_analyzer=1 << EOF
 DROP FUNCTION IF EXISTS wasm_raw_f32;
 DROP FUNCTION IF EXISTS wasm_raw_f64;
 DROP FUNCTION IF EXISTS wasm_rb_f32;
@@ -15,9 +15,9 @@ DROP FUNCTION IF EXISTS wasm_rb_f64;
 DELETE FROM system.webassembly_modules WHERE name = 'identity_int_i2f';
 EOF
 
-cat ${CUR_DIR}/wasm/identity_int.wasm | ${CLICKHOUSE_CLIENT} --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'identity_int_i2f', code FROM input('code String') FORMAT RawBlob"
+cat ${CUR_DIR}/wasm/identity_int.wasm | ${DATASTORE_CLIENT} --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'identity_int_i2f', code FROM input('code String') FORMAT RawBlob"
 
-${CLICKHOUSE_CLIENT} --allow_experimental_analyzer=1 << EOF
+${DATASTORE_CLIENT} --allow_experimental_analyzer=1 << EOF
 CREATE FUNCTION wasm_raw_f32
     LANGUAGE WASM ABI ROW_DIRECT
     FROM 'identity_int_i2f' :: 'identity_raw_f32'

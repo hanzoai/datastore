@@ -4,7 +4,7 @@
 
 extern "C" {
 
-/// Transpiles SQL from a source dialect to ClickHouse SQL.
+/// Transpiles SQL from a source dialect to Datastore SQL.
 /// @param query is a pointer to the beginning of the SQL query.
 /// @param query_size is the size of the SQL query.
 /// @param source_dialect is a pointer to the beginning of the dialect name string (e.g. "sqlite", "mysql").

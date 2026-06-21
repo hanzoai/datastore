@@ -10,11 +10,11 @@ doc_type: 'reference'
 
 :::note
 XML-based Settings Profiles and [configuration files](/operations/configuration-files) are currently not 
-supported for ClickHouse Cloud. To specify settings for your ClickHouse Cloud 
+supported for Datastore Cloud. To specify settings for your Datastore Cloud 
 service, you must use [SQL-driven Settings Profiles](/operations/access-rights#settings-profiles-management).
 :::
 
-There are following main groups of ClickHouse settings:
+There are following main groups of Datastore settings:
 
 - Global server settings
 - Session settings
@@ -32,7 +32,7 @@ To view which settings have been changed from their default value you can query 
 SELECT name, value FROM system.settings WHERE changed
 ```
 
-If no settings have been changed from their default value, then ClickHouse will 
+If no settings have been changed from their default value, then Datastore will 
 return nothing.
 
 To check the value of a particular setting, you can specify the `name` of the 
@@ -55,7 +55,7 @@ Which will return something like this:
 ## Further reading {#further-reading}
 
 - See [global server settings](/operations/server-configuration-parameters/settings.md) to learn more about configuring your 
-  ClickHouse server at the global server level.
-- See [session settings](/operations/settings/settings-query-level.md) to learn more about configuring your ClickHouse 
+  Datastore server at the global server level.
+- See [session settings](/operations/settings/settings-query-level.md) to learn more about configuring your Datastore 
   server at the session level.
 - See [context hierarchy](/development/architecture.md#context) to learn more about configuration processing by Clickhouse.

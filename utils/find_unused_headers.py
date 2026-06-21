@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Find unused headers in ClickHouse source files.
+Find unused headers in Datastore source files.
 
 This script uses clang-include-cleaner to identify potentially unused headers,
 then verifies each removal by attempting to compile the file. Only headers
@@ -230,7 +230,7 @@ def find_source_files(directory: str) -> List[str]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Find unused headers in ClickHouse source files'
+        description='Find unused headers in Datastore source files'
     )
     parser.add_argument('source', help='Source file or directory to analyze')
     parser.add_argument('--build-dir', '-p', default='build',

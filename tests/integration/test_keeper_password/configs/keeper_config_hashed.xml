@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
         <client_password_sha256_hex>c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2</client_password_sha256_hex>
 
         <coordination_settings>
@@ -25,4 +25,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

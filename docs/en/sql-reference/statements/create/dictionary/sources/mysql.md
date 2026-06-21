@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/mysql
 title: 'MySQL dictionary source'
 sidebar_position: 7
 sidebar_label: 'MySQL'
-description: 'Configure MySQL as a dictionary source in ClickHouse.'
+description: 'Configure MySQL as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 
@@ -18,7 +18,7 @@ Example of settings:
 ```sql
 SOURCE(MYSQL(
     port 3306
-    user 'clickhouse'
+    user 'datastore'
     password 'qwerty'
     replica(host 'example01-1' priority 1)
     replica(host 'example01-2' priority 1)
@@ -38,7 +38,7 @@ SOURCE(MYSQL(
 <source>
   <mysql>
       <port>3306</port>
-      <user>clickhouse</user>
+      <user>datastore</user>
       <password>qwerty</password>
       <replica>
           <host>example01-1</host>
@@ -71,12 +71,12 @@ Setting fields:
 | `password` | Password of the MySQL user. You can specify it for all replicas, or for each one individually (inside `<replica>`). |
 | `replica` | Section of replica configurations. There can be multiple sections. |
 | `replica/host` | The MySQL host. |
-| `replica/priority` | The replica priority. When attempting to connect, ClickHouse traverses the replicas in order of priority. The lower the number, the higher the priority. |
+| `replica/priority` | The replica priority. When attempting to connect, Datastore traverses the replicas in order of priority. The lower the number, the higher the priority. |
 | `db` | Name of the database. |
 | `table` | Name of the table. |
 | `where` | The selection criteria. The syntax for conditions is the same as for `WHERE` clause in MySQL, for example, `id > 10 AND id < 20`. Optional. |
 | `invalidate_query` | Query for checking the dictionary status. Optional. Read more in the section [Refreshing dictionary data using LIFETIME](../lifetime.md). |
-| `fail_on_connection_loss` | Controls behavior of the server on connection loss. If `true`, an exception is thrown immediately if the connection between client and server was lost. If `false`, the ClickHouse server retries to execute the query three times before throwing an exception. Note that retrying leads to increased response times. Default value: `false`. |
+| `fail_on_connection_loss` | Controls behavior of the server on connection loss. If `true`, an exception is thrown immediately if the connection between client and server was lost. If `false`, the Datastore server retries to execute the query three times before throwing an exception. Note that retrying leads to increased response times. Default value: `false`. |
 | `query` | The custom query. Optional. |
 
 :::note
@@ -98,7 +98,7 @@ Example of settings:
 SOURCE(MYSQL(
     host 'localhost'
     socket '/path/to/socket/file.sock'
-    user 'clickhouse'
+    user 'datastore'
     password 'qwerty'
     db 'db_name'
     table 'table_name'
@@ -117,7 +117,7 @@ SOURCE(MYSQL(
   <mysql>
       <host>localhost</host>
       <socket>/path/to/socket/file.sock</socket>
-      <user>clickhouse</user>
+      <user>datastore</user>
       <password>qwerty</password>
       <db>db_name</db>
       <table>table_name</table>

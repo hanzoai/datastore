@@ -931,7 +931,7 @@ String BackupImpl::getObjectKey(const String & file_name) const
 size_t BackupImpl::copyFileToDisk(const String & file_name,
                                   DiskPtr destination_disk, const String & destination_path, WriteMode write_mode) const
 {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     String object_key = getObjectKey(file_name);
     if (!object_key.empty())
         return copyFileToDiskByObjectKey(object_key, destination_disk, destination_path, write_mode);

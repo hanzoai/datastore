@@ -114,7 +114,7 @@ def test_merge_tree_load_parts_corrupted(started_cluster):
         node.query(
             f"""
             CREATE TABLE {table} (pk UInt32, id UInt32, s String)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/{table}', '{i}') ORDER BY id PARTITION BY pk"""
+            ENGINE = ReplicatedMergeTree('/datastore/tables/0/{table}', '{i}') ORDER BY id PARTITION BY pk"""
         )
 
     """min-max blocks in created parts: 1_1_0, 2_2_0, 1_2_1, 3_3_0, 1_3_2"""
@@ -224,10 +224,10 @@ def test_merge_tree_load_parts_filesystem_error(started_cluster):
     # We want to somehow check that exception thrown on part creation is handled during part loading.
     # It can be a filesystem exception triggered at initialization of part storage but it hard
     # to trigger it because it should be an exception on stat/listDirectory.
-    # The most easy way to trigger such exception is to use chmod but clickhouse server
+    # The most easy way to trigger such exception is to use chmod but datastore server
     # is run with root user in integration test and this won't work. So let's do
     # some stupid things: create a table without adaptive granularity and change mark
-    # extensions of data files in part to make clickhouse think that it's a compact part which
+    # extensions of data files in part to make datastore think that it's a compact part which
     # cannot be created in such table. This will trigger a LOGICAL_ERROR on part creation.
 
     def corrupt_part(table, part_name):

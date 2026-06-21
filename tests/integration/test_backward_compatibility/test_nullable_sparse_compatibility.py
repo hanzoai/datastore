@@ -4,13 +4,13 @@
 
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 upstream_node = cluster.add_instance("upstream_node")
 old_node = cluster.add_instance(
     "old_node",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="25.9",
     with_installed_binary=True,
 )

@@ -1,4 +1,4 @@
-## ClickHouse performance tests
+## Datastore performance tests
 
 This directory contains `.xml`-files with performance tests.
 

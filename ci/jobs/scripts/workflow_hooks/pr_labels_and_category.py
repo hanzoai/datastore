@@ -210,13 +210,13 @@ def get_category(pr_body: str) -> Tuple[str, str]:
             i += 1
 
     if not category:
-        if "Reverts ClickHouse/" in pr_body:
+        if "Reverts Datastore/" in pr_body:
             return "", LABEL_CATEGORIES["pr-not-for-changelog"][0]
         return "Change category is missing or invalid", ""
 
     matched, _label = find_category(category)
     if matched is None:
-        if "Reverts ClickHouse/" in pr_body:
+        if "Reverts Datastore/" in pr_body:
             return "", LABEL_CATEGORIES["pr-not-for-changelog"][0]
         return f"Change category is missing or invalid: '{category}'", ""
 

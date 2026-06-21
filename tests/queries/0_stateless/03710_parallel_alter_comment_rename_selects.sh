@@ -13,9 +13,9 @@ THREADS_PER_JOB=${THREADS_PER_JOB:-4}
 PRINT_LOGS=${PRINT_LOGS:-0}
 QUERY_TIMEOUT=${QUERY_TIMEOUT:-30}
 
-# clickhouse-client sometimes hangs forever along with the server despite of timeout settings, so we use the timeout util here.
-CLICKHOUSE_CLIENT="timeout $QUERY_TIMEOUT $CLICKHOUSE_CLIENT"
-CLICKHOUSE_DATABASE_TEST="${CLICKHOUSE_DATABASE}_03710_parallel_alter_comment_rename_selects"
+# datastore-client sometimes hangs forever along with the server despite of timeout settings, so we use the timeout util here.
+DATASTORE_CLIENT="timeout $QUERY_TIMEOUT $DATASTORE_CLIENT"
+DATASTORE_DATABASE_TEST="${DATASTORE_DATABASE}_03710_parallel_alter_comment_rename_selects"
 
 
 log() {
@@ -33,9 +33,9 @@ cleanup() {
 
   log "Deleting databases..."
   local rc2=0
-  $CLICKHOUSE_CLIENT -q "
-    DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE_TEST};
-    DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE_TEST}_2;
+  $DATASTORE_CLIENT -q "
+    DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_TEST};
+    DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_TEST}_2;
   " || rc2=$?
   if (( rc2 != 0 )); then
     echo "❌ Failed to delete databases: code $rc2"
@@ -51,7 +51,7 @@ trap cleanup EXIT
 test_query() {
   local rc=0 output
   start_ns=$(date +%s%N)
-  output=$($CLICKHOUSE_CLIENT -q "$@" 2>&1) || rc=$?
+  output=$($DATASTORE_CLIENT -q "$@" 2>&1) || rc=$?
 
   if (( rc == 0 || rc == 81 )); then
       sleep "$(printf "0.0%02d\n" $((RANDOM % 30 + 1)))" # 1-30ms
@@ -71,8 +71,8 @@ test_query() {
 run_rename_thread() {
   log "❕ Rename thread $1 started with PID $BASHPID"
   for i in $(seq 1 "$RUNS"); do
-    test_query "RENAME DATABASE ${CLICKHOUSE_DATABASE_TEST}   TO ${CLICKHOUSE_DATABASE_TEST}_2 -- thread $1"
-    test_query "RENAME DATABASE ${CLICKHOUSE_DATABASE_TEST}_2 TO ${CLICKHOUSE_DATABASE_TEST}   -- thread $1"
+    test_query "RENAME DATABASE ${DATASTORE_DATABASE_TEST}   TO ${DATASTORE_DATABASE_TEST}_2 -- thread $1"
+    test_query "RENAME DATABASE ${DATASTORE_DATABASE_TEST}_2 TO ${DATASTORE_DATABASE_TEST}   -- thread $1"
     (( i % 1000 == 0 )) && log "Rename thread $1: processed $i queries"
   done
   log "✅ Rename thread $1 finished"
@@ -81,8 +81,8 @@ run_rename_thread() {
 run_alter_comment_thread() {
   log "❕ Alter comment thread $1 started with PID $BASHPID"
   for i in $(seq 1 "$RUNS"); do
-    test_query "ALTER DATABASE ${CLICKHOUSE_DATABASE_TEST}   MODIFY COMMENT 'comment1_${1}_${i} -- thread $1'"
-    test_query "ALTER DATABASE ${CLICKHOUSE_DATABASE_TEST}_2 MODIFY COMMENT 'comment2_${1}_${i}  -- thread $1'"
+    test_query "ALTER DATABASE ${DATASTORE_DATABASE_TEST}   MODIFY COMMENT 'comment1_${1}_${i} -- thread $1'"
+    test_query "ALTER DATABASE ${DATASTORE_DATABASE_TEST}_2 MODIFY COMMENT 'comment2_${1}_${i}  -- thread $1'"
     (( i % 1000 == 0 )) && log "Alter comment thread $1: processed $i queries"
   done
   log "✅ Alter comment thread $1 finished"
@@ -102,11 +102,11 @@ run_selects_thread() {
 run_for_engine() {
   log "⚙️ Creating database with Engine=$1"
   test_query "
-    DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE_TEST};
-    DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE_TEST}_2;
-    CREATE DATABASE ${CLICKHOUSE_DATABASE_TEST} ENGINE=${1}${2};
+    DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_TEST};
+    DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_TEST}_2;
+    CREATE DATABASE ${DATASTORE_DATABASE_TEST} ENGINE=${1}${2};
   "
-  log "⚙️ Created database ${CLICKHOUSE_DATABASE_TEST}"
+  log "⚙️ Created database ${DATASTORE_DATABASE_TEST}"
   log "⚙️ Will execute $RUNS runs, $THREADS_PER_JOB threads per job."
 
   log "⚙️ Starting threads..."
@@ -126,4 +126,4 @@ run_for_engine() {
 
 
 run_for_engine "Atomic" ""
-run_for_engine "Replicated" "('/clickhouse/databases/${CLICKHOUSE_TEST_ZOOKEEPER_PREFIX}/${CLICKHOUSE_DATABASE}_db', '{shard}', '{replica}')"
+run_for_engine "Replicated" "('/datastore/databases/${DATASTORE_TEST_ZOOKEEPER_PREFIX}/${DATASTORE_DATABASE}_db', '{shard}', '{replica}')"

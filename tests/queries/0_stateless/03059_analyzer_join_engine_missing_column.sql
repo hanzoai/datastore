@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/17710
+-- https://github.com/ClickHouse/Datastore/issues/17710
 SET enable_analyzer=1;
 CREATE TABLE id_val(id UInt32, val UInt32) ENGINE = Memory;
 CREATE TABLE id_val_join0(id UInt32, val UInt8) ENGINE = Join(ANY, LEFT, id) SETTINGS join_use_nulls = 0;

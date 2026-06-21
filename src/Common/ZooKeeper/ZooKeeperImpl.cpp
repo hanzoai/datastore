@@ -123,7 +123,7 @@ namespace
 /** ZooKeeper wire protocol.
 
 Debugging example:
-strace -t -f -e trace=network -s1000 -x ./clickhouse-zookeeper-cli localhost:2181
+strace -t -f -e trace=network -s1000 -x ./datastore-zookeeper-cli localhost:2181
 
 All numbers are in network byte order (big endian). Sizes are 32 bit. Numbers are signed.
 
@@ -715,7 +715,7 @@ void ZooKeeper::receiveHandshake()
 
     /// Special way to tell a client that server is not ready to serve it.
     /// It's better for faster failover than just connection drop.
-    /// Implemented in clickhouse-keeper.
+    /// Implemented in datastore-keeper.
     if (protocol_version_read == KEEPER_PROTOCOL_VERSION_CONNECTION_REJECT)
         throw Exception::fromMessage(Error::ZCONNECTIONLOSS,
                                      "Keeper server rejected the connection during the handshake. "

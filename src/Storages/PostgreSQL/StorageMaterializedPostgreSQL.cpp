@@ -213,7 +213,7 @@ void StorageMaterializedPostgreSQL::createNestedIfNeeded(PostgreSQLTableStructur
         const auto ast_create = getCreateNestedTableQuery(std::move(table_structure), table_override);
         auto table_id = getStorageID();
         auto tmp_nested_table_id = StorageID(table_id.database_name, getNestedTableName());
-        LOG_DEBUG(log, "Creating clickhouse table for postgresql table {} (ast: {})",
+        LOG_DEBUG(log, "Creating datastore table for postgresql table {} (ast: {})",
                   table_id.getNameForLogs(), ast_create->formatForLogging());
 
         InterpreterCreateQuery interpreter(ast_create, nested_context);

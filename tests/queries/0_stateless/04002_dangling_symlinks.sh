@@ -13,6 +13,6 @@ mkdir -p $DATA_DIR
 echo "data" >> ${DATA_DIR}/good.txt
 ln -s ${DATA_DIR}/that_does_not_exist ${DATA_DIR}/broken_link
 
-$CLICKHOUSE_CLIENT -q "SELECT * FROM file('$DATA_DIR/**', 'LineAsString')"
+$DATASTORE_CLIENT -q "SELECT * FROM file('$DATA_DIR/**', 'LineAsString')"
 
 rm -rf $DATA_DIR

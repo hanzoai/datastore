@@ -19,9 +19,9 @@ doc_type: 'reference'
 
 ## Data types matching {#data-types-matching-orc}
 
-The table below compares supported ORC data types and their corresponding ClickHouse [data types](/sql-reference/data-types/index.md) in `INSERT` and `SELECT` queries.
+The table below compares supported ORC data types and their corresponding Datastore [data types](/sql-reference/data-types/index.md) in `INSERT` and `SELECT` queries.
 
-| ORC data type (`INSERT`)              | ClickHouse data type                                                                                              | ORC data type (`SELECT`) |
+| ORC data type (`INSERT`)              | Datastore data type                                                                                              | ORC data type (`SELECT`) |
 |---------------------------------------|-------------------------------------------------------------------------------------------------------------------|--------------------------|
 | `Boolean`                             | [UInt8](/sql-reference/data-types/int-uint.md)                                                            | `Boolean`                |
 | `Tinyint`                             | [Int8/UInt8](/sql-reference/data-types/int-uint.md)/[Enum8](/sql-reference/data-types/enum.md)    | `Tinyint`                |
@@ -44,7 +44,7 @@ The table below compares supported ORC data types and their corresponding ClickH
 
 - Other types are not supported.
 - Arrays can be nested and can have a value of the `Nullable` type as an argument. `Tuple` and `Map` types also can be nested.
-- The data types of ClickHouse table columns do not have to match the corresponding ORC data fields. When inserting data, ClickHouse interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to the data type set for the ClickHouse table column.
+- The data types of Datastore table columns do not have to match the corresponding ORC data fields. When inserting data, Datastore interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to the data type set for the Datastore table column.
 
 ## Example usage {#example-usage}
 
@@ -101,7 +101,7 @@ ORC is a binary format that does not display in a human-readable form on the ter
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|---------|
 | [`output_format_arrow_string_as_string`](/operations/settings/settings-formats.md/#output_format_arrow_string_as_string)                                                                             | Use Arrow String type instead of Binary for String columns.                            | `false` |
 | [`output_format_orc_compression_method`](/operations/settings/settings-formats.md/#output_format_orc_compression_method)                                                                             | Compression method used in output ORC format. Default value                            | `none`  |
-| [`input_format_arrow_case_insensitive_column_matching`](/operations/settings/settings-formats.md/#input_format_arrow_case_insensitive_column_matching)                                               | Ignore case when matching Arrow columns with ClickHouse columns.                       | `false` |
+| [`input_format_arrow_case_insensitive_column_matching`](/operations/settings/settings-formats.md/#input_format_arrow_case_insensitive_column_matching)                                               | Ignore case when matching Arrow columns with Datastore columns.                       | `false` |
 | [`input_format_arrow_allow_missing_columns`](/operations/settings/settings-formats.md/#input_format_arrow_allow_missing_columns)                                                                     | Allow missing columns while reading Arrow data.                                        | `false` |
 | [`input_format_arrow_skip_columns_with_unsupported_types_in_schema_inference`](/operations/settings/settings-formats.md/#input_format_arrow_skip_columns_with_unsupported_types_in_schema_inference) | Allow skipping columns with unsupported types while schema inference for Arrow format. | `false` |
 

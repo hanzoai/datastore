@@ -29,9 +29,9 @@ Encodes a string using [Base64](https://datatracker.ietf.org/doc/html/rfc4648#se
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT base64URLEncode('https://clickhouse.com')",
+        "SELECT base64URLEncode('https://datastore.com')",
         R"(
-┌─base64URLEncode('https://clickhouse.com')─┐
+┌─base64URLEncode('https://datastore.com')─┐
 │ aHR0cHM6Ly9jbGlja2hvdXNlLmNvbQ            │
 └───────────────────────────────────────────┘
         )"

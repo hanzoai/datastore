@@ -21,7 +21,7 @@ def started_cluster():
         cluster.shutdown()
 
 
-# Regression test for https://github.com/ClickHouse/ClickHouse/issues/98665
+# Regression test for https://github.com/ClickHouse/Datastore/issues/98665
 def test_ttl_to_wrapped_by_cache_disk(started_cluster):
     try:
         node.query(

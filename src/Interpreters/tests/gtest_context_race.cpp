@@ -110,7 +110,7 @@ TEST(Context, GetAccessRace)
 /// and TSan reported a data race against the writer's `emplace`. With the fix
 /// the copy of `table_function_results` happens under that mutex.
 ///
-/// See issue ClickHouse/ClickHouse#104807 (STID 1003-358c).
+/// See issue Datastore/Datastore#104807 (STID 1003-358c).
 TEST(Context, TableFunctionResultsCopyRace)
 {
     auto context = Context::createCopy(getContext().context);
@@ -191,7 +191,7 @@ TEST(Context, SetClustersConfigAfterReloadClusterConfig)
     /// Now simulate the first ConfigReloader pass calling setClustersConfig().
     /// Without the fix this throws Poco::NullPointerException because shared->clusters
     /// is non-null but shared->clusters_config is still null.
-    std::istringstream config_stream{"<clickhouse><remote_servers/></clickhouse>"};
+    std::istringstream config_stream{"<datastore><remote_servers/></datastore>"};
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(config_stream);
     ASSERT_NO_THROW(context->setClustersConfig(config, /*enable_discovery=*/false));
 

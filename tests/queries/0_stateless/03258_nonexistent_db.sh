@@ -10,4 +10,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # can occasionally exceed 5 s under parallel test load. Raising to 60 s keeps
 # the test fast on happy paths and short enough to catch a real hang, while
 # preserving coverage of this client code path.
-timeout 60 ${CLICKHOUSE_CLIENT_BINARY} --database "nonexistent" 2>&1 | grep -o "UNKNOWN_DATABASE" && echo "OK" || echo "FAIL"
+timeout 60 ${DATASTORE_CLIENT_BINARY} --database "nonexistent" 2>&1 | grep -o "UNKNOWN_DATABASE" && echo "OK" || echo "FAIL"

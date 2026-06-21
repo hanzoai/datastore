@@ -15,23 +15,23 @@ for option in "${options[@]}"; do
     # the first one will be processed completelly (i.e. record to query_log
     # will be added)
     urls=(
-        "${CLICKHOUSE_URL}&query_id=$CLICKHOUSE_TEST_UNIQUE_NAME-$option&$option&query=SELECT+1+FORMAT+RowBinary"
-        "${CLICKHOUSE_URL}&query_id=secondary-$CLICKHOUSE_TEST_UNIQUE_NAME-$option&$option&query=SELECT+2+FORMAT+RowBinary"
+        "${DATASTORE_URL}&query_id=$DATASTORE_TEST_UNIQUE_NAME-$option&$option&query=SELECT+1+FORMAT+RowBinary"
+        "${DATASTORE_URL}&query_id=secondary-$DATASTORE_TEST_UNIQUE_NAME-$option&$option&query=SELECT+2+FORMAT+RowBinary"
     )
-    ${CLICKHOUSE_CURL} -sS "${urls[@]}" > /dev/null
+    ${DATASTORE_CURL} -sS "${urls[@]}" > /dev/null
 done
 
 # Wait for all HTTP queries to appear in query_log.
 # There is a race between HTTP response being sent and the query_log entry being written.
 for _ in $(seq 1 60); do
-    $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS system.query_log"
-    count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$CLICKHOUSE_DATABASE' AND query_id LIKE '$CLICKHOUSE_TEST_UNIQUE_NAME%' AND type != 'QueryStart'")
+    $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS system.query_log"
+    count=$($DATASTORE_CLIENT -q "SELECT count() FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$DATASTORE_DATABASE' AND query_id LIKE '$DATASTORE_TEST_UNIQUE_NAME%' AND type != 'QueryStart'")
     [ "$count" -ge 4 ] && break
     sleep 0.5
 done
-$CLICKHOUSE_CLIENT -q "
-    SELECT formatQuerySingleLine(query), replace(query_id, '$CLICKHOUSE_TEST_UNIQUE_NAME-', ''), ProfileEvents['NetworkSendBytes'] > 0
+$DATASTORE_CLIENT -q "
+    SELECT formatQuerySingleLine(query), replace(query_id, '$DATASTORE_TEST_UNIQUE_NAME-', ''), ProfileEvents['NetworkSendBytes'] > 0
     FROM system.query_log
-    WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$CLICKHOUSE_DATABASE' AND query_id LIKE '$CLICKHOUSE_TEST_UNIQUE_NAME%' AND type != 'QueryStart'
+    WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$DATASTORE_DATABASE' AND query_id LIKE '$DATASTORE_TEST_UNIQUE_NAME%' AND type != 'QueryStart'
     ORDER BY event_time_microseconds
 "

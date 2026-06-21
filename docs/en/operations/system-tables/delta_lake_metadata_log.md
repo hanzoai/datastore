@@ -13,9 +13,9 @@ import SystemTableCloud from '@site/docs/_snippets/_system_table_cloud.md';
 
 ## Description {#purpose}
 
-The `system.delta_lake_metadata_log` table records metadata access and parsing events for Delta Lake tables read by ClickHouse. It provides detailed information about each metadata file, which is useful for debugging, auditing, and understanding Delta table structure evolution.
+The `system.delta_lake_metadata_log` table records metadata access and parsing events for Delta Lake tables read by Datastore. It provides detailed information about each metadata file, which is useful for debugging, auditing, and understanding Delta table structure evolution.
 
-This table logs every metadata file read from Delta Lake tables. It helps users trace how ClickHouse interprets Delta table metadata and diagnose issues related to schema evolution, snapshot resolution, or query planning.
+This table logs every metadata file read from Delta Lake tables. It helps users trace how Datastore interprets Delta table metadata and diagnose issues related to schema evolution, snapshot resolution, or query planning.
 
 :::note
 This table is primarily intended for debugging purposes.

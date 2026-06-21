@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.test_tools import TSV
 
 cluster = ClickHouseCluster(__file__)
@@ -21,8 +21,8 @@ node2 = cluster.add_instance(
 node3 = cluster.add_instance(
     "node3",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
@@ -116,11 +116,11 @@ def test_lwu_replicated_database(started_cluster, db_engine, table_engine):
 def test_lwu_upgrade(started_cluster, table_engine):
     node3.query("DROP TABLE IF EXISTS lwu_table_upgrade SYNC")
 
-    if CLICKHOUSE_CI_MIN_TESTED_VERSION not in node3.query("select version()").strip():
+    if DATASTORE_CI_MIN_TESTED_VERSION not in node3.query("select version()").strip():
         node3.restart_with_original_version(clear_data_dir=True)
 
     node3.query(
-        f"CREATE TABLE lwu_table_upgrade (x Int32, y String) ENGINE = {table_engine}('/test/clickhouse/default/lwu_table_upgrade', '1') ORDER BY x"
+        f"CREATE TABLE lwu_table_upgrade (x Int32, y String) ENGINE = {table_engine}('/test/datastore/default/lwu_table_upgrade', '1') ORDER BY x"
     )
     node3.query(
         "INSERT INTO lwu_table_upgrade SELECT number, 'v' || toString(number) FROM numbers(100000)"

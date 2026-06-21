@@ -32,6 +32,6 @@ Row 1:
 database:                   base
 table:                      t1
 uuid:                       81b1c20a-b7c6-4116-a2ce-7583fb6b6736
-metadata_path:              /var/lib/clickhouse/store/461/461cf698-fd0b-406d-8c01-5d8fd5748a91/t1.sql
+metadata_path:              /var/lib/datastore/store/461/461cf698-fd0b-406d-8c01-5d8fd5748a91/t1.sql
 is_permanently:             1
 ```

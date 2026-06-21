@@ -33,7 +33,7 @@ def started_cluster():
 
         copy_file_to_container(
             os.path.join(SCRIPT_DIR, "user_scripts/."),
-            "/var/lib/clickhouse/user_scripts",
+            "/var/lib/datastore/user_scripts",
             node.docker_id,
         )
         node.restart_clickhouse()

@@ -1,7 +1,7 @@
 -- Tags: no-parallel
 -- Test: exercises `User::setName` reserved-name check for the JWT_AUTHENTICAION_MARKER prefix.
 -- Covers: src/Access/User.cpp:36-37 - name_.starts_with(EncodedUserInfo::JWT_AUTHENTICAION_MARKER)
--- The marker " JWT AUTHENTICATION " (Core/Protocol.h:67) is sent by clickhouse-client as the
+-- The marker " JWT AUTHENTICATION " (Core/Protocol.h:67) is sent by datastore-client as the
 -- "user name" on the wire to signal JWT authentication. Allowing a real user to be created with
 -- this name prefix would create a collision in the native protocol handshake (the same reason
 -- USER_INTERSERVER_MARKER is reserved, already covered by 01119_weird_user_names.sql).

@@ -114,7 +114,7 @@ CREATE TABLE tab (id UInt64, message String) ENGINE = MergeTree() ORDER BY id;
 INSERT INTO tab VALUES
     (1, 'the quick brown fox jumps over the lazy dog'),
     (2, 'a fast red car drove past the old house'),
-    (3, 'clickhouse is a fast analytical database'),
+    (3, 'datastore is a fast analytical database'),
     (4, 'the brown quick fox'),
     (5, 'quick brown foxes are fast');
 

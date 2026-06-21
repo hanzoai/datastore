@@ -214,7 +214,7 @@ The `SHOW COLUMNS` statement produces a result table with the following structur
 | `key`       | `PRI` if the column is part of the primary key, `SOR` if the column is part of the sorting key, empty otherwise               | `String`           |
 | `default`   | Default expression of the column if it is of type `ALIAS`, `DEFAULT`, or `MATERIALIZED`, otherwise `NULL`.                    | `Nullable(String)` |
 | `extra`     | Additional information, currently unused                                                                                      | `String`           |
-| `collation` | (only if `FULL` keyword was specified) Collation of the column, always `NULL` because ClickHouse has no per-column collations | `Nullable(String)` |
+| `collation` | (only if `FULL` keyword was specified) Collation of the column, always `NULL` because Datastore has no per-column collations | `Nullable(String)` |
 | `comment`   | (only if `FULL` keyword was specified) Comment on the column                                                                  | `String`           |
 | `privilege` | (only if `FULL` keyword was specified) The privilege you have on this column, currently not available                         | `String`           |
 
@@ -277,7 +277,7 @@ Displays a list of primary and data skipping indexes of a table.
 
 This statement mostly exists for compatibility with MySQL. System tables [`system.tables`](../../operations/system-tables/tables.md) (for
 primary keys) and [`system.data_skipping_indices`](../../operations/system-tables/data_skipping_indices.md) (for data skipping indices)
-provide equivalent information but in a fashion more native to ClickHouse.
+provide equivalent information but in a fashion more native to Datastore.
 
 ### Syntax {#syntax-5}
 
@@ -295,18 +295,18 @@ The statement produces a result table with the following structure:
 | Column          | Description                                                                                                              | Type               |
 |-----------------|--------------------------------------------------------------------------------------------------------------------------|--------------------|
 | `table`         | The name of the table.                                                                                                   | `String`           |
-| `non_unique`    | Always `1` as ClickHouse does not support uniqueness constraints.                                                        | `UInt8`            |
+| `non_unique`    | Always `1` as Datastore does not support uniqueness constraints.                                                        | `UInt8`            |
 | `key_name`      | The name of the index, `PRIMARY` if the index is a primary key index.                                                    | `String`           |
 | `seq_in_index`  | For a primary key index, the position of the column starting from `1`. For a data skipping index: always `1`.            | `UInt8`            |
 | `column_name`   | For a primary key index, the name of the column. For a data skipping index: `''` (empty string), see field "expression". | `String`           |
 | `collation`     | The sorting of the column in the index: `A` if ascending, `D` if descending, `NULL` if unsorted.                         | `Nullable(String)` |
 | `cardinality`   | An estimation of the index cardinality (number of unique values in the index). Currently always 0.                       | `UInt64`           |
-| `sub_part`      | Always `NULL` because ClickHouse does not support index prefixes like MySQL.                                             | `Nullable(String)` |
-| `packed`        | Always `NULL` because ClickHouse does not support packed indexes (like MySQL).                                           | `Nullable(String)` |
+| `sub_part`      | Always `NULL` because Datastore does not support index prefixes like MySQL.                                             | `Nullable(String)` |
+| `packed`        | Always `NULL` because Datastore does not support packed indexes (like MySQL).                                           | `Nullable(String)` |
 | `null`          | Currently unused                                                                                                         |                    |
 | `index_type`    | The index type, e.g. `PRIMARY`, `MINMAX`, `BLOOM_FILTER` etc.                                                            | `String`           |
 | `comment`       | Additional information about the index, currently always `''` (empty string).                                            | `String`           |
-| `index_comment` | `''` (empty string) because indexes in ClickHouse cannot have a `COMMENT` field (like in MySQL).                         | `String`           |
+| `index_comment` | `''` (empty string) because indexes in Datastore cannot have a `COMMENT` field (like in MySQL).                         | `String`           |
 | `visible`       | If the index is visible to the optimizer, always `YES`.                                                                  | `String`           |
 | `expression`    | For a data skipping index, the index expression. For a primary key index: `''` (empty string).                           | `String`           |
 
@@ -350,7 +350,7 @@ The `SELECT * FROM system.processes` query returns data about all the current qu
 Execute in the console:
 
 ```bash
-$ watch -n1 "clickhouse-client --query='SHOW PROCESSLIST'"
+$ watch -n1 "datastore-client --query='SHOW PROCESSLIST'"
 ```
 :::
 

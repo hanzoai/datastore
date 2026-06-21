@@ -9,13 +9,13 @@ DROP TABLE IF EXISTS r2 SYNC;
 CREATE TABLE r1 (
     key UInt64, value String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/01509_parallel_quorum_insert_no_replicas', '1')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/01509_parallel_quorum_insert_no_replicas', '1')
 ORDER BY tuple();
 
 CREATE TABLE r2 (
     key UInt64, value String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/01509_parallel_quorum_insert_no_replicas', '2')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/01509_parallel_quorum_insert_no_replicas', '2')
 ORDER BY tuple();
 
 SET insert_quorum_parallel=1;

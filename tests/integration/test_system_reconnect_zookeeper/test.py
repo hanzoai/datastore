@@ -28,7 +28,7 @@ def get_zk_connected_time(instance):
 def test_system_reconnect_zookeeper(start_cluster):
     instance.query("DROP TABLE IF EXISTS simple SYNC;")
     instance.query(
-        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', 'instance') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', 'instance') ORDER BY tuple() PARTITION BY date;"
     )
 
     old_zk_connected_time = get_zk_connected_time(instance)

@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- Tag no-fasttest: Depends on AWS
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/84707
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/84707
 -- ORC library requires rangeSizeLimit > holeSizeLimit.
 -- When remote_read_min_bytes_for_seek >= 10MB (the hardcoded rangeSizeLimit),
 -- the assertion in coalesceReadRanges was violated.

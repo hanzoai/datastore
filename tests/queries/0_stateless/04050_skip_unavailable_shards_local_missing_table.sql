@@ -2,7 +2,7 @@
 
 -- Test that skip_unavailable_shards skips local shards with missing tables
 -- but still throws when all shards end up being skipped.
--- https://github.com/ClickHouse/ClickHouse/issues/100134
+-- https://github.com/ClickHouse/Datastore/issues/100134
 
 DROP TABLE IF EXISTS dist_04050;
 DROP TABLE IF EXISTS dist_04050_two_shards;
@@ -20,7 +20,7 @@ SELECT * FROM dist_04050 SETTINGS skip_unavailable_shards = 1, prefer_localhost_
 -- Two-shard cluster where the local table is missing on both shards; the skip path must honour
 -- max_skip_unavailable_shards_num / max_skip_unavailable_shards_ratio.
 -- Use the cluster whose shards both resolve to `localhost` so each shard is detected as local
--- (`127.0.0.{2..255}` is intentionally not treated as a local address by ClickHouse, see
+-- (`127.0.0.{2..255}` is intentionally not treated as a local address by Datastore, see
 -- `isLocalAddress.cpp`, which would route the second shard through the remote path instead).
 CREATE TABLE dist_04050_two_shards (x UInt32)
 ENGINE = Distributed(test_cluster_two_shards_localhost, currentDatabase(), non_existent_table_04050);

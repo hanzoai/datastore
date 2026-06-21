@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT"
+format="$DATASTORE_FORMAT"
 
 echo "select 1 format CSV settings max_execution_time = 0.001" | $format
 echo "select 1 settings max_execution_time = 0.001 format CSV" | $format

@@ -117,12 +117,12 @@ def get_run_command(
         # azurite-rs (in-process Azure Blob Storage emulator) needs many fds under parallel load
         "--ulimit nofile=1048576:1048576 "
         # a static link, don't use S3_URL or S3_DOWNLOAD
-        "-e S3_URL='https://s3.amazonaws.com/clickhouse-datasets' "
-        "--tmpfs /tmp/clickhouse:mode=1777 "
+        "-e S3_URL='https://s3.amazonaws.com/datastore-datasets' "
+        "--tmpfs /tmp/datastore:mode=1777 "
         f"--volume={build_path}:/package_folder "
         f"--volume={result_path}:/test_output "
         f"--volume={repo_tests_path}/..:/repo "
-        f"--volume={server_log_path}:/var/log/clickhouse-server "
+        f"--volume={server_log_path}:/var/log/datastore-server "
         f"--volume={cores_path}:/cores "
         f"{env_str} {image} {run_script}"
     )
@@ -179,7 +179,7 @@ def run_stress_test(upgrade_check: bool = False) -> None:
 
     packages_path = temp_path
 
-    docker_image = DockerImage.get_docker_image("clickhouse/stress-test").pull_image()
+    docker_image = DockerImage.get_docker_image("datastore/stress-test").pull_image()
 
     server_log_path = temp_path / "server_log"
     server_log_path.mkdir(parents=True, exist_ok=True)
@@ -222,7 +222,7 @@ def run_stress_test(upgrade_check: bool = False) -> None:
     if server_log_path.exists():
         server_log_oom = Shell.check(
             f"rg -Fqa ' <Fatal> Application: Child process was terminated by signal 9' "
-            f"{server_log_path}/clickhouse-server*.log"
+            f"{server_log_path}/datastore-server*.log"
         )
         is_oom = is_oom or server_log_oom
 
@@ -230,7 +230,7 @@ def run_stress_test(upgrade_check: bool = False) -> None:
     fatal_log = result_path / "fatal.log"
     if server_log_path.exists():
         Shell.check(
-            f"rg --text '\\s<Fatal>\\s' {server_log_path}/clickhouse-server*.log > {fatal_log}"
+            f"rg --text '\\s<Fatal>\\s' {server_log_path}/datastore-server*.log > {fatal_log}"
         )
 
     test_results, additional_logs = process_results(result_path, server_log_path)
@@ -264,7 +264,7 @@ def run_stress_test(upgrade_check: bool = False) -> None:
                 replica_log_pairs.append(("main", log_file, main_stderr))
 
         for sc in ("sc1", "sc2"):
-            sc_server_log = server_log_path / f"clickhouse-server-{sc}.err.log"
+            sc_server_log = server_log_path / f"datastore-server-{sc}.err.log"
             sc_stderr = result_path / f"stderr-{sc}.log"
             if sc_server_log.exists():
                 replica_log_pairs.append((sc, sc_server_log, sc_stderr))

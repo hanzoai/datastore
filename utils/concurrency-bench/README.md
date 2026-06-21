@@ -1,15 +1,15 @@
 # Concurrency Stress Testing Tools
 
-A small toolkit for stress-testing concurrency-related features in ClickHouse. It runs `clickhouse-bench` for each query while increasing the number of concurrent clients from 1 to 32. This helps evaluate scheduling- and concurrency-related changes.
+A small toolkit for stress-testing concurrency-related features in Datastore. It runs `datastore-bench` for each query while increasing the number of concurrent clients from 1 to 32. This helps evaluate scheduling- and concurrency-related changes.
 
 ## Prerequisites
-- ClickHouse server running and accessible.
-- `clickhouse-bench` and `clickhouse-client` available in PATH.
+- Datastore server running and accessible.
+- `datastore-bench` and `datastore-client` available in PATH.
 - Bash and Python 3 (for the log-to-JSON converter).
 - This directory contains: `run.sh`, `queries.txt`, `logs2json.py`, and `index.html`.
 
 ## Testing procedure
-1. Start the ClickHouse server and set up any concurrency features you want to test.
+1. Start the Datastore server and set up any concurrency features you want to test.
 2. Prepare `queries.txt`. The file is semicolon-separated with two columns:
    - Column 1: test duration per concurrency level in seconds.
    - Column 2: SQL query to test.

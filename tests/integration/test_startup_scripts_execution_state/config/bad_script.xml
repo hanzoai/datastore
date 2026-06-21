@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <startup_scripts>
         <throw_on_error>false</throw_on_error>
         <scripts>
@@ -8,4 +8,4 @@
             <query>SELECT * FROM non_existent_table;</query>
         </scripts>
     </startup_scripts>
-</clickhouse>
+</datastore>

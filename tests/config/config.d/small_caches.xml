@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Setup all caches to 128MB to consume less memory and test eviction -->
     <uncompressed_cache_size>134217728</uncompressed_cache_size>
     <mark_cache_size>134217728</mark_cache_size>
@@ -11,4 +11,4 @@
       <max_size_in_bytes>134217728</max_size_in_bytes>
     </query_cache>
     <compiled_expression_cache_size>134217728</compiled_expression_cache_size>
-</clickhouse>
+</datastore>

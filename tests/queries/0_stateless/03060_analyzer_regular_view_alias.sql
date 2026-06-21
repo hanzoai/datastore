@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/11068
+-- https://github.com/ClickHouse/Datastore/issues/11068
 SET enable_analyzer=1;
 create table vt(datetime_value DateTime, value Float64) Engine=Memory;
 

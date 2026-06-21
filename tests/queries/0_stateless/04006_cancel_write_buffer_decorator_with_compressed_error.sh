@@ -18,8 +18,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # compression encodings. The server must return an error without crashing.
 for encoding in lz4 gzip zstd br deflate; do
     # Use -o /dev/null to discard compressed body, check HTTP status code
-    http_code=$(${CLICKHOUSE_CURL} -sS -o /dev/null -w "%{http_code}" \
-        "${CLICKHOUSE_URL}&enable_http_compression=1" \
+    http_code=$(${DATASTORE_CURL} -sS -o /dev/null -w "%{http_code}" \
+        "${DATASTORE_URL}&enable_http_compression=1" \
         -H "Accept-Encoding: $encoding" \
         -d "SELECT negate('not a number')")
 
@@ -32,4 +32,4 @@ for encoding in lz4 gzip zstd br deflate; do
 done
 
 # Verify server is still alive after all the error queries with compression
-${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d "SELECT 'alive'"
+${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d "SELECT 'alive'"

@@ -6,12 +6,12 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-user1="user02884_1_${CLICKHOUSE_DATABASE}_$RANDOM"
-user2="user02884_2_${CLICKHOUSE_DATABASE}_$RANDOM"
-user3="user02884_3_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user1="user02884_1_${DATASTORE_DATABASE}_$RANDOM"
+user2="user02884_2_${DATASTORE_DATABASE}_$RANDOM"
+user3="user02884_3_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.test_table (s String) ENGINE = MergeTree ORDER BY s;
 
 DROP USER IF EXISTS $user1, $user2, $user3;
@@ -20,7 +20,7 @@ GRANT SELECT ON $db.* TO $user1;
 EOF
 
 echo "===== StorageView ====="
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE VIEW $db.test_view_1 (s String)
 AS SELECT * FROM $db.test_table;
 
@@ -65,10 +65,10 @@ AS SELECT * FROM $db.test_table
 WHERE s = {param_id:String};
 EOF
 
-(( $(${CLICKHOUSE_CLIENT} --query "SHOW TABLE $db.test_view_5" 2>&1 | grep -c "INVOKER") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-(( $(${CLICKHOUSE_CLIENT} --query "SHOW TABLE $db.test_view_2" 2>&1 | grep -c "DEFINER = $user1") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --query "SHOW TABLE $db.test_view_5" 2>&1 | grep -c "INVOKER") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --query "SHOW TABLE $db.test_view_2" 2>&1 | grep -c "DEFINER = $user1") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 GRANT SELECT ON $db.test_view_1 TO $user2;
 GRANT SELECT ON $db.test_view_2 TO $user2;
 GRANT SELECT ON $db.test_view_3 TO $user2;
@@ -82,28 +82,28 @@ GRANT SELECT ON $db.test_view_10 TO $user2;
 GRANT SELECT ON $db.test_view_11 TO $user2;
 EOF
 
-${CLICKHOUSE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');"
+${DATASTORE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');"
 
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_1" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_2"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_3"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_4" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_5" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_6"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_7"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_8" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_9"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_10"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_11(param_id='foo')"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_1" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_2"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_3"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_4" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_5" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_6"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_7"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_8" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_9"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_10"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_view_11(param_id='foo')"
 
-${CLICKHOUSE_CLIENT} --query "ALTER TABLE $db.test_view_10 MODIFY SQL SECURITY INVOKER"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_10" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-${CLICKHOUSE_CLIENT} --query "SHOW CREATE TABLE $db.test_view_10" | grep -c "SQL SECURITY INVOKER"
+${DATASTORE_CLIENT} --query "ALTER TABLE $db.test_view_10 MODIFY SQL SECURITY INVOKER"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_10" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+${DATASTORE_CLIENT} --query "SHOW CREATE TABLE $db.test_view_10" | grep -c "SQL SECURITY INVOKER"
 
 
 echo "===== MaterializedView ====="
 echo "create test_mv_1"
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
   CREATE MATERIALIZED VIEW $db.test_mv_1 (s String)
   ENGINE = MergeTree ORDER BY s
   DEFINER = $user1 SQL SECURITY DEFINER
@@ -111,7 +111,7 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 echo "create test_mv_2"
-(( $(${CLICKHOUSE_CLIENT} --query "
+(( $(${DATASTORE_CLIENT} --query "
   CREATE MATERIALIZED VIEW $db.test_mv_2 (s String)
   ENGINE = MergeTree ORDER BY s
   SQL SECURITY INVOKER
@@ -119,7 +119,7 @@ echo "create test_mv_2"
 " 2>&1 | grep -c "SQL SECURITY INVOKER can't be specified for MATERIALIZED VIEW") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
 echo "create test_mv_3"
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
   CREATE MATERIALIZED VIEW $db.test_mv_3 (s String)
   ENGINE = MergeTree ORDER BY s
   SQL SECURITY NONE
@@ -127,10 +127,10 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 echo "create test_mv_data"
-${CLICKHOUSE_CLIENT} --query "CREATE TABLE $db.test_mv_data (s String) ENGINE = MergeTree ORDER BY s;"
+${DATASTORE_CLIENT} --query "CREATE TABLE $db.test_mv_data (s String) ENGINE = MergeTree ORDER BY s;"
 
 echo "create test_mv_4"
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
   CREATE MATERIALIZED VIEW $db.test_mv_4
   TO $db.test_mv_data
   DEFINER = $user1 SQL SECURITY DEFINER
@@ -138,7 +138,7 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 echo "create test_mv_5"
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
   CREATE MATERIALIZED VIEW $db.test_mv_5 (s String)
   ENGINE = MergeTree ORDER BY s
   DEFINER = $user2 SQL SECURITY DEFINER
@@ -146,54 +146,54 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 echo "grant select on test_mv_5 to user2"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_mv_5 TO $user2"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_mv_5 TO $user2"
 
 echo "alter table test_mv_5"
-${CLICKHOUSE_CLIENT} --query "ALTER TABLE $db.test_mv_5 MODIFY SQL SECURITY NONE"
+${DATASTORE_CLIENT} --query "ALTER TABLE $db.test_mv_5 MODIFY SQL SECURITY NONE"
 echo "select from test_mv_5 as user2"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_5"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_5"
 echo "show create table test_mv_5"
-${CLICKHOUSE_CLIENT} --query "SHOW CREATE TABLE $db.test_mv_5" | grep -c "SQL SECURITY NONE"
+${DATASTORE_CLIENT} --query "SHOW CREATE TABLE $db.test_mv_5" | grep -c "SQL SECURITY NONE"
 
 echo "grant select on test_mv_1 to user2"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_mv_1 TO $user2"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_mv_1 TO $user2"
 echo "grant select on test_mv_3 to user2"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_mv_3 TO $user2"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_mv_3 TO $user2"
 echo "grant select on test_mv_4 to user2"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_mv_4 TO $user2"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_mv_4 TO $user2"
 
 echo "select from test_mv_1 as user2"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_mv_1"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_mv_1"
 echo "select from test_mv_3 as user2"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_mv_3"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_mv_3"
 
 echo "revoke select on test_mv_data from user1"
-${CLICKHOUSE_CLIENT} --query "REVOKE SELECT ON $db.test_mv_data FROM $user1"
+${DATASTORE_CLIENT} --query "REVOKE SELECT ON $db.test_mv_data FROM $user1"
 echo "select from test_mv_4 as user2"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_4" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_4" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 echo "insert into test_table"
-(( $(${CLICKHOUSE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 echo "insert into test_table with materialized_views_ignore_errors=1"
-(( $(${CLICKHOUSE_CLIENT} --materialized_views_ignore_errors=1 --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');" 2>&1 | grep -c "Cannot push to the storage. Error is ignored because the setting materialized_views_ignore_errors is enabled.") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --materialized_views_ignore_errors=1 --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');" 2>&1 | grep -c "Cannot push to the storage. Error is ignored because the setting materialized_views_ignore_errors is enabled.") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
 echo "grant insert on test_mv_data to user1"
-${CLICKHOUSE_CLIENT} --query "GRANT INSERT ON $db.test_mv_data TO $user1"
+${DATASTORE_CLIENT} --query "GRANT INSERT ON $db.test_mv_data TO $user1"
 echo "grant select on test_mv_data to user1"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_mv_data TO $user1"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_mv_data TO $user1"
 echo "insert into test_table"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');"
+${DATASTORE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');"
 echo "select from test_mv_4 as user2"
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_mv_4"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT count() FROM $db.test_mv_4"
 
 echo "revoke select on test_table from user1"
-${CLICKHOUSE_CLIENT} --query "REVOKE SELECT ON $db.test_table FROM $user1"
+${DATASTORE_CLIENT} --query "REVOKE SELECT ON $db.test_table FROM $user1"
 echo "select from test_mv_4"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_4" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_4" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 echo "insert into test_table"
-(( $(${CLICKHOUSE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --query "INSERT INTO $db.test_table VALUES ('foo'), ('bar');" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
 echo "create tables"
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.source
 (
     a UInt64
@@ -227,22 +227,22 @@ FROM $db.destination1;
 EOF
 
 echo "insert into source"
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "INSERT INTO $db.source SELECT * FROM generateRandom() LIMIT 100 SETTINGS optimize_trivial_insert_select = 0" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --user $user2 --query "INSERT INTO $db.source SELECT * FROM generateRandom() LIMIT 100 SETTINGS optimize_trivial_insert_select = 0" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 echo "grant insert on source to user2"
-${CLICKHOUSE_CLIENT} --query "GRANT INSERT ON $db.source TO $user2"
+${DATASTORE_CLIENT} --query "GRANT INSERT ON $db.source TO $user2"
 echo "insert into source as user2"
-${CLICKHOUSE_CLIENT} --user $user2 --query "INSERT INTO $db.source SELECT * FROM generateRandom() LIMIT 100 SETTINGS optimize_trivial_insert_select = 0"
+${DATASTORE_CLIENT} --user $user2 --query "INSERT INTO $db.source SELECT * FROM generateRandom() LIMIT 100 SETTINGS optimize_trivial_insert_select = 0"
 
 echo "select from destination1"
-${CLICKHOUSE_CLIENT} --query "SELECT count() FROM destination1"
+${DATASTORE_CLIENT} --query "SELECT count() FROM destination1"
 echo "select from destination2"
-${CLICKHOUSE_CLIENT} --query "SELECT count() FROM destination2"
+${DATASTORE_CLIENT} --query "SELECT count() FROM destination2"
 
 echo "alter table test_table"
-(( $(${CLICKHOUSE_CLIENT} --query "ALTER TABLE test_table MODIFY SQL SECURITY INVOKER" 2>&1 | grep -c "is not supported") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --query "ALTER TABLE test_table MODIFY SQL SECURITY INVOKER" 2>&1 | grep -c "is not supported") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
 echo "create view"
-(( $(${CLICKHOUSE_CLIENT} --user $user1 --query "
+(( $(${DATASTORE_CLIENT} --user $user1 --query "
   CREATE VIEW $db.test_view_broken
   SQL SECURITY DEFINER
   DEFINER CURRENT_USER
@@ -251,39 +251,39 @@ echo "create view"
 " 2>&1 | grep -c "Syntax error") >= 1 )) && echo "Syntax error" || echo "UNEXPECTED"
 
 echo "===== TestGrants ====="
-${CLICKHOUSE_CLIENT} --query "GRANT CREATE ON *.* TO $user1"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_table TO $user1, $user2"
+${DATASTORE_CLIENT} --query "GRANT CREATE ON *.* TO $user1"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_table TO $user1, $user2"
 
-${CLICKHOUSE_CLIENT} --user $user1 --query "
+${DATASTORE_CLIENT} --user $user1 --query "
   CREATE VIEW $db.test_view_g_1
   DEFINER = CURRENT_USER SQL SECURITY DEFINER
   AS SELECT * FROM $db.test_table;
 "
 
-(( $(${CLICKHOUSE_CLIENT} --user $user1 --query "
+(( $(${DATASTORE_CLIENT} --user $user1 --query "
   CREATE VIEW $db.test_view_g_2
   DEFINER = $user2
   AS SELECT * FROM $db.test_table;
 " 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
-${CLICKHOUSE_CLIENT} --query "GRANT SET DEFINER ON $user2 TO $user1"
+${DATASTORE_CLIENT} --query "GRANT SET DEFINER ON $user2 TO $user1"
 
-${CLICKHOUSE_CLIENT} --user $user1 --query "
+${DATASTORE_CLIENT} --user $user1 --query "
   CREATE VIEW $db.test_view_g_2
   DEFINER = $user2
   AS SELECT * FROM $db.test_table;
 "
 
-(( $(${CLICKHOUSE_CLIENT} --user $user1 --query "
+(( $(${DATASTORE_CLIENT} --user $user1 --query "
   CREATE VIEW $db.test_view_g_3
   SQL SECURITY NONE
   AS SELECT * FROM $db.test_table;
 " 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
-${CLICKHOUSE_CLIENT} --query "GRANT SET DEFINER ON $user2 TO $user1"
+${DATASTORE_CLIENT} --query "GRANT SET DEFINER ON $user2 TO $user1"
 
 echo "===== TestRowPolicy ====="
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.test_row_t (x Int32, y Int32) ENGINE = MergeTree ORDER BY x;
 
 CREATE VIEW $db.test_view_row_1 DEFINER = $user1 SQL SECURITY DEFINER AS SELECT x, y AS z FROM $db.test_row_t;
@@ -295,9 +295,9 @@ INSERT INTO $db.test_row_t VALUES (1, 2), (1, 1), (2, 2), (3, 2), (4, 0);
 GRANT SELECT ON $db.test_view_row_1 to $user2;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_row_1"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_view_row_1"
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.test_row_t2 (x Int32, y Int32) ENGINE = MergeTree ORDER BY x;
 
 CREATE VIEW $db.test_mv_row_2 DEFINER = $user1 SQL SECURITY DEFINER AS SELECT x, y AS z FROM $db.test_row_t2;
@@ -309,11 +309,11 @@ INSERT INTO $db.test_row_t2 VALUES (5, 6), (6, 5), (6, 6), (8, 7), (9, 9);
 GRANT SELECT ON $db.test_mv_row_2 to $user2;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_row_2"
+${DATASTORE_CLIENT} --user $user2 --query "SELECT * FROM $db.test_mv_row_2"
 
 echo "===== TestInsertChain ====="
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.session_events(
     clientId UUID,
     sessionId UUID,
@@ -348,12 +348,12 @@ GRANT INSERT ON $db.session_events TO $user3;
 GRANT SELECT ON $db.session_events TO $user3;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user3 --query "INSERT INTO $db.session_events SELECT * FROM generateRandom('clientId UUID, sessionId UUID, pageId UUID, timestamp DateTime, type Enum(\'type1\', \'type2\')', 1, 10, 2) LIMIT 1000 SETTINGS optimize_trivial_insert_select = 0"
-${CLICKHOUSE_CLIENT} --user $user3 --query "SELECT count(*) FROM session_events"
-${CLICKHOUSE_CLIENT} --query "SELECT count(*) FROM materialized_events"
+${DATASTORE_CLIENT} --user $user3 --query "INSERT INTO $db.session_events SELECT * FROM generateRandom('clientId UUID, sessionId UUID, pageId UUID, timestamp DateTime, type Enum(\'type1\', \'type2\')', 1, 10, 2) LIMIT 1000 SETTINGS optimize_trivial_insert_select = 0"
+${DATASTORE_CLIENT} --user $user3 --query "SELECT count(*) FROM session_events"
+${DATASTORE_CLIENT} --query "SELECT count(*) FROM materialized_events"
 
 echo "===== TestOnCluster ====="
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 
 CREATE TABLE $db.test_cluster ON CLUSTER test_shard_localhost (a String) Engine = MergeTree() ORDER BY a FORMAT Null;
 CREATE TABLE $db.test_cluster_2 ON CLUSTER test_shard_localhost (a String) Engine = MergeTree() ORDER BY a FORMAT Null;
@@ -361,9 +361,9 @@ CREATE MATERIALIZED VIEW $db.cluster_mv ON CLUSTER test_shard_localhost TO $db.t
 ALTER TABLE $db.cluster_mv ON CLUSTER test_shard_localhost MODIFY DEFINER = $user3 FORMAT Null;
 EOF
 
-${CLICKHOUSE_CLIENT} --query "SHOW CREATE TABLE $db.cluster_mv" | grep -c "DEFINER = $user3"
+${DATASTORE_CLIENT} --query "SHOW CREATE TABLE $db.cluster_mv" | grep -c "DEFINER = $user3"
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP TABLE $db.test_mv_1;
 DROP TABLE $db.test_mv_3;
 DROP TABLE $db.test_mv_4;
@@ -392,4 +392,4 @@ DROP TABLE $db.cluster_mv ON CLUSTER test_shard_localhost;
 
 DROP TABLE $db.materialized_events;
 EOF
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS $user1, $user2, $user3";
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS $user1, $user2, $user3";

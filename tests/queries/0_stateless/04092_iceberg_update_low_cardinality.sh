@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-ICEBERG_TABLE_PATH="${CLICKHOUSE_USER_FILES}/lakehouses/${CLICKHOUSE_DATABASE}_t0"
+ICEBERG_TABLE_PATH="${DATASTORE_USER_FILES}/lakehouses/${DATASTORE_DATABASE}_t0"
 
 # Cleanup
 rm -rf "${ICEBERG_TABLE_PATH}"
@@ -14,7 +14,7 @@ rm -rf "${ICEBERG_TABLE_PATH}"
 # The position delete file writer used to crash because `_iceberg_metadata_file_path`
 # arrives as LowCardinality(String) from the pipeline, but the Avro/Parquet serializer
 # expected plain String.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_experimental_insert_into_iceberg = 1;
     CREATE TABLE t0 (c0 Int) ENGINE = IcebergLocal('${ICEBERG_TABLE_PATH}');
     INSERT INTO t0 VALUES (1), (2), (3);
@@ -23,12 +23,12 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 # Cleanup
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS t0"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS t0"
 rm -rf "${ICEBERG_TABLE_PATH}"
 
 # Test 2: ALTER UPDATE on IcebergLocal with Avro format.
 # This was the exact reproduction case from the issue.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_experimental_insert_into_iceberg = 1;
     CREATE TABLE t0 (c0 Int) ENGINE = IcebergLocal('${ICEBERG_TABLE_PATH}', 'Avro');
     INSERT INTO t0 VALUES (1);
@@ -38,5 +38,5 @@ ${CLICKHOUSE_CLIENT} --query "
 echo "OK"
 
 # Cleanup
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS t0"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS t0"
 rm -rf "${ICEBERG_TABLE_PATH}"

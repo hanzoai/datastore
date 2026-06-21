@@ -28,9 +28,9 @@ def copy_file_to_container(local_path, dist_path, container_id):
     )
 
 
-config = """<clickhouse>
-    <user_defined_executable_functions_config>/etc/clickhouse-server/functions/test_function_config.xml</user_defined_executable_functions_config>
-</clickhouse>"""
+config = """<datastore>
+    <user_defined_executable_functions_config>/etc/datastore-server/functions/test_function_config.xml</user_defined_executable_functions_config>
+</datastore>"""
 
 
 @pytest.fixture(scope="module")
@@ -39,18 +39,18 @@ def started_cluster():
         cluster.start()
 
         node.replace_config(
-            "/etc/clickhouse-server/config.d/executable_user_defined_functions_config.xml",
+            "/etc/datastore-server/config.d/executable_user_defined_functions_config.xml",
             config,
         )
 
         copy_file_to_container(
             os.path.join(SCRIPT_DIR, "functions/."),
-            "/etc/clickhouse-server/functions",
+            "/etc/datastore-server/functions",
             node.docker_id,
         )
         copy_file_to_container(
             os.path.join(SCRIPT_DIR, "user_scripts/."),
-            "/var/lib/clickhouse/user_scripts",
+            "/var/lib/datastore/user_scripts",
             node.docker_id,
         )
 

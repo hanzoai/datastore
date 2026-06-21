@@ -20,7 +20,7 @@ CREATE DICTIONARY colors
     grp String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src'))
+SOURCE(DATASTORE(TABLE 'dict_src'))
 LAYOUT(HASHED())
 LIFETIME(0);
 
@@ -68,7 +68,7 @@ CREATE DICTIONARY dict_products
     brand String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'src_products'))
+SOURCE(DATASTORE(TABLE 'src_products'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(HASHED());
 

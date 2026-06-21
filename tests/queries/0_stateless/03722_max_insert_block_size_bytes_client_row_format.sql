@@ -1,7 +1,7 @@
 -- Tags: no-async-insert
 -- no-async-insert: Test expects new part for each insert
 
--- Tests how input format parsers form blocks based on min/max thresholds via clickhouse-client
+-- Tests how input format parsers form blocks based on min/max thresholds via datastore-client
 -- 1. Creates 4 test tables
 -- 2. Inserts 8 rows (inline CSV format) via client with different block formation thresholds:
 --    - Test 1: max_insert_block_size_bytes=8 (emit block when reaching 8 bytes). max_insert_block_size_bytes=16 (emit block when reaching 16 bytes)

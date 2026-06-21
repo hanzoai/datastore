@@ -23,7 +23,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -198,32 +198,32 @@ check() {
     fi
 }
 
-check strview  $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/strview.arrow', Arrow)"
-check binview  $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/binview.arrow', Arrow)"
+check strview  $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/strview.arrow', Arrow)"
+check binview  $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/binview.arrow', Arrow)"
 # String: offsets buffer over-read before per-row data check
-check string   $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/string.arrow', Arrow)"
+check string   $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/string.arrow', Arrow)"
 # List: offsets Int32Array read via Value() in readOffsetsFromArrowListColumn
-check list     $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/list.arrow', Arrow)"
+check list     $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/list.arrow', Arrow)"
 # Map: MapArray subclasses ListArray; offsets read via Flatten() in getNestedArrowColumn
-check map      $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/map.arrow', Arrow)"
+check map      $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/map.arrow', Arrow)"
 # JSON: BinaryArray with JSON type hint routes through readColumnWithJSONData
-check json     $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/json.arrow', Arrow, 'x JSON') FORMAT Null"
+check json     $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/json.arrow', Arrow, 'x JSON') FORMAT Null"
 # View data-buffer: view struct length field inflated beyond the variadic data buffer
-check view_dlen  $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/view_dlen.arrow', Arrow)"
+check view_dlen  $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/view_dlen.arrow', Arrow)"
 # JSON data-buffer: data offset+length inflated beyond value_data() buffer
-check json_dlen  $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/json_dlen.arrow', Arrow, 'x JSON') FORMAT Null"
+check json_dlen  $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/json_dlen.arrow', Arrow, 'x JSON') FORMAT Null"
 # BigNum: offsets buffer read via value_length() before checkBinaryOffsetsBuffer
-check bignum     $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/bignum.arrow', Arrow, 'x Int128')"
+check bignum     $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/bignum.arrow', Arrow, 'x Int128')"
 # Geo: offsets buffer read via value_offset()/value_length() before checkBinaryOffsetsBuffer
-check geo        $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/geo.arrow', Arrow, 'x Point')" \
+check geo        $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/geo.arrow', Arrow, 'x Point')" \
                    --input_format_parquet_allow_geoparquet_parser=1
 # IPv6: offsets buffer read via value_length() before checkBinaryOffsetsBuffer
-check ipv6_binary $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/ipv6_binary.arrow', Arrow, 'x IPv6')"
+check ipv6_binary $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/ipv6_binary.arrow', Arrow, 'x IPv6')"
 # View negative size: size=-1 passes is_inline() and wraps SIZE_MAX in accumulation
-check view_negsize $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/view_negsize.arrow', Arrow)"
+check view_negsize $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/view_negsize.arrow', Arrow)"
 # BigNum data-buffer: data buffer too small for value_offset + sizeof(ValueType)
-check bignum_dlen  $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/bignum_dlen.arrow', Arrow, 'x Int128')"
+check bignum_dlen  $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/bignum_dlen.arrow', Arrow, 'x Int128')"
 # IPv6 data-buffer: data buffer too small for value_offset + sizeof(IPv6)
-check ipv6_dlen    $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/ipv6_dlen.arrow', Arrow, 'x IPv6')"
+check ipv6_dlen    $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/ipv6_dlen.arrow', Arrow, 'x IPv6')"
 # Nullable List bitmap: valid offsets + child but truncated parent validity bitmap
-check list_bitmap  $CLICKHOUSE_LOCAL --query "SELECT sum(length(x)) FROM file('${TMP_DIR}/list_bitmap.arrow', Arrow)"
+check list_bitmap  $DATASTORE_LOCAL --query "SELECT sum(length(x)) FROM file('${TMP_DIR}/list_bitmap.arrow', Arrow)"

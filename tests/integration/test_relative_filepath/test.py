@@ -6,8 +6,8 @@ cluster = ClickHouseCluster(__file__)
 node = cluster.add_instance("node", main_configs=["configs/config.xml"])
 
 # The config sets user_files_path to the relative value "user_files".
-# The server resolves it against the main path setting to /var/lib/clickhouse/user_files/.
-user_files_absolute = "/var/lib/clickhouse/user_files"
+# The server resolves it against the main path setting to /var/lib/datastore/user_files/.
+user_files_absolute = "/var/lib/datastore/user_files"
 user_files_dirname = "user_files"
 
 

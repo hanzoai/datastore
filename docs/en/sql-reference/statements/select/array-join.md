@@ -384,4 +384,4 @@ The query execution order is optimized when running `ARRAY JOIN`. Although `ARRA
 
 ## Related content {#related-content}
 
-- Blog: [Working with time series data in ClickHouse](https://clickhouse.com/blog/working-with-time-series-data-and-functions-ClickHouse)
+- Blog: [Working with time series data in Datastore](https://datastore.com/blog/working-with-time-series-data-and-functions-Datastore)

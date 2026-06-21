@@ -9,7 +9,7 @@ SET mutations_execute_nondeterministic_on_initiator = 1;
 -- SELECT sum(...)
 
 CREATE TABLE t_mutations_nondeterministic (id UInt64, v UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1')
 ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, 20);
@@ -27,7 +27,7 @@ DROP TABLE t_mutations_nondeterministic SYNC;
 -- SELECT groupArray(...)
 
 CREATE TABLE t_mutations_nondeterministic (id UInt64, v Array(UInt64))
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1')
 ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, [20]);
@@ -48,7 +48,7 @@ DROP TABLE t_mutations_nondeterministic SYNC;
 -- SELECT uniqExactState(...)
 
 CREATE TABLE t_mutations_nondeterministic (id UInt64, v AggregateFunction(uniqExact, UInt64))
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1')
 ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, initializeAggregation('uniqExactState', 1::UInt64));
@@ -66,7 +66,7 @@ DROP TABLE t_mutations_nondeterministic SYNC;
 -- now()
 
 CREATE TABLE t_mutations_nondeterministic (id UInt64, v DateTime)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1')
 ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, '2020-10-10');
@@ -85,7 +85,7 @@ DROP TABLE t_mutations_nondeterministic SYNC;
 
 -- filesystem(...)
 
-CREATE TABLE t_mutations_nondeterministic (id UInt64, v UInt64) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1') ORDER BY id;
+CREATE TABLE t_mutations_nondeterministic (id UInt64, v UInt64) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1') ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, 10);
 
@@ -96,7 +96,7 @@ DROP TABLE t_mutations_nondeterministic SYNC;
 -- UPDATE SELECT randConstant()
 
 CREATE TABLE t_mutations_nondeterministic (id UInt64, v UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1')
 ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, 10);
@@ -118,7 +118,7 @@ DROP TABLE t_mutations_nondeterministic SYNC;
 -- DELETE WHERE now()
 
 CREATE TABLE t_mutations_nondeterministic (id UInt64, d DateTime)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/02842_mutations_replace', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/02842_mutations_replace', '1')
 ORDER BY id;
 
 INSERT INTO t_mutations_nondeterministic VALUES (10, '2000-10-10'), (20, '2100-10-10');

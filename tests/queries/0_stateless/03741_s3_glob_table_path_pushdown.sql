@@ -22,21 +22,21 @@ SELECT _path, count() FROM 03741_data GROUP BY 1 ORDER BY 1;
 
 SELECT count() FROM 03741_data WHERE _path = 'test/03741_data/file1.parquet';
 SELECT count() FROM 03741_data WHERE _path != 'test/03741_data/file1.parquet';
-SELECT count() FROM 03741_data WHERE _path = 'clickhouse/fake_directory/file1.parquet';
+SELECT count() FROM 03741_data WHERE _path = 'datastore/fake_directory/file1.parquet';
 
 SELECT count() FROM 03741_data WHERE _path IN ('test/03741_data/file1.parquet', 'test/03741_data/file2.parquet');
 SELECT count() FROM 03741_data WHERE _path NOT IN ('test/03741_data/file1.parquet', 'test/03741_data/file2.parquet');
-SELECT count() FROM 03741_data WHERE _path IN ('clickhouse/fake_directory/fake.parquet');
-SELECT count() FROM 03741_data WHERE _path IN ('clickhouse/fake_directory/fake.parquet', 'test/03741_data/nested/file3.parquet');
-SELECT count() FROM 03741_data WHERE _path NOT IN ('clickhouse/fake_directory/fake.parquet', 'test/03741_data/nested/file3.parquet');
+SELECT count() FROM 03741_data WHERE _path IN ('datastore/fake_directory/fake.parquet');
+SELECT count() FROM 03741_data WHERE _path IN ('datastore/fake_directory/fake.parquet', 'test/03741_data/nested/file3.parquet');
+SELECT count() FROM 03741_data WHERE _path NOT IN ('datastore/fake_directory/fake.parquet', 'test/03741_data/nested/file3.parquet');
 
 SELECT count() FROM 03741_data WHERE _path IN (03741_filter);
 SELECT count() FROM 03741_data WHERE _path NOT IN (03741_filter);
 
 SELECT count() FROM 03741_data WHERE _path IN (SELECT * FROM 03741_filter WHERE path LIKE '%nested%');
 SELECT count() FROM 03741_data WHERE _path NOT IN (SELECT * FROM 03741_filter WHERE path LIKE '%nested%');
-SELECT count() FROM 03741_data WHERE _path IN (SELECT * FROM 03741_filter UNION ALL SELECT 'clickhouse/fake_directory/fake.parquet');
-SELECT count() FROM 03741_data WHERE _path NOT IN (SELECT * FROM 03741_filter UNION ALL SELECT 'clickhouse/fake_directory/fake.parquet');
+SELECT count() FROM 03741_data WHERE _path IN (SELECT * FROM 03741_filter UNION ALL SELECT 'datastore/fake_directory/fake.parquet');
+SELECT count() FROM 03741_data WHERE _path NOT IN (SELECT * FROM 03741_filter UNION ALL SELECT 'datastore/fake_directory/fake.parquet');
 
 SELECT count() FROM 03741_data WHERE _path = 'test/03741_data/file1.parquet' AND number > 5;
 SELECT count() FROM 03741_data WHERE _path = 'test/03741_data/file1.parquet' OR number > 5;

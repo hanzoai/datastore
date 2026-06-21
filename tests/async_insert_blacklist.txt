@@ -47,8 +47,8 @@
 02270_stdin_with_query_or_infile_data
 02435_rollback_cancelled_queries
 
-    https://github.com/ClickHouse/ClickHouse/issues/57768
+    https://github.com/ClickHouse/Datastore/issues/57768
 02423_insert_summary_behaviour
 
-    https://github.com/ClickHouse/ClickHouse/issues/79790
+    https://github.com/ClickHouse/Datastore/issues/79790
 02046_remote_table_function_named_collections

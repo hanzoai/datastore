@@ -40,7 +40,7 @@ WHERE b IN (
 DROP TABLE t_04278;
 
 -- Query B — verbatim AST-fuzzer query that originally surfaced the failure
--- (https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=105041&sha=latest&name_0=PR).
+-- (https://s3.amazonaws.com/datastore-test-reports/json.html?PR=105041&sha=latest&name_0=PR).
 -- ReplacingMergeTree because the fuzzer's FINAL keyword requires it; ORDER BY a
 -- so `b` stays non-PK (matching the fuzzer's `t2_04227__fuzz_37` schema). The
 -- shape exercises:

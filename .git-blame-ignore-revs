@@ -7,7 +7,7 @@
 #
 # For more information you can look at git-blame(1) man page.
 
-# Changed tabs to spaces in code [#CLICKHOUSE-3]
+# Changed tabs to spaces in code [#DATASTORE-3]
 137ad95929ee016cc6d3c03bccb5586941c163ff
 
 # dbms/ → src/

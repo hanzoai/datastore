@@ -47,7 +47,7 @@ def change_balancing(old, new, reload=True):
     new_line = line.format(new)
     for node in [node1, node2, node3]:
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/zookeeper_load_balancing.xml",
+            "/etc/datastore-server/config.d/zookeeper_load_balancing.xml",
             old_line,
             new_line,
         )

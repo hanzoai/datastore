@@ -155,13 +155,13 @@ class Description:
         # 1) issue number w/o markdown link
         entry = re.sub(
             r"([^[])#([0-9]{4,})",
-            r"\1[#\2](https://github.com/ClickHouse/ClickHouse/issues/\2)",
+            r"\1[#\2](https://github.com/ClickHouse/Datastore/issues/\2)",
             self.entry,
         )
         # 2) issue URL w/o markdown link
         # including #issuecomment-1 or #event-12
         entry = re.sub(
-            r"([^(])(https://github.com/ClickHouse/ClickHouse/issues/([0-9]{4,})[-#a-z0-9]*)",
+            r"([^(])(https://github.com/ClickHouse/Datastore/issues/([0-9]{4,})[-#a-z0-9]*)",
             r"\1[#\3](\2)",
             entry,
         )
@@ -248,7 +248,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--repo",
-        default="ClickHouse/ClickHouse",
+        default="Datastore/Datastore",
         help="a repository to query for pull-requests from GitHub",
     )
     parser.add_argument(
@@ -439,7 +439,7 @@ def write_changelog(
     fd.write(
         f"---\nsidebar_position: 1\nsidebar_label: {year}\n---\n\n"
         f"# {year} Changelog\n\n"
-        f"### ClickHouse release {TO_REF} ({to_commit}) FIXME "
+        f"### Datastore release {TO_REF} ({to_commit}) FIXME "
         f"as compared to {FROM_REF} ({from_commit})\n\n"
     )
 

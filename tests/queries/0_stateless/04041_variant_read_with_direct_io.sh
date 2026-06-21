@@ -10,7 +10,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-CH_CLIENT="$CLICKHOUSE_CLIENT --allow_suspicious_variant_types=1 --max_threads 2 --min_bytes_to_use_direct_io 1"
+CH_CLIENT="$DATASTORE_CLIENT --allow_suspicious_variant_types=1 --max_threads 2 --min_bytes_to_use_direct_io 1"
 
 $CH_CLIENT -q "drop table if exists test_variant_direct_io;"
 

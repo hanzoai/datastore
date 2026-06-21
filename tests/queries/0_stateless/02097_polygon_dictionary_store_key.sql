@@ -14,7 +14,7 @@ CREATE DICTIONARY polygons_test_dictionary_no_option
     name String
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'polygons_test_table'))
+SOURCE(DATASTORE(TABLE 'polygons_test_table'))
 LAYOUT(POLYGON())
 LIFETIME(0);
 
@@ -27,7 +27,7 @@ CREATE DICTIONARY polygons_test_dictionary
     name String
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'polygons_test_table'))
+SOURCE(DATASTORE(TABLE 'polygons_test_table'))
 LAYOUT(POLYGON(STORE_POLYGON_KEY_COLUMN 1))
 LIFETIME(0);
 

@@ -27,13 +27,13 @@ DROP TABLE t;
 
 # Note that the table comment is not replicated. We can implement it later.
 
-CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_comment_table1/t', '1') ORDER BY () COMMENT 'Hello';
+CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_comment_table1/t', '1') ORDER BY () COMMENT 'Hello';
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 ALTER TABLE t MODIFY COMMENT 'World';
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 DROP TABLE t SYNC;
 
-CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_comment_table2/t', '1') ORDER BY () COMMENT 'Hello';
+CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_comment_table2/t', '1') ORDER BY () COMMENT 'Hello';
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 ALTER TABLE t MODIFY COMMENT 'World', MODIFY COLUMN x UInt16;
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
@@ -59,13 +59,13 @@ ALTER TABLE t MODIFY COMMENT 'World', MODIFY COLUMN x UInt16;
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 DROP TABLE t;
 
-CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_comment_table3/t', '1') ORDER BY ();
+CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_comment_table3/t', '1') ORDER BY ();
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 ALTER TABLE t MODIFY COMMENT 'World';
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 DROP TABLE t SYNC;
 
-CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_comment_table4/t', '1') ORDER BY ();
+CREATE TABLE t (x UInt8) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_comment_table4/t', '1') ORDER BY ();
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';
 ALTER TABLE t MODIFY COMMENT 'World', MODIFY COLUMN x UInt16;
 SELECT comment FROM system.tables WHERE database = currentDatabase() AND table = 't';

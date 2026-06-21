@@ -9,11 +9,11 @@ import time
 from argparse import ArgumentParser
 
 XML_TEMPLATE = """
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
-        <log>{data_dir}/clickhouse-keeper.log</log>
-        <errorlog>{data_dir}/clickhouse-keeper.err.log</errorlog>
+        <log>{data_dir}/datastore-keeper.log</log>
+        <errorlog>{data_dir}/datastore-keeper.err.log</errorlog>
         <stderr>{data_dir}/stderr.log</stderr>
         <stdout>{data_dir}/stdout.log</stdout>
         <size>1000M</size>
@@ -52,7 +52,7 @@ XML_TEMPLATE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 
 """
 
@@ -122,9 +122,9 @@ class Keeper:
                 "--config",
                 self.config_path,
                 "--log-file",
-                f"{self.data_dir}/clickhouse-keeper.log",
+                f"{self.data_dir}/datastore-keeper.log",
                 "--errorlog-file",
-                f"{self.data_dir}/clickhouse-keeper.err.log",
+                f"{self.data_dir}/datastore-keeper.err.log",
             ],
             env=env,
         )

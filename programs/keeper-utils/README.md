@@ -1,20 +1,20 @@
-# ClickHouse Keeper Utils
+# Datastore Keeper Utils
 
-A comprehensive utility tool for managing and analyzing ClickHouse Keeper data, including snapshots and changelogs.
+A comprehensive utility tool for managing and analyzing Datastore Keeper data, including snapshots and changelogs.
 
 ## Building
 
-Build the tool as part of the main ClickHouse build process:
+Build the tool as part of the main Datastore build process:
 
 ```bash
-cd /path/to/ClickHouse
+cd /path/to/Datastore
 mkdir -p build
 cd build
 cmake ..
-make -j$(nproc) clickhouse-keeper-utils
+make -j$(nproc) datastore-keeper-utils
 ```
 
-The binary will be available at `./programs/clickhouse-keeper-utils`.
+The binary will be available at `./programs/datastore-keeper-utils`.
 
 ## Available Commands
 
@@ -24,7 +24,7 @@ Dump the current state of a Keeper cluster by loading snapshots and applying cha
 
 #### Usage
 ```bash
-clickhouse-keeper-utils dump-state [options]
+datastore-keeper-utils dump-state [options]
 ```
 
 #### Options
@@ -54,47 +54,47 @@ clickhouse-keeper-utils dump-state [options]
 
 ```bash
 # Basic usage with default CSV format
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs
 
 # Save output to a file with JSON format
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file output.json --output-format JSONEachRow
 
 # Enable parallel output processing for better performance
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file output.csv --parallel-output
 
 # Include ACL information in the output
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file output_with_acl.csv --with-acl
 
 # Combine options: parallel processing with ACL information
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file output_parallel_acl.csv --parallel-output --with-acl
 
 # Dump session information instead of node tree
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file sessions.csv --dump-sessions
 
 # Dump session information with parallel processing
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file sessions_parallel.csv --dump-sessions --parallel-output
 
 # Dump state up to a specific changelog index
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file state_at_index_1000.csv --end-index 1001
 
 # Debug state up to a specific index with detailed logging
-clickhouse-keeper-utils dump-state --snapshot-path /var/lib/clickhouse/coordination/snapshots \
-    --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils dump-state --snapshot-path /var/lib/datastore/coordination/snapshots \
+    --log-path /var/lib/datastore/coordination/logs \
     --output-file debug_state.csv --debug-mode --end-index 5001
 ```
 
@@ -111,7 +111,7 @@ Analyze Keeper snapshots and print basic information.
 
 #### Usage
 ```bash
-clickhouse-keeper-utils snapshot-analyzer [options]
+datastore-keeper-utils snapshot-analyzer [options]
 ```
 
 #### Options
@@ -124,17 +124,17 @@ clickhouse-keeper-utils snapshot-analyzer [options]
 
 1.  **Analyze all snapshots in a directory (basic info):**
     ```bash
-    clickhouse-keeper-utils snapshot-analyzer --snapshot-path /var/lib/clickhouse/coordination/snapshots/
+    datastore-keeper-utils snapshot-analyzer --snapshot-path /var/lib/datastore/coordination/snapshots/
     ```
 
 2.  **Analyze a specific snapshot file with subtree statistics:**
     ```bash
-    clickhouse-keeper-utils snapshot-analyzer --snapshot-path /var/lib/clickhouse/coordination/snapshots/snapshot_123.bin --with-node-stats
+    datastore-keeper-utils snapshot-analyzer --snapshot-path /var/lib/datastore/coordination/snapshots/snapshot_123.bin --with-node-stats
     ```
 
 3.  **Analyze a snapshot with full storage loaded:**
     ```bash
-    clickhouse-keeper-utils snapshot-analyzer --snapshot-path /var/lib/clickhouse/coordination/snapshots/snapshot_123.bin --full-storage
+    datastore-keeper-utils snapshot-analyzer --snapshot-path /var/lib/datastore/coordination/snapshots/snapshot_123.bin --full-storage
     ```
 
 ### 3. changelog-analyzer
@@ -143,7 +143,7 @@ Analyze Keeper changelogs and print information about them.
 
 #### Usage
 ```bash
-clickhouse-keeper-utils changelog-analyzer --log-path <path> [--changelog <file>]
+datastore-keeper-utils changelog-analyzer --log-path <path> [--changelog <file>]
 ```
 
 #### Options
@@ -154,10 +154,10 @@ clickhouse-keeper-utils changelog-analyzer --log-path <path> [--changelog <file>
 #### Examples
 ```bash
 # Analyze all changelogs in directory
-clickhouse-keeper-utils changelog-analyzer --log-path /var/lib/clickhouse/coordination/logs
+datastore-keeper-utils changelog-analyzer --log-path /var/lib/datastore/coordination/logs
 
 # Analyze specific changelog file
-clickhouse-keeper-utils changelog-analyzer --log-path /var/lib/clickhouse/coordination/logs \
+datastore-keeper-utils changelog-analyzer --log-path /var/lib/datastore/coordination/logs \
     --changelog changelog_1.bin
 ```
 
@@ -167,7 +167,7 @@ Extract a range of entries from a changelog to a new file.
 
 #### Usage
 ```bash
-clickhouse-keeper-utils changelog-splicer --source <file> --destination <dir> [--start-index <n>] --end-index <n>
+datastore-keeper-utils changelog-splicer --source <file> --destination <dir> [--start-index <n>] --end-index <n>
 ```
 
 #### Options
@@ -180,11 +180,11 @@ clickhouse-keeper-utils changelog-splicer --source <file> --destination <dir> [-
 #### Examples
 ```bash
 # Extract specific range of entries
-clickhouse-keeper-utils changelog-splicer --source /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-splicer --source /var/lib/datastore/coordination/logs/changelog_1.bin \
     --destination /tmp --start-index 100 --end-index 200
 
 # Extract from beginning of changelog to specified index
-clickhouse-keeper-utils changelog-splicer --source /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-splicer --source /var/lib/datastore/coordination/logs/changelog_1.bin \
     --destination /tmp --end-index 200
 ```
 
@@ -194,7 +194,7 @@ Deserialize and display the contents of a Keeper changelog file in a human-reada
 
 #### Usage
 ```bash
-clickhouse-keeper-utils changelog-deserializer --changelog-path <file> [options]
+datastore-keeper-utils changelog-deserializer --changelog-path <file> [options]
 ```
 
 #### Options
@@ -236,30 +236,30 @@ clickhouse-keeper-utils changelog-deserializer --changelog-path <file> [options]
 
 ```bash
 # Basic usage with console output
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin
 
 # Save to file with JSON format
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin \
     --output-file output.json --output-format JSONEachRow
 
 # Process a specific range of entries
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin \
     --start-index 100 --end-index 200
 
 # Include detailed request information
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin \
     --with-requests
 
 # Process a specific range with request details and save to CSV
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin \
     --start-index 1000 --end-index 2000 --with-requests --output-file requests.csv
 
 # Enable parallel processing for large files
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin \
     --output-file output.csv --parallel-output
 
 # Combine all options
-clickhouse-keeper-utils changelog-deserializer --changelog-path /var/lib/clickhouse/coordination/logs/changelog_1.bin \
+datastore-keeper-utils changelog-deserializer --changelog-path /var/lib/datastore/coordination/logs/changelog_1.bin \
     --start-index 5000 --end-index 10000 --with-requests --output-file filtered_requests.csv --parallel-output
 ```
 
@@ -276,7 +276,7 @@ The `dump-state` command supports various output formats, including:
 - `CSV` / `CSVWithNames` / `CSVWithNamesAndTypes` (default)
 - `JSON` / `JSONEachRow`
 - `TSV` / `TSVRaw` / `TSVWithNames` / `TSVWithNamesAndTypes`
-- And other formats supported by ClickHouse
+- And other formats supported by Datastore
 
 ## Troubleshooting
 
@@ -286,4 +286,4 @@ The `dump-state` command supports various output formats, including:
 
 ## License
 
-This utility is part of ClickHouse and is distributed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+This utility is part of Datastore and is distributed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).

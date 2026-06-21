@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Test depends on timezone -->
     <timezone>Asia/Istanbul</timezone>
     <!-- retention scheme for GraphiteMergeTree engine-->
@@ -119,4 +119,4 @@
             </retention>
         </pattern>        
     </graphite_rollup>
-</clickhouse>
+</datastore>

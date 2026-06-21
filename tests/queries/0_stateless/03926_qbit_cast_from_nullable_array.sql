@@ -3,7 +3,7 @@
 -- Previously, nullable_source was incorrectly propagated through Tuple element wrappers
 -- into the Array-to-QBit conversion, replacing the properly converted array column
 -- with an unrelated column from the outer Nullable wrapper.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=58b9b010eb7d1210b0c0ec88118ab153a9db0f4d&name_0=MasterCI&name_1=BuzzHouse%20%28arm_asan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=58b9b010eb7d1210b0c0ec88118ab153a9db0f4d&name_0=MasterCI&name_1=BuzzHouse%20%28arm_asan%29
 
 SET allow_suspicious_variant_types = 1;
 SET allow_experimental_variant_type = 1;

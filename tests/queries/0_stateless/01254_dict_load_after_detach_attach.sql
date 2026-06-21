@@ -5,12 +5,12 @@ CREATE DICTIONARY dict
   val UInt64 DEFAULT 10
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_data' PASSWORD '' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_data' PASSWORD '' DB currentDatabase()))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(FLAT());
 
-DETACH DATABASE {CLICKHOUSE_DATABASE:Identifier};
-ATTACH DATABASE {CLICKHOUSE_DATABASE:Identifier};
+DETACH DATABASE {DATASTORE_DATABASE:Identifier};
+ATTACH DATABASE {DATASTORE_DATABASE:Identifier};
 
 SELECT query_count, status FROM system.dictionaries WHERE database = currentDatabase() AND name = 'dict';
 SYSTEM RELOAD DICTIONARY dict;

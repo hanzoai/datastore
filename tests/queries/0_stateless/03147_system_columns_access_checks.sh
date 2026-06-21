@@ -14,23 +14,23 @@ COLUMNS=$(seq 1 $NUM_COLUMNS | sed -r -e 's/(.+)/c\1 UInt8, /' | tr -d '\n')
 
 seq 1 $NUM_TABLES | xargs -P "${THREADS}" -I{} bash -c "
     echo -n '.'
-    $CLICKHOUSE_CLIENT --query 'CREATE OR REPLACE TABLE test{} (${COLUMNS} end String) ENGINE = Memory'
+    $DATASTORE_CLIENT --query 'CREATE OR REPLACE TABLE test{} (${COLUMNS} end String) ENGINE = Memory'
 "
 echo
 
-$CLICKHOUSE_CLIENT "
+$DATASTORE_CLIENT "
 DROP USER IF EXISTS test_03147;
 CREATE USER test_03147;
-GRANT SELECT (end) ON ${CLICKHOUSE_DATABASE}.test1 TO test_03147;
+GRANT SELECT (end) ON ${DATASTORE_DATABASE}.test1 TO test_03147;
 "
 
-# This query was slow in previous ClickHouse versions for several reasons:
+# This query was slow in previous Datastore versions for several reasons:
 # - tables and databases without SHOW TABLES access were still checked for SHOW COLUMNS access for every column in every table;
 # - excessive logging of "access granted" and "access denied"
 
 # The test could succeed even on the previous version, but it will show up as being too slow.
-$CLICKHOUSE_CLIENT --user test_03147 --query "SELECT name FROM system.columns WHERE database = currentDatabase()"
+$DATASTORE_CLIENT --user test_03147 --query "SELECT name FROM system.columns WHERE database = currentDatabase()"
 
-$CLICKHOUSE_CLIENT "
+$DATASTORE_CLIENT "
 DROP USER test_03147;
 "

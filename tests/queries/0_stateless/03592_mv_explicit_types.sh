@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE source
 (
     id String CODEC(ZSTD(1)),
@@ -23,7 +23,7 @@ ORDER BY (toDate(ts), name, id)
 SETTINGS index_granularity = 8192
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE middle
 (
     id String CODEC(ZSTD(1)),
@@ -46,7 +46,7 @@ ORDER BY (applicationId, isSandbox, toStartOfHour(ts), name, appUserId, id, ts)
 SETTINGS index_granularity = 8192
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE MATERIALIZED VIEW source_mv TO middle
 (
     id String,
@@ -79,7 +79,7 @@ FROM source
 WHERE notEmpty(appUserId) AND (applicationId != 0) AND (ts > toDate(fromUnixTimestamp(((60 * 60) * 24) * 365)))
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE destination
 (
     appUserId String CODEC(ZSTD(1)),
@@ -97,7 +97,7 @@ ORDER BY (applicationId, isSandbox, appUserId, key)
 SETTINGS index_granularity = 512
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE MATERIALIZED VIEW middle_mv TO destination
 (
     appUserId String,
@@ -132,7 +132,7 @@ SELECT
 FROM propertyTuples
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 INSERT INTO source ("debug", "headers", "id", "meta", "name", "props", "ts")
 VALUES (
     'debug_string',

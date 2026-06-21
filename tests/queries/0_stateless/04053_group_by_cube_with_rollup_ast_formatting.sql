@@ -1,6 +1,6 @@
 -- Regression test: GROUP BY CUBE(...) WITH ROLLUP caused inconsistent AST
 -- formatting in debug builds because the formatted query could not be parsed back.
--- https://github.com/ClickHouse/ClickHouse/issues/100320
+-- https://github.com/ClickHouse/Datastore/issues/100320
 
 SET enable_analyzer = 1;
 

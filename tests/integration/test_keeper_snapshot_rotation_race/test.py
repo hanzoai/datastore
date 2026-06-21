@@ -70,8 +70,8 @@ def _reset_keeper_storage(cluster_instance, nodes):
             [
                 "rm",
                 "-rf",
-                "/var/lib/clickhouse/coordination/logs",
-                "/var/lib/clickhouse/coordination/snapshots",
+                "/var/lib/datastore/coordination/logs",
+                "/var/lib/datastore/coordination/snapshots",
             ]
         )
 
@@ -85,11 +85,11 @@ def _reset_keeper_storage(cluster_instance, nodes):
 
     deadline = time.monotonic() + 30
     while True:
-        missing = [node.name for node in nodes if node.get_process_pid("clickhouse") is None]
+        missing = [node.name for node in nodes if node.get_process_pid("datastore") is None]
         if not missing:
             break
         if time.monotonic() >= deadline:
-            raise Exception(f"ClickHouse processes did not start on {missing}")
+            raise Exception(f"Datastore processes did not start on {missing}")
         time.sleep(0.1)
 
     for node in nodes:

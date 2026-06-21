@@ -30,7 +30,7 @@ SELECT * FROM test.table FORMAT ProtobufList SETTINGS format_schema = 'schemafil
 ```
 
 ```bash
-cat protobuflist_messages.bin | clickhouse-client --query "INSERT INTO test.table FORMAT ProtobufList SETTINGS format_schema='schemafile:MessageType'"
+cat protobuflist_messages.bin | datastore-client --query "INSERT INTO test.table FORMAT ProtobufList SETTINGS format_schema='schemafile:MessageType'"
 ```
 
 Where the file `schemafile.proto` looks like this:

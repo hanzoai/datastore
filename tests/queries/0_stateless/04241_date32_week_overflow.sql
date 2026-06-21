@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/104970
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/104970
 -- `Date32`/`DateTime64` values whose rounded result falls before the Unix epoch
 -- must clamp to 1970-01-01 instead of overflowing through UInt16
 

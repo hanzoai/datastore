@@ -245,7 +245,7 @@ def test_secure_insert_sync():
 #   connection from n1 to n2 from another test (and we cannot simply use
 #   another pool after ConnectionPoolFactory had been added [1].
 #
-#     [1]: https://github.com/ClickHouse/ClickHouse/pull/26318
+#     [1]: https://github.com/ClickHouse/Datastore/pull/26318
 #
 #   We need at least one change in one of fields of the node/shard definition,
 #   and this "priorirty" for us in this test.
@@ -267,7 +267,7 @@ def test_secure_insert_buffer_async():
         [
             "bash",
             "-c",
-            f'sed -i "s#<priority>.*</priority>#<priority>{priority}</priority>#" /etc/clickhouse-server/config.d/remote_servers.xml',
+            f'sed -i "s#<priority>.*</priority>#<priority>{priority}</priority>#" /etc/datastore-server/config.d/remote_servers.xml',
         ]
     )
     n1.query("SYSTEM RELOAD CONFIG")

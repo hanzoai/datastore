@@ -30,7 +30,7 @@ void StorageSystemDashboards::fillData(MutableColumns & res_columns, ContextPtr 
 {
     static const std::vector<std::map<String, String>> default_dashboards
     {
-        /// Default dashboard for self-managed ClickHouse
+        /// Default dashboard for self-managed Datastore
         {
             { "dashboard", "Overview" },
             { "title", "Queries/second" },
@@ -287,7 +287,7 @@ GROUP BY t
 ORDER BY t WITH FILL STEP {rounding:UInt32}
 )EOQ") }
         },
-        /// Default per host dashboard for self-managed ClickHouse
+        /// Default per host dashboard for self-managed Datastore
         {
             { "dashboard", "Overview (host)" },
             { "title", "Queries/second" },
@@ -527,10 +527,10 @@ GROUP BY t, hostname
 ORDER BY t WITH FILL STEP {rounding:UInt32}
 )EOQ") }
         },
-        /// Memory usage per host dashboard for self-managed ClickHouse
+        /// Memory usage per host dashboard for self-managed Datastore
         {
             { "dashboard", "Memory (host)" },
-            { "title", "Tracked memory by ClickHouse" },
+            { "title", "Tracked memory by Datastore" },
             { "query", trim(R"EOQ(
 WITH toDateTimeOrDefault({from:String}, '', now() - {seconds:UInt32}) AS from,
     toDateTimeOrDefault({to:String}, '', now()) AS to
@@ -639,7 +639,7 @@ ORDER BY t WITH FILL STEP {rounding:UInt32}
         },
         {
             { "dashboard", "Memory (host)" },
-            { "title", "ClickHouse vs Kernel Drift" },
+            { "title", "Datastore vs Kernel Drift" },
             { "query", trim(R"EOQ(
 WITH toDateTimeOrDefault({from:String}, '', now() - {seconds:UInt32}) AS from,
     toDateTimeOrDefault({to:String}, '', now()) AS to
@@ -673,7 +673,7 @@ ORDER BY t ASC WITH FILL STEP {rounding:UInt32}
         },
         {
             { "dashboard", "Memory (host)" },
-            { "title", "ClickHouse vs Allocator Drift" },
+            { "title", "Datastore vs Allocator Drift" },
             { "query", trim(R"EOQ(
 WITH toDateTimeOrDefault({from:String}, '', now() - {seconds:UInt32}) AS from,
     toDateTimeOrDefault({to:String}, '', now()) AS to
@@ -705,7 +705,7 @@ JOIN
 ORDER BY t ASC WITH FILL STEP {rounding:UInt32}
 )EOQ") }
         },
-        /// Default dashboard for ClickHouse Cloud
+        /// Default dashboard for Datastore Cloud
         {
             { "dashboard", "Cloud overview" },
             { "title", "Queries/second" },
@@ -1544,7 +1544,7 @@ GROUP BY t
 ORDER BY t WITH FILL STEP {rounding:UInt32} SETTINGS skip_unavailable_shards = 1
 )EOQ") }
         },
-        /// Default per host dashboard for ClickHouse Cloud
+        /// Default per host dashboard for Datastore Cloud
         {
             { "dashboard", "Cloud overview (host)" },
             { "title", "Queries/second" },
@@ -2073,10 +2073,10 @@ GROUP BY t, hostname
 ORDER BY t WITH FILL STEP {rounding:UInt32} SETTINGS skip_unavailable_shards = 1
 )EOQ") }
         },
-        /// Memory usage per host dashboard in ClickHouse Cloud
+        /// Memory usage per host dashboard in Datastore Cloud
         {
             { "dashboard", "Cloud Memory (host)" },
-            { "title", "Tracked memory by ClickHouse" },
+            { "title", "Tracked memory by Datastore" },
             { "query", trim(R"EOQ(
 WITH toDateTimeOrDefault({from:String}, '', now() - {seconds:UInt32}) AS from,
     toDateTimeOrDefault({to:String}, '', now()) AS to
@@ -2193,7 +2193,7 @@ SETTINGS skip_unavailable_shards = 1
         },
         {
             { "dashboard", "Cloud Memory (host)" },
-            { "title", "ClickHouse vs Kernel Drift" },
+            { "title", "Datastore vs Kernel Drift" },
             { "query", trim(R"EOQ(
 WITH toDateTimeOrDefault({from:String}, '', now() - {seconds:UInt32}) AS from,
     toDateTimeOrDefault({to:String}, '', now()) AS to
@@ -2228,7 +2228,7 @@ SETTINGS skip_unavailable_shards = 1
         },
         {
             { "dashboard", "Cloud Memory (host)" },
-            { "title", "ClickHouse vs Allocator Drift" },
+            { "title", "Datastore vs Allocator Drift" },
             { "query", trim(R"EOQ(
 WITH toDateTimeOrDefault({from:String}, '', now() - {seconds:UInt32}) AS from,
     toDateTimeOrDefault({to:String}, '', now()) AS to

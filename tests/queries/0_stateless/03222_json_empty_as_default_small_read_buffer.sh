@@ -4,13 +4,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATA_FILE=$CLICKHOUSE_TEST_UNIQUE_NAME.json
+DATA_FILE=$DATASTORE_TEST_UNIQUE_NAME.json
 
-# Wrapper for clickhouse-client to always output in JSONEachRow format, that
+# Wrapper for datastore-client to always output in JSONEachRow format, that
 # way format settings will not affect output.
 function clickhouse_local()
 {
-    $CLICKHOUSE_LOCAL --output-format JSONEachRow "$@"
+    $DATASTORE_LOCAL --output-format JSONEachRow "$@"
 }
 
 echo 'Array(UUID)'

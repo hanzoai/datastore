@@ -6,19 +6,19 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 function read_archive_file() {
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${USER_FILES_PATH}/$1') ORDER BY 1, 2"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM file('${USER_FILES_PATH}/$1') ORDER BY 1, 2"
-    $CLICKHOUSE_CLIENT --query "DESC file('${USER_FILES_PATH}/$1')"
-    $CLICKHOUSE_CLIENT --query "CREATE TABLE 02661_archive_table Engine=File('CSV', '${USER_FILES_PATH}/$1')"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM 02661_archive_table ORDER BY 1, 2"
-    $CLICKHOUSE_CLIENT --query "DROP TABLE 02661_archive_table"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${USER_FILES_PATH}/$1') ORDER BY 1, 2"
+    $DATASTORE_CLIENT --query "SELECT * FROM file('${USER_FILES_PATH}/$1') ORDER BY 1, 2"
+    $DATASTORE_CLIENT --query "DESC file('${USER_FILES_PATH}/$1')"
+    $DATASTORE_CLIENT --query "CREATE TABLE 02661_archive_table Engine=File('CSV', '${USER_FILES_PATH}/$1')"
+    $DATASTORE_CLIENT --query "SELECT * FROM 02661_archive_table ORDER BY 1, 2"
+    $DATASTORE_CLIENT --query "DROP TABLE 02661_archive_table"
 }
 
 function run_archive_test() {
-    $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS 02661_archive_table"
+    $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS 02661_archive_table"
 
     extension_without_dot=$(echo $1 | sed -e 's/\.//g')
-    FILE_PREFIX="02661_read_from_archive_${CLICKHOUSE_DATABASE}_$extension_without_dot"
+    FILE_PREFIX="02661_read_from_archive_${DATASTORE_DATABASE}_$extension_without_dot"
 
     touch ${FILE_PREFIX}_data0.csv
     echo -e "1,2\n3,4" > ${FILE_PREFIX}_data1.csv
@@ -42,8 +42,8 @@ function run_archive_test() {
     echo "archive* {2..3}.csv"
     read_archive_file "${FILE_PREFIX}_archive*.$1 :: ${FILE_PREFIX}_data{2..3}.csv"
 
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${USER_FILES_PATH}/${FILE_PREFIX}_archive1.$1::nonexistent.csv')" 2>&1 | grep -q "CANNOT_EXTRACT_TABLE_STRUCTURE" && echo "OK" || echo "FAIL"
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${USER_FILES_PATH}/${FILE_PREFIX}_archive3.$1::{2..3}.csv')" 2>&1 | grep -q "CANNOT_EXTRACT_TABLE_STRUCTURE" && echo "OK" || echo "FAIL"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${USER_FILES_PATH}/${FILE_PREFIX}_archive1.$1::nonexistent.csv')" 2>&1 | grep -q "CANNOT_EXTRACT_TABLE_STRUCTURE" && echo "OK" || echo "FAIL"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${USER_FILES_PATH}/${FILE_PREFIX}_archive3.$1::{2..3}.csv')" 2>&1 | grep -q "CANNOT_EXTRACT_TABLE_STRUCTURE" && echo "OK" || echo "FAIL"
 
     rm ${USER_FILES_PATH}/${FILE_PREFIX}_archive{1..3}.$1
 

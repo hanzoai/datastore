@@ -19,14 +19,14 @@ def start_cluster():
 
 
 def test(start_cluster):
-    node.replace_in_config("/etc/clickhouse-server/config.d/overrides.yaml", "allow_no_password: 0", "allow_no_password: 1")
+    node.replace_in_config("/etc/datastore-server/config.d/overrides.yaml", "allow_no_password: 0", "allow_no_password: 1")
     node.restart_clickhouse()
 
     node.query("DROP USER IF EXISTS u_3574", user="admin", password="1w2swhb1")
     node.query("CREATE USER u_3574 IDENTIFIED WITH no_password", user="admin", password="1w2swhb1")
     assert node.query("SELECT user()", user="u_3574").strip() == "u_3574"
 
-    node.replace_in_config("/etc/clickhouse-server/config.d/overrides.yaml", "allow_no_password: 1", "allow_no_password: 0")
+    node.replace_in_config("/etc/datastore-server/config.d/overrides.yaml", "allow_no_password: 1", "allow_no_password: 0")
     node.restart_clickhouse()
     with pytest.raises(Exception) as err:
         node.query("SELECT user()", user="u_3574")
@@ -34,5 +34,5 @@ def test(start_cluster):
 
     assert node.grep_in_log(
         substring="User is not allowed to Create users",
-        filename="clickhouse-server.err.log",
+        filename="datastore-server.err.log",
     ) == ""

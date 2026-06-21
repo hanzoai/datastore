@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<clickhouse>
+<datastore>
   <rocksdb>
     <options>
         <max_background_jobs>8</max_background_jobs>
@@ -25,4 +25,4 @@
       </table>
     </tables>
   </rocksdb>
-</clickhouse>
+</datastore>

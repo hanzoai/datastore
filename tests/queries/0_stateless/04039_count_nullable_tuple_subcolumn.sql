@@ -17,7 +17,7 @@ INSERT INTO test2 VALUES ((1)), ((NULL)), (NULL);
 EXPLAIN SYNTAX run_query_tree_passes = 1 SELECT count(t.u) FROM test2 SETTINGS enable_analyzer = 1;
 SELECT count(t.u) FROM test2;
 
--- Test from https://github.com/ClickHouse/ClickHouse/pull/99490
+-- Test from https://github.com/ClickHouse/Datastore/pull/99490
 DROP TABLE IF EXISTS t_nullable_tuple;
 
 CREATE TABLE t_nullable_tuple

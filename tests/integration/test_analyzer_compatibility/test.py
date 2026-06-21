@@ -6,7 +6,7 @@ import pytest
 from helpers.cluster import ClickHouseCluster
 from helpers.test_tools import TSV
 
-CLICKHOUSE_MAX_VERSION_WITH_ANALYZER_DISABLED_BY_DEFAULT = "24.2"
+DATASTORE_MAX_VERSION_WITH_ANALYZER_DISABLED_BY_DEFAULT = "24.2"
 
 cluster = ClickHouseCluster(__file__)
 # Here analyzer is enabled by default
@@ -19,8 +19,8 @@ backward = cluster.add_instance(
     "backward",
     use_old_analyzer=True,
     main_configs=["configs/remote_servers.xml"],
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_MAX_VERSION_WITH_ANALYZER_DISABLED_BY_DEFAULT,
+    image="datastore/datastore-server",
+    tag=DATASTORE_MAX_VERSION_WITH_ANALYZER_DISABLED_BY_DEFAULT,
     with_installed_binary=True,
 )
 

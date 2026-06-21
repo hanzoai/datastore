@@ -25,7 +25,7 @@ MySQLOutputFormat::MySQLOutputFormat(WriteBuffer & out_, SharedHeader header_, c
 {
     /// MySQlWire is a special format that is usually used as output format for MySQL protocol connections.
     /// In this case we have a correct `sequence_id` stored in `settings_.mysql_wire`.
-    /// But it's also possible to specify MySQLWire as output format for clickhouse-client or clickhouse-local.
+    /// But it's also possible to specify MySQLWire as output format for datastore-client or datastore-local.
     /// There is no `sequence_id` stored in `settings_.mysql_wire` in this case, so we create a dummy one.
     sequence_id = settings_.mysql_wire.sequence_id ? settings_.mysql_wire.sequence_id : &dummy_sequence_id;
     /// Switch between Text (COM_QUERY) and Binary (COM_EXECUTE_STMT) ResultSet

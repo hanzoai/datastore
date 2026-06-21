@@ -13,4 +13,4 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # containing 3 rows: (42::Int64, 'hello', NULL). The NULL index byte (value 2)
 # was changed to 10, which exceeds the valid range [0, 2].
 
-$CLICKHOUSE_LOCAL --table test --input-format Native -q "SELECT * FROM test" < "${CUR_DIR}/data_native/dynamic_flattened_bad_index.native" 2>&1 | grep -o 'Incorrect index.*reserved for NULL values)'
+$DATASTORE_LOCAL --table test --input-format Native -q "SELECT * FROM test" < "${CUR_DIR}/data_native/dynamic_flattened_bad_index.native" 2>&1 | grep -o 'Incorrect index.*reserved for NULL values)'

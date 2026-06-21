@@ -41,7 +41,7 @@ def test_profiler(started_cluster):
         return
 
     node.query(
-        "CREATE TABLE t (key UInt32, value String) Engine = ReplicatedMergeTree('/clickhouse-tables/test1', 'r1') ORDER BY key"
+        "CREATE TABLE t (key UInt32, value String) Engine = ReplicatedMergeTree('/datastore-tables/test1', 'r1') ORDER BY key"
     )
 
     for _ in range(100):

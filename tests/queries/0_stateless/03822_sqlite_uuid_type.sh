@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-DB_PATH=${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_sqlite_uuid.db
+DB_PATH=${DATASTORE_TMP}/${DATASTORE_DATABASE}_sqlite_uuid.db
 
 rm -f "${DB_PATH}"
 
@@ -16,13 +16,13 @@ sqlite3 "${DB_PATH}" "INSERT INTO t0 VALUES ('00000000-0000-0000-0000-0000000000
 sqlite3 "${DB_PATH}" "INSERT INTO t0 VALUES (NULL);"
 
 echo "Test UUID column type"
-${CLICKHOUSE_LOCAL} --query="CREATE TABLE test_sqlite_uuid (c0 UUID) ENGINE = SQLite('${DB_PATH}', 't0'); SELECT c0 FROM test_sqlite_uuid ORDER BY c0"
+${DATASTORE_LOCAL} --query="CREATE TABLE test_sqlite_uuid (c0 UUID) ENGINE = SQLite('${DB_PATH}', 't0'); SELECT c0 FROM test_sqlite_uuid ORDER BY c0"
 
 echo "Test Nullable(UUID) column type"
-${CLICKHOUSE_LOCAL} --query="CREATE TABLE test_sqlite_uuid_nullable (c0 Nullable(UUID)) ENGINE = SQLite('${DB_PATH}', 't0'); SELECT c0 FROM test_sqlite_uuid_nullable ORDER BY c0 NULLS LAST"
+${DATASTORE_LOCAL} --query="CREATE TABLE test_sqlite_uuid_nullable (c0 Nullable(UUID)) ENGINE = SQLite('${DB_PATH}', 't0'); SELECT c0 FROM test_sqlite_uuid_nullable ORDER BY c0 NULLS LAST"
 
 echo "Test inserting UUID values into SQLite"
-${CLICKHOUSE_LOCAL} --query="INSERT INTO TABLE FUNCTION sqlite('${DB_PATH}', 't0') SELECT 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'"
-${CLICKHOUSE_LOCAL} --query="SELECT c0 FROM sqlite('${DB_PATH}', 't0') ORDER BY c0"
+${DATASTORE_LOCAL} --query="INSERT INTO TABLE FUNCTION sqlite('${DB_PATH}', 't0') SELECT 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'"
+${DATASTORE_LOCAL} --query="SELECT c0 FROM sqlite('${DB_PATH}', 't0') ORDER BY c0"
 
 rm -f "${DB_PATH}"

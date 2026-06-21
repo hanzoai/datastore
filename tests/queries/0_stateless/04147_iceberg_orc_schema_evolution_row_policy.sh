@@ -36,9 +36,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-ICEBERG_PATH="${CLICKHOUSE_USER_FILES}/lakehouses/${CLICKHOUSE_DATABASE}_orc_evol"
-TEST_USER="${CLICKHOUSE_DATABASE}_user_evol"
-TEST_POLICY="${CLICKHOUSE_DATABASE}_policy_evol"
+ICEBERG_PATH="${DATASTORE_USER_FILES}/lakehouses/${DATASTORE_DATABASE}_orc_evol"
+TEST_USER="${DATASTORE_DATABASE}_user_evol"
+TEST_POLICY="${DATASTORE_DATABASE}_policy_evol"
 TEST_TABLE="t_ice_orc_evol"
 
 rm -rf "${ICEBERG_PATH}"
@@ -47,7 +47,7 @@ rm -rf "${ICEBERG_PATH}"
 # check passes and we exercise the strip/fallback path) but populate it with
 # ORC data files only via the `icebergLocal` table function. After this we
 # have one ORC file under the table's first schema.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_experimental_insert_into_iceberg = 1;
 
     CREATE TABLE ${TEST_TABLE} (c0 Int64, c1 String)
@@ -62,18 +62,18 @@ ${CLICKHOUSE_CLIENT} --query "
 # has the same column-id under the new name `renamed_c0`. Reads now go through
 # the schema-changed path: format reader emits `c0`, then `schema_transform`
 # renames it to `renamed_c0` downstream of the source.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_insert_into_iceberg = 1;
     ALTER TABLE ${TEST_TABLE} RENAME COLUMN c0 TO renamed_c0;
 "
 
 # Set up a user and a row policy on the renamed column. The policy keeps rows
 # where `renamed_c0 > 5`.
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
-${CLICKHOUSE_CLIENT} --query "CREATE USER ${TEST_USER} IDENTIFIED WITH plaintext_password BY 'rp_pwd_evol'"
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON *.* TO ${TEST_USER}"
-${CLICKHOUSE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
-${CLICKHOUSE_CLIENT} --query "CREATE ROW POLICY ${TEST_POLICY} ON ${TEST_TABLE} FOR SELECT USING renamed_c0 > 5 TO ${TEST_USER}"
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
+${DATASTORE_CLIENT} --query "CREATE USER ${TEST_USER} IDENTIFIED WITH plaintext_password BY 'rp_pwd_evol'"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON *.* TO ${TEST_USER}"
+${DATASTORE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
+${DATASTORE_CLIENT} --query "CREATE ROW POLICY ${TEST_POLICY} ON ${TEST_TABLE} FOR SELECT USING renamed_c0 > 5 TO ${TEST_USER}"
 
 # 1) `PREWHERE` on the renamed column where it is NOT in the SELECT list (so
 #    `remove_prewhere_column = true`). Without the fix the row-policy
@@ -82,7 +82,7 @@ ${CLICKHOUSE_CLIENT} --query "CREATE ROW POLICY ${TEST_POLICY} ON ${TEST_TABLE} 
 #    fallback filter runs after `schema_transform`, so it sees `renamed_c0`.
 #    Expected: rows where `renamed_c0` in (10..99]; all are >5 so the policy
 #    is satisfied. count = 89.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
     SELECT count()
     FROM ${TEST_TABLE}
     PREWHERE renamed_c0 > 10
@@ -92,7 +92,7 @@ ${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
 # 2) `PREWHERE` overlaps the policy boundary (`renamed_c0 > 3`, policy
 #    `> 5`). Policy is the tighter filter — count must reflect
 #    `renamed_c0 > 5` (intersection), i.e. rows in (5..99]. count = 94.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
     SELECT count()
     FROM ${TEST_TABLE}
     PREWHERE renamed_c0 > 3
@@ -104,7 +104,7 @@ ${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
 #    `PREWHERE`-input column (so the `FilterTransform` can evaluate it) and
 #    the SELECT-list column. Expected: sum of integer values of `c1` for rows
 #    where `renamed_c0` in (10..99] = sum(11..99) = 4895.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
     SELECT sum(toInt64(c1))
     FROM ${TEST_TABLE}
     PREWHERE renamed_c0 > 10
@@ -114,14 +114,14 @@ ${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
 # 4) Plain `SELECT` without `PREWHERE` — exercises the row policy alone on
 #    the renamed column under the schema-changed path. Expected: rows where
 #    `renamed_c0 > 5`, i.e. rows in (5..99]. count = 94.
-${CLICKHOUSE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
+${DATASTORE_CLIENT} --user="${TEST_USER}" --password=rp_pwd_evol --query "
     SELECT count()
     FROM ${TEST_TABLE}
     SETTINGS input_format_parquet_use_native_reader_v3 = 1, enable_analyzer = 1
 "
 
 # Cleanup
-${CLICKHOUSE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS ${TEST_TABLE}"
+${DATASTORE_CLIENT} --query "DROP ROW POLICY IF EXISTS ${TEST_POLICY} ON ${TEST_TABLE}"
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS ${TEST_USER}"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS ${TEST_TABLE}"
 rm -rf "${ICEBERG_PATH}"

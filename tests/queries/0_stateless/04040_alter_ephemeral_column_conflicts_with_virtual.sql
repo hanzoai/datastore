@@ -1,6 +1,6 @@
 -- ALTER TABLE should not allow creating EPHEMERAL columns that conflict with virtual columns.
 -- This is the ALTER counterpart of the CREATE TABLE validation added in PR #99031.
--- https://github.com/ClickHouse/ClickHouse/issues/99437
+-- https://github.com/ClickHouse/Datastore/issues/99437
 
 DROP TABLE IF EXISTS t;
 

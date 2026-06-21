@@ -21,12 +21,12 @@ echo '0' > ${USER_FILES_PATH}/file_10.csv
 
 # echo '' > ${USER_FILES_PATH}/file_10.csv
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS t_regex;"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS t_regex;"
 
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE t_regex (id UInt64) ENGINE = MergeTree() order by id;"
+${DATASTORE_CLIENT} -q "CREATE TABLE t_regex (id UInt64) ENGINE = MergeTree() order by id;"
 
-${CLICKHOUSE_CLIENT} -q "INSERT INTO t_regex SELECT * FROM file('file_{0..10}.csv','CSV');"
-${CLICKHOUSE_CLIENT} -q "SELECT count() from t_regex;"
+${DATASTORE_CLIENT} -q "INSERT INTO t_regex SELECT * FROM file('file_{0..10}.csv','CSV');"
+${DATASTORE_CLIENT} -q "SELECT count() from t_regex;"
 
 rm -rf ${USER_FILES_PATH}/file_{0..10}.csv;
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS t_regex;"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS t_regex;"

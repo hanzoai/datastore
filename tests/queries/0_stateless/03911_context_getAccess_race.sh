@@ -16,9 +16,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS t_race_access"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE t_race_access (id UInt64, name String) ENGINE = MergeTree ORDER BY id"
-$CLICKHOUSE_CLIENT -q "INSERT INTO t_race_access SELECT number, toString(number) FROM numbers(100)"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS t_race_access"
+$DATASTORE_CLIENT -q "CREATE TABLE t_race_access (id UInt64, name String) ENGINE = MergeTree ORDER BY id"
+$DATASTORE_CLIENT -q "INSERT INTO t_race_access SELECT number, toString(number) FROM numbers(100)"
 
 TIMEOUT=10
 
@@ -26,7 +26,7 @@ function thread_ddl_setting()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "SELECT count() FROM t_race_access WHERE id IN (SELECT id FROM t_race_access) SETTINGS allow_ddl=1 FORMAT Null" 2>&1 | grep -v -e "^$" || true
+        $DATASTORE_CLIENT -q "SELECT count() FROM t_race_access WHERE id IN (SELECT id FROM t_race_access) SETTINGS allow_ddl=1 FORMAT Null" 2>&1 | grep -v -e "^$" || true
     done
 }
 
@@ -34,7 +34,7 @@ function thread_introspection_setting()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "SELECT count() FROM t_race_access WHERE id IN (SELECT id FROM t_race_access) SETTINGS allow_introspection_functions=1 FORMAT Null" 2>&1 | grep -v -e "^$" || true
+        $DATASTORE_CLIENT -q "SELECT count() FROM t_race_access WHERE id IN (SELECT id FROM t_race_access) SETTINGS allow_introspection_functions=1 FORMAT Null" 2>&1 | grep -v -e "^$" || true
     done
 }
 
@@ -48,6 +48,6 @@ done
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE t_race_access"
+$DATASTORE_CLIENT -q "DROP TABLE t_race_access"
 
 echo "OK"

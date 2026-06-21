@@ -8,9 +8,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-DATA_FILE="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}.arrow"
-DATA_FILE_STREAM="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}_stream.arrow"
-DATA_FILE_NULLABLE="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}_nullable.arrow"
+DATA_FILE="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}.arrow"
+DATA_FILE_STREAM="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}_stream.arrow"
+DATA_FILE_NULLABLE="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}_nullable.arrow"
 trap 'rm -f "$DATA_FILE" "$DATA_FILE_STREAM" "$DATA_FILE_NULLABLE"' EXIT
 
 # Build a well-formed Arrow file with 4 binary rows of 10 bytes each,
@@ -43,7 +43,7 @@ data[idx + 4 : idx + 8] = struct.pack('<I', 0x40000000)
 open(path, 'wb').write(bytes(data))
 EOF
 
-$CLICKHOUSE_LOCAL --query "SELECT count(), max(length(x)) FROM file('${DATA_FILE}', 'Arrow')" 2>&1 \
+$DATASTORE_LOCAL --query "SELECT count(), max(length(x)) FROM file('${DATA_FILE}', 'Arrow')" 2>&1 \
     | grep -oF 'INCORRECT_DATA' || echo 'FAIL: expected INCORRECT_DATA'
 
 # Same payload via ArrowStream format.
@@ -70,7 +70,7 @@ data[idx + 4 : idx + 8] = struct.pack('<I', 0x40000000)
 open(path, 'wb').write(bytes(data))
 EOF
 
-$CLICKHOUSE_LOCAL --query "SELECT count(), max(length(x)) FROM file('${DATA_FILE_STREAM}', 'ArrowStream')" 2>&1 \
+$DATASTORE_LOCAL --query "SELECT count(), max(length(x)) FROM file('${DATA_FILE_STREAM}', 'ArrowStream')" 2>&1 \
     | grep -oF 'INCORRECT_DATA' || echo 'FAIL: expected INCORRECT_DATA'
 
 # Nullable column: corrupt the last offset on a non-null row so its value_length
@@ -102,13 +102,13 @@ data[idx + 12 : idx + 16] = struct.pack('<I', 0x40000000)
 open(path, 'wb').write(bytes(data))
 EOF
 
-$CLICKHOUSE_LOCAL --query "SELECT x FROM file('${DATA_FILE_NULLABLE}', 'Arrow')" 2>&1 \
+$DATASTORE_LOCAL --query "SELECT x FROM file('${DATA_FILE_NULLABLE}', 'Arrow')" 2>&1 \
     | grep -oF 'INCORRECT_DATA' || echo 'FAIL: expected INCORRECT_DATA'
 
 # Write loop path: non-null empty strings with absent values buffer (IPC body offset=-1).
 # This exercises the null_count==0 write path when buffer->data() may be null.
 # The fixed build must read all rows as empty strings without crashing.
-DATA_FILE_EMPTY="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}_empty.arrow"
+DATA_FILE_EMPTY="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}_empty.arrow"
 trap 'rm -f "$DATA_FILE" "$DATA_FILE_STREAM" "$DATA_FILE_NULLABLE" "$DATA_FILE_EMPTY"' EXIT
 python3 - "$DATA_FILE_EMPTY" <<'EOF'
 import struct
@@ -136,4 +136,4 @@ data[idx : idx + 8] = struct.pack('<q', -1)   # set offset=-1
 open(path, 'wb').write(bytes(data))
 EOF
 
-$CLICKHOUSE_LOCAL --query "SELECT count(), countIf(length(x) = 0) FROM file('${DATA_FILE_EMPTY}', 'Arrow')" 2>&1
+$DATASTORE_LOCAL --query "SELECT count(), countIf(length(x) = 0) FROM file('${DATA_FILE_EMPTY}', 'Arrow')" 2>&1

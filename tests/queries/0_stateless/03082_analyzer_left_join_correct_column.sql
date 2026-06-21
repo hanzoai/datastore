@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/39634
+-- https://github.com/ClickHouse/Datastore/issues/39634
 SET enable_analyzer=1;
 CREATE TABLE test1
 (

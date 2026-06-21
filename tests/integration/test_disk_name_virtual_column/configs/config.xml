@@ -1,8 +1,8 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
     </logger>
@@ -11,15 +11,15 @@
         <disks>
             <disk_local1>
                 <type>local</type>
-                <path>/var/lib/clickhouse/disk1/</path>
+                <path>/var/lib/datastore/disk1/</path>
             </disk_local1>
             <disk_local2>
                 <type>local</type>
-                <path>/var/lib/clickhouse/disk2/</path>
+                <path>/var/lib/datastore/disk2/</path>
             </disk_local2>
             <disk_local3>
                 <type>local</type>
-                <path>/var/lib/clickhouse/disk3/</path>
+                <path>/var/lib/datastore/disk3/</path>
             </disk_local3>
         </disks>
         <policies>
@@ -48,6 +48,6 @@
     </storage_configuration>
 
     <max_concurrent_queries>500</max_concurrent_queries>
-    <path>./clickhouse/</path>
+    <path>./datastore/</path>
     <users_config>users.xml</users_config>
-</clickhouse>
+</datastore>

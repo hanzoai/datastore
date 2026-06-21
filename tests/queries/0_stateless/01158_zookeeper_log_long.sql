@@ -32,7 +32,7 @@ query_ids as
 (
     select query_id from system.query_log where event_date >= yesterday() AND event_time >= now() - 600 AND current_database=currentDatabase() and event_time>=cutoff_time
 )
-select type, has_watch, op_num, replace(path, toString(serverUUID()), '<uuid>'), is_ephemeral, is_sequential, if(startsWith(path, '/clickhouse/sessions'), 1, version), requests_size, request_idx, error, watch_type,
+select type, has_watch, op_num, replace(path, toString(serverUUID()), '<uuid>'), is_ephemeral, is_sequential, if(startsWith(path, '/datastore/sessions'), 1, version), requests_size, request_idx, error, watch_type,
        watch_state, path_created, stat_version, stat_cversion, stat_dataLength, stat_numChildren
 from system.zookeeper_log
 where event_time>=cutoff_time and (session_id, xid) in (

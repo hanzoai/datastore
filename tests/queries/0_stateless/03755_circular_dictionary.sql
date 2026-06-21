@@ -17,7 +17,7 @@ CREATE DICTIONARY filesystem_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Filesystem%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Filesystem%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -28,7 +28,7 @@ CREATE DICTIONARY kafka_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Kafka%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Kafka%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -39,7 +39,7 @@ CREATE DICTIONARY mergetree_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'MergeTree%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'MergeTree%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -50,7 +50,7 @@ CREATE DICTIONARY ddlworker_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'DDLWorker%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'DDLWorker%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -61,7 +61,7 @@ CREATE DICTIONARY storages3_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'StorageS3%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'StorageS3%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -72,7 +72,7 @@ CREATE DICTIONARY background_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Background%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Background%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -83,7 +83,7 @@ CREATE DICTIONARY temporaryfiles_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'TemporaryFiles%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'TemporaryFiles%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -94,7 +94,7 @@ CREATE DICTIONARY parts_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Parts%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Parts%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -105,7 +105,7 @@ CREATE DICTIONARY distrcache_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'DistrCache%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'DistrCache%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -116,7 +116,7 @@ CREATE DICTIONARY drop_dict
     `value` Int64
 )
 PRIMARY KEY metric
-SOURCE(CLICKHOUSE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Drop%\''))
+SOURCE(DATASTORE(QUERY 'SELECT metric, value FROM system.metrics WHERE metric LIKE \'Drop%\''))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(COMPLEX_KEY_HASHED());
 

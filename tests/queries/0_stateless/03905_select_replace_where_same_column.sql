@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/85313
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/85313
 -- SELECT * REPLACE should affect the WHERE clause when the analyzer is enabled.
 
 DROP TABLE IF EXISTS t_replace_where;

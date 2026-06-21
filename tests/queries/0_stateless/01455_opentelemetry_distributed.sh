@@ -14,10 +14,10 @@ function check_log
     # already been sent to the client.  There is therefore a small window where
     # the client has received the HTTP 200 but the span is not yet in the table.
     # Retry a few times to let the background I/O thread finish.
-    # This fixes https://github.com/ClickHouse/ClickHouse/issues/67108 and https://github.com/ClickHouse/ClickHouse/issues/93452
+    # This fixes https://github.com/ClickHouse/Datastore/issues/67108 and https://github.com/ClickHouse/Datastore/issues/93452
     for _retry in {1..20}; do
-        ${CLICKHOUSE_CLIENT} -q "system flush logs opentelemetry_span_log"
-        _gateway_count=$(${CLICKHOUSE_CLIENT} -q "
+        ${DATASTORE_CLIENT} -q "system flush logs opentelemetry_span_log"
+        _gateway_count=$(${DATASTORE_CLIENT} -q "
             select count() from system.opentelemetry_span_log
             where finish_date >= yesterday()
               AND trace_id = UUIDNumToString(toFixedString(unhex('$trace_id'), 16))
@@ -29,14 +29,14 @@ function check_log
         sleep 0.1
     done
 
-${CLICKHOUSE_CLIENT} --format=JSONEachRow -q "
+${DATASTORE_CLIENT} --format=JSONEachRow -q "
 set enable_analyzer = 1;
 -- Spans are already flushed by the retry loop above.
 
 -- Show queries sorted by start time.
 select attribute['db.statement'] as query,
-       attribute['clickhouse.query_status'] as status,
-       attribute['clickhouse.tracestate'] as tracestate,
+       attribute['datastore.query_status'] as status,
+       attribute['datastore.tracestate'] as tracestate,
        1 as sorted_by_start_time
     from system.opentelemetry_span_log
     where finish_date >= yesterday() AND trace_id = UUIDNumToString(toFixedString(unhex('$trace_id'), 16))
@@ -46,8 +46,8 @@ select attribute['db.statement'] as query,
 
 -- Show queries sorted by finish time.
 select attribute['db.statement'] as query,
-       attribute['clickhouse.query_status'] as query_status,
-       attribute['clickhouse.tracestate'] as tracestate,
+       attribute['datastore.query_status'] as query_status,
+       attribute['datastore.tracestate'] as tracestate,
        1 as sorted_by_finish_time
     from system.opentelemetry_span_log
     where finish_date >= yesterday() AND trace_id = UUIDNumToString(toFixedString(unhex('$trace_id'), 16))
@@ -66,7 +66,7 @@ select count(*) "'"'"total spans"'"'",
         and operation_name = 'query'
     ;
 
--- Also check that the initial query span in ClickHouse has proper parent span.
+-- Also check that the initial query span in Datastore has proper parent span.
 -- the first span should be child of input trace context
 -- the 2nd span should be the 'query' span
 select count(*) "'"'"initial query spans with proper parent"'"'"
@@ -87,7 +87,7 @@ select uniqExact(value) "'"'"unique non-empty tracestate values"'"'"
     where finish_date >= yesterday() AND
         trace_id = UUIDNumToString(toFixedString(unhex('$trace_id'), 16))
         and operation_name = 'query'
-        and name = 'clickhouse.tracestate'
+        and name = 'datastore.tracestate'
         and length(value) > 0
     ;
 "
@@ -95,27 +95,27 @@ select uniqExact(value) "'"'"unique non-empty tracestate values"'"'"
 
 # Generate some random trace id so that the prevous runs of the test do not interfere.
 echo "===http==="
-trace_id=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4())))) settings enable_analyzer = 1")
+trace_id=$(${DATASTORE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4())))) settings enable_analyzer = 1")
 
 # Check that the HTTP traceparent is read, and then passed through `remote`
 # table function. We expect 4 queries -- one initial, one SELECT and two
 # DESC TABLE. Two DESC TABLE instead of one looks like a bug, see the issue:
-# https://github.com/ClickHouse/ClickHouse/issues/14228
-${CLICKHOUSE_CURL} \
+# https://github.com/ClickHouse/Datastore/issues/14228
+${DATASTORE_CURL} \
     --header "traceparent: 00-$trace_id-0000000000000073-01" \
-    --header "tracestate: some custom state" "$CLICKHOUSE_URL" \
+    --header "tracestate: some custom state" "$DATASTORE_URL" \
     --get \
     --data-urlencode "query=select 1 from remote('127.0.0.2', system, one) settings enable_analyzer = 1 format Null"
 
 check_log
 
-# With another trace id, check that clickhouse-client accepts traceparent, and
+# With another trace id, check that datastore-client accepts traceparent, and
 # that it is passed through URL table function. We expect two query spans, one
 # for the initial query, and one for the HTTP query.
 echo "===native==="
-trace_id=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
+trace_id=$(${DATASTORE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
 
-${CLICKHOUSE_CLIENT} \
+${DATASTORE_CLIENT} \
     --opentelemetry-traceparent "00-$trace_id-0000000000000073-01" \
     --opentelemetry-tracestate "another custom state" \
     --query "select * from url('http://127.0.0.2:8123/?query=select%201%20format%20Null', CSV, 'a int')"
@@ -125,17 +125,17 @@ check_log
 # Test sampled tracing. The traces should be started with the specified
 # probability, only for initial queries.
 echo "===sampled==="
-query_id=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
+query_id=$(${DATASTORE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
 
 for i in {1..40}
 do
-    ${CLICKHOUSE_CLIENT} \
+    ${DATASTORE_CLIENT} \
         --opentelemetry_start_trace_probability=0.5 \
         --query_id "$query_id-$i" \
         --query "select 1 from remote('127.0.0.2', system, one) format Null" \
         &
 
-    # clickhouse-client is slow to start (initialization of DateLUT), so run
+    # datastore-client is slow to start (initialization of DateLUT), so run
     # several clients in parallel, but not too many.
     if [[ $((i % 10)) -eq 0 ]]
     then
@@ -144,14 +144,14 @@ do
 done
 wait
 
-${CLICKHOUSE_CLIENT} -q "system flush logs opentelemetry_span_log"
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "system flush logs opentelemetry_span_log"
+${DATASTORE_CLIENT} -q "
     -- expect 40 * 0.5 = 20 sampled events on average;
     -- probability of getting 0, 1, 39, or 40 sampled events: 82/2^40 = 1 in 13.4 B runs;
     -- if there are 10k tests run 1k times per day, that's a false positive every 3.7 years
     select if(2 <= count() and count() <= 38, 'OK', 'Fail')
     from system.opentelemetry_span_log
     where finish_date >= yesterday() AND operation_name = 'query'
-        and attribute['clickhouse.query_id'] like '$query_id-%'
+        and attribute['datastore.query_id'] like '$query_id-%'
     ;
 "

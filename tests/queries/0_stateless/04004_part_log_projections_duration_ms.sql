@@ -99,7 +99,7 @@ CREATE TABLE t_proj_repl
     PROJECTION p1 (SELECT key, value ORDER BY value),
     PROJECTION p2 (SELECT key, count() GROUP BY key)
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/04004_t_proj_repl', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/04004_t_proj_repl', 'r1')
 ORDER BY key;
 
 INSERT INTO t_proj_repl SELECT number, toString(number) FROM numbers(5000);

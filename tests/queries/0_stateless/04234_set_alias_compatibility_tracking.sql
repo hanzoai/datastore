@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/104568
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/104568
 -- Manually changing a setting via its alias name must remove it from the
 -- compatibility-tracking set, so the next `SET compatibility=` doesn't revert it.
 

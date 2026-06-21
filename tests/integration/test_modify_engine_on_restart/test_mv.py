@@ -63,10 +63,10 @@ def create_tables():
     q(
         ch1,
         "INSERT INTO hourly_data (domain_name, event_time, count_views)\
-            VALUES ('clickhouse.com', '2019-01-01 10:00:00', 1),\
-                ('clickhouse.com', '2019-02-02 00:00:00', 2),\
-                ('clickhouse.com', '2019-02-01 00:00:00', 3),\
-                ('clickhouse.com', '2020-01-01 00:00:00', 6)",
+            VALUES ('datastore.com', '2019-01-01 10:00:00', 1),\
+                ('datastore.com', '2019-02-02 00:00:00', 2),\
+                ('datastore.com', '2019-02-01 00:00:00', 3),\
+                ('datastore.com', '2020-01-01 00:00:00', 6)",
     )
 
 
@@ -100,10 +100,10 @@ def check_tables(converted):
         q(
             ch1,
             "INSERT INTO hourly_data (domain_name, event_time, count_views)\
-                VALUES ('clickhouse.com', '2019-01-01 10:00:00', 1),\
-                    ('clickhouse.com', '2019-02-02 00:00:00', 2),\
-                    ('clickhouse.com', '2019-02-01 00:00:00', 3),\
-                    ('clickhouse.com', '2020-01-01 00:00:00', 6)",
+                VALUES ('datastore.com', '2019-01-01 10:00:00', 1),\
+                    ('datastore.com', '2019-02-02 00:00:00', 2),\
+                    ('datastore.com', '2019-02-01 00:00:00', 3),\
+                    ('datastore.com', '2020-01-01 00:00:00', 6)",
         )
 
         assert (

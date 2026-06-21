@@ -27,10 +27,10 @@ ColumnsDescription StorageSystemReplicationQueue::getColumnsDescription()
         { "database",                std::make_shared<DataTypeString>(), "Name of the database."},
         { "table",                   std::make_shared<DataTypeString>(), "Name of the table."},
         { "replica_name",            std::make_shared<DataTypeString>(),
-            "Replica name in ClickHouse Keeper. Different replicas of the same table have different names."},
+            "Replica name in Datastore Keeper. Different replicas of the same table have different names."},
         /// Constant element properties.
         { "position",                std::make_shared<DataTypeUInt32>(), "Position of the task in the queue."},
-        { "node_name",               std::make_shared<DataTypeString>(), "Node name in ClickHouse Keeper."},
+        { "node_name",               std::make_shared<DataTypeString>(), "Node name in Datastore Keeper."},
         { "type",                    std::make_shared<DataTypeString>(),
             "Type of the task in the queue, one of: "
             "• GET_PART — Get the part from another replica, "

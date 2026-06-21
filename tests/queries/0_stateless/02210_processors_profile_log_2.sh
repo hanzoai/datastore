@@ -6,16 +6,16 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-QUERY_ID=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
+QUERY_ID=$(${DATASTORE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString(generateUUIDv4()))))")
 
 
-${CLICKHOUSE_CLIENT} --query_id "${QUERY_ID}" <<EOF
+${DATASTORE_CLIENT} --query_id "${QUERY_ID}" <<EOF
 SELECT sum(number) FROM numbers_mt(1000000)
 SETTINGS max_threads = 4, log_processors_profiles=true, log_queries=1, log_queries_min_type='QUERY_FINISH';
 EOF
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS processors_profile_log"
+${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS processors_profile_log"
 
-${CLICKHOUSE_CLIENT} -q "select name, sum(input_rows), sum(input_bytes), sum(output_rows), sum(output_bytes) from system.processors_profile_log where event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '${QUERY_ID}' group by name, plan_step, plan_group order by name, sum(input_rows), sum(input_bytes), sum(output_rows), sum(output_bytes)"
+${DATASTORE_CLIENT} -q "select name, sum(input_rows), sum(input_bytes), sum(output_rows), sum(output_bytes) from system.processors_profile_log where event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '${QUERY_ID}' group by name, plan_step, plan_group order by name, sum(input_rows), sum(input_bytes), sum(output_rows), sum(output_bytes)"
 
-${CLICKHOUSE_CLIENT} -q "select countDistinct(initial_query_id) from system.processors_profile_log where event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '${QUERY_ID}'"
+${DATASTORE_CLIENT} -q "select countDistinct(initial_query_id) from system.processors_profile_log where event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '${QUERY_ID}'"

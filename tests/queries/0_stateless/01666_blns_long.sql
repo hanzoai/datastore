@@ -558,9 +558,9 @@ SELECT count() FROM test;
 DROP TABLE IF EXISTS test_r1 SYNC;
 DROP TABLE IF EXISTS test_r2 SYNC;
 
-CREATE TABLE test_r1 AS test ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_01666', 'r1') ORDER BY "\\" SETTINGS min_bytes_for_wide_part = '100G', replace_long_file_name_to_hash = 1;
+CREATE TABLE test_r1 AS test ENGINE = ReplicatedMergeTree('/datastore/{database}/test_01666', 'r1') ORDER BY "\\" SETTINGS min_bytes_for_wide_part = '100G', replace_long_file_name_to_hash = 1;
 INSERT INTO test_r1 SELECT * FROM test;
-CREATE TABLE test_r2 AS test ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_01666', 'r2') ORDER BY "\\" SETTINGS min_bytes_for_wide_part = '100G', replace_long_file_name_to_hash = 1;
+CREATE TABLE test_r2 AS test ENGINE = ReplicatedMergeTree('/datastore/{database}/test_01666', 'r2') ORDER BY "\\" SETTINGS min_bytes_for_wide_part = '100G', replace_long_file_name_to_hash = 1;
 
 SYSTEM SYNC REPLICA test_r2 STRICT;
 

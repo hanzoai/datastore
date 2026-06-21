@@ -43,31 +43,31 @@ def test_zookeeper_connection_log(started_cluster):
     test_start_time = node1.query("SELECT now64()").strip()
     logging.debug(f"Test start time is {test_start_time}")
 
-    # Let's restart ClickHouse to make sure there are log entries for initialization.
+    # Let's restart Datastore to make sure there are log entries for initialization.
     # By restarting we can also make sure there won't be any config reloads in case of repeated runs.
     # The previous run would revert the config, but we need to reset the state of config.
     node1.restart_clickhouse()
 
     node1.query(
-        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
     node1.query("INSERT INTO simple VALUES ('2020-08-27', 1)")
     node1.query("INSERT INTO simple VALUES ('2020-08-28', 1)")
     node1.query("INSERT INTO simple VALUES ('2020-08-29', 1)")
 
     node1.query(
-        "CREATE TABLE simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
 
     node1.query(
-        "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zk_conn_log_test_2:/clickhouse/tables/0/simple';"
+        "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zk_conn_log_test_2:/datastore/tables/0/simple';"
     )
 
     node1.query(
-        "ALTER TABLE simple2 FETCH PARTITION '2020-08-28' FROM 'zk_conn_log_test_3:/clickhouse/tables/0/simple';"
+        "ALTER TABLE simple2 FETCH PARTITION '2020-08-28' FROM 'zk_conn_log_test_3:/datastore/tables/0/simple';"
     )
 
-    new_auxiliary_config = """<clickhouse>
+    new_auxiliary_config = """<datastore>
     <auxiliary_zookeepers>
         <zk_conn_log_test_2>
             <node index="1">
@@ -82,9 +82,9 @@ def test_zookeeper_connection_log(started_cluster):
             </node>
         </zk_conn_log_test_4>
     </auxiliary_zookeepers>
-</clickhouse>"""
+</datastore>"""
 
-    new_config = """<clickhouse>
+    new_config = """<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo2</host>
@@ -92,13 +92,13 @@ def test_zookeeper_connection_log(started_cluster):
         </node>
         <session_timeout_ms>15000</session_timeout_ms>
     </zookeeper>
-</clickhouse>"""
+</datastore>"""
 
     with node1.with_replace_config(
-        "/etc/clickhouse-server/conf.d/zookeeper_config.xml", new_config
+        "/etc/datastore-server/conf.d/zookeeper_config.xml", new_config
     ):
         with node1.with_replace_config(
-            "/etc/clickhouse-server/config.d/auxiliary_zookeepers.xml",
+            "/etc/datastore-server/config.d/auxiliary_zookeepers.xml",
             new_auxiliary_config,
         ):
 
@@ -116,7 +116,7 @@ def test_zookeeper_connection_log(started_cluster):
             )
 
             node1.query(
-                "ALTER TABLE simple2 FETCH PARTITION '2020-08-29' FROM 'zk_conn_log_test_4:/clickhouse/tables/0/simple';"
+                "ALTER TABLE simple2 FETCH PARTITION '2020-08-29' FROM 'zk_conn_log_test_4:/datastore/tables/0/simple';"
             )
 
             node1.query("SYSTEM FLUSH LOGS")
@@ -173,13 +173,13 @@ node1	Connected	zk_conn_log_test_4	zoo2	2181	0	0	['FILTERED_LIST','MULTI_READ','
 
 def test_connect_on_reload(started_cluster, request):
     node2.replace_in_config(
-        "/etc/clickhouse-server/config.d/enable_keeper.xml",
+        "/etc/datastore-server/config.d/enable_keeper.xml",
         "use_cluster>1",
         "use_cluster>0",
     )
     node2.restart_clickhouse()
     node2.replace_in_config(
-        "/etc/clickhouse-server/config.d/enable_keeper.xml",
+        "/etc/datastore-server/config.d/enable_keeper.xml",
         "use_cluster>0",
         "use_cluster>1",
     )

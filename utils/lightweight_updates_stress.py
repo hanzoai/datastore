@@ -56,7 +56,7 @@ table_name = "updates_stress"
 table_name_data = table_name + "_data"
 table_name_reference = table_name + "_reference"
 query_id_prefix = table_name + "-" + str(random.randint(0, 10000000000))
-cloud_mode = "clickhouse" in args.host
+cloud_mode = "datastore" in args.host
 
 if cloud_mode:
     query_log_name = "clusterAllReplicas(default, system.query_log)"

@@ -225,10 +225,10 @@ def mode_check_statements(parser):
             output_dir=complete_sqlite_dir,
         )
 
-        verify_clickhouse_dir = os.path.join(out_stages_dir, "verify-clickhouse")
+        verify_clickhouse_dir = os.path.join(out_stages_dir, "verify-datastore")
         os.makedirs(verify_clickhouse_dir, exist_ok=True)
 
-        reports["verify-clickhouse"] = run_all_tests_in_parallel(
+        reports["verify-datastore"] = run_all_tests_in_parallel(
             setup_kwargs=as_kwargs(
                 engine=Engines.NATIVE,
                 conn_str=default_clickhouse_native_conn_args(),
@@ -284,10 +284,10 @@ def mode_check_complete(parser):
             output_dir=complete_sqlite_dir,
         )
 
-        verify_clickhouse_dir = os.path.join(out_stages_dir, "complete-clickhouse")
+        verify_clickhouse_dir = os.path.join(out_stages_dir, "complete-datastore")
         os.makedirs(verify_clickhouse_dir, exist_ok=True)
 
-        reports["complete-clickhouse"] = run_all_tests_in_parallel(
+        reports["complete-datastore"] = run_all_tests_in_parallel(
             setup_kwargs=as_kwargs(
                 engine=Engines.NATIVE,
                 conn_str=default_clickhouse_native_conn_args(),
@@ -419,38 +419,38 @@ def mode_self_test(parser):
             reports["sqlite-vs-sqlite"] = runner.report
 
         out_dir_clickhouse_complete = os.path.join(
-            out_stages_dir, "clickhouse-complete"
+            out_stages_dir, "datastore-complete"
         )
         os.makedirs(out_dir_clickhouse_complete, exist_ok=True)
         with setup_connection(
             Engines.NATIVE, default_clickhouse_native_conn_args()
-        ) as clickhouse:
-            runner = TestRunner(clickhouse)
+        ) as datastore:
+            runner = TestRunner(datastore)
             runner.run_all_tests_from_dir(self_test_dir)
             runner.write_results_to_dir(out_dir_clickhouse_complete)
             runner.write_report(out_dir_clickhouse_complete)
-            reports["clickhouse-complete"] = runner.report
+            reports["datastore-complete"] = runner.report
 
         out_dir_clickhouse_vs_clickhouse = os.path.join(
-            out_stages_dir, "clickhouse-vs-clickhouse"
+            out_stages_dir, "datastore-vs-datastore"
         )
         os.makedirs(out_dir_clickhouse_vs_clickhouse, exist_ok=True)
         with setup_connection(
             Engines.NATIVE, default_clickhouse_native_conn_args()
-        ) as clickhouse:
-            runner = TestRunner(clickhouse)
+        ) as datastore:
+            runner = TestRunner(datastore)
             runner.with_verify_mode()
             runner.run_all_tests_from_dir(out_dir_clickhouse_complete)
             runner.write_results_to_dir(out_dir_clickhouse_vs_clickhouse)
             runner.write_report(os.path.join(out_dir_clickhouse_vs_clickhouse))
-            reports["clickhouse-vs-clickhouse"] = runner.report
+            reports["datastore-vs-datastore"] = runner.report
 
         out_dir_sqlite_vs_clickhouse = os.path.join(
-            out_stages_dir, "sqlite-vs-clickhouse"
+            out_stages_dir, "sqlite-vs-datastore"
         )
         os.makedirs(out_dir_sqlite_vs_clickhouse, exist_ok=True)
 
-        reports["sqlite-vs-clickhouse"] = run_all_tests_in_parallel(
+        reports["sqlite-vs-datastore"] = run_all_tests_in_parallel(
             setup_kwargs=as_kwargs(
                 engine=Engines.NATIVE,
                 conn_str=default_clickhouse_native_conn_args(),

@@ -18,10 +18,10 @@ function wait_for_postpone_reasons()
 {
     local table=$1
     for _ in $(seq 1 300); do
-        result=$($CLICKHOUSE_CLIENT --query "
+        result=$($DATASTORE_CLIENT --query "
             SELECT count()
             FROM system.mutations
-            WHERE database = '$CLICKHOUSE_DATABASE' AND table = '$table'
+            WHERE database = '$DATASTORE_DATABASE' AND table = '$table'
               AND NOT is_done AND notEmpty(parts_postpone_reasons)
         ")
         if [ "$result" -gt 0 ]; then
@@ -33,7 +33,7 @@ function wait_for_postpone_reasons()
     return 1
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE mt (id UInt64, num UInt64)
     ENGINE = MergeTree()
     ORDER BY id;
@@ -45,27 +45,27 @@ $CLICKHOUSE_CLIENT --query "
 # Enable the failpoint before creating the mutation to guarantee every
 # selectPartsToMutate call sees it. No pause failpoint needed: since the
 # failpoint blocks mutation selection, the state is stable once set.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT mt_select_parts_to_mutate_no_free_threads;
     ALTER TABLE mt UPDATE num = num + 1 WHERE 1;
 "
 
 wait_for_postpone_reasons "mt"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT mutation_id, command, parts_to_do_names, parts_in_progress_names, parts_postpone_reasons, \
-    is_done FROM system.mutations WHERE database = '$CLICKHOUSE_DATABASE' and table = 'mt' ORDER BY \
+    is_done FROM system.mutations WHERE database = '$DATASTORE_DATABASE' and table = 'mt' ORDER BY \
     mutation_id;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM DISABLE FAILPOINT mt_select_parts_to_mutate_no_free_threads;
 "
 
 wait_for_mutation "mt" "mutation_2.txt"
 
 #test2 'all_parts'->no thread in pool for multiple mutations
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT mt_select_parts_to_mutate_no_free_threads;
     ALTER TABLE mt UPDATE num = num + 2 WHERE 1;
     ALTER TABLE mt UPDATE num = num + 3 WHERE 1;
@@ -73,18 +73,18 @@ $CLICKHOUSE_CLIENT --query "
 
 wait_for_postpone_reasons "mt"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT mutation_id, command, parts_to_do_names, parts_in_progress_names, parts_postpone_reasons, \
-    is_done FROM system.mutations WHERE database = '$CLICKHOUSE_DATABASE' and table = 'mt' ORDER BY \
+    is_done FROM system.mutations WHERE database = '$DATASTORE_DATABASE' and table = 'mt' ORDER BY \
     mutation_id;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM DISABLE FAILPOINT mt_select_parts_to_mutate_no_free_threads;
     DROP TABLE mt SYNC;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE mt (id UInt64, num UInt64)
     ENGINE = MergeTree()
     ORDER BY id;
@@ -93,27 +93,27 @@ $CLICKHOUSE_CLIENT --query "
 "
 
 #test3 part->postpone reasons in pool for one mutation
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT mt_select_parts_to_mutate_max_part_size;
     ALTER TABLE mt UPDATE num = num + 1 WHERE 1;
 "
 
 wait_for_postpone_reasons "mt"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT mutation_id, command, parts_to_do_names, parts_in_progress_names, parts_postpone_reasons, \
-    is_done FROM system.mutations WHERE database = '$CLICKHOUSE_DATABASE' and table = 'mt' ORDER BY \
+    is_done FROM system.mutations WHERE database = '$DATASTORE_DATABASE' and table = 'mt' ORDER BY \
     mutation_id;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM DISABLE FAILPOINT mt_select_parts_to_mutate_max_part_size;
 "
 
 wait_for_mutation "mt" "mutation_2.txt"
 
 #test4 part->postpone reasons for multiple mutations
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT mt_select_parts_to_mutate_max_part_size;
     ALTER TABLE mt UPDATE num = num + 2 WHERE 1;
     ALTER TABLE mt UPDATE num = num + 3 WHERE 1;
@@ -121,13 +121,13 @@ $CLICKHOUSE_CLIENT --query "
 
 wait_for_postpone_reasons "mt"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT mutation_id, command, parts_to_do_names, parts_in_progress_names, parts_postpone_reasons, \
-    is_done FROM system.mutations WHERE database = '$CLICKHOUSE_DATABASE' and table = 'mt' ORDER BY \
+    is_done FROM system.mutations WHERE database = '$DATASTORE_DATABASE' and table = 'mt' ORDER BY \
     mutation_id;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM DISABLE FAILPOINT mt_select_parts_to_mutate_max_part_size;
     DROP TABLE mt SYNC;
 "

@@ -1,4 +1,4 @@
--- Reproducer from https://github.com/ClickHouse/ClickHouse/issues/63460
+-- Reproducer from https://github.com/ClickHouse/Datastore/issues/63460
 DROP TABLE IF EXISTS 03164_users;
 CREATE TABLE 03164_users (uid Nullable(Int16), name String, age Int16) ENGINE=MergeTree ORDER BY (uid) SETTINGS allow_nullable_key=1;
 

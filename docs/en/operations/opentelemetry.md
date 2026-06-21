@@ -1,39 +1,39 @@
 ---
 description: 'Guide to using OpenTelemetry for distributed tracing and metrics collection
-  in ClickHouse'
-sidebar_label: 'Tracing ClickHouse with OpenTelemetry'
+  in Datastore'
+sidebar_label: 'Tracing Datastore with OpenTelemetry'
 sidebar_position: 62
 slug: /operations/opentelemetry
-title: 'Tracing ClickHouse with OpenTelemetry'
+title: 'Tracing Datastore with OpenTelemetry'
 doc_type: 'guide'
 ---
 
-[OpenTelemetry](https://opentelemetry.io/) is an open standard for collecting traces and metrics from the distributed application. ClickHouse has some support for OpenTelemetry.
+[OpenTelemetry](https://opentelemetry.io/) is an open standard for collecting traces and metrics from the distributed application. Datastore has some support for OpenTelemetry.
 
-## Supplying trace context to ClickHouse {#supplying-trace-context-to-clickhouse}
+## Supplying trace context to Datastore {#supplying-trace-context-to-datastore}
 
-ClickHouse accepts trace context HTTP headers, as described by the [W3C recommendation](https://www.w3.org/TR/trace-context/). It also accepts trace context over a native protocol that is used for communication between ClickHouse servers or between the client and server. For manual testing, trace context headers conforming to the Trace Context recommendation can be supplied to `clickhouse-client` using `--opentelemetry-traceparent` and `--opentelemetry-tracestate` flags.
+Datastore accepts trace context HTTP headers, as described by the [W3C recommendation](https://www.w3.org/TR/trace-context/). It also accepts trace context over a native protocol that is used for communication between Datastore servers or between the client and server. For manual testing, trace context headers conforming to the Trace Context recommendation can be supplied to `datastore-client` using `--opentelemetry-traceparent` and `--opentelemetry-tracestate` flags.
 
-If no parent trace context is supplied or the provided trace context does not comply with W3C standard above, ClickHouse can start a new trace, with probability controlled by the [opentelemetry_start_trace_probability](/operations/settings/settings#opentelemetry_start_trace_probability) setting.
+If no parent trace context is supplied or the provided trace context does not comply with W3C standard above, Datastore can start a new trace, with probability controlled by the [opentelemetry_start_trace_probability](/operations/settings/settings#opentelemetry_start_trace_probability) setting.
 
 ## Propagating the trace context {#propagating-the-trace-context}
 
 The trace context is propagated to downstream services in the following cases:
 
-* Queries to remote ClickHouse servers, such as when using [Distributed](../engines/table-engines/special/distributed.md) table engine.
+* Queries to remote Datastore servers, such as when using [Distributed](../engines/table-engines/special/distributed.md) table engine.
 
 * [url](../sql-reference/table-functions/url.md) table function. Trace context information is sent in HTTP headers.
 
-## Tracing ClickHouse Keeper Requests {#tracing-clickhouse-keeper-requests}
+## Tracing Datastore Keeper Requests {#tracing-datastore-keeper-requests}
 
-ClickHouse supports OpenTelemetry tracing for [ClickHouse Keeper](../guides/sre/keeper/index.md) requests (ZooKeeper-compatible coordination service). This feature provides detailed visibility into the lifecycle of Keeper operations, from client request submission through server-side processing.
+Datastore supports OpenTelemetry tracing for [Datastore Keeper](../guides/sre/keeper/index.md) requests (ZooKeeper-compatible coordination service). This feature provides detailed visibility into the lifecycle of Keeper operations, from client request submission through server-side processing.
 
 ### Enabling Keeper Tracing {#enabling-keeper-tracing}
 
 To enable tracing for Keeper requests, configure the following settings in your ZooKeeper/Keeper client configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <zookeeper>
         <node>
             <host>keeper1</host>
@@ -42,12 +42,12 @@ To enable tracing for Keeper requests, configure the following settings in your 
         <!-- Enable OpenTelemetry tracing context propagation -->
         <pass_opentelemetry_tracing_context>true</pass_opentelemetry_tracing_context>
     </zookeeper>
-</clickhouse>
+</datastore>
 ```
 
 ### Keeper Span Types {#keeper-span-types}
 
-When tracing is enabled, ClickHouse creates spans for both client-side and server-side Keeper operations:
+When tracing is enabled, Datastore creates spans for both client-side and server-side Keeper operations:
 
 **Client-side spans:**
 - `zookeeper.create` — Create a new node
@@ -73,11 +73,11 @@ When tracing is enabled, ClickHouse creates spans for both client-side and serve
 
 To manage tracing overhead, Keeper implements dynamic sampling. Sampling rate automatically adjusts between 1/10,000 and 1/10 based on request size. All requests (sampled and unsampled) have their durations recorded to histogram metrics for performance monitoring.
 
-## Tracing the ClickHouse Itself {#tracing-the-clickhouse-itself}
+## Tracing the Datastore Itself {#tracing-the-datastore-itself}
 
-ClickHouse creates `trace spans` for each query and some of the query execution stages, such as query planning or distributed queries.
+Datastore creates `trace spans` for each query and some of the query execution stages, such as query planning or distributed queries.
 
-To be useful, the tracing information has to be exported to a monitoring system that supports OpenTelemetry, such as [Jaeger](https://jaegertracing.io/) or [Prometheus](https://prometheus.io/). ClickHouse avoids a dependency on a particular monitoring system, instead only providing the tracing data through a system table. OpenTelemetry trace span information [required by the standard](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#span) is stored in the [system.opentelemetry_span_log](../operations/system-tables/opentelemetry_span_log.md) table.
+To be useful, the tracing information has to be exported to a monitoring system that supports OpenTelemetry, such as [Jaeger](https://jaegertracing.io/) or [Prometheus](https://prometheus.io/). Datastore avoids a dependency on a particular monitoring system, instead only providing the tracing data through a system table. OpenTelemetry trace span information [required by the standard](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#span) is stored in the [system.opentelemetry_span_log](../operations/system-tables/opentelemetry_span_log.md) table.
 
 The table must be enabled in the server configuration, see the `opentelemetry_span_log` element in the default config file `config.xml`. It is enabled by default.
 
@@ -89,7 +89,7 @@ Setting [log_query_settings](settings/settings.md) allows log changes to query s
 
 ## Integration with monitoring systems {#integration-with-monitoring-systems}
 
-At the moment, there is no ready tool that can export the tracing data from ClickHouse to a monitoring system.
+At the moment, there is no ready tool that can export the tracing data from Datastore to a monitoring system.
 
 For testing, it is possible to setup the export using a materialized view with the [URL](../engines/table-engines/special/url.md) engine over the [system.opentelemetry_span_log](../operations/system-tables/opentelemetry_span_log.md) table, which would push the arriving log data to an HTTP endpoint of a trace collector. For example, to push the minimal span data to a Zipkin instance running at `http://localhost:9411`, in Zipkin v2 JSON format:
 
@@ -105,7 +105,7 @@ SELECT
     operation_name AS name,
     start_time_us AS timestamp,
     finish_time_us - start_time_us AS duration,
-    cast(tuple('clickhouse'), 'Tuple(serviceName text)') AS localEndpoint,
+    cast(tuple('datastore'), 'Tuple(serviceName text)') AS localEndpoint,
     cast(tuple(
         attribute.values[indexOf(attribute.names, 'db.statement')]),
         'Tuple("db.statement" text)') AS tags
@@ -116,4 +116,4 @@ In case of any errors, the part of the log data for which the error has occurred
 
 ## Related content {#related-content}
 
-- Blog: [Building an Observability Solution with ClickHouse - Part 2 - Traces](https://clickhouse.com/blog/storing-traces-and-spans-open-telemetry-in-clickhouse)
+- Blog: [Building an Observability Solution with Datastore - Part 2 - Traces](https://datastore.com/blog/storing-traces-and-spans-open-telemetry-in-datastore)

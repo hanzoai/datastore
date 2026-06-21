@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 CREATE TABLE t
 (
     item_id UInt64,
@@ -19,7 +19,7 @@ INSERT INTO t VALUES (1, 100, '1970-01-01'), (1, 200, '1970-01-02');
 "
 
 for enable_parallel_replicas in {0..1}; do
-  ${CLICKHOUSE_CLIENT} --query="
+  ${DATASTORE_CLIENT} --query="
   --- Old analyzer uses different code path and it produces wrong result in this case.
   set enable_analyzer=1;
   set allow_experimental_parallel_reading_from_replicas=${enable_parallel_replicas}, automatic_parallel_replicas_mode=0, cluster_for_parallel_replicas='parallel_replicas', max_parallel_replicas=100, parallel_replicas_for_non_replicated_merge_tree=1;
@@ -43,6 +43,6 @@ for enable_parallel_replicas in {0..1}; do
   "
 done
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 DROP TABLE t;
 "

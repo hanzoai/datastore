@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <!-- Disk for test 04070_s3_disk_settings_override.
@@ -8,8 +8,8 @@
             <s3_disk_04070>
                 <type>s3</type>
                 <endpoint>http://localhost:11111/test/04070_s3_disk_settings_override/</endpoint>
-                <access_key_id>clickhouse</access_key_id>
-                <secret_access_key>clickhouse</secret_access_key>
+                <access_key_id>datastore</access_key_id>
+                <secret_access_key>datastore</secret_access_key>
                 <s3_max_single_part_upload_size>10000</s3_max_single_part_upload_size>
             </s3_disk_04070>
         </disks>
@@ -23,4 +23,4 @@
             </s3_04070>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

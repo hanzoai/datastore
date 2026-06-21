@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/102651
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/102651
 -- JOIN of a table with a row policy and a view used to fail under the analyzer with
 -- `NOT_FOUND_COLUMN_IN_BLOCK` for a column referenced by the row policy expression.
 

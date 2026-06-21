@@ -41,7 +41,7 @@ def get_spark(log_dir=None):
         )
         .config("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")
-        .config("spark.sql.catalog.spark_catalog.warehouse", "/var/lib/clickhouse/user_files/iceberg_data")
+        .config("spark.sql.catalog.spark_catalog.warehouse", "/var/lib/datastore/user_files/iceberg_data")
         .config(
             "spark.sql.extensions",
             "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
@@ -276,16 +276,16 @@ def get_creation_expression(
 
         if run_on_cluster:
             assert table_function
-            return f"icebergS3Cluster('cluster_simple', s3, filename = 'var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/', format={format}, url = 'http://minio1:9001/{bucket}/')"
+            return f"icebergS3Cluster('cluster_simple', s3, filename = 'var/lib/datastore/user_files/iceberg_data/default/{table_name}/', format={format}, url = 'http://minio1:9001/{bucket}/')"
         else:
             if table_function:
-                return f"icebergS3(s3, filename = 'var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/', format={format}, url = 'http://minio1:9001/{bucket}/')"
+                return f"icebergS3(s3, filename = 'var/lib/datastore/user_files/iceberg_data/default/{table_name}/', format={format}, url = 'http://minio1:9001/{bucket}/')"
             else:
                 return (
                     f"""
                     DROP TABLE IF EXISTS {table_name};
                     CREATE TABLE {if_not_exists_prefix} {table_name} {schema}
-                    ENGINE=IcebergS3(s3, filename = 'var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/', format={format}, url = 'http://minio1:9001/{bucket}/')
+                    ENGINE=IcebergS3(s3, filename = 'var/lib/datastore/user_files/iceberg_data/default/{table_name}/', format={format}, url = 'http://minio1:9001/{bucket}/')
                     {order_by}
                     {partition_by}
                     {settings_expression};
@@ -296,19 +296,19 @@ def get_creation_expression(
         if run_on_cluster:
             assert table_function
             return f"""
-                icebergAzureCluster('cluster_simple', azure, container = '{cluster.azure_container_name}', storage_account_url = '{cluster.env_variables["AZURITE_STORAGE_ACCOUNT_URL"]}', blob_path = '/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/', format={format})
+                icebergAzureCluster('cluster_simple', azure, container = '{cluster.azure_container_name}', storage_account_url = '{cluster.env_variables["AZURITE_STORAGE_ACCOUNT_URL"]}', blob_path = '/var/lib/datastore/user_files/iceberg_data/default/{table_name}/', format={format})
             """
         else:
             if table_function:
                 return f"""
-                    icebergAzure(azure, container = '{cluster.azure_container_name}', storage_account_url = '{cluster.env_variables["AZURITE_STORAGE_ACCOUNT_URL"]}', blob_path = '/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/', format={format})
+                    icebergAzure(azure, container = '{cluster.azure_container_name}', storage_account_url = '{cluster.env_variables["AZURITE_STORAGE_ACCOUNT_URL"]}', blob_path = '/var/lib/datastore/user_files/iceberg_data/default/{table_name}/', format={format})
                 """
             else:
                 return (
                     f"""
                     DROP TABLE IF EXISTS {table_name};
                     CREATE TABLE {if_not_exists_prefix} {table_name} {schema}
-                    ENGINE=IcebergAzure(azure, container = {cluster.azure_container_name}, storage_account_url = '{cluster.env_variables["AZURITE_STORAGE_ACCOUNT_URL"]}', blob_path = '/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/', format={format})
+                    ENGINE=IcebergAzure(azure, container = {cluster.azure_container_name}, storage_account_url = '{cluster.env_variables["AZURITE_STORAGE_ACCOUNT_URL"]}', blob_path = '/var/lib/datastore/user_files/iceberg_data/default/{table_name}/', format={format})
                     {order_by}
                     {partition_by}
                     {settings_expression}
@@ -319,19 +319,19 @@ def get_creation_expression(
         if run_on_cluster:
             assert table_function
             return f"""
-                icebergLocalCluster('cluster_simple', local, path = '/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}', format={format})
+                icebergLocalCluster('cluster_simple', local, path = '/var/lib/datastore/user_files/iceberg_data/default/{table_name}', format={format})
             """
         else:
             if table_function:
                 return f"""
-                    icebergLocal(local, path = '/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}', format={format})
+                    icebergLocal(local, path = '/var/lib/datastore/user_files/iceberg_data/default/{table_name}', format={format})
                 """
             else:
                 return (
                     f"""
                     DROP TABLE IF EXISTS {table_name};
                     CREATE TABLE {if_not_exists_prefix} {table_name} {schema}
-                    ENGINE=IcebergLocal(local, path = '/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}', format={format})
+                    ENGINE=IcebergLocal(local, path = '/var/lib/datastore/user_files/iceberg_data/default/{table_name}', format={format})
                     {order_by}
                     {partition_by}
                     {settings_expression}
@@ -464,7 +464,7 @@ def create_initial_data_file(
 def default_upload_directory(
     started_cluster, storage_type, local_path, remote_path, **kwargs
 ):
-    prefix = "/var/lib/clickhouse/user_files"
+    prefix = "/var/lib/datastore/user_files"
     if local_path != "" and local_path[:len(prefix)] != prefix:
         local_path = prefix + local_path
     if remote_path != "" and remote_path[:len(prefix)] != prefix:
@@ -490,7 +490,7 @@ def default_upload_directory(
 def additional_upload_directory(
     started_cluster, node, storage_type, local_path, remote_path, **kwargs
 ):
-    prefix = "/var/lib/clickhouse/user_files"
+    prefix = "/var/lib/datastore/user_files"
     if local_path != "" and local_path[:len(prefix)] != prefix:
         local_path = prefix + local_path
     if remote_path != "" and remote_path[:len(prefix)] != prefix:

@@ -2,7 +2,7 @@
 -- When a column is missing from a part and has a DEFAULT expression,
 -- injectRequiredColumnsRecursively adds dependencies via emplace_back,
 -- which can reallocate the columns vector and invalidate references into it.
--- https://github.com/ClickHouse/ClickHouse/pull/99679
+-- https://github.com/ClickHouse/Datastore/pull/99679
 
 DROP TABLE IF EXISTS t_inject_columns_dangling_ref;
 

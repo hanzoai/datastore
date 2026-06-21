@@ -50,7 +50,7 @@ SELECT count() FROM (SELECT k FROM t_trivial_group_by_limit GROUP BY k LIMIT 100
 SETTINGS optimize_trivial_group_by_limit_query = 1, max_rows_to_group_by = 3, group_by_overflow_mode = 'throw'; -- { serverError TOO_MANY_ROWS }
 
 -- `LIMIT 0` (or any `LIMIT + OFFSET == 0`): the pass must skip because
--- `max_rows_to_group_by = 0` means "no cap" in ClickHouse, so applying the
+-- `max_rows_to_group_by = 0` means "no cap" in Datastore, so applying the
 -- optimization would silently remove the user's explicit cap. The query also
 -- returns no rows regardless of the optimization, so it buys nothing.
 SELECT count() FROM (SELECT k FROM (SELECT number AS k FROM numbers(10)) GROUP BY k LIMIT 0)
@@ -76,7 +76,7 @@ SETTINGS optimize_trivial_group_by_limit_query = 1;
 
 -- Negative LIMIT / OFFSET: analyzer keeps these as `Int64`, so reading them as
 -- `UInt64` via `safeGet` would throw. The pass must skip the optimization
--- instead of failing the query. ClickHouse supports negative `LIMIT`/`OFFSET`
+-- instead of failing the query. Datastore supports negative `LIMIT`/`OFFSET`
 -- (they mean "take rows starting from the end"), so the queries below must
 -- run successfully.
 SELECT count() FROM (SELECT k FROM (SELECT number AS k FROM numbers(10)) GROUP BY k LIMIT -3)

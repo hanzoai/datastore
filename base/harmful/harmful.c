@@ -238,8 +238,8 @@ TRAP(lgammaf32x)
 TRAP(lgammaf64)
 TRAP(lgammaf64x)
 
-/// These functions are unused by ClickHouse and we should be aware if they are accidentally get used.
-/// Sometimes people report that these function contain vulnerabilities (these reports are bogus for ClickHouse).
+/// These functions are unused by Datastore and we should be aware if they are accidentally get used.
+/// Sometimes people report that these function contain vulnerabilities (these reports are bogus for Datastore).
 TRAP(mq_close)
 TRAP(mq_getattr)
 TRAP(mq_setattr)
@@ -251,7 +251,7 @@ TRAP(mq_unlink)
 TRAP(mq_timedsend)
 TRAP(mq_timedreceive)
 
-/// These functions are also unused by ClickHouse.
+/// These functions are also unused by Datastore.
 TRAP(wordexp)
 TRAP(wordfree)
 

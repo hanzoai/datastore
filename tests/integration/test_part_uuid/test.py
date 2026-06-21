@@ -39,7 +39,7 @@ def test_part_uuid(started_cluster):
         n.query(
             """
         CREATE TABLE t(key UInt64, value UInt64)
-        ENGINE ReplicatedMergeTree('/clickhouse/tables/t', '{}')
+        ENGINE ReplicatedMergeTree('/datastore/tables/t', '{}')
         ORDER BY tuple()
         """.format(
                 ix

@@ -20,7 +20,7 @@ def patch_metadata(table_name):
     # For example pyiceberg doesn't support it at all, you can specify sort order, but data will be written unsorted.
     # Spark implementation supports it, i.e. writes sorted data, but doesn't write proper sort_order_id in manifest files (always writes 0).
     # Here we manually modify metadata file to set actual sort order to id 0.
-    with open(f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/metadata/v4.metadata.json", "rb") as f:
+    with open(f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/metadata/v4.metadata.json", "rb") as f:
         content = json.load(f)
         for order in content['sort-orders']:
             if order['order-id'] == 1:
@@ -32,7 +32,7 @@ def patch_metadata(table_name):
         content['sort-orders'] = [order_found]
         content['default-sort-order-id'] = 0
 
-        with open(f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/metadata/v4.metadata.json", "w") as out_f:
+        with open(f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/metadata/v4.metadata.json", "w") as out_f:
             json.dump(content, out_f)
     # HACK END
 

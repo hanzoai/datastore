@@ -13,7 +13,7 @@ import SystemTableCloud from '@site/docs/_snippets/_system_table_cloud.md';
 ## Description {#description}
 
 Contains information about Kafka consumers.
-Applicable for [Kafka table engine](../../engines/table-engines/integrations/kafka) (native ClickHouse integration)
+Applicable for [Kafka table engine](../../engines/table-engines/integrations/kafka) (native Datastore integration)
 
 ## Columns {#columns}
 
@@ -54,7 +54,7 @@ Row 1:
 ──────
 database:                      test
 table:                         kafka
-consumer_id:                   ClickHouse-instance-test-kafka-1caddc7f-f917-4bb1-ac55-e28bd103a4a0
+consumer_id:                   Datastore-instance-test-kafka-1caddc7f-f917-4bb1-ac55-e28bd103a4a0
 assignments.topic:             ['system_kafka_cons']
 assignments.partition_id:      [0]
 assignments.current_offset:    [18446744073709550615]

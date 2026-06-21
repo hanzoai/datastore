@@ -8,9 +8,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 DATA_FILE=$USER_FILES_PATH/test_02104_null.data
 
 echo -e '{"s" : "NULLSome string"}' > $DATA_FILE
-$CLICKHOUSE_CLIENT -q "SELECT * FROM file('test_02104_null.data', 'JSONStringsEachRow', 's Nullable(String)')"
+$DATASTORE_CLIENT -q "SELECT * FROM file('test_02104_null.data', 'JSONStringsEachRow', 's Nullable(String)')"
 
 echo -e '["NULLSome string"]' > $DATA_FILE
-$CLICKHOUSE_CLIENT -q "SELECT * FROM file('test_02104_null.data', 'JSONCompactStringsEachRow', 's Nullable(String)')"
+$DATASTORE_CLIENT -q "SELECT * FROM file('test_02104_null.data', 'JSONCompactStringsEachRow', 's Nullable(String)')"
 
 rm $DATA_FILE

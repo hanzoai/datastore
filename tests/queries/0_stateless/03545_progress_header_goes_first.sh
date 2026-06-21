@@ -16,6 +16,6 @@ SETTINGS="max_block_size=10000&send_progress_in_http_headers=1&http_headers_prog
             echo $y
         done
     done
-) | ${CLICKHOUSE_CURL} -v -S -X POST "${CLICKHOUSE_URL}&${SETTINGS}" --data-binary @- |& {
-    grep -F -e X-ClickHouse-Progress: -e X-ClickHouse-Summary: -e Connection: | sed 's/: {.*}//' | uniq
+) | ${DATASTORE_CURL} -v -S -X POST "${DATASTORE_URL}&${SETTINGS}" --data-binary @- |& {
+    grep -F -e X-Datastore-Progress: -e X-Datastore-Summary: -e Connection: | sed 's/: {.*}//' | uniq
 }

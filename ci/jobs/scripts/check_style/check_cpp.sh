@@ -219,7 +219,7 @@ xargs < "$STYLE_TMPDIR/all_excluded" grep -n ' $' | grep . && echo "^ Trailing w
 # Forbid stringstream because it's easy to use them incorrectly and hard to debug possible issues
 xargs < "$STYLE_TMPDIR/nobase_excluded" rg 'std::[io]?stringstream' | grep -v "STYLE_CHECK_ALLOW_STD_STRING_STREAM" && echo "Use WriteBufferFromOwnString or ReadBufferFromString instead of std::stringstream"
 
-# Forbid hardware_destructive_interference_size because it provides unrealistic values for ARM (see https://github.com/ClickHouse/ClickHouse/pull/97357)
+# Forbid hardware_destructive_interference_size because it provides unrealistic values for ARM (see https://github.com/ClickHouse/Datastore/pull/97357)
 xargs < "$STYLE_TMPDIR/nobase_excluded" rg '(hardware_destructive_interference_size|hardware_constructive_interference_size)' | grep -vE ':[[:space:]]*//' && echo "Use CH_CACHE_LINE_SIZE from Common/CacheLine.h instead"
 
 # Forbid std::filesystem::is_symlink and std::filesystem::read_symlink, because it's easy to use them incorrectly
@@ -303,16 +303,16 @@ FNR == 1 {
     file = FILENAME
     debuglog = 0; spawn_client = 0; history = 0; timeout_found = 0; eof_found = 0
 }
-/^exp_internal -f \$CLICKHOUSE_TMP\/\$basename\.debuglog 0$/ { debuglog = 1 }
-/^spawn.*CLICKHOUSE_CLIENT_BINARY$/ { spawn_client = 1 }
-/^spawn.*CLICKHOUSE_CLIENT_BINARY.*--history_file/ { history = 1 }
+/^exp_internal -f \$DATASTORE_TMP\/\$basename\.debuglog 0$/ { debuglog = 1 }
+/^spawn.*DATASTORE_CLIENT_BINARY$/ { spawn_client = 1 }
+/^spawn.*DATASTORE_CLIENT_BINARY.*--history_file/ { history = 1 }
 /-i \$any_spawn_id timeout/ { timeout_found = 1 }
 /-i \$any_spawn_id eof/ { eof_found = 1 }
 END { if (file != "") check_file() }
 function check_file() {
     q = "\047"
-    if (!debuglog) print "Missing " q "^exp_internal -f $CLICKHOUSE_TMP/$basename.debuglog 0$" q " in " q file q
-    if (spawn_client && !history) print "Missing " q "^spawn.*CLICKHOUSE_CLIENT_BINARY.*--history_file$" q " in " q file q
+    if (!debuglog) print "Missing " q "^exp_internal -f $DATASTORE_TMP/$basename.debuglog 0$" q " in " q file q
+    if (spawn_client && !history) print "Missing " q "^spawn.*DATASTORE_CLIENT_BINARY.*--history_file$" q " in " q file q
     if (!timeout_found) print "Missing " q "-i $any_spawn_id timeout" q " in " q file q
     if (!eof_found) print "Missing " q "-i $any_spawn_id eof" q " in " q file q
 }
@@ -334,7 +334,7 @@ fi
 #
 #   [1]: git grep --recurse-submodules -e find_library -e find_path contrib
 if git grep -e find_path -e find_library -- :**CMakeLists.txt; then
-    echo "There is find_path/find_library usage. ClickHouse should use everything bundled. Consider adding one more contrib module."
+    echo "There is find_path/find_library usage. Datastore should use everything bundled. Consider adding one more contrib module."
 fi
 
 # Don't allow dynamic compiler check with CMake, because we are using hermetic, reproducible, cross-compiled, static (TLDR, good) builds.
@@ -347,7 +347,7 @@ DIFF=$(comm -3 <(grep -o "\b$PATTERN\w*\b" $ROOT_PATH/src/Core/Settings.cpp | so
 
 # 12a: NDEBUG and cast checks on nobase_all
 {
-# A small typo can lead to debug code in release builds, see https://github.com/ClickHouse/ClickHouse/pull/47647
+# A small typo can lead to debug code in release builds, see https://github.com/ClickHouse/Datastore/pull/47647
 xargs < "$STYLE_TMPDIR/nobase_all" grep -l -F '#ifdef NDEBUG' | \
     xargs awk '/#ifdef NDEBUG/ { inside = 1; dirty = 1 } /#endif/ { if (inside && dirty) { print "File " FILENAME " has suspicious #ifdef NDEBUG, possibly confused with #ifndef NDEBUG" }; inside = 0 } /#else/ { dirty = 0 }'
 

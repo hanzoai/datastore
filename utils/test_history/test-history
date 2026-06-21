@@ -61,7 +61,7 @@ def process_one_commit(commit):
 
 if __name__ == "__main__":
     three_days_ago = datetime.datetime.now() - datetime.timedelta(days=3)
-    parser = argparse.ArgumentParser("ClickHouse commits history parser")
+    parser = argparse.ArgumentParser("Datastore commits history parser")
     parser.add_argument("--token", required=True)
     parser.add_argument("--since", default=three_days_ago.strftime("%Y-%m-%d %H:%M:%S"))
     parser.add_argument("--substr", default="Functional stateful")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     date_since = datetime.datetime.strptime(args.since, "%Y-%m-%d %H:%M:%S")
 
     gh = Github(args.token)
-    repo = gh.get_repo("ClickHouse/ClickHouse")
+    repo = gh.get_repo("Datastore/Datastore")
     commits = get_commits(repo, date_since)
 
     longest_header = []

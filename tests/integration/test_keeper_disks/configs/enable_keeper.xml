@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
     </logger>
@@ -6,7 +6,7 @@
         <disks>
             <log_local>
                 <type>local</type>
-                <path>/var/lib/clickhouse/coordination/logs/</path>
+                <path>/var/lib/datastore/coordination/logs/</path>
             </log_local>
             <log_s3_plain>
                 <type>s3_plain</type>
@@ -16,7 +16,7 @@
             </log_s3_plain>
             <snapshot_local>
                 <type>local</type>
-                <path>/var/lib/clickhouse/coordination/snapshots/</path>
+                <path>/var/lib/datastore/coordination/snapshots/</path>
             </snapshot_local>
             <snapshot_s3_plain>
                 <type>s3_plain</type>
@@ -53,4 +53,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

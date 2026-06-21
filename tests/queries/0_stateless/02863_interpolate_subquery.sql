@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/53640
+-- https://github.com/ClickHouse/Datastore/issues/53640
 DROP TABLE IF EXISTS tab;
 CREATE TABLE tab (i UInt32, a UInt32) ENGINE=Memory;
 SELECT i, col1 FROM (

@@ -33,14 +33,14 @@ def get_local_port(host, ipv6):
         return fd.getsockname()[1]
 
 
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST", "localhost")
-CLICKHOUSE_PORT_HTTP = os.environ.get("CLICKHOUSE_PORT_HTTP", "8123")
+DATASTORE_HOST = os.environ.get("DATASTORE_HOST", "localhost")
+DATASTORE_PORT_HTTP = os.environ.get("DATASTORE_PORT_HTTP", "8123")
 
 #####################################################################################
-# This test starts an HTTP server and serves data to clickhouse url-engine based table.
+# This test starts an HTTP server and serves data to datastore url-engine based table.
 # The main goal of this test is checking that compress methods are working.
 # In order for it to work ip+port of http server (given below) should be
-# accessible from clickhouse server.
+# accessible from datastore server.
 #####################################################################################
 
 # IP-address of this host accessible from the outside world. Get the first one
@@ -76,13 +76,13 @@ SEND_ENCODING = True
 
 
 def get_ch_answer(query):
-    host = CLICKHOUSE_HOST
+    host = DATASTORE_HOST
     if IS_IPV6:
         host = f"[{host}]"
 
     url = os.environ.get(
-        "CLICKHOUSE_URL",
-        "http://{host}:{port}".format(host=CLICKHOUSE_HOST, port=CLICKHOUSE_PORT_HTTP),
+        "DATASTORE_URL",
+        "http://{host}:{port}".format(host=DATASTORE_HOST, port=DATASTORE_PORT_HTTP),
     )
     return urllib.request.urlopen(url, data=query.encode()).read().decode()
 

@@ -16,7 +16,7 @@ CREATE DICTIONARY hierarchy_hashed_array_dictionary
     parent_id UInt64 HIERARCHICAL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'hierarchy_source_table'))
+SOURCE(DATASTORE(TABLE 'hierarchy_source_table'))
 LAYOUT(HASHED_ARRAY({{ dictionary_config }}))
 LIFETIME(MIN 1 MAX 1000);
 

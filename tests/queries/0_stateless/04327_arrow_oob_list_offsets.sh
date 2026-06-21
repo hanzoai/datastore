@@ -13,7 +13,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -99,16 +99,16 @@ check_incorrect_data() {
 }
 
 check_incorrect_data list_nonmonotonic \
-    $CLICKHOUSE_LOCAL --query "SELECT arrayElement(arr, 2) FROM file('${TMP_DIR}/list_nonmonotonic.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT arrayElement(arr, 2) FROM file('${TMP_DIR}/list_nonmonotonic.arrow', Arrow)"
 
 check_incorrect_data largelist_nonmonotonic \
-    $CLICKHOUSE_LOCAL --query "SELECT arrayElement(arr, 2) FROM file('${TMP_DIR}/largelist_nonmonotonic.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT arrayElement(arr, 2) FROM file('${TMP_DIR}/largelist_nonmonotonic.arrow', Arrow)"
 
 check_incorrect_data list_decreasing_offset \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_decreasing_offset.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_decreasing_offset.arrow', Arrow)"
 
 check_incorrect_data list_offset_past_values \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_offset_past_values.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_offset_past_values.arrow', Arrow)"
 
 check_incorrect_data largelist_offset_past_values \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largelist_offset_past_values.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largelist_offset_past_values.arrow', Arrow)"

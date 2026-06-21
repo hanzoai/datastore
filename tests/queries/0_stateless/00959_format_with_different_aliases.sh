@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT --oneline"
+format="$DATASTORE_FORMAT --oneline"
 
 echo "SELECT a + b AS x, a + b AS x" | $format
 echo "SELECT a + b AS x, a + c AS x" | $format

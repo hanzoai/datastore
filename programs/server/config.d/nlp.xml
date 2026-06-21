@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<clickhouse>
+<datastore>
     <synonyms_extensions>
         <extension>
             <name>en</name>
@@ -19,4 +19,4 @@
             <path>config.d/lem-en.bin</path>
         </lemmatizer>
     </lemmatizers>
-</clickhouse>
+</datastore>

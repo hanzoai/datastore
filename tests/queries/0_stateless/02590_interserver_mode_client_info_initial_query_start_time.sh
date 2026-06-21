@@ -14,7 +14,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function get_query_id() { random_str 10; }
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     drop table if exists buf;
     drop table if exists dist;
     drop table if exists data;
@@ -31,8 +31,8 @@ query_id="$(get_query_id)"
 # cluster then, it will be created long time ago, but this is OK for this
 # test, since we care about the difference between NOW() and there should
 # not be any significant difference.
-$CLICKHOUSE_CLIENT --prefer_localhost_replica=0 --query_id "$query_id" -q "select * from dist"
-$CLICKHOUSE_CLIENT -m --param_query_id "$query_id" -q "
+$DATASTORE_CLIENT --prefer_localhost_replica=0 --query_id "$query_id" -q "select * from dist"
+$DATASTORE_CLIENT -m --param_query_id "$query_id" -q "
     system flush logs query_log;
     select count(), count(distinct initial_query_start_time_microseconds) from system.query_log where event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish' and initial_query_id = {query_id:String};
 "
@@ -41,27 +41,27 @@ sleep 1
 
 query_id="$(get_query_id)"
 # this query (and all subsequent) should reuse the previous connection (at least most of the time)
-$CLICKHOUSE_CLIENT --prefer_localhost_replica=0 --query_id "$query_id" -q "select * from dist"
+$DATASTORE_CLIENT --prefer_localhost_replica=0 --query_id "$query_id" -q "select * from dist"
 
-$CLICKHOUSE_CLIENT -m --param_query_id "$query_id" -q "
+$DATASTORE_CLIENT -m --param_query_id "$query_id" -q "
     system flush logs query_log;
     select count(), count(distinct initial_query_start_time_microseconds) from system.query_log where event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish' and initial_query_id = {query_id:String};
 "
 
 echo "INSERT"
 query_id="$(get_query_id)"
-$CLICKHOUSE_CLIENT --prefer_localhost_replica=0 --query_id "$query_id" -m -q "
+$DATASTORE_CLIENT --prefer_localhost_replica=0 --query_id "$query_id" -m -q "
     insert into dist_dist values (1),(2);
     select * from data;
 "
 
 sleep 1
-$CLICKHOUSE_CLIENT -m --param_query_id "$query_id" -q "system flush distributed dist_dist"
+$DATASTORE_CLIENT -m --param_query_id "$query_id" -q "system flush distributed dist_dist"
 sleep 1
-$CLICKHOUSE_CLIENT -m --param_query_id "$query_id" -q "system flush distributed dist"
+$DATASTORE_CLIENT -m --param_query_id "$query_id" -q "system flush distributed dist"
 
 echo "CHECK"
-$CLICKHOUSE_CLIENT -m --param_query_id "$query_id" -q "
+$DATASTORE_CLIENT -m --param_query_id "$query_id" -q "
     select * from data order by key;
     system flush logs query_log;
     select count(), count(distinct initial_query_start_time_microseconds) from system.query_log where event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish' and initial_query_id = {query_id:String};

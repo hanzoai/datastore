@@ -1,6 +1,6 @@
 """
 Test that CGroup CPU metrics (CGroupUserTime, CGroupSystemTime) work correctly
-when ClickHouse runs in a container with a nested cgroup path.
+when Datastore runs in a container with a nested cgroup path.
 
 This test reproduces the path concatenation bug from PR 62003 where
 getCgroupsV2PathContainingFile returns a path without trailing separator,

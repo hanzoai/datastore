@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/9587#issuecomment-944431385
+-- https://github.com/ClickHouse/Datastore/issues/9587#issuecomment-944431385
 
 CREATE TABLE source (a Int32) ENGINE=MergeTree() ORDER BY tuple();
 CREATE TABLE source_null AS source ENGINE=Null;

@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Sanity check to ensure that the server is up and running
 for _ in {1..10}; do
-    echo 'SELECT 1' | ${CLICKHOUSE_CURL_COMMAND} -s "${CLICKHOUSE_URL}" --data-binary @- > /dev/null
+    echo 'SELECT 1' | ${DATASTORE_CURL_COMMAND} -s "${DATASTORE_URL}" --data-binary @- > /dev/null
     if [ $? -eq 0 ]; then
         break
     fi
@@ -16,10 +16,10 @@ for _ in {1..10}; do
 done
 
 CURL_OUTPUT=$(echo 'SELECT 1 + sleepEachRow(0.00002) FROM numbers(100000)' | \
-  ${CLICKHOUSE_CURL_COMMAND} --max-time 10 -vsS "${CLICKHOUSE_URL}&http_wait_end_of_query=1&send_progress_in_http_headers=0&max_execution_time=2" --data-binary @- 2>&1)
+  ${DATASTORE_CURL_COMMAND} --max-time 10 -vsS "${DATASTORE_URL}&http_wait_end_of_query=1&send_progress_in_http_headers=0&max_execution_time=2" --data-binary @- 2>&1)
 
 READ_ROWS=$(echo "${CURL_OUTPUT}" | \
-  grep 'X-ClickHouse-Summary' | grep -v 'Access-Control-Expose-Headers' | \
+  grep 'X-Datastore-Summary' | grep -v 'Access-Control-Expose-Headers' | \
   awk '{print $3}' | \
   sed -E 's/.*"read_rows":"?([^,"]*)"?.*/\1/'
   )

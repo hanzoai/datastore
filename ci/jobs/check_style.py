@@ -499,7 +499,7 @@ def check_file_names(files):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Style Check Job")
+    parser = argparse.ArgumentParser(description="Datastore Style Check Job")
     parser.add_argument("--test", help="Sub check name", default="")
     return parser.parse_args()
 

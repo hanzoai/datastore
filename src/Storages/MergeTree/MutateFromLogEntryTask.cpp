@@ -254,7 +254,7 @@ bool MutateFromLogEntryTask::finalize(ReplicatedMergeMutateTaskBase::PartLogWrit
 
     auto & data_part_storage = new_part->getDataPartStorage();
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     new_part->is_prewarmed = true;
     data_part_storage.setPreferredFileOrder(new_part->getPreferredFileOrder());
 #endif

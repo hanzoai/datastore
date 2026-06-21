@@ -140,7 +140,7 @@ void PipelineExecutor::execute(size_t num_threads, bool concurrency_control)
     num_threads = std::max<size_t>(num_threads, 1);
 
     OpenTelemetry::SpanHolder span("PipelineExecutor::execute()");
-    span.addAttribute("clickhouse.thread_num", num_threads);
+    span.addAttribute("datastore.thread_num", num_threads);
 
     try
     {

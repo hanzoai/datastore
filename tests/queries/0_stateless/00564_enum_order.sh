@@ -4,8 +4,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "DROP TABLE IF EXISTS enum";
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "CREATE TABLE enum (x Enum8('a' = 1, 'bcdefghijklmno' = 0)) ENGINE = Memory";
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "INSERT INTO enum VALUES ('a')";
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "SELECT * FROM enum";
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "DROP TABLE enum";
+$DATASTORE_CURL -sS "$DATASTORE_URL" -d "DROP TABLE IF EXISTS enum";
+$DATASTORE_CURL -sS "$DATASTORE_URL" -d "CREATE TABLE enum (x Enum8('a' = 1, 'bcdefghijklmno' = 0)) ENGINE = Memory";
+$DATASTORE_CURL -sS "$DATASTORE_URL" -d "INSERT INTO enum VALUES ('a')";
+$DATASTORE_CURL -sS "$DATASTORE_URL" -d "SELECT * FROM enum";
+$DATASTORE_CURL -sS "$DATASTORE_URL" -d "DROP TABLE enum";

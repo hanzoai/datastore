@@ -1,5 +1,5 @@
 ---
-description: 'This engine allows integrating ClickHouse with NATS to publish or subscribe
+description: 'This engine allows integrating Datastore with NATS to publish or subscribe
   to message subjects, and process new messages as they become available.'
 sidebar_label: 'NATS'
 sidebar_position: 140
@@ -8,7 +8,7 @@ title: 'NATS table engine'
 doc_type: 'guide'
 ---
 
-This engine allows integrating ClickHouse with [NATS](https://nats.io/).
+This engine allows integrating Datastore with [NATS](https://nats.io/).
 
 `NATS` lets you:
 
@@ -39,7 +39,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
     [nats_flush_interval_ms = N,]
     [nats_username = 'user',]
     [nats_password = 'password',]
-    [nats_token = 'clickhouse',]
+    [nats_token = 'datastore',]
     [nats_credential_file = '/var/nats_credentials',]
     [nats_startup_connect_tries = '5']
     [nats_max_rows_per_message = 1,]
@@ -76,8 +76,8 @@ Optional parameters:
 SSL connection:
 
 For secure connection use `nats_secure = 1`.
-Certificate verification is controlled by the `CLICKHOUSE_NATS_TLS_SECURE` environment variable;
-If the certificate is expired, self-signed, missing, or otherwise invalid, disable verification by setting `CLICKHOUSE_NATS_TLS_SECURE=0`.
+Certificate verification is controlled by the `DATASTORE_NATS_TLS_SECURE` environment variable;
+If the certificate is expired, self-signed, missing, or otherwise invalid, disable verification by setting `DATASTORE_NATS_TLS_SECURE=0`.
 
 Writing to NATS table:
 
@@ -116,14 +116,14 @@ Example:
              date_time_input_format = 'best_effort';
 ```
 
-The NATS server configuration can be added using the ClickHouse config file.
+The NATS server configuration can be added using the Datastore config file.
 More specifically you can add your password for the NATS engine:
 
 ```xml
 <nats>
     <user>click</user>
     <password>house</password>
-    <token>clickhouse</token>
+    <token>datastore</token>
 </nats>
 ```
 
@@ -181,7 +181,7 @@ Note: `_raw_message` and `_error` virtual columns are filled only in case of exc
 
 ## Data formats support {#data-formats-support}
 
-NATS engine supports all [formats](../../../interfaces/formats.md) supported in ClickHouse.
+NATS engine supports all [formats](../../../interfaces/formats.md) supported in Datastore.
 The number of rows in one NATS message depends on whether the format is row-based or block-based:
 
 - For row-based formats the number of rows in one NATS message can be controlled by setting `nats_max_rows_per_message`.

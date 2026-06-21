@@ -48,7 +48,7 @@ def test_create_replicated_merge_tree_with_default_zookeeper(started_cluster):
         node.query(
             """
                 CREATE TABLE test_default_zookeeper(a Int32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/test_default_zookeeper', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/test_default_zookeeper', '{replica}')
                 ORDER BY a;
             """.format(
                 replica=node.name
@@ -71,7 +71,7 @@ def test_create_replicated_merge_tree_with_auxiliary_zookeeper(started_cluster):
         node.query(
             """
                 CREATE TABLE test_auxiliary_zookeeper(a Int32)
-                ENGINE = ReplicatedMergeTree('zookeeper2:/clickhouse/tables/test/test_auxiliary_zookeeper', '{replica}')
+                ENGINE = ReplicatedMergeTree('zookeeper2:/datastore/tables/test/test_auxiliary_zookeeper', '{replica}')
                 ORDER BY a;
             """.format(
                 replica=node.name
@@ -96,7 +96,7 @@ def test_create_replicated_merge_tree_with_not_exists_auxiliary_zookeeper(
         node1.query(
             """
                 CREATE TABLE test_auxiliary_zookeeper(a Int32)
-                ENGINE = ReplicatedMergeTree('zookeeper_not_exits:/clickhouse/tables/test/test_auxiliary_zookeeper', '{replica}')
+                ENGINE = ReplicatedMergeTree('zookeeper_not_exits:/datastore/tables/test/test_auxiliary_zookeeper', '{replica}')
                 ORDER BY a;
             """.format(
                 replica=node1.name
@@ -111,7 +111,7 @@ def test_drop_replicated_merge_tree_with_auxiliary_zookeeper(started_cluster):
         node.query(
             """
                 CREATE TABLE test_auxiliary_zookeeper(a Int32)
-                ENGINE = ReplicatedMergeTree('zookeeper2:/clickhouse/tables/test/test_auxiliary_zookeeper', '{replica}')
+                ENGINE = ReplicatedMergeTree('zookeeper2:/datastore/tables/test/test_auxiliary_zookeeper', '{replica}')
                 ORDER BY a;
             """.format(
                 replica=node.name
@@ -127,9 +127,9 @@ def test_drop_replicated_merge_tree_with_auxiliary_zookeeper(started_cluster):
     assert TSV(node2.query("SELECT a FROM test_auxiliary_zookeeper")) == TSV(expected)
 
     zk = cluster.get_kazoo_client("zoo1")
-    assert zk.exists("/clickhouse/tables/test/test_auxiliary_zookeeper")
+    assert zk.exists("/datastore/tables/test/test_auxiliary_zookeeper")
     drop_table([node1, node2], "test_auxiliary_zookeeper")
-    assert zk.exists("/clickhouse/tables/test/test_auxiliary_zookeeper") is None
+    assert zk.exists("/datastore/tables/test/test_auxiliary_zookeeper") is None
 
 
 def test_path_ambiguity(started_cluster):

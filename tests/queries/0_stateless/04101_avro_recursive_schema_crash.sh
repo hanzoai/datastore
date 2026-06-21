@@ -14,7 +14,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Generate a malicious Avro file with a recursive schema.
 # The schema defines TypeA with field b:TypeB, and TypeB with field a:TypeA (back-reference).
 # The Avro C++ library resolves the symbolic reference into a direct pointer cycle.
-AVRO_FILE="${CLICKHOUSE_TMP}/malicious_recursive.avro"
+AVRO_FILE="${DATASTORE_TMP}/malicious_recursive.avro"
 
 python3 -c "
 import struct, os, json
@@ -70,9 +70,9 @@ with open('${AVRO_FILE}', 'wb') as f:
 "
 
 # This query previously crashed the server. Now it should return an error.
-${CLICKHOUSE_LOCAL} --query "SELECT * FROM file('${AVRO_FILE}', 'Avro')" 2>&1 | grep -o "Recursive Avro schema is not supported"
+${DATASTORE_LOCAL} --query "SELECT * FROM file('${AVRO_FILE}', 'Avro')" 2>&1 | grep -o "Recursive Avro schema is not supported"
 
 # Also test via DESCRIBE to exercise avroNodeToDataType schema inference path
-${CLICKHOUSE_LOCAL} --query "DESCRIBE file('${AVRO_FILE}', 'Avro')" 2>&1 | grep -o "Recursive Avro schema is not supported"
+${DATASTORE_LOCAL} --query "DESCRIBE file('${AVRO_FILE}', 'Avro')" 2>&1 | grep -o "Recursive Avro schema is not supported"
 
 rm -f "${AVRO_FILE}"

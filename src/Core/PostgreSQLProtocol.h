@@ -379,7 +379,7 @@ public:
     {
         out.write('Z');
         writeBinaryBigEndian(size(), out);
-        // 'I' means that we are not in a transaction block. We use it here, because ClickHouse doesn't support transactions.
+        // 'I' means that we are not in a transaction block. We use it here, because Datastore doesn't support transactions.
         out.write('I');
     }
 
@@ -1312,7 +1312,7 @@ public:
         value = enum_to_string[cmd_];
 
         // Commands that include row count according to PostgreSQL protocol
-        // Note: UPDATE and DELETE in ClickHouse always return 0 because ClickHouse uses
+        // Note: UPDATE and DELETE in Datastore always return 0 because Datastore uses
         // lightweight deletes/updates that don't track affected rows in the same way as PostgreSQL
         bool include_row_count = (cmd_ == Command::INSERT || cmd_ == Command::DELETE ||
                                   cmd_ == Command::UPDATE || cmd_ == Command::SELECT ||
@@ -1322,7 +1322,7 @@ public:
         {
             String add = " ";
             if (cmd_ == Command::INSERT)
-                add = " 0 ";  // OID (always 0 for ClickHouse tables)
+                add = " 0 ";  // OID (always 0 for Datastore tables)
             value += add + std::to_string(rows_count_);
         }
     }
@@ -1392,7 +1392,7 @@ public:
             {"FETCH", Command::FETCH},
             {"COPY", Command::COPY},
             {"PREPARE", Command::PREPARE},
-            {"USE", Command::USE}, // ClickHouse-specific, not have in PostgreSQL
+            {"USE", Command::USE}, // Datastore-specific, not have in PostgreSQL
             {"SET", Command::SET},
         };
 

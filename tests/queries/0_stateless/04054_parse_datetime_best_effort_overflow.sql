@@ -1,6 +1,6 @@
 -- Test that parseDateTimeBestEffort does not overflow on very long fractional parts.
 -- The fractional digit count must be clamped to avoid signed integer overflow in readDecimalNumber.
--- https://github.com/ClickHouse/ClickHouse/pull/100368
+-- https://github.com/ClickHouse/Datastore/pull/100368
 
 SET session_timezone = 'UTC';
 

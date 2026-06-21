@@ -3,14 +3,14 @@
 set script_path [info script]
 set CURDIR [file dirname [file normalize $script_path]]
 
-set CLICKHOUSE_LOCAL ""
-set CLICKHOUSE_LOCAL [exec bash -c "source $CURDIR/../shell_config.sh && echo \$CLICKHOUSE_LOCAL"]
+set DATASTORE_LOCAL ""
+set DATASTORE_LOCAL [exec bash -c "source $CURDIR/../shell_config.sh && echo \$DATASTORE_LOCAL"]
 
 log_user 0
 set timeout 30
 match_max 100000
 
-spawn bash -c "$CLICKHOUSE_LOCAL"
+spawn bash -c "$DATASTORE_LOCAL"
 
 expect ":) "
 send -- "SET send_logs_level = 't'\r"

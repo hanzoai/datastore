@@ -31,7 +31,7 @@ def test_deduplicated_attached_part_renamed_after_attach(started_cluster):
     ch1.query(f"CREATE DATABASE {database_name}")
 
     q(
-        "CREATE TABLE dedup (id UInt32) ENGINE=ReplicatedMergeTree('/clickhouse/tables/dedup_attach/dedup/s1', 'r1') ORDER BY id;"
+        "CREATE TABLE dedup (id UInt32) ENGINE=ReplicatedMergeTree('/datastore/tables/dedup_attach/dedup/s1', 'r1') ORDER BY id;"
     )
     q("INSERT INTO dedup VALUES (1),(2),(3);")
 
@@ -84,5 +84,5 @@ def test_deduplicated_attached_part_renamed_after_attach(started_cluster):
     )
 
     q("DROP TABLE dedup")
-    q("SYSTEM DROP REPLICA 'r1' FROM ZKPATH '/clickhouse/tables/dedup_attach/dedup/s1'")
+    q("SYSTEM DROP REPLICA 'r1' FROM ZKPATH '/datastore/tables/dedup_attach/dedup/s1'")
     ch1.query(f"DROP DATABASE {database_name}")

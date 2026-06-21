@@ -25,14 +25,14 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-ZK_PATH="/clickhouse/tables/${CLICKHOUSE_TEST_ZOOKEEPER_PREFIX}/race_test"
+ZK_PATH="/datastore/tables/${DATASTORE_TEST_ZOOKEEPER_PREFIX}/race_test"
 
 function cleanup()
 {
-    ${CLICKHOUSE_CLIENT} -q "SYSTEM DISABLE FAILPOINT replicated_table_remove_zk_before_get_children" 2>/dev/null ||:
-    ${CLICKHOUSE_CLIENT} -q "SYSTEM DISABLE FAILPOINT replicated_table_remove_zk_before_final_multi" 2>/dev/null ||:
-    ${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS race_test SYNC" 2>/dev/null ||:
-    ${CLICKHOUSE_KEEPER_CLIENT} -q "rmr '${ZK_PATH}'" 2>/dev/null ||:
+    ${DATASTORE_CLIENT} -q "SYSTEM DISABLE FAILPOINT replicated_table_remove_zk_before_get_children" 2>/dev/null ||:
+    ${DATASTORE_CLIENT} -q "SYSTEM DISABLE FAILPOINT replicated_table_remove_zk_before_final_multi" 2>/dev/null ||:
+    ${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS race_test SYNC" 2>/dev/null ||:
+    ${DATASTORE_KEEPER_CLIENT} -q "rmr '${ZK_PATH}'" 2>/dev/null ||:
 }
 trap cleanup EXIT
 cleanup
@@ -42,27 +42,27 @@ cleanup
 # A concurrent process deletes the entire zookeeper_path.
 # The fix: return true (completely removed) with a warning instead of throwing LOGICAL_ERROR.
 
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "
     CREATE TABLE race_test (a UInt64)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/race_test', 'r1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/race_test', 'r1')
     ORDER BY a
 "
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM ENABLE FAILPOINT replicated_table_remove_zk_before_get_children"
+${DATASTORE_CLIENT} -q "SYSTEM ENABLE FAILPOINT replicated_table_remove_zk_before_get_children"
 
 # Background: DROP TABLE SYNC triggers dropReplica → removeTableNodesFromZooKeeper.
 # The failpoint will pause execution before tryGetChildren is called.
-${CLICKHOUSE_CLIENT} -q "DROP TABLE race_test SYNC" &
+${DATASTORE_CLIENT} -q "DROP TABLE race_test SYNC" &
 DROP_PID=$!
 
 # Wait until removeTableNodesFromZooKeeper is paused before tryGetChildren.
-${CLICKHOUSE_CLIENT} -q "SYSTEM WAIT FAILPOINT replicated_table_remove_zk_before_get_children PAUSE"
+${DATASTORE_CLIENT} -q "SYSTEM WAIT FAILPOINT replicated_table_remove_zk_before_get_children PAUSE"
 
 # Simulate another process completing the ZK cleanup: delete the entire path.
-${CLICKHOUSE_KEEPER_CLIENT} -q "rmr '${ZK_PATH}'" 2>/dev/null ||:
+${DATASTORE_KEEPER_CLIENT} -q "rmr '${ZK_PATH}'" 2>/dev/null ||:
 
 # Resume. tryGetChildren returns ZNONODE; with the fix we return true (completely removed) instead of throwing.
-${CLICKHOUSE_CLIENT} -q "SYSTEM NOTIFY FAILPOINT replicated_table_remove_zk_before_get_children"
+${DATASTORE_CLIENT} -q "SYSTEM NOTIFY FAILPOINT replicated_table_remove_zk_before_get_children"
 
 # If LOGICAL_ERROR is thrown (release build) or server crashes (debug build),
 # wait returns non-zero and set -e exits the script immediately.
@@ -75,25 +75,25 @@ echo "Scenario A passed"
 # A concurrent process deletes the entire zookeeper_path (including the ephemeral lock).
 # The fix: treat ZNONODE as a concurrent removal (log warning, return false) instead of throwing.
 
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "
     CREATE TABLE race_test (a UInt64)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/race_test', 'r1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/race_test', 'r1')
     ORDER BY a
 "
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM ENABLE FAILPOINT replicated_table_remove_zk_before_final_multi"
+${DATASTORE_CLIENT} -q "SYSTEM ENABLE FAILPOINT replicated_table_remove_zk_before_final_multi"
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE race_test SYNC" &
+${DATASTORE_CLIENT} -q "DROP TABLE race_test SYNC" &
 DROP_PID=$!
 
 # Wait until removeTableNodesFromZooKeeper is paused before the final tryMulti.
-${CLICKHOUSE_CLIENT} -q "SYSTEM WAIT FAILPOINT replicated_table_remove_zk_before_final_multi PAUSE"
+${DATASTORE_CLIENT} -q "SYSTEM WAIT FAILPOINT replicated_table_remove_zk_before_final_multi PAUSE"
 
 # Simulate another process completing the ZK cleanup.
-${CLICKHOUSE_KEEPER_CLIENT} -q "rmr '${ZK_PATH}'" 2>/dev/null ||:
+${DATASTORE_KEEPER_CLIENT} -q "rmr '${ZK_PATH}'" 2>/dev/null ||:
 
 # Resume. tryMulti returns ZNONODE; with the fix we log a warning and return false.
-${CLICKHOUSE_CLIENT} -q "SYSTEM NOTIFY FAILPOINT replicated_table_remove_zk_before_final_multi"
+${DATASTORE_CLIENT} -q "SYSTEM NOTIFY FAILPOINT replicated_table_remove_zk_before_final_multi"
 
 wait $DROP_PID
 

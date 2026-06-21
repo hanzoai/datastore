@@ -84,7 +84,7 @@ def test_replicated_table():
     node_1_1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster_2x2' ("
         "x Int64"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/{shard}', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/{shard}', '{replica}')"
         "ORDER BY x"
     )
 
@@ -111,14 +111,14 @@ def test_two_tables_with_uuid_in_zk_path():
     node_1_1.query(
         "CREATE TABLE table_a ON CLUSTER 'cluster_2x2' ("
         "x Int64"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/{uuid}/{shard}', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/{uuid}/{shard}', '{replica}')"
         "ORDER BY x"
     )
 
     node_1_1.query(
         "CREATE TABLE table_b ON CLUSTER 'cluster_2x2' ("
         "x Int64"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/{uuid}/{shard}', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/{uuid}/{shard}', '{replica}')"
         "ORDER BY x"
     )
 

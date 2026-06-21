@@ -24,7 +24,7 @@ CREATE DICTIONARY 02186_range_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02186_range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02186_range_dictionary_source_table'))
 LAYOUT(RANGE_HASHED(range_lookup_strategy 'min'))
 RANGE(MIN start MAX end)
 LIFETIME(0);
@@ -47,7 +47,7 @@ CREATE DICTIONARY 02186_range_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02186_range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02186_range_dictionary_source_table'))
 LAYOUT(RANGE_HASHED(range_lookup_strategy 'max'))
 RANGE(MIN start MAX end)
 LIFETIME(0);

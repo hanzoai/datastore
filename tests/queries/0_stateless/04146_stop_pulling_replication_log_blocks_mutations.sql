@@ -12,8 +12,8 @@
 DROP TABLE IF EXISTS r1 SYNC;
 DROP TABLE IF EXISTS r2 SYNC;
 
-CREATE TABLE r1 (x UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_pr59895/t', 'r1') ORDER BY tuple();
-CREATE TABLE r2 (x UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_pr59895/t', 'r2') ORDER BY tuple();
+CREATE TABLE r1 (x UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_pr59895/t', 'r1') ORDER BY tuple();
+CREATE TABLE r2 (x UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_pr59895/t', 'r2') ORDER BY tuple();
 
 INSERT INTO r1 VALUES (1),(2),(3);
 SYSTEM SYNC REPLICA r2;

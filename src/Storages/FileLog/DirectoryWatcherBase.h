@@ -15,7 +15,7 @@ class FileLogDirectoryWatcher;
 class DirectoryWatcherBase : WithContext
 {
     /// Most of code in this class is copy from the Poco project:
-    /// https://github.com/ClickHouse-Extras/poco/blob/clickhouse/Foundation/src/DirectoryWatcher.cpp
+    /// https://github.com/ClickHouse-Extras/poco/blob/datastore/Foundation/src/DirectoryWatcher.cpp
     /// This class is used to get notifications about changes
     /// to the filesystem, more precisely, to a specific
     /// directory. Changes to a directory are reported via

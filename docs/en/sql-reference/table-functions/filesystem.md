@@ -15,9 +15,9 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 Recursively iterates a directory and returns a table with file metadata (paths, sizes, types, permissions, modification times) and, optionally, file contents.
 
-In `clickhouse-server` mode, the path must be within the [user_files_path](/operations/server-configuration-parameters/settings.md#user_files_path) directory. Symlinks inside `user_files_path` that point outside of it are followed, but only entries whose path (through the symlink) starts with `user_files_path` are returned.
+In `datastore-server` mode, the path must be within the [user_files_path](/operations/server-configuration-parameters/settings.md#user_files_path) directory. Symlinks inside `user_files_path` that point outside of it are followed, but only entries whose path (through the symlink) starts with `user_files_path` are returned.
 
-In `clickhouse-local` mode, there are no path restrictions.
+In `datastore-local` mode, there are no path restrictions.
 
 ## Syntax {#syntax}
 

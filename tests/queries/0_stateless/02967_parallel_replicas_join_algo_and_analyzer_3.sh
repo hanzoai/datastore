@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 drop table if exists num_1;
 drop table if exists num_2;
 
@@ -23,7 +23,7 @@ PARALLEL_REPLICAS_SETTINGS="enable_parallel_replicas = 2, automatic_parallel_rep
 echo
 echo "nested join with analyzer and parallel replicas, both global"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=0) r
@@ -31,7 +31,7 @@ on l.key = r.key order by l.key limit 10 offset 10000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_prefer_local_join=0"
 
 
-$CLICKHOUSE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
+$DATASTORE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=0) r
@@ -46,14 +46,14 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "nested join with analyzer and parallel replicas, global + local"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=1) r
 on l.key = r.key order by l.key limit 10 offset 10000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_prefer_local_join=0"
 
-$CLICKHOUSE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
+$DATASTORE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=1) r
@@ -69,14 +69,14 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "nested join with analyzer and parallel replicas, both local, both full sorting merge join"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings join_algorithm='full_sorting_merge') r
 on l.key = r.key order by l.key limit 10 offset 10000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_prefer_local_join=0, join_algorithm='full_sorting_merge'"
 
-$CLICKHOUSE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
+$DATASTORE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings join_algorithm='full_sorting_merge') r
@@ -91,14 +91,14 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "nested join with analyzer and parallel replicas, both local, both full sorting and hash join"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings join_algorithm='hash') r
 on l.key = r.key order by l.key limit 10 offset 10000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_prefer_local_join=0, join_algorithm='full_sorting_merge'"
 
-$CLICKHOUSE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
+$DATASTORE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings join_algorithm='hash') r
@@ -113,14 +113,14 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "nested join with analyzer and parallel replicas, both local, both full sorting and hash join"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings join_algorithm='full_sorting_merge') r
 on l.key = r.key order by l.key limit 10 offset 10000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS, parallel_replicas_prefer_local_join=0, join_algorithm='hash'"
 
-$CLICKHOUSE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
+$DATASTORE_CLIENT --max_rows_in_set_to_optimize_join 0 -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings join_algorithm='full_sorting_merge') r

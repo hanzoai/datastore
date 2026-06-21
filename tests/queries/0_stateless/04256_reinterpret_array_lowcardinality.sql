@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/102211
+-- https://github.com/ClickHouse/Datastore/issues/102211
 -- reinterpret() to Array(LowCardinality(...)) must be rejected at validation
 -- time with ILLEGAL_TYPE_OF_ARGUMENT, not at runtime with NOT_IMPLEMENTED.
 

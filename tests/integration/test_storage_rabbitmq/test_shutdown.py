@@ -45,8 +45,8 @@ def get_last_event_time(logger_name, message):
     reason=(
         "Flaky in CI: shutdown ordering on the RabbitMQ event loop is not "
         "reliably reproducible under integration-test load. See "
-        "https://github.com/ClickHouse/ClickHouse/pull/104253 for the "
-        "directive to disable, and https://github.com/ClickHouse/ClickHouse/pull/104273 "
+        "https://github.com/ClickHouse/Datastore/pull/104253 for the "
+        "directive to disable, and https://github.com/ClickHouse/Datastore/pull/104273 "
         "for context."
     )
 )
@@ -85,7 +85,7 @@ def test_shutdown_rabbitmq_with_materialized_view(started_cluster):
             rabbitmq_exchange_type = 'fanout',
             rabbitmq_format = 'JSONEachRow',
             rabbitmq_username = 'root',
-            rabbitmq_password = 'clickhouse',
+            rabbitmq_password = 'datastore',
             rabbitmq_num_consumers = 3,
             rabbitmq_flush_interval_ms = 100,
             rabbitmq_max_block_size = 100
@@ -175,7 +175,7 @@ def test_attach_detach_rabbitmq_with_materialized_view(started_cluster):
             rabbitmq_exchange_type = 'fanout',
             rabbitmq_format = 'JSONEachRow',
             rabbitmq_username = 'root',
-            rabbitmq_password = 'clickhouse',
+            rabbitmq_password = 'datastore',
             rabbitmq_num_consumers = 3,
             rabbitmq_flush_interval_ms = 100,
             rabbitmq_max_block_size = 100
@@ -238,8 +238,8 @@ def test_attach_detach_rabbitmq_with_materialized_view(started_cluster):
     reason=(
         "Flaky in CI: idle-loop shutdown timing is sensitive to libuv "
         "scheduling under integration-test load. See "
-        "https://github.com/ClickHouse/ClickHouse/pull/104253 for the "
-        "directive to disable, and https://github.com/ClickHouse/ClickHouse/pull/104273 "
+        "https://github.com/ClickHouse/Datastore/pull/104253 for the "
+        "directive to disable, and https://github.com/ClickHouse/Datastore/pull/104273 "
         "for context."
     )
 )
@@ -277,7 +277,7 @@ def test_idle_loop_shutdown_completes_promptly(started_cluster):
             rabbitmq_exchange_type = 'fanout',
             rabbitmq_format = 'JSONEachRow',
             rabbitmq_username = 'root',
-            rabbitmq_password = 'clickhouse',
+            rabbitmq_password = 'datastore',
             rabbitmq_flush_interval_ms = 100,
             rabbitmq_max_block_size = 100
     """
@@ -345,8 +345,8 @@ def test_idle_loop_shutdown_completes_promptly(started_cluster):
     reason=(
         "Flaky in CI: depends on RabbitMQ message-delivery timing that is "
         "not reliable under integration-test load. See "
-        "https://github.com/ClickHouse/ClickHouse/pull/104253 for the "
-        "directive to disable, and https://github.com/ClickHouse/ClickHouse/pull/104273 "
+        "https://github.com/ClickHouse/Datastore/pull/104253 for the "
+        "directive to disable, and https://github.com/ClickHouse/Datastore/pull/104273 "
         "for context."
     )
 )
@@ -373,7 +373,7 @@ def test_rabbitmq_virtual_column_table(started_cluster):
             rabbitmq_exchange_type = 'fanout',
             rabbitmq_format = 'JSONEachRow',
             rabbitmq_username = 'root',
-            rabbitmq_password = 'clickhouse',
+            rabbitmq_password = 'datastore',
             rabbitmq_flush_interval_ms = 100,
             rabbitmq_max_block_size = 100,
             rabbitmq_commit_on_select = 1

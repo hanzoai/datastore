@@ -192,7 +192,7 @@ static AvroDeserializer::DeserializeFn createDecimalDeserializeFn(const avro::No
     if (decimal_type.getScale() != static_cast<UInt32>(logical_type.scale()) || decimal_type.getPrecision() != static_cast<UInt32>(logical_type.precision()))
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
-            "Cannot insert Avro decimal with scale {} and precision {} to ClickHouse type {} with scale {} and precision {}",
+            "Cannot insert Avro decimal with scale {} and precision {} to Datastore type {} with scale {} and precision {}",
             logical_type.scale(),
             logical_type.precision(),
             target_type->getName(),
@@ -1294,7 +1294,7 @@ DataTypePtr AvroSchemaReader::avroNodeToDataTypeImpl(const avro::NodePtr & node,
                 return std::make_shared<DataTypeEnum16>(std::move(values));
             }
 
-            throw Exception(ErrorCodes::ILLEGAL_COLUMN, "ClickHouse supports only 8 and 16-bit Enum.");
+            throw Exception(ErrorCodes::ILLEGAL_COLUMN, "Datastore supports only 8 and 16-bit Enum.");
         }
         case avro::Type::AVRO_FIXED:
         {

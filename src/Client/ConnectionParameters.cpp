@@ -80,7 +80,7 @@ ConnectionParameters::ConnectionParameters(const Poco::Util::AbstractConfigurati
 #if USE_JWT_CPP && USE_SSL
         jwt = config.getString("jwt");
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "JWT is disabled, because ClickHouse is built without JWT or SSL support");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "JWT is disabled, because Datastore is built without JWT or SSL support");
 #endif
     }
     else if (config.has("ssh-key-file"))
@@ -106,7 +106,7 @@ ConnectionParameters::ConnectionParameters(const Poco::Util::AbstractConfigurati
 
         ssh_private_key = std::move(key);
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because ClickHouse is built without libssh");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because Datastore is built without libssh");
 #endif
     }
     else
@@ -155,10 +155,10 @@ ConnectionParameters::ConnectionParameters(const Poco::Util::AbstractConfigurati
     /// By default compression is disabled if address looks like localhost.
 
     /// Avoid DNS request if the host is "localhost".
-    /// If ClickHouse is run under QEMU-user with a binary for a different architecture,
+    /// If Datastore is run under QEMU-user with a binary for a different architecture,
     /// and there are all listed startup dependency shared libraries available, but not the runtime dependencies of glibc,
     /// the glibc cannot open "plugins" for DNS resolving, and the DNS resolution does not work.
-    /// At the same time, I want clickhouse-local to always work, regardless.
+    /// At the same time, I want datastore-local to always work, regardless.
     /// TODO: get rid of glibc, or replace getaddrinfo to c-ares.
 
     compression = config.getBool("compression", host != "localhost" && !isLocalAddress(DNSResolver::instance().resolveHostAllInOriginOrder(host).front()))

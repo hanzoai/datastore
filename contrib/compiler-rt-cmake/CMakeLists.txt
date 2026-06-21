@@ -1,4 +1,4 @@
-# Build compiler-rt (builtins, sanitizer runtimes, XRay) for ClickHouse.
+# Build compiler-rt (builtins, sanitizer runtimes, XRay) for Datastore.
 #
 # Replaces the external CMake invocation that previously lived in
 # cmake/build_clang_builtin.cmake with direct add_library() targets,
@@ -617,7 +617,7 @@ if (ENABLE_XRAY)
     #   RTXrayPROFILING + RTSanitizerCommon[+Libc].
     # Upstream additionally builds clang_rt.xray-fdr/-basic/-profiling as
     # separate archives so an application can link only the modes it uses;
-    # ClickHouse always wants all of them, so we collapse into one archive.
+    # Datastore always wants all of them, so we collapse into one archive.
     set(_xray_arch_cpp "")
     set(_xray_arch_asm "")
     if     (ARCH_AMD64)

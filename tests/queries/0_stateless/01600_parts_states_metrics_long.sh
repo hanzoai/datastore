@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 function query()
 {
     # NOTE: database_atomic_wait_for_drop_and_detach_synchronously needed only for local env, CI has it ON
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&database_atomic_wait_for_drop_and_detach_synchronously=1" -d "$*"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}&database_atomic_wait_for_drop_and_detach_synchronously=1" -d "$*"
 }
 
 
@@ -20,7 +20,7 @@ verify()
     local result
 
     for _ in {1..100}; do
-        # NOTE: database = $CLICKHOUSE_DATABASE is unwanted
+        # NOTE: database = $DATASTORE_DATABASE is unwanted
         result=$( query "SELECT
             (SELECT sumIf(value, metric = 'PartsActive'), sumIf(value, metric = 'PartsOutdated') FROM system.metrics)
                 =
@@ -39,7 +39,7 @@ verify()
         sleep 0.5
     done
 
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         SELECT sumIf(value, metric = 'PartsActive'), sumIf(value, metric = 'PartsOutdated') FROM system.metrics;
         SELECT sum(active), sum(NOT active) FROM system.parts;
         SELECT sum(active), sum(NOT active) FROM system.projection_parts;

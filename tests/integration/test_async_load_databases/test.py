@@ -51,7 +51,7 @@ def started_cluster():
                 CREATE DATABASE dict ENGINE=Dictionary;
                 CREATE DATABASE test;
                 CREATE TABLE test_table_src(date Date, id UInt32, dummy UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_table', '{nodenum}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test_table', '{nodenum}')
                 PARTITION BY date ORDER BY id
                 """
             )
@@ -172,7 +172,7 @@ def test_dependent_tables(started_cluster):
     )
     query(
         "create dictionary test.d (n int default 0, m int default 42) primary key n "
-        "source(clickhouse(host 'localhost' port tcpPort() user 'default' table 'src' password '' db 'default'))"
+        "source(datastore(host 'localhost' port tcpPort() user 'default' table 'src' password '' db 'default'))"
         "lifetime(min 1 max 10) layout(flat())"
     )
     query(
@@ -371,10 +371,10 @@ def test_materialized_views_replicated(started_cluster):
             DROP DATABASE IF EXISTS test_mv;
             CREATE DATABASE test_mv;
             CREATE TABLE test_mv.test_table_H(id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_table_H', '{nodenum}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test_table_H', '{nodenum}')
             ORDER BY id;
             CREATE TABLE test_mv.test_table_S(id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_table_S', '{nodenum}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test_table_S', '{nodenum}')
             ORDER BY id;
             CREATE MATERIALIZED VIEW test_mv.test_mv TO test_mv.test_table_S
             AS SELECT id FROM test_mv.test_table_H;

@@ -2,7 +2,7 @@
 set -e
 # Aka GIGACHAD BISECTOR
 # Example:
-# ./bisect.sh --good 4c191319 --bad 09a09ca5 -p /home/nik/work/ClickHouse/ [--walker]
+# ./bisect.sh --good 4c191319 --bad 09a09ca5 -p /home/nik/work/Datastore/ [--walker]
 
 export START_COMMIT=""
 export END_COMMIT=""
@@ -16,15 +16,15 @@ export COMMITS_ARG=""
 export SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 export PRIVATE=false # Default to public CI builds
 
-# clickhouse-test will use its client
-export CLICKHOUSE_BINARY="$SCRIPT_DIR/data/clickhouse"
+# datastore-test will use its client
+export DATASTORE_BINARY="$SCRIPT_DIR/data/datastore"
 
 # Usage function to display help
 usage() {
   echo "Usage: $0 --good <start_commit> --bad <end_commit> --path <path> --test <test_command> [--env <env_option>] [--walker] [--private]"
   echo "  --good       Starting commit hash for bisect"
   echo "  --bad        Ending commit hash for bisect"
-  echo "  --path       Path to ClickHouse repository. CH_ROOT env variable will be used by default"
+  echo "  --path       Path to Datastore repository. CH_ROOT env variable will be used by default"
   echo "  --build-missing-binary  (Optional) Compile missing binaries if binary from CI is missing"
   echo "  --build-directory       Path to the build directory in case if we will decide to compile the binary"
   echo "  --test       Path to test script/command to run for each commit (default: test.sh)"
@@ -220,7 +220,7 @@ echo
 
 cleanup() {
   echo "Cleaning up..."
-  # Kill all local ClickHouse server processes
+  # Kill all local Datastore server processes
   (ps aux | grep -E '[c]lickhouse[- ]server' | awk '{print $2}' | xargs kill -9) 2>/dev/null || true
   # Kill MinIO (identified by port 11111)
   (lsof -ti :11111 | xargs kill -9) 2>/dev/null || true

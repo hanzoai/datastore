@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103120
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103120
 --
 -- `SET <name> = DEFAULT` used to lose the `is_auto` flag for `SettingFieldMaxThreads`-typed
 -- settings whose declared default is `0` (auto): `max_threads`, `max_final_threads`,

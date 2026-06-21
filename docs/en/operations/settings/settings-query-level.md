@@ -18,18 +18,18 @@ The order of priority for defining a setting is:
 1. Applying a setting to a user directly, or within a settings profile
 
     - SQL (recommended)
-    - adding one or more XML or YAML files to `/etc/clickhouse-server/users.d`
+    - adding one or more XML or YAML files to `/etc/datastore-server/users.d`
 
 2. Session settings
 
-    - Send `SET setting=value` from the ClickHouse Cloud SQL console or
-    `clickhouse client` in interactive mode. Similarly, you can use ClickHouse
+    - Send `SET setting=value` from the Datastore Cloud SQL console or
+    `datastore client` in interactive mode. Similarly, you can use Datastore
     sessions in the HTTP protocol. To do this, you need to specify the
     `session_id` HTTP parameter.
 
 3. Query settings
 
-    - When starting `clickhouse client` in non-interactive mode, set the startup
+    - When starting `datastore client` in non-interactive mode, set the startup
     parameter `--setting=value`.
     - When using the HTTP API, pass CGI parameters (`URL?setting_1=value&setting_2=value...`).
     - Define settings in the
@@ -95,7 +95,7 @@ In the example below, `SQL_` is chosen as the custom prefix:
 ```
 
 :::note
-In ClickHouse Cloud it is not possible to specify a custom prefix.
+In Datastore Cloud it is not possible to specify a custom prefix.
 All custom user settings begin with prefix `SQL_`.
 :::
 
@@ -161,8 +161,8 @@ SETTINGS PROFILE log_ingest
 
 ### Using XML to create a settings profile and user {#using-xml-to-create-a-settings-profile-and-user}
 
-```xml title=/etc/clickhouse-server/users.d/users.xml
-<clickhouse>
+```xml title=/etc/datastore-server/users.d/users.xml
+<datastore>
 # highlight-start
     <profiles>
         <log_ingest>
@@ -184,7 +184,7 @@ SETTINGS PROFILE log_ingest
             <named_collection_control>1</named_collection_control>
         </default>
     </users>
-</clickhouse>
+</datastore>
 ```
 
 #### Examine the settings profile and assignment {#examine-the-settings-profile-and-assignment-1}
@@ -230,5 +230,5 @@ VALUES (...)
 
 ## See also {#see-also}
 
-- View the [Settings](/operations/settings/settings.md) page for a description of the ClickHouse settings.
+- View the [Settings](/operations/settings/settings.md) page for a description of the Datastore settings.
 - [Global server settings](/operations/server-configuration-parameters/settings.md)

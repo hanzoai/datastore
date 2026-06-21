@@ -41,7 +41,7 @@ def test_hide_in_preprocessed(started_cluster):
     )
     assert "key_1" in node.query("select collection from system.named_collections")
     out = node.exec_in_container(
-        ["cat", "/var/lib/clickhouse/preprocessed_configs/config.xml"]
+        ["cat", "/var/lib/datastore/preprocessed_configs/config.xml"]
     )
     assert (
         '<max_thread_pool_free_size hide_in_preprocessed="1">2000</max_thread_pool_free_size>'
@@ -59,5 +59,5 @@ def test_hide_in_preprocessed(started_cluster):
 
     # make sure the preprocessed users.xml was saved (this throws if the file does not exist)
     node.exec_in_container(
-        ["ls", "/var/lib/clickhouse/preprocessed_configs/users.xml"]
+        ["ls", "/var/lib/datastore/preprocessed_configs/users.xml"]
     )

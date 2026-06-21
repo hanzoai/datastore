@@ -260,7 +260,7 @@ private:
     const size_t snapshots_to_keep;
     /// All existing snapshots in our path (log_index -> path)
     std::map<uint64_t, SnapshotFileInfoPtr> existing_snapshots;
-    /// Compress snapshots in common ZSTD format instead of custom ClickHouse block LZ4 format
+    /// Compress snapshots in common ZSTD format instead of custom Datastore block LZ4 format
     const bool compress_snapshots_zstd;
     /// Superdigest for deserialization of storage
     const std::string superdigest;

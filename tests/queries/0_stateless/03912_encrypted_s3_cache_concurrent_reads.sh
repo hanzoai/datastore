@@ -8,15 +8,15 @@
 
 set -e
 
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=fatal
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=fatal
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-TABLE="t_encrypted_s3_cache_race_${CLICKHOUSE_DATABASE}"
+TABLE="t_encrypted_s3_cache_race_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS ${TABLE};
     CREATE TABLE ${TABLE} (key UInt64, value String)
     ENGINE = MergeTree ORDER BY key
@@ -31,7 +31,7 @@ function thread_read {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
             SELECT count() FROM ${TABLE} WHERE NOT ignore(value) FORMAT Null
         " 2>&1 | grep -v -e 'Received exception from server' -e '^(query: ' -e '^\s*)$' | grep -v -e UNKNOWN_TABLE
     done
@@ -41,8 +41,8 @@ function thread_read_with_cache_drop {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "SYSTEM DROP FILESYSTEM CACHE 's3_cache'" 2>&1 | grep -v -e 'Received exception from server' -e '^(query: ' -e '^\s*)$'
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "SYSTEM DROP FILESYSTEM CACHE 's3_cache'" 2>&1 | grep -v -e 'Received exception from server' -e '^(query: ' -e '^\s*)$'
+        $DATASTORE_CLIENT --query "
             SELECT sum(key) FROM ${TABLE} WHERE NOT ignore(value) FORMAT Null
         " 2>&1 | grep -v -e 'Received exception from server' -e '^(query: ' -e '^\s*)$' | grep -v -e UNKNOWN_TABLE
     done
@@ -57,6 +57,6 @@ thread_read_with_cache_drop &
 
 wait
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS ${TABLE}"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS ${TABLE}"
 
 echo "OK"

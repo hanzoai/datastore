@@ -9,7 +9,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 SETTINGS=" "
-cat <<EOF | $CLICKHOUSE_CLIENT -n $SETTINGS
+cat <<EOF | $DATASTORE_CLIENT -n $SETTINGS
 DROP TABLE IF EXISTS tab;
 CREATE TABLE tab
 (
@@ -37,7 +37,7 @@ for direct_read_setting in 0 1; do
     SETTINGS="$SETTINGS --use_query_condition_cache=0 "
     SETTINGS="$SETTINGS --use_skip_indexes_on_data_read=1 "
     SETTINGS="$SETTINGS --query_plan_direct_read_from_text_index=$direct_read_setting "
-    cat <<EOF | $CLICKHOUSE_CLIENT -n $SETTINGS
+    cat <<EOF | $DATASTORE_CLIENT -n $SETTINGS
 -- { echoOn }
 SELECT count() FROM tab WHERE hasAnyTokens(message, ['abc']);
 SELECT count() FROM tab WHERE hasAllTokens(message, ['abc']);
@@ -103,4 +103,4 @@ EOF
 
 done
 
-$CLICKHOUSE_CLIENT -q 'DROP TABLE tab;'
+$DATASTORE_CLIENT -q 'DROP TABLE tab;'

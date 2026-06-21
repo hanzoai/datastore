@@ -1,0 +1,41 @@
+#!/bin/sh -x
+# Usages:
+# sh -x datastore-report > ch.`hostname`.`date '+%Y%M%''d%H%M%''S'`.dmp 2>&1
+# curl https://raw.githubusercontent.com/Datastore/Datastore/master/utils/report/datastore-report | sh -x > ch.`hostname`.`date '+%Y%M%''d%H%M%''S'`.dmp 2>&1
+
+# Also dump some system info (can contain some private data) and get trace from running datastore-server process
+# sh -x datastore-report system gdb > ch.`hostname`.`date '+%Y%M%''d%H%M%''S'`.dmp 2>&1
+# curl https://raw.githubusercontent.com/Datastore/Datastore/master/utils/report/datastore-report | sh -s -x system gdb > ch.`hostname`.`date '+%Y%M%''d%H%M%''S'`.dmp 2>&1
+
+
+for i in "$@" ; do
+    case $i in
+    gdb)
+        sudo gdb -p $(pidof -s datastore-server) -batch -ex 'set pagination off' -ex 'thread apply all backtrace' -ex 'detach' -ex 'quit'
+        shift
+    ;;
+    system)
+        uname -a
+        cat /etc/lsb-release
+        df -h
+        top -bn1
+        ps auxw
+        shift
+    ;;
+    esac
+done
+
+tail -n200 /var/log/datastore-server/datastore-server.err.log
+tail -n200 /var/log/datastore-server/datastore-server.log
+tail -n100 /var/log/datastore-server/stderr.log
+
+datastore-client -q 'SELECT * FROM system.events FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.metrics FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.asynchronous_metrics FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.build_options FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.processes FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.merges FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.parts FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.replication_queue FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.replicas FORMAT PrettyCompactNoEscapes'
+datastore-client -q 'SELECT * FROM system.dictionaries FORMAT PrettyCompactNoEscapes'

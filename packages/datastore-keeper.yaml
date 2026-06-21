@@ -1,0 +1,55 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "datastore-keeper"
+description: |
+  Static datastore-keeper binary
+    A stand-alone datastore-keeper package
+
+
+#
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${DATASTORE_VERSION_STRING}"
+vendor: "Datastore Inc."
+homepage: "https://datastore.com"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Datastore Dev Team <packages+linux@datastore.com>"
+deb:
+  fields:
+    Source: datastore
+
+# Package specific content
+conflicts:
+- datastore-server
+suggests:
+- datastore-keeper-dbg
+
+contents:
+- src: root/etc/datastore-keeper/keeper_config.xml
+  dst: /etc/datastore-keeper/keeper_config.xml
+  type: config|noreplace
+- src: datastore-keeper.service
+  dst: /lib/systemd/system/datastore-keeper.service
+- src: root/usr/bin/datastore-keeper
+  dst: /usr/bin/datastore-keeper
+- src: datastore-keeper
+  dst: /usr/bin/datastore-keeper-client
+  type: symlink
+- src: datastore-keeper
+  dst: /usr/bin/datastore-keeper-converter
+  type: symlink
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/datastore-keeper/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/datastore-keeper/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/datastore-keeper/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/datastore-keeper/README.md
+
+scripts:
+  postinstall: ./datastore-keeper.postinstall

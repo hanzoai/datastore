@@ -5,8 +5,8 @@
 DROP TABLE IF EXISTS table1;
 DROP TABLE IF EXISTS table2;
 
-CREATE TABLE table1(x UInt32) ENGINE ReplicatedMergeTree('/clickhouse/tables/{database}/test_03779/table', '1') ORDER BY x;
-CREATE TABLE table2(x UInt32) ENGINE ReplicatedMergeTree('/clickhouse/tables/{database}/test_03779/table', '2') ORDER BY x;
+CREATE TABLE table1(x UInt32) ENGINE ReplicatedMergeTree('/datastore/tables/{database}/test_03779/table', '1') ORDER BY x;
+CREATE TABLE table2(x UInt32) ENGINE ReplicatedMergeTree('/datastore/tables/{database}/test_03779/table', '2') ORDER BY x;
 
 set insert_quorum=2;
 

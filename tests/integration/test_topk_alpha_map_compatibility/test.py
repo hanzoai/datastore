@@ -48,7 +48,7 @@ cluster = ClickHouseCluster(__file__)
 
 node = cluster.add_instance(
     "node",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="25.10",
     with_installed_binary=True,
     stay_alive=True,

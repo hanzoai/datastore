@@ -28,7 +28,7 @@ SET_OUTPUT="SET $OUTPUT_SETTING = true;"
 INITIAL_INSERT_VALUES="('str1',1),('',2),('str2',3)"
 MULTI_WRAPPER_VALUES="(0,1,2)"
 
-# takes ClickHouse format and protobuf class as arguments
+# takes Datastore format and protobuf class as arguments
 protobuf_info() {
   input_or_output="$1"
   clickhouse_format="$2"
@@ -44,7 +44,7 @@ protobuf_info() {
   fi
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
   DROP TABLE IF EXISTS $MAIN_TABLE;
   DROP TABLE IF EXISTS $ROUNDTRIP_TABLE;
   DROP TABLE IF EXISTS $COMPATIBILITY_TABLE;
@@ -78,19 +78,19 @@ echo $SET_OUTPUT
 
 echo
 echo "Insert $INITIAL_INSERT_VALUES into table (Nullable(String), Int32):"
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
   INSERT INTO $MAIN_TABLE VALUES $INITIAL_INSERT_VALUES;
   SELECT * FROM $MAIN_TABLE;
 "
 
 echo
 echo "Protobuf representation of the second row:"
-$CLICKHOUSE_CLIENT --query "$SET_OUTPUT SELECT * FROM $MAIN_TABLE WHERE ref = 2 LIMIT 1 $(protobuf_info output ProtobufSingle Message)" > "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "$SET_OUTPUT SELECT * FROM $MAIN_TABLE WHERE ref = 2 LIMIT 1 $(protobuf_info output ProtobufSingle Message)" > "$BINARY_FILE_PATH"
 hexdump -C $BINARY_FILE_PATH
 
 echo
 echo "Decoded with protoc:"
-(cd $SCHEMADIR && $PROTOC_BINARY --proto_path=. --proto_path=/usr/share/clickhouse/protos --decode Message "$PROTOBUF_FILE_NAME".proto) < $BINARY_FILE_PATH
+(cd $SCHEMADIR && $PROTOC_BINARY --proto_path=. --proto_path=/usr/share/datastore/protos --decode Message "$PROTOBUF_FILE_NAME".proto) < $BINARY_FILE_PATH
 
 echo
 echo "Proto message with wrapper for (NULL, 1), ('', 2), ('str', 3):"
@@ -101,37 +101,37 @@ hexdump -C $MESSAGE_FILE_PATH
 
 echo
 echo "Insert proto message into table (Nullable(String), Int32):"
-$CLICKHOUSE_CLIENT --query "$SET_INPUT INSERT INTO $ROUNDTRIP_TABLE $(protobuf_info input Protobuf Message)" < "$MESSAGE_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM $ROUNDTRIP_TABLE"
+$DATASTORE_CLIENT --query "$SET_INPUT INSERT INTO $ROUNDTRIP_TABLE $(protobuf_info input Protobuf Message)" < "$MESSAGE_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM $ROUNDTRIP_TABLE"
 
 echo
 echo "Proto output of the table using Google wrapper:"
-$CLICKHOUSE_CLIENT --query "$SET_OUTPUT SELECT * FROM $ROUNDTRIP_TABLE $(protobuf_info output Protobuf Message)" > "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "$SET_OUTPUT SELECT * FROM $ROUNDTRIP_TABLE $(protobuf_info output Protobuf Message)" > "$BINARY_FILE_PATH"
 hexdump -C $BINARY_FILE_PATH
 
 echo
 echo "Proto output of the table without Google wrapper:"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM $ROUNDTRIP_TABLE $(protobuf_info output Protobuf MessageNoWrapper)" > "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM $ROUNDTRIP_TABLE $(protobuf_info output Protobuf MessageNoWrapper)" > "$BINARY_FILE_PATH"
 hexdump -C $BINARY_FILE_PATH
 
 echo
 echo "Insert proto message into table (Tuple(String), Int32)"
 echo "with disabled Google wrappers flattening:"
-$CLICKHOUSE_CLIENT --query "INSERT INTO $COMPATIBILITY_TABLE $(protobuf_info input Protobuf Message)" < "$MESSAGE_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM $COMPATIBILITY_TABLE"
+$DATASTORE_CLIENT --query "INSERT INTO $COMPATIBILITY_TABLE $(protobuf_info input Protobuf Message)" < "$MESSAGE_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM $COMPATIBILITY_TABLE"
 
 echo
 echo "Insert $MULTI_WRAPPER_VALUES and reinsert using Google wrappers into:"
 echo "Table (Nullable(Int32), Nullable(Int32), Int32):"
-$CLICKHOUSE_CLIENT --query "INSERT INTO $MULTI_TABLE VALUES $MULTI_WRAPPER_VALUES"
-$CLICKHOUSE_CLIENT --query "$SET_OUTPUT SELECT * FROM $MULTI_TABLE $(protobuf_info output Protobuf MessageMultiWrapper)" > "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "$SET_INPUT INSERT INTO $MULTI_TABLE $(protobuf_info input Protobuf MessageMultiWrapper)" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM $MULTI_TABLE"
+$DATASTORE_CLIENT --query "INSERT INTO $MULTI_TABLE VALUES $MULTI_WRAPPER_VALUES"
+$DATASTORE_CLIENT --query "$SET_OUTPUT SELECT * FROM $MULTI_TABLE $(protobuf_info output Protobuf MessageMultiWrapper)" > "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "$SET_INPUT INSERT INTO $MULTI_TABLE $(protobuf_info input Protobuf MessageMultiWrapper)" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM $MULTI_TABLE"
 
 rm "$BINARY_FILE_PATH"
 rm "$MESSAGE_FILE_PATH"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
   DROP TABLE $MAIN_TABLE;
   DROP TABLE $ROUNDTRIP_TABLE;
   DROP TABLE $COMPATIBILITY_TABLE;

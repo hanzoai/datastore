@@ -9,28 +9,28 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -m -q "ATTACH TABLE mv" |& {
+$DATASTORE_CLIENT -m -q "ATTACH TABLE mv" |& {
     # CANNOT_GET_CREATE_TABLE_QUERY -- ATTACH TABLE IF EXISTS
     # TABLE_ALREADY_EXISTS          -- ATTACH TABLE IF NOT EXISTS
     grep -F -m1 Exception | grep -v -e CANNOT_GET_CREATE_TABLE_QUERY -e TABLE_ALREADY_EXISTS
 }
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP TABLE IF EXISTS null;
     CREATE TABLE null (key Int) ENGINE = Null;
     DROP TABLE IF EXISTS mv;
     CREATE MATERIALIZED VIEW mv ENGINE = Null() AS SELECT * FROM null;
 "
 
-$CLICKHOUSE_CLIENT -q "INSERT INTO null SELECT * FROM numbers_mt(1000) settings max_threads=1000, max_insert_threads=1000, max_block_size=1" |& {
+$DATASTORE_CLIENT -q "INSERT INTO null SELECT * FROM numbers_mt(1000) settings max_threads=1000, max_insert_threads=1000, max_block_size=1" |& {
     # To avoid handling stacktrace here, get only first line (-m1)
     # this should be OK, since you cannot have multiple exceptions from the client anyway.
     grep -m1 -F 'DB::Exception:' | grep -F -v -e 'UNKNOWN_TABLE'
 } &
 sleep 0.05
-$CLICKHOUSE_CLIENT -q "DETACH TABLE mv"
+$DATASTORE_CLIENT -q "DETACH TABLE mv"
 
 # avoid leftovers on DROP DATABASE (force_remove_data_recursively_on_drop) for Ordinary database
-$CLICKHOUSE_CLIENT -q "ATTACH TABLE mv"
+$DATASTORE_CLIENT -q "ATTACH TABLE mv"
 
 wait

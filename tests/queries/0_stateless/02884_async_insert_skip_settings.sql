@@ -3,7 +3,7 @@
 DROP TABLE IF EXISTS t_async_insert_skip_settings SYNC;
 
 CREATE TABLE t_async_insert_skip_settings (id UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/tables/t_async_insert_skip_settings', '1')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/tables/t_async_insert_skip_settings', '1')
 ORDER BY id;
 
 SET async_insert = 1;

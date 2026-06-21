@@ -1,5 +1,5 @@
 -- BFloat16 columns compared against string literals must match the stored (narrowed) value.
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103682
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103682
 -- Before the fix, `convertFieldToType` promoted BFloat16 to Float64 when parsing the string,
 -- so '49.9' became Float64(49.9000000000000057) and the strict Float64->BFloat16 cast back
 -- failed (49.9 != 49.75), yielding a Null Field and zero matches.

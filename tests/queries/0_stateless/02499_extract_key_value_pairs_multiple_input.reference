@@ -345,7 +345,7 @@ WITH
 SELECT
     x;
 {'argument1':'1','argument2':'2','char':'=','char2':'=','formula':'1+2=3','result':'3','string':'foo=bar'}
--- https://github.com/ClickHouse/ClickHouse/issues/56357
+-- https://github.com/ClickHouse/Datastore/issues/56357
 WITH
     extractKeyValuePairs('{"a":"1", "b":"2"}', ':', '{, }') as s_map,
     CAST(

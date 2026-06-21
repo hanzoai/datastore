@@ -1,6 +1,6 @@
 ---
 description: 'This engine provides integration with the Apache Hadoop ecosystem by
-  allowing to manage data on HDFS via ClickHouse. This engine is similar to the File
+  allowing to manage data on HDFS via Datastore. This engine is similar to the File
   and URL engines, but provides Hadoop-specific features.'
 sidebar_label: 'HDFS'
 sidebar_position: 80
@@ -15,9 +15,9 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 <CloudNotSupportedBadge/>
 
-This engine provides integration with the [Apache Hadoop](https://en.wikipedia.org/wiki/Apache_Hadoop) ecosystem by allowing to manage data on [HDFS](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html) via ClickHouse. This engine is similar to the [File](/engines/table-engines/special/file) and [URL](/engines/table-engines/special/url) engines, but provides Hadoop-specific features.
+This engine provides integration with the [Apache Hadoop](https://en.wikipedia.org/wiki/Apache_Hadoop) ecosystem by allowing to manage data on [HDFS](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html) via Datastore. This engine is similar to the [File](/engines/table-engines/special/file) and [URL](/engines/table-engines/special/url) engines, but provides Hadoop-specific features.
 
-This feature is not supported by ClickHouse engineers, and it is known to have a sketchy quality. In case of any problems, fix them yourself and submit a pull request.
+This feature is not supported by Datastore engineers, and it is known to have a sketchy quality. In case of any problems, fix them yourself and submit a pull request.
 
 ## Usage {#usage}
 
@@ -76,7 +76,7 @@ SELECT * FROM hdfs_engine_table LIMIT 2
   - [Zero-copy](../../../operations/storing-data.md#zero-copy) replication is possible, but not recommended.
 
   :::note Zero-copy replication is not ready for production
-  Zero-copy replication is disabled by default in ClickHouse version 22.8 and higher.  This feature is not recommended for production use.
+  Zero-copy replication is disabled by default in Datastore version 22.8 and higher.  This feature is not recommended for production use.
   :::
 
 **Globs in path**
@@ -134,19 +134,19 @@ CREATE TABLE big_table (name String, value UInt32) ENGINE = HDFS('hdfs://hdfs1:9
 ```
 ## Configuration {#configuration}
 
-Similar to GraphiteMergeTree, the HDFS engine supports extended configuration using the ClickHouse config file. There are two configuration keys that you can use: global (`hdfs`) and user-level (`hdfs_*`). The global configuration is applied first, and then the user-level configuration is applied (if it exists).
+Similar to GraphiteMergeTree, the HDFS engine supports extended configuration using the Datastore config file. There are two configuration keys that you can use: global (`hdfs`) and user-level (`hdfs_*`). The global configuration is applied first, and then the user-level configuration is applied (if it exists).
 
 ```xml
 <!-- Global configuration options for HDFS engine type -->
 <hdfs>
-  <hadoop_kerberos_keytab>/tmp/keytab/clickhouse.keytab</hadoop_kerberos_keytab>
-  <hadoop_kerberos_principal>clickuser@TEST.CLICKHOUSE.TECH</hadoop_kerberos_principal>
+  <hadoop_kerberos_keytab>/tmp/keytab/datastore.keytab</hadoop_kerberos_keytab>
+  <hadoop_kerberos_principal>clickuser@TEST.DATASTORE.TECH</hadoop_kerberos_principal>
   <hadoop_security_authentication>kerberos</hadoop_security_authentication>
 </hdfs>
 
 <!-- Configuration specific for user "root" -->
 <hdfs_root>
-  <hadoop_kerberos_principal>root@TEST.CLICKHOUSE.TECH</hadoop_kerberos_principal>
+  <hadoop_kerberos_principal>root@TEST.DATASTORE.TECH</hadoop_kerberos_principal>
 </hdfs_root>
 ```
 
@@ -200,7 +200,7 @@ Similar to GraphiteMergeTree, the HDFS engine supports extended configuration us
 
 [HDFS Configuration Reference](https://hawq.apache.org/docs/userguide/2.3.0.0-incubating/reference/HDFSConfigurationParameterReference.html) might explain some parameters.
 
-#### ClickHouse extras {#clickhouse-extras}
+#### Datastore extras {#datastore-extras}
 
 | **parameter**                                         | **default value**       |
 | -                                                  | -                    |
@@ -213,8 +213,8 @@ Similar to GraphiteMergeTree, the HDFS engine supports extended configuration us
 
 ## Kerberos support {#kerberos-support}
 
-If the `hadoop_security_authentication` parameter has the value `kerberos`, ClickHouse authenticates via Kerberos.
-Parameters are [here](#clickhouse-extras) and `hadoop_security_kerberos_ticket_cache_path` may be of help.
+If the `hadoop_security_authentication` parameter has the value `kerberos`, Datastore authenticates via Kerberos.
+Parameters are [here](#datastore-extras) and `hadoop_security_kerberos_ticket_cache_path` may be of help.
 Note that due to libhdfs3 limitations only old-fashioned approach is supported,
 datanode communications are not secured by SASL (`HADOOP_SECURE_DN_USER` is a reliable indicator of such
 security approach). Use `tests/integration/test_storage_kerberized_hdfs/hdfs_configs/bootstrap.sh` for reference.
@@ -224,12 +224,12 @@ If `hadoop_kerberos_keytab`, `hadoop_kerberos_principal` or `hadoop_security_ker
 
 libhdfs3 support HDFS namenode HA.
 
-- Copy `hdfs-site.xml` from an HDFS node to `/etc/clickhouse-server/`.
-- Add following piece to ClickHouse config file:
+- Copy `hdfs-site.xml` from an HDFS node to `/etc/datastore-server/`.
+- Add following piece to Datastore config file:
 
 ```xml
   <hdfs>
-    <libhdfs3_conf>/etc/clickhouse-server/hdfs-site.xml</libhdfs3_conf>
+    <libhdfs3_conf>/etc/datastore-server/hdfs-site.xml</libhdfs3_conf>
   </hdfs>
 ```
 

@@ -17,10 +17,10 @@ log = None
 with client(
     name="client>",
     log=log,
-    command=os.environ.get("CLICKHOUSE_BINARY", "clickhouse")
+    command=os.environ.get("DATASTORE_BINARY", "datastore")
     + " client --storage_file_read_method=pread",
 ) as client1:
-    filename = os.environ["CLICKHOUSE_TMP"] + "/infile_progress.tsv"
+    filename = os.environ["DATASTORE_TMP"] + "/infile_progress.tsv"
 
     client1.expect(prompt)
     client1.send("DROP TABLE IF EXISTS test.infile_progress")

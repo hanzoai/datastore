@@ -10,23 +10,23 @@
 # The view's referenced tables are not in the backup (only the view itself is)
 # and have been truncated from the database, so `RESTORE` emits benign warnings
 # about the missing dependencies.
-export CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=fatal
+export DATASTORE_CLIENT_SERVER_LOGS_LEVEL=fatal
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DB="${CLICKHOUSE_DATABASE}_04027"
-BACKUP_NAME="${CLICKHOUSE_DATABASE}_04027_backup"
+DB="${DATASTORE_DATABASE}_04027"
+BACKUP_NAME="${DATASTORE_DATABASE}_04027_backup"
 
 function cleanup()
 {
-    ${CLICKHOUSE_CLIENT} -q "DROP DATABASE IF EXISTS ${DB}" 2>/dev/null ||:
+    ${DATASTORE_CLIENT} -q "DROP DATABASE IF EXISTS ${DB}" 2>/dev/null ||:
 }
 trap cleanup EXIT
 cleanup
 
-${CLICKHOUSE_CLIENT} -nm -q "
+${DATASTORE_CLIENT} -nm -q "
     CREATE DATABASE ${DB} ENGINE = Memory;
     CREATE TABLE ${DB}.src1 (c0 Int) ENGINE = Memory;
     CREATE TABLE ${DB}.src2 (c0 Int) ENGINE = Memory;

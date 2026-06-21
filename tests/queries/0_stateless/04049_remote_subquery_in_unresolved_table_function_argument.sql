@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/83442
+-- https://github.com/ClickHouse/Datastore/issues/83442
 -- Scalar subquery inside an unresolved table function argument should not cause
 -- a LOGICAL_ERROR about unexpected IDENTIFIER node in extractTableExpressions.
 

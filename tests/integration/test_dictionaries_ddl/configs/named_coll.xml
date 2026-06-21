@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <nc_secure_0>
             <host>localhost</host>
@@ -26,4 +26,4 @@
             <query>select id, SomeValue1 from test.xml_dictionary_table</query>
         </click1>
     </named_collections>
-</clickhouse>
+</datastore>

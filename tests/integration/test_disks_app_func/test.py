@@ -25,7 +25,7 @@ def started_cluster():
                 [
                     "bash",
                     "-c",
-                    f"mkdir -p /var/lib/clickhouse/{path}",
+                    f"mkdir -p /var/lib/datastore/{path}",
                 ]
             )
 
@@ -43,7 +43,7 @@ def write(source, disk, path):
             "echo 'tester' |"
             + " ".join(
                 [
-                    "/usr/bin/clickhouse",
+                    "/usr/bin/datastore",
                     "disks",
                     "--save-logs",
                     "--disk",
@@ -64,7 +64,7 @@ def touch(source, disk, path):
             "echo 'tester' |"
             + " ".join(
                 [
-                    "/usr/bin/clickhouse",
+                    "/usr/bin/datastore",
                     "disks",
                     "--save-logs",
                     "--disk",
@@ -80,7 +80,7 @@ def touch(source, disk, path):
 def mkdir(source, disk, path):
     source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--save-logs",
             "--disk",
@@ -94,7 +94,7 @@ def mkdir(source, disk, path):
 def ls(source, disk, path):
     return source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--save-logs",
             "--disk",
@@ -108,7 +108,7 @@ def ls(source, disk, path):
 def remove(source, disk, path):
     return source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--save-logs",
             "--disk",
@@ -122,7 +122,7 @@ def remove(source, disk, path):
 def remove_recurive(source, disk, path):
     return source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--save-logs",
             "--disk",
@@ -185,7 +185,7 @@ def test_disks_app_func_ld(started_cluster):
     source = cluster.instances["disks_app_test"]
 
     out = source.exec_in_container(
-        ["/usr/bin/clickhouse", "disks", "--save-logs", "--query", "list-disks"]
+        ["/usr/bin/datastore", "disks", "--save-logs", "--query", "list-disks"]
     )
 
     disks = list(
@@ -205,7 +205,7 @@ def test_disks_app_func_ld(started_cluster):
 
     out = source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--save-logs",
             "--query",
@@ -259,7 +259,7 @@ def test_disks_app_func_cp(started_cluster):
 
     source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--query",
             "copy --recursive --disk-from test1 --disk-to test2 . .",
@@ -291,7 +291,7 @@ def test_disks_app_func_ln(started_cluster):
 
     source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--query",
             "link data/default/test_table data/default/z_tester",
@@ -299,7 +299,7 @@ def test_disks_app_func_ln(started_cluster):
     )
 
     out = source.exec_in_container(
-        ["/usr/bin/clickhouse", "disks", "--save-logs", "--query", "list data/default/"]
+        ["/usr/bin/datastore", "disks", "--save-logs", "--query", "list data/default/"]
     )
 
     files = out.split("\n")
@@ -367,7 +367,7 @@ def test_disks_app_func_mv(started_cluster):
 
     source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--disk",
             "test1",
@@ -392,7 +392,7 @@ def test_disks_app_func_read_write(started_cluster):
 
     out = source.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--save-logs",
             "--disk",

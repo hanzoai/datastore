@@ -15,7 +15,7 @@ def start_cluster():
         for ix, node in enumerate([node1, node2]):
             node.query_with_retry(
                 """CREATE TABLE fetch_fallback (k int, v int, z String)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/t0', '{}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/t0', '{}')
                 ORDER BY tuple()""".format(
                     ix
                 )

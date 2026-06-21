@@ -15,8 +15,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS column_sizes_race"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS column_sizes_race"
+$DATASTORE_CLIENT -q "
     CREATE TABLE column_sizes_race (a UInt8, b Int16, c Float32, d String)
     ENGINE = MergeTree ORDER BY a PARTITION BY b % 10
     SETTINGS old_parts_lifetime = 1
@@ -29,7 +29,7 @@ function thread_insert()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "INSERT INTO column_sizes_race SELECT rand(1), rand(2), 1 / rand(3), toString(rand(4)) FROM numbers(1000)" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "INSERT INTO column_sizes_race SELECT rand(1), rand(2), 1 / rand(3), toString(rand(4)) FROM numbers(1000)" >& /dev/null
     done
 }
 
@@ -38,9 +38,9 @@ function thread_alter_column()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "ALTER TABLE column_sizes_race ADD COLUMN h String DEFAULT '0'" >& /dev/null
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "ALTER TABLE column_sizes_race MODIFY COLUMN h UInt64" >& /dev/null
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "ALTER TABLE column_sizes_race DROP COLUMN h" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "ALTER TABLE column_sizes_race ADD COLUMN h String DEFAULT '0'" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "ALTER TABLE column_sizes_race MODIFY COLUMN h UInt64" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "ALTER TABLE column_sizes_race DROP COLUMN h" >& /dev/null
     done
 }
 
@@ -49,7 +49,7 @@ function thread_delete()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10&mutations_sync=1" -d "ALTER TABLE column_sizes_race DELETE WHERE rand() % 2 = 1" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10&mutations_sync=1" -d "ALTER TABLE column_sizes_race DELETE WHERE rand() % 2 = 1" >& /dev/null
     done
 }
 
@@ -58,7 +58,7 @@ function thread_optimize()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "OPTIMIZE TABLE column_sizes_race FINAL" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "OPTIMIZE TABLE column_sizes_race FINAL" >& /dev/null
     done
 }
 
@@ -67,8 +67,8 @@ function thread_query_parts()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "SELECT * FROM system.parts WHERE database = currentDatabase() FORMAT Null" >& /dev/null
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&max_execution_time=10" -d "SELECT * FROM system.parts_columns WHERE database = currentDatabase() FORMAT Null" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "SELECT * FROM system.parts WHERE database = currentDatabase() FORMAT Null" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&max_execution_time=10" -d "SELECT * FROM system.parts_columns WHERE database = currentDatabase() FORMAT Null" >& /dev/null
     done
 }
 
@@ -86,5 +86,5 @@ thread_query_parts &
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE column_sizes_race"
+$DATASTORE_CLIENT -q "DROP TABLE column_sizes_race"
 echo "OK"

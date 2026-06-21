@@ -10,8 +10,8 @@ def started_cluster(request):
     xid_mode = request.param
     cluster = ClickHouseCluster(__file__)
 
-    clickhouse = cluster.add_instance(
-        "clickhouse",
+    datastore = cluster.add_instance(
+        "datastore",
         main_configs=[
             "configs/server/use_keeper.xml",
             f"configs/{xid_mode}/server/use_xid_64.xml",
@@ -23,7 +23,7 @@ def started_cluster(request):
         with_remote_database_disk=False,
     )
 
-    # we're running keepers as standalone ClickHouse servers as we need to collect span log from them
+    # we're running keepers as standalone Datastore servers as we need to collect span log from them
     keeper1 = cluster.add_instance(
         "clickhouseKeeper1",
         main_configs=[
@@ -63,7 +63,7 @@ def test_keeper_opentelemetry_tracing(started_cluster):
     4. Find related ZooKeeper read (i.e. get, exists, or list) operations.
     5. For each read operation, make sure that the replica that we have session with has right spans in the right sequence and that other replicas have no spans.
     """
-    clickhouse = started_cluster.instances["clickhouse"]
+    datastore = started_cluster.instances["datastore"]
     keeper1 = started_cluster.instances["clickhouseKeeper1"]
     keeper2 = started_cluster.instances["clickhouseKeeper2"]
     keeper3 = started_cluster.instances["clickhouseKeeper3"]
@@ -74,33 +74,33 @@ def test_keeper_opentelemetry_tracing(started_cluster):
     ddl_query_id = str(uuid.uuid4())
 
     # run DDL query
-    clickhouse.query(
+    datastore.query(
         f"CREATE DATABASE `{db}` ENGINE=Replicated('/test/{db}', 'shard1', 'replica1')",
     )
-    clickhouse.query(
+    datastore.query(
         f"CREATE TABLE `{db}.{t}` (`s` String) ENGINE = ReplicatedMergeTree('/test/{t}', 'r1') ORDER BY tuple()",
         query_id=ddl_query_id,
     )
 
     # flush logs
-    for node in (keeper1, keeper2, keeper3, clickhouse):
+    for node in (keeper1, keeper2, keeper3, datastore):
         node.query("SYSTEM FLUSH LOGS system.opentelemetry_span_log")
 
     # find the DDL query's trace_id
-    ddl_trace_id = clickhouse.query(
+    ddl_trace_id = datastore.query(
         f"""
         SELECT trace_id
         FROM system.opentelemetry_span_log
         WHERE 1
             AND operation_name = 'query'
-            AND attribute['clickhouse.query_id'] = '{ddl_query_id}'
+            AND attribute['datastore.query_id'] = '{ddl_query_id}'
         """
     ).strip()
     assert ddl_trace_id != ""
 
     # find all span ids for the zookeeper.<write-operation> spans that pertain to the DDL query
     # each span id is a separate zookeeper query that we ran as part of the DDL query
-    zookeeper_write_operations_spans_on_client = clickhouse.query(
+    zookeeper_write_operations_spans_on_client = datastore.query(
         f"""
         SELECT span_id
         FROM system.opentelemetry_span_log
@@ -142,7 +142,7 @@ def test_keeper_opentelemetry_tracing(started_cluster):
 
     # find all span ids for the zookeeper.<read-operation> spans that pertain to the DDL query
     # each span id is a separate zookeeper query that we ran as part of the DDL query
-    zookeeper_read_operations_spans_on_client = clickhouse.query(
+    zookeeper_read_operations_spans_on_client = datastore.query(
         f"""
         SELECT span_id
         FROM system.opentelemetry_span_log
@@ -199,7 +199,7 @@ def test_keeper_opentelemetry_tracing_without_server_trace(started_cluster):
     traces for ZooKeeper requests should still be created from scratch and propagated to all keeper replicas.
     """
 
-    clickhouse = started_cluster.instances["clickhouse"]
+    datastore = started_cluster.instances["datastore"]
     keeper1 = started_cluster.instances["clickhouseKeeper1"]
     keeper2 = started_cluster.instances["clickhouseKeeper2"]
     keeper3 = started_cluster.instances["clickhouseKeeper3"]
@@ -207,7 +207,7 @@ def test_keeper_opentelemetry_tracing_without_server_trace(started_cluster):
     db = f"test_no_server_trace_{uuid.uuid4()}_database"
 
     # run DDL with server tracing disabled but keeper tracing enabled per-query
-    clickhouse.query(
+    datastore.query(
         f"CREATE DATABASE `{db}` ENGINE=Replicated('/test/{db}', 'shard1', 'replica1')",
         settings={
             "opentelemetry_start_trace_probability": "0.0",
@@ -217,8 +217,8 @@ def test_keeper_opentelemetry_tracing_without_server_trace(started_cluster):
 
     # find traces pertaining to zookeeper write requests related to our DDL
     # these traces were started from scratch by create_trace_if_not_exists
-    clickhouse.query("SYSTEM FLUSH LOGS system.opentelemetry_span_log")
-    zookeeper_write_traces = clickhouse.query(
+    datastore.query("SYSTEM FLUSH LOGS system.opentelemetry_span_log")
+    zookeeper_write_traces = datastore.query(
         f"""
         SELECT trace_id
         FROM system.opentelemetry_span_log

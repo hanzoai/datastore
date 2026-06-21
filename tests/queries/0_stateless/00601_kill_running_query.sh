@@ -10,7 +10,7 @@ function wait_for_query_to_start()
 {
     local timeout=30
     local start=$EPOCHSECONDS
-    while [[ $($CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "SELECT count() FROM system.processes WHERE query_id = '$1'") == 0 ]]; do
+    while [[ $($DATASTORE_CURL -sS "$DATASTORE_URL" -d "SELECT count() FROM system.processes WHERE query_id = '$1'") == 0 ]]; do
         if ((EPOCHSECONDS - start > timeout)); then
             echo "Timeout waiting for query $1 to start" >&2
             exit 1
@@ -21,7 +21,7 @@ function wait_for_query_to_start()
 
 # Use sleep-based query that is guaranteed to run long enough to be killed,
 # unlike the previous groupArray query that could complete too quickly on fast machines.
-${CLICKHOUSE_CURL_COMMAND} -q --max-time 30 -sS "$CLICKHOUSE_URL&query_id=test_00601_$CLICKHOUSE_DATABASE" -d 'SELECT sleep(1) FROM numbers(10000) SETTINGS max_block_size = 1, max_rows_to_read = 0' > /dev/null 2>&1 &
-wait_for_query_to_start "test_00601_$CLICKHOUSE_DATABASE"
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL" -d "KILL QUERY WHERE query_id = 'test_00601_$CLICKHOUSE_DATABASE'"
+${DATASTORE_CURL_COMMAND} -q --max-time 30 -sS "$DATASTORE_URL&query_id=test_00601_$DATASTORE_DATABASE" -d 'SELECT sleep(1) FROM numbers(10000) SETTINGS max_block_size = 1, max_rows_to_read = 0' > /dev/null 2>&1 &
+wait_for_query_to_start "test_00601_$DATASTORE_DATABASE"
+$DATASTORE_CURL -sS "$DATASTORE_URL" -d "KILL QUERY WHERE query_id = 'test_00601_$DATASTORE_DATABASE'"
 wait || true

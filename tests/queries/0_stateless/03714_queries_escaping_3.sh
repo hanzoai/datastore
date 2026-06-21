@@ -6,13 +6,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-export CURR_DATABASE="test_03714_sqllite_${CLICKHOUSE_DATABASE}"
+export CURR_DATABASE="test_03714_sqllite_${DATASTORE_DATABASE}"
 
 DB_PATH=${USER_FILES_PATH}/${CURR_DATABASE}_db1
 
 function cleanup()
 {
-    ${CLICKHOUSE_CLIENT} --query="DROP DATABASE IF EXISTS ${CURR_DATABASE}"
+    ${DATASTORE_CLIENT} --query="DROP DATABASE IF EXISTS ${CURR_DATABASE}"
 }
 trap cleanup EXIT
 
@@ -25,10 +25,10 @@ chmod ugo+w "${DB_PATH}"
 
 sqlite3 "${DB_PATH}" "INSERT INTO table1 VALUES ('line1', 1), ('line2', 2), ('line3', 3)"
 
-${CLICKHOUSE_CLIENT} --query="CREATE DATABASE ${CURR_DATABASE} ENGINE = SQLite('${DB_PATH}')"
+${DATASTORE_CLIENT} --query="CREATE DATABASE ${CURR_DATABASE} ENGINE = SQLite('${DB_PATH}')"
 
-${CLICKHOUSE_CLIENT} --query="EXISTS TABLE ${CURR_DATABASE}.table1;"
-${CLICKHOUSE_CLIENT} --query="EXISTS TABLE ${CURR_DATABASE}.\"a\' or name='table1\";"
+${DATASTORE_CLIENT} --query="EXISTS TABLE ${CURR_DATABASE}.table1;"
+${DATASTORE_CLIENT} --query="EXISTS TABLE ${CURR_DATABASE}.\"a\' or name='table1\";"
 
 
-${CLICKHOUSE_CLIENT} --query="DROP DATABASE IF EXISTS ${CURR_DATABASE}"
+${DATASTORE_CLIENT} --query="DROP DATABASE IF EXISTS ${CURR_DATABASE}"

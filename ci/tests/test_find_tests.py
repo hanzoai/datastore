@@ -4,9 +4,9 @@ Regression tests for `ci/jobs/scripts/find_tests.py` test-name derivation.
 PR #104097 changed only `tests/queries/0_stateless/02995_settings_26_4_1.tsv`
 under `tests/queries/0_stateless/`.  The flaky-check driver derived the test
 name `02995_settings_26_4_1` by stripping the extension and asked
-`clickhouse-test` to re-run it 50 times — but no test with that base name
+`datastore-test` to re-run it 50 times — but no test with that base name
 exists (the `.tsv` is a data file consumed by `02995_new_settings_history.sh`).
-The filter matched zero tests and `clickhouse-test` exited with code 1.
+The filter matched zero tests and `datastore-test` exited with code 1.
 
 These tests pin the corrected behaviour: orphan supporting files are skipped,
 and supporting files with a real sibling test (e.g. `.reference`) still map

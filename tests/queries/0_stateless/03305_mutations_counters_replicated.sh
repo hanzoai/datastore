@@ -13,7 +13,7 @@ set -e
 function wait_for_mutation_cleanup()
 {
     for _ in {0..50}; do
-        res=$($CLICKHOUSE_CLIENT --query "SELECT active_on_fly_data_mutations FROM system.tables WHERE database = currentDatabase() AND table = 't_mutations_counters_2'")
+        res=$($DATASTORE_CLIENT --query "SELECT active_on_fly_data_mutations FROM system.tables WHERE database = currentDatabase() AND table = 't_mutations_counters_2'")
         if [[ $res == "0" ]]; then
             break
         fi
@@ -21,10 +21,10 @@ function wait_for_mutation_cleanup()
     done
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_mutations_counters_2;
 
-    CREATE TABLE t_mutations_counters_2 (a UInt64, b UInt64) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_mutations_counters_2', '1') ORDER BY a;
+    CREATE TABLE t_mutations_counters_2 (a UInt64, b UInt64) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_mutations_counters_2', '1') ORDER BY a;
 
     INSERT INTO t_mutations_counters_2 VALUES (1, 2) (2, 3);
 
@@ -43,7 +43,7 @@ $CLICKHOUSE_CLIENT --query "
 wait_for_mutation "t_mutations_counters_2" "0000000001"
 wait_for_mutation_cleanup
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT 'active_on_fly_data_mutations', active_on_fly_data_mutations FROM system.tables WHERE database = currentDatabase() AND table = 't_mutations_counters_2';
     SELECT 'mutations', count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_mutations_counters_2' AND NOT is_done;
     SELECT * FROM t_mutations_counters_2 ORDER BY a;

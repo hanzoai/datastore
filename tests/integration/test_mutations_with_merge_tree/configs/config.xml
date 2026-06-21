@@ -1,11 +1,11 @@
-<clickhouse>
+<datastore>
     <logger>
-        <log>/var/log/clickhouse-server/log.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
-        <stderr>/var/log/clickhouse-server/stderr.log</stderr>
-        <stdout>/var/log/clickhouse-server/stdout.log</stdout>
+        <log>/var/log/datastore-server/log.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
+        <stderr>/var/log/datastore-server/stderr.log</stderr>
+        <stdout>/var/log/datastore-server/stdout.log</stdout>
     </logger>
 
-    <path>/var/lib/clickhouse/</path>
+    <path>/var/lib/datastore/</path>
     <users_config>users.xml</users_config>
-</clickhouse>
+</datastore>

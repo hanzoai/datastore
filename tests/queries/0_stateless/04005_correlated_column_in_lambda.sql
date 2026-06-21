@@ -1,7 +1,7 @@
 -- Test for correlated columns referenced inside lambda functions
 -- Previously, PLACEHOLDER nodes for correlated columns were not properly
 -- captured by the lambda mechanism, causing LOGICAL_ERROR during execution.
--- https://github.com/ClickHouse/ClickHouse/issues/85460
+-- https://github.com/ClickHouse/Datastore/issues/85460
 
 SET enable_analyzer = 1;
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Hanzo Datastore** is a column-oriented database for real-time analytics, based on ClickHouse and optimized for the Hanzo AI platform's unified analytics needs. It provides:
+**Hanzo Datastore** is a column-oriented database for real-time analytics, based on Datastore and optimized for the Hanzo AI platform's unified analytics needs. It provides:
 
 - **Web Analytics** - Privacy-focused visitor tracking (from Umami)
 - **AI Observability** - LLM traces, costs, latency (from LangFuse)
@@ -81,7 +81,7 @@ HANZO_DATASTORE_PORT=8123
 HANZO_DATASTORE_DB=hanzo
 ```
 
-## Syncing with Upstream ClickHouse
+## Syncing with Upstream Datastore
 
 ```bash
 # Fetch upstream changes
@@ -103,11 +103,11 @@ git push origin master
 
 ```xml
 <!-- config.d/hanzo.xml -->
-<clickhouse>
+<datastore>
     <max_memory_usage>10000000000</max_memory_usage>
     <max_bytes_before_external_group_by>5000000000</max_bytes_before_external_group_by>
     <distributed_aggregation_memory_efficient>1</distributed_aggregation_memory_efficient>
-</clickhouse>
+</datastore>
 ```
 
 ### Partitioning Strategy

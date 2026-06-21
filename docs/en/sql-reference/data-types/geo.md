@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for geometric data types in ClickHouse used for representing
+description: 'Documentation for geometric data types in Datastore used for representing
   geographical objects and locations'
 sidebar_label: 'Geo'
 sidebar_position: 54
@@ -8,7 +8,7 @@ title: 'Geometric'
 doc_type: 'reference'
 ---
 
-ClickHouse supports data types for representing geographical objects — locations, lands, etc.
+Datastore supports data types for representing geographical objects — locations, lands, etc.
 
 **See Also**
 - [Representing simple geographical features](https://en.wikipedia.org/wiki/GeoJSON).
@@ -171,4 +171,4 @@ SELECT * FROM geo_dst;
 
 ## Related Content {#related-content}
 
-- [Exploring massive, real-world data sets: 100+ Years of Weather Records in ClickHouse](https://clickhouse.com/blog/real-world-data-noaa-climate-data)
+- [Exploring massive, real-world data sets: 100+ Years of Weather Records in Datastore](https://datastore.com/blog/real-world-data-noaa-climate-data)

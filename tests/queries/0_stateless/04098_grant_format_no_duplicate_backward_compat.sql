@@ -3,7 +3,7 @@
 -- (e.g. FILE) are converted to old-style grants (e.g. FILE ON *.*).
 -- Two separate elements (READ + WRITE) on the same source should be merged into
 -- a single old-style grant, not duplicated.
--- https://github.com/ClickHouse/ClickHouse/issues/102325
+-- https://github.com/ClickHouse/Datastore/issues/102325
 
 -- READ + WRITE on a specific source should produce a single old-style grant.
 SELECT formatQuery('GRANT READ, WRITE ON FILE TO x');

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/69683
+-- https://github.com/ClickHouse/Datastore/issues/69683
 -- Inserting NULL into a non-Nullable Enum column should use the default value,
 -- not produce an invalid value that causes errors later.
 

@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <macros>
         <defaultMac>ro</defaultMac>
     </macros>
-</clickhouse>
+</datastore>

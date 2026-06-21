@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/95537
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/95537
 -- INSERT SELECT with UNION ALL + CTE + JOIN corrupts constant values
 DROP TABLE IF EXISTS t_const_squash;
 CREATE TABLE t_const_squash (s String, x UInt32) ENGINE = MergeTree ORDER BY x;

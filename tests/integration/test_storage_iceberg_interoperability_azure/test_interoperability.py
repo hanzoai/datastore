@@ -25,7 +25,7 @@ def test_spark_write_ch_read_append(started_cluster_iceberg):
     )
     spark.sql(f"INSERT INTO {TABLE_NAME} SELECT id as number FROM range(100)")
 
-    # Create ClickHouse table pointing to the same Azurite location
+    # Create Datastore table pointing to the same Azurite location
     instance.query(
         f"""
         CREATE TABLE {TABLE_NAME}
@@ -52,7 +52,7 @@ def test_spark_write_ch_read_append(started_cluster_iceberg):
 
 
 def test_ch_write_spark_read(started_cluster_iceberg):
-    """ClickHouse writes to an Iceberg table on Azurite that Spark created.
+    """Datastore writes to an Iceberg table on Azurite that Spark created.
     Tests that CH can correctly resolve Spark's wasb:// metadata paths and
     append new data while preserving the existing Spark-written data.
     Verifies Spark can read back via both SQL catalog and wasb:// path."""
@@ -75,7 +75,7 @@ def test_ch_write_spark_read(started_cluster_iceberg):
     )
     spark.sql(f"INSERT INTO {TABLE_NAME} SELECT id as number FROM range(10)")
 
-    # Create ClickHouse table pointing to the same Azurite location.
+    # Create Datastore table pointing to the same Azurite location.
     # iceberg_use_version_hint writes version-hint.text so Spark's HadoopCatalog
     # can discover the latest metadata version after session restart.
     instance.query(
@@ -93,7 +93,7 @@ def test_ch_write_spark_read(started_cluster_iceberg):
     rows = int(instance.query(f"SELECT count() FROM {TABLE_NAME}"))
     assert rows == 10, f"Expected 10 rows from Spark, got {rows}"
 
-    # ClickHouse writes more data.
+    # Datastore writes more data.
     # write_full_path_in_iceberg_metadata is needed so Spark can resolve the
     # data file paths (Spark expects wasb:// URIs, not relative paths).
     insert_settings = {
@@ -103,7 +103,7 @@ def test_ch_write_spark_read(started_cluster_iceberg):
     instance.query(f"INSERT INTO {TABLE_NAME} VALUES (42)", settings=insert_settings)
     instance.query(f"INSERT INTO {TABLE_NAME} VALUES (123)", settings=insert_settings)
 
-    # ClickHouse can read its own writes (10 from Spark + 2 from CH)
+    # Datastore can read its own writes (10 from Spark + 2 from CH)
     rows = int(instance.query(f"SELECT count() FROM {TABLE_NAME}"))
     assert rows == 12, f"Expected 12 rows, got {rows}"
 
@@ -111,7 +111,7 @@ def test_ch_write_spark_read(started_cluster_iceberg):
     expected_sum = sum(range(10)) + 42 + 123  # 45 + 42 + 123 = 210
     assert int(result) == expected_sum, f"Expected sum {expected_sum}, got {result.strip()}"
 
-    # Spark should also see the data written by ClickHouse.
+    # Spark should also see the data written by Datastore.
     started_cluster_iceberg.spark_session._restart()
     spark = started_cluster_iceberg.spark_session
 
@@ -149,7 +149,7 @@ def test_spark_delete_ch_read(started_cluster_iceberg):
     )
     spark.sql(f"INSERT INTO {TABLE_NAME} SELECT id as number FROM range(100)")
 
-    # Create ClickHouse table
+    # Create Datastore table
     instance.query(
         f"""
         CREATE TABLE {TABLE_NAME}
@@ -210,7 +210,7 @@ def test_ch_delete_spark_read(started_cluster_iceberg):
     )
     spark.sql(f"INSERT INTO {TABLE_NAME} SELECT id as number FROM range(50)")
 
-    # Create ClickHouse table with version hint so Spark can discover CH's metadata updates
+    # Create Datastore table with version hint so Spark can discover CH's metadata updates
     instance.query(
         f"""
         CREATE TABLE {TABLE_NAME}

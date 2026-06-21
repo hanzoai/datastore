@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/99257
+-- https://github.com/ClickHouse/Datastore/issues/99257
 -- INTERSECT has higher precedence than UNION, and this must be preserved after DETACH/ATTACH.
 
 DROP TABLE IF EXISTS v0;

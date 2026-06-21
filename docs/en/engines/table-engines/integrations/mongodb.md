@@ -57,7 +57,7 @@ ENGINE = MongoDB(uri, collection[, oid_columns]);
 
 ## Types mappings {#types-mappings}
 
-| MongoDB                 | ClickHouse                                                            |
+| MongoDB                 | Datastore                                                            |
 |-------------------------|-----------------------------------------------------------------------|
 | bool, int32, int64      | *any numeric type except Decimals*, Boolean, String                   |
 | double                  | Float64, String                                                       |
@@ -105,7 +105,7 @@ SELECT count() FROM sample_oid WHERE _id = '67bf6cc44ebc466d33d42fb2'; --will ou
 SELECT count() FROM sample_oid WHERE another_oid_column = '67bf6cc40000000000ea41b1'; --will output 0
 ```
 
-In this case the output will be `0`, because ClickHouse doesn't know that `another_oid_column` has `oid` type, so let's fix it:
+In this case the output will be `0`, because Datastore doesn't know that `another_oid_column` has `oid` type, so let's fix it:
 
 ```sql
 CREATE TABLE sample_oid
@@ -130,7 +130,7 @@ SELECT count() FROM sample_oid WHERE another_oid_column = '67bf6cc40000000000ea4
 Only queries with simple expressions are supported (for example, `WHERE field = <constant> ORDER BY field2 LIMIT <constant>`).
 Such expressions are translated to MongoDB query language and executed on the server side.
 You can disable all these restriction, using [mongodb_throw_on_unsupported_query](../../../operations/settings/settings.md#mongodb_throw_on_unsupported_query).
-In that case ClickHouse tries to convert query on best effort basis, but it can lead to full table scan and processing on ClickHouse side.
+In that case Datastore tries to convert query on best effort basis, but it can lead to full table scan and processing on Datastore side.
 
 :::note
 It's always better to explicitly set type of literal because Mongo requires strict typed filters.\
@@ -154,7 +154,7 @@ This applied for `Date`, `Date32`, `DateTime`, `Bool`, `UUID`.
 
 Assuming MongoDB has [sample_mflix](https://www.mongodb.com/docs/atlas/sample-data/sample-mflix) dataset loaded
 
-Create a table in ClickHouse which allows to read data from MongoDB collection:
+Create a table in Datastore which allows to read data from MongoDB collection:
 
 ```sql title="Query"
 CREATE TABLE sample_mflix_table

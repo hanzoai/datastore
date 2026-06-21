@@ -11,7 +11,7 @@ TRUSTED_CONTRIBUTORS = {
         "taiyang-li",
         "ucasFL",  # Amos Bird's friend
         "canhld94",
-        "uladzislauNestsiaruk",  # Student working on https://github.com/ClickHouse/ClickHouse/pull/91416, remove by 05/2026
+        "uladzislauNestsiaruk",  # Student working on https://github.com/ClickHouse/Datastore/pull/91416, remove by 05/2026
     ]
 }
 
@@ -21,7 +21,7 @@ CAN_BE_TESTED = "can be tested"
 def user_in_trusted_org(user_name: str) -> bool:
     """Check if the user is in a trusted organization."""
     lines = Shell.get_output(
-        "gh api orgs/ClickHouse/members --paginate --cache=1h --jq='.[].login'",
+        "gh api orgs/Datastore/members --paginate --cache=1h --jq='.[].login'",
         verbose=True,
     )
     return user_name in [line.strip() for line in lines.splitlines() if line.strip()]

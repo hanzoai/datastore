@@ -1,5 +1,5 @@
 -- Tags: long, no-flaky-check, no-sanitizers
--- https://github.com/ClickHouse/ClickHouse/issues/47713
+-- https://github.com/ClickHouse/Datastore/issues/47713
 -- Verify that CTE with LEFT JOIN runs quickly and does not hang.
 
 -- joined_block_split_single_row disables lazy join counting, turning O(n) probe into O(n²).

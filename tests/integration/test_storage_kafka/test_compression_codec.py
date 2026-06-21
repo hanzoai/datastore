@@ -193,24 +193,24 @@ def test_settings_precedence(kafka_cluster, create_query_generator):
     table_name = f"{topic_name}"
 
     general_kafka_config = """
-    <clickhouse>
+    <datastore>
     <kafka>
         <compression_codec>lz4</compression_codec>
     </kafka>
-</clickhouse>
+</datastore>
 """
 
     producer_specific_config = """
-    <clickhouse>
+    <datastore>
     <kafka>
         <compression_codec>lz4</compression_codec>
         <producer>
             <compression_codec>snappy</compression_codec>
         </producer>
     </kafka>
-</clickhouse>
+</datastore>
 """
-    config_file_path = "/etc/clickhouse-server/config.d/compression_codec.xml"
+    config_file_path = "/etc/datastore-server/config.d/compression_codec.xml"
 
     # Clickhouse has to be restarted to apply the default config
     with restart_clickhouse_after():

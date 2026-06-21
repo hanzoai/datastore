@@ -12,12 +12,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # `ReadBufferFromFile` (1 MiB). On the pre-fix code path, the file content also
 # stages through a `std::string` first, which pins another 64 MiB before the
 # column reallocation fires -- pushing the peak past the limit set below.
-mkdir -p "${CLICKHOUSE_USER_FILES_UNIQUE}"
+mkdir -p "${DATASTORE_USER_FILES_UNIQUE}"
 for i in 1 2 3; do
-    head -c 67108864 /dev/zero > "${CLICKHOUSE_USER_FILES_UNIQUE}/big_${i}.bin"
+    head -c 67108864 /dev/zero > "${DATASTORE_USER_FILES_UNIQUE}/big_${i}.bin"
 done
 
-TEST_REL="${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TEST_REL="${DATASTORE_TEST_UNIQUE_NAME}"
 
 # Empirical peaks at this scenario (aarch64, single stream):
 #   * Streaming directly into the column (post-fix): ~385 MiB
@@ -28,7 +28,7 @@ TEST_REL="${CLICKHOUSE_TEST_UNIQUE_NAME}"
 # pre-fix path raises `MEMORY_LIMIT_EXCEEDED` while the post-fix path completes
 # successfully. `max_threads=1` pins the work to one stream so the peaks above
 # are deterministic instead of being divided across `num_streams` columns.
-$CLICKHOUSE_CLIENT --max_threads=1 --max_memory_usage=440000000 --query "
+$DATASTORE_CLIENT --max_threads=1 --max_memory_usage=440000000 --query "
     SELECT sum(length(content))
     FROM filesystem('${TEST_REL}')
     WHERE name LIKE 'big_%'
@@ -36,10 +36,10 @@ $CLICKHOUSE_CLIENT --max_threads=1 --max_memory_usage=440000000 --query "
 
 # Sanity check: with a generous limit, the same query succeeds and reports the
 # correct total size, so the streaming path produces the same bytes as before.
-$CLICKHOUSE_CLIENT --max_threads=1 --query "
+$DATASTORE_CLIENT --max_threads=1 --query "
     SELECT sum(length(content))
     FROM filesystem('${TEST_REL}')
     WHERE name LIKE 'big_%'
 "
 
-rm -rf "${CLICKHOUSE_USER_FILES_UNIQUE:?}"
+rm -rf "${DATASTORE_USER_FILES_UNIQUE:?}"

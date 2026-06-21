@@ -1,6 +1,6 @@
 services:
   # Service "prometheus_writer" runs a prometheus server which scrapes some metrics and sends them via the RemoteWrite
-  # protocol to ClickHouse by url ${PROMETHEUS_REMOTE_WRITE_HANDLER}.
+  # protocol to Datastore by url ${PROMETHEUS_REMOTE_WRITE_HANDLER}.
   prometheus_writer:
     image: prom/prometheus:v3.5.0
     hostname: ${PROMETHEUS_WRITER_HOSTNAME:-prometheus_writer}
@@ -44,7 +44,7 @@ services:
     stop_grace_period: 5s
     cpus: 3
   # Service "prometheus_reader" runs a prometheus server which scrapes nothing and can request data via the RemoteRead protocol
-  # from ClickHouse by url ${PROMETHEUS_REMOTE_READ_HANDLER}.
+  # from Datastore by url ${PROMETHEUS_REMOTE_READ_HANDLER}.
   prometheus_reader:
     image: prom/prometheus:v3.5.0
     hostname: ${PROMETHEUS_READER_HOSTNAME:-prometheus_reader}

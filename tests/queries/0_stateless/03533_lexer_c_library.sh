@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tags: fasttest-only
 # Tag fasttest-only - this test requires lexer_test which is only available
-# in fast-test environment because it is built along with clickhouse but is not
+# in fast-test environment because it is built along with datastore but is not
 # transferred as an artifact to other test environments
 
 

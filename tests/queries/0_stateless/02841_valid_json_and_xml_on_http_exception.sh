@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-CH_URL_BASE="$CLICKHOUSE_URL&http_write_exception_in_output_format=1&enable_analyzer=0"
+CH_URL_BASE="$DATASTORE_URL&http_write_exception_in_output_format=1&enable_analyzer=0"
 
 
 for http_wait_end_of_query in 0 1
@@ -21,7 +21,7 @@ do
         for format in JSON JSONEachRow JSONCompact JSONCompactEachRow JSONObjectEachRow XML
         do
             echo $format
-            ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from numbers(10) format $format settings output_format_parallel_formatting=$parallel" | sed "s/(version .*)//" | sed "s/DB::Exception//"
+            ${DATASTORE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from numbers(10) format $format settings output_format_parallel_formatting=$parallel" | sed "s/(version .*)//" | sed "s/DB::Exception//"
         done
     done
 
@@ -30,24 +30,24 @@ do
     for format in JSON JSONEachRow JSONCompact JSONCompactEachRow JSONObjectEachRow XML
     do
         echo $format
-            ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from system.numbers format $format settings max_block_size=1, output_format_parallel_formatting=0" | sed "s/(version .*)//" | sed "s/DB::Exception//"
+            ${DATASTORE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from system.numbers format $format settings max_block_size=1, output_format_parallel_formatting=0" | sed "s/(version .*)//" | sed "s/DB::Exception//"
     done
 
     echo "With parallel formatting"
     for format in JSON JSONCompact JSONObjectEachRow
     do
         echo $format
-        ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from system.numbers format $format settings max_block_size=1, output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+        ${DATASTORE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from system.numbers format $format settings max_block_size=1, output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
     done
 
     for format in JSONEachRow JSONCompactEachRow
     do
         echo $format
-        ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from system.numbers format $format settings max_block_size=1, output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=LineAsString -q "select min(isValidJSON(line)) from table"
+        ${DATASTORE_CURL} -sS "$CH_URL" -d "select number, throwIf(number > 3) as res from system.numbers format $format settings max_block_size=1, output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=LineAsString -q "select min(isValidJSON(line)) from table"
     done
 
     echo "Formatting error"
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         drop table if exists test_02841;
         create table test_02841 (x UInt32, s String, y Enum('a' = 1)) engine=MergeTree order by x;
         system stop merges test_02841;
@@ -63,37 +63,37 @@ do
     for format in JSON JSONEachRow JSONCompact JSONCompactEachRow JSONObjectEachRow XML
     do
         echo $format
-        ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 order by x format $format settings output_format_parallel_formatting=0" | sed "s/(version .*)//" | sed "s/DB::Exception//"
+        ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 order by x format $format settings output_format_parallel_formatting=0" | sed "s/(version .*)//" | sed "s/DB::Exception//"
     done
 
     echo "With parallel formatting"
     for format in JSON JSONCompact JSONObjectEachRow
     do
         echo $format
-        ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format $format settings output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+        ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format $format settings output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
     done
 
     for format in JSONEachRow JSONCompactEachRow
     do
         echo $format
-        ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format $format settings output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=LineAsString -q "select min(isValidJSON(line)) from table"
+        ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format $format settings output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=LineAsString -q "select min(isValidJSON(line)) from table"
     done
 
 
     echo "Test 1"
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         truncate table test_02841;
         insert into test_02841 ${CH_SETTINGS} select 1, repeat('aaaaa', 1000000), 1;
         insert into test_02841 ${CH_SETTINGS} select 2, repeat('aaaaa', 1000000), 99;
         insert into test_02841 ${CH_SETTINGS} select 3, repeat('aaaaa', 1000000), 1;
     "
 
-    ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=0" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
-    ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+    ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=0" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+    ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
 
 
     echo "Test 2"
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         truncate table test_02841;
         insert into test_02841 ${CH_SETTINGS} values (1, 'str1', 1);
         insert into test_02841 ${CH_SETTINGS} values (2, 'str2', 1);
@@ -103,11 +103,11 @@ do
         insert into test_02841 ${CH_SETTINGS} select number, 'str_numbers_2', 1 from numbers(5000);
     "
 
-    ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=0" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
-    ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+    ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=0" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+    ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
 
     echo "Test 3"
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         truncate table test_02841;
         insert into test_02841 ${CH_SETTINGS} values (1, 'str1', 1);
         insert into test_02841 ${CH_SETTINGS} values (2, 'str2', 1);
@@ -117,9 +117,9 @@ do
         insert into test_02841 ${CH_SETTINGS} select number, 'str_numbers_2', 1 from numbers(5000);
     "
 
-    ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=0" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
-    ${CLICKHOUSE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=1" | $CLICKHOUSE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+    ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=0" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
+    ${DATASTORE_CURL} -sS "$CH_URL" -d "select * from test_02841 format JSON settings output_format_parallel_formatting=1" | $DATASTORE_LOCAL --input-format=JSONAsString -q "select isValidJSON(json) from table"
 
-    $CLICKHOUSE_CLIENT -q "drop table test_02841"
+    $DATASTORE_CLIENT -q "drop table test_02841"
 
 done

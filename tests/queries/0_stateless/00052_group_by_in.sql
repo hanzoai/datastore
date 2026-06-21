@@ -1,5 +1,5 @@
 -- Tags: stateful, no-parallel-replicas
--- https://github.com/ClickHouse/ClickHouse/issues/74716
+-- https://github.com/ClickHouse/Datastore/issues/74716
 
 select StartDate, TraficSourceID in (0) ? 'type_in' : 'other' as traf_type, sum(Sign)
 from test.visits 

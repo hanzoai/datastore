@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/56521
+-- https://github.com/ClickHouse/Datastore/issues/56521
 
 SYSTEM FLUSH LOGS query_log;
 

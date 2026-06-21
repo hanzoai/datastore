@@ -24,10 +24,10 @@ node2 = cluster.add_instance(
 )
 
 config = """
-<clickhouse>
+<datastore>
     <replicated_fetches_http_connection_timeout>30</replicated_fetches_http_connection_timeout>
     <replicated_fetches_http_receive_timeout>1</replicated_fetches_http_receive_timeout>
-</clickhouse>
+</datastore>
 """
 
 
@@ -53,7 +53,7 @@ def test_no_stall(started_cluster):
         instance.query(
             """
             CREATE TABLE t (key UInt64, data String)
-            ENGINE = ReplicatedMergeTree('/clickhouse/test/t', '{instance}')
+            ENGINE = ReplicatedMergeTree('/datastore/test/t', '{instance}')
                 ORDER BY tuple()
                 PARTITION BY key"""
         )
@@ -92,7 +92,7 @@ def test_no_stall(started_cluster):
         print("Connection timeouts tested!")
 
         node2.replace_config(
-            "/etc/clickhouse-server/config.d/timeouts_for_fetches.xml", config
+            "/etc/datastore-server/config.d/timeouts_for_fetches.xml", config
         )
 
         node2.restart_clickhouse()

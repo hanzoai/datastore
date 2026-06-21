@@ -49,7 +49,7 @@ try:
     #
     # 2) The second block has fewer rows than rows left in the unfinished granule (3094 < 5042).
     # It can be written entirely in this unfinished granule and we will still have some rows left. But it's granularity
-    # should be smaller than rows left in granule (3094 < 5042), so clickhouse will adjust (make smaller) this last unfinished granule.
+    # should be smaller than rows left in granule (3094 < 5042), so datastore will adjust (make smaller) this last unfinished granule.
     # This adjust logic contained a bug: we adjust not to the new block's granularity (3094), but to the difference of the new block granularity and
     # already written rows (3094 - 1811 = 1283). This lead to several unsigned integer overflows in code and huge granules as result.
     #

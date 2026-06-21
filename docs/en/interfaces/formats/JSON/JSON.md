@@ -38,7 +38,7 @@ The `JSON` type is compatible with JavaScript. To ensure this, some characters a
 For compatibility with JavaScript, Int64 and UInt64 integers are enclosed in double quotes by default. 
 To remove the quotes, you can set the configuration parameter [`output_format_json_quote_64bit_integers`](/operations/settings/settings-formats.md/#output_format_json_quote_64bit_integers) to `0`.
 
-ClickHouse supports [NULL](/sql-reference/syntax.md), which is displayed as `null` in the JSON output. To enable `+nan`, `-nan`, `+inf`, `-inf` values in output, set the [output_format_json_quote_denormals](/operations/settings/settings-formats.md/#output_format_json_quote_denormals) to `1`.
+Datastore supports [NULL](/sql-reference/syntax.md), which is displayed as `null` in the JSON output. To enable `+nan`, `-nan`, `+inf`, `-inf` values in output, set the [output_format_json_quote_denormals](/operations/settings/settings-formats.md/#output_format_json_quote_denormals) to `1`.
 
 ## Example usage {#example-usage}
 

@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS t_03209 SYNC;
 
-CREATE TABLE t_03209 ( `a` Decimal(18, 0), `b` Decimal(18, 1), `c` Decimal(36, 0) ) ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_03209', 'r1') ORDER BY tuple();
+CREATE TABLE t_03209 ( `a` Decimal(18, 0), `b` Decimal(18, 1), `c` Decimal(36, 0) ) ENGINE = ReplicatedMergeTree('/datastore/{database}/test_03209', 'r1') ORDER BY tuple();
 INSERT INTO t_03209 VALUES ('33', '44.4', '35');
 
 SET automatic_parallel_replicas_mode = 0;

@@ -17,7 +17,7 @@ CREATE DICTIONARY test_dictionary
 )
 PRIMARY KEY id
 LAYOUT(FLAT())
-SOURCE(CLICKHOUSE(TABLE 'test_table'))
+SOURCE(DATASTORE(TABLE 'test_table'))
 LIFETIME(0);
 
 SELECT 'Dictionary';

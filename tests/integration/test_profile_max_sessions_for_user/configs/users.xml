@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_sessions_for_user>2</max_sessions_for_user>
@@ -13,4 +13,4 @@
             <password>123</password>
         </test_user>
     </users>
-</clickhouse>
+</datastore>

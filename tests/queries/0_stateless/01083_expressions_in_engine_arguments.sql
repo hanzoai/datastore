@@ -39,7 +39,7 @@ CREATE VIEW view AS SELECT toInt64(n) as n FROM (SELECT toString(n) as n from me
 SELECT nonexistentsomething; -- { serverError UNKNOWN_IDENTIFIER }
 
 CREATE DICTIONARY dict (n UInt64, col String DEFAULT '42') PRIMARY KEY n
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT getServerPort('tcp_port_secure') SECURE 1 USER 'default' TABLE 'url')) LIFETIME(1) LAYOUT(CACHE(SIZE_IN_CELLS 1));
+SOURCE(DATASTORE(HOST 'localhost' PORT getServerPort('tcp_port_secure') SECURE 1 USER 'default' TABLE 'url')) LIFETIME(1) LAYOUT(CACHE(SIZE_IN_CELLS 1));
 
 -- dict --> url --> merge |-> distributed -> file (1)
 --                        |-> distributed_tf -> buffer -> file (1)

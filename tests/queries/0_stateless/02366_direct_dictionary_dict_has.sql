@@ -35,7 +35,7 @@ CREATE DICTIONARY test_dictionary
    value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_table'))
+SOURCE(DATASTORE(TABLE 'test_table'))
 LAYOUT(DIRECT());
 
 SELECT id, lookup_key, dictHas('test_dictionary', lookup_key) FROM test_lookup_table ORDER BY id ASC;

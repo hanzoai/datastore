@@ -10,7 +10,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 for STORAGE_POLICY in 's3_cache' 'local_cache' 'azure_cache'; do
     echo "Using storage policy: $STORAGE_POLICY"
 
-    $CLICKHOUSE_CLIENT --multiline  --query """
+    $DATASTORE_CLIENT --multiline  --query """
     SET max_memory_usage='20G';
     SET enable_filesystem_cache_on_write_operations = 0;
 
@@ -23,9 +23,9 @@ for STORAGE_POLICY in 's3_cache' 'local_cache' 'azure_cache'; do
 
     query="SELECT * FROM test_02226 LIMIT 10"
 
-    query_id=$($CLICKHOUSE_CLIENT --query "select queryID() from ($query) limit 1" 2>&1)
+    query_id=$($DATASTORE_CLIENT --query "select queryID() from ($query) limit 1" 2>&1)
 
-    $CLICKHOUSE_CLIENT --multiline  --query """
+    $DATASTORE_CLIENT --multiline  --query """
     SYSTEM FLUSH LOGS query_log;
     SELECT ProfileEvents['CachedReadBufferReadFromCacheHits'] > 0 as remote_fs_cache_hit,
            ProfileEvents['CachedReadBufferReadFromCacheMisses'] > 0 as remote_fs_cache_miss,
@@ -40,14 +40,14 @@ for STORAGE_POLICY in 's3_cache' 'local_cache' 'azure_cache'; do
     LIMIT 1;
     """
 
-    $CLICKHOUSE_CLIENT --multiline --query """
+    $DATASTORE_CLIENT --multiline --query """
     set remote_filesystem_read_method = 'read';
     set local_filesystem_read_method = 'pread';
     """
 
-    query_id=$($CLICKHOUSE_CLIENT --query "select queryID() from ($query) limit 1" 2>&1)
+    query_id=$($DATASTORE_CLIENT --query "select queryID() from ($query) limit 1" 2>&1)
 
-    $CLICKHOUSE_CLIENT --multiline  --query """
+    $DATASTORE_CLIENT --multiline  --query """
     SYSTEM FLUSH LOGS query_log;
     SELECT ProfileEvents['CachedReadBufferReadFromCacheHits'] > 0 as remote_fs_cache_hit,
            ProfileEvents['CachedReadBufferReadFromCacheMisses'] > 0 as remote_fs_cache_miss,
@@ -63,13 +63,13 @@ for STORAGE_POLICY in 's3_cache' 'local_cache' 'azure_cache'; do
     """
 
 
-    $CLICKHOUSE_CLIENT --multiline --query """
+    $DATASTORE_CLIENT --multiline --query """
     set remote_filesystem_read_method='threadpool';
     """
 
-    query_id=$($CLICKHOUSE_CLIENT --query "select queryID() from ($query) limit 1")
+    query_id=$($DATASTORE_CLIENT --query "select queryID() from ($query) limit 1")
 
-    $CLICKHOUSE_CLIENT --multiline  --query """
+    $DATASTORE_CLIENT --multiline  --query """
     SYSTEM FLUSH LOGS query_log;
     SELECT ProfileEvents['CachedReadBufferReadFromCacheHits'] > 0 as remote_fs_cache_hit,
            ProfileEvents['CachedReadBufferReadFromCacheMisses'] > 0 as remote_fs_cache_miss,
@@ -84,7 +84,7 @@ for STORAGE_POLICY in 's3_cache' 'local_cache' 'azure_cache'; do
     LIMIT 1;
     """
 
-    $CLICKHOUSE_CLIENT --multiline  --query """
+    $DATASTORE_CLIENT --multiline  --query """
     SELECT * FROM test_02226 WHERE value LIKE '%abc%' ORDER BY value LIMIT 10 FORMAT Null;
 
     SET enable_filesystem_cache_on_write_operations = 1;
@@ -97,5 +97,5 @@ for STORAGE_POLICY in 's3_cache' 'local_cache' 'azure_cache'; do
     INSERT INTO test_02226 SELECT * FROM generateRandom('key UInt32, value String') LIMIT 10000;
     """
 
-    $CLICKHOUSE_CLIENT --query "DROP TABLE test_02226"
+    $DATASTORE_CLIENT --query "DROP TABLE test_02226"
 done

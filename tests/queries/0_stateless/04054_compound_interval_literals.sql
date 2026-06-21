@@ -1,5 +1,5 @@
 -- Mixed-type interval literals: INTERVAL 'string' FROM_KIND TO TO_KIND
--- https://github.com/ClickHouse/ClickHouse/issues/99611
+-- https://github.com/ClickHouse/Datastore/issues/99611
 
 SELECT '-- HOUR TO MINUTE';
 SELECT INTERVAL '1:30' HOUR TO MINUTE;

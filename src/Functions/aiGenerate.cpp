@@ -96,7 +96,7 @@ The first argument is a named collection that specifies the provider, model, end
         .returned_value = {"The generated text response, or the default value for the column type (empty string) if the request failed and `ai_function_throw_on_error` is disabled.", {"String"}},
         .examples
         = {{"Simple question", "SELECT aiGenerate('ai_credentials', 'What is 2 + 2? Reply with just the number.')", "4"},
-           {"With system prompt", "SELECT aiGenerate('ai_credentials', 'Explain ClickHouse', 'You are a database expert. Be concise.')", ""},
+           {"With system prompt", "SELECT aiGenerate('ai_credentials', 'Explain Datastore', 'You are a database expert. Be concise.')", ""},
            {"Summarize column values", "SELECT article_title, aiGenerate('ai_credentials', concat('Summarize in one sentence: ', article_body)) AS summary FROM articles LIMIT 5", ""}},
         .introduced_in = {26, 4},
         .category = FunctionDocumentation::Category::AI});

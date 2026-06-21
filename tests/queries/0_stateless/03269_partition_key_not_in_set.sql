@@ -1,4 +1,4 @@
--- Related to https://github.com/ClickHouse/ClickHouse/issues/69829
+-- Related to https://github.com/ClickHouse/Datastore/issues/69829
 --
 -- The main goal of the test is to assert that constant transformation
 -- for set constant while partition pruning won't be performed

@@ -57,8 +57,8 @@ def started_cluster():
 
 def test_return_real_values(started_cluster):
     assert None != dictionary_node.get_process_pid(
-        "clickhouse"
-    ), "ClickHouse must be alive"
+        "datastore"
+    ), "Datastore must be alive"
 
     first_batch = """
     SELECT count(*)

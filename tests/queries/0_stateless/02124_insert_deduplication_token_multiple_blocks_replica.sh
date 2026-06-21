@@ -7,32 +7,32 @@ QUERY_COUNT_ORIGIN_BLOCKS="SELECT COUNT(*) FROM system.parts WHERE database = cu
 QUERY_SELECT_FROM_TABLE_ORDERED="SELECT * FROM block_dedup_token_replica ORDER BY id;"
 INSERT_BLOCK_SETTINGS="max_insert_block_size=1&min_insert_block_size_rows=0&min_insert_block_size_bytes=0"
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS block_dedup_token_replica SYNC"
-$CLICKHOUSE_CLIENT --query="CREATE TABLE block_dedup_token_replica (id Int32) ENGINE=ReplicatedMergeTree('/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/{table}', '{replica}') ORDER BY id"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS block_dedup_token_replica SYNC"
+$DATASTORE_CLIENT --query="CREATE TABLE block_dedup_token_replica (id Int32) ENGINE=ReplicatedMergeTree('/$DATASTORE_TEST_ZOOKEEPER_PREFIX/{table}', '{replica}') ORDER BY id"
 # Need to stop merges due to randomization of old_parts_lifetime setting, so all initial parts are guaranteed to exist when we check them
-$CLICKHOUSE_CLIENT --query="SYSTEM STOP MERGES block_dedup_token_replica"
+$DATASTORE_CLIENT --query="SYSTEM STOP MERGES block_dedup_token_replica"
 
-$CLICKHOUSE_CLIENT --query="SELECT 'insert 2 blocks with dedup token, 1 row per block'"
+$DATASTORE_CLIENT --query="SELECT 'insert 2 blocks with dedup token, 1 row per block'"
 DEDUP_TOKEN='dedup1'
-echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2)' | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
-$CLICKHOUSE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
+echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2)' | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
+$DATASTORE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
 
-$CLICKHOUSE_CLIENT --query="SELECT 'insert deduplicated by token'"
-echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2)' | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
-$CLICKHOUSE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
+$DATASTORE_CLIENT --query="SELECT 'insert deduplicated by token'"
+echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2)' | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
+$DATASTORE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
 
-$CLICKHOUSE_CLIENT --query="SELECT 'insert the same data by providing different dedup token'"
+$DATASTORE_CLIENT --query="SELECT 'insert the same data by providing different dedup token'"
 DEDUP_TOKEN='dedup2'
-echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2)' | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
-$CLICKHOUSE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
+echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2)' | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
+$DATASTORE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
 
-$CLICKHOUSE_CLIENT --query="SELECT 'insert 4 blocks, 2 deduplicated, 2 inserted'"
-echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2), (3), (4)' | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
-$CLICKHOUSE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
+$DATASTORE_CLIENT --query="SELECT 'insert 4 blocks, 2 deduplicated, 2 inserted'"
+echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2), (3), (4)' | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
+$DATASTORE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
 
-$CLICKHOUSE_CLIENT --query="SELECT 'disable token based deduplication, insert the same data as with token'"
+$DATASTORE_CLIENT --query="SELECT 'disable token based deduplication, insert the same data as with token'"
 DEDUP_TOKEN=''
-echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2), (3), (4)' | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
-$CLICKHOUSE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
+echo 'INSERT INTO block_dedup_token_replica VALUES (1), (2), (3), (4)' | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&$INSERT_BLOCK_SETTINGS&insert_deduplication_token='$DEDUP_TOKEN'&query=" --data-binary @-
+$DATASTORE_CLIENT --query "$QUERY_COUNT_ORIGIN_BLOCKS;$QUERY_SELECT_FROM_TABLE_ORDERED"
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE block_dedup_token_replica SYNC"
+$DATASTORE_CLIENT --query="DROP TABLE block_dedup_token_replica SYNC"

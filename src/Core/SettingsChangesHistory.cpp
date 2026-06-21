@@ -35,7 +35,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
         // clang-format off
         /// History of settings changes that controls some backward incompatible changes
         /// across all Datastore versions. It maps Datastore version to settings changes that were done
-        /// across all ClickHouse versions. It maps ClickHouse version to settings changes that were done
+        /// across all Datastore versions. It maps Datastore version to settings changes that were done
         /// in this version. This history contains both changes to existing settings and newly added settings.
         /// Settings changes is a vector of structs
         ///     {setting_name, previous_value, new_value, reason}.
@@ -51,12 +51,12 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"use_partition_pruning", true, true, "New setting controlling whether MergeTree uses partition key for pruning. 'use_partition_key' is an alias for this setting."},
             {"use_partition_key", true, true, "Alias for setting 'use_partition_pruning'."},
             {"mysql_datatypes_support_level", "", "decimal,datetime64,date2Date32", "Enable modern MySQL type mappings by default."},
-        /// It's used to implement `compatibility` setting (see https://github.com/ClickHouse/ClickHouse/issues/35972)
+        /// It's used to implement `compatibility` setting (see https://github.com/ClickHouse/Datastore/issues/35972)
         /// Note: please check if the key already exists to prevent duplicate entries.
         addSettingsChanges(settings_changes_history, "26.5",
         {
             {"show_remote_databases_in_system_tables", false, false, "Renamed from `show_data_lake_catalogs_in_system_tables` and broadened to also hide `MySQL` and `PostgreSQL` databases from `system.tables`, `system.columns` and `system.completions` by default, since enumerating their tables requires expensive remote calls. Users who relied on the previous behavior must set this setting to `true`. The old name is kept as an alias."},
-            {"defer_partition_pruning_after_final", true, true, "Setting newly added in 26.5 to gate the FINAL partition-pruning behavior that shipped silently in 26.3 (https://github.com/ClickHouse/ClickHouse/pull/98242). The meaningful semantic change is registered under the 26.3 block so `compatibility = '26.2'` reverts it; this entry exists so the upgrade-from-26.4 check accepts the newly-introduced name."},
+            {"defer_partition_pruning_after_final", true, true, "Setting newly added in 26.5 to gate the FINAL partition-pruning behavior that shipped silently in 26.3 (https://github.com/ClickHouse/Datastore/pull/98242). The meaningful semantic change is registered under the 26.3 block so `compatibility = '26.2'` reverts it; this entry exists so the upgrade-from-26.4 check accepts the newly-introduced name."},
             {"optimize_trivial_group_by_limit_query", false, true, "New setting that limits aggregation to at most LIMIT distinct keys for `SELECT key_expr FROM t GROUP BY key_expr LIMIT n` queries."},
             {"date_time_input_format", "basic", "best_effort", "Better usability"},
             {"cast_string_to_date_time_mode", "basic", "best_effort", "Better usability"},
@@ -167,7 +167,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
         });
         addSettingsChanges(settings_changes_history, "26.3",
         {
-            {"defer_partition_pruning_after_final", false, true, "Gates the FINAL planner's unconditional skipping of partition pruning when the partition-key column is not in the sorting key. The behavior change itself shipped silently in 26.3 via https://github.com/ClickHouse/ClickHouse/pull/98242; this entry retroactively documents it so `compatibility = '26.2'` restores the pre-regression behavior (0 = prune before FINAL, fast; 1 = defer pruning, correctness-safe)."},
+            {"defer_partition_pruning_after_final", false, true, "Gates the FINAL planner's unconditional skipping of partition pruning when the partition-key column is not in the sorting key. The behavior change itself shipped silently in 26.3 via https://github.com/ClickHouse/Datastore/pull/98242; this entry retroactively documents it so `compatibility = '26.2'` restores the pre-regression behavior (0 = prune before FINAL, fast; 1 = defer pruning, correctness-safe)."},
             {"allow_experimental_polyglot_dialect", false, false, "New setting to enable the polyglot SQL transpiler dialect."},
             {"polyglot_dialect", "", "", "New setting to specify the source SQL dialect for the polyglot transpiler."},
             {"output_format_trim_fixed_string", false, false, "New setting to trim trailing zero bytes from FixedString values in text output formats"},
@@ -538,7 +538,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"enable_time_time64_type", false, false, "New settings. Allows to use a new experimental Time and Time64 data types."},
             {"optimize_use_projection_filtering", false, true, "New setting"},
             {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as Datastore JSON Column."},
-            {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as ClickHouse JSON Column."},
+            {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as Datastore JSON Column."},
             {"use_skip_indexes_if_final", 0, 1, "Change in default value of setting"},
             {"use_skip_indexes_if_final_exact_mode", 0, 1, "Change in default value of setting"},
             {"allow_experimental_time_series_aggregate_functions", false, false, "New setting to enable experimental timeSeries* aggregate functions."},
@@ -559,7 +559,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"geotoh3_argument_order", "lon_lat", "lat_lon", "A new setting for legacy behaviour to set lon and lat argument order"},
             {"secondary_indices_enable_bulk_filtering", false, true, "A new algorithm for filtering by data skipping indices"},
             {"implicit_table_at_top_level", "", "", "A new setting, used in datastore-local"},
-            {"implicit_table_at_top_level", "", "", "A new setting, used in clickhouse-local"},
+            {"implicit_table_at_top_level", "", "", "A new setting, used in datastore-local"},
             {"use_skip_indexes_if_final_exact_mode", 0, 0, "This setting was introduced to help FINAL query return correct results with skip indexes"},
             {"parsedatetime_e_requires_space_padding", true, false, "Improved compatibility with MySQL DATE_FORMAT/STR_TO_DATE"},
             {"formatdatetime_e_with_space_padding", true, false, "Improved compatibility with MySQL DATE_FORMAT/STR_TO_DATE"},
@@ -611,7 +611,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"allow_experimental_correlated_subqueries", false, false, "Added new setting to allow correlated subqueries execution."},
             {"serialize_query_plan", false, false, "NewSetting"},
             {"allow_experimental_shared_set_join", 0, 1, "A setting for Datastore Cloud to enable SharedSet and SharedJoin"},
-            {"allow_experimental_shared_set_join", 0, 1, "A setting for ClickHouse Cloud to enable SharedSet and SharedJoin"},
+            {"allow_experimental_shared_set_join", 0, 1, "A setting for Datastore Cloud to enable SharedSet and SharedJoin"},
             {"allow_special_bool_values_inside_variant", true, false, "Don't allow special bool values during Variant type parsing"},
             {"cast_string_to_variant_use_inference", true, true, "New setting to enable/disable types inference during CAST from String to Variant"},
             {"distributed_cache_read_request_max_tries", 20, 20, "New setting"},
@@ -802,22 +802,22 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"distributed_cache_read_alignment", 0, 0, "A setting for Datastore Cloud"},
             {"distributed_cache_max_unacked_inflight_packets", 10, 10, "A setting for Datastore Cloud"},
             {"distributed_cache_data_packet_ack_window", 5, 5, "A setting for Datastore Cloud"},
-            {"cloud_mode_database_engine", 1, 1, "A setting for ClickHouse Cloud"},
-            {"allow_experimental_shared_set_join", 0, 0, "A setting for ClickHouse Cloud"},
-            {"read_through_distributed_cache", 0, 0, "A setting for ClickHouse Cloud"},
-            {"write_through_distributed_cache", 0, 0, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_throw_on_error", 0, 0, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_log_mode", "on_error", "on_error", "A setting for ClickHouse Cloud"},
-            {"distributed_cache_fetch_metrics_only_from_current_az", 1, 1, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_connect_max_tries", 20, 20, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_receive_response_wait_milliseconds", 60000, 60000, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_receive_timeout_milliseconds", 10000, 10000, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_wait_connection_from_pool_milliseconds", 100, 100, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_bypass_connection_pool", 0, 0, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_pool_behaviour_on_limit", "allocate_bypassing_pool", "allocate_bypassing_pool", "A setting for ClickHouse Cloud"},
-            {"distributed_cache_read_alignment", 0, 0, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_max_unacked_inflight_packets", 10, 10, "A setting for ClickHouse Cloud"},
-            {"distributed_cache_data_packet_ack_window", 5, 5, "A setting for ClickHouse Cloud"},
+            {"cloud_mode_database_engine", 1, 1, "A setting for Datastore Cloud"},
+            {"allow_experimental_shared_set_join", 0, 0, "A setting for Datastore Cloud"},
+            {"read_through_distributed_cache", 0, 0, "A setting for Datastore Cloud"},
+            {"write_through_distributed_cache", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_throw_on_error", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_log_mode", "on_error", "on_error", "A setting for Datastore Cloud"},
+            {"distributed_cache_fetch_metrics_only_from_current_az", 1, 1, "A setting for Datastore Cloud"},
+            {"distributed_cache_connect_max_tries", 20, 20, "A setting for Datastore Cloud"},
+            {"distributed_cache_receive_response_wait_milliseconds", 60000, 60000, "A setting for Datastore Cloud"},
+            {"distributed_cache_receive_timeout_milliseconds", 10000, 10000, "A setting for Datastore Cloud"},
+            {"distributed_cache_wait_connection_from_pool_milliseconds", 100, 100, "A setting for Datastore Cloud"},
+            {"distributed_cache_bypass_connection_pool", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_pool_behaviour_on_limit", "allocate_bypassing_pool", "allocate_bypassing_pool", "A setting for Datastore Cloud"},
+            {"distributed_cache_read_alignment", 0, 0, "A setting for Datastore Cloud"},
+            {"distributed_cache_max_unacked_inflight_packets", 10, 10, "A setting for Datastore Cloud"},
+            {"distributed_cache_data_packet_ack_window", 5, 5, "A setting for Datastore Cloud"},
             {"input_format_parquet_enable_row_group_prefetch", false, true, "Enable row group prefetching during parquet parsing. Currently, only single-threaded parsing can prefetch."},
             {"input_format_orc_dictionary_as_low_cardinality", false, true, "Treat ORC dictionary encoded columns as LowCardinality columns while reading ORC files"},
             {"allow_experimental_refreshable_materialized_view", false, true, "Not experimental anymore"},
@@ -863,7 +863,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"merge_tree_min_bytes_per_task_for_remote_reading", 4194304, 2097152, "Value is unified with `filesystem_prefetch_min_bytes_for_single_read_task`"},
             {"use_hive_partitioning", false, false, "Allows to use hive partitioning for File, URL, S3, AzureBlobStorage and HDFS engines."},
             {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in Datastore Keeper"},
-            {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in ClickHouse Keeper"},
+            {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in Datastore Keeper"},
             {"allow_archive_path_syntax", true, true, "Added new setting to allow disabling archive path syntax."},
             {"query_cache_tag", "", "", "New setting for labeling query cache settings."},
             {"allow_experimental_time_series_table", false, false, "Added new setting to allow the TimeSeries table engine"},
@@ -997,11 +997,11 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"output_format_arrow_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
             {"output_format_parquet_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. Datastore supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
             {"output_format_orc_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. Datastore supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
-            {"output_format_parquet_string_as_string", false, true, "ClickHouse allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the ClickHouse String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
-            {"output_format_orc_string_as_string", false, true, "ClickHouse allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the ClickHouse String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
-            {"output_format_arrow_string_as_string", false, true, "ClickHouse allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the ClickHouse String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
-            {"output_format_parquet_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. ClickHouse supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
-            {"output_format_orc_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. ClickHouse supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
+            {"output_format_parquet_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
+            {"output_format_orc_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
+            {"output_format_arrow_string_as_string", false, true, "Datastore allows arbitrary binary data in the String data type, which is typically UTF-8. Parquet/ORC/Arrow Strings only support UTF-8. That's why you can choose which Arrow's data type to use for the Datastore String data type - String or Binary. While Binary would be more correct and compatible, using String by default will correspond to user expectations in most cases."},
+            {"output_format_parquet_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. Datastore supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
+            {"output_format_orc_compression_method", "lz4", "zstd", "Parquet/ORC/Arrow support many compression methods, including lz4 and zstd. Datastore supports each and every compression method. Some inferior tools, such as 'duckdb', lack support for the faster `lz4` compression method, that's why we set zstd by default."},
             {"output_format_pretty_highlight_digit_groups", false, true, "If enabled and if output is a terminal, highlight every digit corresponding to the number of thousands, millions, etc. with underline."},
             {"geo_distance_returns_float64_on_float64_arguments", false, true, "Increase the default precision."},
             {"azure_max_inflight_parts_for_one_file", 20, 20, "The maximum number of a concurrent loaded parts in multipart upload request. 0 means unlimited."},
@@ -1044,8 +1044,8 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"default_normal_view_sql_security", "INVOKER", "INVOKER", "Allows to set default `SQL SECURITY` option while creating a normal view"},
             {"mysql_map_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect Datastore with BI tools."},
             {"mysql_map_fixed_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect Datastore with BI tools."},
-            {"mysql_map_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect ClickHouse with BI tools."},
-            {"mysql_map_fixed_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect ClickHouse with BI tools."},
+            {"mysql_map_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect Datastore with BI tools."},
+            {"mysql_map_fixed_string_to_text_in_show_columns", false, true, "Reduce the configuration effort to connect Datastore with BI tools."},
         });
         addSettingsChanges(settings_changes_history, "24.1",
         {
@@ -1184,7 +1184,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
         addSettingsChanges(settings_changes_history, "22.4",
         {
             {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because Datastore interpret SETTINGS as some values, which is misleading"}
-            {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because ClickHouse interpret SETTINGS as some values, which is misleading"}
+            {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because Datastore interpret SETTINGS as some values, which is misleading"}
         });
         addSettingsChanges(settings_changes_history, "22.3",
         {

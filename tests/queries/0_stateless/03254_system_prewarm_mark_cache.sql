@@ -5,7 +5,7 @@ SET parallel_replicas_local_plan = 1;
 DROP TABLE IF EXISTS t_prewarm_cache;
 
 CREATE TABLE t_prewarm_cache (a UInt64, b UInt64, c UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/03254_prewarm_mark_cache_smt/t_prewarm_cache', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/03254_prewarm_mark_cache_smt/t_prewarm_cache', '1')
 ORDER BY a SETTINGS prewarm_mark_cache = 0;
 
 SYSTEM CLEAR MARK CACHE;

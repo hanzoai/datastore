@@ -259,7 +259,7 @@ ALLOC_SUBSTRINGS = (
     "mi_malloc", "mi_calloc",
     # C++ static/thread-local initialization wrappers
     "__cxx_global_var_init", "__cxa_thread_atexit_impl",
-    # ClickHouse allocator wrappers — informative only as callers, not as leaf
+    # Datastore allocator wrappers — informative only as callers, not as leaf
     "DB::Memory<", "Memory::newImpl", "Allocator<false", "Allocator<true",
     "allocNoTrack",
     "PODArrayBase::realloc", "PODArrayBase::alloc",

@@ -43,12 +43,12 @@ DROP TABLE IF EXISTS replicated_table_detach_all2;
 CREATE TABLE replicated_table_detach_all1 (
   id UInt64,
   Data String
-) ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_00753_{database}/replicated_table_detach_all', '1') ORDER BY id PARTITION BY id;
+) ENGINE = ReplicatedMergeTree('/datastore/tables/test_00753_{database}/replicated_table_detach_all', '1') ORDER BY id PARTITION BY id;
 
 CREATE TABLE replicated_table_detach_all2 (
   id UInt64,
   Data String
-) ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_00753_{database}/replicated_table_detach_all', '2') ORDER BY id PARTITION BY id;
+) ENGINE = ReplicatedMergeTree('/datastore/tables/test_00753_{database}/replicated_table_detach_all', '2') ORDER BY id PARTITION BY id;
 
 
 INSERT INTO replicated_table_detach_all1 VALUES (1, '1'), (2, '2');
@@ -64,7 +64,7 @@ select * from replicated_table_detach_all1 order by id;
 SYSTEM SYNC REPLICA replicated_table_detach_all2;
 select * from replicated_table_detach_all2 order by id;
 
-ALTER TABLE replicated_table_detach_all1 FETCH PARTITION ALL FROM '/clickhouse/tables/test_00753_{database}/replicated_table_detach_all1'; -- { serverError SUPPORT_IS_DISABLED }
+ALTER TABLE replicated_table_detach_all1 FETCH PARTITION ALL FROM '/datastore/tables/test_00753_{database}/replicated_table_detach_all1'; -- { serverError SUPPORT_IS_DISABLED }
 
 DROP TABLE replicated_table_detach_all1;
 DROP TABLE replicated_table_detach_all2;
@@ -111,7 +111,7 @@ ALTER TABLE partition_attach_all ATTACH PARTITION ALL;
 SELECT * FROM partition_attach_all ORDER BY x;
 
 CREATE TABLE replicated_partition_attach_all (x UInt64, p UInt8)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_00753_{database}/replicated_partition_attach_all', '1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/test_00753_{database}/replicated_partition_attach_all', '1')
         ORDER BY x
         PARTITION BY p;
 INSERT INTO replicated_partition_attach_all VALUES (1, 1), (2, 2), (3, 3);

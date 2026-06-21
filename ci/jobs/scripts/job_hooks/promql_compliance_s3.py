@@ -1,7 +1,7 @@
 """S3 baseline for PromQL compliance (same layout idea as LLVM coverage .info).
 
 Master publishes to (HTTPS, public read):
-  https://clickhouse-builds.s3.amazonaws.com/REFs/master/<sha>/promql_compliance/promql_compliance_result.json
+  https://datastore-builds.s3.amazonaws.com/REFs/master/<sha>/promql_compliance/promql_compliance_result.json
 
 PR jobs walk ``master_track_commits_sha`` (Config Workflow / store_data) and use the first
 object that exists, mirroring ``generate_diff_coverage_report.sh`` for LLVM.
@@ -24,7 +24,7 @@ from ci.praktika.utils import Shell
 
 S3_KEY_DIR = "promql_compliance"
 RESULT_NAME = "promql_compliance_result.json"
-UPSTREAM_REPO = "ClickHouse/ClickHouse"
+UPSTREAM_REPO = "Datastore/Datastore"
 MASTER_BRANCH = "master"
 URL_TIMEOUT_SEC = 30
 
@@ -62,7 +62,7 @@ def fetch_baseline_from_s3(commits: list[str]) -> Tuple[Optional[dict[str, Any]]
         try:
             req = Request(
                 url,
-                headers={"User-Agent": "ClickHouse-CI-promql-compliance"},
+                headers={"User-Agent": "Datastore-CI-promql-compliance"},
             )
             with urlopen(req, timeout=URL_TIMEOUT_SEC) as resp:
                 if resp.status != 200:
@@ -91,14 +91,14 @@ def master_track_commits(info: Info) -> list[str]:
         return []
     try:
         merge_base = Shell.get_output(
-            f"gh api repos/ClickHouse/ClickHouse/compare/master...{sha} -q .merge_base_commit.sha",
+            f"gh api repos/Datastore/Datastore/compare/master...{sha} -q .merge_base_commit.sha",
             strict=False,
             verbose=False,
         ).strip()
         if not merge_base:
             return []
         raw = Shell.get_output(
-            f"gh api 'repos/ClickHouse/ClickHouse/commits?sha={merge_base}&per_page=30' -q '.[].sha'",
+            f"gh api 'repos/Datastore/Datastore/commits?sha={merge_base}&per_page=30' -q '.[].sha'",
             strict=False,
             verbose=False,
         )

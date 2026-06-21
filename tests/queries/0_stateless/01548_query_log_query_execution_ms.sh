@@ -15,10 +15,10 @@ function test_query_duration_ms()
         "--query_id=$query_id"
         "--format=Null"
     )
-    $CLICKHOUSE_CLIENT "${query_opts[@]}" -q "select sleep(0.4)" || exit 1
-    $CLICKHOUSE_CLIENT -q "system flush logs query_log, query_thread_log" || exit 1
+    $DATASTORE_CLIENT "${query_opts[@]}" -q "select sleep(0.4)" || exit 1
+    $DATASTORE_CLIENT -q "system flush logs query_log, query_thread_log" || exit 1
 
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         select count()
         from system.query_log
         where
@@ -29,7 +29,7 @@ function test_query_duration_ms()
             and event_time >= now() - interval 1 minute;
     " || exit 1
 
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         -- at least two threads for processing
         -- (but one just waits for another, sigh)
         select count() == 2

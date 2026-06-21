@@ -934,7 +934,7 @@ def _finish_workflow(workflow, job_name):
             ready_for_merge_description += f", Dropped: {len(dropped_results)}"
 
     # Revert PRs should be easy to merge - only Fast test is required
-    if "Reverts ClickHouse/" in env.PR_BODY:
+    if "Reverts Datastore/" in env.PR_BODY:
         fast_test_failed = any(
             "Fast test" in name for name in failed_results
         )

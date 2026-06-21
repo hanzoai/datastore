@@ -28,7 +28,7 @@ def test_replica_always_download(started_cluster):
         CREATE TABLE IF NOT EXISTS test_table(
             key UInt64,
             value String
-        ) ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_table/replicated', '1')
+        ) ENGINE = ReplicatedMergeTree('/datastore/tables/test_table/replicated', '1')
         ORDER BY tuple()
     """
     )
@@ -37,7 +37,7 @@ def test_replica_always_download(started_cluster):
         CREATE TABLE IF NOT EXISTS test_table(
             key UInt64,
             value String
-        ) ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_table/replicated', '2')
+        ) ENGINE = ReplicatedMergeTree('/datastore/tables/test_table/replicated', '2')
         ORDER BY tuple()
         SETTINGS always_fetch_merged_part=1
     """

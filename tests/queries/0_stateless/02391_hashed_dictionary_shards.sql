@@ -33,7 +33,7 @@ CREATE DICTIONARY test_dictionary_10_shards
     key UInt64,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table))
+SOURCE(DATASTORE(TABLE test_table))
 LAYOUT(SPARSE_HASHED(SHARDS 10))
 LIFETIME(0);
 
@@ -50,7 +50,7 @@ CREATE DICTIONARY test_dictionary_10_shards_nullable
     key UInt64,
     value Nullable(UInt16)
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table_nullable))
+SOURCE(DATASTORE(TABLE test_table_nullable))
 LAYOUT(SPARSE_HASHED(SHARDS 10))
 LIFETIME(0);
 
@@ -68,7 +68,7 @@ CREATE DICTIONARY test_complex_dictionary_10_shards
     key_2 UInt64,
     value UInt16
 ) PRIMARY KEY key_1, key_2
-SOURCE(CLICKHOUSE(TABLE test_table_complex))
+SOURCE(DATASTORE(TABLE test_table_complex))
 LAYOUT(COMPLEX_KEY_SPARSE_HASHED(SHARDS 10))
 LIFETIME(0);
 
@@ -85,7 +85,7 @@ CREATE DICTIONARY test_dictionary_10_shards_string
     key String,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table_string))
+SOURCE(DATASTORE(TABLE test_table_string))
 LAYOUT(SPARSE_HASHED(SHARDS 10))
 LIFETIME(0);
 
@@ -99,7 +99,7 @@ CREATE DICTIONARY test_dictionary_10_shards_incremental
     key UInt64,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table_last_access UPDATE_FIELD last_access))
+SOURCE(DATASTORE(TABLE test_table_last_access UPDATE_FIELD last_access))
 LAYOUT(SPARSE_HASHED(SHARDS 10))
 LIFETIME(0);
 

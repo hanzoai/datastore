@@ -17,7 +17,7 @@ nodes = [
         f"node{num}",
         main_configs=["configs/clusters.xml"],
         with_zookeeper=True,
-        image="clickhouse/clickhouse-server",
+        image="datastore/datastore-server",
         tag="25.12",
         stay_alive=True,
         use_old_analyzer=False,

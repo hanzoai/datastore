@@ -27,12 +27,12 @@ def simple_test(node, disk):
         [
             "bash",
             "-c",
-            f"echo 'meow' | /usr/bin/clickhouse disks --disk {disk} --query 'write im_a_file.txt'",
+            f"echo 'meow' | /usr/bin/datastore disks --disk {disk} --query 'write im_a_file.txt'",
         ]
     )
     out = node.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--disk",
             disk,

@@ -88,7 +88,7 @@ def test_insert_distributed_async_send_success():
         ]
     )
 
-    # will check that clickhouse-server is alive
+    # will check that datastore-server is alive
     node.restart_clickhouse()
 
     node.query("DROP TABLE IF EXISTS data SYNC")

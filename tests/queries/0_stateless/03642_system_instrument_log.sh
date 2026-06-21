@@ -8,20 +8,20 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+    $DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
 }
 
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SYSTEM INSTRUMENT REMOVE ALL;
     SYSTEM INSTRUMENT ADD 'QueryMetricLog::startQuery' LOG EXIT 'this is an instrumentation log';
 "
 
-query_id="${CLICKHOUSE_DATABASE}_log"
-$CLICKHOUSE_CLIENT --query-id=$query_id -q "SELECT 1 FORMAT Null;"
+query_id="${DATASTORE_DATABASE}_log"
+$DATASTORE_CLIENT --query-id=$query_id -q "SELECT 1 FORMAT Null;"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SYSTEM INSTRUMENT REMOVE ALL;
     SYSTEM FLUSH LOGS system.text_log;
     SELECT count() FROM system.text_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '$query_id' AND message ILIKE '%this is an instrumentation log%Stack trace:%';

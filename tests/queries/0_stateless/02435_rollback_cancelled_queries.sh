@@ -9,12 +9,12 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-export DATA_FILE="$CLICKHOUSE_TMP/deduptest.tsv"
-export TEST_MARK="02435_insert_${CLICKHOUSE_DATABASE}_"
-export SESSION="02435_session_${CLICKHOUSE_DATABASE}"
+export DATA_FILE="$DATASTORE_TMP/deduptest.tsv"
+export TEST_MARK="02435_insert_${DATASTORE_DATABASE}_"
+export SESSION="02435_session_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT -q 'select * from numbers(1000000) format TSV' > $DATA_FILE
-$CLICKHOUSE_CLIENT -q 'create table dedup_test(A Int64) Engine = MergeTree order by sin(A) partition by intDiv(A, 100000)'
+$DATASTORE_CLIENT -q 'select * from numbers(1000000) format TSV' > $DATA_FILE
+$DATASTORE_CLIENT -q 'create table dedup_test(A Int64) Engine = MergeTree order by sin(A) partition by intDiv(A, 100000)'
 
 function insert_data
 {
@@ -25,7 +25,7 @@ function insert_data
     COMMIT=""
     SETTINGS="query_id=$ID&$TXN_SETTINGS&max_insert_block_size=110000&min_insert_block_size_rows=110000"
     if [[ "$IMPLICIT" -eq 0 ]]; then
-        $CLICKHOUSE_CURL -sS -d 'begin transaction' "$CLICKHOUSE_URL&$TXN_SETTINGS"
+        $DATASTORE_CURL -sS -d 'begin transaction' "$DATASTORE_URL&$TXN_SETTINGS"
         SETTINGS="$SETTINGS&session_check=1"
         BEGIN="begin transaction;"
         COMMIT=$(echo -ne "\n\n\ncommit")
@@ -36,32 +36,32 @@ function insert_data
     TYPE=$(( RANDOM % 6 ))
 
     if [[ "$TYPE" -eq 0 ]]; then
-        $CLICKHOUSE_CURL -sS -X POST --data-binary @- "$CLICKHOUSE_URL&$SETTINGS&query=insert+into+dedup_test+format+TSV" < $DATA_FILE
+        $DATASTORE_CURL -sS -X POST --data-binary @- "$DATASTORE_URL&$SETTINGS&query=insert+into+dedup_test+format+TSV" < $DATA_FILE
     elif [[ "$TYPE" -eq 1 ]]; then
-        $CLICKHOUSE_CURL -sS -X POST -H "Transfer-Encoding: chunked" --data-binary @- "$CLICKHOUSE_URL&$SETTINGS&query=insert+into+dedup_test+format+TSV" < $DATA_FILE
+        $DATASTORE_CURL -sS -X POST -H "Transfer-Encoding: chunked" --data-binary @- "$DATASTORE_URL&$SETTINGS&query=insert+into+dedup_test+format+TSV" < $DATA_FILE
     elif [[ "$TYPE" -eq 2 ]]; then
-        $CLICKHOUSE_CURL -sS -F 'file=@-' "$CLICKHOUSE_URL&$TRASH_SETTINGS&file_format=TSV&file_types=UInt64" -X POST --form-string 'query=insert into dedup_test select * from file' < $DATA_FILE
+        $DATASTORE_CURL -sS -F 'file=@-' "$DATASTORE_URL&$TRASH_SETTINGS&file_format=TSV&file_types=UInt64" -X POST --form-string 'query=insert into dedup_test select * from file' < $DATA_FILE
     else
         # client will send 1000-rows blocks, server will squash them into 110000-rows blocks (more chances to catch a bug on query cancellation)
         # Use -k 5s so that SIGKILL is sent 5 seconds after SIGTERM if the client does not exit.
         # Under ASan, receiving SIGINT while the allocator lock is held causes DoLeakCheck (called from
         # safeExit via interruptSignalHandler) to deadlock acquiring the same lock. The client then ignores
         # SIGTERM too, so without -k the timeout wrapper waits forever, keeping the pipe open.
-        timeout -k 5s 120 $CLICKHOUSE_CLIENT --stacktrace --query_id="$ID" --throw_on_unsupported_query_inside_transaction=0 --implicit_transaction="$IMPLICIT" \
+        timeout -k 5s 120 $DATASTORE_CLIENT --stacktrace --query_id="$ID" --throw_on_unsupported_query_inside_transaction=0 --implicit_transaction="$IMPLICIT" \
             --max_block_size=1000 --max_insert_block_size=1000 -q \
             "${BEGIN}insert into dedup_test settings max_insert_block_size=110000, min_insert_block_size_rows=110000 format TSV$COMMIT" < $DATA_FILE \
             | grep -Fv "Transaction is not in RUNNING state" | grep -Fv "There is no current transaction"
     fi
 
     if [[ "$IMPLICIT" -eq 0 ]]; then
-        $CLICKHOUSE_CURL -sS -d 'commit' "$CLICKHOUSE_URL&$TXN_SETTINGS&close_session=1" 2>&1 \
+        $DATASTORE_CURL -sS -d 'commit' "$DATASTORE_URL&$TXN_SETTINGS&close_session=1" 2>&1 \
             | grep -Fav "Transaction is not in RUNNING state" | grep -Fav "There is no current transaction"
     fi
 }
 
-ID="02435_insert_init_${CLICKHOUSE_DATABASE}_$RANDOM"
+ID="02435_insert_init_${DATASTORE_DATABASE}_$RANDOM"
 insert_data 0
-$CLICKHOUSE_CLIENT -q 'select count() from dedup_test'
+$DATASTORE_CLIENT -q 'select count() from dedup_test'
 
 function thread_insert
 {
@@ -82,7 +82,7 @@ function thread_select
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        timeout 120 $CLICKHOUSE_CLIENT --implicit_transaction=1 -q "with (select count() from dedup_test) as c select throwIf(c % 1000000 != 0, 'Expected 1000000 * N rows, got ' || toString(c)) format Null"
+        timeout 120 $DATASTORE_CLIENT --implicit_transaction=1 -q "with (select count() from dedup_test) as c select throwIf(c % 1000000 != 0, 'Expected 1000000 * N rows, got ' || toString(c)) format Null"
         sleep 0.$RANDOM;
     done
 }
@@ -96,8 +96,8 @@ function thread_cancel
         if (( RANDOM % 2 )); then
             SIGNAL="KILL"
         fi
-        # Kill all matching processes, not just the first one. The TYPE=4 insert path wraps clickhouse-client
-        # in `timeout 120`, which forks a child: both the timeout wrapper (lower PID) and the clickhouse-client
+        # Kill all matching processes, not just the first one. The TYPE=4 insert path wraps datastore-client
+        # in `timeout 120`, which forks a child: both the timeout wrapper (lower PID) and the datastore-client
         # (higher PID) contain $TEST_MARK in their cmdlines. Killing only the wrapper (head -1 picks the lower
         # PID) orphans the client, leaving the pipe write end open and blocking all downstream grep processes
         # indefinitely.
@@ -116,20 +116,20 @@ thread_cancel 2> /dev/null &
 
 wait
 
-#$CLICKHOUSE_CLIENT -q 'system flush logs'
+#$DATASTORE_CLIENT -q 'system flush logs'
 
-ID="02435_insert_last_${CLICKHOUSE_DATABASE}_$RANDOM"
+ID="02435_insert_last_${DATASTORE_DATABASE}_$RANDOM"
 insert_data 1
 
-$CLICKHOUSE_CLIENT --implicit_transaction=1 -q 'select throwIf(count() % 1000000 != 0 or count() = 0) from dedup_test' \
-  || $CLICKHOUSE_CLIENT -q "select name, rows, active, visible, creation_tid, creation_csn from system.parts where database=currentDatabase();"
+$DATASTORE_CLIENT --implicit_transaction=1 -q 'select throwIf(count() % 1000000 != 0 or count() = 0) from dedup_test' \
+  || $DATASTORE_CLIENT -q "select name, rows, active, visible, creation_tid, creation_csn from system.parts where database=currentDatabase();"
 
 # Ensure that thread_cancel actually did something (useful when editing this test)
 # We cannot check it in the CI, because sometimes it fails due to randomization
-# $CLICKHOUSE_CLIENT -q "select count() > 0 from system.text_log where event_date >= yesterday() and query_id like '$TEST_MARK%' and (
+# $DATASTORE_CLIENT -q "select count() > 0 from system.text_log where event_date >= yesterday() and query_id like '$TEST_MARK%' and (
 #   message_format_string in ('Unexpected end of file while reading chunk header of HTTP chunked data', 'Unexpected EOF, got {} of {} bytes',
 #   'Query was cancelled or a client has unexpectedly dropped the connection') or
 #   message like '%Connection reset by peer%' or message like '%Broken pipe, while writing to socket%')"
 
 wait_for_queries_to_finish 30
-$CLICKHOUSE_CLIENT --database_atomic_wait_for_drop_and_detach_synchronously=0 -q "drop table dedup_test"
+$DATASTORE_CLIENT --database_atomic_wait_for_drop_and_detach_synchronously=0 -q "drop table dedup_test"

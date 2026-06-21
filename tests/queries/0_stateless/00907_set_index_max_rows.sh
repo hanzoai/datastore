@@ -4,9 +4,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS set_idx;"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS set_idx;"
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 CREATE TABLE set_idx
 (
     u64 UInt64,
@@ -16,12 +16,12 @@ CREATE TABLE set_idx
 ORDER BY u64
 SETTINGS index_granularity = 6, index_granularity_bytes = '10Mi';"
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 INSERT INTO set_idx
 SELECT number, number FROM system.numbers LIMIT 100"
 
 # simple select
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE i32 > 0 SETTINGS optimize_move_to_prewhere = 1, query_plan_optimize_prewhere = 1 FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE i32 > 0 SETTINGS optimize_move_to_prewhere = 1, query_plan_optimize_prewhere = 1 FORMAT JSON" | grep "rows_read"
 
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE set_idx;"
+$DATASTORE_CLIENT --query="DROP TABLE set_idx;"

@@ -1,11 +1,11 @@
-<clickhouse>
+<datastore>
     <auth_use_forwarded_address>true</auth_use_forwarded_address>
     <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/ClickHouse-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71 -->
     <openSSL>
         <server> <!-- Used for https server AND secure tcp port -->
-            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt -->
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
+            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/datastore-server/server.key -out /etc/datastore-server/server.crt -->
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
             <verificationMode>none</verificationMode>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
@@ -65,8 +65,8 @@
             <port>8445</port>
             <description>https protocol with TLSv1_2 minimum version</description>
             <disableProtocols>sslv2,sslv3,tlsv1,tlsv1_1</disableProtocols>
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
         </https_tls1_2>
         <https_tls1_3>
             <type>tls</type>
@@ -75,8 +75,8 @@
             <port>8446</port>
             <description>https protocol with TLSv1_3 minimum version</description>
             <disableProtocols>sslv2,sslv3,tlsv1,tlsv1_1,tlsv1_2</disableProtocols>
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
         </https_tls1_3>
         <http_proxy>
             <type>proxy1</type>
@@ -95,4 +95,4 @@
         <database>system</database>
         <table>query_log</table>
     </query_log>
-</clickhouse>
+</datastore>

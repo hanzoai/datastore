@@ -9,7 +9,7 @@ FILE_PATH="${USER_FILES_PATH}/file"
 mkdir -p ${FILE_PATH}
 chmod 777 ${FILE_PATH}
 
-FILE="test_symlink_${CLICKHOUSE_DATABASE}"
+FILE="test_symlink_${DATASTORE_DATABASE}"
 
 symlink_path=${FILE_PATH}/${FILE}
 symlink_path_with_regex="${FILE_PATH}*/${FILE}"
@@ -25,6 +25,6 @@ function cleanup()
 }
 trap cleanup EXIT
 
-${CLICKHOUSE_CLIENT} --query="insert into table function file('${symlink_path}', 'Values', 'a String') select 'OK'";
-${CLICKHOUSE_CLIENT} --query="select * from file('${symlink_path}', 'Values', 'a String') order by a";
-${CLICKHOUSE_CLIENT} --query="select * from file('${symlink_path_with_regex}', 'Values', 'a String') order by a";
+${DATASTORE_CLIENT} --query="insert into table function file('${symlink_path}', 'Values', 'a String') select 'OK'";
+${DATASTORE_CLIENT} --query="select * from file('${symlink_path}', 'Values', 'a String') order by a";
+${DATASTORE_CLIENT} --query="select * from file('${symlink_path_with_regex}', 'Values', 'a String') order by a";

@@ -15,13 +15,13 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-[Apache Parquet](https://parquet.apache.org/) is a columnar storage format widespread in the Hadoop ecosystem. ClickHouse supports read and write operations for this format.
+[Apache Parquet](https://parquet.apache.org/) is a columnar storage format widespread in the Hadoop ecosystem. Datastore supports read and write operations for this format.
 
 ## Data types matching {#data-types-matching-parquet}
 
-The table below shows how Parquet data types match ClickHouse [data types](/sql-reference/data-types/index.md).
+The table below shows how Parquet data types match Datastore [data types](/sql-reference/data-types/index.md).
 
-| Parquet type (logical, converted, or physical) | ClickHouse data type |
+| Parquet type (logical, converted, or physical) | Datastore data type |
 |------------------------------------------------|----------------------|
 | `BOOLEAN` | [Bool](/sql-reference/data-types/boolean.md) |
 | `UINT_8` | [UInt8](/sql-reference/data-types/int-uint.md) |
@@ -50,7 +50,7 @@ The table below shows how Parquet data types match ClickHouse [data types](/sql-
 
 When writing Parquet file, data types that don't have a matching Parquet type are converted to the nearest available type:
 
-| ClickHouse data type | Parquet type |
+| Datastore data type | Parquet type |
 |----------------------|--------------|
 | [IPv4](/sql-reference/data-types/ipv4.md) | `UINT_32` |
 | [IPv6](/sql-reference/data-types/ipv6.md) | `FIXED_LEN_BYTE_ARRAY` (16 bytes) |
@@ -60,11 +60,11 @@ When writing Parquet file, data types that don't have a matching Parquet type ar
 
 Arrays can be nested and can have a value of `Nullable` type as an argument. `Tuple` and `Map` types can also be nested.
 
-Data types of ClickHouse table columns can differ from the corresponding fields of the Parquet data inserted. When inserting data, ClickHouse interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to that data type which is set for the ClickHouse table column. E.g. a `UINT_32` Parquet column can be read into an [IPv4](/sql-reference/data-types/ipv4.md) ClickHouse column.
+Data types of Datastore table columns can differ from the corresponding fields of the Parquet data inserted. When inserting data, Datastore interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to that data type which is set for the Datastore table column. E.g. a `UINT_32` Parquet column can be read into an [IPv4](/sql-reference/data-types/ipv4.md) Datastore column.
 
-For some Parquet types there's no closely matching ClickHouse type. We read them as follows:
+For some Parquet types there's no closely matching Datastore type. We read them as follows:
 * `TIME` (time of day) is read as a timestamp. E.g. `10:23:13.000` becomes `1970-01-01 10:23:13.000`.
-* `TIMESTAMP`/`TIME` with `isAdjustedToUTC=false` is a local wall-clock time (year, month, day, hour, minute, second and subsecond fields in a local timezone, regardless of what specific time zone is considered local), same as SQL `TIMESTAMP WITHOUT TIME ZONE`. ClickHouse reads it as if it were a UTC timestamp instead. E.g. `2025-09-29 18:42:13.000` (representing a reading of a local wall clock) becomes `2025-09-29 18:42:13.000` (`DateTime64(3, 'UTC')` representing a point in time). If converted to String, it shows the correct year, month, day, hour, minute, second and subsecond, which can then be interpreted as being in some local timezone instead of UTC. Counterintuitively, changing the type from `DateTime64(3, 'UTC')` to `DateTime64(3)` would not help as both types represent a point in time rather than a clock reading, but `DateTime64(3)` would incorrectly be formatted using local timezone.
+* `TIMESTAMP`/`TIME` with `isAdjustedToUTC=false` is a local wall-clock time (year, month, day, hour, minute, second and subsecond fields in a local timezone, regardless of what specific time zone is considered local), same as SQL `TIMESTAMP WITHOUT TIME ZONE`. Datastore reads it as if it were a UTC timestamp instead. E.g. `2025-09-29 18:42:13.000` (representing a reading of a local wall clock) becomes `2025-09-29 18:42:13.000` (`DateTime64(3, 'UTC')` representing a point in time). If converted to String, it shows the correct year, month, day, hour, minute, second and subsecond, which can then be interpreted as being in some local timezone instead of UTC. Counterintuitively, changing the type from `DateTime64(3, 'UTC')` to `DateTime64(3)` would not help as both types represent a point in time rather than a clock reading, but `DateTime64(3)` would incorrectly be formatted using local timezone.
 * `INTERVAL` is currently read as `FixedString(12)` with raw binary representation of the time interval, as encoded in Parquet file.
 
 ## Example usage {#example-usage}
@@ -132,7 +132,7 @@ To exchange data with Hadoop, you can use the [`HDFS table engine`](/engines/tab
 | `input_format_parquet_skip_columns_with_unsupported_types_in_schema_inference` | Skip columns with unsupported types while schema inference for format Parquet                                                                                                                                                      | `0`         |
 | `input_format_parquet_max_block_size`                                          | Max block size for parquet reader.                                                                                                                                                                                                | `65409`     |
 | `input_format_parquet_prefer_block_bytes`                                      | Average block bytes output by parquet reader                                                                                                                                                                                      | `16744704`  |
-| `input_format_parquet_enable_json_parsing`                                      | When reading Parquet files, parse JSON columns as ClickHouse JSON Column.                                                                                                                                                                                      | `1`  |
+| `input_format_parquet_enable_json_parsing`                                      | When reading Parquet files, parse JSON columns as Datastore JSON Column.                                                                                                                                                                                      | `1`  |
 | `output_format_parquet_row_group_size`                                         | Target row group size in rows.                                                                                                                                                                                                      | `1000000`   |
 | `output_format_parquet_row_group_size_bytes`                                   | Target row group size in bytes, before compression.                                                                                                                                                                                  | `536870912` |
 | `output_format_parquet_string_as_string`                                       | Use Parquet String type instead of Binary for String columns.                                                                                                                                                                      | `1`         |
@@ -143,4 +143,4 @@ To exchange data with Hadoop, you can use the [`HDFS table engine`](/engines/tab
 | `output_format_parquet_batch_size`                                             | Check page size every this many rows. Consider decreasing if you have columns with average values size above a few KBs.                                                                                                              | `1024`      |
 | `output_format_parquet_write_page_index`                                       | Add a possibility to write page index into parquet files.                                                                                                                                                                          | `1`         |
 | `input_format_parquet_import_nested`                                           | Obsolete setting, does nothing.                                                                                                                                                                                                   | `0`         |
-| `input_format_parquet_local_time_as_utc` | true | Determines the data type used by schema inference for Parquet timestamps with isAdjustedToUTC=false. If true: DateTime64(..., 'UTC'), if false: DateTime64(...). Neither behavior is fully correct as ClickHouse doesn't have a data type for local wall-clock time. Counterintuitively, 'true' is probably the less incorrect option, because formatting the 'UTC' timestamp as String will produce representation of the correct local time. |
+| `input_format_parquet_local_time_as_utc` | true | Determines the data type used by schema inference for Parquet timestamps with isAdjustedToUTC=false. If true: DateTime64(..., 'UTC'), if false: DateTime64(...). Neither behavior is fully correct as Datastore doesn't have a data type for local wall-clock time. Counterintuitively, 'true' is probably the less incorrect option, because formatting the 'UTC' timestamp as String will produce representation of the correct local time. |

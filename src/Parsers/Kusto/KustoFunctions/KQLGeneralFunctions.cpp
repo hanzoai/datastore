@@ -567,7 +567,7 @@ bool ToDateTimeFmt::convertImpl(String & out, IParser::Pos & pos)
     [[maybe_unused]] String format_str = getConvertedArgument(fn_name, pos);
 
     /// The format_str argument is accepted for KQL compatibility but not wired into parsing.
-    /// ClickHouse's parseDateTimeBestEffort handles standard datetime formats automatically,
+    /// Datastore's parseDateTimeBestEffort handles standard datetime formats automatically,
     /// which covers the common cases. Custom/ambiguous format strings that depend on the
     /// explicit format for correct interpretation may parse differently from KQL semantics.
     auto inner = fmt::format("parseDateTime64BestEffortOrNull({}, 9, 'UTC')", datetime_str);
@@ -597,7 +597,7 @@ bool RowNumber::convertImpl(String & out, IParser::Pos & pos)
         start = std::stoll(*start_arg);
 
     /// KQL `row_number(start, restart)` resets the counter when `restart` evaluates to true.
-    /// ClickHouse window functions don't have a corresponding reset construct, so we reject
+    /// Datastore window functions don't have a corresponding reset construct, so we reject
     /// this form rather than silently returning a value that ignores the predicate.
     if (auto reset_arg = getOptionalArgument(fn_name, pos))
         throw Exception(

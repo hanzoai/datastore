@@ -13,7 +13,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 set -e
 
 # disable fault injection; part ids are non-deterministic in case of insert retries
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET insert_keeper_fault_injection_probability = 0;
 
     CREATE TABLE rmt (id UInt64, num UInt64)
@@ -24,17 +24,17 @@ $CLICKHOUSE_CLIENT --query "
 "
 
 # Test one mutation for partitions in one entry.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     ALTER TABLE rmt UPDATE num = num + 1 WHERE 1;
 "
 
 wait_for_mutation  "rmt" "0000000000"
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS part_log;"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS part_log;"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT part_name, event_type, merged_from, mutation_ids \
-    FROM system.part_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND database = '$CLICKHOUSE_DATABASE' and table = 'rmt' \
+    FROM system.part_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND database = '$DATASTORE_DATABASE' and table = 'rmt' \
     AND event_type IN ('MutatePart', 'MutatePartStart') \
     ORDER BY event_time_microseconds;
 "
@@ -42,7 +42,7 @@ $CLICKHOUSE_CLIENT --query "
 wait_for_mutation "rmt" "0000000000"
 
 # Test multiple mutations for partitions in one entry.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT rmt_merge_selecting_task_pause_when_scheduled;
     ALTER TABLE rmt UPDATE num = num + 2 WHERE 1;
     ALTER TABLE rmt UPDATE num = num + 3 WHERE 1;
@@ -52,15 +52,15 @@ $CLICKHOUSE_CLIENT --query "
 
 wait_for_mutation  "rmt" "0000000003"
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS part_log;"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS part_log;"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT part_name, event_type, merged_from, mutation_ids \
-    FROM system.part_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND database = '$CLICKHOUSE_DATABASE' and table = 'rmt' \
+    FROM system.part_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND database = '$DATASTORE_DATABASE' and table = 'rmt' \
     AND event_type IN ('MutatePart', 'MutatePartStart') \
     ORDER BY event_time_microseconds;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE rmt SYNC;
 "

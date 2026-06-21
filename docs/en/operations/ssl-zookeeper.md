@@ -1,10 +1,10 @@
 ---
-description: 'Guide to configuring secure SSL/TLS communication between ClickHouse
+description: 'Guide to configuring secure SSL/TLS communication between Datastore
   and ZooKeeper'
 sidebar_label: 'Secured Communication with Zookeeper'
 sidebar_position: 45
 slug: /operations/ssl-zookeeper
-title: 'Optional secured communication between ClickHouse and Zookeeper'
+title: 'Optional secured communication between Datastore and Zookeeper'
 doc_type: 'guide'
 ---
 
@@ -12,7 +12,7 @@ import SelfManaged from '@site/docs/_snippets/_self_managed_only_automated.md';
 
 <SelfManaged />
 
-You should specify `ssl.keyStore.location`, `ssl.keyStore.password` and `ssl.trustStore.location`, `ssl.trustStore.password` for communication with ClickHouse client over SSL. These options are available from Zookeeper version 3.5.2.
+You should specify `ssl.keyStore.location`, `ssl.keyStore.password` and `ssl.trustStore.location`, `ssl.trustStore.password` for communication with Datastore client over SSL. These options are available from Zookeeper version 3.5.2.
 
 You can add `zookeeper.crt` to trusted certificates.
 
@@ -25,8 +25,8 @@ Client section in `config.xml` will look like:
 
 ```xml
 <client>
-    <certificateFile>/etc/clickhouse-server/client.crt</certificateFile>
-    <privateKeyFile>/etc/clickhouse-server/client.key</privateKeyFile>
+    <certificateFile>/etc/datastore-server/client.crt</certificateFile>
+    <privateKeyFile>/etc/datastore-server/client.key</privateKeyFile>
     <loadDefaultCAFile>true</loadDefaultCAFile>
     <cacheSessions>true</cacheSessions>
     <disableProtocols>sslv2,sslv3</disableProtocols>
@@ -37,10 +37,10 @@ Client section in `config.xml` will look like:
 </client>
 ```
 
-Add Zookeeper to ClickHouse config with some cluster and macros:
+Add Zookeeper to Datastore config with some cluster and macros:
 
 ```xml
-<clickhouse>
+<datastore>
     <zookeeper>
         <node>
             <host>localhost</host>
@@ -48,10 +48,10 @@ Add Zookeeper to ClickHouse config with some cluster and macros:
             <secure>1</secure>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>
 ```
 
-Start `clickhouse-server`. In logs you should see:
+Start `datastore-server`. In logs you should see:
 
 ```text
 <Trace> ZooKeeper: initialized, hosts: secure://localhost:2281
@@ -65,7 +65,7 @@ To ensure traffic is encrypted run `tcpdump` on secured port:
 tcpdump -i any dst port 2281 -nnXS
 ```
 
-And query in `clickhouse-client`:
+And query in `datastore-client`:
 
 ```sql
 SELECT * FROM system.zookeeper WHERE path = '/';

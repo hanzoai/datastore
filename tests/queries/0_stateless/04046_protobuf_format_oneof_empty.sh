@@ -24,7 +24,7 @@ set -eo pipefail
 #     Clear nothing3 = 6;
 #   }
 # }
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS records_04046;
 SELECT '>> records';
@@ -52,7 +52,7 @@ EOF
 #     Empty nothing2 = 2;
 #   }
 # }
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS empty_records_04046;
 SELECT '>> empty records';
@@ -78,7 +78,7 @@ EOF
 #     int32 id = 1;
 # 		InnerRecord inner = 2;
 # }
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS empty_inner_records_04046;
 SELECT '>> empty inner records';

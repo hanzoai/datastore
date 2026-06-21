@@ -20,7 +20,7 @@ CREATE DICTIONARY range_dictionary
   Tax Float64 DEFAULT 0.2
 )
 PRIMARY KEY CountryID
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'date_table' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'date_table' DB currentDatabase()))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN StartDate MAX EndDate)
@@ -74,7 +74,7 @@ CREATE DICTIONARY range_dictionary_nullable
   Tax Nullable(Float64) DEFAULT 0.2
 )
 PRIMARY KEY CountryID
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'date_table' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'date_table' DB currentDatabase()))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN StartDate MAX EndDate);

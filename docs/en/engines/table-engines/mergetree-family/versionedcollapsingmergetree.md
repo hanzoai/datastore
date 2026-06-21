@@ -128,13 +128,13 @@ To find out why we need two rows for each change, see [Algorithm](#table_engines
 
 ### Algorithm {#table_engines-versionedcollapsingmergetree-algorithm}
 
-When ClickHouse merges data parts, it deletes each pair of rows that have the same primary key and version and different `Sign`. The order of rows does not matter.
+When Datastore merges data parts, it deletes each pair of rows that have the same primary key and version and different `Sign`. The order of rows does not matter.
 
-When ClickHouse inserts data, it orders rows by the primary key. If the `Version` column is not in the primary key, ClickHouse adds it to the primary key implicitly as the last field and uses it for ordering.
+When Datastore inserts data, it orders rows by the primary key. If the `Version` column is not in the primary key, Datastore adds it to the primary key implicitly as the last field and uses it for ordering.
 
 ## Selecting data {#selecting-data}
 
-ClickHouse does not guarantee that all of the rows with the same primary key will be in the same resulting data part or even on the same physical server. This is true both for writing the data and for subsequent merging of the data parts. In addition, ClickHouse processes `SELECT` queries with multiple threads, and it cannot predict the order of rows in the result. This means that aggregation is required if there is a need to get completely "collapsed" data from a `VersionedCollapsingMergeTree` table.
+Datastore does not guarantee that all of the rows with the same primary key will be in the same resulting data part or even on the same physical server. This is true both for writing the data and for subsequent merging of the data parts. In addition, Datastore processes `SELECT` queries with multiple threads, and it cannot predict the order of rows in the result. This means that aggregation is required if there is a need to get completely "collapsed" data from a `VersionedCollapsingMergeTree` table.
 
 To finalize collapsing, write a query with a `GROUP BY` clause and aggregate functions that account for the sign. For example, to calculate quantity, use `sum(Sign)` instead of `count()`. To calculate the sum of something, use `sum(Sign * x)` instead of `sum(x)`, and add `HAVING sum(Sign) > 0`.
 
@@ -179,7 +179,7 @@ INSERT INTO UAct VALUES (4324182021466249494, 5, 146, 1, 1)
 INSERT INTO UAct VALUES (4324182021466249494, 5, 146, -1, 1),(4324182021466249494, 6, 185, 1, 2)
 ```
 
-We use two `INSERT` queries to create two different data parts. If we insert the data with a single query, ClickHouse creates one data part and will never perform any merge.
+We use two `INSERT` queries to create two different data parts. If we insert the data with a single query, Datastore creates one data part and will never perform any merge.
 
 Getting the data:
 
@@ -199,7 +199,7 @@ SELECT * FROM UAct
 
 What do we see here and where are the collapsed parts?
 We created two data parts using two `INSERT` queries. The `SELECT` query was performed in two threads, and the result is a random order of rows.
-Collapsing did not occur because the data parts have not been merged yet. ClickHouse merges data parts at an unknown point in time which we cannot predict.
+Collapsing did not occur because the data parts have not been merged yet. Datastore merges data parts at an unknown point in time which we cannot predict.
 
 This is why we need aggregation:
 

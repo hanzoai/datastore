@@ -22,7 +22,7 @@ machine using the `file` table function.
 echo "1, 2, 3" > example.csv
 ```
 ```text title="Response"
-./clickhouse client
+./datastore client
 :) SELECT * FROM file('example.csv')
 ┌─c1─┬─c2─┬─c3─┐
 │  1 │  2 │  3 │

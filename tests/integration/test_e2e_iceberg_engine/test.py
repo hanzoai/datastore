@@ -5,7 +5,7 @@ Apache Iceberg tables.  Unlike the table functions, the engine requires a
 persistent `CREATE TABLE` statement and exposes engine-level SETTINGS for
 metadata resolution, schema evolution, and data caching.
 
-NOTE: ClickHouse was not originally designed to support tables with externally
+NOTE: Datastore was not originally designed to support tables with externally
 changing schemas, so some features that work with regular tables may not work
 with the Iceberg Table Engine, especially with the old analyzer.  We recommend
 using the Iceberg Table Function for most use cases.
@@ -213,7 +213,7 @@ def multi_snapshot_table(manager):
 
 
 def _create_engine_table(node, manager, iceberg_table_name, *, settings: str = "") -> str:
-    """Create a ClickHouse engine table pointing at an Iceberg table.
+    """Create a Datastore engine table pointing at an Iceberg table.
 
     Returns the CH table name.
     """
@@ -361,7 +361,7 @@ def test_engine_projection_pushdown(node, manager, sales_table):
 
 
 def test_engine_primitive_types(node, manager, types_table):
-    """Iceberg-to-ClickHouse type mapping is correct for engine-attached tables."""
+    """Iceberg-to-Datastore type mapping is correct for engine-attached tables."""
     tbl = _create_engine_table(node, manager, types_table)
     prim_cols = [
         "col_bool", "col_int32", "col_int64", "col_float32", "col_float64",

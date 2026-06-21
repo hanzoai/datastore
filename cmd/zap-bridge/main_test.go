@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Hanzo Industries Inc.
 // SPDX-License-Identifier: Apache-2.0
 //
-// Unit tests for the zap-bridge ZAP→ClickHouse translator.
+// Unit tests for the zap-bridge ZAP→Datastore translator.
 //
 // These tests construct a `bridge` with a fake executor (no real
-// ClickHouse), build real ZAP request messages with the canonical wire
+// Datastore), build real ZAP request messages with the canonical wire
 // shape, drive them through `bridge.handle`, and decode the ZAP responses
 // back into structured form for assertion.
 //
@@ -26,8 +26,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ClickHouse/clickhouse-go/v2/lib/column"
-	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/ClickHouse/datastore-go/v2/lib/column"
+	"github.com/ClickHouse/datastore-go/v2/lib/driver"
 	"github.com/luxfi/zap"
 )
 
@@ -217,7 +217,7 @@ func decodeResponse(t *testing.T, msg *zap.Message) (uint32, []byte) {
 }
 
 // newTestBridge builds a bridge wired to the supplied fake — no real
-// ClickHouse, no ZAP listener. Just the handler logic. admit is left
+// Datastore, no ZAP listener. Just the handler logic. admit is left
 // nil so handler tests don't block on the semaphore; security tests
 // that exercise the gate construct their own bridge.
 func newTestBridge(fe *fakeExec) *bridge {

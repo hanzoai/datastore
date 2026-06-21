@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/65548
+-- https://github.com/ClickHouse/Datastore/issues/65548
 DROP TABLE IF EXISTS test_projection_deduplicate;
 
 CREATE TABLE test_projection_deduplicate

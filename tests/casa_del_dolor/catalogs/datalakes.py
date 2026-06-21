@@ -50,7 +50,7 @@ from utils.backgroundworker import BackgroundWorker
 
 
 def get_local_base_path(catalog_name: str) -> str:
-    return f"/var/lib/clickhouse/user_files/lakehouses/{catalog_name}"
+    return f"/var/lib/datastore/user_files/lakehouses/{catalog_name}"
 
 
 spark_properties = {
@@ -701,7 +701,7 @@ logger.jetty.level = warn
                 "spark.databricks.delta.retentionDurationCheck.enabled", "false"
             )
             builder.config("spark.hadoop.zlib.compress.level", "DEFAULT_COMPRESSION")
-            # Set timezone to match ClickHouse
+            # Set timezone to match Datastore
             if "TZ" in env:
                 builder.config("spark.sql.session.timeZone", env["TZ"])
             for k, val in env.items():

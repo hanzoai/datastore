@@ -14,7 +14,7 @@ from keeper.framework.core.util import _exec, sh
 def four(node, cmd):
     """Execute 4LW command on keeper node. For ZooKeeper/RaftKeeper, runs keeper-client from host."""
     if getattr(node, "is_raftkeeper", False):
-        bin_path = os.environ.get("CLICKHOUSE_BINARY", "clickhouse")
+        bin_path = os.environ.get("DATASTORE_BINARY", "datastore")
         try:
             proc = subprocess.run(
                 [
@@ -63,8 +63,8 @@ def four(node, cmd):
         return ""
 
     methods = [
-        f"HOME=/tmp clickhouse keeper-client --host 127.0.0.1 --port {CLIENT_PORT} -q {shlex.quote(cmd)} 2>&1",
-        f"HOME=/tmp clickhouse keeper-client -p {CLIENT_PORT} -q {shlex.quote(cmd)} 2>&1",
+        f"HOME=/tmp datastore keeper-client --host 127.0.0.1 --port {CLIENT_PORT} -q {shlex.quote(cmd)} 2>&1",
+        f"HOME=/tmp datastore keeper-client -p {CLIENT_PORT} -q {shlex.quote(cmd)} 2>&1",
         f'bash -lc "exec 3<>/dev/tcp/127.0.0.1/{CLIENT_PORT}; printf \'%s\\n\' {shlex.quote(cmd)} >&3; cat <&3; exec 3<&-; exec 3>&-" 2>&1',
         # Raw 4LW over TCP (works when keeper-client is missing or -q does not support 4LW)
         f"printf '%s\\n' {shlex.quote(cmd)} | timeout 2 nc 127.0.0.1 {CLIENT_PORT} 2>&1",

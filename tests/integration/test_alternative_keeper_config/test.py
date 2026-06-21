@@ -55,7 +55,7 @@ def test_create_insert(started_cluster):
         CREATE TABLE tbl ON CLUSTER 'test_cluster' (
             id Int64,
             str String
-        ) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')
+        ) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')
         ORDER BY id
         """
     )

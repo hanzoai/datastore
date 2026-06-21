@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 3.25)
 # on the order in which contrib/ libraries are traversed.
 set (CMAKE_POLICY_DEFAULT_CMP0126 NEW)
 
-project(ClickHouse LANGUAGES C CXX ASM)
+project(Datastore LANGUAGES C CXX ASM)
 
 # If turned off: e.g. when ENABLE_FOO is ON, but FOO tool was not found, the CMake will continue.
 option(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION
@@ -23,7 +23,7 @@ option(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION
    but is not possible to satisfy" ON)
 
 # This allows to compile some code conditionally in the private build while having byte-identical source files.
-set (CLICKHOUSE_CLOUD 0)
+set (DATASTORE_CLOUD 0)
 
 if(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION)
     set(RECONFIGURE_MESSAGE_LEVEL FATAL_ERROR)
@@ -91,7 +91,7 @@ if (ENABLE_FUZZING)
     set (ENABLE_CHECK_HEAVY_BUILDS 1)
     set (GLIBC_COMPATIBILITY OFF)
     set (ENABLE_BENCHMARKS 0)
-    set (ENABLE_CLICKHOUSE_KEEPER 0)
+    set (ENABLE_DATASTORE_KEEPER 0)
 
     # For codegen_select_fuzzer
     set (ENABLE_PROTOBUF 1)
@@ -155,7 +155,7 @@ endif ()
 
 if (OS_LINUX)
     # We should not export dynamic symbols, because:
-    # - The main clickhouse binary does not use dlopen,
+    # - The main datastore binary does not use dlopen,
     #   and whatever is poisoning it by LD_PRELOAD should not link to our symbols.
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-export-dynamic -Wl,--gc-sections")
 
@@ -200,7 +200,7 @@ endif()
 # In Release builds (which have no debug info by default), this option has
 # no effect -- it only reduces debug info for RelWithDebInfo and MinSizeRel.
 option(OMIT_HEAVY_DEBUG_SYMBOLS
-    "Do not generate debugger info for heavy modules (ClickHouse functions and dictionaries, some contrib)"
+    "Do not generate debugger info for heavy modules (Datastore functions and dictionaries, some contrib)"
     ${OMIT_HEAVY_DEBUG_SYMBOLS_DEFAULT})
 
 option(BUILD_STANDALONE_KEEPER "Build keeper as small standalone binary" OFF)
@@ -215,12 +215,12 @@ endif ()
 
 # Add a section with the hash of the compiled machine code for integrity checks.
 # Only for official builds, because adding a section can be time consuming (rewrite of several GB).
-# And cross compiled binaries are not supported (since you cannot execute clickhouse hash-binary)
-if (CLICKHOUSE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
-    message(STATUS "Official build: A checksum hash will be added to the clickhouse executable")
+# And cross compiled binaries are not supported (since you cannot execute datastore hash-binary)
+if (DATASTORE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
+    message(STATUS "Official build: A checksum hash will be added to the datastore executable")
     set (USE_BINARY_HASH 1 CACHE STRING "Calculate binary hash and store it in the separate section")
 else ()
-    message(STATUS "No official build: A checksum hash will not be added to the clickhouse executable")
+    message(STATUS "No official build: A checksum hash will not be added to the datastore executable")
 endif ()
 
 # Optionally split binaries and debug symbols.
@@ -231,7 +231,7 @@ if (SPLIT_DEBUG_SYMBOLS)
     set(SPLIT_DEBUG_SYMBOLS_DIR "stripped" CACHE STRING "A separate directory for stripped information")
 endif()
 
-option(BUILD_STRIPPED_BINARY "Build stripped binary (clickhouse-stripped)" OFF)
+option(BUILD_STRIPPED_BINARY "Build stripped binary (datastore-stripped)" OFF)
 
 cmake_host_system_information(RESULT AVAILABLE_PHYSICAL_MEMORY QUERY AVAILABLE_PHYSICAL_MEMORY) # Not available under freebsd
 
@@ -491,7 +491,7 @@ if (NOT OS_ANDROID AND OS_LINUX AND NOT ARCH_S390X AND NOT SANITIZE AND NOT ENAB
     # and keeping binary addresses constant even with ASLR enabled.
     # Disabled on Android as it requires PIE: https://source.android.com/docs/security/enhancements#android-5
     # Disabled on IBM S390X due to build issues with 'no-pie'
-    # Disabled with sanitizers to avoid issues with maximum relocation size: https://github.com/ClickHouse/ClickHouse/pull/49145
+    # Disabled with sanitizers to avoid issues with maximum relocation size: https://github.com/ClickHouse/Datastore/pull/49145
     set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -fno-pie")
     set (CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -fno-pie")
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -no-pie -Wl,-no-pie")
@@ -506,13 +506,13 @@ endif ()
 enable_testing() # Enable for tests without binary
 
 set(ENABLE_OPENSSL_DYNAMIC_DEFAULT OFF)
-option(ENABLE_OPENSSL_DYNAMIC "This option removes SSL from ClickHouse and will link to the OpenSSL version supplied by OS." ${ENABLE_OPENSSL_DYNAMIC_DEFAULT})
+option(ENABLE_OPENSSL_DYNAMIC "This option removes SSL from Datastore and will link to the OpenSSL version supplied by OS." ${ENABLE_OPENSSL_DYNAMIC_DEFAULT})
 
 # when installing to /usr - place configs to /etc but for /usr/local place to /usr/local/etc
 if (CMAKE_INSTALL_PREFIX STREQUAL "/usr")
-    set (CLICKHOUSE_ETC_DIR "/etc")
+    set (DATASTORE_ETC_DIR "/etc")
 else ()
-    set (CLICKHOUSE_ETC_DIR "${CMAKE_INSTALL_PREFIX}/etc")
+    set (DATASTORE_ETC_DIR "${CMAKE_INSTALL_PREFIX}/etc")
 endif ()
 
 message (STATUS "Building for: ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_LIBRARY_ARCHITECTURE}")
@@ -558,7 +558,7 @@ macro (clickhouse_add_executable target)
         # In case of static jemalloc, because zone_register() is located in zone.c and
         # is never used outside (it is declared as constructor) it is omitted
         # by the linker, and so jemalloc will not be registered as system
-        # allocator under osx [1], and clickhouse will SIGSEGV.
+        # allocator under osx [1], and datastore will SIGSEGV.
         #
         #   [1]: https://github.com/jemalloc/jemalloc/issues/708
         #
@@ -694,7 +694,7 @@ if (NATIVE_BUILD_TARGETS
             "-DCMAKE_BUILD_TYPE=Release"
             # Avoid overriding .cargo/config.toml with native toolchain.
             "-DENABLE_RUST=OFF"
-            "-DENABLE_CLICKHOUSE_SELF_EXTRACTING=${ENABLE_CLICKHOUSE_SELF_EXTRACTING}"
+            "-DENABLE_DATASTORE_SELF_EXTRACTING=${ENABLE_DATASTORE_SELF_EXTRACTING}"
             "-DUSE_BINARY_HASH=${USE_BINARY_HASH}"
         ${PROJECT_SOURCE_DIR}
         WORKING_DIRECTORY "${NATIVE_BUILD_DIR}"

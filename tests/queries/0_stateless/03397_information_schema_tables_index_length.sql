@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/57590
+-- https://github.com/ClickHouse/Datastore/issues/57590
 
 DROP TABLE IF EXISTS tab_with_primary_key_index;
 CREATE TABLE tab_with_primary_key_index (id UInt32, a UInt32) ENGINE = MergeTree ORDER BY id;

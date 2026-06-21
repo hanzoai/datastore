@@ -221,7 +221,7 @@ INSTANTIATE_TEST_SUITE_P(ParserCreateQuery_DICTIONARY_WITH_COMMENT, ParserTest,
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'source_table'))
 LAYOUT(FLAT())
 LIFETIME(MIN 0 MAX 1000)
 COMMENT 'Test dictionary with comment';
@@ -232,7 +232,7 @@ COMMENT 'Test dictionary with comment';
     `value` String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'source_table'))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(FLAT())
 COMMENT 'Test dictionary with comment')sql"

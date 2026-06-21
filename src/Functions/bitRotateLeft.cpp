@@ -33,7 +33,7 @@ struct BitRotateLeftImpl
             /// Canonical defined-behaviour rotation: masks both shift counts to
             /// `0..bits-1`, so no shift is ever UB regardless of `b`. Compilers recognize
             /// this pattern and emit a single `rol` on targets with hardware rotate.
-            /// ClickHouse's `Int8` is `signed _BitInt(8)`, so we go through the matching
+            /// Datastore's `Int8` is `signed _BitInt(8)`, so we go through the matching
             /// standard unsigned type by `sizeof` rather than `std::make_unsigned_t`.
             using U = std::conditional_t<sizeof(Result) == 1, uint8_t,
                 std::conditional_t<sizeof(Result) == 2, uint16_t,

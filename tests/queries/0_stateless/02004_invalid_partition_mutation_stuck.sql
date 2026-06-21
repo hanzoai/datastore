@@ -7,7 +7,7 @@ CREATE TABLE rep_data
     t DateTime,
     INDEX idx t TYPE minmax GRANULARITY 1
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/rep_data', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/rep_data', '1')
 PARTITION BY p
 ORDER BY t
 SETTINGS number_of_free_entries_in_pool_to_execute_mutation=0;

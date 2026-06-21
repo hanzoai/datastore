@@ -27,7 +27,7 @@ def started_cluster():
             node.query_with_retry(
                 """
             CREATE TABLE IF NOT EXISTS test_table_replicated(date Date, id UInt32, value Int32)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/sometable', '{replica}') ORDER BY id;
+    ENGINE = ReplicatedMergeTree('/datastore/tables/0/sometable', '{replica}') ORDER BY id;
                 """.format(
                     replica=node.name
                 )
@@ -40,7 +40,7 @@ def started_cluster():
             node.query_with_retry(
                 """
             CREATE TABLE IF NOT EXISTS test_table_replicated(date Date, id UInt32, value Int32)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/1/someotable', '{replica}') ORDER BY id;
+    ENGINE = ReplicatedMergeTree('/datastore/tables/1/someotable', '{replica}') ORDER BY id;
                 """.format(
                     replica=node.name
                 )

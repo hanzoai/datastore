@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/96664
+-- https://github.com/ClickHouse/Datastore/issues/96664
 
 SET enable_analyzer = 1; -- use_variant_as_common_type for if() requires the analyzer
 

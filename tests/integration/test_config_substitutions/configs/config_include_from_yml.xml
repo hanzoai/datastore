@@ -1,5 +1,5 @@
-<clickhouse>
-  <include_from>/etc/clickhouse-server/config.d/include_from_source.yml</include_from>
+<datastore>
+  <include_from>/etc/datastore-server/config.d/include_from_source.yml</include_from>
   <profiles>
     <default>
         <max_query_size incl="mqs" />
@@ -15,4 +15,4 @@
       <include incl="users_1" />
       <include incl="users_2" />
   </users>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/91849
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/91849
 -- Special columns (`ver`, `is_deleted`, `sign`) used in `PREWHERE` on `FINAL`
 -- were dropped from the read plan in `ReadFromMergeTree`, causing `NOT_FOUND_COLUMN_IN_BLOCK`.
 --

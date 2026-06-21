@@ -1,5 +1,5 @@
 ---
-description: 'This page explains how ClickHouse server can be configured with configuration
+description: 'This page explains how Datastore server can be configured with configuration
   files in XML or YAML syntax.'
 sidebar_label: 'Configuration Files'
 sidebar_position: 50
@@ -9,24 +9,24 @@ doc_type: 'guide'
 ---
 
 :::note
-XML-based settings profiles and configuration files are not supported for ClickHouse Cloud. Therefore, in ClickHouse Cloud, you won't find a config.xml file. Instead, you should use SQL commands to manage settings through settings profiles.
+XML-based settings profiles and configuration files are not supported for Datastore Cloud. Therefore, in Datastore Cloud, you won't find a config.xml file. Instead, you should use SQL commands to manage settings through settings profiles.
 
 For further details, see ["Configuring Settings"](/manage/settings)
 :::
 
-The ClickHouse server can be configured with configuration files in XML or YAML syntax.
-In most installation types, the ClickHouse server runs with `/etc/clickhouse-server/config.xml` as the default configuration file, but it is also possible to specify the location of the configuration file manually at server startup using command line option `--config-file` or `-C`.
-Additional configuration files may be placed into directory `config.d/` relative to the main configuration file, for example into directory `/etc/clickhouse-server/config.d/`.
-Files in this directory and the main configuration are merged in a preprocessing step before the configuration is applied in ClickHouse server.
+The Datastore server can be configured with configuration files in XML or YAML syntax.
+In most installation types, the Datastore server runs with `/etc/datastore-server/config.xml` as the default configuration file, but it is also possible to specify the location of the configuration file manually at server startup using command line option `--config-file` or `-C`.
+Additional configuration files may be placed into directory `config.d/` relative to the main configuration file, for example into directory `/etc/datastore-server/config.d/`.
+Files in this directory and the main configuration are merged in a preprocessing step before the configuration is applied in Datastore server.
 Configuration files are merged in alphabetical order.
 To simplify updates and improve modularization, it is a best practice to keep the default `config.xml` file unmodified and place additional customization into `config.d/`.
-The ClickHouse keeper configuration lives in `/etc/clickhouse-keeper/keeper_config.xml`.
-Similarly, additional configuration files for Keeper need to be placed in `/etc/clickhouse-keeper/keeper_config.d/`.
+The Datastore keeper configuration lives in `/etc/datastore-keeper/keeper_config.xml`.
+Similarly, additional configuration files for Keeper need to be placed in `/etc/datastore-keeper/keeper_config.d/`.
 
 It is possible to mix XML and YAML configuration files, for example you could have a main configuration file `config.xml` and additional configuration files `config.d/network.xml`, `config.d/timezone.yaml` and `config.d/keeper.yaml`.
 Mixing XML and YAML within a single configuration file is not supported.
-XML configuration files should use `<clickhouse>...</clickhouse>` as the top-level tag.
-In YAML configuration files, `clickhouse:` is optional, if absent the parser inserts it automatically.
+XML configuration files should use `<datastore>...</datastore>` as the top-level tag.
+In YAML configuration files, `datastore:` is optional, if absent the parser inserts it automatically.
 
 ## Merging configuration {#merging}
 
@@ -39,7 +39,7 @@ Two configuration files (usually the main configuration file and another configu
 For example, given two configuration files:
 
 ```xml title="config.xml"
-<clickhouse>
+<datastore>
     <config_a>
         <setting_1>1</setting_1>
     </config_a>
@@ -49,13 +49,13 @@ For example, given two configuration files:
     <config_c>
         <setting_3>3</setting_3>
     </config_c>
-</clickhouse>
+</datastore>
 ```
 
 and
 
 ```xml title="config.d/other_config.xml"
-<clickhouse>
+<datastore>
     <config_a>
         <setting_4>4</setting_4>
     </config_a>
@@ -65,13 +65,13 @@ and
     <config_c remove="remove">
         <setting_6>6</setting_6>
     </config_c>
-</clickhouse>
+</datastore>
 ```
 
 The resulting merged configuration file will be:
 
 ```xml
-<clickhouse>
+<datastore>
     <config_a>
         <setting_1>1</setting_1>
         <setting_4>4</setting_4>
@@ -79,7 +79,7 @@ The resulting merged configuration file will be:
     <config_b>
         <setting_5>5</setting_5>
     </config_b>
-</clickhouse>
+</datastore>
 ```
 
 ### Substitution by environment variables and ZooKeeper nodes {#from_env_zk}
@@ -89,37 +89,37 @@ To specify that a value of an element should be replaced by the value of an envi
 For example, with environment variable `$MAX_QUERY_SIZE = 150000`:
 
 ```xml
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_query_size from_env="MAX_QUERY_SIZE"/>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 ```
 
 Thw resulting configuration will be:
 
 ```xml
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_query_size>150000</max_query_size>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 ```
 
 The same is possible using `from_zk` (ZooKeeper node):
 
 ```xml
-<clickhouse>
+<datastore>
     <postgresql_port from_zk="/zk_configs/postgresql_port"/>
-</clickhouse>
+</datastore>
 ```
 
 ```shell
-# clickhouse-keeper-client
+# datastore-keeper-client
 / :) touch /zk_configs
 / :) create /zk_configs/postgresql_port "9005"
 / :) get /zk_configs/postgresql_port
@@ -129,9 +129,9 @@ The same is possible using `from_zk` (ZooKeeper node):
 Resulting in the following configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <postgresql_port>9005</postgresql_port>
-</clickhouse>
+</datastore>
 ```
 
 #### Default values {#default-values}
@@ -143,38 +143,38 @@ The element takes on the value of the environment variable or ZooKeeper node if 
 The previous example is repeated, but assuming `MAX_QUERY_SIZE` is not set:
 
 ```xml
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_query_size replace="1" from_env="MAX_QUERY_SIZE">150000</max_query_size>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 ```
 
 Resulting in configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_query_size>150000</max_query_size>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 ```
 
 ## Substitution with file content {#substitution-with-file-content}
 
 It is also possible to replace parts of the configuration by file contents. This can be done in two ways:
 
-- *Substituting Values*: If an element has the attribute `incl`, its value will be replaced by the content of the referenced file. By default, the path to the file with substitutions is `/etc/metrika.xml`. This can be changed in the [`include_from`](../operations/server-configuration-parameters/settings.md#include_from) element in the server config. The substitution values are specified in `/clickhouse/substitution_name` elements in this file. If a substitution specified in `incl` does not exist, it is recorded in the log. To prevent ClickHouse from logging missing substitutions, specify attribute `optional="true"` (for example, settings for [macros](../operations/server-configuration-parameters/settings.md#macros)).
+- *Substituting Values*: If an element has the attribute `incl`, its value will be replaced by the content of the referenced file. By default, the path to the file with substitutions is `/etc/metrika.xml`. This can be changed in the [`include_from`](../operations/server-configuration-parameters/settings.md#include_from) element in the server config. The substitution values are specified in `/datastore/substitution_name` elements in this file. If a substitution specified in `incl` does not exist, it is recorded in the log. To prevent Datastore from logging missing substitutions, specify attribute `optional="true"` (for example, settings for [macros](../operations/server-configuration-parameters/settings.md#macros)).
 - *Substituting elements*: If you want to replace the entire element with a substitution, use `include` as the element name. The element name `include` can be combined with the attribute `from_zk = "/path/to/node"`. In this case, the element value is replaced by the contents of the ZooKeeper node at `/path/to/node`. This also works with you store an entire XML subtree as a Zookeeper node, it will be fully inserted into the source element.
 
 An example of this is shown below:
 
 ```xml
-<clickhouse>
+<datastore>
     <!-- Appends XML subtree found at `/profiles-in-zookeeper` ZK path to `<profiles>` element. -->
     <profiles from_zk="/profiles-in-zookeeper" />
 
@@ -183,7 +183,7 @@ An example of this is shown below:
         <include from_zk="/users-in-zookeeper" />
         <include from_zk="/other-users-in-zookeeper" />
     </users>
-</clickhouse>
+</datastore>
 ```
 
 If you want to merge the substituting content with the existing configuration instead of appending, you can use the attribute `merge="true"`. For example: `<include from_zk="/some_path" merge="true">`. In this case, the existing configuration will be merged with the content from the substitution and the existing configuration settings will be replaced with values from the substitution.
@@ -199,7 +199,7 @@ Decryption happens only at runtime in the server process.
 For example:
 
 ```xml
-<clickhouse>
+<datastore>
 
     <encryption_codecs>
         <aes_128_gcm_siv>
@@ -212,17 +212,17 @@ For example:
         <password encrypted_by="AES_128_GCM_SIV">961F000000040000000000EEDDEF4F453CFE6457C4234BD7C09258BD651D85</password>
     </interserver_http_credentials>
 
-</clickhouse>
+</datastore>
 ```
 
 The attributes [`from_env`](#from_env_zk) and [`from_zk`](#from_env_zk) can also be applied to `encryption_codecs`:
 
 ```xml
-<clickhouse>
+<datastore>
 
     <encryption_codecs>
         <aes_128_gcm_siv>
-            <key_hex from_env="CLICKHOUSE_KEY_HEX"/>
+            <key_hex from_env="DATASTORE_KEY_HEX"/>
         </aes_128_gcm_siv>
     </encryption_codecs>
 
@@ -231,15 +231,15 @@ The attributes [`from_env`](#from_env_zk) and [`from_zk`](#from_env_zk) can also
         <password encrypted_by="AES_128_GCM_SIV">961F000000040000000000EEDDEF4F453CFE6457C4234BD7C09258BD651D85</password>
     </interserver_http_credentials>
 
-</clickhouse>
+</datastore>
 ```
 
 ```xml
-<clickhouse>
+<datastore>
 
     <encryption_codecs>
         <aes_128_gcm_siv>
-            <key_hex from_zk="/clickhouse/aes128_key_hex"/>
+            <key_hex from_zk="/datastore/aes128_key_hex"/>
         </aes_128_gcm_siv>
     </encryption_codecs>
 
@@ -248,7 +248,7 @@ The attributes [`from_env`](#from_env_zk) and [`from_zk`](#from_env_zk) can also
         <password encrypted_by="AES_128_GCM_SIV">961F000000040000000000EEDDEF4F453CFE6457C4234BD7C09258BD651D85</password>
     </interserver_http_credentials>
 
-</clickhouse>
+</datastore>
 ```
 
 Encryption keys and encrypted values can be defined in either config file.
@@ -256,21 +256,21 @@ Encryption keys and encrypted values can be defined in either config file.
 An example `config.xml` is given as:
 
 ```xml
-<clickhouse>
+<datastore>
 
     <encryption_codecs>
         <aes_128_gcm_siv>
-            <key_hex from_zk="/clickhouse/aes128_key_hex"/>
+            <key_hex from_zk="/datastore/aes128_key_hex"/>
         </aes_128_gcm_siv>
     </encryption_codecs>
 
-</clickhouse>
+</datastore>
 ```
 
 An example `users.xml` is given as:
 
 ```xml
-<clickhouse>
+<datastore>
 
     <users>
         <test_user>
@@ -279,13 +279,13 @@ An example `users.xml` is given as:
         </test_user>
     </users>
 
-</clickhouse>
+</datastore>
 ```
 
 To encrypt a value, you can use the (example) program `encrypt_decrypt`:
 
 ```bash
-./encrypt_decrypt /etc/clickhouse-server/config.xml -e AES_128_GCM_SIV abcd
+./encrypt_decrypt /etc/datastore-server/config.xml -e AES_128_GCM_SIV abcd
 ```
 
 ```text
@@ -293,19 +293,19 @@ To encrypt a value, you can use the (example) program `encrypt_decrypt`:
 ```
 
 Even with encrypted configuration elements, encrypted elements still appear in the preprocessed configuration file.
-If this is a problem for your ClickHouse deployment, there are two alternatives: Either set file permissions of the preprocessed file to 600 or use the attribute `hide_in_preprocessed`.
+If this is a problem for your Datastore deployment, there are two alternatives: Either set file permissions of the preprocessed file to 600 or use the attribute `hide_in_preprocessed`.
 
 For example:
 
 ```xml
-<clickhouse>
+<datastore>
 
     <interserver_http_credentials hide_in_preprocessed="true">
         <user>admin</user>
         <password>secret</password>
     </interserver_http_credentials>
 
-</clickhouse>
+</datastore>
 ```
 
 ## User settings {#user-settings}
@@ -323,11 +323,11 @@ Note that configuration files are first [merged](#merging) taking into account s
 For example, you can have a separate config file for each user like this:
 
 ```bash
-$ cat /etc/clickhouse-server/users.d/alice.xml
+$ cat /etc/datastore-server/users.d/alice.xml
 ```
 
 ```xml
-<clickhouse>
+<datastore>
     <users>
       <alice>
           <profile>analytics</profile>
@@ -338,14 +338,14 @@ $ cat /etc/clickhouse-server/users.d/alice.xml
           <quota>analytics</quota>
       </alice>
     </users>
-</clickhouse>
+</datastore>
 ```
 
 ## YAML examples {#example-1}
 
-Here you can see the default config written in YAML: [`config.yaml.example`](https://github.com/ClickHouse/ClickHouse/blob/master/programs/server/config.yaml.example).
+Here you can see the default config written in YAML: [`config.yaml.example`](https://github.com/ClickHouse/Datastore/blob/master/programs/server/config.yaml.example).
 
-There are some differences between YAML and XML formats in terms of ClickHouse configurations. 
+There are some differences between YAML and XML formats in terms of Datastore configurations. 
 Tips for writing configuration in YAML format are presented below.
 
 An XML tag with a text value is represented by a YAML key-value pair

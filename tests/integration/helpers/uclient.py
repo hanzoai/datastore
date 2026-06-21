@@ -16,7 +16,7 @@ class client(object):
     def __init__(self, command=None, name="", log=None):
         self.client = uexpect.spawn(["/bin/bash", "--noediting"])
         if command is None:
-            command = "/usr/bin/clickhouse-client"
+            command = "/usr/bin/datastore-client"
         self.client.command = command
         self.client.eol("\r")
         self.client.logger(log, prefix=name)

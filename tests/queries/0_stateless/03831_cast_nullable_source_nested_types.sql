@@ -4,7 +4,7 @@
 -- createTupleWrapper passes it to element wrappers, and createArrayWrapper (before the fix)
 -- passed it to createStringToEnumWrapper where the inner String column has M total array
 -- elements (M != N), causing a size mismatch assertion.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=96894&sha=20e3ac9e9d7a4790a81b166af49e932202510e1e&name_0=PR&name_1=BuzzHouse%20%28amd_debug%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?PR=96894&sha=20e3ac9e9d7a4790a81b166af49e932202510e1e&name_0=PR&name_1=BuzzHouse%20%28amd_debug%29
 
 SET allow_experimental_nullable_tuple_type = 1;
 

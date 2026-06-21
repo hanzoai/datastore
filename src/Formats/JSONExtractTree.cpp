@@ -1664,7 +1664,7 @@ public:
         }
 
         /// We couldn't insert element into current variants (or skipped it intentionally),
-        /// infer ClickHouse type for this element and add it as a new variant.
+        /// infer Datastore type for this element and add it as a new variant.
         auto element_type = removeNullable(elementToDataType(element, format_settings));
         if (!checkIfTypeIsComplete(element_type))
         {

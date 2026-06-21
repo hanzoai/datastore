@@ -1,6 +1,6 @@
 # Periodic upstream sync.
 #
-# Fetches upstream ClickHouse, opens a DRAFT PR with the merge result on a
+# Fetches upstream Datastore, opens a DRAFT PR with the merge result on a
 # branch named `upstream-sync/<UTC-date>`. NEVER auto-merges. On conflict the
 # workflow pushes the in-progress merge (with conflict markers committed) so a
 # human can `git checkout` the branch, resolve, force-push, mark ready.
@@ -12,7 +12,7 @@ name: upstream-sync
 
 on:
   schedule:
-    # Weekly, Monday 06:00 UTC. ClickHouse moves slower than codex; weekly
+    # Weekly, Monday 06:00 UTC. Datastore moves slower than codex; weekly
     # keeps PR noise tractable while still catching CVE-grade fixes within
     # a reasonable window.
     - cron: '0 6 * * 1'
@@ -21,7 +21,7 @@ on:
       upstream_url:
         description: 'Upstream git URL'
         required: false
-        default: 'https://github.com/ClickHouse/ClickHouse.git'
+        default: 'https://github.com/ClickHouse/Datastore.git'
       upstream_branch:
         description: 'Upstream branch'
         required: false
@@ -41,7 +41,7 @@ jobs:
     runs-on: hanzo-build-linux-amd64
     timeout-minutes: 30
     env:
-      UPSTREAM_URL: ${{ inputs.upstream_url || 'https://github.com/ClickHouse/ClickHouse.git' }}
+      UPSTREAM_URL: ${{ inputs.upstream_url || 'https://github.com/ClickHouse/Datastore.git' }}
       UPSTREAM_BRANCH: ${{ inputs.upstream_branch || 'master' }}
     steps:
       - name: checkout main

@@ -130,7 +130,7 @@ Enable logging for the table via the table setting `enable_logging_to_queue_log=
 Introspection capabilities are the same as the [S3Queue table engine](/engines/table-engines/integrations/s3queue#introspection) with several distinct differences:
 
 1. Use the `system.azure_queue_metadata_cache` for the in-memory state of the queue for server versions >= 25.1. For older versions use the `system.s3queue_metadata_cache` (it would contain information for `azure` tables as well).
-2. Enable the `system.azure_queue_log` via the main ClickHouse configuration e.g.
+2. Enable the `system.azure_queue_log` via the main Datastore configuration e.g.
 
   ```xml
   <azure_queue_log>
@@ -177,7 +177,7 @@ FORMAT Vertical
 
 Row 1:
 ──────
-hostname:              clickhouse
+hostname:              datastore
 event_date:            2024-12-16
 event_time:            2024-12-16 13:42:47
 database:              default

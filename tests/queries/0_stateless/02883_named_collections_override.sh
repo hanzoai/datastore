@@ -4,11 +4,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-u1="${CLICKHOUSE_TEST_UNIQUE_NAME}_collection1"
-u2="${CLICKHOUSE_TEST_UNIQUE_NAME}_collection2"
-u3="${CLICKHOUSE_TEST_UNIQUE_NAME}_collection3"
+u1="${DATASTORE_TEST_UNIQUE_NAME}_collection1"
+u2="${DATASTORE_TEST_UNIQUE_NAME}_collection2"
+u3="${DATASTORE_TEST_UNIQUE_NAME}_collection3"
 
-${CLICKHOUSE_CLIENT}  -m --query "
+${DATASTORE_CLIENT}  -m --query "
 
 DROP NAMED COLLECTION IF EXISTS $u1;
 DROP NAMED COLLECTION IF EXISTS $u2;

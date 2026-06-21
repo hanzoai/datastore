@@ -16,7 +16,7 @@ allocator goes through `CurrentMemoryTracker::alloc` (the throwing path).
 The oversized resize now throws `MEMORY_LIMIT_EXCEEDED` and the server
 stays alive.
 
-This test runs ClickHouse in a 1 GiB Docker memory cgroup, sends a single
+This test runs Datastore in a 1 GiB Docker memory cgroup, sends a single
 ~950 MiB query body, and asserts:
   - the server is still running afterwards,
   - no cgroup OOM kill was recorded,
@@ -31,7 +31,7 @@ from helpers.cluster import ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 
-# 1 GiB container memory limit. ClickHouse will detect this via cgroup v2 and
+# 1 GiB container memory limit. Datastore will detect this via cgroup v2 and
 # derive `max_server_memory_usage = 0.9 * 1 GiB = 921.6 MiB`.
 node = cluster.add_instance(
     "node",
@@ -78,7 +78,7 @@ def test_tcp_query_body_oversized_read():
         "server did not derive max_server_memory_usage from available RAM"
     )
 
-    pid_before = node.get_process_pid("clickhouse")
+    pid_before = node.get_process_pid("datastore")
     oom_kill_before = _cgroup_oom_kill_count(node)
 
     # 2. Send a ~950 MiB query body via the native TCP protocol from the
@@ -99,13 +99,13 @@ def test_tcp_query_body_oversized_read():
     time.sleep(1)
 
     # 4. Server must still be alive — no OOM kill, no crash.
-    pid_after = node.get_process_pid("clickhouse")
+    pid_after = node.get_process_pid("datastore")
     assert pid_after is not None, (
-        "expected ClickHouse to stay alive after rejecting the oversized "
+        "expected Datastore to stay alive after rejecting the oversized "
         "query, but the process is gone"
     )
     assert pid_after == pid_before, (
-        f"expected same ClickHouse process to keep running, "
+        f"expected same Datastore process to keep running, "
         f"got PID {pid_before} -> {pid_after}"
     )
     assert node.query("SELECT 1").strip() == "1", (

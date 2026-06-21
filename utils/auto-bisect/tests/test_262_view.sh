@@ -2,7 +2,7 @@
 set -e
 
 echo "$PWD"
-CH_PATH=${CH_PATH:=clickhouse}
+CH_PATH=${CH_PATH:=datastore}
 
 VIEW_NAME="x"
 
@@ -33,7 +33,7 @@ COMMENT 'comment'
 "
 
 # Extract create_table_query and calculate positions
-# We use position() inside ClickHouse for a cleaner, high-performance check
+# We use position() inside Datastore for a cleaner, high-performance check
 RESULT=$($CH_PATH client -q "
 SELECT
     if(position(create_table_query, 'COMMENT') < position(create_table_query, 'AS SELECT'), 1, 0)

@@ -1,5 +1,5 @@
 ---
-description: 'System table which exists only if ClickHouse Keeper or ZooKeeper are
+description: 'System table which exists only if Datastore Keeper or ZooKeeper are
   configured. It exposes data from the Keeper cluster defined in the config.'
 keywords: ['system table', 'zookeeper']
 slug: /operations/system-tables/zookeeper
@@ -9,18 +9,18 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-The table does not exist unless ClickHouse Keeper or ZooKeeper is configured. The `system.zookeeper` table exposes data from the Keeper clusters defined in the config.
+The table does not exist unless Datastore Keeper or ZooKeeper is configured. The `system.zookeeper` table exposes data from the Keeper clusters defined in the config.
 The query must either have a `path =`   condition or a `path IN`  condition set with the `WHERE` clause as shown below. This corresponds to the path of the children that you want to get data for.
 
-The query `SELECT * FROM system.zookeeper WHERE path = '/clickhouse'` outputs data for all children on the `/clickhouse` node.
+The query `SELECT * FROM system.zookeeper WHERE path = '/datastore'` outputs data for all children on the `/datastore` node.
 To output data for all root nodes, write path = '/'.
 If the path specified in 'path' does not exist, an exception will be thrown.
 
-The query `SELECT * FROM system.zookeeper WHERE path IN ('/', '/clickhouse')` outputs data for all children on the `/` and `/clickhouse` node.
+The query `SELECT * FROM system.zookeeper WHERE path IN ('/', '/datastore')` outputs data for all children on the `/` and `/datastore` node.
 If in the specified 'path' collection has does not exist path, an exception will be thrown.
 It can be used to do a batch of Keeper path queries.
 
-The query `SELECT * FROM system.zookeeper WHERE path = '/clickhouse' AND zookeeperName = 'auxiliary_cluster'` outputs data in `auxiliary_cluster` ZooKeeper cluster.
+The query `SELECT * FROM system.zookeeper WHERE path = '/datastore' AND zookeeperName = 'auxiliary_cluster'` outputs data in `auxiliary_cluster` ZooKeeper cluster.
 If the specified 'auxiliary_cluster' does not exists, an exception will be thrown.
 
 ## Columns {#columns}
@@ -48,7 +48,7 @@ Example:
 ```sql
 SELECT *
 FROM system.zookeeper
-WHERE path = '/clickhouse/tables/01-08/visits/replicas'
+WHERE path = '/datastore/tables/01-08/visits/replicas'
 FORMAT Vertical
 ```
 
@@ -68,7 +68,7 @@ ephemeralOwner: 0
 dataLength:     0
 numChildren:    7
 pzxid:          987021031383
-path:           /clickhouse/tables/01-08/visits/replicas
+path:           /datastore/tables/01-08/visits/replicas
 
 Row 2:
 ──────
@@ -85,5 +85,5 @@ ephemeralOwner: 0
 dataLength:     0
 numChildren:    7
 pzxid:          987021252247
-path:           /clickhouse/tables/01-08/visits/replicas
+path:           /datastore/tables/01-08/visits/replicas
 ```

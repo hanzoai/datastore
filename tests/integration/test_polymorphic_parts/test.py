@@ -5,7 +5,7 @@ import struct
 
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.test_tools import TSV, assert_eq_with_retry, exec_query_with_retry
 
 cluster = ClickHouseCluster(__file__)
@@ -45,7 +45,7 @@ def create_tables(name, nodes, node_settings, shard):
         node.query(
             """
             CREATE TABLE {name}(date Date, id UInt32, s String, arr Array(Int32))
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{shard}/{name}', '{repl}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/{shard}/{name}', '{repl}')
             PARTITION BY toYYYYMM(date)
             ORDER BY id
             SETTINGS index_granularity = 64, index_granularity_bytes = {index_granularity_bytes},
@@ -62,7 +62,7 @@ def create_tables_old_format(name, nodes, shard):
         node.query(
             """
             CREATE TABLE {name}(date Date, id UInt32, s String, arr Array(Int32))
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{shard}/{name}', '{repl}', date, id, 64)
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/{shard}/{name}', '{repl}', date, id, 64)
             """.format(
                 name=name, shard=shard, repl=i
             ),
@@ -377,8 +377,8 @@ node7 = cluster.add_instance(
     "node7",
     user_configs=["configs_old/users.d/not_optimize_count.xml"],
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
@@ -403,7 +403,7 @@ def start_cluster_diff_versions():
             node7.query(
                 """
                 CREATE TABLE {name}(date Date, id UInt32, s String, arr Array(Int32))
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/shard5/{name}', '1')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/shard5/{name}', '1')
                 PARTITION BY toYYYYMM(date)
                 ORDER BY id
                 SETTINGS index_granularity = 64, index_granularity_bytes = {index_granularity_bytes}
@@ -415,7 +415,7 @@ def start_cluster_diff_versions():
             node8.query(
                 """
                 CREATE TABLE {name}(date Date, id UInt32, s String, arr Array(Int32))
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/shard5/{name}', '2')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/shard5/{name}', '2')
                 PARTITION BY toYYYYMM(date)
                 ORDER BY id
                 SETTINGS index_granularity = 64, index_granularity_bytes = {index_granularity_bytes},

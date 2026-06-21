@@ -1,5 +1,5 @@
 ---
-description: 'Overview of supported data formats for input and output in ClickHouse'
+description: 'Overview of supported data formats for input and output in Datastore'
 sidebar_label: 'View all formats...'
 sidebar_position: 21
 slug: /interfaces/formats
@@ -11,8 +11,8 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 # Formats for input and output data {#formats-for-input-and-output-data}
 
-ClickHouse supports most of the known text and binary data formats. This allows easy integration into almost any working
-data pipeline to leverage the benefits of ClickHouse.
+Datastore supports most of the known text and binary data formats. This allows easy integration into almost any working
+data pipeline to leverage the benefits of Datastore.
 
 ## Input formats {#input-formats}
 
@@ -21,7 +21,7 @@ Input formats are used for:
 - Performing `SELECT` queries from file-backed tables such as `File`, `URL`, or `HDFS`
 - Reading dictionaries
 
-Choosing the right input format is crucial for efficient data ingestion in ClickHouse. With over 70 supported formats,
+Choosing the right input format is crucial for efficient data ingestion in Datastore. With over 70 supported formats,
 selecting the most performant option can significantly impact insert speed, CPU and memory usage, and overall system
 efficiency. To help navigate these choices, we benchmarked ingestion performance across formats, revealing key takeaways:
 
@@ -29,12 +29,12 @@ efficiency. To help navigate these choices, we benchmarked ingestion performance
   resource usage, and minimal server-side processing overhead.
 - **Compression is essential** - LZ4 reduces data size with minimal CPU cost, while ZSTD offers higher compression at the
   expense of additional CPU usage.
-- **Pre-sorting has a moderate impact**, as ClickHouse already sorts efficiently.
+- **Pre-sorting has a moderate impact**, as Datastore already sorts efficiently.
 - **Batching significantly improves efficiency** - larger batches reduce insert overhead and improve throughput.
 
 For a deep dive into the results and best practices,
-read the full [benchmark analysis](https://www.clickhouse.com/blog/clickhouse-input-format-matchup-which-is-fastest-most-efficient).
-For the full test results, explore the [FastFormats](https://fastformats.clickhouse.com/) online dashboard.
+read the full [benchmark analysis](https://www.datastore.com/blog/datastore-input-format-matchup-which-is-fastest-most-efficient).
+For the full test results, explore the [FastFormats](https://fastformats.datastore.com/) online dashboard.
 
 ## Output formats {#output-formats}
 
@@ -136,7 +136,7 @@ The supported formats are:
 | [Markdown](./formats/Markdown.md)                                                                          | ✗   | ✔     |
 | [Form](./formats/Form.md)                                                                                  | ✔   | ✗     |
 
-You can control some format processing parameters with the ClickHouse settings. For more information read the [Settings](/operations/settings/settings-formats.md) section.
+You can control some format processing parameters with the Datastore settings. For more information read the [Settings](/operations/settings/settings-formats.md) section.
 
 ## Format schema {#formatschema}
 

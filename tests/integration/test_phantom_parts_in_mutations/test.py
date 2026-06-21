@@ -35,7 +35,7 @@ def test_phantom_parts_to_do_in_mutations(started_cluster):
     node.query(
         """
         CREATE TABLE phantom_r1 (key UInt64, value String)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/phantom', 'r1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/phantom', 'r1')
         ORDER BY key
         SETTINGS old_parts_lifetime = 1,
                  cleanup_delay_period = 1,
@@ -43,7 +43,7 @@ def test_phantom_parts_to_do_in_mutations(started_cluster):
                  cleanup_thread_preferred_points_per_iteration = 0;
 
         CREATE TABLE phantom_r2 (key UInt64, value String)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/phantom', 'r2')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/phantom', 'r2')
         ORDER BY key
         SETTINGS old_parts_lifetime = 1,
                  cleanup_delay_period = 1,

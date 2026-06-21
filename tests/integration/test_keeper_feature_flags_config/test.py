@@ -10,7 +10,7 @@ from helpers.cluster import ClickHouseCluster
 CURRENT_TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 cluster = ClickHouseCluster(__file__)
 
-# clickhouse itself will use external zookeeper
+# datastore itself will use external zookeeper
 node = cluster.add_instance(
     "node",
     main_configs=["configs/enable_keeper.xml"],
@@ -40,7 +40,7 @@ def restart_clickhouse(feature_flags=[], expect_fail=False):
     node.stop_clickhouse()
     node.copy_file_to_container(
         os.path.join(CURRENT_TEST_DIR, "configs/enable_keeper.xml"),
-        "/etc/clickhouse-server/config.d/enable_keeper.xml",
+        "/etc/datastore-server/config.d/enable_keeper.xml",
     )
 
     if len(feature_flags) > 0:
@@ -52,7 +52,7 @@ def restart_clickhouse(feature_flags=[], expect_fail=False):
         feature_flags_config += "<\\/feature_flags>"
 
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/enable_keeper.xml",
+            "/etc/datastore-server/config.d/enable_keeper.xml",
             "<!-- FEATURE FLAGS -->",
             feature_flags_config,
         )

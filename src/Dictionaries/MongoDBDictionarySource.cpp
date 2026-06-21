@@ -115,7 +115,7 @@ void registerDictionarySourceMongoDB(DictionarySourceFactory & factory)
         bool /* created_from_ddl */) -> DictionarySourcePtr
     {
         throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-        "Dictionary source of type `mongodb` is disabled because ClickHouse was built without mongodb support.");
+        "Dictionary source of type `mongodb` is disabled because Datastore was built without mongodb support.");
     };
     #endif
 

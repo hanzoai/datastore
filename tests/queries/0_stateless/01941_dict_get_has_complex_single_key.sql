@@ -7,7 +7,7 @@ DROP DICTIONARY IF EXISTS test_dictionary;
 CREATE DICTIONARY test_dictionary(key String, value String)
 PRIMARY KEY key
 LAYOUT(COMPLEX_KEY_HASHED())
-SOURCE(CLICKHOUSE(TABLE 'test_dictionary_source'))
+SOURCE(DATASTORE(TABLE 'test_dictionary_source'))
 LIFETIME(0);
 
 SELECT 'dictGet';

@@ -31,7 +31,7 @@ def get_lg_prof_sample():
 
 def set_config(config, value):
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/jemalloc_profiler_sampling_rate.xml",
+        "/etc/datastore-server/config.d/jemalloc_profiler_sampling_rate.xml",
         f"{config}>.*<",
         f"{config}>{value}<",
     )

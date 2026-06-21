@@ -1,6 +1,6 @@
 -- Tags: distributed
 
--- from https://github.com/ClickHouse/ClickHouse/issues/5142
+-- from https://github.com/ClickHouse/Datastore/issues/5142
 
 set distributed_foreground_insert = 1;
 

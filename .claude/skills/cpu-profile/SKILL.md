@@ -1,6 +1,6 @@
 ---
 name: cpu-profile
-description: Profile a ClickHouse query using the sampling query profiler and system.trace_log. Use when the user wants to find CPU hotspots, analyze where time is spent in a query, or investigate performance bottlenecks.
+description: Profile a Datastore query using the sampling query profiler and system.trace_log. Use when the user wants to find CPU hotspots, analyze where time is spent in a query, or investigate performance bottlenecks.
 argument-hint: [query_id or query text]
 disable-model-invocation: false
 allowed-tools: Task, Bash, Read, Grep, Glob, AskUserQuestion
@@ -8,7 +8,7 @@ allowed-tools: Task, Bash, Read, Grep, Glob, AskUserQuestion
 
 # CPU Profile Analysis Skill
 
-Profile a ClickHouse query using the built-in sampling query profiler (`system.trace_log`).
+Profile a Datastore query using the built-in sampling query profiler (`system.trace_log`).
 Collects CPU stack traces at configurable intervals and analyzes them to find hotspots.
 
 ## Arguments
@@ -46,18 +46,18 @@ SETTINGS allow_introspection_functions = 1
 
 Generate a unique query ID and run the query with aggressive profiling settings (100us sampling = ~10,000 samples/sec).
 
-Use `clickhouse-client` in non-interactive mode with an explicit `--query_id` to avoid any race with concurrent queries:
+Use `datastore-client` in non-interactive mode with an explicit `--query_id` to avoid any race with concurrent queries:
 
 ```bash
 PROFILE_QID="cpu-profile-$(uuidgen)"
-clickhouse-client --query_id "$PROFILE_QID" -q "
+datastore-client --query_id "$PROFILE_QID" -q "
     SELECT ...
     SETTINGS query_profiler_cpu_time_period_ns = 100000,
              query_profiler_real_time_period_ns = 100000
 "
 ```
 
-Alternatively, if running interactively, parse the `Query id: <uuid>` line that `clickhouse-client` prints before each query.
+Alternatively, if running interactively, parse the `Query id: <uuid>` line that `datastore-client` prints before each query.
 
 After execution, verify the query completed and collect metadata:
 ```sql
@@ -194,8 +194,8 @@ Repeat drill-down until user selects "Done".
 - The `query_profiler_cpu_time_period_ns` setting controls sampling frequency. Default is 1,000,000,000 (1 sample/sec). Use 100,000 (100us) for detailed profiling of short queries, 1,000,000 (1ms) for longer queries.
 - `trace_type = 'CPU'` counts CPU time; `trace_type = 'Real'` counts wall-clock time (includes IO waits).
 - `allow_introspection_functions = 1` is required for `addressToSymbol`, `demangle`, `addressToLine`.
-- The `clickhouse-common-static-dbg` package must be installed for symbol resolution.
-- On ClickHouse Cloud, use `FROM clusterAllReplicas(default, system.trace_log)` to collect traces from all nodes.
+- The `datastore-common-static-dbg` package must be installed for symbol resolution.
+- On Datastore Cloud, use `FROM clusterAllReplicas(default, system.trace_log)` to collect traces from all nodes.
 - Stack traces in `system.trace_log` are stored as arrays of addresses, with index 1 being the innermost (leaf) frame.
 
 ## Examples

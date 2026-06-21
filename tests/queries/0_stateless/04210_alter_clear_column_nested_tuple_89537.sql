@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/89537
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/89537
 --
 -- `ALTER TABLE ... CLEAR COLUMN` on a `Tuple`-typed subcolumn of a `Nested`
 -- column followed by a merge (e.g. `OPTIMIZE TABLE ... FINAL`) used to abort

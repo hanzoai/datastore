@@ -31,7 +31,7 @@ Like [`base64Decode`](#base64Decode), but returns an empty string in case of err
         "SELECT tryBase64Decode('Y2xpY2tob3VzZQ==')",
         R"(
 ┌─tryBase64Decode('Y2xpY2tob3VzZQ==')─┐
-│ clickhouse                          │
+│ datastore                          │
 └─────────────────────────────────────┘
         )"
     }

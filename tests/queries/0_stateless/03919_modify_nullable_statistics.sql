@@ -3,12 +3,12 @@ drop table if exists t_stat_nullable_2 sync;
 SET materialize_statistics_on_insert = 1;
 
 create table t_stat_nullable_1(A Int64, B String, C String)
-Engine = ReplicatedMergeTree('/clickhouse/{database}/tables/t_stat_nullable', '1')
+Engine = ReplicatedMergeTree('/datastore/{database}/tables/t_stat_nullable', '1')
 order by A
 SETTINGS auto_statistics_types = 'uniq';
 
 create table t_stat_nullable_2( A Int64, B String, C String)
-Engine = ReplicatedMergeTree('/clickhouse/{database}/tables/t_stat_nullable', '2')
+Engine = ReplicatedMergeTree('/datastore/{database}/tables/t_stat_nullable', '2')
 order by A
 SETTINGS auto_statistics_types = 'uniq';
 

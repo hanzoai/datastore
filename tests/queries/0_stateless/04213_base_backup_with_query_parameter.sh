@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-# Regression test for https://github.com/ClickHouse/ClickHouse/issues/103324.
+# Regression test for https://github.com/ClickHouse/Datastore/issues/103324.
 #
 # Before the fix, `InterpreterSetQuery::applySettingsFromQuery` called
 # `BackupSettings::fromBackupQuery` for `BACKUP` queries (and the analogous
@@ -23,16 +23,16 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 #
 # Regression introduced by PR #99205 (commit `e6721ef7b16`).
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS t_103324"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE t_103324 (a Int) ENGINE = Memory"
-$CLICKHOUSE_CLIENT --query "INSERT INTO t_103324 VALUES (1)"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS t_103324"
+$DATASTORE_CLIENT --query "CREATE TABLE t_103324 (a Int) ENGINE = Memory"
+$DATASTORE_CLIENT --query "INSERT INTO t_103324 VALUES (1)"
 
 # `BACKUP` path: before the fix this raised `BAD_ARGUMENTS` synchronously on
 # the client, before the asynchronous backup operation was even queued.
 # `FORMAT Null` discards the operation UUID; the asynchronous backup itself
 # may fail later for unrelated reasons (the destination is intentionally
 # unreachable), which is irrelevant to this regression test.
-$CLICKHOUSE_CLIENT --param_backup_name='/tmp/x_103324' --query "
+$DATASTORE_CLIENT --param_backup_name='/tmp/x_103324' --query "
 BACKUP TABLE t_103324 TO S3('s3://test103324.invalid/x', 'k', 's')
     SETTINGS base_backup = S3({backup_name:String}, 'k', 's')
     ASYNC FORMAT Null
@@ -40,7 +40,7 @@ BACKUP TABLE t_103324 TO S3('s3://test103324.invalid/x', 'k', 's')
 
 # Symmetric check for the `RESTORE` path, which goes through
 # `RestoreSettings::extractCoreSettingsFromQuery`.
-$CLICKHOUSE_CLIENT --param_backup_name='/tmp/x_103324' --query "
+$DATASTORE_CLIENT --param_backup_name='/tmp/x_103324' --query "
 RESTORE TABLE t_103324 FROM S3('s3://test103324.invalid/x', 'k', 's')
     SETTINGS base_backup = S3({backup_name:String}, 'k', 's')
     ASYNC FORMAT Null
@@ -52,10 +52,10 @@ RESTORE TABLE t_103324 FROM S3('s3://test103324.invalid/x', 'k', 's')
 # `ProcessList::insert`). We just exercise the code path; the actual setting
 # value cannot be observed for `BACKUP ... ASYNC`, but the parse + apply
 # step must not throw.
-$CLICKHOUSE_CLIENT --param_backup_name='/tmp/x_103324' --query "
+$DATASTORE_CLIENT --param_backup_name='/tmp/x_103324' --query "
 BACKUP TABLE t_103324 TO S3('s3://test103324.invalid/y', 'k', 's')
     SETTINGS base_backup = S3({backup_name:String}, 'k', 's'), max_execution_time = 60
     ASYNC FORMAT Null
 " 2>&1 | { grep -F BAD_ARGUMENTS || echo CORE_SETTING_OK; }
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS t_103324"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS t_103324"

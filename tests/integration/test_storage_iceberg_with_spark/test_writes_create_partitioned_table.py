@@ -28,14 +28,14 @@ def test_writes_create_partitioned_table(started_cluster_iceberg_with_spark, for
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
-    with open(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/metadata/version-hint.text", "wb") as f:
+    with open(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/metadata/version-hint.text", "wb") as f:
         f.write(b"2")
 
-    df = spark.read.format("iceberg").load(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}").collect()
+    df = spark.read.format("iceberg").load(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}").collect()
     assert len(df) == 1
 
 
@@ -57,9 +57,9 @@ def test_writes_date_column_with_time_transforms(started_cluster_iceberg_with_sp
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
-    df = spark.read.format("iceberg").load(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}").collect()
+    df = spark.read.format("iceberg").load(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}").collect()
     assert len(df) == 1

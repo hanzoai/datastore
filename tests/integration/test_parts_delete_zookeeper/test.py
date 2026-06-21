@@ -31,7 +31,7 @@ def test_merge_doesnt_work_without_zookeeper(start_cluster, request):
     node1.query(
         f"""
         CREATE TABLE {table}(date Date, id UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/replicated', 'node1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test/replicated', 'node1')
         ORDER BY id PARTITION BY toYYYYMM(date) SETTINGS old_parts_lifetime=4, cleanup_delay_period=1, cleanup_thread_preferred_points_per_iteration=0;
         """
     )

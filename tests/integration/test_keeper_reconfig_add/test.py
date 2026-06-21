@@ -28,13 +28,13 @@ def started_cluster():
         node2.stop_clickhouse()
         node2.copy_file_to_container(
             os.path.join(CONFIG_DIR, "keeper2.xml"),
-            "/etc/clickhouse-server/config.d/keeper.xml",
+            "/etc/datastore-server/config.d/keeper.xml",
         )
 
         node3.stop_clickhouse()
         node3.copy_file_to_container(
             os.path.join(CONFIG_DIR, "keeper3.xml"),
-            "/etc/clickhouse-server/config.d/keeper.xml",
+            "/etc/datastore-server/config.d/keeper.xml",
         )
 
         yield cluster

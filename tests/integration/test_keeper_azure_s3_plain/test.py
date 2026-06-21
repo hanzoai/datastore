@@ -18,7 +18,7 @@ def generate_config(azurite_port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <logger>
         <level>trace</level>
     </logger>
@@ -26,7 +26,7 @@ def generate_config(azurite_port):
         <disks>
             <log_local>
                 <type>local</type>
-                <path>/var/lib/clickhouse/coordination/logs/</path>
+                <path>/var/lib/datastore/coordination/logs/</path>
             </log_local>
             <log_azure_plain>
                 <type>s3_plain</type>
@@ -38,7 +38,7 @@ def generate_config(azurite_port):
             </log_azure_plain>
             <snapshot_local>
                 <type>local</type>
-                <path>/var/lib/clickhouse/coordination/snapshots/</path>
+                <path>/var/lib/datastore/coordination/snapshots/</path>
             </snapshot_local>
         </disks>
     </storage_configuration>
@@ -69,7 +69,7 @@ def generate_config(azurite_port):
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>"""
+</datastore>"""
         )
     return path
 
@@ -124,10 +124,10 @@ def cleanup(started_cluster, node):
 
     # Remove local coordination directories.
     node.exec_in_container(
-        ["rm", "-rf", "/var/lib/clickhouse/coordination/logs"]
+        ["rm", "-rf", "/var/lib/datastore/coordination/logs"]
     )
     node.exec_in_container(
-        ["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"]
+        ["rm", "-rf", "/var/lib/datastore/coordination/snapshots"]
     )
 
     node.start_clickhouse()

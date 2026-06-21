@@ -16,7 +16,7 @@ CREATE DICTIONARY table_function_dictionary_test_dictionary
    value UInt64 DEFAULT 0
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' DATABASE currentDatabase() TABLE 'table_function_dictionary_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' DATABASE currentDatabase() TABLE 'table_function_dictionary_source_table'))
 LAYOUT(DIRECT());
 
 SELECT * FROM dictionary('table_function_dictionary_test_dictionary') ORDER BY ALL;

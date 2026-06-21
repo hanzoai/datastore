@@ -12,7 +12,7 @@ use crate::compilers::clang::{Clang, ClangXX};
 use crate::compilers::rustc::RustC;
 use crate::config::Config;
 use crate::counters::CacheStatsTracker;
-use crate::disks::clickhouse::ClickHouseDisk;
+use crate::disks::datastore::ClickHouseDisk;
 use crate::disks::local::LocalDisk;
 use crate::traits::compiler::CompilerMeta;
 use crate::traits::disk::Disk;
@@ -125,13 +125,13 @@ async fn compiler_cache_entrypoint(config: &Config) -> Result<(), Box<dyn Error>
 
             let compiled_bytes = match clickhouse_disk.read(&compiler_version, &total_hash).await {
                 Ok(bytes) => {
-                    info!("Loaded from ClickHouse");
+                    info!("Loaded from Datastore");
 
                     stats.increment_remote_hit();
 
                     compiler
                         .apply_cache(&bytes)
-                        .expect("Unable to apply cache from ClickHouse");
+                        .expect("Unable to apply cache from Datastore");
 
                     did_load_from_clickhouse = true;
 
@@ -179,15 +179,15 @@ async fn compiler_cache_entrypoint(config: &Config) -> Result<(), Box<dyn Error>
                 .await;
 
             if upload_result.is_ok() {
-                info!("Uploaded to ClickHouse");
+                info!("Uploaded to Datastore");
                 break;
             }
-            warn!("Failed to upload to ClickHouse, retrying...");
+            warn!("Failed to upload to Datastore, retrying...");
 
             tries -= 1;
             if tries == 0 {
                 error!(
-                    "Failed to upload to ClickHouse: {}",
+                    "Failed to upload to Datastore: {}",
                     upload_result.err().unwrap()
                 );
                 break;

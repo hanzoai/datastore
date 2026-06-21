@@ -35,7 +35,7 @@ def test_cleanup_dir_after_bad_zk_conn(start_cluster):
        id Int64,
        event_time DateTime
     )
-    Engine=ReplicatedMergeTree('/clickhouse/tables/replica/test', 'node1')
+    Engine=ReplicatedMergeTree('/datastore/tables/replica/test', 'node1')
     PARTITION BY toYYYYMMDD(event_time)
     ORDER BY id;"""
     with PartitionManager() as pm:
@@ -54,27 +54,27 @@ def test_cleanup_dir_after_bad_zk_conn(start_cluster):
 
 def test_cleanup_dir_after_wrong_replica_name(start_cluster):
     node1.query_with_retry(
-        "CREATE TABLE IF NOT EXISTS test2_r1 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test2/', 'r1') ORDER BY n"
+        "CREATE TABLE IF NOT EXISTS test2_r1 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test2/', 'r1') ORDER BY n"
     )
     error = node1.query_and_get_error(
-        "CREATE TABLE test2_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test2/', 'r1') ORDER BY n"
+        "CREATE TABLE test2_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test2/', 'r1') ORDER BY n"
     )
     assert "already exists" in error
     node1.query_with_retry(
-        "CREATE TABLE IF NOT EXISTS test_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test2/', 'r2') ORDER BY n"
+        "CREATE TABLE IF NOT EXISTS test_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test2/', 'r2') ORDER BY n"
     )
 
 
 def test_cleanup_dir_after_wrong_zk_path(start_cluster):
     node1.query(
-        "CREATE TABLE test3_r1 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test3/', 'r1') ORDER BY n"
+        "CREATE TABLE test3_r1 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test3/', 'r1') ORDER BY n"
     )
     error = node1.query_and_get_error(
-        "CREATE TABLE test3_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/', 'r2') ORDER BY n"
+        "CREATE TABLE test3_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/', 'r2') ORDER BY n"
     )
     assert "Cannot create" in error
     node1.query(
-        "CREATE TABLE test3_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test3/', 'r2') ORDER BY n"
+        "CREATE TABLE test3_r2 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test3/', 'r2') ORDER BY n"
     )
     node1.query("DROP TABLE test3_r1 SYNC")
     node1.query("DROP TABLE test3_r2 SYNC")
@@ -82,7 +82,7 @@ def test_cleanup_dir_after_wrong_zk_path(start_cluster):
 
 def test_attach_without_zk(start_cluster):
     node1.query_with_retry(
-        "CREATE TABLE test4_r1 (n UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test4/', 'r1') ORDER BY n"
+        "CREATE TABLE test4_r1 (n UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test4/', 'r1') ORDER BY n"
     )
     node1.query("DETACH TABLE test4_r1")
     with PartitionManager() as pm:

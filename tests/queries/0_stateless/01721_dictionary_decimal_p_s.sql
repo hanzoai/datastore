@@ -30,7 +30,7 @@ CREATE DICTIONARY IF NOT EXISTS decimal_dict (
 --	,Decimal256_ Decimal256(37) DEFAULT 0.11
 )
 PRIMARY KEY KeyField
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_decimal_dict' DB current_database()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_decimal_dict' DB current_database()))
 LIFETIME(0) LAYOUT(SPARSE_HASHED);
 
 select '-------- 42 --------';

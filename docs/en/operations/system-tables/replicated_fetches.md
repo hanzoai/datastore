@@ -50,11 +50,11 @@ table:                       t
 elapsed:                     7.243039876
 progress:                    0.41832135995612835
 result_part_name:            all_0_0_0
-result_part_path:            /var/lib/clickhouse/store/700/70080a04-b2de-4adf-9fa5-9ea210e81766/all_0_0_0/
+result_part_path:            /var/lib/datastore/store/700/70080a04-b2de-4adf-9fa5-9ea210e81766/all_0_0_0/
 partition_id:                all
 total_size_bytes_compressed: 1052783726
 bytes_read_compressed:       440401920
-source_replica_path:         /clickhouse/test/t/replicas/1
+source_replica_path:         /datastore/test/t/replicas/1
 source_replica_hostname:     node1
 source_replica_port:         9009
 interserver_scheme:          http

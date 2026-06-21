@@ -14,7 +14,7 @@ CREATE DICTIONARY 02155_test_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02155_test_table'))
+SOURCE(DATASTORE(TABLE '02155_test_table'))
 LAYOUT(DIRECT());
 
 SELECT name, comment FROM system.dictionaries WHERE name == '02155_test_dictionary' AND database == currentDatabase();

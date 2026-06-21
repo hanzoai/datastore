@@ -1,9 +1,9 @@
 """
-End-to-end tests for the stacktrace helpers in tests/clickhouse-test.
+End-to-end tests for the stacktrace helpers in tests/datastore-test.
 
 Background
 ----------
-``clickhouse-test`` assigns ``args = parse_args()`` only inside
+``datastore-test`` assigns ``args = parse_args()`` only inside
 ``if __name__ == "__main__":``.  On macOS, Python's default
 multiprocessing start method is ``spawn``, which re-imports the module
 in each worker without executing ``__main__`` — so module-level
@@ -13,9 +13,9 @@ hung-check path raised ``NameError: name 'args' is not defined`` inside
 ``get_server_pid``.
 
 These tests reproduce the same import condition by loading
-``clickhouse-test`` via ``runpy.run_path`` (which, like spawn, does not
+``datastore-test`` via ``runpy.run_path`` (which, like spawn, does not
 run ``__main__``) and then invoke each public stacktrace helper against
-the live ClickHouse server provided by the ``ClickHouseService``
+the live Datastore server provided by the ``ClickHouseService``
 fixture in ``ci/jobs/ci_tests_job.py``.
 
 Pre-fix: NameError inside the fresh import.
@@ -29,21 +29,21 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "clickhouse-test")
+_DATASTORE_TEST = str(_REPO_ROOT / "tests" / "datastore-test")
 
 
 def _load_clickhouse_test():
-    # Mimic a spawn worker: load clickhouse-test without running __main__,
+    # Mimic a spawn worker: load datastore-test without running __main__,
     # so module-level `args` is absent.
-    ct = runpy.run_path(_CLICKHOUSE_TEST)
+    ct = runpy.run_path(_DATASTORE_TEST)
     assert "args" not in ct, (
         "module-level 'args' must not be defined outside __main__; otherwise "
         "the spawn-worker scenario this test reproduces does not apply"
     )
 
     # Sanity-check the precondition: the CI tests job started a server.
-    assert ct["pgrep"](command="clickhouse-server"), (
-        "no clickhouse-server process found — this test expects ClickHouseService "
+    assert ct["pgrep"](command="datastore-server"), (
+        "no datastore-server process found — this test expects ClickHouseService "
         "(see ci/jobs/ci_tests_job.py) to be running on localhost:9000"
     )
     return ct
@@ -55,7 +55,7 @@ def _make_args():
     # after parse_args() for a local-server, plaintext-TCP,
     # default-database run.
     return argparse.Namespace(
-        client="clickhouse-client --port=9000",
+        client="datastore-client --port=9000",
         client_option=None,
         secure=False,
         tcp_host="localhost",

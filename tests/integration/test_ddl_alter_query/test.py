@@ -29,14 +29,14 @@ def started_cluster():
         for i, node in enumerate([node1, node2]):
             node.query("CREATE DATABASE testdb")
             node.query(
-                """CREATE TABLE testdb.test_table(id UInt32, val String) ENGINE = ReplicatedMergeTree('/clickhouse/test/test_table1', '{}') ORDER BY id;""".format(
+                """CREATE TABLE testdb.test_table(id UInt32, val String) ENGINE = ReplicatedMergeTree('/datastore/test/test_table1', '{}') ORDER BY id;""".format(
                     i
                 )
             )
         for i, node in enumerate([node3, node4]):
             node.query("CREATE DATABASE testdb")
             node.query(
-                """CREATE TABLE testdb.test_table(id UInt32, val String) ENGINE = ReplicatedMergeTree('/clickhouse/test/test_table2', '{}') ORDER BY id;""".format(
+                """CREATE TABLE testdb.test_table(id UInt32, val String) ENGINE = ReplicatedMergeTree('/datastore/test/test_table2', '{}') ORDER BY id;""".format(
                     i
                 )
             )
@@ -79,12 +79,12 @@ def test_ddl_queue_hostname_change(started_cluster):
 
     # There's no easy way to change hostname of a container, so let's update values in zk
     query_znode = node1.query(
-        "select max(name) from system.zookeeper where path='/clickhouse/task_queue/ddl'"
+        "select max(name) from system.zookeeper where path='/datastore/task_queue/ddl'"
     )[:-1]
 
     value = (
         node1.query(
-            "select value from system.zookeeper where path='/clickhouse/task_queue/ddl' and name='{}' format TSVRaw".format(
+            "select value from system.zookeeper where path='/datastore/task_queue/ddl' and name='{}' format TSVRaw".format(
                 query_znode
             )
         )[:-1]
@@ -95,22 +95,22 @@ def test_ddl_queue_hostname_change(started_cluster):
     )
 
     finished_znode = node1.query(
-        "select name from system.zookeeper where path='/clickhouse/task_queue/ddl/{}/finished' and name like '%node1%'".format(
+        "select name from system.zookeeper where path='/datastore/task_queue/ddl/{}/finished' and name like '%node1%'".format(
             query_znode
         )
     )[:-1]
 
     node1.query(
-        "insert into system.zookeeper (name, path, value) values ('{}', '/clickhouse/task_queue/ddl', '{}')".format(
+        "insert into system.zookeeper (name, path, value) values ('{}', '/datastore/task_queue/ddl', '{}')".format(
             query_znode, value.replace("node1", "imaginary.old.hostname")
         )
     )
     started_cluster.get_kazoo_client("zoo1").delete(
-        "/clickhouse/task_queue/ddl/{}/finished/{}".format(query_znode, finished_znode)
+        "/datastore/task_queue/ddl/{}/finished/{}".format(query_znode, finished_znode)
     )
 
     node1.query(
-        "insert into system.zookeeper (name, path, value) values ('{}', '/clickhouse/task_queue/ddl/{}/finished', '0\\n')".format(
+        "insert into system.zookeeper (name, path, value) values ('{}', '/datastore/task_queue/ddl/{}/finished', '0\\n')".format(
             finished_znode.replace("node1", "imaginary.old.hostname"), query_znode
         )
     )

@@ -15,9 +15,9 @@
         </structure>
 
         <source>
-            <clickhouse>
+            <datastore>
                 <table>dictionary_values</table>
-            </clickhouse>
+            </datastore>
         </source>
 
         <layout>

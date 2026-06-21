@@ -1,4 +1,4 @@
--- env SQL_FUZZY_FUNCTIONS=arrayEnumerateUniqRanked,arrayEnumerateDenseRanked SQL_FUZZY_RUNS=1000 clickhouse-test fuzzy
+-- env SQL_FUZZY_FUNCTIONS=arrayEnumerateUniqRanked,arrayEnumerateDenseRanked SQL_FUZZY_RUNS=1000 datastore-test fuzzy
 
 SELECT arrayEnumerateUniq(         [1,1,2,2,1,1],    [1,2,1,2,2,2]);
 SELECT arrayEnumerateUniqRanked(1, [1,1,2,2,1,1], 1, [1,2,1,2,2,2],1);

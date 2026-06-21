@@ -1,5 +1,5 @@
 -- Test that EXCEPT ALL and INTERSECT ALL correctly handle row multiplicities.
--- https://github.com/ClickHouse/ClickHouse/issues/96801
+-- https://github.com/ClickHouse/Datastore/issues/96801
 
 SELECT '-- EXCEPT ALL: basic (subtract one from two duplicates)';
 SELECT 1 AS x

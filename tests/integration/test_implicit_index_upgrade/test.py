@@ -14,7 +14,7 @@ def started_cluster():
         cluster.add_instance(
             "node",
             with_zookeeper=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="25.10",
             with_installed_binary=True,
             stay_alive=True,
@@ -54,7 +54,7 @@ def test_implicit_index_upgrade_numeric(started_cluster):
             value2 Float64,
             label String
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_numeric', 'r1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test_numeric', 'r1')
         ORDER BY key
         SETTINGS add_minmax_index_for_numeric_columns=1, add_minmax_index_for_string_columns=0;
         """
@@ -96,7 +96,7 @@ def test_implicit_index_upgrade_string(started_cluster):
             label String,
             tag String
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_string', 'r1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test_string', 'r1')
         ORDER BY key
         SETTINGS add_minmax_index_for_numeric_columns=0, add_minmax_index_for_string_columns=1;
         """
@@ -138,7 +138,7 @@ def test_implicit_index_upgrade_mixed(started_cluster):
             label String,
             tag String
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_mixed', 'r1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test_mixed', 'r1')
         ORDER BY key
         SETTINGS add_minmax_index_for_numeric_columns=1, add_minmax_index_for_string_columns=1;
         """
@@ -187,7 +187,7 @@ def test_implicit_index_upgrade_alter_replay(started_cluster):
             value Int32,
             label String
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_alter_replay', 'r1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test_alter_replay', 'r1')
         ORDER BY key
         SETTINGS add_minmax_index_for_numeric_columns=1, add_minmax_index_for_string_columns=0;
         """
@@ -217,7 +217,7 @@ def test_implicit_index_upgrade_alter_replay(started_cluster):
             label String,
             extra Float64 DEFAULT 0
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_alter_replay', 'r2')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test_alter_replay', 'r2')
         ORDER BY key
         SETTINGS add_minmax_index_for_numeric_columns=1, add_minmax_index_for_string_columns=0;
         """

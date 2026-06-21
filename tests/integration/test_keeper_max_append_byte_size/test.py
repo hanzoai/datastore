@@ -41,7 +41,7 @@ def change_byte_limit_and_restart(node, byte_limit):
     logging.info(f"Changing {node.name} byte limit to {byte_limit}...")
     # Use sed-compatible regex: [0-9]\+ matches one or more digits in sed
     node.replace_in_config(
-        f"/etc/clickhouse-server/config.d/keeper_{node.name}.xml",
+        f"/etc/datastore-server/config.d/keeper_{node.name}.xml",
         "<max_requests_append_bytes_size>[0-9]\\+</max_requests_append_bytes_size>",
         f"<max_requests_append_bytes_size>{byte_limit}</max_requests_append_bytes_size>",
     )

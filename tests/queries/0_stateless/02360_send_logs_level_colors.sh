@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=trace
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=trace
 
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-file_name="${CLICKHOUSE_TMP}/res_${CLICKHOUSE_DATABASE}.log"
+file_name="${DATASTORE_TMP}/res_${DATASTORE_DATABASE}.log"
 
 # Run query via expect to make isatty() return true
 function run()
@@ -24,8 +24,8 @@ EOF
     grep -F $'\x1b' "$file_name" && cat "$file_name" || echo "ASCII text"
 }
 
-run "$CLICKHOUSE_CLIENT -q 'SELECT 1' 2>$file_name"
-run "$CLICKHOUSE_CLIENT -q 'SELECT 1' --server_logs_file=$file_name"
-run "$CLICKHOUSE_CLIENT -q 'SELECT 1' --server_logs_file=- >$file_name"
+run "$DATASTORE_CLIENT -q 'SELECT 1' 2>$file_name"
+run "$DATASTORE_CLIENT -q 'SELECT 1' --server_logs_file=$file_name"
+run "$DATASTORE_CLIENT -q 'SELECT 1' --server_logs_file=- >$file_name"
 
 rm -f "$file_name"

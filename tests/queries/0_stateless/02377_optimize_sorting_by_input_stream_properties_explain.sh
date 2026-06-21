@@ -15,28 +15,28 @@ FIND_SORTMODE="$GREP_SORTMODE | $TRIM_LEADING_SPACES"
 
 function explain_sorting {
     echo "-- QUERY: "$1
-    $CLICKHOUSE_CLIENT --merge_tree_read_split_ranges_into_intersecting_and_non_intersecting_injection_probability=0.0 -q "$1" | eval $FIND_SORTING
+    $DATASTORE_CLIENT --merge_tree_read_split_ranges_into_intersecting_and_non_intersecting_injection_probability=0.0 -q "$1" | eval $FIND_SORTING
 }
 
 function explain_sortmode {
     echo "-- QUERY: "$1
-    $CLICKHOUSE_CLIENT --enable_analyzer=0 --merge_tree_read_split_ranges_into_intersecting_and_non_intersecting_injection_probability=0.0 -q "$1" | eval $FIND_SORTMODE
+    $DATASTORE_CLIENT --enable_analyzer=0 --merge_tree_read_split_ranges_into_intersecting_and_non_intersecting_injection_probability=0.0 -q "$1" | eval $FIND_SORTMODE
     echo "-- QUERY (analyzer): "$1
-    $CLICKHOUSE_CLIENT --enable_analyzer=1 --merge_tree_read_split_ranges_into_intersecting_and_non_intersecting_injection_probability=0.0 -q "$1" | eval $FIND_SORTMODE
+    $DATASTORE_CLIENT --enable_analyzer=1 --merge_tree_read_split_ranges_into_intersecting_and_non_intersecting_injection_probability=0.0 -q "$1" | eval $FIND_SORTMODE
 }
 
-$CLICKHOUSE_CLIENT -q "drop table if exists optimize_sorting sync"
-$CLICKHOUSE_CLIENT -q "create table optimize_sorting (a UInt64, b UInt64, c UInt64) engine=MergeTree() order by tuple()"
-$CLICKHOUSE_CLIENT -q "insert into optimize_sorting values (0, 0, 0) (1, 1, 1)"
+$DATASTORE_CLIENT -q "drop table if exists optimize_sorting sync"
+$DATASTORE_CLIENT -q "create table optimize_sorting (a UInt64, b UInt64, c UInt64) engine=MergeTree() order by tuple()"
+$DATASTORE_CLIENT -q "insert into optimize_sorting values (0, 0, 0) (1, 1, 1)"
 echo "-- EXPLAIN PLAN sorting for MergeTree w/o sorting key"
 explain_sortmode "$MAKE_OUTPUT_STABLE;EXPLAIN PLAN actions=1, header=1, sorting=1 SELECT a FROM optimize_sorting ORDER BY a"
-$CLICKHOUSE_CLIENT -q "drop table if exists optimize_sorting sync"
+$DATASTORE_CLIENT -q "drop table if exists optimize_sorting sync"
 
-$CLICKHOUSE_CLIENT -q "drop table if exists optimize_sorting sync"
-$CLICKHOUSE_CLIENT -q "create table optimize_sorting (a UInt64, b UInt64, c UInt64) engine=MergeTree() order by (a, b)"
-$CLICKHOUSE_CLIENT -q "insert into optimize_sorting select number, number % 5, number % 2 from numbers(0,10)"
-$CLICKHOUSE_CLIENT -q "insert into optimize_sorting select number, number % 5, number % 2 from numbers(10,10)"
-$CLICKHOUSE_CLIENT -q "insert into optimize_sorting SELECT number, number % 5, number % 2 from numbers(20,10)"
+$DATASTORE_CLIENT -q "drop table if exists optimize_sorting sync"
+$DATASTORE_CLIENT -q "create table optimize_sorting (a UInt64, b UInt64, c UInt64) engine=MergeTree() order by (a, b)"
+$DATASTORE_CLIENT -q "insert into optimize_sorting select number, number % 5, number % 2 from numbers(0,10)"
+$DATASTORE_CLIENT -q "insert into optimize_sorting select number, number % 5, number % 2 from numbers(10,10)"
+$DATASTORE_CLIENT -q "insert into optimize_sorting SELECT number, number % 5, number % 2 from numbers(20,10)"
 
 echo "-- disable optimization -> sorting order is NOT propagated from subquery -> full sort"
 explain_sorting "$DISABLE_OPTIMIZATION;EXPLAIN PIPELINE SELECT a FROM (SELECT a FROM optimize_sorting) ORDER BY a"
@@ -74,4 +74,4 @@ explain_sortmode "$MAKE_OUTPUT_STABLE;EXPLAIN PLAN actions=1, header=1, sorting=
 echo "-- check that correct sorting info is provided in case of only prefix of sorting key is in ORDER BY clause but all sorting key columns returned by query"
 explain_sortmode "$MAKE_OUTPUT_STABLE;EXPLAIN PLAN sorting=1 SELECT a, b FROM optimize_sorting ORDER BY a"
 
-$CLICKHOUSE_CLIENT -q "drop table if exists optimize_sorting sync"
+$DATASTORE_CLIENT -q "drop table if exists optimize_sorting sync"

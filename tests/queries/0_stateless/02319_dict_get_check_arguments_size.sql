@@ -15,7 +15,7 @@ CREATE DICTIONARY test_dictionary
 )
 PRIMARY KEY id
 LAYOUT(FLAT())
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LIFETIME(0);
 
 SELECT dictGet('test_dictionary', 'value', 0);
@@ -45,7 +45,7 @@ CREATE DICTIONARY range_hashed_dictionary
     value String
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start MAX end)
 LIFETIME(0);

@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function get_exception_message()
 {
-  $CLICKHOUSE_CLIENT --query "$1" |& head -n1 | sed 's/.*DB::Exception: \(.*\) (version.*/\1/g'
+  $DATASTORE_CLIENT --query "$1" |& head -n1 | sed 's/.*DB::Exception: \(.*\) (version.*/\1/g'
 }
 
 get_exception_message "Select * from sqlite('/etc/passwd', 'something');"

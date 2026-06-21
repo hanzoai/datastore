@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Decimal data types in ClickHouse, which provide
+description: 'Documentation for the Decimal data types in Datastore, which provide
   fixed-point arithmetic with configurable precision'
 sidebar_label: 'Decimal'
 sidebar_position: 6

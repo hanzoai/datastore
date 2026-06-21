@@ -6,10 +6,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-[ -e "${CLICKHOUSE_TMP}"/test_append_to_output_file ] && rm "${CLICKHOUSE_TMP}"/test_append_to_output_file
+[ -e "${DATASTORE_TMP}"/test_append_to_output_file ] && rm "${DATASTORE_TMP}"/test_append_to_output_file
 
-${CLICKHOUSE_CLIENT} --query "SELECT * FROM (SELECT 'Hello, World! From client.') INTO OUTFILE '${CLICKHOUSE_TMP}/test_append_to_output_file'"
-${CLICKHOUSE_LOCAL} --query "SELECT * FROM (SELECT 'Hello, World! From local.') INTO OUTFILE '${CLICKHOUSE_TMP}/test_append_to_output_file' APPEND"
-cat ${CLICKHOUSE_TMP}/test_append_to_output_file
+${DATASTORE_CLIENT} --query "SELECT * FROM (SELECT 'Hello, World! From client.') INTO OUTFILE '${DATASTORE_TMP}/test_append_to_output_file'"
+${DATASTORE_LOCAL} --query "SELECT * FROM (SELECT 'Hello, World! From local.') INTO OUTFILE '${DATASTORE_TMP}/test_append_to_output_file' APPEND"
+cat ${DATASTORE_TMP}/test_append_to_output_file
 
-rm -f "${CLICKHOUSE_TMP}/test_append_to_output_file"
+rm -f "${DATASTORE_TMP}/test_append_to_output_file"

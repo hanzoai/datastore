@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/10894
+-- https://github.com/ClickHouse/Datastore/issues/10894
 
 DROP TABLE IF EXISTS event;
 DROP TABLE IF EXISTS user;

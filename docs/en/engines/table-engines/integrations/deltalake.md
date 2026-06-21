@@ -33,7 +33,7 @@ ENGINE = DeltaLake(url, [aws_access_key_id, aws_secret_access_key,] [extra_crede
 
 - `url` — Bucket url with path to the existing Delta Lake table.
 - `aws_access_key_id`, `aws_secret_access_key` - Long-term credentials for the [AWS](https://aws.amazon.com/) account user.  You can use these to authenticate your requests. Parameter is optional. If credentials are not specified, they are used from the configuration file.
-- `extra_credentials` - Optional. Used to pass a `role_arn` for role-based access in ClickHouse Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
+- `extra_credentials` - Optional. Used to pass a `role_arn` for role-based access in Datastore Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
 
 Engine parameters can be specified using [Named Collections](/operations/named-collections.md).
 
@@ -41,21 +41,21 @@ Engine parameters can be specified using [Named Collections](/operations/named-c
 
 ```sql
 CREATE TABLE deltalake
-ENGINE = DeltaLake('http://mars-doc-test.s3.amazonaws.com/clickhouse-bucket-3/test_table/', 'ABC123', 'Abc+123')
+ENGINE = DeltaLake('http://mars-doc-test.s3.amazonaws.com/datastore-bucket-3/test_table/', 'ABC123', 'Abc+123')
 ```
 
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <deltalake_conf>
-            <url>http://mars-doc-test.s3.amazonaws.com/clickhouse-bucket-3/</url>
+            <url>http://mars-doc-test.s3.amazonaws.com/datastore-bucket-3/</url>
             <access_key_id>ABC123<access_key_id>
             <secret_access_key>Abc+123</secret_access_key>
         </deltalake_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql
@@ -75,7 +75,7 @@ ENGINE = DeltaLake('https://storage.googleapis.com/<bucket>/<path>/', '<access_k
 ```
 
 :::note[Unsupported gsutil URI]
-gsutil URI such as `gs://clickhouse-docs-example-bucket` is not supported, please use a URL starting `https://storage.googleapis.com`
+gsutil URI such as `gs://datastore-docs-example-bucket` is not supported, please use a URL starting `https://storage.googleapis.com`
 :::
 
 **Arguments**

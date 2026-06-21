@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} -m --query "
+${DATASTORE_CLIENT} -m --query "
 DROP TABLE IF EXISTS test_s3;
 
 CREATE TABLE test_s3 (a UInt64, b UInt64)
@@ -25,10 +25,10 @@ INSERT INTO test_s3 SELECT number, number FROM numbers_mt(1);
 for _ in {0..9}
 do
     query="SELECT a, b FROM test_s3"
-    query_id=$(${CLICKHOUSE_CLIENT} --query "select queryID() from ($query) limit 1" 2>&1)
-    ${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
+    query_id=$(${DATASTORE_CLIENT} --query "select queryID() from ($query) limit 1" 2>&1)
+    ${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
 
-    RES=$(${CLICKHOUSE_CLIENT} -m --query "
+    RES=$(${DATASTORE_CLIENT} -m --query "
     SELECT ProfileEvents['DiskConnectionsPreserved'] > 0
     FROM system.query_log
     WHERE event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish'
@@ -49,7 +49,7 @@ done
 
 for _ in {0..9}
 do
-    query_id=$(${CLICKHOUSE_CLIENT} -q "
+    query_id=$(${DATASTORE_CLIENT} -q "
     SELECT queryID() FROM(
         SELECT *
         FROM url(
@@ -59,9 +59,9 @@ do
         ) LIMIT 1 SETTINGS max_threads=1, http_make_head_request=0;
     ")
 
-    ${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
+    ${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
 
-    RES=$(${CLICKHOUSE_CLIENT} -m --query "
+    RES=$(${DATASTORE_CLIENT} -m --query "
     SELECT ProfileEvents['StorageConnectionsPreserved'] > 0
     FROM system.query_log
     WHERE event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish'

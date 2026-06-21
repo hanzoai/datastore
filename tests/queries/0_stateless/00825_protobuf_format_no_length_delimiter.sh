@@ -9,7 +9,7 @@ SCHEMADIR=$CURDIR/format_schemas
 set -eo pipefail
 
 # Run the client.
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE IF EXISTS no_length_delimiter_protobuf_00825;
 DROP TABLE IF EXISTS roundtrip_no_length_delimiter_protobuf_00825;
 
@@ -24,7 +24,7 @@ SELECT * FROM no_length_delimiter_protobuf_00825;
 EOF
 
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_no_length_delimiter.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM no_length_delimiter_protobuf_00825 LIMIT 1 FORMAT ProtobufSingle SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_no_length_delimiter:Message'" > "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM no_length_delimiter_protobuf_00825 LIMIT 1 FORMAT ProtobufSingle SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_no_length_delimiter:Message'" > "$BINARY_FILE_PATH"
 
 # Check the output in the ProtobufSingle format
 echo
@@ -38,17 +38,17 @@ echo
 # Check the input in the ProtobufSingle format.
 echo
 echo "Roundtrip:"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE roundtrip_no_length_delimiter_protobuf_00825 AS no_length_delimiter_protobuf_00825"
-$CLICKHOUSE_CLIENT --query "INSERT INTO roundtrip_no_length_delimiter_protobuf_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_no_length_delimiter:Message' FORMAT ProtobufSingle" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM roundtrip_no_length_delimiter_protobuf_00825"
+$DATASTORE_CLIENT --query "CREATE TABLE roundtrip_no_length_delimiter_protobuf_00825 AS no_length_delimiter_protobuf_00825"
+$DATASTORE_CLIENT --query "INSERT INTO roundtrip_no_length_delimiter_protobuf_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_no_length_delimiter:Message' FORMAT ProtobufSingle" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM roundtrip_no_length_delimiter_protobuf_00825"
 rm "$BINARY_FILE_PATH"
 
 # The ProtobufSingle format can't be used to write multiple rows because this format doesn't have any row delimiter.
-$CLICKHOUSE_CLIENT > /dev/null <<EOF
+$DATASTORE_CLIENT > /dev/null <<EOF
 SELECT * FROM no_length_delimiter_protobuf_00825 FORMAT ProtobufSingle SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_no_length_delimiter:Message'; -- { clientError 546 }
 EOF
 
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE no_length_delimiter_protobuf_00825;
 DROP TABLE roundtrip_no_length_delimiter_protobuf_00825;
 EOF

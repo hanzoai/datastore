@@ -742,7 +742,7 @@
 \N	\N	\N	100	13135809584443979190
 === Try load data from sample_json.parquet
 0	1	{"user":{"name":"Alice","age":31},"scores":[10,20]}	{"scores":[10,20],"user":{"age":31,"name":"Alice"}}	1	17687545379002382850
-3	4	{"app":{"name":"ClickHouse","version":"24.2"},"metrics":{"qps":900}}	{"app":{"name":"ClickHouse","version":"24.2"},"metrics":{"qps":900}}	1	3094391947156615394
+3	4	{"app":{"name":"Datastore","version":"24.2"},"metrics":{"qps":900}}	{"app":{"name":"Datastore","version":"24.2"},"metrics":{"qps":900}}	1	3094391947156615394
 1	2	{"user":{"name":"Bob","age":27},"flags":["dev","chess"]}	{"flags":["dev","chess"],"user":{"age":27,"name":"Bob"}}	1	114206891745091234
 2	3	{"system":{"name":"DuckDB","version":"0.10"},"ok":true}	{"ok":true,"system":{"name":"DuckDB","version":"0.10"}}	1	9344593291134591414
 

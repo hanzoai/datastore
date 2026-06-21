@@ -10,7 +10,7 @@ set -eo pipefail
 
 # string1: "string1"
 # string2: "string2"
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS string_or_string_3447;
 SELECT '>> string_or_string';
@@ -30,7 +30,7 @@ EOF
 # inner {
 #   string2: "string2"
 # }
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS inner_string_or_string_3447;
 SELECT '>> inner_string_or_string';
@@ -62,7 +62,7 @@ EOF
 # date: "2024-06-01"
 # sell {
 # }
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS transaction_3447;
 SELECT '>> oneof_transaction';
@@ -90,7 +90,7 @@ EOF
 
 # items: { name: "item1" int_value: 10 }
 # items: { name: "item2" string_value: "foo" }
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS oneof_repeated_3447;
 SELECT '>> oneof_repeated';
@@ -109,7 +109,7 @@ EOF
 # string1: "string1"
 # string2: "string2"
 # string_oneof column does not contain tag 2
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS string_or_string_exception_enum_3447;
 SELECT '>> string_or_string_exception_enum';
@@ -120,7 +120,7 @@ EOF
 # string1: "string1"
 # string2: "string2"
 # string_oneof column is float, which is inappropriate
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS string_or_string_exception_float_3447;
 SELECT '>> string_or_string_exception_float';
@@ -131,7 +131,7 @@ EOF
 # string1: "string1"
 # string2: "string2"
 # string_oneof column is Int32
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 SET input_format_protobuf_oneof_presence=true;
 DROP TABLE IF EXISTS string_or_string_int32_3447;
 SELECT '>> string_or_string_int32';

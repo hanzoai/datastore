@@ -1,6 +1,6 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 
@@ -10,8 +10,8 @@ node1 = cluster.add_instance("node1", stay_alive=True)
 node2 = cluster.add_instance(
     "node2",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     with_installed_binary=True,
     stay_alive=True,
 )
@@ -70,7 +70,7 @@ def start_cluster():
 def test_modulo_partition_key_issue_23508(start_cluster):
     node2.query("DROP TABLE IF EXISTS test SYNC")
     node2.query(
-        "CREATE TABLE test (id Int64, v UInt64, value String) ENGINE = ReplicatedReplacingMergeTree('/clickhouse/tables/table1', '1', v) PARTITION BY id % 20 ORDER BY (id, v)"
+        "CREATE TABLE test (id Int64, v UInt64, value String) ENGINE = ReplicatedReplacingMergeTree('/datastore/tables/table1', '1', v) PARTITION BY id % 20 ORDER BY (id, v)"
     )
     node2.query(
         "INSERT INTO test SELECT number, number, toString(number) FROM numbers(10)"

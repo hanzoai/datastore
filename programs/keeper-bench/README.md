@@ -1,6 +1,6 @@
 # Keeper Bench
 
-`keeper-bench` benchmarks ClickHouse Keeper (or any ZooKeeper-compatible service) in two modes:
+`keeper-bench` benchmarks Datastore Keeper (or any ZooKeeper-compatible service) in two modes:
 
 - Generate requests from a workload config (`generator` section).
 - Replay requests from a recorded request log (`--input-request-log`).
@@ -11,11 +11,11 @@ Replace placeholders in the commands below with paths in your environment.
 
 ```bash
 # Generated workload from config
-clickhouse keeper-bench \
+datastore keeper-bench \
     --config <config_file>
 
 # Replay workload from a request log
-clickhouse keeper-bench \
+datastore keeper-bench \
     -h localhost:9181 \
     --input-request-log <request_log_file>
 ```
@@ -171,7 +171,7 @@ Notes:
 - Paths must start with `/`.
 - `children_of` is resolved at startup; if it has no children and no explicit paths are provided, an exception is raised.
 - `tagged` references a tag name assigned to setup nodes via the `tag` field. All paths created with that tag are included. If the tag is not found, an exception is raised.
-- Duplicate `path` keys in one section are supported when parsed by ClickHouse config loader (Poco-style key indexing).
+- Duplicate `path` keys in one section are supported when parsed by Datastore config loader (Poco-style key indexing).
 
 ---
 
@@ -413,7 +413,7 @@ Replay mode reads requests from `--input-request-log`.
 Behavior details:
 
 - Input format and schema are auto-detected.
-- Compressed files are supported through ClickHouse format/compression detection.
+- Compressed files are supported through Datastore format/compression detection.
 - Replay preserves per-session request ordering via executor queues.
 
 Supported operation kinds in logs include `Create`, `Set`, `Remove`, `Check`, `CheckNotExists`, `Sync`, `Get`, `List`, `Exists`, `Multi`, and `MultiRead`.

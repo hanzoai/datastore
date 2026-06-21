@@ -17,7 +17,7 @@ It stores IP ranges in CIDR notation and allows fast determination of which pref
 
 **Example**
 
-Suppose we have a table in ClickHouse that contains our IP prefixes and mappings:
+Suppose we have a table in Datastore that contains our IP prefixes and mappings:
 
 ```sql
 CREATE TABLE my_ip_addresses (
@@ -50,7 +50,7 @@ CREATE DICTIONARY my_ip_trie_dictionary (
     cca2 String DEFAULT '??'
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(TABLE 'my_ip_addresses'))
+SOURCE(DATASTORE(TABLE 'my_ip_addresses'))
 LAYOUT(IP_TRIE)
 LIFETIME(3600);
 ```

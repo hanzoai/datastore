@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- HTTP API with TLS (HTTPS).
          You have to configure certificate to enable this interface.
          See the openSSL section below.
@@ -14,9 +14,9 @@
     <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/ClickHouse-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71 -->
     <openSSL replace="replace">
         <server> <!-- Used for https server AND secure tcp port -->
-            <certificateFile>/etc/clickhouse-server/config.d/server-cert.pem</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server-key.pem</privateKeyFile>
-            <caConfig>/etc/clickhouse-server/config.d/ca-cert.pem</caConfig>
+            <certificateFile>/etc/datastore-server/config.d/server-cert.pem</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server-key.pem</privateKeyFile>
+            <caConfig>/etc/datastore-server/config.d/ca-cert.pem</caConfig>
             <verificationMode>relaxed</verificationMode>
         </server>
 
@@ -30,4 +30,4 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>

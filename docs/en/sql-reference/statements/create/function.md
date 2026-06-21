@@ -77,4 +77,4 @@ SELECT create_query FROM system.functions WHERE name = 'exampleReplaceFunction';
 
 ### [Executable UDFs](/sql-reference/functions/udf.md). {#executable-udfs}
 
-### [User-defined functions in ClickHouse Cloud](https://clickhouse.com/blog/user-defined-functions-clickhouse-udfs) {#user-defined-functions-in-clickhouse-cloud}
+### [User-defined functions in Datastore Cloud](https://datastore.com/blog/user-defined-functions-datastore-udfs) {#user-defined-functions-in-datastore-cloud}

@@ -503,8 +503,8 @@ void FileSegment::write(char * from, size_t size, size_t offset_in_file)
 FileSegment::State FileSegment::wait(size_t offset)
 {
     OpenTelemetry::SpanHolder span("FileSegment::wait");
-    span.addAttribute("clickhouse.key", key().toString());
-    span.addAttribute("clickhouse.offset", offset);
+    span.addAttribute("datastore.key", key().toString());
+    span.addAttribute("datastore.offset", offset);
 
     auto lk = lock();
 

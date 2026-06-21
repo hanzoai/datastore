@@ -3,9 +3,9 @@
 
 SET allow_experimental_alias_table_engine = 1;
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE:Identifier} FORMAT Null;
-CREATE DATABASE {CLICKHOUSE_DATABASE:Identifier} ENGINE = Replicated('/clickhouse/04239_storage_alias_missing_target_replicated_database_drop/{database}', 'shard1', 'replica1') FORMAT Null;
-USE {CLICKHOUSE_DATABASE:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE:Identifier} FORMAT Null;
+CREATE DATABASE {DATASTORE_DATABASE:Identifier} ENGINE = Replicated('/datastore/04239_storage_alias_missing_target_replicated_database_drop/{database}', 'shard1', 'replica1') FORMAT Null;
+USE {DATASTORE_DATABASE:Identifier};
 
 CREATE TABLE target_for_alias_missing_target (id UInt32) ENGINE = MergeTree ORDER BY id FORMAT Null;
 CREATE TABLE alias_with_missing_target ENGINE = Alias('target_for_alias_missing_target') FORMAT Null;
@@ -16,4 +16,4 @@ SELECT count() FROM system.tables WHERE database = currentDatabase() AND name = 
 DROP TABLE alias_with_missing_target FORMAT Null;
 SELECT count() FROM system.tables WHERE database = currentDatabase() AND name = 'alias_with_missing_target';
 
-DROP DATABASE {CLICKHOUSE_DATABASE:Identifier} FORMAT Null;
+DROP DATABASE {DATASTORE_DATABASE:Identifier} FORMAT Null;

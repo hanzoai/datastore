@@ -97,7 +97,7 @@ def started_cluster():
         cluster.add_instance(
             "instance_24.5",
             with_zookeeper=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.5",
             stay_alive=True,
             user_configs=[
@@ -115,7 +115,7 @@ def started_cluster():
             "instance2_24.5",
             with_zookeeper=True,
             keeper_required_feature_flags=["create_if_not_exists"],
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.5",
             stay_alive=True,
             user_configs=[
@@ -184,7 +184,7 @@ def test_upgrade_3(started_cluster):
 
     table_name = f"test_upgrade_3_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -270,7 +270,7 @@ def test_filtering_files(started_cluster, mode):
 
     table_name = f"test_replicated_{mode}_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 100
 
@@ -278,10 +278,10 @@ def test_filtering_files(started_cluster, mode):
     node2.query("DROP DATABASE IF EXISTS r")
 
     node1.query(
-        f"CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node1')"
+        f"CREATE DATABASE r ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node1')"
     )
     node2.query(
-        f"CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node2')"
+        f"CREATE DATABASE r ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node2')"
     )
 
     create_table(
@@ -377,7 +377,7 @@ def test_ordered_start_after_avoids_deep_relisting(started_cluster):
 
     table_name = f"test_start_after_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     initial_files = 1100
 
@@ -472,7 +472,7 @@ def test_failed_commit(started_cluster):
 
     table_name = f"test_failed_commit_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 1
 
@@ -556,7 +556,7 @@ def test_failure_in_the_middle(started_cluster):
 
     table_name = f"test_failure_in_the_middle_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     files_to_generate = 1
 
@@ -669,7 +669,7 @@ def test_macros_support(started_cluster):
         DROP DATABASE IF EXISTS a;
         DROP DATABASE IF EXISTS r;
         CREATE DATABASE a ENGINE=Atomic;
-        CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node1');
+        CREATE DATABASE r ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node1');
         """
     )
 
@@ -703,7 +703,7 @@ def test_macros_support(started_cluster):
     table_uuid = node.query(
         f"SELECT uuid FROM system.tables WHERE database = 'r' AND name = '{table_name}'"
     ).strip()
-    keeper_path = f"/clickhouse/s3queue/{table_name}/{table_uuid}/"
+    keeper_path = f"/datastore/s3queue/{table_name}/{table_uuid}/"
 
     assert (
         node.query(
@@ -721,7 +721,7 @@ def test_disable_streaming(started_cluster):
 
     table_name = f"test_disable_streaming_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -731,7 +731,7 @@ def test_disable_streaming(started_cluster):
     )
 
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/disable_streaming.xml",
+        "/etc/datastore-server/config.d/disable_streaming.xml",
         "0",
         "1",
     )
@@ -774,7 +774,7 @@ def test_disable_streaming(started_cluster):
     )
 
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/disable_streaming.xml",
+        "/etc/datastore-server/config.d/disable_streaming.xml",
         "1",
         "0",
     )
@@ -799,7 +799,7 @@ def test_disable_insertion_and_mutation(started_cluster):
 
     table_name = f"test_disable_insertion_and_mutation_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -841,7 +841,7 @@ def test_shutdown_logs(started_cluster):
     node = started_cluster.instances["instance"]
     table_name = f"test_shutdown_logs"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -886,7 +886,7 @@ def test_shutdown_order(started_cluster):
     node = started_cluster.instances["instance"]
     table_name = f"test_shutdown_order_{generate_random_string()}"
     dst_table_name = f"a_{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     format = "column1 Int32, column2 String"
@@ -924,7 +924,7 @@ def test_shutdown_order(started_cluster):
         dst_table_name,
         mv_name=mv_table_name,
         format=format,
-        dst_table_engine=f"ReplicatedMergeTree('/clickhouse/tables/{table_name}', 'node')",
+        dst_table_engine=f"ReplicatedMergeTree('/datastore/tables/{table_name}', 'node')",
     )
 
     node.restart_clickhouse()
@@ -1009,7 +1009,7 @@ def test_cancel_during_commit_on_select(started_cluster):
     """
     node = started_cluster.instances["instance_without_keeper_fault_injection"]
     table_name = f"test_cancel_commit_on_select_{generate_random_string()}"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     format = "column1 Int32, column2 String"
@@ -1102,7 +1102,7 @@ def test_shutdown_dedup_off_no_duplicates(started_cluster):
     node = started_cluster.instances["instance_without_keeper_fault_injection"]
     table_name = f"test_shutdown_dedup_off_{generate_random_string()}"
     dst_table_name = f"a_{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     format = "column1 Int32, column2 String"
@@ -1229,7 +1229,7 @@ def test_mv_settings(started_cluster, mode, limit):
     node = started_cluster.instances["instance"]
     table_name = f"test_mv_settings_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     if limit == 9999999999:
         expected_parts_num = 1
@@ -1299,7 +1299,7 @@ def test_detach_attach_table(started_cluster):
     table_name = f"test_detach_attach_table_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     mv_table_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     format = "column1 Int32, column2 String"
@@ -1359,7 +1359,7 @@ def test_failed_startup(started_cluster):
     table_name = f"test_failed_startup_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     mv_table_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     format = "column1 Int32, column2 String"
@@ -1429,14 +1429,14 @@ def test_create_or_replace_table(started_cluster):
     db_name = f"db_{table_name}"
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     node1.query(
-        f"CREATE DATABASE {db_name} ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node1')"
+        f"CREATE DATABASE {db_name} ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node1')"
     )
     node2.query(
-        f"CREATE DATABASE {db_name} ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node2')"
+        f"CREATE DATABASE {db_name} ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node2')"
     )
 
     create_table(
@@ -1479,7 +1479,7 @@ def test_persistent_processing_nodes_cleanup(started_cluster):
     node = started_cluster.instances["instance"]
     table_name = f"max_persistent_processing_nodes_cleanup_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     create_table(
@@ -1527,7 +1527,7 @@ def test_persistent_processing(started_cluster):
     table_name = f"max_persistent_processing_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     format = "a Int32, b String"
 
@@ -1596,7 +1596,7 @@ def test_persistent_processing_failed_commit_retries(started_cluster, mode):
     )
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     format = "a Int32, b String"
 
@@ -1749,7 +1749,7 @@ def test_metadata_cache_exact_size_tracking(started_cluster):
 
     table_name = f"test_cache_exact_{mode}_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     create_table(
@@ -1883,7 +1883,7 @@ def test_deduplication(started_cluster, mode):
     table_name = f"test_deduplication_{mode}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     format = "a Int32, b String"
 
@@ -1936,7 +1936,7 @@ def test_deduplication(started_cluster, mode):
     node.query(
         f"""
         CREATE TABLE {dst_table_name} ({format}, _path String)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/{table_name}', 'node')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/{table_name}', 'node')
         ORDER BY a SETTINGS replicated_deduplication_window_seconds_for_async_inserts = 1000;
     """
     )
@@ -2033,7 +2033,7 @@ def test_deduplication_with_multiple_chunks(started_cluster, mode):
     table_name = f"test_deduplication_chunks_{mode}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     format = "a Int32, b String"
 
@@ -2087,7 +2087,7 @@ def test_deduplication_with_multiple_chunks(started_cluster, mode):
     node.query(
         f"""
         CREATE TABLE {dst_table_name} ({format}, _path String)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/{table_name}', 'node')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/{table_name}', 'node')
         ORDER BY a SETTINGS replicated_deduplication_window_seconds_for_async_inserts = 1000;
     """
     )
@@ -2210,7 +2210,7 @@ def test_failed_commit_after_success(started_cluster):
 
     table_name = f"test_failed_commit_after_success_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     create_table(
@@ -2270,7 +2270,7 @@ def test_failed_commit_after_success_select(started_cluster):
     node = started_cluster.instances["instance_without_keeper_fault_injection"]
 
     table_name = f"test_failed_commit_after_success_select_{generate_random_string()}"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     create_table(

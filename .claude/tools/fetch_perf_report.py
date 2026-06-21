@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-Fetch ClickHouse CI performance comparison results.
+Fetch Datastore CI performance comparison results.
 
 Fetches the machine-readable all-query-metrics.tsv from S3 for each
-performance comparison shard, then uses clickhouse-local to filter,
+performance comparison shard, then uses datastore-local to filter,
 classify, and format the results.
 
 Usage:
   python3 fetch_perf_report.py <url> [options]
 
 URL formats:
-  - GitHub PR URL:  https://github.com/ClickHouse/ClickHouse/pull/12345
-  - CI HTML URL:    https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=...&sha=...
+  - GitHub PR URL:  https://github.com/ClickHouse/Datastore/pull/12345
+  - CI HTML URL:    https://s3.amazonaws.com/datastore-test-reports/json.html?PR=...&sha=...
 
 Options:
   --arch <amd|arm|all>   Filter by architecture (default: all)
@@ -26,11 +26,11 @@ Options:
   --summary              Show only per-shard summary, no individual queries
 
 Examples:
-  python3 fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/96630"
-  python3 fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/96630" --arch amd
-  python3 fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/96630" --all --sort times
-  python3 fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/96630" --test group_by
-  python3 fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/96630" --json
+  python3 fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/96630"
+  python3 fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/96630" --arch amd
+  python3 fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/96630" --all --sort times
+  python3 fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/96630" --test group_by
+  python3 fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/96630" --json
 """
 
 import argparse
@@ -76,7 +76,7 @@ def download_url(url, dest):
 def resolve_pr(pr_url):
     """Given a GitHub PR URL, resolve base_url, pr_number, sha."""
     m = re.search(
-        r"github\.com/ClickHouse/(ClickHouse(?:_private)?|clickhouse-private)/pull/(\d+)",
+        r"github\.com/Datastore/(Datastore(?:_private)?|datastore-private)/pull/(\d+)",
         pr_url,
     )
     if not m:
@@ -85,17 +85,17 @@ def resolve_pr(pr_url):
     pr_number = m.group(2)
 
     is_private = "private" in repo.lower()
-    bucket = "clickhouse-private-test-reports" if is_private else "clickhouse-test-reports"
+    bucket = "datastore-private-test-reports" if is_private else "datastore-test-reports"
     base_url = f"https://s3.amazonaws.com/{bucket}"
 
-    gh_repo = f"ClickHouse/{repo}" if is_private else "ClickHouse/ClickHouse"
+    gh_repo = f"Datastore/{repo}" if is_private else "Datastore/Datastore"
     try:
         comments_json = subprocess.check_output(
             [
                 "gh", "api", f"repos/{gh_repo}/issues/{pr_number}/comments",
                 "--paginate",
                 "--jq",
-                '.[] | select(.user.login == "clickhouse-gh[bot]") | {body, created_at}',
+                '.[] | select(.user.login == "datastore-gh[bot]") | {body, created_at}',
             ],
             text=True,
             stderr=subprocess.PIPE,
@@ -106,7 +106,7 @@ def resolve_pr(pr_url):
             raise RuntimeError("No CI bot comment found")
 
         url_pattern = re.compile(
-            r"https://s3\.amazonaws\.com/clickhouse(?:-private)?-test-reports/json\.html\?[^\s)]+"
+            r"https://s3\.amazonaws\.com/datastore(?:-private)?-test-reports/json\.html\?[^\s)]+"
         )
         ci_url = None
         for comment in comments:
@@ -243,7 +243,7 @@ def download_shard(shard, tmpdir):
     if not download_url(shard["tsv_url"], dest):
         return shard, None, f"Failed to download {shard['tsv_url']}"
 
-    # Prepend arch and shard_num columns so clickhouse-local can distinguish shards
+    # Prepend arch and shard_num columns so datastore-local can distinguish shards
     enriched = os.path.join(tmpdir, f"{arch}_{shard_num}_enriched.tsv")
     try:
         with open(dest, "r") as fin, open(enriched, "w") as fout:
@@ -383,16 +383,16 @@ def build_detail_sql(args, data_path, fmt="JSONEachRow"):
 
 
 # ---------------------------------------------------------------------------
-# Run clickhouse-local
+# Run datastore-local
 # ---------------------------------------------------------------------------
 
 def run_ch(sql):
-    """Run a SQL query via clickhouse local. Returns stdout."""
-    cmd = ["clickhouse", "local", "--query", sql]
+    """Run a SQL query via datastore local. Returns stdout."""
+    cmd = ["datastore", "local", "--query", sql]
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
     if result.returncode != 0:
         raise RuntimeError(
-            f"clickhouse local failed (exit {result.returncode}):\n{result.stderr.strip()}"
+            f"datastore local failed (exit {result.returncode}):\n{result.stderr.strip()}"
         )
     return result.stdout
 
@@ -580,7 +580,7 @@ def output_human(summary_rows, detail_rows, pr_number, metric, multi_shard):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Fetch ClickHouse CI performance comparison results"
+        description="Fetch Datastore CI performance comparison results"
     )
     parser.add_argument("url", help="GitHub PR URL or CI HTML URL")
     parser.add_argument(
@@ -623,9 +623,9 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # Verify clickhouse is available
-    if shutil.which("clickhouse") is None:
-        print("Error: clickhouse not found in PATH.", file=sys.stderr)
+    # Verify datastore is available
+    if shutil.which("datastore") is None:
+        print("Error: datastore not found in PATH.", file=sys.stderr)
         sys.exit(1)
 
     # Resolve URL

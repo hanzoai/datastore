@@ -9,7 +9,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_block_number SYNC;
     SET enable_lightweight_update = 1;
     SET insert_keeper_fault_injection_probability = 0.0;
@@ -26,13 +26,13 @@ $CLICKHOUSE_CLIENT --query "
 "
 
 failpoint_name="rmt_merge_task_sleep_in_prepare"
-storage_policy=`$CLICKHOUSE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
+storage_policy=`$DATASTORE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
 
 if [[ "$storage_policy" == "s3_with_keeper" ]]; then
     failpoint_name="smt_merge_task_sleep_in_prepare"
 fi
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET optimize_throw_if_noop = 1;
     SYSTEM ENABLE FAILPOINT $failpoint_name;
     OPTIMIZE TABLE t_lwu_block_number PARTITION ID 'all' FINAL;
@@ -40,7 +40,7 @@ $CLICKHOUSE_CLIENT --query "
 
 sleep 1.0
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET enable_lightweight_update = 1;
     UPDATE t_lwu_block_number SET s = 'bar' WHERE id = 2;
     OPTIMIZE TABLE t_lwu_block_number PARTITION ID 'patch-8feeedf7588c601fd7f38da7fe68712b-all' FINAL;
@@ -48,7 +48,7 @@ $CLICKHOUSE_CLIENT --query "
 
 wait
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT * FROM t_lwu_block_number ORDER BY id SETTINGS apply_patch_parts = 1;
 
     SET optimize_throw_if_noop = 1;

@@ -46,7 +46,7 @@ node2 = cluster.add_instance(
 
 def get_log(node):
     return node.exec_in_container(
-        ["bash", "-c", "cat /var/log/clickhouse-server/clickhouse-server.log"]
+        ["bash", "-c", "cat /var/log/datastore-server/datastore-server.log"]
     )
 
 
@@ -93,7 +93,7 @@ def add_disk(node, name, path, separate_file=False):
     except:
         tree = ET.ElementTree(
             ET.fromstring(
-                "<clickhouse><storage_configuration><disks/><policies/></storage_configuration></clickhouse>"
+                "<datastore><storage_configuration><disks/><policies/></storage_configuration></datastore>"
             )
         )
     root = tree.getroot()
@@ -123,7 +123,7 @@ def update_disk(node, name, path, keep_free_space_bytes, separate_file=False):
     except:
         tree = ET.ElementTree(
             ET.fromstring(
-                "<clickhouse><storage_configuration><disks/><policies/></storage_configuration></clickhouse>"
+                "<datastore><storage_configuration><disks/><policies/></storage_configuration></datastore>"
             )
         )
 

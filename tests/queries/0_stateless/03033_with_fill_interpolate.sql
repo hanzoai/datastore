@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/55794
+-- https://github.com/ClickHouse/Datastore/issues/55794
 SET enable_analyzer=1;
 DROP TABLE IF EXISTS 03033_example_table;
 

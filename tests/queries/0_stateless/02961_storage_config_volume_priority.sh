@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 SELECT
     volume_name,
     volume_priority
@@ -15,7 +15,7 @@ WHERE policy_name = 'policy_02961'
 ORDER BY volume_priority ASC;
 "
 
-config_path=${CLICKHOUSE_CONFIG_DIR}/config.d/storage_conf_02961.xml
+config_path=${DATASTORE_CONFIG_DIR}/config.d/storage_conf_02961.xml
 config_path_tmp=$config_path.tmp
 
 echo 'check non-unique values dont work'
@@ -24,7 +24,7 @@ cat $config_path \
 > $config_path_tmp
 mv $config_path_tmp $config_path
 
-$CLICKHOUSE_CLIENT -m --query "
+$DATASTORE_CLIENT -m --query "
 set send_logs_level='error';
 SYSTEM RELOAD CONFIG" 2>&1 | grep -c 'volume_priority values must be unique across the policy'
 
@@ -40,7 +40,7 @@ cat $config_path \
 > $config_path_tmp
 mv $config_path_tmp $config_path
 
-$CLICKHOUSE_CLIENT -m --query "
+$DATASTORE_CLIENT -m --query "
 set send_logs_level='error';
 SYSTEM RELOAD CONFIG" 2>&1 | grep -c 'volume_priority values must cover the range from 1 to N (lowest priority specified) without gaps'
 

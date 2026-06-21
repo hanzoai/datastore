@@ -15,7 +15,7 @@ SELECT count(DISTINCT _time)
 FROM url('http://localhost:11111/test/04104_url_time.csv', 'CSV', 'a UInt32');
 
 -- A response without a Last-Modified header must yield NULL.
--- ClickHouse's own HTTP query endpoint does not set Last-Modified.
+-- Datastore's own HTTP query endpoint does not set Last-Modified.
 SELECT _time
 FROM url('http://127.0.0.1:8123/?query=select+1&user=default', LineAsString, 's String');
 

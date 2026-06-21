@@ -161,7 +161,7 @@ def unique_table_name(pytest_request_fixture):
             id="mt"
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_create_with_invalid_destination_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/test_create_with_invalid_destination_rmt', '1')",
             id="rmt"
         )
     ]
@@ -229,7 +229,7 @@ def test_create_with_invalid_destination(started_cluster, engine, request):
             id="mt"
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_alter_with_invalid_destination', '1')",
+            "ReplicatedMergeTree('/datastore/test_alter_with_invalid_destination', '1')",
             id="rmt"
         )
     ]
@@ -301,7 +301,7 @@ def test_alter_with_invalid_destination(started_cluster, engine, request):
             id="mt_disk",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_inserts_and_moves_rmt_disk', '1')",
+            "ReplicatedMergeTree('/datastore/test_inserts_and_moves_rmt_disk', '1')",
             "TTL d1 TO DISK 'external'",
             id="rmt_disk",
         ),
@@ -311,7 +311,7 @@ def test_alter_with_invalid_destination(started_cluster, engine, request):
             id="mt_volume",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_inserts_and_moves_rmt_volume', '1')",
+            "ReplicatedMergeTree('/datastore/test_inserts_and_moves_rmt_volume', '1')",
             "TTL d1 TO VOLUME 'external'",
             id="rmt_volume",
         ),
@@ -555,7 +555,7 @@ def test_inserts_and_moves(started_cluster, engine, ttl_rule, request):
             id="mt_interval_delete",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_delete_rmt_interval_delete', '1')",
+            "ReplicatedMergeTree('/datastore/test_delete_rmt_interval_delete', '1')",
             f"TTL d1 + INTERVAL {SOON_SECONDS} SECOND DELETE",
             id="rmt_interval_delete",
         ),
@@ -565,7 +565,7 @@ def test_inserts_and_moves(started_cluster, engine, ttl_rule, request):
             id="mt_delete",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_delete_rmt_delete', '1')",
+            "ReplicatedMergeTree('/datastore/test_delete_rmt_delete', '1')",
             "TTL d1 DELETE",
             id="rmt_delete",
         ),
@@ -631,7 +631,7 @@ def test_delete(started_cluster, engine, ttl_rule, request):
             id="mt_disk_interval_delete",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_alter_rmt_1', '1')",
+            "ReplicatedMergeTree('/datastore/test_alter_rmt_1', '1')",
             "TTL d1 TO DISK 'external'",
             "MODIFY TTL d1 + INTERVAL 60 MINUTE DELETE",
             id="rmt_disk_internal_delete",
@@ -643,7 +643,7 @@ def test_delete(started_cluster, engine, ttl_rule, request):
             id="mt_volume_interval_delete",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_alter_rmt_2', '1')",
+            "ReplicatedMergeTree('/datastore/test_alter_rmt_2', '1')",
             "TTL d1 TO VOLUME 'external'",
             "MODIFY TTL d1 + INTERVAL 60 MINUTE TO DISK 'external'",
             id="rmt_volume_interval_delete",
@@ -655,7 +655,7 @@ def test_delete(started_cluster, engine, ttl_rule, request):
             id="mt_disk_remove_ttl",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_alter_rmt_3', '1')",
+            "ReplicatedMergeTree('/datastore/test_alter_rmt_3', '1')",
             "TTL d1 TO DISK 'external'",
             "REMOVE TTL",
             id="rmt_disk_remove_ttl",
@@ -667,7 +667,7 @@ def test_delete(started_cluster, engine, ttl_rule, request):
             id="mt_disk_remove_ttl",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_alter_rmt_3', '1')",
+            "ReplicatedMergeTree('/datastore/test_alter_rmt_3', '1')",
             "TTL d1 TO VOLUME 'external'",
             "REMOVE TTL",
             id="rmt_disk_remove_ttl",
@@ -733,7 +733,7 @@ def test_alter(started_cluster, engine, ttl_create_rule, ttl_alter_rule, request
             id="mt",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_ttl_can_be_changed_with_alter_ReplicatedMergeTree', '1')",
+            "ReplicatedMergeTree('/datastore/test_ttl_can_be_changed_with_alter_ReplicatedMergeTree', '1')",
             id="rmt",
         ),
     ],
@@ -808,7 +808,7 @@ def test_layered_tired_storage(started_cluster, engine, request):
             id="mt"
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_materialize_ttl_per_partition_with_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/test_materialize_ttl_per_partition_with_rmt', '1')",
             id="rmt"
         ),
     ]
@@ -888,7 +888,7 @@ def test_materialize_ttl_per_partition(started_cluster, engine, request):
             id="mt",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_move_works_after_policy_change_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/test_move_works_after_policy_change_rmt', '1')",
             id="rmt",
         ),
     ]
@@ -948,7 +948,7 @@ def test_move_after_policy_change(started_cluster, engine, request):
 
 def test_replicated_download_ttl_info(started_cluster, request):
     table_name = unique_table_name(request)
-    engine = "ReplicatedMergeTree('/clickhouse/test_replicated_download_ttl_info', '{replica}')"
+    engine = "ReplicatedMergeTree('/datastore/test_replicated_download_ttl_info', '{replica}')"
 
     try:
         for node in (node1, node2):
@@ -1027,7 +1027,7 @@ def test_ttl_move_if_exists(started_cluster, dest_type, request):
             CREATE TABLE {table_name} (
                 s1 String,
                 d1 DateTime
-            ) ENGINE = ReplicatedMergeTree('/clickhouse/test_ttl_move_if_exists', '{node_name}')
+            ) ENGINE = ReplicatedMergeTree('/datastore/test_ttl_move_if_exists', '{node_name}')
             ORDER BY tuple()
             TTL d1 TO {dest_type} {if_exists} 'external'
             SETTINGS storage_policy='{policy}'
@@ -1110,7 +1110,7 @@ def test_ttl_move_if_exists(started_cluster, dest_type, request):
             id="mt"
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/replicated_test_merges_to_disk_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_test_merges_to_disk_rmt', '1')",
             id="rmt"
         ),
     ]
@@ -1177,7 +1177,7 @@ def test_merges_to_disk(started_cluster, engine, request):
             id="mt",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_moves_with_full_disk_work_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/test_moves_with_full_disk_work_rmt', '1')",
             id="rmt",
         ),
     ],
@@ -1251,7 +1251,7 @@ def test_moves_with_full_disk(started_cluster, engine, request):
             id="mt",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_merges_with_full_disk_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/test_merges_with_full_disk_rmt', '1')",
             id="rmt",
         ),
     ],
@@ -1329,7 +1329,7 @@ def test_merges_with_full_disk(started_cluster, engine, request):
             id="mt"
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_moves_after_merges_rmt', '1')",
+            "ReplicatedMergeTree('/datastore/test_moves_after_merges_rmt', '1')",
             id="rmt"
         ),
     ]
@@ -1387,7 +1387,7 @@ def test_moves_after_merges(started_cluster, engine, request):
             id="mt",
         ),
         pytest.param(
-            "ReplicatedMergeTree('/clickhouse/test_concurrent_alter_with_ttl_move', '1')",
+            "ReplicatedMergeTree('/datastore/test_concurrent_alter_with_ttl_move', '1')",
             id="rmt"
         ),
     ]

@@ -537,7 +537,7 @@ bool ParserFilterClause::parseImpl(Pos & pos, ASTPtr & node, Expected & expected
     if (function.name == "count")
     {
         /// Remove child from function.arguments if it's '*' because countIf(*) is not supported.
-        /// See https://github.com/ClickHouse/ClickHouse/issues/61004
+        /// See https://github.com/ClickHouse/Datastore/issues/61004
         boost::range::remove_erase_if(function.arguments->children, [] (const ASTPtr & child)
         {
             return typeid_cast<const ASTAsterisk *>(child.get()) || typeid_cast<const ASTQualifiedAsterisk *>(child.get());
@@ -1675,7 +1675,7 @@ const char * ParserAlias::restricted_keywords[] =
     "NOT",
     "OFFSET",
     "ON",
-    "ONLY", /// YQL's synonym for ANTI. Note: YQL is the name of one of proprietary languages, completely unrelated to ClickHouse.
+    "ONLY", /// YQL's synonym for ANTI. Note: YQL is the name of one of proprietary languages, completely unrelated to Datastore.
     "ORDER",
     "PARALLEL",
     "PREWHERE",

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<clickhouse>
+<datastore>
   <storage_configuration>
     <disks>
         <s3_disk>
@@ -21,4 +21,4 @@
         </s3>
     </policies>
   </storage_configuration>
-</clickhouse>
+</datastore>

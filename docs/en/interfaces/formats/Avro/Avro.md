@@ -31,34 +31,34 @@ import DataTypeMapping from './_snippets/data-types-matching.md'
 | `input_format_avro_null_as_default`         | Whether to use a default value instead of throwing an error when inserting a `null` value into a non-nullable column. |   `0`   |
 | `output_format_avro_codec`                  | Compression algorithm for Avro output files. Possible values: `null`, `deflate`, `snappy`, `zstd`.            |         |
 | `output_format_avro_sync_interval`          | Sync marker frequency in Avro files (in bytes). | `16384` |
-| `output_format_avro_string_column_pattern`  | Regular expression to identify `String` columns for Avro string type mapping. By default, ClickHouse `String` columns are written as Avro `bytes` type.                                 |         |
+| `output_format_avro_string_column_pattern`  | Regular expression to identify `String` columns for Avro string type mapping. By default, Datastore `String` columns are written as Avro `bytes` type.                                 |         |
 | `output_format_avro_rows_in_file`           | Maximum number of rows per Avro output file. When this limit is reached, a new file is created (if the storage system supports file splitting).                                                         | `1`     |
 
 ## Examples {#examples}
 
 ### Reading Avro data {#reading-avro-data}
 
-To read data from an Avro file into a ClickHouse table:
+To read data from an Avro file into a Datastore table:
 
 ```bash
-$ cat file.avro | clickhouse-client --query="INSERT INTO {some_table} FORMAT Avro"
+$ cat file.avro | datastore-client --query="INSERT INTO {some_table} FORMAT Avro"
 ```
 
 The root schema of the ingested Avro file must be of type `record`.
 
-To find the correspondence between table columns and fields of Avro schema, ClickHouse compares their names. 
+To find the correspondence between table columns and fields of Avro schema, Datastore compares their names. 
 This comparison is case-sensitive and unused fields are skipped.
 
-Data types of ClickHouse table columns can differ from the corresponding fields of the Avro data inserted. When inserting data, ClickHouse interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to the corresponding column type.
+Data types of Datastore table columns can differ from the corresponding fields of the Avro data inserted. When inserting data, Datastore interprets data types according to the table above and then [casts](/sql-reference/functions/type-conversion-functions#CAST) the data to the corresponding column type.
 
 While importing data, when a field is not found in the schema and setting [`input_format_avro_allow_missing_fields`](/operations/settings/settings-formats.md/#input_format_avro_allow_missing_fields) is enabled, the default value will be used instead of throwing an error.
 
 ### Writing Avro data {#writing-avro-data}
 
-To write data from a ClickHouse table into an Avro file:
+To write data from a Datastore table into an Avro file:
 
 ```bash
-$ clickhouse-client --query="SELECT * FROM {some_table} FORMAT Avro" > file.avro
+$ datastore-client --query="SELECT * FROM {some_table} FORMAT Avro" > file.avro
 ```
 
 Column names must:
@@ -70,11 +70,11 @@ The output compression and sync interval for Avro files can be configured using 
 
 ### Inferring the Avro schema {#inferring-the-avro-schema}
 
-Using the ClickHouse [`DESCRIBE`](/sql-reference/statements/describe-table) function, you can quickly view the inferred format of an Avro file like the following example. 
-This example includes the URL of a publicly accessible Avro file in the ClickHouse S3 public bucket:
+Using the Datastore [`DESCRIBE`](/sql-reference/statements/describe-table) function, you can quickly view the inferred format of an Avro file like the following example. 
+This example includes the URL of a publicly accessible Avro file in the Datastore S3 public bucket:
 
 ```sql
-DESCRIBE url('https://clickhouse-public-datasets.s3.eu-central-1.amazonaws.com/hits.avro','Avro);
+DESCRIBE url('https://datastore-public-datasets.s3.eu-central-1.amazonaws.com/hits.avro','Avro);
 
 ┌─name───────────────────────┬─type────────────┬─default_type─┬─default_expression─┬─comment─┬─codec_expression─┬─ttl_expression─┐
 │ WatchID                    │ Int64           │              │                    │         │                  │                │

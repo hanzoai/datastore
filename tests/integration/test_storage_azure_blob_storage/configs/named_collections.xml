@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <azure_conf1>
             <container>cont</container>
@@ -11,4 +11,4 @@
             <account_key>Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==</account_key>
         </azure_conf2>
     </named_collections>
-</clickhouse>
+</datastore>

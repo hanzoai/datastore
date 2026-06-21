@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <test1>
@@ -27,4 +27,4 @@
             </test2>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <cluster_simple>
             <shard>
@@ -16,4 +16,4 @@
     <max_thread_pool_size>1800</max_thread_pool_size>
     <thread_pool_queue_size>1800</thread_pool_queue_size>
 
-</clickhouse>
+</datastore>

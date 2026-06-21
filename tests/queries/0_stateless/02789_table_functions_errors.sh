@@ -7,6 +7,6 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # Simply calling a table function correctly should not increase system.errors
-OLD_ERROR_QUANTITY=$(${CLICKHOUSE_CLIENT} --query "SELECT sum(value) FROM system.errors WHERE name = 'UNKNOWN_TABLE'")
-${CLICKHOUSE_CLIENT} --query "SELECT count() FROM numbers(10)"
-${CLICKHOUSE_CLIENT} --query "SELECT sum(value) = ${OLD_ERROR_QUANTITY}  FROM system.errors WHERE name = 'UNKNOWN_TABLE'"
+OLD_ERROR_QUANTITY=$(${DATASTORE_CLIENT} --query "SELECT sum(value) FROM system.errors WHERE name = 'UNKNOWN_TABLE'")
+${DATASTORE_CLIENT} --query "SELECT count() FROM numbers(10)"
+${DATASTORE_CLIENT} --query "SELECT sum(value) = ${OLD_ERROR_QUANTITY}  FROM system.errors WHERE name = 'UNKNOWN_TABLE'"

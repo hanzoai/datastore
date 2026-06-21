@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/84856
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/84856
 -- Skip index of type `set` should not throw `Bad get: has Null` when
 -- the indexed column contains NULL values.
 

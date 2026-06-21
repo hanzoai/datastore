@@ -1,12 +1,12 @@
-<clickhouse>
+<datastore>
     <http_port>5002</http_port>  <!-- Must match with Pebble configuration -->
     <https_port>3443</https_port>
 
     <acme>
-        <email>test@clickhouse.com</email>
+        <email>test@datastore.com</email>
         <terms_of_service_agreed>true</terms_of_service_agreed>
         <domains>
-            <domain>single.integration-tests.clickhouse.com</domain>
+            <domain>single.integration-tests.datastore.com</domain>
         </domains>
         <directory_url>https://10.5.11.2:14000/dir</directory_url>
         <refresh_certificates_task_interval_seconds>1</refresh_certificates_task_interval_seconds>
@@ -19,4 +19,4 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>

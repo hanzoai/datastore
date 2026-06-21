@@ -5,7 +5,7 @@
         aliases expands the expression super-linearly, producing a large tree of `plus` calls.
 
         This stresses analysis of an expression with very many (deterministic) function nodes.
-        Source: https://github.com/ClickHouse/ClickHouse/pull/88043#issuecomment-4574799259
+        Source: https://github.com/ClickHouse/Datastore/pull/88043#issuecomment-4574799259
     -->
     <settings>
         <enable_analyzer>1</enable_analyzer>

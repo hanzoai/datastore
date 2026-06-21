@@ -1,5 +1,5 @@
-<clickhouse>
-    <custom_local_disks_base_directory>/var/lib/clickhouse/disks/</custom_local_disks_base_directory>
+<datastore>
+    <custom_local_disks_base_directory>/var/lib/datastore/disks/</custom_local_disks_base_directory>
     <database_disk>
         <disk>global_db_disk</disk>
     </database_disk>
@@ -7,11 +7,11 @@
         <disks>
             <global_db_disk>
                 <type>local</type>
-                <path>/var/lib/clickhouse/disks/global_db_disk/</path>
+                <path>/var/lib/datastore/disks/global_db_disk/</path>
             </global_db_disk>
             <db_disk>
                 <type>local</type>
-                <path>/var/lib/clickhouse/disks/db_disk/</path>
+                <path>/var/lib/datastore/disks/db_disk/</path>
             </db_disk>
             <s3>
                 <type>s3_plain</type>
@@ -29,4 +29,4 @@
             </s3_plain_rewritable>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

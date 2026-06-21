@@ -8,11 +8,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
     DROP TABLE IF EXISTS contributors;
     CREATE TABLE contributors (name String) ENGINE = Memory;"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM system.contributors ORDER BY name DESC FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO contributors FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM system.contributors ORDER BY name DESC FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO contributors FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     -- random results
     SELECT * FROM contributors LIMIT 10 FORMAT Null;
     DROP TABLE contributors;
@@ -20,31 +20,31 @@ ${CLICKHOUSE_CLIENT} --query="
     DROP TABLE IF EXISTS parquet_numbers;
     CREATE TABLE parquet_numbers (number UInt64) ENGINE = Memory;"
 # less than default block size (65k)
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM system.numbers LIMIT 10000 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM system.numbers LIMIT 10000 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_numbers ORDER BY number DESC LIMIT 10;
     TRUNCATE TABLE parquet_numbers;"
 
 # More than default block size
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM system.numbers LIMIT 100000 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM system.numbers LIMIT 100000 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_numbers ORDER BY number DESC LIMIT 10;
     TRUNCATE TABLE parquet_numbers;"
 
-${CLICKHOUSE_CLIENT} --max_block_size=2 --query="SELECT * FROM system.numbers LIMIT 3 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --max_block_size=2 --query="SELECT * FROM system.numbers LIMIT 3 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_numbers ORDER BY number DESC LIMIT 10;
 
     TRUNCATE TABLE parquet_numbers;"
-${CLICKHOUSE_CLIENT} --max_block_size=1 --query="SELECT * FROM system.numbers LIMIT 1000 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --max_block_size=1 --query="SELECT * FROM system.numbers LIMIT 1000 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_numbers FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_numbers ORDER BY number DESC LIMIT 10;
     DROP TABLE parquet_numbers;
 
     DROP TABLE IF EXISTS parquet_events;
     CREATE TABLE parquet_events (event String, value UInt64, description String) ENGINE = Memory;"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM system.events FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_events FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM system.events FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_events FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT event, description FROM parquet_events WHERE event IN ('ContextLock', 'Query') ORDER BY event;
     DROP TABLE parquet_events;
 
@@ -67,28 +67,28 @@ ${CLICKHOUSE_CLIENT} --query="
     -- max
     INSERT INTO parquet_types1 values (      127,         255,       32767,         65535,  2147483647,    4294967295, 9223372036854775807, 9223372036854775807, -1.032,     -1.064,    'string-2',             'fixedstring-2', '2004-06-07', '2004-02-03 04:05:06', '2004-02-03 04:05:06.789');"
 
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types1 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types2 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types1 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types2 FORMAT Parquet"
 
 echo original:
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8" | tee "${CLICKHOUSE_TMP}"/parquet_all_types_1.dump
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8" | tee "${DATASTORE_TMP}"/parquet_all_types_1.dump
 echo converted:
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types2 ORDER BY int8" | tee "${CLICKHOUSE_TMP}"/parquet_all_types_2.dump
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" > "${CLICKHOUSE_TMP}"/parquet_all_types_1.parquet
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types2 ORDER BY int8 FORMAT Parquet" > "${CLICKHOUSE_TMP}"/parquet_all_types_2.parquet
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types2 ORDER BY int8" | tee "${DATASTORE_TMP}"/parquet_all_types_2.dump
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" > "${DATASTORE_TMP}"/parquet_all_types_1.parquet
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types2 ORDER BY int8 FORMAT Parquet" > "${DATASTORE_TMP}"/parquet_all_types_2.parquet
 echo diff:
-diff "${CLICKHOUSE_TMP}"/parquet_all_types_1.dump "${CLICKHOUSE_TMP}"/parquet_all_types_2.dump
+diff "${DATASTORE_TMP}"/parquet_all_types_1.dump "${DATASTORE_TMP}"/parquet_all_types_2.dump
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
     TRUNCATE TABLE parquet_types2;
     INSERT INTO parquet_types3 values (       79,          81,          82,            83,          84,            85,          86,            87,              88,              89,         'str01',                  'fstr1', '2003-03-04', '2004-05-06', '2004-05-06 07:08:09.012');"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types3 ORDER BY int8 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types2 FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types3 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types3 ORDER BY int8 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types2 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types3 FORMAT Parquet"
 
-${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types4 values (       80,          81,          82,            83,          84,            85,          86,            87,              88,              89,         'str02',                  'fstr2', '2005-03-04 05:06:07', '2006-08-09 10:11:12', '2006-08-09 10:11:12.345')"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types4 ORDER BY int8 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types2 FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types4 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="INSERT INTO parquet_types4 values (       80,          81,          82,            83,          84,            85,          86,            87,              88,              89,         'str02',                  'fstr2', '2005-03-04 05:06:07', '2006-08-09 10:11:12', '2006-08-09 10:11:12.345')"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types4 ORDER BY int8 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types2 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types4 FORMAT Parquet"
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
     SELECT 'dest:';
     SELECT * FROM parquet_types2 ORDER BY int8;
     SELECT 'min:';
@@ -102,11 +102,11 @@ ${CLICKHOUSE_CLIENT} --query="
     CREATE TABLE parquet_types5       (int8 Nullable(Int8), uint8 Nullable(UInt8), int16 Nullable(Int16), uint16 Nullable(UInt16), int32 Nullable(Int32), uint32 Nullable(UInt32), int64 Nullable(Int64), uint64 Nullable(UInt64), float32 Nullable(Float32), float64 Nullable(Float64), string Nullable(String), fixedstring Nullable(FixedString(15)), date Nullable(Date), datetime Nullable(DateTime('UTC')), datetime64 Nullable(DateTime64(9, 'UTC'))) ENGINE = Memory;
     CREATE TABLE parquet_types6       (int8 Nullable(Int8), uint8 Nullable(UInt8), int16 Nullable(Int16), uint16 Nullable(UInt16), int32 Nullable(Int32), uint32 Nullable(UInt32), int64 Nullable(Int64), uint64 Nullable(UInt64), float32 Nullable(Float32), float64 Nullable(Float64), string Nullable(String), fixedstring Nullable(FixedString(15)), date Nullable(Date), datetime Nullable(DateTime('UTC')), datetime64 Nullable(DateTime64(9, 'UTC'))) ENGINE = Memory;
     INSERT INTO parquet_types5 values (               NULL,                  NULL,                  NULL,                    NULL,                  NULL,                    NULL,                  NULL,                    NULL,                      NULL,                      NULL,                    NULL,                                  NULL,                NULL,                        NULL, NULL);"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types5 ORDER BY int8 FORMAT Parquet" > "${CLICKHOUSE_TMP}"/parquet_all_types_5.parquet
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types5 ORDER BY int8 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types6 FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_types6 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types5 ORDER BY int8 FORMAT Parquet" > "${DATASTORE_TMP}"/parquet_all_types_5.parquet
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types5 ORDER BY int8 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types6 FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_types1 ORDER BY int8 FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_types6 FORMAT Parquet"
 echo dest from null:
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_types6 ORDER BY int8;
 
     DROP TABLE parquet_types5;
@@ -125,8 +125,8 @@ ${CLICKHOUSE_CLIENT} --query="
 
     INSERT INTO parquet_arrays VALUES (2, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []);"
 
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_arrays FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_arrays FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_arrays FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_arrays FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_arrays ORDER BY id;
 
     DROP TABLE parquet_arrays;
@@ -134,23 +134,23 @@ ${CLICKHOUSE_CLIENT} --query="
     DROP TABLE IF EXISTS parquet_nullable_arrays;
     CREATE TABLE parquet_nullable_arrays (id UInt32, a1 Array(Nullable(UInt32)), a2 Array(Nullable(String)), a3 Array(Nullable(Decimal(4, 2)))) engine=Memory();
     INSERT INTO parquet_nullable_arrays VALUES (1, [1, Null, 2], [Null, 'Some string', Null], [0.001, Null, 42.42]), (2, [Null], [Null], [Null]), (3, [], [], []);"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_nullable_arrays FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_nullable_arrays FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_nullable_arrays FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_nullable_arrays FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_nullable_arrays ORDER BY id;
     DROP TABLE parquet_nullable_arrays;
 
     DROP TABLE IF EXISTS parquet_nested_arrays;
     CREATE TABLE parquet_nested_arrays (a1 Array(Array(Array(UInt32))), a2 Array(Array(Array(String))), a3 Array(Array(Nullable(UInt32))), a4 Array(Array(Nullable(String)))) engine=Memory();
     INSERT INTO parquet_nested_arrays VALUES ([[[1,2,3], [1,2,3]], [[1,2,3]], [[], [1,2,3]]], [[['Some string', 'Some string'], []], [['Some string']], [[]]], [[Null, 1, 2], [Null], [1, 2], []], [['Some string', Null, 'Some string'], [Null], []]);"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_nested_arrays FORMAT Parquet" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_nested_arrays FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_nested_arrays FORMAT Parquet" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_nested_arrays FORMAT Parquet"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_nested_arrays;
     DROP TABLE parquet_nested_arrays;
 
     DROP TABLE IF EXISTS parquet_decimal;
     CREATE TABLE parquet_decimal (d1 Decimal32(4), d2 Decimal64(8), d3 Decimal128(16), d4 Decimal256(32)) ENGINE = Memory;
     INSERT INTO TABLE parquet_decimal VALUES (0.123, 0.123123123, 0.123123123123, 0.123123123123123123);"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_decimal FORMAT Arrow" | ${CLICKHOUSE_CLIENT} --query="INSERT INTO parquet_decimal FORMAT Arrow"
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_decimal FORMAT Arrow" | ${DATASTORE_CLIENT} --query="INSERT INTO parquet_decimal FORMAT Arrow"
+${DATASTORE_CLIENT} --query="
     SELECT * FROM parquet_decimal;
     DROP TABLE parquet_decimal;"

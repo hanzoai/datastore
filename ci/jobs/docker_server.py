@@ -21,9 +21,9 @@ temp_path = Path(f"{Utils.cwd()}/ci/tmp")
 GITHUB_SERVER_URL = os.getenv("GITHUB_SERVER_URL", "https://github.com")
 with tempfile.NamedTemporaryFile("w", delete=False) as f:
     GIT_KNOWN_HOSTS_FILE = f.name
-    GIT_PREFIX = (  # All commits to remote are done as robot-clickhouse
-        "git -c user.email=robot-clickhouse@users.noreply.github.com "
-        "-c user.name=robot-clickhouse -c commit.gpgsign=false "
+    GIT_PREFIX = (  # All commits to remote are done as robot-datastore
+        "git -c user.email=robot-datastore@users.noreply.github.com "
+        "-c user.name=robot-datastore -c commit.gpgsign=false "
         "-c core.sshCommand="
         f"'ssh -o UserKnownHostsFile={GIT_KNOWN_HOSTS_FILE} "
         "-o StrictHostKeyChecking=accept-new'"
@@ -70,7 +70,7 @@ def docker_login(relogin: bool = True) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description="A program to build clickhouse-server image, both alpine and "
+        description="A program to build datastore-server image, both alpine and "
         "ubuntu versions",
     )
     parser.add_argument(
@@ -177,8 +177,8 @@ def buildx_args(
         "--sbom=true",
         f"--platform=linux/{arch}",
         f"--label=build-url={action_url}",
-        f"--label=com.clickhouse.build.githash={sha}",
-        f"--label=com.clickhouse.build.version={version}",
+        f"--label=com.datastore.build.githash={sha}",
+        f"--label=com.datastore.build.version={version}",
     ]
     if direct_urls:
         args.append(f"--build-arg=DIRECT_DOWNLOAD_URLS='{' '.join(direct_urls)}'")
@@ -225,7 +225,7 @@ def build_and_push_image(
             # distroless and ubuntu-server use an Ubuntu builder with dpkg, so they
             # need .deb packages. alpine and ubuntu-keeper use .tgz packages.
             uses_deb = os == "distroless" or (
-                os == "ubuntu" and "clickhouse-server" in image.name
+                os == "ubuntu" and "datastore-server" in image.name
             )
             if uses_deb:
                 urls = [
@@ -235,10 +235,10 @@ def build_and_push_image(
                 ]
             else:
                 # For keeper/alpine tgz builds, only pass the keeper tgz.
-                # Excluding clickhouse-common-static.tgz avoids a large unnecessary download.
+                # Excluding datastore-common-static.tgz avoids a large unnecessary download.
                 tgz_urls = [url for url in direct_urls[arch] if ".tgz" in url]
                 if "keeper" in image.name:
-                    urls = [url for url in tgz_urls if "clickhouse-keeper" in url]
+                    urls = [url for url in tgz_urls if "datastore-keeper" in url]
                 else:
                     urls = tgz_urls
         cmd_args.extend(
@@ -298,7 +298,7 @@ def test_docker_library(test_results) -> None:
     test_name = "docker library image test"
     try:
         repo = "docker-library/official-images"
-        logging.info("Cloning %s repository to run tests for 'clickhouse' image", repo)
+        logging.info("Cloning %s repository to run tests for 'datastore' image", repo)
         repo_path = temp_path / repo
         config_override = (
             Path(Utils.cwd()) / "ci/jobs/scripts/docker_server/config.sh"
@@ -358,10 +358,10 @@ def main():
         version_dict = CHVersion.get_current_version_as_dict()
         if not info.is_local_run:
             print(
-                "WARNING: ClickHouse version has not been found in workflow kv storage - read from repo"
+                "WARNING: Datastore version has not been found in workflow kv storage - read from repo"
             )
             info.add_workflow_warning(
-                "ClickHouse version has not been found in workflow kv storage"
+                "Datastore version has not been found in workflow kv storage"
             )
     assert version_dict
 
@@ -370,10 +370,10 @@ def main():
 
     if "server image" in info.job_name:
         image_path = args.image_path or "docker/server"
-        image_repo = args.image_repo or "clickhouse/clickhouse-server"
+        image_repo = args.image_repo or "datastore/datastore-server"
     elif "keeper image" in info.job_name:
         image_path = args.image_path or "docker/keeper"
-        image_repo = args.image_repo or "clickhouse/clickhouse-keeper"
+        image_repo = args.image_repo or "datastore/datastore-keeper"
     else:
         assert False, f"Unexpected job name [{info.job_name}]"
 
@@ -399,23 +399,23 @@ def main():
     for arch, build_name in zip(ARCH, ("amd_release", "arm_release")):
         if args.allow_build_reuse:
             # read s3 urls from pre-downloaded build reports
-            if "clickhouse-server" in image_repo:
+            if "datastore-server" in image_repo:
                 PACKAGES = [
-                    "clickhouse-client",
-                    "clickhouse-server",
-                    "clickhouse-common-static",
+                    "datastore-client",
+                    "datastore-server",
+                    "datastore-common-static",
                 ]
-            elif "clickhouse-keeper" in image_repo:
+            elif "datastore-keeper" in image_repo:
                 # Both packages are needed to cover all three keeper image variants:
-                #   distroless: installs from .deb via dpkg; clickhouse-common-static
-                #               provides the clickhouse multi-tool binary (clickhouse-keeper
-                #               is a symlink to it). clickhouse-keeper .deb is not published
+                #   distroless: installs from .deb via dpkg; datastore-common-static
+                #               provides the datastore multi-tool binary (datastore-keeper
+                #               is a symlink to it). datastore-keeper .deb is not published
                 #               separately, so the common-static .deb is the only source.
-                #   alpine/ubuntu: installs from .tgz; clickhouse-keeper provides the
+                #   alpine/ubuntu: installs from .tgz; datastore-keeper provides the
                 #               standalone keeper binary and its symlinks. The common-static
                 #               .tgz is implicitly excluded because the url filter below
-                #               keeps only urls containing "clickhouse-keeper" in the name.
-                PACKAGES = ["clickhouse-common-static", "clickhouse-keeper"]
+                #               keeps only urls containing "datastore-keeper" in the name.
+                PACKAGES = ["datastore-common-static", "datastore-keeper"]
             else:
                 assert False, "BUG"
             urls = read_build_urls(build_name)

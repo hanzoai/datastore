@@ -15,7 +15,7 @@ import ExperimentalBadge from '@theme/badges/ExperimentalBadge';
 # Kafka table engine
 
 :::tip
-If you're on ClickHouse Cloud, we recommend using [ClickPipes](/integrations/clickpipes) instead. ClickPipes natively supports private network connections, scaling ingestion and cluster resources independently, and comprehensive monitoring for streaming Kafka data into ClickHouse.
+If you're on Datastore Cloud, we recommend using [ClickPipes](/integrations/clickpipes) instead. ClickPipes natively supports private network connections, scaling ingestion and cluster resources independently, and comprehensive monitoring for streaming Kafka data into Datastore.
 :::
 
 - Publish or subscribe to data flows.
@@ -75,7 +75,7 @@ Optional parameters:
 - `kafka_sasl_password` - SASL password for use with the `PLAIN` and `SASL-SCRAM-..` mechanisms.
 - `kafka_schema` — Parameter that must be used if the format requires a schema definition. For example, [Cap'n Proto](https://capnproto.org/) requires the path to the schema file and the name of the root `schema.capnp:Message` object.
 - `kafka_schema_registry_skip_bytes` — The number of bytes to skip from the beginning of each message when using schema registry with envelope headers (e.g., AWS Glue Schema Registry which includes a 19-byte envelope). Range: `[0, 255]`. Default: `0`.
-- `kafka_num_consumers` — The number of consumers per table. Specify more consumers if the throughput of one consumer is insufficient. The total number of consumers should not exceed the number of partitions in the topic, since only one consumer can be assigned per partition, and must not be greater than the number of physical cores on the server where ClickHouse is deployed. Default: `1`.
+- `kafka_num_consumers` — The number of consumers per table. Specify more consumers if the throughput of one consumer is insufficient. The total number of consumers should not exceed the number of partitions in the topic, since only one consumer can be assigned per partition, and must not be greater than the number of physical cores on the server where Datastore is deployed. Default: `1`.
 - `kafka_max_block_size` — The maximum batch size (in messages) for poll. Default: [max_insert_block_size](../../../operations/settings/settings.md#max_insert_block_size).
 - `kafka_skip_broken_messages` — Kafka message parser tolerance to schema-incompatible messages per block. If `kafka_skip_broken_messages = N` then the engine skips *N* Kafka messages that cannot be parsed (a message equals a row of data). Default: `0`.
 - `kafka_commit_every_batch` — Commit every consumed and handled batch instead of a single commit after writing a whole block. Default: `0`.
@@ -94,7 +94,7 @@ Optional parameters:
   `AWS_ZONE_ID` for the AWS IMDSv2 availability zone ID, for example `euc1-az1`;
   `AWS_ZONE_NAME` for the AWS IMDSv2 availability zone name, for example `eu-central-1a`;
   `GCP_ZONE` for the GCP metadata service zone, for example `europe-central2-a`;
-  `CLICKHOUSE` to use ClickHouse internal detection, which may rely on cloud metadata or configuration;
+  `DATASTORE` to use Datastore internal detection, which may rely on cloud metadata or configuration;
   `AWS_ZONE_NAME_THEN_GCP_ZONE` to try `AWS_ZONE_NAME` and then `GCP_ZONE`.
   Default: empty string, disabled.
   Tip: different environments use different availability zone formats. Amazon MSK typically uses zone IDs, so prefer `AWS_ZONE_ID`. Confluent Cloud typically uses zone names, so prefer `AWS_ZONE_NAME`. If unsure, use `AWS_ZONE_NAME_THEN_GCP_ZONE` or check the `broker.rack` value on your cluster.
@@ -203,7 +203,7 @@ If you want to change the target table by using `ALTER`, we recommend disabling 
 
 ## Configuration {#configuration}
 
-Similar to GraphiteMergeTree, the Kafka engine supports extended configuration using the ClickHouse config file. There are two configuration keys that you can use: global (below `<kafka>`) and topic-level (below `<kafka><kafka_topic>`). The global configuration is applied first, and then the topic-level configuration is applied (if it exists).
+Similar to GraphiteMergeTree, the Kafka engine supports extended configuration using the Datastore config file. There are two configuration keys that you can use: global (below `<kafka>`) and topic-level (below `<kafka><kafka_topic>`). The global configuration is applied first, and then the topic-level configuration is applied (if it exists).
 
 ```xml
   <kafka>
@@ -245,12 +245,12 @@ Similar to GraphiteMergeTree, the Kafka engine supports extended configuration u
   </kafka>
 ```
 
-For a list of possible configuration options, see the [librdkafka configuration reference](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md). Use the underscore (`_`) instead of a dot in the ClickHouse configuration. For example, `check.crcs=true` will be `<check_crcs>true</check_crcs>`.
+For a list of possible configuration options, see the [librdkafka configuration reference](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md). Use the underscore (`_`) instead of a dot in the Datastore configuration. For example, `check.crcs=true` will be `<check_crcs>true</check_crcs>`.
 
 ### Kerberos support {#kafka-kerberos-support}
 
 To deal with Kerberos-aware Kafka, add `security_protocol` child element with `sasl_plaintext` value. It is enough if Kerberos ticket-granting ticket is obtained and cached by OS facilities.
-ClickHouse is able to maintain Kerberos credentials using a keytab file. Consider `sasl_kerberos_service_name`, `sasl_kerberos_keytab` and `sasl_kerberos_principal` child elements.
+Datastore is able to maintain Kerberos credentials using a keytab file. Consider `sasl_kerberos_service_name`, `sasl_kerberos_keytab` and `sasl_kerberos_principal` child elements.
 
 Example:
 
@@ -289,7 +289,7 @@ With `kafka_map_virtual_columns_on_write = 1`, the behaviour changes:
 
 - `_key` (type `String`) — mapped to the Kafka message key.
 - `_timestamp` (type `DateTime`) — mapped to the Kafka message timestamp.
-- `_headers.name` (type `Array(String)`) and `_headers.value` (type `Array(String)`) — mapped to Kafka message headers. Each pair `(_headers.name[i], _headers.value[i])` becomes one Kafka header. Because `_headers.name` and `_headers.value` share the `_headers` Nested prefix, ClickHouse requires both arrays to have the same size for every row.
+- `_headers.name` (type `Array(String)`) and `_headers.value` (type `Array(String)`) — mapped to Kafka message headers. Each pair `(_headers.name[i], _headers.value[i])` becomes one Kafka header. Because `_headers.name` and `_headers.value` share the `_headers` Nested prefix, Datastore requires both arrays to have the same size for every row.
 
 Columns with these names are **excluded from the message payload** only if their types match those listed above; otherwise they stay in the payload, so schemas that happen to reuse these names for unrelated data keep working.
 
@@ -320,21 +320,21 @@ The produced Kafka message has payload `{"event_json":"{\"a\":1}"}`, key `sessio
 
 ## Data formats support {#data-formats-support}
 
-Kafka engine supports all [formats](../../../interfaces/formats.md) supported in ClickHouse.
+Kafka engine supports all [formats](../../../interfaces/formats.md) supported in Datastore.
 The number of rows in one Kafka message depends on whether the format is row-based or block-based:
 
 - For row-based formats the number of rows in one Kafka message can be controlled by setting `kafka_max_rows_per_message`.
 - For block-based formats we cannot divide block into smaller parts, but the number of rows in one block can be controlled by general setting [max_block_size](/operations/settings/settings#max_block_size).
 
-## Engine to store committed offsets in ClickHouse Keeper {#engine-to-store-committed-offsets-in-clickhouse-keeper}
+## Engine to store committed offsets in Datastore Keeper {#engine-to-store-committed-offsets-in-datastore-keeper}
 
 <ExperimentalBadge/>
 
 If `allow_experimental_kafka_offsets_storage_in_keeper` is enabled, then two more settings can be specified to the Kafka table engine:
-- `kafka_keeper_path` specifies the path to the table in ClickHouse Keeper
-- `kafka_replica_name` specifies the replica name in ClickHouse Keeper
+- `kafka_keeper_path` specifies the path to the table in Datastore Keeper
+- `kafka_replica_name` specifies the replica name in Datastore Keeper
 
-Either both of the settings must be specified or neither of them. When both of them are specified, then a new, experimental Kafka engine will be used. The new engine doesn't depend on storing the committed offsets in Kafka, but stores them in ClickHouse Keeper. It still tries to commit the offsets to Kafka, but it only depends on those offsets when the table is created. In any other circumstances (table is restarted, or recovered after some error) the offsets stored in ClickHouse Keeper will be used as an offset to continue consuming messages from. Apart from the committed offset, it also stores how many messages were consumed in the last batch, so if the insert fails, the same amount of messages will be consumed, thus enabling deduplication if necessary.
+Either both of the settings must be specified or neither of them. When both of them are specified, then a new, experimental Kafka engine will be used. The new engine doesn't depend on storing the committed offsets in Kafka, but stores them in Datastore Keeper. It still tries to commit the offsets to Kafka, but it only depends on those offsets when the table is created. In any other circumstances (table is restarted, or recovered after some error) the offsets stored in Datastore Keeper will be used as an offset to continue consuming messages from. Apart from the committed offset, it also stores how many messages were consumed in the last batch, so if the insert fails, the same amount of messages will be consumed, thus enabling deduplication if necessary.
 
 Example:
 
@@ -342,7 +342,7 @@ Example:
 CREATE TABLE experimental_kafka (key UInt64, value UInt64)
 ENGINE = Kafka('localhost:19092', 'my-topic', 'my-consumer', 'JSONEachRow')
 SETTINGS
-  kafka_keeper_path = '/clickhouse/{database}/{uuid}',
+  kafka_keeper_path = '/datastore/{database}/{uuid}',
   kafka_replica_name = '{replica}'
 SETTINGS allow_experimental_kafka_offsets_storage_in_keeper=1;
 ```
@@ -350,7 +350,7 @@ SETTINGS allow_experimental_kafka_offsets_storage_in_keeper=1;
 ### Known limitations {#known-limitations}
 
 As the new engine is experimental, it is not production ready yet. There are few known limitations of the implementation:
-- Rapidly dropping and recreating the table or specifying the same ClickHouse Keeper path to different engines might cause issues. As best practice you can use the `{uuid}` in `kafka_keeper_path` to avoid clashing paths.
+- Rapidly dropping and recreating the table or specifying the same Datastore Keeper path to different engines might cause issues. As best practice you can use the `{uuid}` in `kafka_keeper_path` to avoid clashing paths.
 - To make repeatable reads, messages cannot be consumed from multiple partitions on a single thread. On the other hand, the Kafka consumers have to be polled regularly to keep them alive. As a result of these two objectives, we decided to only allow creating multiple consumers if `kafka_thread_per_consumer` is enabled, otherwise it is too complicated to avoid issues regarding polling consumers regularly.
 
 **See Also**

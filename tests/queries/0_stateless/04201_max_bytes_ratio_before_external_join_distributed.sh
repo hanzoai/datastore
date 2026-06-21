@@ -17,31 +17,31 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # so that each executor recomputes the spill threshold from its own
 # memory limits.
 
-USER="u04201_${CLICKHOUSE_DATABASE}"
+USER="u04201_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT -q "DROP USER IF EXISTS ${USER}"
+$DATASTORE_CLIENT -q "DROP USER IF EXISTS ${USER}"
 # 1 GiB is small enough to keep the spill threshold (`ratio * available`)
 # below the right-side hash table for both the local user and the default
 # user that the cluster spawns secondary queries as on the executors, but
 # big enough that the post-spill `GraceHashJoin` probe phase has headroom
 # to finish without tripping the user-level `MEMORY_LIMIT_EXCEEDED`.
-$CLICKHOUSE_CLIENT -q "CREATE USER ${USER} IDENTIFIED WITH no_password SETTINGS max_memory_usage_for_user = '1Gi'"
-$CLICKHOUSE_CLIENT -q "GRANT ALL ON *.* TO ${USER}"
+$DATASTORE_CLIENT -q "CREATE USER ${USER} IDENTIFIED WITH no_password SETTINGS max_memory_usage_for_user = '1Gi'"
+$DATASTORE_CLIENT -q "GRANT ALL ON *.* TO ${USER}"
 
-LOG_LOCAL="04201_local_${CLICKHOUSE_DATABASE}"
-LOG_DIST="04201_serialized_${CLICKHOUSE_DATABASE}"
+LOG_LOCAL="04201_local_${DATASTORE_DATABASE}"
+LOG_DIST="04201_serialized_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT --user "${USER}" -q "DROP TABLE IF EXISTS t_left_04201 SYNC"
-$CLICKHOUSE_CLIENT --user "${USER}" -q "DROP TABLE IF EXISTS t_right_04201 SYNC"
-$CLICKHOUSE_CLIENT --user "${USER}" -q "CREATE TABLE t_left_04201  (k UInt64) ENGINE = MergeTree ORDER BY k"
-$CLICKHOUSE_CLIENT --user "${USER}" -q "CREATE TABLE t_right_04201 (k UInt64) ENGINE = MergeTree ORDER BY k"
-$CLICKHOUSE_CLIENT --user "${USER}" -q "INSERT INTO t_left_04201  SELECT number FROM numbers(100000)"
-$CLICKHOUSE_CLIENT --user "${USER}" -q "INSERT INTO t_right_04201 SELECT number FROM numbers(100000)"
+$DATASTORE_CLIENT --user "${USER}" -q "DROP TABLE IF EXISTS t_left_04201 SYNC"
+$DATASTORE_CLIENT --user "${USER}" -q "DROP TABLE IF EXISTS t_right_04201 SYNC"
+$DATASTORE_CLIENT --user "${USER}" -q "CREATE TABLE t_left_04201  (k UInt64) ENGINE = MergeTree ORDER BY k"
+$DATASTORE_CLIENT --user "${USER}" -q "CREATE TABLE t_right_04201 (k UInt64) ENGINE = MergeTree ORDER BY k"
+$DATASTORE_CLIENT --user "${USER}" -q "INSERT INTO t_left_04201  SELECT number FROM numbers(100000)"
+$DATASTORE_CLIENT --user "${USER}" -q "INSERT INTO t_right_04201 SELECT number FROM numbers(100000)"
 
 # 1. Non-distributed join with the ratio set: spilling must happen.
 #    The ratio is intentionally tiny (0.0001 of ~1 GiB ≈ 100 KiB) so the
 #    spill threshold is well below the right-side hash table (~9 MiB).
-$CLICKHOUSE_CLIENT --user "${USER}" -q "
+$DATASTORE_CLIENT --user "${USER}" -q "
     SELECT count()
     FROM t_left_04201 AS t1
     INNER JOIN t_right_04201 AS t2 ON t1.k = t2.k
@@ -66,7 +66,7 @@ $CLICKHOUSE_CLIENT --user "${USER}" -q "
 #    would absorb one of the shards and only the initial query would be
 #    logged), which is what makes the per-executor assertion below
 #    meaningful.
-$CLICKHOUSE_CLIENT --user "${USER}" -q "
+$DATASTORE_CLIENT --user "${USER}" -q "
     SELECT count()
     FROM cluster('test_cluster_two_shards', currentDatabase(), t_left_04201) AS t1
     INNER JOIN cluster('test_cluster_two_shards', currentDatabase(), t_right_04201) AS t2 ON t1.k = t2.k
@@ -82,12 +82,12 @@ $CLICKHOUSE_CLIENT --user "${USER}" -q "
     FORMAT Null
 "
 
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
 
 # Verify spilling via profile events. The local query is a single execution,
 # so requiring its `QueryFinish` row to record
 # `JoinSpillingHashJoinSwitchedToGraceJoin > 0` is sufficient.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT
         'local',
         countIf(ProfileEvents['JoinSpillingHashJoinSwitchedToGraceJoin'] > 0) > 0
@@ -112,7 +112,7 @@ $CLICKHOUSE_CLIENT -q "
 # — the style check requires this filter to appear in any test that
 # reads from `system.query_log`) and match secondary rows by
 # `initial_query_id`.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     WITH initial_query_ids AS
     (
         SELECT query_id
@@ -133,6 +133,6 @@ $CLICKHOUSE_CLIENT -q "
         AND event_date >= yesterday()
 "
 
-$CLICKHOUSE_CLIENT --user "${USER}" -q "DROP TABLE t_left_04201 SYNC"
-$CLICKHOUSE_CLIENT --user "${USER}" -q "DROP TABLE t_right_04201 SYNC"
-$CLICKHOUSE_CLIENT -q "DROP USER IF EXISTS ${USER}"
+$DATASTORE_CLIENT --user "${USER}" -q "DROP TABLE t_left_04201 SYNC"
+$DATASTORE_CLIENT --user "${USER}" -q "DROP TABLE t_right_04201 SYNC"
+$DATASTORE_CLIENT -q "DROP USER IF EXISTS ${USER}"

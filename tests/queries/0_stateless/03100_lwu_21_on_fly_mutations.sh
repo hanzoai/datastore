@@ -11,7 +11,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_on_fly SYNC;
     SET enable_lightweight_update = 1;
 
@@ -48,7 +48,7 @@ $CLICKHOUSE_CLIENT --query "
 
 wait_for_mutation "t_lwu_on_fly" "0000000001"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT * FROM t_lwu_on_fly ORDER BY id;
 
     OPTIMIZE TABLE t_lwu_on_fly FINAL SETTINGS optimize_throw_if_noop = 1;

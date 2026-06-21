@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/104432
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/104432
 -- `anyHeavy` used to ignore default values that came from the sparse-column
 -- code path because the `addManyDefaults` override hardcoded length=0.
 

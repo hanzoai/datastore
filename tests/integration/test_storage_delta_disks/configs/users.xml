@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <delta_lake_enable_expression_visitor_logging>1</delta_lake_enable_expression_visitor_logging>
@@ -20,4 +20,4 @@
         <default>
         </default>
     </quotas>
-</clickhouse>
+</datastore>

@@ -3,14 +3,14 @@ slug: /sql-reference/statements/create/dictionary/sources/http
 title: 'HTTP(S) dictionary source'
 sidebar_position: 5
 sidebar_label: 'HTTP(S)'
-description: 'Configure an HTTP or HTTPS endpoint as a dictionary source in ClickHouse.'
+description: 'Configure an HTTP or HTTPS endpoint as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Working with an HTTP(S) server depends on [how the dictionary is stored in memory](../layouts/). If the dictionary is stored using `cache` and `complex_key_cache`, ClickHouse requests the necessary keys by sending a request via the `POST` method.
+Working with an HTTP(S) server depends on [how the dictionary is stored in memory](../layouts/). If the dictionary is stored using `cache` and `complex_key_cache`, Datastore requests the necessary keys by sending a request via the `POST` method.
 
 Example of settings:
 
@@ -52,7 +52,7 @@ SOURCE(HTTP(
 </Tabs>
 <br/>
 
-In order for ClickHouse to access an HTTPS resource, you must [configure openSSL](/operations/server-configuration-parameters/settings#openssl) in the server configuration.
+In order for Datastore to access an HTTPS resource, you must [configure openSSL](/operations/server-configuration-parameters/settings#openssl) in the server configuration.
 
 Setting fields:
 

@@ -1,8 +1,8 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-server/log.log</log>
-        <errorlog>/var/log/clickhouse-server/log.err.log</errorlog>
+        <log>/var/log/datastore-server/log.log</log>
+        <errorlog>/var/log/datastore-server/log.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
     </logger>
@@ -12,4 +12,4 @@
     <listen_host>127.0.0.1</listen_host>
     <interserver_http_port>9009</interserver_http_port>
     <interserver_http_host>127.0.0.1</interserver_http_host>
-</clickhouse>
+</datastore>

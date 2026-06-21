@@ -13,15 +13,15 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 function reset_table()
 {
     table=${1:-"tt"}
-    $CLICKHOUSE_CLIENT -q "drop table if exists $table"
-    $CLICKHOUSE_CLIENT -q "create table $table (n int) engine=MergeTree order by tuple()"
+    $DATASTORE_CLIENT -q "drop table if exists $table"
+    $DATASTORE_CLIENT -q "create table $table (n int) engine=MergeTree order by tuple()"
 
     # In order to preserve parts names merges have to be disabled
-    $CLICKHOUSE_CLIENT -q "system stop merges $table"
+    $DATASTORE_CLIENT -q "system stop merges $table"
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (1)" # inserts all_1_1_0
-    $CLICKHOUSE_CLIENT -q "insert into $table values (2)" # inserts all_2_2_0
-    $CLICKHOUSE_CLIENT -q "insert into $table values (3)" # inserts all_3_3_0
+    $DATASTORE_CLIENT -q "insert into $table values (1)" # inserts all_1_1_0
+    $DATASTORE_CLIENT -q "insert into $table values (2)" # inserts all_2_2_0
+    $DATASTORE_CLIENT -q "insert into $table values (3)" # inserts all_3_3_0
 }
 
 function concurrent_drop_after()
@@ -33,7 +33,7 @@ function concurrent_drop_after()
     tx 11 "begin transaction"
     tx 11 "select count() from tt"
     tx 11 "truncate table tt"
-    $CLICKHOUSE_CLIENT --database_atomic_wait_for_drop_and_detach_synchronously=0 -q "drop table tt"
+    $DATASTORE_CLIENT --database_atomic_wait_for_drop_and_detach_synchronously=0 -q "drop table tt"
     tx 11 "commit"
 }
 
@@ -47,7 +47,7 @@ function concurrent_drop_before()
 
     tx 21 "begin transaction"
     tx 21 "select count() from tt"
-    $CLICKHOUSE_CLIENT -q                                 "drop table tt"
+    $DATASTORE_CLIENT -q                                 "drop table tt"
     tx 21 "truncate table tt" | grep -Eo "UNKNOWN_TABLE" | uniq
     tx 21 "rollback" | grep -v "INVALID_TRANSACTION" ||:
 }
@@ -69,8 +69,8 @@ function concurrent_insert()
     tx 31 "commit"
     tx 32                                            "commit"
 
-    $CLICKHOUSE_CLIENT -q "select n from tt order by n"
-    $CLICKHOUSE_CLIENT -q "select name, rows from system.parts
+    $DATASTORE_CLIENT -q "select n from tt order by n"
+    $DATASTORE_CLIENT -q "select name, rows from system.parts
                               where table='tt' and database=currentDatabase() and active
                               order by name"
 }
@@ -90,8 +90,8 @@ function concurrent_drop_part_before()
     tx 41 "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
     tx 42                         "commit"
 
-    $CLICKHOUSE_CLIENT -q "select n from tt order by n"
-    $CLICKHOUSE_CLIENT -q "select name, rows from system.parts
+    $DATASTORE_CLIENT -q "select n from tt order by n"
+    $DATASTORE_CLIENT -q "select name, rows from system.parts
                               where table='tt' and database=currentDatabase() and active
                               order by name"
 
@@ -116,7 +116,7 @@ function read_from_snapshot()
     tx 51 "select count() from tt"
     tx 51 "commit"
 
-    $CLICKHOUSE_CLIENT -q "select count() from tt"
+    $DATASTORE_CLIENT -q "select count() from tt"
 }
 
 read_from_snapshot
@@ -135,12 +135,12 @@ function concurrent_drop_part_after()
     tx 61 "commit"
     tx 62             "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 
-    $CLICKHOUSE_CLIENT -q "select n from drop_part_after_table order by n"
-    $CLICKHOUSE_CLIENT -q "select name, rows from system.parts
+    $DATASTORE_CLIENT -q "select n from drop_part_after_table order by n"
+    $DATASTORE_CLIENT -q "select name, rows from system.parts
                               where table='drop_part_after_table' and database=currentDatabase() and active
                               order by name"
-    $CLICKHOUSE_CLIENT -q "system flush logs part_log"
-    $CLICKHOUSE_CLIENT -q "select event_type, part_name from system.part_log
+    $DATASTORE_CLIENT -q "system flush logs part_log"
+    $DATASTORE_CLIENT -q "select event_type, part_name from system.part_log
                               where event_date >= yesterday() AND event_time >= now() - 600 AND table='drop_part_after_table' and database=currentDatabase()
                               order by part_name"
 }
@@ -156,13 +156,13 @@ function concurrent_truncate_notx_after()
     tx 71 "begin transaction"
     tx 71 "select count() from tt"
     tx 71 "alter table tt drop part 'all_2_2_0'"
-    $CLICKHOUSE_CLIENT -q                                 "truncate table tt"
+    $DATASTORE_CLIENT -q                                 "truncate table tt"
     # return 0, since truncate was out of transaction
     # it would be better if exception raised
     tx 71 "select count() from tt"
     tx 71 "commit"
 
-    $CLICKHOUSE_CLIENT -q "select count() from tt"
+    $DATASTORE_CLIENT -q "select count() from tt"
 }
 
 concurrent_truncate_notx_after
@@ -175,12 +175,12 @@ function concurrent_truncate_notx_before()
 
     tx 81 "begin transaction"
     tx 81 "select count() from tt"
-    $CLICKHOUSE_CLIENT -q                                 "truncate table tt"
+    $DATASTORE_CLIENT -q                                 "truncate table tt"
     tx 81 "alter table tt drop part 'all_2_2_0'" | grep -Eo "NO_SUCH_DATA_PART" | uniq
     tx 81 "select count() from tt" | grep -Eo "INVALID_TRANSACTION" | uniq
     tx 81 "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
 
-    $CLICKHOUSE_CLIENT -q "select count() from tt"
+    $DATASTORE_CLIENT -q "select count() from tt"
 }
 
 concurrent_truncate_notx_before
@@ -199,7 +199,7 @@ function concurrent_rollback_truncate()
     tx 92               "rollback"
     tx_wait 91
 
-    $CLICKHOUSE_CLIENT -q "select count() from tt"
+    $DATASTORE_CLIENT -q "select count() from tt"
 }
 
 concurrent_rollback_truncate

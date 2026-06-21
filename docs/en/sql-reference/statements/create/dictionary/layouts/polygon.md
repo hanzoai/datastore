@@ -15,7 +15,7 @@ The `polygon` (`POLYGON`) dictionary is optimized for point-in-polygon queries, 
 Given a coordinate (latitude/longitude), it efficiently finds which polygon/region (from a set of many polygons, such as country or region boundaries) contains that point.
 It's well-suited for mapping location coordinates to their containing region.
 
-<iframe width="1024" height="576" src="https://www.youtube.com/embed/FyRsriQp46E?si=Kf8CXoPKEpGQlC-Y" title="Polygon Dictionaries in ClickHouse" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="1024" height="576" src="https://www.youtube.com/embed/FyRsriQp46E?si=Kf8CXoPKEpGQlC-Y" title="Polygon Dictionaries in Datastore" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 Example of configuring a polygon dictionary:
 
@@ -82,7 +82,7 @@ When configuring the polygon dictionary, the key must have one of two types:
 
 Points can be specified as an array or a tuple of their coordinates. In the current implementation, only two-dimensional points are supported.
 
-The user can upload their own data in all formats supported by ClickHouse.
+The user can upload their own data in all formats supported by Datastore.
 
 There are 3 types of [in-memory storage](./#storing-dictionaries-in-memory) available:
 
@@ -131,7 +131,7 @@ CREATE DICTIONARY polygons_test_dictionary
     name String
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'polygons_test_table'))
+SOURCE(DATASTORE(TABLE 'polygons_test_table'))
 LAYOUT(POLYGON(STORE_POLYGON_KEY_COLUMN 1))
 LIFETIME(0);
 

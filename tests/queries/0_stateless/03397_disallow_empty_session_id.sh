@@ -5,4 +5,4 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # This should fail
-${CLICKHOUSE_CURL} -X GET -sS "${CLICKHOUSE_URL}&session_id=&query=SELECT+1" | grep -o "SESSION_ID_EMPTY"
+${DATASTORE_CURL} -X GET -sS "${DATASTORE_URL}&session_id=&query=SELECT+1" | grep -o "SESSION_ID_EMPTY"

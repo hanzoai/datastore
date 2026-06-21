@@ -112,7 +112,7 @@ def test_replicated(started_cluster):
     mv_name = f"{table_name}_mv"
     db_name = f"r"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 100
 
@@ -120,10 +120,10 @@ def test_replicated(started_cluster):
     node2.query(f"DROP DATABASE IF EXISTS {db_name}")
 
     node1.query(
-        f"CREATE DATABASE {db_name} ENGINE=Replicated('/clickhouse/databases/replicateddb', 'shard1', 'node1')"
+        f"CREATE DATABASE {db_name} ENGINE=Replicated('/datastore/databases/replicateddb', 'shard1', 'node1')"
     )
     node2.query(
-        f"CREATE DATABASE {db_name} ENGINE=Replicated('/clickhouse/databases/replicateddb', 'shard1', 'node2')"
+        f"CREATE DATABASE {db_name} ENGINE=Replicated('/datastore/databases/replicateddb', 'shard1', 'node2')"
     )
 
     def do_create_table():
@@ -180,7 +180,7 @@ def test_bad_settings(started_cluster):
     node = started_cluster.instances["node_cloud_mode"]
 
     table_name = f"test_bad_settings_{uuid.uuid4().hex[:8]}"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
 
     try:
@@ -207,7 +207,7 @@ def test_processing_threads(started_cluster):
     table_name = f"test_processing_threads_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -262,7 +262,7 @@ def test_alter_settings(started_cluster):
     table_name = f"test_alter_settings_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 1000
 
@@ -270,10 +270,10 @@ def test_alter_settings(started_cluster):
     node2.query("DROP DATABASE IF EXISTS r")
 
     node1.query(
-        f"CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node1')"
+        f"CREATE DATABASE r ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node1')"
     )
     node2.query(
-        f"CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node2')"
+        f"CREATE DATABASE r ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node2')"
     )
 
     create_table(
@@ -513,7 +513,7 @@ def test_list_and_delete_race(started_cluster):
     node_2 = started_cluster.instances["instance2"]
     table_name = f"list_and_delete_race_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 1000
     row_num = 1
@@ -609,7 +609,7 @@ def test_registry(started_cluster):
     db_name = f"db_{table_name}"
     mv_name = f"{table_name}_mv"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 100
 
@@ -617,10 +617,10 @@ def test_registry(started_cluster):
     node2.query(f"DROP DATABASE IF EXISTS {db_name}")
 
     node1.query(
-        f"CREATE DATABASE {db_name} ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node1')"
+        f"CREATE DATABASE {db_name} ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node1')"
     )
     node2.query(
-        f"CREATE DATABASE {db_name} ENGINE=Replicated('/clickhouse/databases/{table_name}', 'shard1', 'node2')"
+        f"CREATE DATABASE {db_name} ENGINE=Replicated('/datastore/databases/{table_name}', 'shard1', 'node2')"
     )
 
     create_table(

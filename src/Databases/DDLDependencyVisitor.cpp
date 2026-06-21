@@ -182,10 +182,10 @@ namespace
 
         }
 
-        /// The definition of a dictionary: SOURCE(CLICKHOUSE(...)) LAYOUT(...) LIFETIME(...)
+        /// The definition of a dictionary: SOURCE(DATASTORE(...)) LAYOUT(...) LIFETIME(...)
         void visitDictionaryDef(const ASTDictionary & dictionary)
         {
-            if (!dictionary.source || dictionary.source->name != "clickhouse" || !dictionary.source->elements)
+            if (!dictionary.source || dictionary.source->name != "datastore" || !dictionary.source->elements)
                 return;
 
             auto config = getDictionaryConfigurationFromAST(create_query->as<ASTCreateQuery &>(), global_context);
@@ -559,7 +559,7 @@ namespace
         try
         {
             ParserSelectWithUnionQuery parser;
-            String description = fmt::format("Query for ClickHouse dictionary {}.{}", backQuoteIfNeed(data.table_name.database), backQuoteIfNeed(data.table_name.table));
+            String description = fmt::format("Query for Datastore dictionary {}.{}", backQuoteIfNeed(data.table_name.database), backQuoteIfNeed(data.table_name.table));
             String fixed_query = removeWhereConditionPlaceholder(query);
             const Settings & settings = data.global_context->getSettingsRef();
             ASTPtr select = parseQuery(

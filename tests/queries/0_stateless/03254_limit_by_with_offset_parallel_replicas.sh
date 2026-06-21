@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 DROP TABLE IF EXISTS limit_by;
 DROP TABLE IF EXISTS ties;
 DROP TABLE IF EXISTS test_fetch;
@@ -36,7 +36,7 @@ INSERT INTO test_fetch VALUES(1, 1), (2, 1), (3, 4), (3, 3), (5, 4), (0, 6), (5,
 
 for enable_analyzer in {0..1}; do
   for enable_parallel_replicas in {0..1}; do
-    ${CLICKHOUSE_CLIENT} --query="
+    ${DATASTORE_CLIENT} --query="
     set enable_analyzer=${enable_analyzer};
     set allow_experimental_parallel_reading_from_replicas=${enable_parallel_replicas}, automatic_parallel_replicas_mode=0, cluster_for_parallel_replicas='parallel_replicas', max_parallel_replicas=100, parallel_replicas_for_non_replicated_merge_tree=1;
 
@@ -72,7 +72,7 @@ for enable_analyzer in {0..1}; do
   done
 done
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 DROP TABLE limit_by;
 DROP TABLE ties;
 DROP TABLE test_fetch;

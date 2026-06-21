@@ -59,7 +59,7 @@ class StackTraceReader(object):
                 while i < len(lines) and stack_trace_pattern_if_err.search(lines[i]):
                     match = stack_trace_pattern_if_err.search(lines[i])
                     trace_line = lines[i][match.end() :]
-                    trace_line = trace_line.split("ClickHouse/")[-1]
+                    trace_line = trace_line.split("Datastore/")[-1]
                     trace += trace_line.strip() + "\n"
                     i += 1
                 continue

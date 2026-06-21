@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS test;
 CREATE TABLE test(
     key String,
     val Map(String, Variant(String, Int32, DateTime64(3, 'UTC')))
-) engine = ReplicatedMergeTree('/clickhouse/tables/{database}/table', '1')
+) engine = ReplicatedMergeTree('/datastore/tables/{database}/table', '1')
 order by key;
 
 insert into test VALUES ('a', {'a':'a', 'b':1, 'c': '2020-01-01 10:10:10.11'});

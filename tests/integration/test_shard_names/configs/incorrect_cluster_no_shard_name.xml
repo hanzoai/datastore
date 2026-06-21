@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_incorrect_cluster_no_shard_name>
             <node>
@@ -12,4 +12,4 @@
             </node>
         </test_incorrect_cluster_no_shard_name>
     </remote_servers>
-</clickhouse>
+</datastore>

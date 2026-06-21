@@ -1,6 +1,6 @@
 -- The input is table(test text, query text, run UInt32, version UInt8, metrics Array(float)).
 -- Run like this:
--- clickhouse-local --queries-file eqmed.sql -S 'test text, query text, run UInt32, version UInt8, metrics Array(float)' --file analyze/tmp/modulo_0.tsv
+-- datastore-local --queries-file eqmed.sql -S 'test text, query text, run UInt32, version UInt8, metrics Array(float)' --file analyze/tmp/modulo_0.tsv
 select
    arrayMap(x -> floor(x, 4), original_medians_array.medians_by_version[1] as l) l_rounded,
    arrayMap(x -> floor(x, 4), original_medians_array.medians_by_version[2] as r) r_rounded,

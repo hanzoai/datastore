@@ -17,7 +17,7 @@ SCHEMADIR=$CURDIR/format_schemas
 set -eo pipefail
 
 # Run the client.
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE IF EXISTS persons_00825;
 DROP TABLE IF EXISTS roundtrip_persons_00825;
 DROP TABLE IF EXISTS alt_persons_00825;
@@ -62,56 +62,56 @@ EOF
 echo
 echo "Schema 00825_protobuf_format_persons:Person"
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_persons.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons:Person'" > $BINARY_FILE_PATH
+$DATASTORE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons:Person'" > $BINARY_FILE_PATH
 echo
 $CURDIR/helpers/protobuf_length_delimited_encoder.py --decode_and_check --format_schema "$SCHEMADIR/00825_protobuf_format_persons:Person" --input "$BINARY_FILE_PATH"
 echo
 echo "Roundtrip:"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE roundtrip_persons_00825 AS persons_00825"
-$CLICKHOUSE_CLIENT --query "INSERT INTO roundtrip_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons:Person' FORMAT Protobuf" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM roundtrip_persons_00825 ORDER BY name"
+$DATASTORE_CLIENT --query "CREATE TABLE roundtrip_persons_00825 AS persons_00825"
+$DATASTORE_CLIENT --query "INSERT INTO roundtrip_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons:Person' FORMAT Protobuf" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM roundtrip_persons_00825 ORDER BY name"
 rm "$BINARY_FILE_PATH"
 
 # Use schema 00825_protobuf_format_persons:AltPerson
 echo
 echo "Schema 00825_protobuf_format_persons:AltPerson"
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_persons.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons:AltPerson'" > $BINARY_FILE_PATH
+$DATASTORE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons:AltPerson'" > $BINARY_FILE_PATH
 echo
 $CURDIR/helpers/protobuf_length_delimited_encoder.py --decode_and_check --format_schema "$SCHEMADIR/00825_protobuf_format_persons:AltPerson" --input "$BINARY_FILE_PATH"
 echo
 echo "Roundtrip:"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE alt_persons_00825 AS persons_00825"
-$CLICKHOUSE_CLIENT --query "INSERT INTO alt_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons:AltPerson' FORMAT Protobuf" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM alt_persons_00825 ORDER BY name"
+$DATASTORE_CLIENT --query "CREATE TABLE alt_persons_00825 AS persons_00825"
+$DATASTORE_CLIENT --query "INSERT INTO alt_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons:AltPerson' FORMAT Protobuf" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM alt_persons_00825 ORDER BY name"
 rm "$BINARY_FILE_PATH"
 
 # Use schema 00825_protobuf_format_persons:StrPerson
 echo
 echo "Schema 00825_protobuf_format_persons:StrPerson"
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_persons.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons:StrPerson'" > $BINARY_FILE_PATH
+$DATASTORE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons:StrPerson'" > $BINARY_FILE_PATH
 echo
 $CURDIR/helpers/protobuf_length_delimited_encoder.py --decode_and_check --format_schema "$SCHEMADIR/00825_protobuf_format_persons:StrPerson" --input "$BINARY_FILE_PATH"
 echo
 echo "Roundtrip:"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE str_persons_00825 AS persons_00825"
-$CLICKHOUSE_CLIENT --query "INSERT INTO str_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons:StrPerson' FORMAT Protobuf" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM str_persons_00825 ORDER BY name"
+$DATASTORE_CLIENT --query "CREATE TABLE str_persons_00825 AS persons_00825"
+$DATASTORE_CLIENT --query "INSERT INTO str_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons:StrPerson' FORMAT Protobuf" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM str_persons_00825 ORDER BY name"
 rm "$BINARY_FILE_PATH"
 
 # Use schema 00825_protobuf_format_syntax2:Syntax2Person
 echo
 echo "Schema 00825_protobuf_format_syntax2:Syntax2Person"
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_persons.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons_syntax2:Syntax2Person'" > $BINARY_FILE_PATH
+$DATASTORE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons_syntax2:Syntax2Person'" > $BINARY_FILE_PATH
 echo
 $CURDIR/helpers/protobuf_length_delimited_encoder.py --decode_and_check --format_schema "$SCHEMADIR/00825_protobuf_format_persons_syntax2:Syntax2Person" --input "$BINARY_FILE_PATH"
 echo
 echo "Roundtrip:"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE syntax2_persons_00825 AS persons_00825"
-$CLICKHOUSE_CLIENT --query "INSERT INTO syntax2_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons_syntax2:Syntax2Person' FORMAT Protobuf" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM syntax2_persons_00825 ORDER BY name"
+$DATASTORE_CLIENT --query "CREATE TABLE syntax2_persons_00825 AS persons_00825"
+$DATASTORE_CLIENT --query "INSERT INTO syntax2_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons_syntax2:Syntax2Person' FORMAT Protobuf" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM syntax2_persons_00825 ORDER BY name"
 rm "$BINARY_FILE_PATH"
 
 # Use schema 00825_protobuf_format_persons_edition2023:Person
@@ -119,17 +119,17 @@ rm "$BINARY_FILE_PATH"
 echo
 echo "Schema 00825_protobuf_format_persons_edition2023:Person"
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_persons.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons_edition2023:Person'" > $BINARY_FILE_PATH
+$DATASTORE_CLIENT --query "SELECT * FROM persons_00825 ORDER BY name FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_persons_edition2023:Person'" > $BINARY_FILE_PATH
 echo
 $CURDIR/helpers/protobuf_length_delimited_encoder.py --decode_and_check --format_schema "$SCHEMADIR/00825_protobuf_format_persons_edition2023:Person" --input "$BINARY_FILE_PATH"
 echo
 echo "Roundtrip:"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE edition2023_persons_00825 AS persons_00825"
-$CLICKHOUSE_CLIENT --query "INSERT INTO edition2023_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons_edition2023:Person' FORMAT Protobuf" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM edition2023_persons_00825 ORDER BY name"
+$DATASTORE_CLIENT --query "CREATE TABLE edition2023_persons_00825 AS persons_00825"
+$DATASTORE_CLIENT --query "INSERT INTO edition2023_persons_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_persons_edition2023:Person' FORMAT Protobuf" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM edition2023_persons_00825 ORDER BY name"
 rm "$BINARY_FILE_PATH"
 
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE persons_00825;
 DROP TABLE roundtrip_persons_00825;
 DROP TABLE alt_persons_00825;

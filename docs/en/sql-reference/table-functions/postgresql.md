@@ -44,14 +44,14 @@ In the `INSERT` query to distinguish table function `postgresql(...)` from table
 
 Simple `WHERE` clauses such as `=`, `!=`, `>`, `>=`, `<`, `<=`, and `IN` are executed on the PostgreSQL server.
 
-All joins, aggregations, sorting, `IN [ array ]` conditions and the `LIMIT` sampling constraint are executed in ClickHouse only after the query to PostgreSQL finishes.
+All joins, aggregations, sorting, `IN [ array ]` conditions and the `LIMIT` sampling constraint are executed in Datastore only after the query to PostgreSQL finishes.
 
 `INSERT` queries on PostgreSQL side run as `COPY "table_name" (field1, field2, ... fieldN) FROM STDIN` inside PostgreSQL transaction with auto-commit after each `INSERT` statement.
 
-PostgreSQL Array types converts into ClickHouse arrays.
+PostgreSQL Array types converts into Datastore arrays.
 
 :::note
-Be careful, in PostgreSQL an array data type column like Integer[] may contain arrays of different dimensions in different rows, but in ClickHouse it is only allowed to have multidimensional arrays of the same dimension in all rows.
+Be careful, in PostgreSQL an array data type column like Integer[] may contain arrays of different dimensions in different rows, but in Datastore it is only allowed to have multidimensional arrays of the same dimension in all rows.
 :::
 
 Supports multiple replicas that must be listed by `|`. For example:
@@ -93,7 +93,7 @@ postgresql> SELECT * FROM test;
 (1 row)
 ```
 
-Selecting data from ClickHouse using plain arguments:
+Selecting data from Datastore using plain arguments:
 
 ```sql
 SELECT * FROM postgresql('localhost:5432', 'test', 'test', 'postgresql_user', 'password') WHERE str IN ('test');
@@ -143,7 +143,7 @@ postgres=# INSERT INTO "nice.schema"."nice.table" SELECT i FROM generate_series(
 
 ```sql
 CREATE TABLE pg_table_schema_with_dots (a UInt32)
-        ENGINE PostgreSQL('localhost:5432', 'clickhouse', 'nice.table', 'postgrsql_user', 'password', 'nice.schema');
+        ENGINE PostgreSQL('localhost:5432', 'datastore', 'nice.table', 'postgrsql_user', 'password', 'nice.schema');
 ```
 
 ## Related {#related}
@@ -153,4 +153,4 @@ CREATE TABLE pg_table_schema_with_dots (a UInt32)
 
 ### Replicating or migrating Postgres data with with PeerDB {#replicating-or-migrating-postgres-data-with-with-peerdb}
 
-> In addition to table functions, you can always use [PeerDB](https://docs.peerdb.io/introduction) by ClickHouse to set up a continuous data pipeline from Postgres to ClickHouse. PeerDB is a tool designed specifically to replicate data from Postgres to ClickHouse using change data capture (CDC).
+> In addition to table functions, you can always use [PeerDB](https://docs.peerdb.io/introduction) by Datastore to set up a continuous data pipeline from Postgres to Datastore. PeerDB is a tool designed specifically to replicate data from Postgres to Datastore using change data capture (CDC).

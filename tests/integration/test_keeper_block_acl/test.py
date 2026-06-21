@@ -36,9 +36,9 @@ def wait_node():
 
 def setup_node():
     node.stop_clickhouse()
-    node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/log"])
+    node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/log"])
     node.exec_in_container(
-        ["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"]
+        ["rm", "-rf", "/var/lib/datastore/coordination/snapshots"]
     )
     set_acl_blocking(0)
     set_snapshot_on_exit(0)
@@ -48,7 +48,7 @@ def setup_node():
 
 def set_acl_blocking(value):
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/keeper_config.xml",
+        "/etc/datastore-server/config.d/keeper_config.xml",
         "<cleanup_old_and_ignore_new_acl>[01]</cleanup_old_and_ignore_new_acl>",
         f"<cleanup_old_and_ignore_new_acl>{value}</cleanup_old_and_ignore_new_acl>",
     )
@@ -56,7 +56,7 @@ def set_acl_blocking(value):
 
 def set_snapshot_on_exit(value):
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/keeper_config.xml",
+        "/etc/datastore-server/config.d/keeper_config.xml",
         "<create_snapshot_on_exit>[01]</create_snapshot_on_exit>",
         f"<create_snapshot_on_exit>{value}</create_snapshot_on_exit>",
     )

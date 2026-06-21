@@ -12,7 +12,7 @@ node = cluster.add_instance(
         "configs/config.xml",
     ],
 )
-path_to_data = "/var/lib/clickhouse/"
+path_to_data = "/var/lib/datastore/"
 
 
 @pytest.fixture(scope="module")

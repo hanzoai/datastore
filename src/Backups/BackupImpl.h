@@ -101,7 +101,7 @@ private:
     void writeBackupMetadata() TSA_REQUIRES(mutex);
     void readBackupMetadata() TSA_REQUIRES(mutex);
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     size_t copyFileToDiskByObjectKey(const String & object_key, DiskPtr destination_disk, const String & destination_path, WriteMode write_mode) const;
 #endif
 

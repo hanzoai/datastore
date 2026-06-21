@@ -40,7 +40,7 @@ SELECT * FROM system.error_log LIMIT 1 FORMAT Vertical;
 ```text
 Row 1:
 ──────
-hostname:            clickhouse.testing.internal
+hostname:            datastore.testing.internal
 event_date:          2025-11-11
 event_time:          2025-11-11 11:35:28
 code:                60
@@ -57,4 +57,4 @@ last_error_trace:    [100506790044914,100506534488542,100506409937998,1005064099
 
 - [error_log setting](../../operations/server-configuration-parameters/settings.md#error_log) — Enabling and disabling the setting.
 - [system.errors](../../operations/system-tables/errors.md) — Contains error codes with the number of times they have been triggered.
-- [Monitoring](../../operations/monitoring.md) — Base concepts of ClickHouse monitoring.
+- [Monitoring](../../operations/monitoring.md) — Base concepts of Datastore monitoring.

@@ -42,21 +42,21 @@ Engine parameters can be specified using [Named Collections](../../../operations
 ### Example {#example}
 
 ```sql
-CREATE TABLE paimon_table ENGINE=PaimonS3('http://test.s3.amazonaws.com/clickhouse-bucket/test_table', 'test', 'test')
+CREATE TABLE paimon_table ENGINE=PaimonS3('http://test.s3.amazonaws.com/datastore-bucket/test_table', 'test', 'test')
 ```
 
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <paimon_conf>
-            <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
+            <url>http://test.s3.amazonaws.com/datastore-bucket/</url>
             <access_key_id>test</access_key_id>
             <secret_access_key>test</secret_access_key>
         </paimon_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql
@@ -90,7 +90,7 @@ CREATE TABLE paimon_inc
 ENGINE = PaimonS3(paimon_conf, filename = 'paimon_all_types')
 SETTINGS
     paimon_incremental_read = 1,
-    paimon_keeper_path = '/clickhouse/{database}/{uuid}',
+    paimon_keeper_path = '/datastore/{database}/{uuid}',
     paimon_replica_name = '{replica}';
 ```
 
@@ -133,7 +133,7 @@ CREATE TABLE paimon_mv_source
 ENGINE = PaimonLocal('/path/to/paimon/table')
 SETTINGS
     paimon_incremental_read = 1,
-    paimon_keeper_path = '/clickhouse/tables/{uuid}',
+    paimon_keeper_path = '/datastore/tables/{uuid}',
     paimon_replica_name = '{replica}',
     paimon_metadata_refresh_interval_sec = 1;
 
@@ -142,7 +142,7 @@ CREATE TABLE paimon_mv_source
 ENGINE = Paimon('http://minio:9000/bucket/path/to/table', 'access_key', 'secret_key')
 SETTINGS
     paimon_incremental_read = 1,
-    paimon_keeper_path = '/clickhouse/tables/{uuid}',
+    paimon_keeper_path = '/datastore/tables/{uuid}',
     paimon_replica_name = '{replica}',
     paimon_metadata_refresh_interval_sec = 1;
 ```
@@ -189,7 +189,7 @@ Stop the MV before dropping it to prevent background refresh from blocking DDL o
 - `paimon_replica_name` must be unique per replica within the same Keeper path.
 - Incremental read uses at-most-once delivery: the committed snapshot is advanced when data files are collected, before the data is actually consumed. If the query fails after file collection, the skipped snapshots will not be re-read on retry.
 - The table engine is read-only; data modification is not supported.
-- Incremental read does not handle historical data deletions from the Paimon source. If upstream Paimon data is deleted or updated, the corresponding rows already written to a ClickHouse MergeTree destination table will not be automatically removed. You must manually issue `ALTER TABLE ... DELETE` on the MergeTree table to clean up stale data.
+- Incremental read does not handle historical data deletions from the Paimon source. If upstream Paimon data is deleted or updated, the corresponding rows already written to a Datastore MergeTree destination table will not be automatically removed. You must manually issue `ALTER TABLE ... DELETE` on the MergeTree table to clean up stale data.
 
 ## Aliases {#aliases}
 
@@ -205,7 +205,7 @@ Table engine `Paimon` is an alias to `PaimonS3` now.
 
 ## Data Types supported {#data-types-supported}
 
-| Paimon Data Type | ClickHouse Data Type |
+| Paimon Data Type | Datastore Data Type |
 |-------|--------|
 |BOOLEAN     |Int8      |
 |TINYINT     |Int8      |

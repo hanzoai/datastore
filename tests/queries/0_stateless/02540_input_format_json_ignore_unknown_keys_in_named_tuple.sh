@@ -5,13 +5,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # This are just simple tests
-echo '{"t" : {"a" : 1, "b" : 2}}' | $CLICKHOUSE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=0 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table" |& grep -m1 -o INCORRECT_DATA
-echo '{"t" : {"a" : 1, "b" : 2}}' | $CLICKHOUSE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=1 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table"
-echo '{"t" : {"b" : 2, "a" : 1}}' | $CLICKHOUSE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=0 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table" |& grep -m1 -o NOT_FOUND_COLUMN_IN_BLOCK
-echo '{"t" : {"b" : 2, "a" : 1}}' | $CLICKHOUSE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=1 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table"
+echo '{"t" : {"a" : 1, "b" : 2}}' | $DATASTORE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=0 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table" |& grep -m1 -o INCORRECT_DATA
+echo '{"t" : {"a" : 1, "b" : 2}}' | $DATASTORE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=1 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table"
+echo '{"t" : {"b" : 2, "a" : 1}}' | $DATASTORE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=0 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table" |& grep -m1 -o NOT_FOUND_COLUMN_IN_BLOCK
+echo '{"t" : {"b" : 2, "a" : 1}}' | $DATASTORE_LOCAL --input_format_json_ignore_unknown_keys_in_named_tuple=1 --input-format=NDJSON --structure='t Tuple(a UInt32)' -q "select * from table"
 
 # And now let's try to parse something more complex - gharchive.
-# (see https://github.com/ClickHouse/ClickHouse/issues/15323)
+# (see https://github.com/ClickHouse/Datastore/issues/15323)
 #
 # NOTE: That JSON here was simplified
 gharchive_structure=(
@@ -108,21 +108,21 @@ gharchive_settings=(
     --output-format JSONObjectEachRow
 )
 
-$CLICKHOUSE_LOCAL "${gharchive_settings[@]}" --structure="${gharchive_structure[*]}" -q "select * from table" <<EOL
-{"type":"CreateEvent","actor":{"login":"foobar"},"repo":{"name":"ClickHouse/ClickHouse"},"payload":{"ref":"backport","ref_type":"branch"},"created_at":"2023-01-26T10:48:02Z"}
+$DATASTORE_LOCAL "${gharchive_settings[@]}" --structure="${gharchive_structure[*]}" -q "select * from table" <<EOL
+{"type":"CreateEvent","actor":{"login":"foobar"},"repo":{"name":"Datastore/Datastore"},"payload":{"ref":"backport","ref_type":"branch"},"created_at":"2023-01-26T10:48:02Z"}
 EOL
 
 # NOTE: due to [1] we cannot use dot.dot notation, only tupleElement()
 #
-#   [1]: https://github.com/ClickHouse/ClickHouse/issues/24607
-$CLICKHOUSE_LOCAL --enable_analyzer=1 "${gharchive_settings[@]}" --structure="${gharchive_structure[*]}" -q "
+#   [1]: https://github.com/ClickHouse/Datastore/issues/24607
+$DATASTORE_LOCAL --enable_analyzer=1 "${gharchive_settings[@]}" --structure="${gharchive_structure[*]}" -q "
     SELECT
         payload.issue.labels.name AS labels,
         payload.pull_request.merged_by.login AS merged_by
     FROM table
 " <<EOL
-{"type":"PullRequestEvent","actor":{"login":"foobar"},"repo":{"name":"ClickHouse/ClickHouse"},"payload":{"ref":"backport","ref_type":"branch","pull_request":{"merged_by":null}}}
-{"type":"PullRequestEvent","actor":{"login":"foobar"},"repo":{"name":"ClickHouse/ClickHouse"},"payload":{"ref":"backport","ref_type":"branch","pull_request":{"merged_by":{"login": "foobar"}}}}
-{"type":"IssueCommentEvent","actor":{"login":"foobar"},"repo":{"name":"ClickHouse/ClickHouse"},"payload":{"issue":{"labels":[]}}}
-{"type":"IssueCommentEvent","actor":{"login":"foobar"},"repo":{"name":"ClickHouse/ClickHouse"},"payload":{"issue":{"labels":[{"name":"backport"}]}}}
+{"type":"PullRequestEvent","actor":{"login":"foobar"},"repo":{"name":"Datastore/Datastore"},"payload":{"ref":"backport","ref_type":"branch","pull_request":{"merged_by":null}}}
+{"type":"PullRequestEvent","actor":{"login":"foobar"},"repo":{"name":"Datastore/Datastore"},"payload":{"ref":"backport","ref_type":"branch","pull_request":{"merged_by":{"login": "foobar"}}}}
+{"type":"IssueCommentEvent","actor":{"login":"foobar"},"repo":{"name":"Datastore/Datastore"},"payload":{"issue":{"labels":[]}}}
+{"type":"IssueCommentEvent","actor":{"login":"foobar"},"repo":{"name":"Datastore/Datastore"},"payload":{"issue":{"labels":[{"name":"backport"}]}}}
 EOL

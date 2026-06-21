@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-SQL_FILE_NAME=$"03156_default_multiquery_split_${CLICKHOUSE_DATABASE}.sql"
+SQL_FILE_NAME=$"03156_default_multiquery_split_${DATASTORE_DATABASE}.sql"
 
 # The old multiquery implementation uses '\n' to split INSERT query segmentation
 # this case is mainly to test the following situations
@@ -37,7 +37,7 @@ INSERT INTO TEST2 FORMAT CSV
 6
 EOF
 
-$CLICKHOUSE_CLIENT -m < "$SQL_FILE_NAME" 2>&1 | grep -o 'Syntax error'
+$DATASTORE_CLIENT -m < "$SQL_FILE_NAME" 2>&1 | grep -o 'Syntax error'
 
 # insert 7, 8, 9 into test2, because we use semicolon to determine the end of insert query(format is VALUES)
 # then select all data from test1 and test2
@@ -60,6 +60,6 @@ EXPLAIN AST INSERT INTO TEST1 VALUES (101),(102);
 
 EOF
 
-$CLICKHOUSE_CLIENT -m < "$SQL_FILE_NAME"
+$DATASTORE_CLIENT -m < "$SQL_FILE_NAME"
 
 rm "$SQL_FILE_NAME"

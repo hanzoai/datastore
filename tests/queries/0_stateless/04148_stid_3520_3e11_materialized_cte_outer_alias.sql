@@ -10,7 +10,7 @@
 -- `SerializationNullable::enumerateStreams` while trying to `assert_cast` a non-Nullable
 -- column to `ColumnNullable`.
 --
--- See https://github.com/ClickHouse/ClickHouse/issues/103813.
+-- See https://github.com/ClickHouse/Datastore/issues/103813.
 --
 -- The query analyzer now detects this drift across references and rejects the query
 -- with `TYPE_MISMATCH` (error code 53) instead of crashing the server with a

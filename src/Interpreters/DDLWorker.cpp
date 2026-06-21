@@ -367,7 +367,7 @@ void DDLWorker::scheduleTasks(bool reinitialized)
                 {
                     /// TODO We cannot guarantee that query was actually executed synchronously if connection was lost.
                     /// Let's simple create synced/ node for now, but it would be better to pass UNFINISHED status to initiator
-                    /// or wait for query to actually finish (requires https://github.com/ClickHouse/ClickHouse/issues/23513)
+                    /// or wait for query to actually finish (requires https://github.com/ClickHouse/Datastore/issues/23513)
                     task->createSyncedNodeIfNeed(zookeeper);
                     task->completely_processed = true;
                 }
@@ -659,7 +659,7 @@ void DDLWorker::processTask(DDLTaskBase & task, const ZooKeeperPtr & zookeeper, 
         task.entry.tracing_context,
         this->context->getOpenTelemetrySpanLog());
     tracing_ctx_holder.root_span.kind = OpenTelemetry::SpanKind::CONSUMER;
-    tracing_ctx_holder.root_span.addAttribute("clickhouse.ddl_entry.initial_query_id", task.entry.initial_query_id);
+    tracing_ctx_holder.root_span.addAttribute("datastore.ddl_entry.initial_query_id", task.entry.initial_query_id);
 
     String active_node_path = task.getActiveNodePath();
     String finished_node_path = task.getFinishedNodePath();

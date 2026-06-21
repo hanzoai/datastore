@@ -48,10 +48,10 @@ def test_recovery_time_metric(start_cluster):
 
     node.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "-C",
-            "/etc/clickhouse-server/config.xml",
+            "/etc/datastore-server/config.xml",
             "--disk",
             f"{db_disk_name}",
             "--save-logs",

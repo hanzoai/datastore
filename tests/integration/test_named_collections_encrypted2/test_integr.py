@@ -216,7 +216,7 @@ def test_s3queue_after_processing_delete(cluster):
     node = cluster.instances["s3_node"]
     bucket = cluster.minio_bucket
     files_path = f"s3queue_del_{uuid.uuid4().hex[:8]}"
-    keeper_path = f"/clickhouse/s3queue_del_{uuid.uuid4().hex[:8]}"
+    keeper_path = f"/datastore/s3queue_del_{uuid.uuid4().hex[:8]}"
 
     create_s3_collection(node, "s3queue_del", cluster.minio_host, bucket, f"{files_path}/")
 
@@ -317,7 +317,7 @@ def test_shared_credentials_multiple_tables(cluster):
         node.query(f"DROP TABLE {name}_s3")
 
 
-@pytest.mark.skip(reason="""https://github.com/ClickHouse/ClickHouse/issues/77366""")
+@pytest.mark.skip(reason="""https://github.com/ClickHouse/Datastore/issues/77366""")
 def test_server_starts_with_dropped_collection_table(cluster):
     from helpers.client import QueryRuntimeException
 

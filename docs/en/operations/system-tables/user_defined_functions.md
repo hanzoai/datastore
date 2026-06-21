@@ -58,7 +58,7 @@ Row 1:
 name:           my_sum_udf
 load_status:    Success
 type:           executable
-command:        /var/lib/clickhouse/user_scripts/sum.py
+command:        /var/lib/datastore/user_scripts/sum.py
 return_type:    UInt64
 argument_types: ['UInt64','UInt64']
 ```

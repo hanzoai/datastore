@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 ch_format() {
-    $CLICKHOUSE_FORMAT --oneline
+    $DATASTORE_FORMAT --oneline
 }
 
 format_query() {

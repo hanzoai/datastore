@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/59600
+-- https://github.com/ClickHouse/Datastore/issues/59600
 SELECT arrayReduce(toNullable('stddevSampOrNull'), [1]); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 SELECT arrayReduce(toNullable('median'), [toDecimal32OrNull(toFixedString('1', 1), 2), 8]); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 SELECT toFixedString('--- Int Empty ---', toLowCardinality(17)), arrayReduce(toNullable('avgOrNull'), [1]); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }

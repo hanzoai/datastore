@@ -48,7 +48,7 @@ protected:
         auto progress_result = insert_future.get();
 
         /// Report the written rows/bytes as progress so that query_log
-        /// and HTTP X-ClickHouse-Summary reflect the actual insert stats.
+        /// and HTTP X-Datastore-Summary reflect the actual insert stats.
         if (process_list_elem)
         {
             process_list_elem->updateProgressOut(Progress(WriteProgress(progress_result.rows, progress_result.bytes)));
@@ -64,7 +64,7 @@ protected:
             p.read_bytes = progress_result.bytes;
             /// Do not set p.result_rows/result_bytes here: flushQueryProgress
             /// in executeQuery.cpp will derive them from progress_out.written_rows,
-            /// so setting them here would cause double-counting in X-ClickHouse-Summary.
+            /// so setting them here would cause double-counting in X-Datastore-Summary.
             progress_callback(p);
         }
 

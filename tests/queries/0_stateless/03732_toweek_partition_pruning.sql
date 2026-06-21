@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/90240
+-- https://github.com/ClickHouse/Datastore/issues/90240
 -- toWeek() incorrectly claimed monotonicity, causing partition pruning
 -- to skip December partitions for weeks 49-52.
 

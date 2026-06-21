@@ -92,7 +92,7 @@ def test_replicated_table():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -129,7 +129,7 @@ def test_empty_replicated_table():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -153,7 +153,7 @@ def test_empty_replicated_table():
 
 def test_replicated_database():
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
 
     node1.query(
@@ -199,7 +199,7 @@ def test_replicated_database_compare_parts():
     replica is selected by settings replica_num=2, replica_num_in_backup=2
     """
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
 
     node1.query(
@@ -272,7 +272,7 @@ def test_different_tables_on_nodes():
 
 def test_backup_restore_on_single_replica():
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
     node1.query(
         "CREATE TABLE mydb.test (`name` String, `value` UInt32) ENGINE = ReplicatedMergeTree ORDER BY value"
@@ -315,7 +315,7 @@ def test_backup_restore_on_single_replica():
 
 def test_table_with_parts_in_queue_considered_non_empty():
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
     node1.query(
         "CREATE TABLE mydb.test (`x` UInt32) ENGINE = ReplicatedMergeTree ORDER BY x"
@@ -338,7 +338,7 @@ def test_replicated_table_with_uuid_in_zkpath():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/{uuid}','{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/{uuid}','{replica}')"
         "ORDER BY x"
     )
 
@@ -369,7 +369,7 @@ def test_replicated_table_with_not_synced_insert():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -398,7 +398,7 @@ def test_replicated_table_with_not_synced_merge():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -428,7 +428,7 @@ def test_replicated_table_restored_into_bigger_cluster():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -452,7 +452,7 @@ def test_replicated_table_restored_into_smaller_cluster():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -470,7 +470,7 @@ def test_replicated_table_restored_into_smaller_cluster():
 
 def test_replicated_database_async():
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
 
     node1.query("CREATE TABLE mydb.tbl(x UInt8) ENGINE=ReplicatedMergeTree ORDER BY x")
@@ -528,14 +528,14 @@ def test_replicated_database_async():
 
 @pytest.mark.parametrize("special_macro", ["uuid", "database"])
 def test_replicated_database_with_special_macro_in_zk_path(special_macro):
-    zk_path = "/clickhouse/databases/{" + special_macro + "}"
+    zk_path = "/datastore/databases/{" + special_macro + "}"
     node1.query(
         "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('"
         + zk_path
         + "','{shard}','{replica}')"
     )
 
-    # ReplicatedMergeTree without arguments means ReplicatedMergeTree('/clickhouse/tables/{uuid}/{shard}', '{replica}')
+    # ReplicatedMergeTree without arguments means ReplicatedMergeTree('/datastore/tables/{uuid}/{shard}', '{replica}')
     node1.query("CREATE TABLE mydb.tbl(x Int64) ENGINE=ReplicatedMergeTree ORDER BY x")
 
     node1.query("INSERT INTO mydb.tbl VALUES (-3)")
@@ -568,7 +568,7 @@ def test_keeper_value_max_size():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -603,7 +603,7 @@ def test_async_backups_to_same_destination(interface, on_cluster):
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -683,7 +683,7 @@ def test_required_privileges():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -827,7 +827,7 @@ def test_system_functions():
 
 def test_projection():
     node1.query(
-        "CREATE TABLE tbl ON CLUSTER 'cluster' (x UInt32, y String) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}') "
+        "CREATE TABLE tbl ON CLUSTER 'cluster' (x UInt32, y String) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}') "
         "ORDER BY y PARTITION BY x%10"
     )
     node1.query(f"INSERT INTO tbl SELECT number, toString(number) FROM numbers(3)")
@@ -877,7 +877,7 @@ def test_file_deduplication():
         f"""
         CREATE TABLE tbl ON CLUSTER 'cluster' (
         {column_name} Int32
-        ) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{{replica}}')
+        ) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{{replica}}')
         ORDER BY tuple() SETTINGS min_bytes_for_wide_part=0
         """
     )
@@ -886,7 +886,7 @@ def test_file_deduplication():
         f"""
         CREATE TABLE tbl2 ON CLUSTER 'cluster' (
         {column_name} Int32
-        ) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{{replica}}-2')
+        ) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{{replica}}-2')
         ORDER BY tuple() SETTINGS min_bytes_for_wide_part=0
         """
     )
@@ -924,14 +924,14 @@ def test_replicated_table_with_not_synced_def():
     node1.query(
         "CREATE TABLE tbl ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY tuple()"
     )
 
     node2.query(
         "CREATE TABLE tbl ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY tuple()"
     )
 
@@ -977,7 +977,7 @@ def test_replicated_table_with_not_synced_def():
 
 def test_table_in_replicated_database_with_not_synced_def():
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
 
     node1.query(
@@ -1042,7 +1042,7 @@ def test_mutation():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY tuple()"
     )
 
@@ -1081,7 +1081,7 @@ def test_tables_dependency():
 
     node1.query(
         "CREATE DICTIONARY mydb.dict ON CLUSTER 'cluster' (x Int64, y String) PRIMARY KEY x "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB 'mydb' TABLE 'src')) LAYOUT(FLAT()) LIFETIME(0)"
+        "SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB 'mydb' TABLE 'src')) LAYOUT(FLAT()) LIFETIME(0)"
     )
 
     node1.query(
@@ -1168,7 +1168,7 @@ def test_shutdown_waits_for_backup():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -1205,7 +1205,7 @@ def test_replicated_table_after_alters():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x Int32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 

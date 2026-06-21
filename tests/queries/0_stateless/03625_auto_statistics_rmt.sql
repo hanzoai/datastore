@@ -10,7 +10,7 @@ CREATE TABLE test_table
     v2 UInt64 STATISTICS(tdigest),
     v3 String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_table', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_table', '1')
 ORDER BY id
 SETTINGS
     enable_block_number_column = 0,

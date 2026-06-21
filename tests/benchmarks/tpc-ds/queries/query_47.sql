@@ -10,7 +10,7 @@
 --        case when v1.avg_monthly_sales > 0 then abs(v1.sum_sales - v1.avg_monthly_sales) / v1.avg_monthly_sales else null end > 0.1
 --  order by v1.sum_sales - v1.avg_monthly_sales, v1.s_store_name
 
--- This is not explicitly allowed by the TPC-DS specification, must be fixed: https://github.com/ClickHouse/ClickHouse/issues/94858
+-- This is not explicitly allowed by the TPC-DS specification, must be fixed: https://github.com/ClickHouse/Datastore/issues/94858
 
 WITH
     v1 AS

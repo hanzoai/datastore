@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/50570
+-- https://github.com/ClickHouse/Datastore/issues/50570
 
 DROP TABLE IF EXISTS tnul SYNC;
 DROP TABLE IF EXISTS tlc SYNC;

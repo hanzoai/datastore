@@ -14,10 +14,10 @@ if [ "$(basename "$SCRIPT_DIR")" = "env" ]; then
   SCRIPT_DIR="$(dirname "$SCRIPT_DIR")"
 fi
 
-CH_PATH=${CH_PATH:=$(command -v clickhouse || true)}
+CH_PATH=${CH_PATH:=$(command -v datastore || true)}
 
 if [ -z "$CH_PATH" ] || [ ! -s "$CH_PATH" ]; then
-  echo "Can't find clickhouse binary at '$CH_PATH'"
+  echo "Can't find datastore binary at '$CH_PATH'"
   exit 1
 fi
 
@@ -25,9 +25,9 @@ source ${SCRIPT_DIR}/helpers/lib.sh
 start_minio
 
 ETC_DIR="$SCRIPT_DIR/data/etc"
-CH_CONFIG_DIR="$ETC_DIR/clickhouse-server"
-CH_CONFIG_DIR1="$ETC_DIR/clickhouse-server1"
-CH_CLIENT_DIR="$ETC_DIR/clickhouse-client"
+CH_CONFIG_DIR="$ETC_DIR/datastore-server"
+CH_CONFIG_DIR1="$ETC_DIR/datastore-server1"
+CH_CLIENT_DIR="$ETC_DIR/datastore-client"
 
 (
   cd $WORK_TREE || exit 1
@@ -35,7 +35,7 @@ CH_CLIENT_DIR="$ETC_DIR/clickhouse-client"
   mkdir -p "$CH_CONFIG_DIR/config.d" "$CH_CONFIG_DIR/users.d" \
             "$CH_CONFIG_DIR1/config.d" "$CH_CONFIG_DIR1/users.d" \
             "$CH_CLIENT_DIR" \
-            /var/lib/clickhouse/ /var/lib/clickhouse1/
+            /var/lib/datastore/ /var/lib/clickhouse1/
 
   # Copy base server configs, dereferencing symlinks so absolute paths are not needed
   cp -rL programs/server/. "$CH_CONFIG_DIR/"
@@ -60,7 +60,7 @@ CH_CLIENT_DIR="$ETC_DIR/clickhouse-client"
   cp $SCRIPT_DIR/env/config/users_cloud.xml "$CH_CONFIG_DIR/users.d/"
   cp $WORK_TREE/tests/config/users.d/database_replicated.xml "$CH_CONFIG_DIR/users.d/"
 
-  # Override filesystem caches path to use /var/lib/clickhouse
+  # Override filesystem caches path to use /var/lib/datastore
   cp $SCRIPT_DIR/env/config/filesystem_caches_path.xml "$CH_CONFIG_DIR/config.d/"
 
   # Copy server1 config to server2
@@ -72,14 +72,14 @@ CH_CLIENT_DIR="$ETC_DIR/clickhouse-client"
     > "$CH_CONFIG_DIR1/config.d/macros.xml"
 
   # Patch server2: separate transaction log path
-  sed "s|/test/clickhouse/txn|/test/clickhouse/txn1|" \
+  sed "s|/test/datastore/txn|/test/datastore/txn1|" \
     "$CH_CONFIG_DIR/config.d/transactions.xml" \
     > "$CH_CONFIG_DIR1/config.d/transactions.xml"
 
   # Patch server2: separate filesystem cache path
   sed \
-    -e "s|<filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>|<filesystem_caches_path>/var/lib/clickhouse/filesystem_caches_1/</filesystem_caches_path>|" \
-    -e "s|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/clickhouse/filesystem_caches/</custom_cached_disks_base_directory>|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/clickhouse/filesystem_caches_1/</custom_cached_disks_base_directory>|" \
+    -e "s|<filesystem_caches_path>/var/lib/datastore/filesystem_caches/</filesystem_caches_path>|<filesystem_caches_path>/var/lib/datastore/filesystem_caches_1/</filesystem_caches_path>|" \
+    -e "s|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/datastore/filesystem_caches/</custom_cached_disks_base_directory>|<custom_cached_disks_base_directory replace=\"replace\">/var/lib/datastore/filesystem_caches_1/</custom_cached_disks_base_directory>|" \
     "$CH_CONFIG_DIR/config.d/filesystem_caches_path.xml" \
     > "$CH_CONFIG_DIR1/config.d/filesystem_caches_path.xml"
 )
@@ -87,13 +87,13 @@ CH_CLIENT_DIR="$ETC_DIR/clickhouse-client"
 
 PID_FILE="$SCRIPT_DIR/data/ch.pid"
 PID_FILE1="$SCRIPT_DIR/data/ch1.pid"
-LOG_FILE="$SCRIPT_DIR/data/clickhouse.log"
+LOG_FILE="$SCRIPT_DIR/data/datastore.log"
 LOG_FILE1="$SCRIPT_DIR/data/clickhouse1.log"
 CH_DATA="$SCRIPT_DIR/data/ch"
 CH_DATA1="$SCRIPT_DIR/data/ch1"
 
-# Kill all local ClickHouse servers
-(ps aux | grep -E 'clickhouse[- ]server' | awk '{print $2}' | xargs kill -9) 2>/dev/null || true
+# Kill all local Datastore servers
+(ps aux | grep -E 'datastore[- ]server' | awk '{print $2}' | xargs kill -9) 2>/dev/null || true
 sleep 1
 
 if [[ "${CLEAN_CH_DATA:-1}" -ne 0 ]]; then

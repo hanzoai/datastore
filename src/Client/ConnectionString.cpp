@@ -25,7 +25,7 @@ namespace
 using namespace std::string_literals;
 using namespace std::literals::string_view_literals;
 
-constexpr auto CONNECTION_URI_SCHEME = "clickhouse:"sv;
+constexpr auto CONNECTION_URI_SCHEME = "datastore:"sv;
 
 const std::unordered_map<std::string_view, std::string_view> PROHIBITED_CLIENT_OPTIONS = {
     /// Client option, client option long name
@@ -142,11 +142,11 @@ bool tryParseConnectionString(
     try
     {
         /** Poco::URI doesn't support several hosts in URI.
-          * Split string clickhouse:[user[:password]@]host1:port1, ... , hostN:portN[database]?[query_parameters]
+          * Split string datastore:[user[:password]@]host1:port1, ... , hostN:portN[database]?[query_parameters]
           * into multiple string for each host:
-          * clickhouse:[user[:password]@]host1:port1[database]?[query_parameters]
+          * datastore:[user[:password]@]host1:port1[database]?[query_parameters]
           * ...
-          * clickhouse:[user[:password]@]hostN:portN[database]?[query_parameters]
+          * datastore:[user[:password]@]hostN:portN[database]?[query_parameters]
           */
         Poco::URI uri;
         auto last_host_begin = connection_string.begin() + offset;
@@ -186,7 +186,7 @@ bool tryParseConnectionString(
         if (!user_info.empty())
         {
             // Poco::URI doesn't decode user name/password by default.
-            // But ClickHouse allows to have users with email user name like: 'john@some_mail.com'
+            // But Datastore allows to have users with email user name like: 'john@some_mail.com'
             // john@some_mail.com should be percent-encoded: 'john%40some_mail.com'
             size_t pos = user_info.find(':');
             if (pos != std::string::npos)

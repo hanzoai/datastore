@@ -29,7 +29,7 @@ def get_spark(log_dir=None):
         )
         .config("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")
-        .config("spark.sql.catalog.spark_catalog.warehouse", "/var/lib/clickhouse/user_files/iceberg_data")
+        .config("spark.sql.catalog.spark_catalog.warehouse", "/var/lib/datastore/user_files/iceberg_data")
         .config(
             "spark.sql.extensions",
             "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,"
@@ -60,14 +60,14 @@ def started_cluster_iceberg_with_spark():
         logging.info(filesystem_cache_config_path)
         with open(filesystem_cache_config_path, "w") as f:
             f.write(f"""
-<clickhouse>
+<datastore>
   <filesystem_caches>
     <{filesystem_cache_name}>
       <max_size>1Gi</max_size>
       <path>{filesystem_cache_name}</path>
     </{filesystem_cache_name}>
   </filesystem_caches>
-</clickhouse>
+</datastore>
 """)
         cluster.add_instance(
             "node1",

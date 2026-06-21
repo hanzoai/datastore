@@ -10,7 +10,7 @@
 --
 -- The pass now deduplicates by quantile level, so identical references share the same
 -- `arrayElement` extraction.
--- https://github.com/ClickHouse/ClickHouse/issues/102976
+-- https://github.com/ClickHouse/Datastore/issues/102976
 
 SET optimize_syntax_fuse_functions = 1;
 

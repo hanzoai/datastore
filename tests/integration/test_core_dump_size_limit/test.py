@@ -22,7 +22,7 @@ def start_cluster():
 
 def test_core_dump_size_limit_hot_reload(start_cluster):
     def get_core_dump_limit():
-        pid = node.get_process_pid("clickhouse")
+        pid = node.get_process_pid("datastore")
         result = node.exec_in_container(
             ["bash", "-c", f"prlimit --pid {pid} --core --output=SOFT --noheadings"],
             user="root",
@@ -32,7 +32,7 @@ def test_core_dump_size_limit_hot_reload(start_cluster):
     assert get_core_dump_limit() == 1073741824
 
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/core_dump.xml",
+        "/etc/datastore-server/config.d/core_dump.xml",
         "<size_limit>1073741824</size_limit>",
         "<size_limit>536870912</size_limit>",
     )
@@ -42,7 +42,7 @@ def test_core_dump_size_limit_hot_reload(start_cluster):
 
     # Restore original config so the test is repeatable
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/core_dump.xml",
+        "/etc/datastore-server/config.d/core_dump.xml",
         "<size_limit>536870912</size_limit>",
         "<size_limit>1073741824</size_limit>",
     )

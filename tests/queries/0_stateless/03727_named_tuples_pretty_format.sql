@@ -5,7 +5,7 @@ WITH data AS (
         [NULL, 'Hello'] AS top_nulls,
         ['Row1', NULL] AS top_strs,
         [42, 7] AS ids,
-        ['ClickHouse', 'Database'] AS names,
+        ['Datastore', 'Database'] AS names,
         [(1, 'nested', NULL), (2, 'inner', 123)] AS nesteds,
         [
             [(100, 'foo'), (200, 'bar')],

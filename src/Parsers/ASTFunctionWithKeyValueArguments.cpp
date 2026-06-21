@@ -33,7 +33,7 @@ void ASTPair::formatImpl(WriteBuffer & ostr, const FormatSettings & settings, Fo
     if (!settings.show_secrets && (first == "password"))
     {
         /// Hide password in the definition of a dictionary:
-        /// SOURCE(CLICKHOUSE(host 'example01-01-1' port 9000 user 'default' password '[HIDDEN]' db 'default' table 'ids'))
+        /// SOURCE(DATASTORE(host 'example01-01-1' port 9000 user 'default' password '[HIDDEN]' db 'default' table 'ids'))
         ostr << "'[HIDDEN]'";
     }
     else if (!settings.show_secrets && (first == "uri"))

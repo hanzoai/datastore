@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -61,4 +61,4 @@
         <shard>0</shard>
     </macros>
 
-</clickhouse>
+</datastore>

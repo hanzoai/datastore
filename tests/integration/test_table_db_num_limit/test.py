@@ -293,7 +293,7 @@ def test_named_collection_if_not_exists_metric(started_cluster):
     metric when the collection already exists.
     DROP NAMED COLLECTION IF EXISTS on a nonexistent collection must not
     deflate the metric either.
-    https://github.com/ClickHouse/ClickHouse/issues/102507
+    https://github.com/ClickHouse/Datastore/issues/102507
     """
 
     def _get_number_of_collections():
@@ -332,7 +332,7 @@ def test_named_collection_metric_on_startup(started_cluster):
     Collections loaded from config on startup must be reflected in the
     NamedCollection metric. node2 starts with 2 config-defined collections
     (from_config_1, from_config_2).
-    https://github.com/ClickHouse/ClickHouse/issues/102507
+    https://github.com/ClickHouse/Datastore/issues/102507
     """
 
     def _get_metric(n):
@@ -348,7 +348,7 @@ def test_named_collection_metric_after_config_reload(started_cluster):
     """
     SYSTEM RELOAD CONFIG must not break the NamedCollection metric for
     SQL-created collections.
-    https://github.com/ClickHouse/ClickHouse/issues/102507
+    https://github.com/ClickHouse/Datastore/issues/102507
     """
 
     def _get_metric(n):

@@ -48,7 +48,7 @@ public:
 
         /// The mongocxx driver deliberately skips calling `mongoc_cleanup` under ASan
         /// to avoid issues with dynamically loaded libraries becoming unloaded.
-        /// In ClickHouse all libraries (including OpenSSL) are statically linked,
+        /// In Datastore all libraries (including OpenSSL) are statically linked,
         /// so that concern does not apply. Calling `mongoc_cleanup` explicitly prevents
         /// LeakSanitizer from reporting global allocations (handshake data, etc.)
         /// made by libmongoc as memory leaks.

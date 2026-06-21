@@ -162,8 +162,8 @@ def test_paramiko_password(started_cluster):
 
 
 def _server_open_files():
-    pid = instance.get_process_pid("clickhouse")
-    assert pid is not None, "could not locate clickhouse PID"
+    pid = instance.get_process_pid("datastore")
+    assert pid is not None, "could not locate datastore PID"
     out = instance.exec_in_container(
         ["bash", "-c", f"ls -1 /proc/{pid}/fd | wc -l"]
     )
@@ -182,7 +182,7 @@ def _hold_server_fds(port, count):
 def test_ssh_interactive_pty_with_high_fds(started_cluster):
     """
     Regression test for the `select(2)` / `fd_set` overflow inside
-    `replxx::Terminal::wait_for_input` when the embedded clickhouse-client is
+    `replxx::Terminal::wait_for_input` when the embedded datastore-client is
     reached over SSH PTY in a process whose fd table extends past
     `FD_SETSIZE` (1024 on glibc).
 
@@ -224,7 +224,7 @@ def test_ssh_interactive_pty_with_high_fds(started_cluster):
             time.sleep(0.5)
         else:
             raise AssertionError(
-                f"expected clickhouse-server fd count to grow by ~{DUMMY_CONNECTIONS}, "
+                f"expected datastore-server fd count to grow by ~{DUMMY_CONNECTIONS}, "
                 f"got delta={delta} (baseline={baseline_files}, after={after_files}); "
                 "Poco's accept thread did not drain the kernel accept queue"
             )

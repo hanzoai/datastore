@@ -1,5 +1,5 @@
 ---
-description: 'Guide to using and configuring the query cache feature in ClickHouse'
+description: 'Guide to using and configuring the query cache feature in Datastore'
 sidebar_label: 'Query cache'
 sidebar_position: 65
 slug: /operations/query-cache
@@ -8,14 +8,14 @@ doc_type: 'guide'
 ---
 
 The query cache allows to compute `SELECT` queries just once and to serve further executions of the same query directly from the cache.
-Depending on the type of the queries, this can dramatically reduce latency and resource consumption of the ClickHouse server.
+Depending on the type of the queries, this can dramatically reduce latency and resource consumption of the Datastore server.
 
 ## Background, design and limitations {#background-design-and-limitations}
 
 Query caches can generally be viewed as transactionally consistent or inconsistent.
 
 - In transactionally consistent caches, the database invalidates (discards) cached query results if the result of the `SELECT` query changes
-  or potentially changes. In ClickHouse, operations which change the data include inserts/updates/deletes in/of/from tables or collapsing
+  or potentially changes. In Datastore, operations which change the data include inserts/updates/deletes in/of/from tables or collapsing
   merges. Transactionally consistent caching is especially suitable for OLTP databases, for example
   [MySQL](https://dev.mysql.com/doc/refman/5.6/en/query-cache.html) (which removed query cache after v8.0) and
   [Oracle](https://docs.oracle.com/database/121/TGDBA/tune_result_cache.htm).
@@ -28,18 +28,18 @@ Query caches can generally be viewed as transactionally consistent or inconsiste
 
 Transactionally inconsistent caching is traditionally provided by client tools or proxy packages (e.g.
 [chproxy](https://www.chproxy.org/configuration/caching/)) interacting with the database. As a result, the same caching logic and
-configuration is often duplicated. With ClickHouse's query cache, the caching logic moves to the server side. This reduces maintenance
+configuration is often duplicated. With Datastore's query cache, the caching logic moves to the server side. This reduces maintenance
 effort and avoids redundancy.
 
 ## Configuration settings and usage {#configuration-settings-and-usage}
 
 :::note
-In ClickHouse Cloud, you must use [query level settings](/operations/settings/query-level) to edit query cache settings. Editing [config level settings](/operations/configuration-files) is currently not supported.
+In Datastore Cloud, you must use [query level settings](/operations/settings/query-level) to edit query cache settings. Editing [config level settings](/operations/configuration-files) is currently not supported.
 :::
 
 :::note
-[clickhouse-local](utilities/clickhouse-local.md) runs a single query at a time. Since query result caching does not make sense, the query
-result cache is disabled in clickhouse-local.
+[datastore-local](utilities/datastore-local.md) runs a single query at a time. Since query result caching does not make sense, the query
+result cache is disabled in datastore-local.
 :::
 
 Setting [use_query_cache](/operations/settings/settings#use_query_cache) can be used to control whether a specific query or all queries of the
@@ -84,7 +84,7 @@ in system table [system.query_log](system-tables/query_log.md) shows for each ex
 read from the query cache. Metrics `QueryCacheEntries` and `QueryCacheBytes` in system table
 [system.metrics](system-tables/metrics.md) show how many entries / bytes the query cache currently contains.
 
-The query cache exists once per ClickHouse server process. However, cache results are by default not shared between users. This can be
+The query cache exists once per Datastore server process. However, cache results are by default not shared between users. This can be
 changed (see below) but doing so is not recommended for security reasons.
 
 Query results are referenced in the query cache by the [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) of
@@ -151,7 +151,7 @@ cache evicts entries "lazily", i.e. when an entry becomes stale, it is not immed
 is to be inserted into the query cache, the database checks whether the cache has enough free space for the new entry. If this is not the
 case, the database tries to remove all stale entries. If the cache still has not enough free space, the new entry is not inserted.
 
-If the query is run via HTTP, then ClickHouse sets the `Age` and `Expires` headers with the age (in seconds) and expiration timestamp of the
+If the query is run via HTTP, then Datastore sets the `Age` and `Expires` headers with the age (in seconds) and expiration timestamp of the
 cached entry.
 
 Entries in the query cache are compressed by default. This reduces the overall memory consumption at the cost of slower writes into / reads
@@ -203,7 +203,7 @@ SETTINGS use_query_cache = true, query_cache_for_subqueries = true;
 
 Subquery cache entries are visible in [system.query_cache](system-tables/query_cache.md) with `is_subquery = 1`. The `query_cache_ttl` setting also applies to subquery cache entries and can be set per subquery.
 
-ClickHouse reads table data in blocks of [max_block_size](/operations/settings/settings#max_block_size) rows. Due to filtering, aggregation,
+Datastore reads table data in blocks of [max_block_size](/operations/settings/settings#max_block_size) rows. Due to filtering, aggregation,
 etc., result blocks are typically much smaller than 'max_block_size' but there are also cases where they are much bigger. Setting
 [query_cache_squash_partial_results](/operations/settings/settings#query_cache_squash_partial_results) (enabled by default) controls if result blocks
 are squashed (if they are tiny) or split (if they are large) into blocks of 'max_block_size' size before insertion into the query result
@@ -246,4 +246,4 @@ be marked accessible by other users (i.e. shared) by supplying setting
 
 ## Related content {#related-content}
 
-- Blog: [Introducing the ClickHouse Query Cache](https://clickhouse.com/blog/introduction-to-the-clickhouse-query-cache-and-design)
+- Blog: [Introducing the Datastore Query Cache](https://datastore.com/blog/introduction-to-the-datastore-query-cache-and-design)

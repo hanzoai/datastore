@@ -44,8 +44,8 @@ ClientEmbedded::ClientEmbedded(
 
 void ClientEmbedded::printHelpMessage(const OptionsDescription & options_description)
 {
-    output_stream << "Welcome to the ClickHouse embedded client!" << "\n";
-    output_stream << "This client runs on the server side inside the ClickHouse's main process." << "\n";
+    output_stream << "Welcome to the Datastore embedded client!" << "\n";
+    output_stream << "This client runs on the server side inside the Datastore's main process." << "\n";
 
     if (options_description.main_description.has_value())
         output_stream << options_description.main_description.value() << "\n";
@@ -54,8 +54,8 @@ void ClientEmbedded::printHelpMessage(const OptionsDescription & options_descrip
     if (options_description.hosts_and_ports_description.has_value())
         output_stream << options_description.hosts_and_ports_description.value() << "\n";
 
-    output_stream << "All settings are documented at https://clickhouse.com/docs/en/operations/settings/settings.\n\n";
-    output_stream << "See also: https://clickhouse.com/docs/en/integrations/sql-clients/cli\n";
+    output_stream << "All settings are documented at https://datastore.com/docs/en/operations/settings/settings.\n\n";
+    output_stream << "See also: https://datastore.com/docs/en/integrations/sql-clients/cli\n";
 }
 
 

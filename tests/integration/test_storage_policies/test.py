@@ -29,13 +29,13 @@ def test_storage_policy_configuration_change(started_cluster):
     node.stop_clickhouse()
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "disk2_only.xml"),
-        "/etc/clickhouse-server/config.d/disks.xml",
+        "/etc/datastore-server/config.d/disks.xml",
     )
     node.start_clickhouse()
 
     node.stop_clickhouse()
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "disks.xml"),
-        "/etc/clickhouse-server/config.d/disks.xml",
+        "/etc/datastore-server/config.d/disks.xml",
     )
     node.start_clickhouse()

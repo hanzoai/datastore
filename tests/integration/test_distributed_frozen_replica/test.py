@@ -60,7 +60,7 @@ def started_cluster():
             node.query(
                 """
                 CREATE TABLE local_table(i Int64, d DateTime)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/local_table/{shard}', '{replica}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/local_table/{shard}', '{replica}')
                 PARTITION BY toYYYYMMDD(d) ORDER BY d
                 """
             )

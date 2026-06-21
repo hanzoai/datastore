@@ -8,11 +8,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function print_flush_query_logs()
 {
-    ${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS asynchronous_insert_log, query_log"
+    ${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS asynchronous_insert_log, query_log"
     echo ""
 
     echo "system.asynchronous_insert_log"
-        ${CLICKHOUSE_CLIENT} -q "
+        ${DATASTORE_CLIENT} -q "
           SELECT
               database,
               table,
@@ -28,7 +28,7 @@ function print_flush_query_logs()
           FORMAT Vertical"
 
     echo "system.query_log"
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
       SELECT
           replace(type::String, 'Exception', 'Exc*****on') as type,
           read_rows,
@@ -54,9 +54,9 @@ function print_flush_query_logs()
 }
 
 
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE async_insert_landing (id UInt32) ENGINE = MergeTree ORDER BY id"
+${DATASTORE_CLIENT} -q "CREATE TABLE async_insert_landing (id UInt32) ENGINE = MergeTree ORDER BY id"
 
 query_id="$(random_str 10)"
-${CLICKHOUSE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=0, async_insert=1 values ('Invalid')" 2>/dev/null || true
-${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH ASYNC INSERT QUEUE"
+${DATASTORE_CLIENT} --query_id="${query_id}" -q "INSERT INTO async_insert_landing SETTINGS wait_for_async_insert=0, async_insert=1 values ('Invalid')" 2>/dev/null || true
+${DATASTORE_CLIENT} -q "SYSTEM FLUSH ASYNC INSERT QUEUE"
 print_flush_query_logs ${query_id}

@@ -1,8 +1,8 @@
-onlyif ClickHouse
+onlyif Datastore
 statement ok
 CREATE TABLE t1(a INTEGER, b INTEGER) ENGINE = MergeTree() PRIMARY KEY tuple()
 
-skipif ClickHouse
+skipif Datastore
 statement ok
 CREATE TABLE t1(a INTEGER, b INTEGER)
 
@@ -30,7 +30,7 @@ SELECT a, c
 ----
 
 # expect to fail
-onlyif ClickHouse
+onlyif Datastore
 query error UNKNOWN_IDENTIFIER
 SELECT a, c FROM t1
 ----
@@ -107,7 +107,7 @@ SELECT NULL as a
 ----
 NULL
 
-onlyif ClickHouse
+onlyif Datastore
 query I nosort
 SELECT CAST(NULL AS Nullable(INTEGER))
 ----
@@ -123,7 +123,7 @@ query IIIIIIIIIIIIIII nosort
 SELECT 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 ----
 
-skipif ClickHouse
+skipif Datastore
 query I nosort
 WITH RECURSIVE
   cnt(x) AS (
@@ -136,7 +136,7 @@ SELECT x FROM cnt;
 ----
 20 values hashing to 52c46dff81346ead02fcf6245c762b1a
 
-onlyif ClickHouse
+onlyif Datastore
 query I nosort
 SELECT number+1 from system.numbers LIMIT 20
 ----
@@ -149,6 +149,6 @@ CREATE TABLE tab0(pk INTEGER PRIMARY KEY, col0 INTEGER, col1 FLOAT, col2 TEXT, c
 statement ok
 INSERT INTO tab0 VALUES(0,535,860.48,'uxbns',253,640.58,'jvqkl')
 
-skipif ClickHouse
+skipif Datastore
 query I rowsort label-20
 SELECT + col2 AS col5 FROM tab0 WHERE NOT ( col0 ) * - - col4 IS NULL

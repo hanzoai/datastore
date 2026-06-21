@@ -25,7 +25,7 @@ There are no other rules for escaping characters.
 - Tuples in CSV format are serialized as separate columns (that is, their nesting in the tuple is lost).
 
 ```bash
-$ clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO test.csv FORMAT CSV" < data.csv
+$ datastore-client --format_csv_delimiter="|" --query="INSERT INTO test.csv FORMAT CSV" < data.csv
 ```
 
 :::note

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100469 (STID: 1499-4a82).
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100469 (STID: 1499-4a82).
 --
 -- The JOIN-conversion optimizers `tryConvertAnyOuterJoinToInnerJoin` (`convertOuterJoinToInnerJoin.cpp`)
 -- and `tryConvertAnyJoinToSemiOrAntiJoin` (`convertAnyJoinToSemiOrAntiJoin.cpp`) call

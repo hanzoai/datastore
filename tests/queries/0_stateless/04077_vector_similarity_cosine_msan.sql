@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 
 -- Reproducer for MSan use-of-uninitialized-value in simsimd_cos_f32_sve
--- https://github.com/ClickHouse/ClickHouse/issues/101232
+-- https://github.com/ClickHouse/Datastore/issues/101232
 
 DROP TABLE IF EXISTS test_vec;
 

@@ -61,13 +61,13 @@ def test_system_logs_recreate():
                     "bash",
                     "-c",
                     f"""echo "
-            <clickhouse>
+            <datastore>
                 <{table}>
                     <engine>ENGINE = Null</engine>
                     <partition_by remove='remove'/>
                 </{table}>
-            </clickhouse>
-            " > /etc/clickhouse-server/config.d/zzz-override-{table}.xml
+            </datastore>
+            " > /etc/datastore-server/config.d/zzz-override-{table}.xml
             """,
                 ]
             )
@@ -95,12 +95,12 @@ def test_system_logs_recreate():
                     "bash",
                     "-c",
                     f"""echo "
-            <clickhouse>
+            <datastore>
                 <{table}>
                     <storage_policy>system_tables</storage_policy>
                 </{table}>
-            </clickhouse>
-            " > /etc/clickhouse-server/config.d/zzz-override-{table}.xml
+            </datastore>
+            " > /etc/datastore-server/config.d/zzz-override-{table}.xml
             """,
                 ]
             )
@@ -131,7 +131,7 @@ def test_system_logs_recreate():
 
         for table in system_logs:
             node.exec_in_container(
-                ["rm", f"/etc/clickhouse-server/config.d/zzz-override-{table}.xml"]
+                ["rm", f"/etc/datastore-server/config.d/zzz-override-{table}.xml"]
             )
 
         node.restart_clickhouse()
@@ -176,12 +176,12 @@ def test_drop_system_log():
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
             </query_log>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        </datastore>
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
@@ -205,6 +205,6 @@ def test_drop_system_log():
     )  # we check that query_log just exists
 
     node.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", f"/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
     node.restart_clickhouse()

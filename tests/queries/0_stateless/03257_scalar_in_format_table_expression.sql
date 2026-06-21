@@ -29,7 +29,7 @@ $$
         )
     ); -- { serverError UNKNOWN_IDENTIFIER }
 
--- https://github.com/ClickHouse/ClickHouse/issues/70177
+-- https://github.com/ClickHouse/Datastore/issues/70177
 
 -- Resolution of the scalar subquery should work ok (already did, adding a test just for safety)
 -- Disabled for the old analyzer since it incorrectly passes 's' to format, instead of resolving s and passing that
@@ -59,7 +59,7 @@ WITH (
 ) as s SELECT count()
 FROM format(TSVRaw, s); -- { serverError UNKNOWN_IDENTIFIER }
 
--- https://github.com/ClickHouse/ClickHouse/issues/70675
+-- https://github.com/ClickHouse/Datastore/issues/70675
 SELECT count()
 FROM format(TSVRaw, (
     SELECT CAST(arrayStringConcat(groupArray(format(TSVRaw, (

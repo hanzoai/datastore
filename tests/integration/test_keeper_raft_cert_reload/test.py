@@ -66,8 +66,8 @@ def restore_certificates(started_cluster):
             [
                 "bash",
                 "-c",
-                "cp /etc/clickhouse-server/config.d/first.crt /etc/clickhouse-server/config.d/first.crt.bak && "
-                "cp /etc/clickhouse-server/config.d/first.key /etc/clickhouse-server/config.d/first.key.bak",
+                "cp /etc/datastore-server/config.d/first.crt /etc/datastore-server/config.d/first.crt.bak && "
+                "cp /etc/datastore-server/config.d/first.key /etc/datastore-server/config.d/first.key.bak",
             ]
         )
     yield
@@ -78,13 +78,13 @@ def restore_certificates(started_cluster):
                 [
                     "bash",
                     "-c",
-                    "cp /etc/clickhouse-server/config.d/first.crt.bak /etc/clickhouse-server/config.d/first.crt && "
-                    "cp /etc/clickhouse-server/config.d/first.key.bak /etc/clickhouse-server/config.d/first.key",
+                    "cp /etc/datastore-server/config.d/first.crt.bak /etc/datastore-server/config.d/first.crt && "
+                    "cp /etc/datastore-server/config.d/first.key.bak /etc/datastore-server/config.d/first.key",
                 ]
             )
         except Exception:
             pass
-    # Reload config so ClickHouse picks up the restored certificates for next iteration
+    # Reload config so Datastore picks up the restored certificates for next iteration
     for node in all_nodes:
         try:
             node.query("SYSTEM RELOAD CONFIG")
@@ -139,9 +139,9 @@ def replace_certificates(node):
         [
             "bash",
             "-c",
-            "cp /etc/clickhouse-server/config.d/second.crt /etc/clickhouse-server/config.d/first.crt && "
-            "cp /etc/clickhouse-server/config.d/second.key /etc/clickhouse-server/config.d/first.key && "
-            "touch /etc/clickhouse-server/config.d/first.crt /etc/clickhouse-server/config.d/first.key",
+            "cp /etc/datastore-server/config.d/second.crt /etc/datastore-server/config.d/first.crt && "
+            "cp /etc/datastore-server/config.d/second.key /etc/datastore-server/config.d/first.key && "
+            "touch /etc/datastore-server/config.d/first.crt /etc/datastore-server/config.d/first.key",
         ]
     )
 
@@ -153,7 +153,7 @@ def get_cert_serial_from_file(node):
             "openssl",
             "x509",
             "-in",
-            "/etc/clickhouse-server/config.d/first.crt",
+            "/etc/datastore-server/config.d/first.crt",
             "-serial",
             "-noout",
         ]

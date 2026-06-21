@@ -1,4 +1,4 @@
---- Based on https://github.com/ClickHouse/ClickHouse/issues/49685
+--- Based on https://github.com/ClickHouse/Datastore/issues/49685
 --- Verify that ReplacingMergeTree properly handles _is_deleted:
 --- SELECT FINAL should take `_is_deleted` into consideration when there is only one partition.
 -- { echoOn }

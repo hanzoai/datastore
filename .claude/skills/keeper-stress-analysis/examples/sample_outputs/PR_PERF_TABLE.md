@@ -12,7 +12,7 @@ _Every claim is backed by a `pre → post` measurement from `keeper_stress_tests
 
 ## In-window perf PRs (direct measurement)
 
-### [#101502](https://github.com/ClickHouse/ClickHouse/pull/101502) — Reduce profiled lock overhead in Keeper
+### [#101502](https://github.com/ClickHouse/Datastore/pull/101502) — Reduce profiled lock overhead in Keeper
 
 Pre `e02b59d7` (2026-04-02) → Post `18dfe15a` (2026-04-04). No co-merged perf PRs.
 
@@ -34,7 +34,7 @@ Pre `e02b59d7` (2026-04-02) → Post `18dfe15a` (2026-04-04). No co-merged perf 
 
 ---
 
-### [#100876](https://github.com/ClickHouse/ClickHouse/pull/100876) — `shared_mutex` for `KeeperLogStore`
+### [#100876](https://github.com/ClickHouse/Datastore/pull/100876) — `shared_mutex` for `KeeperLogStore`
 
 Pre `ed70b0de` (2026-04-09) → Post `36e87560` (2026-04-11, next no-fault). Co-merged with #99491 (snapshot cleanup, no-op).
 
@@ -57,7 +57,7 @@ Pre `ed70b0de` (2026-04-09) → Post `36e87560` (2026-04-11, next no-fault). Co-
 
 ---
 
-### [#100778](https://github.com/ClickHouse/ClickHouse/pull/100778) — Run consecutive read requests in parallel
+### [#100778](https://github.com/ClickHouse/Datastore/pull/100778) — Run consecutive read requests in parallel
 
 Pre `36e87560` (2026-04-11) → Post `9678bc3a` (2026-04-12). No co-merged perf PRs.
 
@@ -78,7 +78,7 @@ Pre `36e87560` (2026-04-11) → Post `9678bc3a` (2026-04-12). No co-merged perf 
 
 ---
 
-### [#99651](https://github.com/ClickHouse/ClickHouse/pull/99651) — Keeper object-based snapshots
+### [#99651](https://github.com/ClickHouse/Datastore/pull/99651) — Keeper object-based snapshots
 
 Pre `fdf46ee1` (2026-03-31) → Post `e02b59d7` (2026-04-02). Co-merged with #99484 (race fix) and #101524 (clang-tidy). Numbers are joint.
 
@@ -99,7 +99,7 @@ Server-side failure counters across all 18 post-merge nightlies on `write-multi`
 
 ---
 
-### [#102586](https://github.com/ClickHouse/ClickHouse/pull/102586) — Fix OOMs on huge multi requests
+### [#102586](https://github.com/ClickHouse/Datastore/pull/102586) — Fix OOMs on huge multi requests
 
 Pre `60b6d7e8` (2026-04-14) → Post `d678fe4b` (2026-04-16). Co-merged with #100606 (jemalloc UI, no-op).
 
@@ -122,7 +122,7 @@ Pre `60b6d7e8` (2026-04-14) → Post `d678fe4b` (2026-04-16). Co-merged with #10
 
 These 6 PRs merged between 2026-03-16 and 2026-03-24 — before the cumulative-comparison baseline window of 2026-03-26..2026-03-29. Their improvement is **already in the baseline**, so a per-PR pre/post Δ under the current framework can't isolate them. The cumulative-window numbers below show what's been delivered post-threshold _on top of_ what these PRs already shipped.
 
-### [#99751](https://github.com/ClickHouse/ClickHouse/pull/99751) — Reduce lock contention and improve profiling
+### [#99751](https://github.com/ClickHouse/Datastore/pull/99751) — Reduce lock contention and improve profiling
 
 **Intent**: foundation for the lock-contention reduction work. Adds profiling instrumentation that #101502 later optimises.
 
@@ -138,7 +138,7 @@ These 6 PRs merged between 2026-03-16 and 2026-03-24 — before the cumulative-c
 
 ---
 
-### [#99860](https://github.com/ClickHouse/ClickHouse/pull/99860) — Reduce Keeper memory usage with compact children set
+### [#99860](https://github.com/ClickHouse/Datastore/pull/99860) — Reduce Keeper memory usage with compact children set
 
 **Intent**: each znode's children list now uses a compact data structure instead of a full container. Should drop memory footprint on workloads with many children-per-node.
 
@@ -161,7 +161,7 @@ These 6 PRs merged between 2026-03-16 and 2026-03-24 — before the cumulative-c
 
 ---
 
-### [#100003](https://github.com/ClickHouse/ClickHouse/pull/100003) — Microoptimizations for Keeper hot path
+### [#100003](https://github.com/ClickHouse/Datastore/pull/100003) — Microoptimizations for Keeper hot path
 
 **Intent**: small CPU-cycle wins on request processing identified during profiling.
 
@@ -180,7 +180,7 @@ These 6 PRs merged between 2026-03-16 and 2026-03-24 — before the cumulative-c
 
 ---
 
-### [#100010](https://github.com/ClickHouse/ClickHouse/pull/100010) — Improve request skipping for closed sessions
+### [#100010](https://github.com/ClickHouse/Datastore/pull/100010) — Improve request skipping for closed sessions
 
 **Intent**: faster cleanup of in-flight requests when a session terminates.
 
@@ -192,7 +192,7 @@ These 6 PRs merged between 2026-03-16 and 2026-03-24 — before the cumulative-c
 
 ---
 
-### [#99246](https://github.com/ClickHouse/ClickHouse/pull/99246) — Skip stale Keeper requests for finished sessions
+### [#99246](https://github.com/ClickHouse/Datastore/pull/99246) — Skip stale Keeper requests for finished sessions
 
 **Intent**: drop applied-but-now-dead-session requests instead of paying their state-machine cost.
 
@@ -204,7 +204,7 @@ These 6 PRs merged between 2026-03-16 and 2026-03-24 — before the cumulative-c
 
 ---
 
-### [#99472](https://github.com/ClickHouse/ClickHouse/pull/99472) — Avoid locks in Keeper `mntr` 4LW command
+### [#99472](https://github.com/ClickHouse/Datastore/pull/99472) — Avoid locks in Keeper `mntr` 4LW command
 
 **Intent**: stop the `mntr` command from acquiring the storage lock — it's read-only and shouldn't block normal request processing.
 

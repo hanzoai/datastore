@@ -56,7 +56,7 @@ CREATE DICTIONARY dict_prices_ckh
   tag   String
 )
 PRIMARY KEY k1, k2
-SOURCE(CLICKHOUSE(TABLE 'ref_prices_ckh'))
+SOURCE(DATASTORE(TABLE 'ref_prices_ckh'))
 LAYOUT(COMPLEX_KEY_HASHED())
 LIFETIME(0);
 
@@ -68,7 +68,7 @@ CREATE DICTIONARY dict_prices_ch_array
   tag   String
 )
 PRIMARY KEY k1, k2
-SOURCE(CLICKHOUSE(TABLE 'ref_prices_ckh'))
+SOURCE(DATASTORE(TABLE 'ref_prices_ckh'))
 LAYOUT(COMPLEX_KEY_HASHED_ARRAY())
 LIFETIME(0);
 
@@ -80,7 +80,7 @@ CREATE DICTIONARY dict_prices_ck_sparse_hashed
   tag   String
 )
 PRIMARY KEY k1, k2
-SOURCE(CLICKHOUSE(TABLE 'ref_prices_ckh'))
+SOURCE(DATASTORE(TABLE 'ref_prices_ckh'))
 LAYOUT(COMPLEX_KEY_SPARSE_HASHED())
 LIFETIME(0);
 
@@ -91,7 +91,7 @@ CREATE DICTIONARY dict_items_flat
   score UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_items_flat'))
+SOURCE(DATASTORE(TABLE 'ref_items_flat'))
 LAYOUT(FLAT())
 LIFETIME(0);
 
@@ -102,7 +102,7 @@ CREATE DICTIONARY dict_items_hashed
   score UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_items_flat'))
+SOURCE(DATASTORE(TABLE 'ref_items_flat'))
 LAYOUT(HASHED())
 LIFETIME(0);
 
@@ -113,7 +113,7 @@ CREATE DICTIONARY dict_items_hashed_array
   score UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_items_flat'))
+SOURCE(DATASTORE(TABLE 'ref_items_flat'))
 LAYOUT(HASHED_ARRAY())
 LIFETIME(0);
 
@@ -124,7 +124,7 @@ CREATE DICTIONARY dict_items_sparse_hashed
   score UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_items_flat'))
+SOURCE(DATASTORE(TABLE 'ref_items_flat'))
 LAYOUT(SPARSE_HASHED())
 LIFETIME(0);
 

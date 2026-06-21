@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/81636
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/81636
 -- UNION ALL with remote() and an outer WHERE clause should not fail with
 -- UNKNOWN_DATABASE when predicate pushdown tries to resolve the remote database locally.
 

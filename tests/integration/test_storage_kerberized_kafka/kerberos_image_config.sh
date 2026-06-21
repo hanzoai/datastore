@@ -3,8 +3,8 @@
 
 set -x # trace
 
-: "${REALM:=TEST.CLICKHOUSE.TECH}"
-: "${DOMAIN_REALM:=test.clickhouse.com}"
+: "${REALM:=TEST.DATASTORE.TECH}"
+: "${DOMAIN_REALM:=test.datastore.com}"
 : "${KERB_MASTER_KEY:=masterkey}"
 : "${KERB_ADMIN_USER:=admin}"
 : "${KERB_ADMIN_PASS:=admin}"
@@ -103,12 +103,12 @@ create_keytabs() {
 
 
   kadmin.local -q "addprinc -randkey kafkauser/instance@${REALM}"
-  kadmin.local -q "ktadd -norandkey -k /tmp/keytab/clickhouse.keytab kafkauser/instance@${REALM}"
+  kadmin.local -q "ktadd -norandkey -k /tmp/keytab/datastore.keytab kafkauser/instance@${REALM}"
 
   kadmin.local -q "addprinc -randkey anotherkafkauser/instance@${REALM}"
-  kadmin.local -q "ktadd -norandkey -k /tmp/keytab/clickhouse.keytab anotherkafkauser/instance@${REALM}"
+  kadmin.local -q "ktadd -norandkey -k /tmp/keytab/datastore.keytab anotherkafkauser/instance@${REALM}"
 
-  chmod g+r /tmp/keytab/clickhouse.keytab
+  chmod g+r /tmp/keytab/datastore.keytab
 
 }
 

@@ -17,8 +17,8 @@ NUM_TABLES=5
 TIMEOUT=10
 
 for i in $(seq 1 $NUM_TABLES); do
-    ${CLICKHOUSE_CLIENT} --query "
-        CREATE TABLE IF NOT EXISTS ${CLICKHOUSE_DATABASE}.dedup_race_${i} (x UInt64)
+    ${DATASTORE_CLIENT} --query "
+        CREATE TABLE IF NOT EXISTS ${DATASTORE_DATABASE}.dedup_race_${i} (x UInt64)
         ENGINE = MergeTree ORDER BY x
         SETTINGS non_replicated_deduplication_window = 100
     "
@@ -30,9 +30,9 @@ function thread_create_drop()
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
         local i=$((RANDOM % NUM_TABLES + 1))
-        ${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.dedup_race_${i}" 2>/dev/null
-        ${CLICKHOUSE_CLIENT} --query "
-            CREATE TABLE IF NOT EXISTS ${CLICKHOUSE_DATABASE}.dedup_race_${i} (x UInt64)
+        ${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.dedup_race_${i}" 2>/dev/null
+        ${DATASTORE_CLIENT} --query "
+            CREATE TABLE IF NOT EXISTS ${DATASTORE_DATABASE}.dedup_race_${i} (x UInt64)
             ENGINE = MergeTree ORDER BY x
             SETTINGS non_replicated_deduplication_window = 100
         " 2>/dev/null
@@ -45,8 +45,8 @@ function thread_alter_dedup_window()
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
         local i=$((RANDOM % NUM_TABLES + 1))
-        ${CLICKHOUSE_CLIENT} --query "
-            ALTER TABLE ${CLICKHOUSE_DATABASE}.dedup_race_${i}
+        ${DATASTORE_CLIENT} --query "
+            ALTER TABLE ${DATASTORE_DATABASE}.dedup_race_${i}
             MODIFY SETTING non_replicated_deduplication_window = $((RANDOM % 200))
         " 2>/dev/null
     done
@@ -64,7 +64,7 @@ thread_alter_dedup_window &
 wait
 
 for i in $(seq 1 $NUM_TABLES); do
-    ${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.dedup_race_${i}" 2>/dev/null
+    ${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.dedup_race_${i}" 2>/dev/null
 done
 
 echo "OK"

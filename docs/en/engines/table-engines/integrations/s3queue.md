@@ -15,7 +15,7 @@ import ScalePlanFeatureBadge from '@theme/badges/ScalePlanFeatureBadge'
 
 This engine provides integration with [Amazon S3](https://aws.amazon.com/s3/) ecosystem and allows streaming import. This engine is similar to the [Kafka](../../../engines/table-engines/integrations/kafka.md), [RabbitMQ](../../../engines/table-engines/integrations/rabbitmq.md) engines, but provides S3-specific features.
 
-It is important to understand this note from the [original PR for S3Queue implementation](https://github.com/ClickHouse/ClickHouse/pull/49086/files#diff-e1106769c9c8fbe48dd84f18310ef1a250f2c248800fde97586b3104e9cd6af8R183): when the `MATERIALIZED VIEW` joins the engine, the S3Queue Table Engine starts collecting data in the background.
+It is important to understand this note from the [original PR for S3Queue implementation](https://github.com/ClickHouse/Datastore/pull/49086/files#diff-e1106769c9c8fbe48dd84f18310ef1a250f2c248800fde97586b3104e9cd6af8R183): when the `MATERIALIZED VIEW` joins the engine, the S3Queue Table Engine starts collecting data in the background.
 
 ## Create table {#creating-a-table}
 
@@ -59,7 +59,7 @@ Before `24.7`, it is required to use `s3queue_` prefix for all settings apart fr
 
 ```sql
 CREATE TABLE s3queue_engine_table (name String, value UInt32)
-ENGINE=S3Queue('https://clickhouse-public-datasets.s3.amazonaws.com/my-test-bucket-768/*', 'CSV', 'gzip')
+ENGINE=S3Queue('https://datastore-public-datasets.s3.amazonaws.com/my-test-bucket-768/*', 'CSV', 'gzip')
 SETTINGS
     mode = 'unordered';
 ```
@@ -67,15 +67,15 @@ SETTINGS
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <s3queue_conf>
-            <url>'https://clickhouse-public-datasets.s3.amazonaws.com/my-test-bucket-768/*</url>
+            <url>'https://datastore-public-datasets.s3.amazonaws.com/my-test-bucket-768/*</url>
             <access_key_id>test<access_key_id>
             <secret_access_key>test</secret_access_key>
         </s3queue_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql
@@ -127,13 +127,13 @@ Example:
 
 ```sql
 CREATE TABLE s3queue_engine_table (name String, value UInt32)
-ENGINE=S3Queue('https://clickhouse-public-datasets.s3.amazonaws.com/my-test-bucket-768/*', 'CSV', 'gzip')
+ENGINE=S3Queue('https://datastore-public-datasets.s3.amazonaws.com/my-test-bucket-768/*', 'CSV', 'gzip')
 SETTINGS
     mode = 'unordered',
     after_processing = 'move',
     after_processing_retries = 20,
     after_processing_move_prefix = 'dst_prefix',
-    after_processing_move_uri = 'https://clickhouse-public-datasets.s3.amazonaws.com/dst-bucket',
+    after_processing_move_uri = 'https://datastore-public-datasets.s3.amazonaws.com/dst-bucket',
     after_processing_move_access_key_id = 'test',
     after_processing_move_secret_access_key = 'test';
 ```
@@ -214,9 +214,9 @@ Default value: empty string.
 
 ### `keeper_path` {#keeper_path}
 
-Path to the queue metadata in ZooKeeper. If not specified explicitly, ClickHouse builds the path from `s3queue_default_zookeeper_path`, the database UUID, and the table UUID. Absolute values (starting with `/`) are used as provided, while relative values are appended to the configured prefix. Macros such as `{database}` or `{uuid}` are expanded before the engine connects to ZooKeeper.
+Path to the queue metadata in ZooKeeper. If not specified explicitly, Datastore builds the path from `s3queue_default_zookeeper_path`, the database UUID, and the table UUID. Absolute values (starting with `/`) are used as provided, while relative values are appended to the configured prefix. Macros such as `{database}` or `{uuid}` are expanded before the engine connects to ZooKeeper.
 
-To target an auxiliary ZooKeeper cluster, prefix the value with the configured name, for example `analytics_keeper:/clickhouse/queue/orders`. The name must exist in `<auxiliary_zookeepers>`; otherwise the engine reports `Unknown auxiliary ZooKeeper name ...`. The full string (including the prefix) is preserved in `SHOW CREATE TABLE` so the statement can be replicated verbatim.
+To target an auxiliary ZooKeeper cluster, prefix the value with the configured name, for example `analytics_keeper:/datastore/queue/orders`. The name must exist in `<auxiliary_zookeepers>`; otherwise the engine reports `Unknown auxiliary ZooKeeper name ...`. The full string (including the prefix) is preserved in `SHOW CREATE TABLE` so the statement can be replicated verbatim.
 
 Possible values:
 
@@ -258,7 +258,7 @@ Default value: `0`.
 
 ### `polling_min_timeout_ms` {#polling_min_timeout_ms}
 
-Specifies the minimum time, in milliseconds, that ClickHouse waits before making the next polling attempt.
+Specifies the minimum time, in milliseconds, that Datastore waits before making the next polling attempt.
 
 Possible values:
 
@@ -268,7 +268,7 @@ Default value: `1000`.
 
 ### `polling_max_timeout_ms` {#polling_max_timeout_ms}
 
-Defines the maximum time, in milliseconds, that ClickHouse waits before initiating the next polling attempt.
+Defines the maximum time, in milliseconds, that Datastore waits before initiating the next polling attempt.
 
 Possible values:
 
@@ -366,7 +366,7 @@ SETTINGS
 
 `S3Queue` `ordered` mode, as well as `unordered`, supports `(s3queue_)processing_threads_num` setting (`s3queue_` prefix is optional), which allows to control number of threads, which would do processing of `S3` files locally on the server.
 
-For `ordered` mode without partitioning, ClickHouse may resume S3 listing from the last processed key to avoid re-listing the full prefix history. In bucketed ordered mode, the resume point is conservatively chosen as the smallest processed key across all buckets to avoid skipping unprocessed files.
+For `ordered` mode without partitioning, Datastore may resume S3 listing from the last processed key to avoid re-listing the full prefix history. In bucketed ordered mode, the resume point is conservatively chosen as the smallest processed key across all buckets to avoid skipping unprocessed files.
 This resume-listing optimization is used only for S3-backed queues in ordered mode without partitioning (not for AzureQueue or when `partitioning_mode` is set).
 In addition, `ordered` mode also introduces another setting called `(s3queue_)buckets` which means "logical threads". It means that in distributed scenario, when there are several servers with `S3Queue` table replicas, where this setting defines the number of processing units. E.g. each processing thread on each `S3Queue` replica will try to lock a certain `bucket` for processing, each `bucket` is attributed to certain files by hash of the file name. Therefore, in distributed scenario it is highly recommended to have `(s3queue_)buckets` setting to be at least equal to the number of replicas or bigger. This is fine to have the number of buckets bigger than the number of replicas. The most optimal scenario would be for `(s3queue_)buckets` setting to equal a multiplication of `number_of_replicas` and `(s3queue_)processing_threads_num`.
 The setting `(s3queue_)processing_threads_num` is not recommended for usage before version `24.6`.
@@ -392,7 +392,7 @@ Example:
 
 ```sql
   CREATE TABLE s3queue_engine_table (name String, value UInt32)
-    ENGINE=S3Queue('https://clickhouse-public-datasets.s3.amazonaws.com/my-test-bucket-768/*', 'CSV', 'gzip')
+    ENGINE=S3Queue('https://datastore-public-datasets.s3.amazonaws.com/my-test-bucket-768/*', 'CSV', 'gzip')
     SETTINGS
         mode = 'unordered';
 
@@ -472,7 +472,7 @@ FROM system.s3queue_metadata_cache
 
 Row 1:
 ──────
-zookeeper_path:        /clickhouse/s3queue/25ea5621-ae8c-40c7-96d0-cec959c5ab88/3b3f66a1-9866-4c2e-ba78-b6bfa154207e
+zookeeper_path:        /datastore/s3queue/25ea5621-ae8c-40c7-96d0-cec959c5ab88/3b3f66a1-9866-4c2e-ba78-b6bfa154207e
 file_name:             wikistat/original/pageviews-20150501-030000.gz
 rows_processed:        5068534
 status:                Processed

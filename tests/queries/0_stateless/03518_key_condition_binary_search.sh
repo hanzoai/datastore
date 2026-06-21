@@ -7,12 +7,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-readonly query_prefix=$CLICKHOUSE_DATABASE
+readonly query_prefix=$DATASTORE_DATABASE
 
 # Does additional index analysis round and affects profile events
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --automatic_parallel_replicas_mode 0 --enable_parallel_replicas 0 --use_statistics_for_part_pruning=0"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --automatic_parallel_replicas_mode 0 --enable_parallel_replicas 0 --use_statistics_for_part_pruning=0"
 
-$CLICKHOUSE_CLIENT -n -q "
+$DATASTORE_CLIENT -n -q "
 DROP TABLE IF EXISTS t;
 CREATE TABLE t
 (
@@ -22,11 +22,11 @@ ENGINE = MergeTree
 ORDER BY c;
 INSERT INTO t values('One');"
 
-$CLICKHOUSE_CLIENT -n -q "SELECT * FROM t WHERE c = 1 FORMAT Null;" --query_id="${query_prefix}_binary1"
-$CLICKHOUSE_CLIENT -n -q "SELECT * FROM t WHERE c = 'One' FORMAT Null;" --query_id="${query_prefix}_binary2"
-$CLICKHOUSE_CLIENT -n -q "SELECT * FROM t WHERE c = 1 and 1 = 1  FORMAT Null;" --query_id="${query_prefix}_binary3"
+$DATASTORE_CLIENT -n -q "SELECT * FROM t WHERE c = 1 FORMAT Null;" --query_id="${query_prefix}_binary1"
+$DATASTORE_CLIENT -n -q "SELECT * FROM t WHERE c = 'One' FORMAT Null;" --query_id="${query_prefix}_binary2"
+$DATASTORE_CLIENT -n -q "SELECT * FROM t WHERE c = 1 and 1 = 1  FORMAT Null;" --query_id="${query_prefix}_binary3"
 
-$CLICKHOUSE_CLIENT -n -q "
+$DATASTORE_CLIENT -n -q "
 DROP TABLE IF EXISTS t1;
 CREATE TABLE t1
 (
@@ -36,11 +36,11 @@ ENGINE = MergeTree
 ORDER BY timestamp;
 INSERT INTO t1 VALUES ('2025-05-21 00:00:00');"
 
-$CLICKHOUSE_CLIENT -n -q "SELECT * FROM t1 WHERE toDayOfMonth(timestamp) = 1 FORMAT Null;" --query-id="${query_prefix}_generic1"
+$DATASTORE_CLIENT -n -q "SELECT * FROM t1 WHERE toDayOfMonth(timestamp) = 1 FORMAT Null;" --query-id="${query_prefix}_generic1"
 
 # Non-native integer type edge case in ToNumberMonotonicity
-# See: https://github.com/ClickHouse/ClickHouse/issues/80742
-$CLICKHOUSE_CLIENT -n -q "
+# See: https://github.com/ClickHouse/Datastore/issues/80742
+$DATASTORE_CLIENT -n -q "
 DROP TABLE IF EXISTS t2;
 CREATE TABLE t2
 (
@@ -52,9 +52,9 @@ ORDER BY a
 SETTINGS index_granularity = 64, index_granularity_bytes = '10M', min_bytes_for_wide_part = 0;
 INSERT INTO t2 SELECT number, number FROM numbers(1);"
 
-$CLICKHOUSE_CLIENT -n -q "SELECT count() FROM t2 WHERE (a < toUInt256(200)) FORMAT Null;" --query-id="${query_prefix}_generic2"
+$DATASTORE_CLIENT -n -q "SELECT count() FROM t2 WHERE (a < toUInt256(200)) FORMAT Null;" --query-id="${query_prefix}_generic2"
 
-$CLICKHOUSE_CLIENT -n -q "
+$DATASTORE_CLIENT -n -q "
 DROP TABLE IF EXISTS t3;
 CREATE TABLE t3
 (
@@ -66,11 +66,11 @@ ORDER BY a
 SETTINGS index_granularity = 64, index_granularity_bytes = '10M', min_bytes_for_wide_part = 0;
 INSERT INTO t3 SELECT number, number FROM numbers(1);"
 
-$CLICKHOUSE_CLIENT -n -q "SELECT count() FROM t3 WHERE CAST(a, 'Int256') = '4' FORMAT Null;" --query-id="${query_prefix}_generic3"
+$DATASTORE_CLIENT -n -q "SELECT count() FROM t3 WHERE CAST(a, 'Int256') = '4' FORMAT Null;" --query-id="${query_prefix}_generic3"
 
-$CLICKHOUSE_CLIENT -n -q "SYSTEM FLUSH LOGS query_log;"
+$DATASTORE_CLIENT -n -q "SYSTEM FLUSH LOGS query_log;"
 
-$CLICKHOUSE_CLIENT -n -q "SELECT sum(ProfileEvents['IndexBinarySearchAlgorithm']), sum(ProfileEvents['IndexGenericExclusionSearchAlgorithm']) FROM system.query_log
+$DATASTORE_CLIENT -n -q "SELECT sum(ProfileEvents['IndexBinarySearchAlgorithm']), sum(ProfileEvents['IndexGenericExclusionSearchAlgorithm']) FROM system.query_log
     WHERE type > 1 AND event_date >= yesterday() AND event_time >= now() - 600 AND query_id ILIKE '${query_prefix}_binary%' AND current_database = currentDatabase()"
-$CLICKHOUSE_CLIENT -n -q "SELECT sum(ProfileEvents['IndexBinarySearchAlgorithm']), sum(ProfileEvents['IndexGenericExclusionSearchAlgorithm']) FROM system.query_log
+$DATASTORE_CLIENT -n -q "SELECT sum(ProfileEvents['IndexBinarySearchAlgorithm']), sum(ProfileEvents['IndexGenericExclusionSearchAlgorithm']) FROM system.query_log
     WHERE type > 1 AND event_date >= yesterday() AND query_id ILIKE '${query_prefix}_generic%' AND current_database = currentDatabase()"

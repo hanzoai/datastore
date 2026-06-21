@@ -49,9 +49,9 @@ def setup_nodes():
     p = Pool(2)
     waiters = []
     for node in [node1, node2]:
-        node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/log"])
+        node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/log"])
         node.exec_in_container(
-            ["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"]
+            ["rm", "-rf", "/var/lib/datastore/coordination/snapshots"]
         )
 
         waiters.append(p.apply_async(start_clickhouse, (node,)))

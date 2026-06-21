@@ -117,7 +117,7 @@ String toString(TargetArch arch);
 ///
 /// IMPORTANT: Clang's default tuning for `x86-64-v4` includes `TuningPrefer256Bit` (see X86_64V4Tuning
 /// in contrib/llvm-project/llvm/lib/Target/X86/X86.td). This was added conservatively to avoid AVX-512
-/// frequency throttling on early implementations like Skylake-X. However, for ClickHouse's data-intensive
+/// frequency throttling on early implementations like Skylake-X. However, for Datastore's data-intensive
 /// workloads, 512-bit operations often provide better performance despite potential frequency drops because:
 /// - Memory-bound operations are less sensitive to frequency reduction
 /// - Processing 64 bytes vs 32 bytes per instruction overcomes the penalty for large datasets

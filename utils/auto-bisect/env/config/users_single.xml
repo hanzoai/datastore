@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <admin>
             <password></password>
@@ -30,10 +30,10 @@
 
     <user_directories replace="replace">
         <!-- <users_xml>-->
-        <!-- <path>/etc/clickhouse-server/users.xml</path>-->
+        <!-- <path>/etc/datastore-server/users.xml</path>-->
         <!-- </users_xml>-->
         <replicated>
-            <zookeeper_path>/clickhouse/mycluster/access/</zookeeper_path>
+            <zookeeper_path>/datastore/mycluster/access/</zookeeper_path>
         </replicated>
     </user_directories>
-</clickhouse>
+</datastore>

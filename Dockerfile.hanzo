@@ -14,7 +14,7 @@ ARG REPO_CHANNEL=stable
 
 # -- ZAP bridge build stage ----------------------------------------------------
 # Compiles the Go zap-bridge binary for the target architecture. Independent
-# of the ClickHouse C++ build — fast, cacheable, no cross-pollination.
+# of the Datastore C++ build — fast, cacheable, no cross-pollination.
 FROM golang:1.26-alpine AS zap-builder
 ARG TARGETARCH
 WORKDIR /src
@@ -60,7 +60,7 @@ COPY docker/server/entrypoint.sh /entrypoint.sh
 COPY docker/server/nginx-header-proxy.conf /etc/nginx/http.d/datastore-proxy.conf
 
 # Native ZAP bridge — single static binary. Started by entrypoint.sh in the
-# background before clickhouse-server. Listens on :9999, proxies to
+# background before datastore-server. Listens on :9999, proxies to
 # 127.0.0.1:9000. See cmd/zap-bridge/main.go for the wire protocol.
 COPY --from=zap-builder /out/zap-bridge /usr/local/bin/zap-bridge
 
@@ -98,7 +98,7 @@ RUN arch=${TARGETARCH:-amd64} \
             && wget -c -q "${REPOSITORY}/${package}-${DS_VERSION}-${arch}.tgz.sha512" \
         ; done \
     fi \
-    && cat *.tgz.sha512 | sed 's:/output/:/tmp/:' | sed 's/clickhouse-/datastore-/g' | sha512sum -c \
+    && cat *.tgz.sha512 | sed 's:/output/:/tmp/:' | sed 's/datastore-/datastore-/g' | sha512sum -c \
     && for file in *.tgz; do \
         if [ -f "$file" ]; then \
             echo "Unpacking $file"; \
@@ -115,7 +115,7 @@ RUN arch=${TARGETARCH:-amd64} \
     && cp /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone \
     # White-label: rename upstream binary → hanzo-datastore
-    && if [ -f /usr/bin/clickhouse ]; then mv /usr/bin/clickhouse /usr/bin/hanzo-datastore; fi \
+    && if [ -f /usr/bin/datastore ]; then mv /usr/bin/datastore /usr/bin/hanzo-datastore; fi \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore-server \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/datastore-client \
@@ -126,12 +126,12 @@ RUN arch=${TARGETARCH:-amd64} \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-extract-from-config \
     && ln -sf /usr/bin/hanzo-datastore /usr/bin/hanzo-datastore-su \
     # Merge upstream config into hanzo-datastore paths (COPY may have pre-created dirs)
-    && if [ -d /etc/clickhouse-server ]; then \
-        cp -a /etc/clickhouse-server/* /etc/hanzo-datastore-server/ 2>/dev/null || true; \
-        rm -rf /etc/clickhouse-server; fi \
-    && if [ -d /etc/clickhouse-client ]; then \
-        cp -a /etc/clickhouse-client/* /etc/hanzo-datastore-client/ 2>/dev/null || true; \
-        rm -rf /etc/clickhouse-client; fi \
+    && if [ -d /etc/datastore-server ]; then \
+        cp -a /etc/datastore-server/* /etc/hanzo-datastore-server/ 2>/dev/null || true; \
+        rm -rf /etc/datastore-server; fi \
+    && if [ -d /etc/datastore-client ]; then \
+        cp -a /etc/datastore-client/* /etc/hanzo-datastore-client/ 2>/dev/null || true; \
+        rm -rf /etc/datastore-client; fi \
     # Pre-create nginx runtime dirs writable by hanzo-datastore user (for non-root operation)
     && mkdir -p /var/lib/nginx/logs /var/lib/nginx/tmp/client_body /var/lib/nginx/tmp/proxy \
         /var/lib/nginx/tmp/fastcgi /var/lib/nginx/tmp/uwsgi /var/lib/nginx/tmp/scgi /run/nginx \

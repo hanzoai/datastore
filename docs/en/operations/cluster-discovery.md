@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for cluster discovery in ClickHouse'
+description: 'Documentation for cluster discovery in Datastore'
 sidebar_label: 'Cluster discovery'
 slug: /operations/cluster-discovery
 title: 'Cluster discovery'
@@ -8,7 +8,7 @@ doc_type: 'guide'
 
 ## Overview {#overview}
 
-ClickHouse's Cluster Discovery feature simplifies cluster configuration by allowing nodes to automatically discover and register themselves without the need for explicit definition in the configuration files. This is especially beneficial in cases where the manual definition of each node becomes cumbersome.
+Datastore's Cluster Discovery feature simplifies cluster configuration by allowing nodes to automatically discover and register themselves without the need for explicit definition in the configuration files. This is especially beneficial in cases where the manual definition of each node becomes cumbersome.
 
 :::note
 
@@ -16,11 +16,11 @@ Cluster Discovery is an experimental feature and can be changed or removed in fu
 To enable it include the `allow_experimental_cluster_discovery` setting in your configuration file:
 
 ```xml
-<clickhouse>
+<datastore>
     <!-- ... -->
     <allow_experimental_cluster_discovery>1</allow_experimental_cluster_discovery>
     <!-- ... -->
-</clickhouse>
+</datastore>
 ```
 :::
 
@@ -28,7 +28,7 @@ To enable it include the `allow_experimental_cluster_discovery` setting in your 
 
 ### Traditional manual configuration {#traditional-manual-configuration}
 
-Traditionally, in ClickHouse, each shard and replica in the cluster needed to be manually specified in the configuration:
+Traditionally, in Datastore, each shard and replica in the cluster needed to be manually specified in the configuration:
 
 ```xml
 <remote_servers>
@@ -66,7 +66,7 @@ With Cluster Discovery, rather than defining each node explicitly, you simply sp
 <remote_servers>
     <cluster_name>
         <discovery>
-            <path>/clickhouse/discovery/cluster_name</path>
+            <path>/datastore/discovery/cluster_name</path>
 
             <!-- # Optional configuration parameters: -->
 
@@ -92,7 +92,7 @@ for `node1` and `node2`:
 
 ```xml
 <discovery>
-    <path>/clickhouse/discovery/cluster_name</path>
+    <path>/datastore/discovery/cluster_name</path>
     <shard>1</shard>
 </discovery>
 ```
@@ -101,7 +101,7 @@ for `node3` and `node4`:
 
 ```xml
 <discovery>
-    <path>/clickhouse/discovery/cluster_name</path>
+    <path>/datastore/discovery/cluster_name</path>
     <shard>2</shard>
 </discovery>
 ```
@@ -114,7 +114,7 @@ To enable observer mode, include the `<observer/>` tag within the `<discovery>` 
 
 ```xml
 <discovery>
-    <path>/clickhouse/discovery/cluster_name</path>
+    <path>/datastore/discovery/cluster_name</path>
     <observer/>
 </discovery>
 ```
@@ -127,14 +127,14 @@ Sometimes you may need to add and remove not only hosts in clusters, but cluster
 <remote_servers>
     <some_unused_name>
         <discovery>
-            <multicluster_root_path>/clickhouse/discovery</multicluster_root_path>
+            <multicluster_root_path>/datastore/discovery</multicluster_root_path>
             <observer/>
         </discovery>
     </some_unused_name>
 </remote_servers>
 ```
 
-In this case, when some other host registers itself with the path `/clickhouse/discovery/some_new_cluster`, a cluster with name `some_new_cluster` will be added.
+In this case, when some other host registers itself with the path `/datastore/discovery/some_new_cluster`, a cluster with name `some_new_cluster` will be added.
 
 You can use both features simultaneously, the host can register itself in cluster `my_cluster` and discovery any other clusters:
 
@@ -142,12 +142,12 @@ You can use both features simultaneously, the host can register itself in cluste
 <remote_servers>
     <my_cluster>
         <discovery>
-            <path>/clickhouse/discovery/my_cluster</path>
+            <path>/datastore/discovery/my_cluster</path>
         </discovery>
     </my_cluster>
     <some_unused_name>
         <discovery>
-            <multicluster_root_path>/clickhouse/discovery</multicluster_root_path>
+            <multicluster_root_path>/datastore/discovery</multicluster_root_path>
             <observer/>
         </discovery>
     </some_unused_name>
@@ -171,7 +171,7 @@ Consider the following example with a cluster of 3 nodes:
 <remote_servers>
     <default>
         <discovery>
-            <path>/clickhouse/discovery/default_cluster</path>
+            <path>/datastore/discovery/default_cluster</path>
         </discovery>
     </default>
 </remote_servers>
@@ -190,7 +190,7 @@ FROM system.clusters WHERE cluster = 'default';
 
 ```sql
 CREATE TABLE event_table ON CLUSTER default (event_time DateTime, value String)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/event_table', '{replica}')
+ENGINE = ReplicatedMergeTree('/datastore/tables/event_table', '{replica}')
 ORDER BY event_time PARTITION BY toYYYYMM(event_time);
 
 INSERT INTO event_table ...

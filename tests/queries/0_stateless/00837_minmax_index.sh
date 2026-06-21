@@ -5,10 +5,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS minmax_idx;"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS minmax_idx;"
 
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 CREATE TABLE minmax_idx
 (
     u64 UInt64,
@@ -26,7 +26,7 @@ ORDER BY u64
 SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi', add_minmax_index_for_numeric_columns=0;"
 
 
-$CLICKHOUSE_CLIENT --query="INSERT INTO minmax_idx VALUES
+$DATASTORE_CLIENT --query="INSERT INTO minmax_idx VALUES
 (0, 5, 4.7, 6.5, 'cba', 'b', '2014-01-04'),
 (1, 5, 4.7, 6.5, 'cba', 'b', '2014-03-11'),
 (2, 2, 4.5, 2.5, 'abc', 'a', '2014-01-01'),
@@ -41,11 +41,11 @@ $CLICKHOUSE_CLIENT --query="INSERT INTO minmax_idx VALUES
 (12, 5, 4.7, 6.5, 'cba', 'b', '2015-01-01')"
 
 # simple select
-$CLICKHOUSE_CLIENT --query="SELECT * FROM minmax_idx WHERE i32 = 5 AND i32 + f64 < 12 AND 3 < d AND d < 7 AND (s = 'bac' OR s = 'cba') ORDER BY dt SETTINGS use_query_condition_cache = 0"
-$CLICKHOUSE_CLIENT --query="SELECT * FROM minmax_idx WHERE i32 = 5 AND i32 + f64 < 12 AND 3 < d AND d < 7 AND (s = 'bac' OR s = 'cba') ORDER BY dt SETTINGS use_query_condition_cache = 0 FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM minmax_idx WHERE i32 = 5 AND i32 + f64 < 12 AND 3 < d AND d < 7 AND (s = 'bac' OR s = 'cba') ORDER BY dt SETTINGS use_query_condition_cache = 0"
+$DATASTORE_CLIENT --query="SELECT * FROM minmax_idx WHERE i32 = 5 AND i32 + f64 < 12 AND 3 < d AND d < 7 AND (s = 'bac' OR s = 'cba') ORDER BY dt SETTINGS use_query_condition_cache = 0 FORMAT JSON" | grep "rows_read"
 
 # select with hole made by primary key
-$CLICKHOUSE_CLIENT --query="SELECT * FROM minmax_idx WHERE (u64 < 2 OR u64 > 10) AND e != 'b' ORDER BY dt SETTINGS use_query_condition_cache = 0"
-$CLICKHOUSE_CLIENT --query="SELECT * FROM minmax_idx WHERE (u64 < 2 OR u64 > 10) AND e != 'b' ORDER BY dt SETTINGS use_query_condition_cache = 0 FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM minmax_idx WHERE (u64 < 2 OR u64 > 10) AND e != 'b' ORDER BY dt SETTINGS use_query_condition_cache = 0"
+$DATASTORE_CLIENT --query="SELECT * FROM minmax_idx WHERE (u64 < 2 OR u64 > 10) AND e != 'b' ORDER BY dt SETTINGS use_query_condition_cache = 0 FORMAT JSON" | grep "rows_read"
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE minmax_idx"
+$DATASTORE_CLIENT --query="DROP TABLE minmax_idx"

@@ -19,12 +19,12 @@ CREATE TABLE landing
     time DateTime,
     number Int64
 )
-Engine=ReplicatedReplacingMergeTree('/clickhouse/' || currentDatabase() || '/landing/{shard}/', '{replica}')
+Engine=ReplicatedReplacingMergeTree('/datastore/' || currentDatabase() || '/landing/{shard}/', '{replica}')
 PARTITION BY toYYYYMMDD(time)
 ORDER BY time;
 
 CREATE MATERIALIZED VIEW mv
-ENGINE = ReplicatedSummingMergeTree('/clickhouse/' || currentDatabase() || '/mv/{shard}/', '{replica}')
+ENGINE = ReplicatedSummingMergeTree('/datastore/' || currentDatabase() || '/mv/{shard}/', '{replica}')
 PARTITION BY toYYYYMMDD(hour) ORDER BY hour
 AS SELECT
     toStartOfHour(time) AS hour,
@@ -48,7 +48,7 @@ SELECT '-- Original issue with deduplicate_blocks_in_dependent_materialized_view
 
     This is the unexpected behavior due to setting max_insert_delayed_streams_for_parallel_write > 1.
 
-    This unexpected behavior was present since version 21.9 or earlier but due to this PR https://github.com/ClickHouse/ClickHouse/pull/34780
+    This unexpected behavior was present since version 21.9 or earlier but due to this PR https://github.com/ClickHouse/Datastore/pull/34780
     when max_insert_delayed_streams_for_parallel_write gets disabled by default the issue was mitigated.
 
     This is what happens:
@@ -66,12 +66,12 @@ CREATE TABLE landing
     time DateTime,
     number Int64
 )
-Engine=ReplicatedReplacingMergeTree('/clickhouse/' || currentDatabase() || '/landing/{shard}/', '{replica}')
+Engine=ReplicatedReplacingMergeTree('/datastore/' || currentDatabase() || '/landing/{shard}/', '{replica}')
 PARTITION BY toYYYYMMDD(time)
 ORDER BY time;
 
 CREATE MATERIALIZED VIEW mv
-ENGINE = ReplicatedSummingMergeTree('/clickhouse/' || currentDatabase() || '/mv/{shard}/', '{replica}')
+ENGINE = ReplicatedSummingMergeTree('/datastore/' || currentDatabase() || '/mv/{shard}/', '{replica}')
 PARTITION BY toYYYYMMDD(hour) ORDER BY hour
 AS SELECT
     toStartOfHour(time) AS hour,
@@ -109,12 +109,12 @@ CREATE TABLE landing
     time DateTime,
     number Int64
 )
-Engine=ReplicatedReplacingMergeTree('/clickhouse/' || currentDatabase() || '/landing/{shard}/', '{replica}')
+Engine=ReplicatedReplacingMergeTree('/datastore/' || currentDatabase() || '/landing/{shard}/', '{replica}')
 PARTITION BY toYYYYMMDD(time)
 ORDER BY time;
 
 CREATE MATERIALIZED VIEW mv
-ENGINE = ReplicatedSummingMergeTree('/clickhouse/' || currentDatabase() || '/mv/{shard}/', '{replica}')
+ENGINE = ReplicatedSummingMergeTree('/datastore/' || currentDatabase() || '/mv/{shard}/', '{replica}')
 PARTITION BY toYYYYMMDD(hour) ORDER BY hour
 AS SELECT
     toStartOfHour(time) AS hour,
@@ -133,10 +133,10 @@ SELECT * FROM mv FINAL ORDER BY hour;
 DROP TABLE IF EXISTS landing SYNC;
 DROP TABLE IF EXISTS mv SYNC;
 
-SELECT '-- Regression introduced in https://github.com/ClickHouse/ClickHouse/pull/54184';
+SELECT '-- Regression introduced in https://github.com/ClickHouse/Datastore/pull/54184';
 /*
 
-    This is a test to prevent regression introduced in https://github.com/ClickHouse/ClickHouse/pull/54184 from happening again.
+    This is a test to prevent regression introduced in https://github.com/ClickHouse/Datastore/pull/54184 from happening again.
 
     The PR was trying to fix the unexpected behavior when deduplicate_blocks_in_dependent_materialized_views = 0 AND
     max_insert_delayed_streams_for_parallel_write > 1 but it ended up adding a new regression.
@@ -152,7 +152,7 @@ CREATE TABLE landing
     `pk3` LowCardinality(String),
     `pk4` String
 )
-ENGINE = ReplicatedReplacingMergeTree('/clickhouse/' || currentDatabase() || '/landing/{shard}/', '{replica}')
+ENGINE = ReplicatedReplacingMergeTree('/datastore/' || currentDatabase() || '/landing/{shard}/', '{replica}')
 ORDER BY (pk1, pk2, pk3, pk4);
 
 CREATE TABLE ds
@@ -163,7 +163,7 @@ CREATE TABLE ds
     `pk4` LowCardinality(String),
     `occurences` AggregateFunction(count)
 )
-ENGINE = ReplicatedAggregatingMergeTree('/clickhouse/' || currentDatabase() || '/ds/{shard}/', '{replica}')
+ENGINE = ReplicatedAggregatingMergeTree('/datastore/' || currentDatabase() || '/ds/{shard}/', '{replica}')
 ORDER BY (pk1, pk2, pk3, pk4);
 
 CREATE MATERIALIZED VIEW mv TO ds AS

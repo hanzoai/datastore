@@ -14,4 +14,4 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # declaring 2 rows of FixedString(8) via the indexes column, but providing
 # zero bytes of actual FixedString data.
 
-$CLICKHOUSE_LOCAL --table test --input-format Native -q "SELECT * FROM test" < "${CUR_DIR}/data_native/dynamic_flattened_underfilled.native" 2>&1 | grep -o 'Mismatch in flattened Dynamic column[^.]*'
+$DATASTORE_LOCAL --table test --input-format Native -q "SELECT * FROM test" < "${CUR_DIR}/data_native/dynamic_flattened_underfilled.native" 2>&1 | grep -o 'Mismatch in flattened Dynamic column[^.]*'

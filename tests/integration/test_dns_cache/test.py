@@ -87,7 +87,7 @@ def _fill_nodes(nodes, table_name):
             DROP DATABASE IF EXISTS test;
             CREATE DATABASE test;
             CREATE TABLE IF NOT EXISTS {0}(date Date, id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{0}', '{1}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/{0}', '{1}')
             ORDER BY id PARTITION BY toYYYYMM(date);
             """.format(
                 table_name, node.name
@@ -349,12 +349,12 @@ def test_user_access_ip_change(cluster_ready, node_name):
     if node_name == "node5":
         # client is not allowed to connect, so execute it directly in container to send query from localhost
         node.exec_in_container(
-            ["bash", "-c", 'clickhouse client -q "SYSTEM CLEAR DNS CACHE"'],
+            ["bash", "-c", 'datastore client -q "SYSTEM CLEAR DNS CACHE"'],
             privileged=True,
             user="root",
         )
         node.exec_in_container(
-            ["bash", "-c", 'clickhouse client -q "SYSTEM CLEAR CONNECTIONS CACHE"'],
+            ["bash", "-c", 'datastore client -q "SYSTEM CLEAR CONNECTIONS CACHE"'],
             privileged=True,
             user="root",
         )
@@ -393,7 +393,7 @@ def test_host_is_drop_from_cache_after_consecutive_failures(cluster_ready):
     assert node4.wait_for_log_line(
         regexp="Code: 198. DB::NetException: Not found address of host: InvalidHostThatDoesNotExist.",
         # There's noize in a normal log, let's search the error log for the exception
-        filename="/var/log/clickhouse-server/clickhouse-server.err.log",
+        filename="/var/log/datastore-server/datastore-server.err.log",
     )
     assert node4.wait_for_log_line(
         "Cached hosts not found:.*InvalidHostThatDoesNotExist**",
@@ -411,10 +411,10 @@ def test_host_is_drop_from_cache_after_consecutive_failures(cluster_ready):
 
 def _render_filter_config(allow_ipv4, allow_ipv6):
     config = f"""
-    <clickhouse>
+    <datastore>
         <dns_allow_resolve_names_to_ipv4>{int(allow_ipv4)}</dns_allow_resolve_names_to_ipv4>
         <dns_allow_resolve_names_to_ipv6>{int(allow_ipv6)}</dns_allow_resolve_names_to_ipv6>
-    </clickhouse>
+    </datastore>
     """
     return config
 
@@ -439,7 +439,7 @@ def test_dns_resolver_filter(cluster_ready, allow_ipv4, allow_ipv6):
         ]
     )
     node.replace_config(
-        "/etc/clickhouse-server/config.d/dns_filter.xml",
+        "/etc/datastore-server/config.d/dns_filter.xml",
         _render_filter_config(allow_ipv4, allow_ipv6),
     )
 
@@ -463,7 +463,7 @@ def test_dns_resolver_filter(cluster_ready, allow_ipv4, allow_ipv6):
         [
             "bash",
             "-c",
-            "rm /etc/clickhouse-server/config.d/dns_filter.xml",
+            "rm /etc/datastore-server/config.d/dns_filter.xml",
         ],
         privileged=True,
         user="root",
@@ -477,7 +477,7 @@ def test_setting_disable_internal_dns_cache(cluster_ready, disable_internal_dns_
     # DNSCacheUpdater has to be created before any scenario that requires
     # DNS resolution (e.g. the loading of tables and clusters config).
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/remote_servers_with_disable_dns_setting.xml",
+        "/etc/datastore-server/config.d/remote_servers_with_disable_dns_setting.xml",
         "<disable_internal_dns_cache>[10]</disable_internal_dns_cache>",
         f"<disable_internal_dns_cache>{disable_internal_dns_cache}</disable_internal_dns_cache>"
     )
@@ -490,7 +490,7 @@ def test_setting_disable_internal_dns_cache(cluster_ready, disable_internal_dns_
 
     # Reset the node8 state
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/remote_servers_with_disable_dns_setting.xml",
+        "/etc/datastore-server/config.d/remote_servers_with_disable_dns_setting.xml",
         "<disable_internal_dns_cache>[10]</disable_internal_dns_cache>",
         "<disable_internal_dns_cache>0</disable_internal_dns_cache>"
     )
@@ -512,7 +512,7 @@ def test_reload_cluster_config_if_host_address_change(cluster_ready):
     # Failed to resolve DNS at cluster initialization
     assert node.wait_for_log_line(
         regexp="Cluster: Code: 198. DB::NetException: Not found address of host: node8.",
-        filename="/var/log/clickhouse-server/clickhouse-server.err.log",
+        filename="/var/log/datastore-server/datastore-server.err.log",
         timeout=3
     )
     # `is_local` is set to false by default as failure in DNS resolution

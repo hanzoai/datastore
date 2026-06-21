@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/61950
+-- https://github.com/ClickHouse/Datastore/issues/61950
 SET enable_analyzer=1;
 
 with dummy + 1 as dummy select dummy from system.one;

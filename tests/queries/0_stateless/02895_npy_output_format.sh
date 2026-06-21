@@ -4,13 +4,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-mkdir -p ${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/
-rm -rf ${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME:?}/*
-chmod 777 ${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/
+mkdir -p ${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/
+rm -rf ${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME:?}/*
+chmod 777 ${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/
 
 # parallel_distributed_insert_select is disabled be able execute INSERT SELECTs with parallel replicas run
 # Otherwise, INSERT SELECTs fail with enabled parallel replicas and parallel_distributed_insert_select=2 since they try to open the same npy file in parallel
-${CLICKHOUSE_CLIENT} --parallel_distributed_insert_select=0 -q "
+${DATASTORE_CLIENT} --parallel_distributed_insert_select=0 -q "
 SELECT '-- test data types --';
 CREATE TABLE 02896_npy_data_types
 (
@@ -30,43 +30,43 @@ CREATE TABLE 02896_npy_data_types
 
 INSERT INTO 02896_npy_data_types VALUES (1, 1, 1, 1, 1, 1, 1, 1, 0.1, 0.01, 'npy', 'npy'), (-1, -1, -1, -1, 0, 0, 0, 0, 0.2, 0.02, 'npy', 'npynpy');
 
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int8.npy') SELECT i1 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int16.npy') SELECT i2 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int32.npy') SELECT i4 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int64.npy') SELECT i8 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint8.npy') SELECT u1 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint16.npy') SELECT u2 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint32.npy') SELECT u4 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint64.npy') SELECT u8 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_float32.npy') SELECT f4 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_float64.npy') SELECT f8 FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_fixedstring.npy') SELECT fs FROM 02896_npy_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_string.npy') SELECT s FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int8.npy') SELECT i1 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int16.npy') SELECT i2 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int32.npy') SELECT i4 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int64.npy') SELECT i8 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint8.npy') SELECT u1 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint16.npy') SELECT u2 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint32.npy') SELECT u4 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint64.npy') SELECT u8 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_float32.npy') SELECT f4 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_float64.npy') SELECT f8 FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_fixedstring.npy') SELECT fs FROM 02896_npy_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_string.npy') SELECT s FROM 02896_npy_data_types;
 
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int8.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int16.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int32.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int64.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint8.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint16.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint32.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint64.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_float32.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_float64.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_fixedstring.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_string.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int8.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int16.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int32.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_int64.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint8.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint16.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint32.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_uint64.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_float32.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_float64.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_fixedstring.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_dtype_string.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int8.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int16.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int32.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int64.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint8.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint16.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint32.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint64.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_float32.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_float64.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_fixedstring.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_string.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int8.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int16.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int32.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_int64.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint8.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint16.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint32.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_uint64.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_float32.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_float64.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_fixedstring.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_dtype_string.npy');
 
 SELECT '-- test nested data types --';
 CREATE TABLE 02896_npy_nested_data_types
@@ -78,16 +78,16 @@ CREATE TABLE 02896_npy_nested_data_types
 
 INSERT INTO 02896_npy_nested_data_types VALUES ([[[1], [2]], [[3], [4]]], [[0.1], [0.2]], ['a', 'bb']), ([[[1], [2]], [[3], [4]]], [[0.1], [0.2]], ['ccc', 'dddd']);
 
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_int32.npy') SELECT i4 FROM 02896_npy_nested_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_float64.npy') SELECT f8 FROM 02896_npy_nested_data_types;
-INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_string.npy') SELECT s FROM 02896_npy_nested_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_int32.npy') SELECT i4 FROM 02896_npy_nested_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_float64.npy') SELECT f8 FROM 02896_npy_nested_data_types;
+INSERT INTO TABLE FUNCTION file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_string.npy') SELECT s FROM 02896_npy_nested_data_types;
 
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_int32.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_float64.npy');
-SELECT * FROM file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_string.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_int32.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_float64.npy');
-DESC file('${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}/02895_nested_dtype_string.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_int32.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_float64.npy');
+SELECT * FROM file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_string.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_int32.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_float64.npy');
+DESC file('${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}/02895_nested_dtype_string.npy');
 
 SELECT '-- test exceptions --';
 CREATE TABLE 02896_npy_exceptions
@@ -103,12 +103,12 @@ CREATE TABLE 02896_npy_exceptions
 INSERT INTO 02896_npy_exceptions VALUES (1, '2019-01-01', (1, 1), [1, 1], [1, 1], []), (0, '2019-01-01', (0, 0), [0, 0], [0], [0]);
 "
 
-$CLICKHOUSE_CLIENT "SELECT * FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "TOO_MANY_COLUMNS" || echo 'Missing TOO_MANY_COLUMNS error';
-$CLICKHOUSE_CLIENT "SELECT unsupported_u FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_u';
-$CLICKHOUSE_CLIENT "SELECT unsupported_date FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_date';
-$CLICKHOUSE_CLIENT "SELECT unsupported_tuple FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_tuple';
-$CLICKHOUSE_CLIENT "SELECT unsupported_nested_i FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_nested_i';
-$CLICKHOUSE_CLIENT "SELECT ragged_dimention FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "ILLEGAL_COLUMN" || echo 'Missing ILLEGAL_COLUMN error for ragged_dimention';
-$CLICKHOUSE_CLIENT "SELECT zero_dimension FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "ILLEGAL_COLUMN" || echo 'Missing ILLEGAL_COLUMN error for zero_dimension';
+$DATASTORE_CLIENT "SELECT * FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "TOO_MANY_COLUMNS" || echo 'Missing TOO_MANY_COLUMNS error';
+$DATASTORE_CLIENT "SELECT unsupported_u FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_u';
+$DATASTORE_CLIENT "SELECT unsupported_date FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_date';
+$DATASTORE_CLIENT "SELECT unsupported_tuple FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_tuple';
+$DATASTORE_CLIENT "SELECT unsupported_nested_i FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "BAD_ARGUMENTS" || echo 'Missing BAD_ARGUMENTS error for unsupported_nested_i';
+$DATASTORE_CLIENT "SELECT ragged_dimention FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "ILLEGAL_COLUMN" || echo 'Missing ILLEGAL_COLUMN error for ragged_dimention';
+$DATASTORE_CLIENT "SELECT zero_dimension FROM 02896_npy_exceptions FORMAT Npy;" 2>&1 | grep -q "ILLEGAL_COLUMN" || echo 'Missing ILLEGAL_COLUMN error for zero_dimension';
 
-rm -rf ${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME:?}
+rm -rf ${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME:?}

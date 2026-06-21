@@ -1,5 +1,5 @@
 -- Original reproducer from the issue
--- https://github.com/ClickHouse/ClickHouse/issues/77803
+-- https://github.com/ClickHouse/Datastore/issues/77803
 SELECT mapFromArrays(
     [toNullable(toLowCardinality('c')), toFixedString(toFixedString('d', toUInt256(1)), toLowCardinality(1))],
     map('b', 1, toFixedString('a', 1), 2)

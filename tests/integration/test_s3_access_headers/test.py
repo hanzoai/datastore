@@ -100,7 +100,7 @@ def test_custom_access_header(
 
     assert instance.query(f"SELECT count(*) FROM {table_name}") == "3\n"
 
-    config_path = "/etc/clickhouse-server/config.d/s3_headers.xml"
+    config_path = "/etc/datastore-server/config.d/s3_headers.xml"
 
     instance.replace_in_config(
         config_path,

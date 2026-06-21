@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Tags: no-fasttest
-# Test that clickhouse-local can cancel scalar subqueries via SIGINT.
+# Test that datastore-local can cancel scalar subqueries via SIGINT.
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
 # Start a query with an infinite scalar subquery
-${CLICKHOUSE_LOCAL} --query="SELECT (SELECT max(number) FROM system.numbers) + 1 SETTINGS max_rows_to_read = 0, max_bytes_to_read = 0" >/dev/null 2>&1 &
+${DATASTORE_LOCAL} --query="SELECT (SELECT max(number) FROM system.numbers) + 1 SETTINGS max_rows_to_read = 0, max_bytes_to_read = 0" >/dev/null 2>&1 &
 local_pid=$!
 
 sleep 1

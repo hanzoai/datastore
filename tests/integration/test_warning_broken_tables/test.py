@@ -42,13 +42,13 @@ def test_warn_on_database_ending_broken_replicated_tables(started_cluster):
         node.query(f"DROP DATABASE IF EXISTS {ordinary_database_for_broken_tables} SYNC")
         node.query(f"DROP DATABASE IF EXISTS {atomic_database_for_broken_tables} SYNC")
     node1.query(
-        f"CREATE DATABASE {database_name} ENGINE = Replicated('/clickhouse/databases/{database_name}', 'shard1', 'replica1');"
+        f"CREATE DATABASE {database_name} ENGINE = Replicated('/datastore/databases/{database_name}', 'shard1', 'replica1');"
     )
     started_cluster.get_kazoo_client("zoo1").set(
-        f"/clickhouse/databases/{database_name}/logs_to_keep", b"4"
+        f"/datastore/databases/{database_name}/logs_to_keep", b"4"
     )
     node2.query(
-        f"CREATE DATABASE {database_name} ENGINE = Replicated('/clickhouse/databases/{database_name}', 'shard1', 'replica2');"
+        f"CREATE DATABASE {database_name} ENGINE = Replicated('/datastore/databases/{database_name}', 'shard1', 'replica2');"
     )
 
     settings = {"distributed_ddl_task_timeout": 0}

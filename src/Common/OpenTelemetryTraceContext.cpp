@@ -106,8 +106,8 @@ bool Span::addAttribute(const Exception & e) noexcept
     if (!this->isTraceEnabled())
         return false;
 
-    return addAttributeImpl("clickhouse.exception", getExceptionMessage(e, false))
-        && addAttributeImpl("clickhouse.exception_code", e.code());
+    return addAttributeImpl("datastore.exception", getExceptionMessage(e, false))
+        && addAttributeImpl("datastore.exception_code", e.code());
 }
 
 bool Span::addAttribute(std::exception_ptr e) noexcept
@@ -115,7 +115,7 @@ bool Span::addAttribute(std::exception_ptr e) noexcept
     if (!this->isTraceEnabled() || e == nullptr)
         return false;
 
-    return addAttributeImpl("clickhouse.exception", getExceptionMessage(e, false));
+    return addAttributeImpl("datastore.exception", getExceptionMessage(e, false));
 }
 
 bool Span::addAttribute(const ExecutionStatus & e) noexcept
@@ -123,8 +123,8 @@ bool Span::addAttribute(const ExecutionStatus & e) noexcept
     if (!this->isTraceEnabled())
         return false;
 
-    return addAttributeImpl("clickhouse.exception", e.message)
-        && addAttributeImpl("clickhouse.exception_code", e.code);
+    return addAttributeImpl("datastore.exception", e.message)
+        && addAttributeImpl("datastore.exception_code", e.code);
 }
 
 SpanHolder::SpanHolder(
@@ -158,7 +158,7 @@ SpanHolder::SpanHolder(
         this->start_time_us
             = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-        this->addAttribute("clickhouse.thread_id", getThreadId());
+        this->addAttribute("datastore.thread_id", getThreadId());
 
         this->old_trace_flags = current_trace_context->trace_flags;
     }
@@ -452,7 +452,7 @@ TracingContextHolder::~TracingContextHolder()
             {
                 /// This object is created to initialize tracing context on a new thread,
                 /// it's helpful to record the thread_id so that we know the thread switching from the span log
-                this->root_span.addAttribute("clickhouse.thread_id", getThreadId());
+                this->root_span.addAttribute("datastore.thread_id", getThreadId());
             }
             catch (...) // NOLINT(bugprone-empty-catch)
             {

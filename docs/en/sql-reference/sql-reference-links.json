@@ -1,7 +1,7 @@
 [
 	{
 		"title": "Statements",
-		"description": "A list of available SQL statements in ClickHouse",
+		"description": "A list of available SQL statements in Datastore",
 		"url": "/docs/sql-reference/statements/"
 	},
 	{

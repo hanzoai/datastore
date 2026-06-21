@@ -14,7 +14,7 @@ CREATE DICTIONARY 02176_test_simple_key_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02176_test_simple_key_table'))
+SOURCE(DATASTORE(TABLE '02176_test_simple_key_table'))
 LAYOUT(DIRECT());
 
 SELECT dictGet('02176_test_simple_key_dictionary', 'value', toUInt64(0));
@@ -48,7 +48,7 @@ CREATE DICTIONARY 02176_test_complex_key_dictionary
     value String
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(TABLE '02176_test_complex_key_table'))
+SOURCE(DATASTORE(TABLE '02176_test_complex_key_table'))
 LAYOUT(COMPLEX_KEY_DIRECT());
 
 SELECT dictGet('02176_test_complex_key_dictionary', 'value', tuple(toUInt64(0), '0'));

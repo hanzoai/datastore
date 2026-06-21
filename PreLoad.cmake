@@ -40,7 +40,7 @@ if (NOT "$ENV{CFLAGS}" STREQUAL ""
 
     message(FATAL_ERROR "
         Some of the variables like CFLAGS, CXXFLAGS, LDFLAGS are not empty.
-        It is not possible to build ClickHouse with custom flags.
+        It is not possible to build Datastore with custom flags.
         These variables can be set up by previous invocation of some other build tools.
         You should cleanup these variables and start over again.
 

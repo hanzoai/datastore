@@ -8,7 +8,7 @@ from helpers.test_tools import TSV
 
 cluster = ClickHouseCluster(__file__)
 instance = cluster.add_instance("node")
-path_to_data = "/var/lib/clickhouse/"
+path_to_data = "/var/lib/datastore/"
 
 
 @pytest.fixture(scope="module")

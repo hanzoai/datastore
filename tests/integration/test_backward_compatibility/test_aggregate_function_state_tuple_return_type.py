@@ -1,7 +1,7 @@
 import pytest
 
 from helpers.cluster import (
-    CLICKHOUSE_CI_PRE_NULLABLE_TUPLE_VERSION,
+    DATASTORE_CI_PRE_NULLABLE_TUPLE_VERSION,
     ClickHouseCluster,
 )
 
@@ -9,32 +9,32 @@ cluster = ClickHouseCluster(__file__)
 pre_nullable_tuple_node_1 = cluster.add_instance(
     "pre_nullable_tuple_node_1",
     with_zookeeper=False,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_PRE_NULLABLE_TUPLE_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_PRE_NULLABLE_TUPLE_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
 pre_nullable_tuple_node_2 = cluster.add_instance(
     "pre_nullable_tuple_node_2",
     with_zookeeper=False,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_PRE_NULLABLE_TUPLE_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_PRE_NULLABLE_TUPLE_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
 pre_nullable_tuple_node_3 = cluster.add_instance(
     "pre_nullable_tuple_node_3",
     with_zookeeper=False,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_PRE_NULLABLE_TUPLE_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_PRE_NULLABLE_TUPLE_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
 pre_nullable_tuple_node_4 = cluster.add_instance(
     "pre_nullable_tuple_node_4",
     with_zookeeper=False,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_PRE_NULLABLE_TUPLE_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_PRE_NULLABLE_TUPLE_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )

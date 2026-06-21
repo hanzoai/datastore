@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tags: deadlock, no-debug, no-parallel
 
-# NOTE: database = $CLICKHOUSE_DATABASE is unwanted
+# NOTE: database = $DATASTORE_DATABASE is unwanted
 
 set -e
 
@@ -17,7 +17,7 @@ function cleanup()
 
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT -q "create view view_00840 as select count(*),database,table from system.columns group by database,table"
+$DATASTORE_CLIENT -q "create view view_00840 as select count(*),database,table from system.columns group by database,table"
 
 
 function thread_drop_create()
@@ -27,7 +27,7 @@ function thread_drop_create()
     while [ $SECONDS -lt "$TIMELIMIT" ] && [ $it -lt 100 ];
     do
         it=$((it+1))
-        $CLICKHOUSE_CLIENT -m -q "
+        $DATASTORE_CLIENT -m -q "
             drop table if exists view_00840;
             create view view_00840 as select count(*),database,table from system.columns group by database,table;
         "
@@ -41,7 +41,7 @@ function thread_select()
     while [ $SECONDS -lt "$TIMELIMIT" ] && [ $it -lt 250 ];
     do
         it=$((it+1))
-        $CLICKHOUSE_CLIENT -q "select * from view_00840 order by table" >/dev/null 2>&1 || true
+        $DATASTORE_CLIENT -q "select * from view_00840 order by table" >/dev/null 2>&1 || true
     done
 }
 
@@ -56,6 +56,6 @@ thread_select $TIMEOUT &
 wait
 trap '' EXIT
 
-echo "drop table view_00840" | $CLICKHOUSE_CLIENT
+echo "drop table view_00840" | $DATASTORE_CLIENT
 
 echo 'did not deadlock'

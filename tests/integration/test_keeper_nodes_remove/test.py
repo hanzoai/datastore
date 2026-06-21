@@ -78,11 +78,11 @@ def test_nodes_remove(started_cluster):
 
         node2.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_two_nodes_2.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper2.xml",
+            "/etc/datastore-server/config.d/enable_keeper2.xml",
         )
         node1.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_two_nodes_1.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
 
         node1.query("SYSTEM RELOAD CONFIG")
@@ -120,7 +120,7 @@ def test_nodes_remove(started_cluster):
 
         node1.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_single_keeper1.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
 
         node1.query("SYSTEM RELOAD CONFIG")

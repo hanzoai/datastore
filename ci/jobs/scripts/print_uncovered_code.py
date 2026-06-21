@@ -61,11 +61,11 @@ def _is_noise(relpath: str, lineno: int) -> bool:
 def _normalize_sf(sf: str) -> str:
     """Strip machine-specific path prefix, keeping only the repo-relative path.
 
-    Handles both CI paths (/home/ubuntu/actions-runner/_work/ClickHouse/ClickHouse/src/...)
-    and local paths (/home/user/Documents/ClickHouse/src/...) by taking everything
-    after the last occurrence of '/ClickHouse/'.
+    Handles both CI paths (/home/ubuntu/actions-runner/_work/Datastore/Datastore/src/...)
+    and local paths (/home/user/Documents/Datastore/src/...) by taking everything
+    after the last occurrence of '/Datastore/'.
     """
-    marker = "/ClickHouse/"
+    marker = "/Datastore/"
     idx = sf.rfind(marker)
     if idx >= 0:
         return sf[idx + len(marker):]

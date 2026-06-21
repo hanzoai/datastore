@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     drop table if exists data_fsync_pe;
 
     create table data_fsync_pe (key Int) engine=MergeTree()
@@ -27,12 +27,12 @@ ret=1
 # Retry in case of fsync/fdatasync was too fast
 # (FileSyncElapsedMicroseconds/DirectorySyncElapsedMicroseconds was 0)
 for i in {1..100}; do
-    query_id="insert-$i-$CLICKHOUSE_DATABASE"
+    query_id="insert-$i-$DATASTORE_DATABASE"
 
-    $CLICKHOUSE_CLIENT --query_id "$query_id" -q "insert into data_fsync_pe values (1)"
+    $DATASTORE_CLIENT --query_id "$query_id" -q "insert into data_fsync_pe values (1)"
 
     read -r FileSync FileOpen DirectorySync FileSyncElapsedMicroseconds DirectorySyncElapsedMicroseconds <<<"$(
-    $CLICKHOUSE_CLIENT -m --param_query_id "$query_id" -q "
+    $DATASTORE_CLIENT -m --param_query_id "$query_id" -q "
         system flush logs query_log;
 
         select
@@ -77,6 +77,6 @@ for i in {1..100}; do
     break
 done
 
-$CLICKHOUSE_CLIENT -q "drop table data_fsync_pe"
+$DATASTORE_CLIENT -q "drop table data_fsync_pe"
 
 exit $ret

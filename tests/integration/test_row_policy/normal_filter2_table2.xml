@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <!-- For testing the table filters -->
@@ -12,4 +12,4 @@
             </databases>
         </default>
     </users>
-</clickhouse>
+</datastore>

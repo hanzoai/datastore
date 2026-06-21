@@ -8,8 +8,8 @@ drop table if exists shard_1.from_1;
 drop table if exists shard_0.to;
 drop table if exists shard_1.to;
 
-create table shard_0.from_1 (x UInt32) engine = ReplicatedMergeTree('/clickhouse/tables/from_1_' || currentDatabase(), '0') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, shared_merge_tree_disable_merges_and_mutations_assignment=1;
-create table shard_1.from_1 (x UInt32) engine = ReplicatedMergeTree('/clickhouse/tables/from_1_' || currentDatabase(), '1') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, shared_merge_tree_disable_merges_and_mutations_assignment=1;
+create table shard_0.from_1 (x UInt32) engine = ReplicatedMergeTree('/datastore/tables/from_1_' || currentDatabase(), '0') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, shared_merge_tree_disable_merges_and_mutations_assignment=1;
+create table shard_1.from_1 (x UInt32) engine = ReplicatedMergeTree('/datastore/tables/from_1_' || currentDatabase(), '1') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, shared_merge_tree_disable_merges_and_mutations_assignment=1;
 
 system stop merges shard_0.from_1;
 system stop merges shard_1.from_1;
@@ -21,9 +21,9 @@ insert into shard_0.from_1 select number + 50 from numbers(10);
 
 system sync replica shard_1.from_1;
 
-create table shard_0.to (x UInt32) engine = ReplicatedMergeTree('/clickhouse/tables/to_' || currentDatabase(), '0') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, max_parts_to_merge_at_once=2, shared_merge_tree_disable_merges_and_mutations_assignment=1;
+create table shard_0.to (x UInt32) engine = ReplicatedMergeTree('/datastore/tables/to_' || currentDatabase(), '0') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, max_parts_to_merge_at_once=2, shared_merge_tree_disable_merges_and_mutations_assignment=1;
 
-create table shard_1.to (x UInt32) engine = ReplicatedMergeTree('/clickhouse/tables/to_' || currentDatabase(), '1') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, max_parts_to_merge_at_once=2;
+create table shard_1.to (x UInt32) engine = ReplicatedMergeTree('/datastore/tables/to_' || currentDatabase(), '1') order by x settings old_parts_lifetime=1, max_cleanup_delay_period=1, cleanup_delay_period=1, max_parts_to_merge_at_once=2;
 
 detach table shard_1.to;
 

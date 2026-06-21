@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <backups>
         <test_inject_sleep>true</test_inject_sleep>
     </backups>
     <backup_threads>12</backup_threads>
     <restore_threads>2</restore_threads>
-</clickhouse>
+</datastore>

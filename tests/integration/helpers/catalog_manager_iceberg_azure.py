@@ -41,7 +41,7 @@ class IcebergAzureCatalogManager:
 
     Creates Iceberg tables locally via pyiceberg's SqlCatalog, then uploads
     the generated metadata and data files to Azure Blob Storage.
-    ClickHouse reads the uploaded tables via icebergAzure() table function
+    Datastore reads the uploaded tables via icebergAzure() table function
     or IcebergAzure table engine.
     """
 

@@ -107,7 +107,7 @@ SELECT round(L2DistanceTransposed([1.0, 2.0, 3.0]::QBit(Float32, 3), materialize
 
 
 -- Constant QBit query vector and non-constant reference vector
--- https://github.com/ClickHouse/ClickHouse/issues/91517
+-- https://github.com/ClickHouse/Datastore/issues/91517
 SELECT
     number,
     round(L2DistanceTransposed([0,0,0]::QBit(Float64, 3), [number, number, number], 64), 1) AS dist

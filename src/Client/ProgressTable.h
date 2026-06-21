@@ -34,7 +34,7 @@ public:
     void writeFinalTable(WriteBufferFromFileDescriptor & message, std::unique_lock<std::mutex> & message_lock);
 
     /// Update the metric values. They can be updated from:
-    /// onProfileEvents in clickhouse-client;
+    /// onProfileEvents in datastore-client;
     void updateTable(const Block & block);
 
     /// Reset progress table values.

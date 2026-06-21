@@ -13,7 +13,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-WORK_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORK_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 trap 'rm -rf "$WORK_DIR"' EXIT
@@ -48,7 +48,7 @@ PYEOF
 # The over-declared string must be rejected cleanly (and with bounded memory) instead of allocating
 # ~2 GB up front. The data genuinely ends after the length prefix, so this surfaces as an Avro
 # EOF / INCORRECT_DATA error.
-out=$(${CLICKHOUSE_LOCAL} --input-format Avro -S "s String" \
+out=$(${DATASTORE_LOCAL} --input-format Avro -S "s String" \
         --query "SELECT s FROM table FORMAT Null SETTINGS max_memory_usage = 104857600" \
         < "${WORK_DIR}/strbomb.avro" 2>&1)
 if echo "$out" | grep -qE "AVRO_EXCEPTION|EOF reached|INCORRECT_DATA|CANNOT_READ_ALL_DATA"; then

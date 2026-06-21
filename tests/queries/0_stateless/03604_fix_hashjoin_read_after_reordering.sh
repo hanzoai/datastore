@@ -27,7 +27,7 @@ client_opts=(
 # (3) number of rows exceeds both min_rows_value and threshold_value
 # ------------------------------
 for n in "${numbers_values[@]}"; do
-    ${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+    ${DATASTORE_CLIENT} "${client_opts[@]}" --query "
     SELECT *
     FROM (SELECT 1 x) x
     LEFT JOIN (SELECT 2 y) y ON x.x = y.y
@@ -48,7 +48,7 @@ done
 # (3) number of rows exceeds both min_rows_value and threshold_value
 # ------------------------------
 for n in "${numbers_values[@]}"; do
-    ${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+    ${DATASTORE_CLIENT} "${client_opts[@]}" --query "
     SELECT *
     FROM (SELECT 1 x) x
     LEFT JOIN (SELECT 2 y) y ON x.x = y.y
@@ -66,7 +66,7 @@ done
 # Join tests WITHOUT the three custom parameters
 # ------------------------------
 for n in "${numbers_values[@]}"; do
-    ${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+    ${DATASTORE_CLIENT} "${client_opts[@]}" --query "
     SELECT *
     FROM (SELECT 1 x) x
     LEFT JOIN (SELECT 2 y) y ON x.x = y.y
@@ -78,7 +78,7 @@ done
 # ------------------------------
 # Simple Join
 # ------------------------------
-${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+${DATASTORE_CLIENT} "${client_opts[@]}" --query "
 SELECT c.name, p.category, o.amount
 FROM
     (SELECT 1 AS id, 'Alice' AS name) AS c
@@ -94,7 +94,7 @@ ORDER BY ALL
 # ------------------------------
 # Aggregation + Join
 # ------------------------------
-${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+${DATASTORE_CLIENT} "${client_opts[@]}" --query "
 SELECT c.name, o.total_amount
 FROM
     (SELECT 1 AS id, 'Alice' AS name) AS c
@@ -113,7 +113,7 @@ ORDER BY ALL;
 # ------------------------------
 # Self-join
 # ------------------------------
-${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+${DATASTORE_CLIENT} "${client_opts[@]}" --query "
 SELECT e1.id AS emp1, e2.id AS emp2, e1.department
 FROM
     (SELECT 1 AS id, 'HR' AS department
@@ -134,7 +134,7 @@ ORDER BY ALL;
 # ------------------------------
 # Multi-condition Join with expressions
 # ------------------------------
-${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+${DATASTORE_CLIENT} "${client_opts[@]}" --query "
 SELECT a.id, b.value AS b_val, c.value AS c_val
 FROM
     (SELECT 1 AS id, 15 AS value
@@ -156,7 +156,7 @@ ORDER BY ALL;
 # ------------------------------
 # Multi-layer join
 # ------------------------------
-${CLICKHOUSE_CLIENT} "${client_opts[@]}" --query "
+${DATASTORE_CLIENT} "${client_opts[@]}" --query "
 SELECT t1.id, t2.val2, t3.val3
 FROM
     (SELECT 1 AS id, 10 AS val

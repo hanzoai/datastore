@@ -26,7 +26,7 @@ CREATE DICTIONARY dict_hashed_array_invalid_backlog
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'source_simple'))
+SOURCE(DATASTORE(TABLE 'source_simple'))
 LAYOUT(HASHED_ARRAY(SHARD_LOAD_QUEUE_BACKLOG 0))
 LIFETIME(MIN 1 MAX 1000);
 
@@ -40,7 +40,7 @@ CREATE DICTIONARY dict_complex_hashed_array_invalid_backlog
     value String
 )
 PRIMARY KEY key1, key2
-SOURCE(CLICKHOUSE(TABLE 'source_complex'))
+SOURCE(DATASTORE(TABLE 'source_complex'))
 LAYOUT(COMPLEX_KEY_HASHED_ARRAY(SHARD_LOAD_QUEUE_BACKLOG 0))
 LIFETIME(MIN 1 MAX 1000);
 
@@ -53,7 +53,7 @@ CREATE DICTIONARY dict_hashed_array_valid_backlog
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'source_simple'))
+SOURCE(DATASTORE(TABLE 'source_simple'))
 LAYOUT(HASHED_ARRAY(SHARDS 2 SHARD_LOAD_QUEUE_BACKLOG 5))
 LIFETIME(MIN 1 MAX 1000);
 

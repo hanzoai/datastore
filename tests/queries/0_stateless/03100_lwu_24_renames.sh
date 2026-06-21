@@ -19,7 +19,7 @@ function wait_for_mutation_to_start()
     for i in {1..300}
     do
         sleep 0.1
-        if [[ $(${CLICKHOUSE_CLIENT} --query="SELECT parts_to_do FROM system.mutations WHERE database='$CLICKHOUSE_DATABASE' AND table='$table' AND mutation_id='$mutation_id'") -eq 1 ]]; then
+        if [[ $(${DATASTORE_CLIENT} --query="SELECT parts_to_do FROM system.mutations WHERE database='$DATASTORE_DATABASE' AND table='$table' AND mutation_id='$mutation_id'") -eq 1 ]]; then
             break
         fi
 
@@ -29,7 +29,7 @@ function wait_for_mutation_to_start()
     done
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_renames SYNC;
     SET enable_lightweight_update = 1;
 
@@ -62,7 +62,7 @@ function wait_for_rename()
 {
     for i in {1..100}; do
         sleep 0.3
-        ${CLICKHOUSE_CLIENT} --query "SHOW CREATE TABLE t_lwu_renames" | grep -q "\`c\` UInt64" && break;
+        ${DATASTORE_CLIENT} --query "SHOW CREATE TABLE t_lwu_renames" | grep -q "\`c\` UInt64" && break;
 
         if [[ $i -eq 100 ]]; then
             echo "Timed out while waiting for rename to execute"
@@ -73,7 +73,7 @@ function wait_for_rename()
 wait_for_rename
 wait_for_mutation_to_start "t_lwu_renames" "0000000000"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT sum(c) FROM t_lwu_renames SETTINGS apply_patch_parts = 0;
     SELECT sum(c) FROM t_lwu_renames SETTINGS apply_patch_parts = 1;
     SYSTEM START MERGES t_lwu_renames;
@@ -81,7 +81,7 @@ $CLICKHOUSE_CLIENT --query "
 
 wait_for_mutation "t_lwu_renames" "0000000000"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT sum(c) FROM t_lwu_renames SETTINGS apply_patch_parts = 0;
     DROP TABLE t_lwu_renames SYNC;
 "

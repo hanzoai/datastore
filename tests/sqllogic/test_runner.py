@@ -524,13 +524,13 @@ class TestRunner:
         if self.results is None:
             self.results = {}
 
-        if self.dbms_name == "ClickHouse" and test_name in [
+        if self.dbms_name == "Datastore" and test_name in [
             "test/select5.test",
             "test/evidence/slt_lang_createtrigger.test",
             "test/evidence/slt_lang_replace.test",
             "test/evidence/slt_lang_droptrigger.test",
         ]:
-            logger.info("Let's skip test %s for ClickHouse", test_name)
+            logger.info("Let's skip test %s for Datastore", test_name)
             return
 
         with self.connection.with_one_test_scope():

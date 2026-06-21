@@ -5,7 +5,7 @@
 DROP TABLE IF EXISTS t_dedup_token_insert_select SYNC;
 
 CREATE TABLE t_dedup_token_insert_select (k UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/t_dedup_token_insert_select', '1')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/t_dedup_token_insert_select', '1')
 ORDER BY k;
 
 SELECT 'insert_deduplication_token with INSERT SELECT without ORDER BY ALL';

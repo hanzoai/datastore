@@ -123,7 +123,7 @@ base64URLEncode() {
     echo -n "$1" | base64 -w0 | tr '+/' '-_' | tr -d '='
 }
 
-# Compute all expected values with the shell upfront (no ClickHouse involved),
+# Compute all expected values with the shell upfront (no Datastore involved),
 # then check everything in one bulk query instead of two queries per URL.
 # None of the test URLs contain single quotes or SQL-significant backslashes,
 # and base64url output (A-Za-z0-9-_) never contains them either, so plain
@@ -141,7 +141,7 @@ done
 # One query: check that base64URLEncode matches the shell ground truth
 # and that base64URLDecode is a left inverse (roundtrip).
 # Prints nothing on success; prints failing rows on mismatch.
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 SELECT
     url,
     base64URLEncode(url) AS ch_encoded,
@@ -152,7 +152,7 @@ WHERE ch_encoded != expected_encoded OR ch_decoded != url
 FORMAT TSV"
 
 # special case for '
-decode=$(${CLICKHOUSE_CLIENT} --query="SELECT base64URLDecode(base64URLEncode('http://example.com/!$&\'()*+,;=:@/path'))")
+decode=$(${DATASTORE_CLIENT} --query="SELECT base64URLDecode(base64URLEncode('http://example.com/!$&\'()*+,;=:@/path'))")
 if [ "$decode" != "http://example.com/!$&\'()*+,;=:@/path" ]; then
     echo "Special case fail"
     echo "Got:      $decode"

@@ -1,5 +1,5 @@
 ---
-description: 'Page describing transactional (ACID) support in ClickHouse'
+description: 'Page describing transactional (ACID) support in Datastore'
 slug: /guides/developer/transactional
 title: 'Transactional (ACID) support'
 doc_type: 'guide'
@@ -16,7 +16,7 @@ This is transactional (ACID) if the inserted rows are packed and inserted as a s
 - Atomic: an INSERT succeeds or is rejected as a whole: if a confirmation is sent to the client, then all rows were inserted; if an error is sent to the client, then no rows were inserted.
 - Consistent: if there are no table constraints violated, then all rows in an INSERT are inserted and the INSERT succeeds; if constraints are violated, then no rows are inserted.
 - Isolated: concurrent clients observe a consistent snapshot of the table–the state of the table either as it was before the INSERT attempt, or after the successful INSERT; no partial state is seen. Clients inside of another transaction have [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation), while clients outside of a transaction have [read uncommitted](https://en.wikipedia.org/wiki/Isolation_(database_systems)#Read_uncommitted) isolation level.
-- Durable: a successful INSERT is written to the filesystem before answering to the client, on a single replica or multiple replicas (controlled by the `insert_quorum` setting), and ClickHouse can ask the OS to sync the filesystem data on the storage media (controlled by the `fsync_after_insert` setting).
+- Durable: a successful INSERT is written to the filesystem before answering to the client, on a single replica or multiple replicas (controlled by the `insert_quorum` setting), and Datastore can ask the OS to sync the filesystem data on the storage media (controlled by the `fsync_after_insert` setting).
 - INSERT into multiple tables with one statement is possible if materialized views are involved (the INSERT from the client is to a table which has associate materialized views).
 
 ## Case 2: INSERT into multiple partitions, of one table, of the MergeTree* family {#case-2-insert-into-multiple-partitions-of-one-table-of-the-mergetree-family}
@@ -44,7 +44,7 @@ Same as Case 1 above, with this detail:
   - the insert format is column-based (like Native, Parquet, ORC, etc) and the data contains only one block of data
 - the size of the inserted block in general may depend on many settings (for example: `max_block_size`, `max_insert_block_size`, `min_insert_block_size_rows`, `min_insert_block_size_bytes`, `preferred_block_size_bytes`, etc)
 - if the client did not receive an answer from the server, the client does not know if the transaction succeeded, and it can repeat the transaction, using exactly-once insertion properties
-- ClickHouse is using [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) with [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation) internally for concurrent transactions
+- Datastore is using [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) with [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation) internally for concurrent transactions
 - all ACID properties are valid even in the case of server kill/crash
 - either insert_quorum into different AZ or fsync should be enabled to ensure durable inserts in the typical setup
 - "consistency" in ACID terms does not cover the semantics of distributed systems, see https://jepsen.io/consistency which is controlled by different settings (select_sequential_consistency)
@@ -55,18 +55,18 @@ Same as Case 1 above, with this detail:
 <ExperimentalBadge/>
 <CloudNotSupportedBadge/>
 
-In addition to the functionality described at the top of this document, ClickHouse has experimental support for transactions, commits, and rollback functionality.
+In addition to the functionality described at the top of this document, Datastore has experimental support for transactions, commits, and rollback functionality.
 
 ### Requirements {#requirements}
 
-- Deploy ClickHouse Keeper or ZooKeeper to track transactions
+- Deploy Datastore Keeper or ZooKeeper to track transactions
 - Atomic DB only (Default)
 - Non-Replicated MergeTree table engine only
 - Enable experimental transaction support by adding this setting in `config.d/transactions.xml`:
   ```xml
-  <clickhouse>
+  <datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-  </clickhouse>
+  </datastore>
   ```
 
 ### Notes {#notes-1}
@@ -76,28 +76,28 @@ In addition to the functionality described at the top of this document, ClickHou
 
 ### Configuration {#configuration}
 
-These examples are with a single node ClickHouse server with ClickHouse Keeper enabled.
+These examples are with a single node Datastore server with Datastore Keeper enabled.
 
 #### Enable experimental transaction support {#enable-experimental-transaction-support}
 
-```xml title=/etc/clickhouse-server/config.d/transactions.xml
-<clickhouse>
+```xml title=/etc/datastore-server/config.d/transactions.xml
+<datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-</clickhouse>
+</datastore>
 ```
 
-#### Basic configuration for a single ClickHouse server node with ClickHouse Keeper enabled {#basic-configuration-for-a-single-clickhouse-server-node-with-clickhouse-keeper-enabled}
+#### Basic configuration for a single Datastore server node with Datastore Keeper enabled {#basic-configuration-for-a-single-datastore-server-node-with-datastore-keeper-enabled}
 
 :::note
-See the [deployment](/deployment-guides/terminology.md) documentation for details on deploying ClickHouse server and a proper quorum of ClickHouse Keeper nodes.  The configuration shown here is for experimental purposes.
+See the [deployment](/deployment-guides/terminology.md) documentation for details on deploying Datastore server and a proper quorum of Datastore Keeper nodes.  The configuration shown here is for experimental purposes.
 :::
 
-```xml title=/etc/clickhouse-server/config.d/config.xml
-<clickhouse replace="true">
+```xml title=/etc/datastore-server/config.d/config.xml
+<datastore replace="true">
     <logger>
         <level>debug</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>3</count>
     </logger>
@@ -107,15 +107,15 @@ See the [deployment](/deployment-guides/terminology.md) documentation for detail
     <tcp_port>9000</tcp_port>
     <zookeeper>
         <node>
-            <host>clickhouse-01</host>
+            <host>datastore-01</host>
             <port>9181</port>
         </node>
     </zookeeper>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
         <coordination_settings>
             <operation_timeout_ms>10000</operation_timeout_ms>
             <session_timeout_ms>30000</session_timeout_ms>
@@ -124,19 +124,19 @@ See the [deployment](/deployment-guides/terminology.md) documentation for detail
         <raft_configuration>
             <server>
                 <id>1</id>
-                <hostname>clickhouse-keeper-01</hostname>
+                <hostname>datastore-keeper-01</hostname>
                 <port>9234</port>
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 ```
 
 ### Example {#example}
 
 #### Verify that experimental transactions are enabled {#verify-that-experimental-transactions-are-enabled}
 
-Issue a `BEGIN TRANSACTION` or `START TRANSACTION` followed by a `ROLLBACK` to verify that experimental transactions are enabled, and that ClickHouse Keeper is enabled as it is used to track transactions. 
+Issue a `BEGIN TRANSACTION` or `START TRANSACTION` followed by a `ROLLBACK` to verify that experimental transactions are enabled, and that Datastore Keeper is enabled as it is used to track transactions. 
 
 ```sql
 BEGIN TRANSACTION
@@ -154,13 +154,13 @@ DB::Exception: Transactions are not supported.
 (NOT_IMPLEMENTED)
 ```
 
-You can also check ClickHouse Keeper by issuing
+You can also check Datastore Keeper by issuing
 
 ```bash
 echo ruok | nc localhost 9181
 ```
 
-ClickHouse Keeper should respond with `imok`.
+Datastore Keeper should respond with `imok`.
 :::
 
 ```sql
@@ -284,7 +284,7 @@ FROM mergetree_table
 ### Transactions introspection {#transactions-introspection}
 
 You can inspect transactions by querying the `system.transactions` table, but note that you cannot query that
-table from a session that is in a transaction. Open a second `clickhouse client` session to query that table.
+table from a session that is in a transaction. Open a second `datastore client` session to query that table.
 
 ```sql
 SELECT *
@@ -304,4 +304,4 @@ state:       RUNNING
 
 ## More Details {#more-details}
 
-See this [meta issue](https://github.com/ClickHouse/ClickHouse/issues/48794) to find much more extensive tests and to keep up to date with the progress.
+See this [meta issue](https://github.com/ClickHouse/Datastore/issues/48794) to find much more extensive tests and to keep up to date with the progress.

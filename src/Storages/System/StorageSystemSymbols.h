@@ -9,7 +9,7 @@ namespace DB
 class Context;
 
 
-/** Implements the system table `symbols` for introspection of symbols in the ClickHouse binary.
+/** Implements the system table `symbols` for introspection of symbols in the Datastore binary.
   */
 class StorageSystemSymbols final : public StorageWithCommonVirtualColumns
 {

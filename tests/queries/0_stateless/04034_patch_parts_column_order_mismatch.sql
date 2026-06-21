@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/clickhouse-core-incidents/issues/1021
+-- Regression test for https://github.com/ClickHouse/datastore-core-incidents/issues/1021
 -- When multiple patch parts (Merge + Join mode) update the same columns,
 -- the column ordering in patch blocks must be deterministic to avoid
 -- LOGICAL_ERROR "Block structure mismatch in patch parts stream".

@@ -1,5 +1,5 @@
 -- Subnormal (denormalized) Float64 values should be parseable as literals.
--- https://github.com/ClickHouse/ClickHouse/issues/38455
+-- https://github.com/ClickHouse/Datastore/issues/38455
 
 SELECT 4.9406564584124654E-324 > 0;
 SELECT 1.0e-308 > 0;

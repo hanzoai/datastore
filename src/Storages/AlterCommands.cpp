@@ -50,7 +50,7 @@
 
 #include <ranges>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -899,7 +899,7 @@ void AlterCommand::apply(StorageInMemoryMetadata & metadata, ContextPtr context)
     {
         metadata.select = SelectQueryDescription::getSelectQueryFromASTForMatView(select, metadata.refresh != nullptr, context);
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         /// For Shared Catalog on secondary replicas very likely we don't have the settings used to run the SELECT on the initiator.
         /// Because of that we can fail, or the resulting columns can be different from the original ones.
         /// So we return early and set the columns ourselves, if they differ.

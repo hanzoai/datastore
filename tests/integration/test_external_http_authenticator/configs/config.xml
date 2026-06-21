@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <http_authentication_servers>
         <basic_server>
           <uri>http://localhost:8000/basic_auth</uri>
@@ -14,4 +14,4 @@
         </basic_server>
     </http_authentication_servers>
     <custom_settings_prefixes>auth_</custom_settings_prefixes>
-</clickhouse>
+</datastore>

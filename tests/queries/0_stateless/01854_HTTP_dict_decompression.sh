@@ -6,4 +6,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 python3 "$CURDIR"/01854_HTTP_dict_decompression.python
 
-$CLICKHOUSE_CLIENT -q "DROP DICTIONARY test_table_select"
+$DATASTORE_CLIENT -q "DROP DICTIONARY test_table_select"

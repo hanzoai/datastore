@@ -29,9 +29,9 @@ Encodes a string using [Base64](https://en.wikipedia.org/wiki/Base64) representa
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT base64Encode('clickhouse')",
+        "SELECT base64Encode('datastore')",
         R"(
-┌─base64Encode('clickhouse')─┐
+┌─base64Encode('datastore')─┐
 │ Y2xpY2tob3VzZQ==           │
 └────────────────────────────┘
         )"

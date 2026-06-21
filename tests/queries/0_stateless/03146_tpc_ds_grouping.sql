@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/46335
+-- https://github.com/ClickHouse/Datastore/issues/46335
 SET enable_analyzer = 1;
 SELECT
     key_a + key_b AS d,

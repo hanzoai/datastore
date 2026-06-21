@@ -1,4 +1,4 @@
--- Tests https://github.com/ClickHouse/ClickHouse/issues/103812
+-- Tests https://github.com/ClickHouse/Datastore/issues/103812
 
 SELECT 'Without preprocessor';
 

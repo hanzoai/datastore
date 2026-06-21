@@ -1,5 +1,5 @@
 ---
-description: 'Overview of nested data structures in ClickHouse'
+description: 'Overview of nested data structures in Datastore'
 sidebar_label: 'Nested(Name1 Type1, Name2 Type2, ...)'
 sidebar_position: 57
 slug: /sql-reference/data-types/nested-data-structures/nested

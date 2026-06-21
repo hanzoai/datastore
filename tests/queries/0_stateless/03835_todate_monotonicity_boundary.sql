@@ -3,7 +3,7 @@
 -- and values > 65535 as unix timestamps. The monotonicity check must correctly
 -- identify ranges crossing this boundary as non-monotonic.
 -- Previously caused LOGICAL_ERROR "Invalid binary search result in MergeTreeSetIndex" in debug builds.
--- https://github.com/ClickHouse/ClickHouse/issues/90461
+-- https://github.com/ClickHouse/Datastore/issues/90461
 
 DROP TABLE IF EXISTS t_todate_mono;
 

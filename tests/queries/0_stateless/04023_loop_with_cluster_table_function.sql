@@ -1,5 +1,5 @@
 -- Tags: no-fasttest
--- Test for https://github.com/ClickHouse/ClickHouse/issues/98847
+-- Test for https://github.com/ClickHouse/Datastore/issues/98847
 -- Composing loop() with cluster table functions like urlCluster() should work
 -- without throwing "Unexpected table function name: loop" exception.
 

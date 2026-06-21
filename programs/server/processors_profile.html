@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ClickHouse Processors Profile</title>
+    <title>Datastore Processors Profile</title>
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDExIDEwIj48c3R5bGU+LmJne2ZpbGw6IzAwMH0ub3tmaWxsOiNmZjB9PC9zdHlsZT48cmVjdCBjbGFzcz0iYmciIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiLz48cGF0aCBkPSJNMSwxIGgxIHY4IGgtMSB6IiBjbGFzcz0ibyIvPjxwYXRoIGQ9Ik0zLDEgaDEgdjggaC0xIHoiIGNsYXNzPSJvIi8+PHBhdGggZD0iTTUsMSBoMSB2OCBoLTEgeiIgY2xhc3M9Im8iLz48cGF0aCBkPSJNNywxIGgxIHY4IGgtMSB6IiBjbGFzcz0ibyIvPjxwYXRoIGQ9Ik05LDQuMjUgaDEgdjEuNSBoLTEgeiIgY2xhc3M9Im8iLz48L3N2Zz4">
     <script src="/js/viz-standalone.js"></script>
     <style>
@@ -335,7 +335,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>ClickHouse Processors Profile</h1>
+        <h1>Datastore Processors Profile</h1>
         <div class="controls">
             <div class="connection-params">
                 <input spellcheck="false" id="url" type="text" value="" placeholder="URL" />
@@ -417,7 +417,7 @@
         }
 
         /// Run a query against the server. `params` is an object of named query parameters that bind
-        /// to ClickHouse `{name:Type}` placeholders. Always prefer this over string interpolation for
+        /// to Datastore `{name:Type}` placeholders. Always prefer this over string interpolation for
         /// any user-controlled value — it eliminates SQL injection risk because the server treats the
         /// parameter as a literal of the declared type, never as SQL syntax.
         async function runQuery(query, format = 'TabSeparatedWithNames', params = {}) {
@@ -508,7 +508,7 @@
             loadQueries();
         }
 
-        /// Parse the TSVWithNames body returned by ClickHouse. TSV unescaping is per the format spec:
+        /// Parse the TSVWithNames body returned by Datastore. TSV unescaping is per the format spec:
         /// \n, \t, \r, \\ and \0.
         function unescapeTSV(s) {
             let out = '';

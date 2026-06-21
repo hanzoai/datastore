@@ -1,0 +1,81 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "datastore-server"
+description: |
+  Server binary for Datastore
+    Datastore is a column-oriented database management system
+    that allows generating analytical data reports in real time.
+    This package provides datastore common configuration files
+
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${DATASTORE_VERSION_STRING}"
+vendor: "Datastore Inc."
+homepage: "https://datastore.com"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Datastore Dev Team <packages+linux@datastore.com>"
+deb:
+  fields:
+    Source: datastore
+
+# Package specific content
+replaces:
+- datastore-server-common
+- datastore-server-base
+provides:
+- datastore-keeper
+- datastore-server-common
+recommends:
+- libcap2-bin
+
+overrides:
+  deb:
+    depends:
+    - datastore-common-static (= ${DATASTORE_VERSION_STRING})
+  rpm:
+    depends:
+    - datastore-common-static = ${DATASTORE_VERSION_STRING}
+
+contents:
+- src: root/etc/datastore-server/config.xml
+  dst: /etc/datastore-server/config.xml
+  type: config|noreplace
+- src: root/etc/datastore-server/users.xml
+  dst: /etc/datastore-server/users.xml
+  type: config|noreplace
+- src: datastore-server.init
+  dst: /etc/init.d/datastore-server
+- src: datastore-server.service
+  dst: /lib/systemd/system/datastore-server.service
+- src: root/usr/bin/datastore-server
+  dst: /usr/bin/datastore-server
+# datastore-keeper part
+- src: root/etc/datastore-keeper/keeper_config.xml
+  dst: /etc/datastore-keeper/keeper_config.xml
+  type: config|noreplace
+- src: datastore-keeper.service
+  dst: /lib/systemd/system/datastore-keeper.service
+- src: datastore
+  dst: /usr/bin/datastore-keeper
+  type: symlink
+- src: datastore
+  dst: /usr/bin/datastore-keeper-client
+  type: symlink
+- src: datastore
+  dst: /usr/bin/datastore-keeper-converter
+  type: symlink
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/datastore-server/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/datastore-server/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/datastore-server/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/datastore-server/README.md
+
+scripts:
+  postinstall: ./datastore-server.postinstall

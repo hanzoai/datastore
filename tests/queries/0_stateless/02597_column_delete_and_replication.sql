@@ -8,7 +8,7 @@ CREATE TABLE test (
     `p_id` String,
     `d` String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test/test_table', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test/test_table', '1')
 ORDER BY (c_id, p_id);
 
 set mutations_sync=0;

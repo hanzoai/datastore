@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the FixedString data type in ClickHouse'
+description: 'Documentation for the FixedString data type in Datastore'
 sidebar_label: 'FixedString(N)'
 sidebar_position: 10
 slug: /sql-reference/data-types/fixedstring
@@ -28,7 +28,7 @@ Examples of the values that can be efficiently stored in `FixedString`-typed col
 
 To store UUID values, use the [UUID](../../sql-reference/data-types/uuid.md) data type.
 
-When inserting the data, ClickHouse:
+When inserting the data, Datastore:
 
 - Complements a string with null bytes if the string contains fewer than `N` bytes.
 - Throws the `Too large value for FixedString(N)` exception if the string contains more than `N` bytes.
@@ -62,8 +62,8 @@ Note that the length of the `FixedString(N)` value is constant. The [length](/sq
 
 Selecting data with `WHERE` clause return various result depending on how the condition is specified:
 
-- If equality operator `=` or `==` or `equals` function used, ClickHouse _doesn't_ take `\0` char into consideration, i.e. queries `SELECT * FROM FixedStringTable WHERE name = 'a';` and `SELECT * FROM FixedStringTable WHERE name = 'a\0';` return the same result.
-- If `LIKE` clause is used, ClickHouse _does_ take `\0` char into consideration, so one may need to explicitly specify `\0` char in the filter condition.
+- If equality operator `=` or `==` or `equals` function used, Datastore _doesn't_ take `\0` char into consideration, i.e. queries `SELECT * FROM FixedStringTable WHERE name = 'a';` and `SELECT * FROM FixedStringTable WHERE name = 'a\0';` return the same result.
+- If `LIKE` clause is used, Datastore _does_ take `\0` char into consideration, so one may need to explicitly specify `\0` char in the filter condition.
 
 ```sql
 SELECT name

@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/mongodb
 title: 'MongoDB dictionary source'
 sidebar_position: 9
 sidebar_label: 'MongoDB'
-description: 'Configure MongoDB as a dictionary source in ClickHouse.'
+description: 'Configure MongoDB as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 
@@ -31,7 +31,7 @@ Or using a URI:
 
 ```sql
 SOURCE(MONGODB(
-    uri 'mongodb://localhost:27017/clickhouse'
+    uri 'mongodb://localhost:27017/datastore'
     collection 'dictionary_source'
 ))
 ```

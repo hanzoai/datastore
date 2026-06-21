@@ -7,7 +7,7 @@ JSONCompactEachRowWithNames
 JSONCompactEachRowWithNamesAndTypes
 JSONCompactStringsEachRow
 JSONCompactStringsEachRowWithNamesAndTypes
-multi clickhouse-local one file
+multi datastore-local one file
 TSVWithNames
 0
 0

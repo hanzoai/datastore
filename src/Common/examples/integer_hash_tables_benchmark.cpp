@@ -75,7 +75,7 @@ static void NO_INLINE testForType(size_t method, size_t rows_size)
 }
 
 /** This benchmark does not test which hash table is fastest.
- * It tests simple aggregation scenario that is important for ClickHouse.
+ * It tests simple aggregation scenario that is important for Datastore.
  *
  * Support bash script it is important to rerun program for each method:
  * benchmark.sh

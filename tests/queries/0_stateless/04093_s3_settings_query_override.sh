@@ -25,18 +25,18 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # been observed to be flaky against the local S3 mock under the flaky check
 # (random settings combined with multipart upload), and this test only needs
 # to verify that the multipart upload path is taken, not upload integrity.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 INSERT INTO TABLE FUNCTION s3('http://localhost:11111/test/04093_s3_settings_query_override.csv', 'CSV', 's String')
 SELECT repeat('x', 100) FROM numbers(500)
 SETTINGS s3_max_single_part_upload_size = 10000, s3_truncate_on_insert = 1, s3_check_objects_after_upload = 0
 "
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
 
 # With s3_max_single_part_upload_size = 10000 at query level, the data should
 # be uploaded via multipart (CreateMultipartUpload + UploadPart + CompleteMultipartUpload).
 # If the global endpoint config (100Mi) had incorrectly taken priority, it would be a single PutObject.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 SELECT
     ProfileEvents['S3CreateMultipartUpload'] >= 1 AS has_multipart_create,
     ProfileEvents['S3UploadPart'] >= 1 AS has_upload_parts,

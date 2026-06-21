@@ -14,7 +14,7 @@ def _is_sanitizer_build():
     """Detect sanitizer builds before starting the cluster, to avoid creating
     containers that are slow to shut down under sanitizers."""
     binary = os.environ.get(
-        "CLICKHOUSE_TESTS_SERVER_BIN_PATH", "/usr/bin/clickhouse"
+        "DATASTORE_TESTS_SERVER_BIN_PATH", "/usr/bin/datastore"
     )
     try:
         result = subprocess.run(

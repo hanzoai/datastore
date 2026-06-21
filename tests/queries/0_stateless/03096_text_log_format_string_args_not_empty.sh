@@ -5,10 +5,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 query_id=$(random_str 12)
-$CLICKHOUSE_CLIENT -m --enable_analyzer=1 --query_id ${query_id}_1 --query "select unknown_identifier; -- { serverError UNKNOWN_IDENTIFIER }"
-$CLICKHOUSE_CLIENT -m --enable_analyzer=1 --query_id ${query_id}_2 --query "select conut(); -- { serverError UNKNOWN_FUNCTION }"
+$DATASTORE_CLIENT -m --enable_analyzer=1 --query_id ${query_id}_1 --query "select unknown_identifier; -- { serverError UNKNOWN_IDENTIFIER }"
+$DATASTORE_CLIENT -m --enable_analyzer=1 --query_id ${query_id}_2 --query "select conut(); -- { serverError UNKNOWN_FUNCTION }"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 system flush logs text_log;
 
 SET max_rows_to_read = 0; -- system.text_log can be really big

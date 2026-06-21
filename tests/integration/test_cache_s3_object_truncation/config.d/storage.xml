@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3_disk>
@@ -12,7 +12,7 @@
             <s3_cache>
                 <type>cache</type>
                 <disk>s3_disk</disk>
-                <path>/var/lib/clickhouse/cache/</path>
+                <path>/var/lib/datastore/cache/</path>
                 <max_size>10Gi</max_size>
             </s3_cache>
         </disks>
@@ -26,4 +26,4 @@
             </s3_cache>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

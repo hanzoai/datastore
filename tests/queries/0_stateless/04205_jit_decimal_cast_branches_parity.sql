@@ -21,7 +21,7 @@
 -- to a single `COLUMN Const(...)` produced at planning time.
 --
 -- Background: regression first reported in
--- https://github.com/ClickHouse/ClickHouse/issues/103808 and fixed in PR #103809
+-- https://github.com/ClickHouse/Datastore/issues/103808 and fixed in PR #103809
 -- ("Fix wrong values from JIT-compiled if/multiIf with Decimal result").
 --
 -- Branches of `nativeCastWithDecimalScale` exercised here:

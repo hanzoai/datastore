@@ -9,7 +9,7 @@ import time
 COMPLETION_TIMEOUT_SECONDS = 30
 
 DEBUG_LOG = os.path.join(
-    os.environ.get("CLICKHOUSE_TMP", "/tmp"),
+    os.environ.get("DATASTORE_TMP", "/tmp"),
     "03988_keeper_client_autocomplete.debuglog",
 )
 
@@ -124,9 +124,9 @@ def test_completion(program, argv, input_text, expected_text, test_name, state=N
 if __name__ == "__main__":
     test_path = sys.argv[1]
 
-    keeper_client = os.environ.get("CLICKHOUSE_KEEPER_CLIENT", "")
+    keeper_client = os.environ.get("DATASTORE_KEEPER_CLIENT", "")
     if not keeper_client:
-        print("CLICKHOUSE_KEEPER_CLIENT is not set")
+        print("DATASTORE_KEEPER_CLIENT is not set")
         sys.exit(1)
 
     args = shlex.split(keeper_client)

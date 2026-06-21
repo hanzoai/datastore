@@ -1,0 +1,51 @@
+# package sources should be placed in ${PWD}/root
+# nfpm should run from the same directory with a config
+name: "datastore-common-static"
+description: |
+  Common files for Datastore
+    Datastore is a column-oriented database management system
+    that allows generating analytical data reports in real time.
+    This package provides common files for both datastore server and client
+
+# Common packages config
+arch: "${DEB_ARCH}" # amd64, arm64
+platform: "linux"
+version: "${DATASTORE_VERSION_STRING}"
+vendor: "Datastore Inc."
+homepage: "https://datastore.com"
+license: "Apache"
+section: "database"
+priority: "optional"
+maintainer: "Datastore Dev Team <packages+linux@datastore.com>"
+deb:
+  fields:
+    Source: datastore
+
+# Package specific content
+replaces:
+- datastore-common
+- datastore-server-base
+provides:
+- datastore-common
+- datastore-server-base
+suggests:
+- datastore-common-static-dbg
+
+contents:
+- src: root/usr/bin/datastore
+  dst: /usr/bin/datastore
+- src: root/usr/bin/datastore-extract-from-config
+  dst: /usr/bin/datastore-extract-from-config
+- src: root/usr/share/bash-completion/completions
+  dst: /usr/share/bash-completion/completions
+- src: root/usr/share/datastore
+  dst: /usr/share/datastore
+# docs
+- src: ../AUTHORS
+  dst: /usr/share/doc/datastore-common-static/AUTHORS
+- src: ../CHANGELOG.md
+  dst: /usr/share/doc/datastore-common-static/CHANGELOG.md
+- src: ../LICENSE
+  dst: /usr/share/doc/datastore-common-static/LICENSE
+- src: ../README.md
+  dst: /usr/share/doc/datastore-common-static/README.md

@@ -17,7 +17,7 @@ function get_done_or_die_trying()
   # Sometimes curl produces errors like 'Recv failure: Connection reset by peer' and fails test, let's add a little bit of retries
   for _ in $(seq 1 10)
   do
-    curl "$CLICKHOUSE_URL" --silent --fail --show-error --data "$1" &>/dev/null && return
+    curl "$DATASTORE_URL" --silent --fail --show-error --data "$1" &>/dev/null && return
   done
 
   echo "Cannot successfully make request"
@@ -46,44 +46,44 @@ wait;
 
 
 # Check results with different max_block_size
-$CLICKHOUSE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase()'
-$CLICKHOUSE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase() SETTINGS max_block_size=1'
-$CLICKHOUSE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase() SETTINGS max_block_size=77'
-$CLICKHOUSE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase() SETTINGS max_block_size=11111'
+$DATASTORE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase()'
+$DATASTORE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase() SETTINGS max_block_size=1'
+$DATASTORE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase() SETTINGS max_block_size=77'
+$DATASTORE_CLIENT -q 'SELECT count() as c, sum(total_replicas) >= 3*c, sum(active_replicas) >= 3*c FROM system.replicas WHERE database=currentDatabase() SETTINGS max_block_size=11111'
 
 
 echo "Making $CONCURRENCY requests to system.replicas"
 
 for i in $(seq 1 $CONCURRENCY)
 do
-    curl "$CLICKHOUSE_URL" --silent --fail --show-error --data "
+    curl "$DATASTORE_URL" --silent --fail --show-error --data "
         SELECT * FROM system.replicas WHERE database=currentDatabase() FORMAT Null SETTINGS log_comment='02908_many_requests';" &>/dev/null &
 done
 
 echo "Query system.replicas while waiting for other concurrent requests to finish"
 # lost_part_count column is read from ZooKeeper
-curl "$CLICKHOUSE_URL" --silent --fail --show-error --data "SELECT sum(lost_part_count) FROM system.replicas WHERE database=currentDatabase();" 2>&1;
+curl "$DATASTORE_URL" --silent --fail --show-error --data "SELECT sum(lost_part_count) FROM system.replicas WHERE database=currentDatabase();" 2>&1;
 # is_leader column is filled without ZooKeeper
-curl "$CLICKHOUSE_URL" --silent --fail --show-error --data "SELECT sum(is_leader) FROM system.replicas WHERE database=currentDatabase();" 2>&1;
+curl "$DATASTORE_URL" --silent --fail --show-error --data "SELECT sum(is_leader) FROM system.replicas WHERE database=currentDatabase();" 2>&1;
 
 wait;
 
 
 # Make a request to system.replicas without other concurrent requests to figure out the baseline of how many ZK requests it makes
-curl "$CLICKHOUSE_URL" --silent --fail --show-error --data "
+curl "$DATASTORE_URL" --silent --fail --show-error --data "
    SELECT * FROM system.replicas WHERE database=currentDatabase() FORMAT Null SETTINGS log_comment='02908_many_requests-baseline';" &>/dev/null
 
 
 # Wait for the baseline query to appear in query_log.
 # There is a race between HTTP response being sent and the query_log entry being written.
 for _ in $(seq 1 60); do
-    $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
-    count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database=currentDatabase() AND log_comment='02908_many_requests-baseline' AND type = 'QueryFinish'")
+    $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+    count=$($DATASTORE_CLIENT -q "SELECT count() FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database=currentDatabase() AND log_comment='02908_many_requests-baseline' AND type = 'QueryFinish'")
     [ "$count" -ge 1 ] && break
     sleep 0.5
 done
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 -- Check that average number of ZK request is less then a half of max requests
 WITH
     (SELECT ProfileEvents['ZooKeeperTransactions']

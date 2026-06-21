@@ -1,4 +1,4 @@
---https://github.com/ClickHouse/ClickHouse/issues/59402
+--https://github.com/ClickHouse/Datastore/issues/59402
 CREATE TABLE t1
 (
     f1 Int32,

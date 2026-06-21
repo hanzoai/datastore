@@ -16,7 +16,7 @@ def fill_nodes(nodes):
             node.query(
                 f"""
                     CREATE TABLE test_table_{table_id}(a UInt64)
-                    ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/replicated/{table_id}', '{node.name}') ORDER BY tuple();
+                    ENGINE = ReplicatedMergeTree('/datastore/tables/test/replicated/{table_id}', '{node.name}') ORDER BY tuple();
                 """
             )
 
@@ -59,7 +59,7 @@ def test_restart_zookeeper(start_cluster):
 
     node1_zk = get_zookeeper_which_node_connected_to(node1)
 
-    # ClickHouse should +- immediately reconnect to another zookeeper node
+    # Datastore should +- immediately reconnect to another zookeeper node
     cluster.stop_zookeeper_nodes([node1_zk])
     time.sleep(5)
 

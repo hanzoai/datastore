@@ -19,7 +19,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 #    the second test below covers the happy path explicitly.
 echo "bounded:"
 python3 -c 'import sys; sys.stdout.write("a"+("-a"*1000001))' \
-    | $CLICKHOUSE_LOCAL \
+    | $DATASTORE_LOCAL \
         --input-format='CustomSeparated' --structure='x String' --table='t' \
         --format_custom_field_delimiter='-' \
         --format_custom_escaping_rule='CSV' \
@@ -29,7 +29,7 @@ python3 -c 'import sys; sys.stdout.write("a"+("-a"*1000001))' \
 
 # 2. Well-formed input is unaffected by the cap.
 echo "well-formed:"
-$CLICKHOUSE_LOCAL \
+$DATASTORE_LOCAL \
     --input-format='CustomSeparated' --structure='x String, y String, z String' --table='t' \
     --format_custom_field_delimiter='-' \
     --format_custom_escaping_rule='CSV' \

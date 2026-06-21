@@ -349,7 +349,7 @@ bool SchemaConverter::processSubtreePrimitive(TraversalNode & node)
             primitive_type_hint = assert_cast<const DataTypeNullable &>(*primitive_type_hint).getNestedType();
         }
     }
-    /// Force map key to be non-nullable because clickhouse Map doesn't support nullable map key.
+    /// Force map key to be non-nullable because datastore Map doesn't support nullable map key.
     else if (!options.schema_inference_force_not_nullable && node.schema_context != SchemaContext::MapKey)
     {
         if (levels.back().is_array == false)
@@ -476,7 +476,7 @@ bool SchemaConverter::processSubtreeMap(TraversalNode & node)
         else if (typeid_cast<const DataTypeArray *>(node.type_hint.get()))
         {
             /// Support explicitly requesting Array(Tuple) type for map columns. Useful e.g. if the map
-            /// key type is something that's not allowed as Map key in clickhouse.
+            /// key type is something that's not allowed as Map key in datastore.
             array_type_hint = node.type_hint;
             no_map = true;
         }
@@ -764,7 +764,7 @@ void SchemaConverter::processPrimitiveColumn(
     ///  * Parquet Type ("physical type"),
     ///  * Parquet ConvertedType (deprecated, but we have to support it),
     ///  * Parquet LogicalType,
-    ///  * ClickHouse type hint (e.g. if the user specified column types explicitly).
+    ///  * Datastore type hint (e.g. if the user specified column types explicitly).
     ///
     /// Outputs:
     ///  * out_decoder - how to decode the column (it then separately further dispatches to
@@ -971,7 +971,7 @@ void SchemaConverter::processPrimitiveColumn(
             throw Exception(ErrorCodes::INCORRECT_DATA, "Unexpected integer logical type: {}", thriftToString(element));
 
         /// Can't leave the signed->unsigned conversion to castColumn.
-        /// E.g. if parquet type is UINT64, and the requested clickhouse type is Int128,
+        /// E.g. if parquet type is UINT64, and the requested datastore type is Int128,
         /// casting Int64 -> UInt64 -> Int128 produces different result from Int64 -> Int128.
         auto converter = std::make_shared<IntConverter>();
         converter->input_size = physical_bits / 8;
@@ -995,7 +995,7 @@ void SchemaConverter::processPrimitiveColumn(
     else if (logical.__isset.TIMESTAMP || logical.__isset.TIME || converted == CONV::TIMESTAMP_MILLIS || converted == CONV::TIMESTAMP_MICROS || converted == CONV::TIME_MILLIS || converted == CONV::TIME_MICROS)
     {
         /// We interpret both timestamp (logical.TIMESTAMP) and time-of-day (logical.TIME)
-        /// types as timestamps, since clickhouse doesn't have time-of-day type.
+        /// types as timestamps, since datastore doesn't have time-of-day type.
         /// E.g. time of day 12:34:56.789 turns into timestamp 1970-01-01 12:34:56.789.
 
         UInt32 scale;
@@ -1292,7 +1292,7 @@ void SchemaConverter::processPrimitiveColumn(
                     return;
                 }
 
-                /// Legacy ClickHouse binary formats for [U]Int128 and [U]Int256.
+                /// Legacy Datastore binary formats for [U]Int128 and [U]Int256.
                 /// These are written as FIXED_LEN_BYTE_ARRAY(16/32) but without logical types.
                 if (which.isInteger() && !which.isNativeInteger() &&
                     type_hint->getSizeOfValueInMemory() == size_t(element.type_length))

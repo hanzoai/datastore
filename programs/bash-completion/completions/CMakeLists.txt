@@ -16,14 +16,14 @@ endmacro()
 configure_bash_completion()
 foreach (name
     # set of functions
-    clickhouse-bootstrap
+    datastore-bootstrap
 
     # binaries that accept settings as command line argument
-    clickhouse-client
-    clickhouse-local
-    clickhouse-benchmark
+    datastore-client
+    datastore-local
+    datastore-benchmark
 
-    clickhouse
+    datastore
 )
     install(FILES ${name} DESTINATION ${out})
 endforeach()

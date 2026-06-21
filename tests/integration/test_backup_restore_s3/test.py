@@ -126,7 +126,7 @@ def setup_minio_users(cluster):
     node.stop_clickhouse()
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "disk_s3_restricted_user.xml"),
-        "/etc/clickhouse-server/config.d/disk_s3_restricted_user.xml",
+        "/etc/datastore-server/config.d/disk_s3_restricted_user.xml",
     )
     node.start_clickhouse()
 
@@ -991,9 +991,9 @@ def test_backup_to_s3_different_credentials(
     check_system_tables(cluster, backup_events["query_id"])
 
     for events in [backup_events, restore_events]:
-        # If allow_s3_native_copy == True then we expect ClickHouse to try s3 native copy first and fail,
+        # If allow_s3_native_copy == True then we expect Datastore to try s3 native copy first and fail,
         # then fallback to the reading+writing approach.
-        # If allow_s3_native_copy == 'auto' then we expect ClickHouse to find that the source and destination credentials
+        # If allow_s3_native_copy == 'auto' then we expect Datastore to find that the source and destination credentials
         # are different, then go directly to the reading+writing approach (without trying s3 native copy).
         assert ("S3CopyObject" in events) == (allow_s3_native_copy == True)
         # When `use_multipart_copy` is enabled, even though `allow_s3_native_copy` is disabled, `S3WriteRequestsErrors` is still possible  in `events`.
@@ -1056,7 +1056,7 @@ def test_backup_restore_s3_plain(cluster):
 
     assert instance.query("SELECT count(*) FROM sample") == "100\n"
 
-    table_data_path = instance.query(f"SELECT data_paths[1] FROM system.tables WHERE name='sample' and database='default'").strip().replace("/var/lib/clickhouse/", "").strip("/")
+    table_data_path = instance.query(f"SELECT data_paths[1] FROM system.tables WHERE name='sample' and database='default'").strip().replace("/var/lib/datastore/", "").strip("/")
     minio = cluster.minio_client
     local_path = os.path.join(instance.path, "database")
     source_table_path = f"{local_path}/{table_data_path}"

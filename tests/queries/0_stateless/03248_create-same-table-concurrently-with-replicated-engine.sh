@@ -6,12 +6,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # with Replicated engine
-$CLICKHOUSE_CLIENT --query "CREATE DATABASE IF NOT EXISTS ${CLICKHOUSE_DATABASE}_db ENGINE=Replicated('/test/clickhouse/db/${CLICKHOUSE_DATABASE}_db', 's1', 'r1')"
+$DATASTORE_CLIENT --query "CREATE DATABASE IF NOT EXISTS ${DATASTORE_DATABASE}_db ENGINE=Replicated('/test/datastore/db/${DATASTORE_DATABASE}_db', 's1', 'r1')"
 
 function create_or_replace_table_thread
 {
     for _ in {1..15}; do
-        $CLICKHOUSE_CURL -sS $CLICKHOUSE_URL -d "CREATE OR REPLACE TABLE ${CLICKHOUSE_DATABASE}_db.test_table (x Int) ENGINE=Memory" > /dev/null
+        $DATASTORE_CURL -sS $DATASTORE_URL -d "CREATE OR REPLACE TABLE ${DATASTORE_DATABASE}_db.test_table (x Int) ENGINE=Memory" > /dev/null
     done
 }
 export -f create_or_replace_table_thread;
@@ -22,4 +22,4 @@ done
 
 wait
 
-$CLICKHOUSE_CLIENT --query "DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE}_db SYNC"
+$DATASTORE_CLIENT --query "DROP DATABASE IF EXISTS ${DATASTORE_DATABASE}_db SYNC"

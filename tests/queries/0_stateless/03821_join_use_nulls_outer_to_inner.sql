@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ${HOME}/clickhouse-client --queries-file
+#!/usr/bin/env -S ${HOME}/datastore-client --queries-file
 
 DROP TABLE IF EXISTS t1;
 DROP TABLE IF EXISTS t2;

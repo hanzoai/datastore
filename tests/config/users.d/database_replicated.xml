@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <distributed_ddl_output_mode>none</distributed_ddl_output_mode>
@@ -9,4 +9,4 @@
             <database_replicated_allow_replicated_engine_arguments>3</database_replicated_allow_replicated_engine_arguments>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

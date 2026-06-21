@@ -58,7 +58,7 @@ Write:
 ### Use backticks where necessary
 
 Backtick code elements like settings, function names, SQL statements, format names, and data types. Generally,
-anything you would type into clickhouse-client should be backticked. This helps to make the changelog entries more readable.
+anything you would type into datastore-client should be backticked. This helps to make the changelog entries more readable.
 
 Instead of:
 

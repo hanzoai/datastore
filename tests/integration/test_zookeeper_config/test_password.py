@@ -43,7 +43,7 @@ def test_identity(started_cluster):
     node1.query(
         """
     CREATE TABLE simple (date Date, id UInt32)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', '{replica}') PARTITION BY toYYYYMM(date) ORDER BY id;
+    ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', '{replica}') PARTITION BY toYYYYMM(date) ORDER BY id;
     """.format(
             replica=node1.name
         )
@@ -53,6 +53,6 @@ def test_identity(started_cluster):
         node2.query(
             """
         CREATE TABLE simple (date Date, id UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', '1') PARTITION BY toYYYYMM(date) ORDER BY id;
+        ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', '1') PARTITION BY toYYYYMM(date) ORDER BY id;
         """
         )

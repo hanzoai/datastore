@@ -13,7 +13,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -114,31 +114,31 @@ check_incorrect_data() {
 }
 
 check_incorrect_data int32_neg_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/int32_neg_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/int32_neg_length.arrow', Arrow)"
 
 check_incorrect_data int32_huge_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/int32_huge_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/int32_huge_length.arrow', Arrow)"
 
 check_incorrect_data bool_neg_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/bool_neg_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/bool_neg_length.arrow', Arrow)"
 
 check_incorrect_data decimal_huge_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/decimal_huge_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/decimal_huge_length.arrow', Arrow)"
 
 check_incorrect_data empty_struct_neg_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/empty_struct_neg_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/empty_struct_neg_length.arrow', Arrow)"
 
 check_incorrect_data largelist_huge_child_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largelist_huge_child_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largelist_huge_child_length.arrow', Arrow)"
 
 check_incorrect_data binary_json_huge_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/binary_json_huge_length.arrow', Arrow) FORMAT Null SETTINGS allow_experimental_json_type=1"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/binary_json_huge_length.arrow', Arrow) FORMAT Null SETTINGS allow_experimental_json_type=1"
 
 check_incorrect_data largebinary_json_huge_length \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largebinary_json_huge_length.arrow', Arrow) FORMAT Null SETTINGS allow_experimental_json_type=1"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largebinary_json_huge_length.arrow', Arrow) FORMAT Null SETTINGS allow_experimental_json_type=1"
 
 # The 8 MB memory limit is below the 16 MB UUID-column reserve but above the 1 MB input, so an
 # implementation that reserves before checking byte_width fails with MEMORY_LIMIT_EXCEEDED; the
 # fixed reader rejects the type with INCORRECT_DATA before reserving.
 check_incorrect_data fixedbinary1_as_uuid \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/fixedbinary1_as_uuid.arrow', Arrow, 'x UUID') FORMAT Null SETTINGS max_memory_usage=8000000"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/fixedbinary1_as_uuid.arrow', Arrow, 'x UUID') FORMAT Null SETTINGS max_memory_usage=8000000"

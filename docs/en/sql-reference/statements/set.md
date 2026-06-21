@@ -35,7 +35,7 @@ SET TIME ZONE [=] 'timezone'
 
 Sets the session time zone. This is an alias for `SET session_timezone = 'timezone'`, provided for compatibility with PostgreSQL and other SQL databases.
 
-Many SQL clients, ORMs, and JDBC drivers automatically issue `SET TIME ZONE` when connecting. This syntax allows such tools to work with ClickHouse without custom workarounds.
+Many SQL clients, ORMs, and JDBC drivers automatically issue `SET TIME ZONE` when connecting. This syntax allows such tools to work with Datastore without custom workarounds.
 
 ```sql
 SET TIME ZONE 'UTC';

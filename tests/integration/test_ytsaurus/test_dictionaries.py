@@ -332,7 +332,7 @@ def test_dictionary_xml_config(started_cluster):
 </dictionaries>
 """
     instance.replace_config(
-        "/etc/clickhouse-server/dictionaries/yt_config_dict.xml", dict_config
+        "/etc/datastore-server/dictionaries/yt_config_dict.xml", dict_config
     )
     instance.query("SYSTEM RELOAD CONFIG")
     assert instance.query(f"SELECT dictGet('yt_dict_xml', 'value', 3)") == "0\n"

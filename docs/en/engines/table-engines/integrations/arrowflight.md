@@ -7,8 +7,8 @@ title: 'ArrowFlight table engine'
 doc_type: 'reference'
 ---
 
-The ArrowFlight table engine enables ClickHouse to query remote datasets via the [Apache Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) protocol.
-This integration allows ClickHouse to fetch data from external Flight-enabled servers in a columnar Arrow format with high performance.
+The ArrowFlight table engine enables Datastore to query remote datasets via the [Apache Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) protocol.
+This integration allows Datastore to fetch data from external Flight-enabled servers in a columnar Arrow format with high performance.
 
 ## Creating a Table {#creating-a-table}
 
@@ -55,10 +55,10 @@ SELECT * FROM remote_flight_data ORDER BY id;
 
 ## Notes {#notes}
 
-* The schema defined in ClickHouse must match the schema returned by the Flight server.
+* The schema defined in Datastore must match the schema returned by the Flight server.
 * This engine is suitable for federated queries, data virtualization, and decoupling storage from compute.
 
 ## See Also {#see-also}
 
 * [Apache Arrow Flight SQL](https://arrow.apache.org/docs/format/FlightSql.html)
-* [Arrow format integration in ClickHouse](/interfaces/formats/Arrow)
+* [Arrow format integration in Datastore](/interfaces/formats/Arrow)

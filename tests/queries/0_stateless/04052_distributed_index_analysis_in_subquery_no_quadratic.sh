@@ -14,7 +14,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS test_in_dia;
 
     CREATE TABLE test_in_dia (key Int, value Int)
@@ -35,9 +35,9 @@ $CLICKHOUSE_CLIENT -q "
         max_insert_threads = 1;
 "
 
-query_id="$RANDOM-$CLICKHOUSE_DATABASE"
+query_id="$RANDOM-$DATASTORE_DATABASE"
 
-$CLICKHOUSE_CLIENT --query_id $query_id -q "
+$DATASTORE_CLIENT --query_id $query_id -q "
     SET automatic_parallel_replicas_mode = 0;
     SET parallel_replicas_for_non_replicated_merge_tree = 1;
     SET parallel_replicas_index_analysis_only_on_coordinator = 1;
@@ -62,7 +62,7 @@ $CLICKHOUSE_CLIENT --query_id $query_id -q "
 # the unused RemoteSource. In that case the worker data-reading query is never sent
 # and no query_log entry is created, so we only assert a bounded count and show
 # the deterministic queries (initial + index analysis).
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SYSTEM FLUSH LOGS query_log;
 
     -- Total query count must be bounded, not quadratic.
@@ -93,4 +93,4 @@ $CLICKHOUSE_CLIENT -q "
     ORDER BY normalized_query;
 "
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_in_dia"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_in_dia"

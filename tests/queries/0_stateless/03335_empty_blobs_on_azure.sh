@@ -8,13 +8,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-CONTAINER="cont-$(echo "${CLICKHOUSE_TEST_UNIQUE_NAME}" | tr _ -)"
+CONTAINER="cont-$(echo "${DATASTORE_TEST_UNIQUE_NAME}" | tr _ -)"
 
 DISK_NAME="$CONTAINER"
 
 # Create a table on S3 disk with Array column and wide parts
 # Insert a row with empty Array-s so that arr.bin file is empty
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP TABLE IF EXISTS test_empty_blobs;
 
     CREATE TABLE test_empty_blobs (key Int, arr Array(UInt32)) ENGINE=MergeTree() ORDER BY tuple()
@@ -25,7 +25,7 @@ $CLICKHOUSE_CLIENT -m -q "
                 metadata_type = local,
                 object_storage_type = azure_blob_storage,
                 name = '${CONTAINER}',
-                path='/var/lib/clickhouse/disks/${CONTAINER}/tables',
+                path='/var/lib/datastore/disks/${CONTAINER}/tables',
                 container_name = '${CONTAINER}',
                 endpoint = 'http://localhost:10000/devstoreaccount1/${CONTAINER}/plain-tables',
                 account_name = 'devstoreaccount1',
@@ -39,12 +39,12 @@ $CLICKHOUSE_CLIENT -m -q "
 "
 
 # Find table UUID for non-Ordinary database or use 'database_name/test_empty_blobs'
-UUID=`$CLICKHOUSE_CLIENT -q "
+UUID=`$DATASTORE_CLIENT -q "
     SELECT if (uuid != '00000000-0000-0000-0000-000000000000', uuid::String, currentDatabase() || '/test_empty_blobs')
     FROM system.tables
     WHERE database = currentDatabase() AND table = 'test_empty_blobs'"`;
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     SYSTEM FLUSH LOGS text_log;
 
     -- Check logs for skipping empty blob
@@ -70,7 +70,7 @@ $CLICKHOUSE_CLIENT -m -q "
 
 BACKUP_NAME="test_empty_blobs_backup_$UUID"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     -- Backup and restore the table
     BACKUP TABLE test_empty_blobs TO Disk('backups', '$BACKUP_NAME');
 
@@ -79,7 +79,7 @@ $CLICKHOUSE_CLIENT -m -q "
     RESTORE TABLE test_empty_blobs FROM Disk('backups', '$BACKUP_NAME');
 " >/dev/null && echo 'Backup-restore succeeded';
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     -- Read after restore
     SELECT * FROM test_empty_blobs ORDER BY key;
 

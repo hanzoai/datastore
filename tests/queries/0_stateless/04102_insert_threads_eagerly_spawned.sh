@@ -8,23 +8,23 @@
 
 # Verifies that a plain INSERT (no SELECT, no MVs) does not request
 # excessive ConcurrencyControl slots or spawn unnecessary threads.
-# Regression test for https://github.com/ClickHouse/ClickHouse/issues/102947
+# Regression test for https://github.com/ClickHouse/Datastore/issues/102947
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_insert_threads"
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_insert_threads_mv"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE test_insert_threads (x UInt64) ENGINE = MergeTree ORDER BY x"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_insert_threads"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_insert_threads_mv"
+$DATASTORE_CLIENT -q "CREATE TABLE test_insert_threads (x UInt64) ENGINE = MergeTree ORDER BY x"
 
 # Test 1: Plain INSERT FORMAT TSV with max_threads=16, no MVs.
 # The insert pipeline is a single chain — should use max_insert_threads (1).
 echo "=== Plain INSERT without MVs ==="
 QUERY_ID1="04102_no_mv_$RANDOM"
 
-$CLICKHOUSE_CLIENT -q "SELECT number FROM numbers(10000) FORMAT TSV" | \
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT -q "SELECT number FROM numbers(10000) FORMAT TSV" | \
+$DATASTORE_CLIENT \
     --query_id="$QUERY_ID1" \
     --max_threads=16 \
     --max_insert_threads=1 \
@@ -32,9 +32,9 @@ $CLICKHOUSE_CLIENT \
     --log_queries=1 \
     -q "INSERT INTO test_insert_threads FORMAT TSV"
 
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT
         if(peak_threads_usage <= 4, 'FEW THREADS', 'MANY THREADS SPAWNED')
     FROM system.query_log
@@ -48,12 +48,12 @@ $CLICKHOUSE_CLIENT -q "
 
 # Test 2: INSERT with a materialized view — should use more threads.
 echo "=== Plain INSERT with MV ==="
-$CLICKHOUSE_CLIENT -q "CREATE MATERIALIZED VIEW test_insert_threads_mv ENGINE = MergeTree ORDER BY x AS SELECT x FROM test_insert_threads"
+$DATASTORE_CLIENT -q "CREATE MATERIALIZED VIEW test_insert_threads_mv ENGINE = MergeTree ORDER BY x AS SELECT x FROM test_insert_threads"
 
 QUERY_ID2="04102_with_mv_$RANDOM"
 
-$CLICKHOUSE_CLIENT -q "SELECT number FROM numbers(10000) FORMAT TSV" | \
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT -q "SELECT number FROM numbers(10000) FORMAT TSV" | \
+$DATASTORE_CLIENT \
     --query_id="$QUERY_ID2" \
     --max_threads=16 \
     --max_insert_threads=1 \
@@ -61,10 +61,10 @@ $CLICKHOUSE_CLIENT \
     --log_queries=1 \
     -q "INSERT INTO test_insert_threads FORMAT TSV"
 
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
 
 # With MVs, peak_threads should be higher than without MVs
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT
         if(peak_threads_usage > 1, 'MORE THAN 1 THREAD', 'SINGLE THREAD')
     FROM system.query_log
@@ -76,5 +76,5 @@ $CLICKHOUSE_CLIENT -q "
     SETTINGS optimize_if_transform_strings_to_enum = 0
 "
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE test_insert_threads_mv"
-$CLICKHOUSE_CLIENT -q "DROP TABLE test_insert_threads"
+$DATASTORE_CLIENT -q "DROP TABLE test_insert_threads_mv"
+$DATASTORE_CLIENT -q "DROP TABLE test_insert_threads"

@@ -44,7 +44,7 @@ def started_cluster():
             "instance_24.5",
             with_zookeeper=True,
             with_minio=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.5",
             stay_alive=True,
             user_configs=[
@@ -62,7 +62,7 @@ def started_cluster():
             with_zookeeper=True,
             with_minio=True,
             keeper_required_feature_flags=["create_if_not_exists"],
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.5",
             stay_alive=True,
             user_configs=[
@@ -99,7 +99,7 @@ def test_migration(started_cluster, setting_prefix, buckets_num):
     table_name = f"test_replicated_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
     mv_name = f"{table_name}_mv"
-    keeper_path = f"/clickhouse/test_{table_name}_{buckets_num}"
+    keeper_path = f"/datastore/test_{table_name}_{buckets_num}"
     files_path = f"{table_name}_data"
 
     for node in [node1, node2]:
@@ -107,14 +107,14 @@ def test_migration(started_cluster, setting_prefix, buckets_num):
 
     # Clean up the ZK path in case DROP DATABASE on an older binary didn't fully remove it
     zk_client = started_cluster.get_kazoo_client("zoo1")
-    if zk_client.exists("/clickhouse/databases/replicateddb3"):
-        zk_client.delete("/clickhouse/databases/replicateddb3", recursive=True)
+    if zk_client.exists("/datastore/databases/replicateddb3"):
+        zk_client.delete("/datastore/databases/replicateddb3", recursive=True)
 
     node1.query(
-        "CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/replicateddb3', 'shard1', 'node1')"
+        "CREATE DATABASE r ENGINE=Replicated('/datastore/databases/replicateddb3', 'shard1', 'node1')"
     )
     node2.query(
-        "CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/replicateddb3', 'shard1', 'node2')"
+        "CREATE DATABASE r ENGINE=Replicated('/datastore/databases/replicateddb3', 'shard1', 'node2')"
     )
 
     create_table(

@@ -103,7 +103,7 @@ CREATE TABLE system.contributors
     `name` String
 )
 ENGINE = SystemContributors
-COMMENT 'Contains a list of all ClickHouse contributors <3'
+COMMENT 'Contains a list of all Datastore contributors <3'
 CREATE TABLE system.current_roles
 (
     `role_name` String,
@@ -166,7 +166,7 @@ CREATE TABLE system.detached_parts
     `level` Nullable(UInt32)
 )
 ENGINE = SystemDetachedParts
-COMMENT 'Contains a list of all parts which are being found in /detached directory along with a reason why it was detached. ClickHouse server doesn\'t use such parts anyhow.'
+COMMENT 'Contains a list of all parts which are being found in /detached directory along with a reason why it was detached. Datastore server doesn\'t use such parts anyhow.'
 CREATE TABLE system.dictionaries
 (
     `database` String,
@@ -348,7 +348,7 @@ CREATE TABLE system.licenses
     `license_text` String
 )
 ENGINE = SystemLicenses
-COMMENT 'Contains licenses of third-party libraries that are located in the contrib directory of ClickHouse sources.'
+COMMENT 'Contains licenses of third-party libraries that are located in the contrib directory of Datastore sources.'
 CREATE TABLE system.macros
 (
     `macro` String,
@@ -1010,7 +1010,7 @@ CREATE TABLE system.replication_queue
     `merge_type` String
 )
 ENGINE = SystemReplicationQueue
-COMMENT 'Contains information about tasks from replication queues stored in ClickHouse Keeper, or ZooKeeper, for each table replica.'
+COMMENT 'Contains information about tasks from replication queues stored in Datastore Keeper, or ZooKeeper, for each table replica.'
 CREATE TABLE system.role_grants
 (
     `user_name` Nullable(String),
@@ -1191,7 +1191,7 @@ CREATE TABLE system.time_zones
     `time_zone` String
 )
 ENGINE = SystemTimeZones
-COMMENT 'Contains a list of time zones that are supported by the ClickHouse server. This list of timezones might vary depending on the version of ClickHouse.'
+COMMENT 'Contains a list of time zones that are supported by the Datastore server. This list of timezones might vary depending on the version of Datastore.'
 CREATE TABLE system.user_directories
 (
     `name` String,
@@ -1200,7 +1200,7 @@ CREATE TABLE system.user_directories
     `precedence` UInt64
 )
 ENGINE = SystemUserDirectories
-COMMENT 'Contains the information about configured user directories - directories on the file system from which ClickHouse server is allowed to read user provided data.'
+COMMENT 'Contains the information about configured user directories - directories on the file system from which Datastore server is allowed to read user provided data.'
 CREATE TABLE system.users
 (
     `name` String,
@@ -1229,7 +1229,7 @@ CREATE TABLE system.warnings
     `message_format_string` LowCardinality(String)
 )
 ENGINE = SystemWarnings
-COMMENT 'Contains warnings about server configuration to be displayed by clickhouse-client right after it connects to the server.'
+COMMENT 'Contains warnings about server configuration to be displayed by datastore-client right after it connects to the server.'
 CREATE TABLE system.zeros
 (
     `zero` UInt8

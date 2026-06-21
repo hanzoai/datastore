@@ -75,7 +75,7 @@ select (select sum(cityHash64(*)) from nullables_02735) - (select sum(cityHash64
 drop table nullables_02735;
 
 
--- TODO: When cityHash64() fully supports Nullable: https://github.com/ClickHouse/ClickHouse/pull/58754
+-- TODO: When cityHash64() fully supports Nullable: https://github.com/ClickHouse/Datastore/pull/58754
 --       the next two blocks can be simplified: arrays_out_02735 intermediate table is not needed,
 --       a.csv and b.csv are not needed.
 

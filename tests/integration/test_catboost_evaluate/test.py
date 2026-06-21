@@ -23,7 +23,7 @@ def ch_cluster():
     try:
         cluster.start()
 
-        instance.exec_in_container(["mkdir", f"/etc/clickhouse-server/model/"])
+        instance.exec_in_container(["mkdir", f"/etc/datastore-server/model/"])
 
         machine = instance.get_machine_name()
         for source_name in os.listdir(os.path.join(SCRIPT_DIR, "model/.")):
@@ -36,7 +36,7 @@ def ch_cluster():
                 "docker cp {local} {cont_id}:{dist}".format(
                     local=os.path.join(SCRIPT_DIR, f"model/{source_name}"),
                     cont_id=instance.docker_id,
-                    dist=f"/etc/clickhouse-server/model/{dest_name}",
+                    dist=f"/etc/datastore-server/model/{dest_name}",
                 )
             )
 
@@ -59,7 +59,7 @@ def testConstantFeatures(ch_cluster):
     result = instance.query("system reload models")
 
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
     )
     expected = "-1.930268705869267\n"
     assert result == expected
@@ -78,7 +78,7 @@ def testNonConstantFeatures(ch_cluster):
     instance.query("INSERT INTO T VALUES(0, 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);")
 
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11) from T;"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11) from T;"
     )
     expected = "-1.930268705869267\n"
     assert result == expected
@@ -119,12 +119,12 @@ def testWrongNumberOfFeatureArguments(ch_cluster):
     result = instance.query("system reload models")
 
     err = instance.query_and_get_error(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin');"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin');"
     )
     assert "Function catboostEvaluate expects at least 2 arguments" in err
 
     err = instance.query_and_get_error(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1, 2);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1, 2);"
     )
     assert (
         "Number of columns is different with number of features: columns size 2 float features size 2 + cat features size 9"
@@ -139,7 +139,7 @@ def testFloatFeatureMustBeNumeric(ch_cluster):
     result = instance.query("system reload models")
 
     err = instance.query_and_get_error(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 'a', 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 'a', 3, 4, 5, 6, 7, 8, 9, 10, 11);"
     )
     assert "Column 1 should be numeric to make float feature" in err
 
@@ -151,7 +151,7 @@ def testCategoricalFeatureMustBeNumericOrString(ch_cluster):
     result = instance.query("system reload models")
 
     err = instance.query_and_get_error(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, tuple(8), 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, tuple(8), 9, 10, 11);"
     )
     assert "Column 7 should be numeric or string" in err
 
@@ -164,7 +164,7 @@ def testOnLowCardinalityFeatures(ch_cluster):
 
     # same but on domain-compressed data
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', toLowCardinality(1.0), toLowCardinality(2.0), toLowCardinality(3), toLowCardinality(4), toLowCardinality(5), toLowCardinality(6), toLowCardinality(7), toLowCardinality(8), toLowCardinality(9), toLowCardinality(10), toLowCardinality(11));"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', toLowCardinality(1.0), toLowCardinality(2.0), toLowCardinality(3), toLowCardinality(4), toLowCardinality(5), toLowCardinality(6), toLowCardinality(7), toLowCardinality(8), toLowCardinality(9), toLowCardinality(10), toLowCardinality(11));"
     )
     expected = "-1.930268705869267\n"
     assert result == expected
@@ -177,14 +177,14 @@ def testOnNullableFeatures(ch_cluster):
     result = instance.query("system reload models")
 
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', toNullable(1.0), toNullable(2.0), toNullable(3), toNullable(4), toNullable(5), toNullable(6), toNullable(7), toNullable(8), toNullable(9), toNullable(10), toNullable(11));"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', toNullable(1.0), toNullable(2.0), toNullable(3), toNullable(4), toNullable(5), toNullable(6), toNullable(7), toNullable(8), toNullable(9), toNullable(10), toNullable(11));"
     )
     expected = "-1.930268705869267\n"
     assert result == expected
 
     # Actual NULLs are disallowed
     err = instance.query_and_get_error(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL));"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL), toNullable(NULL));"
     )
     assert "Column 0 should be numeric to make float feature" in err
 
@@ -200,15 +200,15 @@ def testInvalidLibraryPath(ch_cluster):
         [
             "bash",
             "-c",
-            "mv /etc/clickhouse-server/model/libcatboostmodel.so /etc/clickhouse-server/model/nonexistant.so",
+            "mv /etc/datastore-server/model/libcatboostmodel.so /etc/datastore-server/model/nonexistant.so",
         ]
     )
 
     err = instance.query_and_get_error(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
     )
     assert (
-        "Can't load library /etc/clickhouse-server/model/libcatboostmodel.so: file doesn't exist"
+        "Can't load library /etc/datastore-server/model/libcatboostmodel.so: file doesn't exist"
         in err
     )
 
@@ -217,7 +217,7 @@ def testInvalidLibraryPath(ch_cluster):
         [
             "bash",
             "-c",
-            "mv /etc/clickhouse-server/model/nonexistant.so /etc/clickhouse-server/model/libcatboostmodel.so",
+            "mv /etc/datastore-server/model/nonexistant.so /etc/datastore-server/model/libcatboostmodel.so",
         ]
     )
 
@@ -246,17 +246,17 @@ def testRecoveryAfterCrash(ch_cluster):
     result = instance.query("system reload models")
 
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
     )
     expected = "-1.930268705869267\n"
     assert result == expected
 
     instance.exec_in_container(
-        ["bash", "-c", "kill -9 `pidof clickhouse-library-bridge`"], user="root"
+        ["bash", "-c", "kill -9 `pidof datastore-library-bridge`"], user="root"
     )
 
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
     )
     assert result == expected
 
@@ -272,7 +272,7 @@ def testAmazonModelSingleRow(ch_cluster):
     result = instance.query("system reload models")
 
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/amazon_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9);"
+        "select catboostEvaluate('/etc/datastore-server/model/amazon_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9);"
     )
     expected = "0.7774665009089274\n"
     assert result == expected
@@ -297,7 +297,7 @@ def testAmazonModelManyRows(ch_cluster):
     # First compute prediction, then as a very crude way to fingerprint and compare the result: sum and floor
     # (the focus is to test that the exchange of large result sets between the server and the bridge works)
     result = instance.query(
-        "SELECT floor(sum(catboostEvaluate('/etc/clickhouse-server/model/amazon_model.bin', RESOURCE, MGR_ID, ROLE_ROLLUP_1, ROLE_ROLLUP_2, ROLE_DEPTNAME, ROLE_TITLE, ROLE_FAMILY_DESC, ROLE_FAMILY, ROLE_CODE))) FROM amazon"
+        "SELECT floor(sum(catboostEvaluate('/etc/datastore-server/model/amazon_model.bin', RESOURCE, MGR_ID, ROLE_ROLLUP_1, ROLE_ROLLUP_2, ROLE_DEPTNAME, ROLE_TITLE, ROLE_FAMILY_DESC, ROLE_FAMILY, ROLE_CODE))) FROM amazon"
     )
 
     expected = "583092\n"
@@ -312,7 +312,7 @@ def testModelUpdate(ch_cluster):
 
     result = instance.query("system reload models")
 
-    query = "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+    query = "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
 
     result = instance.query(query)
     expected = "-1.930268705869267\n"
@@ -323,25 +323,25 @@ def testModelUpdate(ch_cluster):
         [
             "bash",
             "-c",
-            "mv /etc/clickhouse-server/model/simple_model.bin /etc/clickhouse-server/model/simple_model.bin.bak",
+            "mv /etc/datastore-server/model/simple_model.bin /etc/datastore-server/model/simple_model.bin.bak",
         ]
     )
     instance.exec_in_container(
         [
             "bash",
             "-c",
-            "mv /etc/clickhouse-server/model/amazon_model.bin /etc/clickhouse-server/model/simple_model.bin",
+            "mv /etc/datastore-server/model/amazon_model.bin /etc/datastore-server/model/simple_model.bin",
         ]
     )
 
     # unload simple model
     result = instance.query(
-        "system reload model '/etc/clickhouse-server/model/simple_model.bin'"
+        "system reload model '/etc/datastore-server/model/simple_model.bin'"
     )
 
     # load the simple-model-camouflaged amazon model
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9);"
     )
     expected = "0.7774665009089274\n"
     assert result == expected
@@ -351,14 +351,14 @@ def testModelUpdate(ch_cluster):
         [
             "bash",
             "-c",
-            "mv /etc/clickhouse-server/model/simple_model.bin /etc/clickhouse-server/model/amazon_model.bin",
+            "mv /etc/datastore-server/model/simple_model.bin /etc/datastore-server/model/amazon_model.bin",
         ]
     )
     instance.exec_in_container(
         [
             "bash",
             "-c",
-            "mv /etc/clickhouse-server/model/simple_model.bin.bak /etc/clickhouse-server/model/simple_model.bin",
+            "mv /etc/datastore-server/model/simple_model.bin.bak /etc/datastore-server/model/simple_model.bin",
         ]
     )
 
@@ -376,7 +376,7 @@ def testSystemModelsAndModelRefresh(ch_cluster):
 
     # load simple model
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
+        "select catboostEvaluate('/etc/datastore-server/model/simple_model.bin', 1.0, 2.0, 3, 4, 5, 6, 7, 8, 9, 10, 11);"
     )
     expected = "-1.930268705869267\n"
     assert result == expected
@@ -384,12 +384,12 @@ def testSystemModelsAndModelRefresh(ch_cluster):
     # check model system view with one model loaded
     result = instance.query("select * from system.models")
     assert result.count("\n") == 1
-    expected = "/etc/clickhouse-server/model/simple_model.bin"
+    expected = "/etc/datastore-server/model/simple_model.bin"
     assert expected in result
 
     # load amazon model
     result = instance.query(
-        "select catboostEvaluate('/etc/clickhouse-server/model/amazon_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9);"
+        "select catboostEvaluate('/etc/datastore-server/model/amazon_model.bin', 1, 2, 3, 4, 5, 6, 7, 8, 9);"
     )
     expected = "0.7774665009089274\n"
     assert result == expected
@@ -397,18 +397,18 @@ def testSystemModelsAndModelRefresh(ch_cluster):
     # check model system view with one model loaded
     result = instance.query("select * from system.models")
     assert result.count("\n") == 2
-    expected = "/etc/clickhouse-server/model/simple_model.bin"
+    expected = "/etc/datastore-server/model/simple_model.bin"
     assert expected in result
-    expected = "/etc/clickhouse-server/model/amazon_model.bin"
+    expected = "/etc/datastore-server/model/amazon_model.bin"
     assert expected in result
 
     # unload simple model
     result = instance.query(
-        "system reload model '/etc/clickhouse-server/model/simple_model.bin'"
+        "system reload model '/etc/datastore-server/model/simple_model.bin'"
     )
 
     # check model system view, it should not display the removed model
     result = instance.query("select * from system.models")
     assert result.count("\n") == 1
-    expected = "/etc/clickhouse-server/model/amazon_model.bin"
+    expected = "/etc/datastore-server/model/amazon_model.bin"
     assert expected in result

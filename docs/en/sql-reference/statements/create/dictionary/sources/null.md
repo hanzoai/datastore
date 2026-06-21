@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/null
 title: 'Null dictionary source'
 sidebar_position: 14
 sidebar_label: 'Null'
-description: 'Configure a Null (empty) dictionary source in ClickHouse for testing.'
+description: 'Configure a Null (empty) dictionary source in Datastore for testing.'
 doc_type: 'reference'
 ---
 

@@ -7,7 +7,7 @@ node1 = cluster.add_instance("node1")
 node2 = cluster.add_instance("node2")
 node256 = cluster.add_instance(
     "node256",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="25.6",
     with_installed_binary=True,
 )

@@ -29,9 +29,9 @@ gh pr view "$PR_NUMBER" --json number,title,body,headRefName,baseRefName,state,m
 ```
 
 If `gh` is not available or not authenticated, use WebFetch to get the data. Append `?per_page=100` and follow the `Link` header for pagination (the `rel="next"` URL) to fetch all pages:
-- `https://api.github.com/repos/ClickHouse/ClickHouse/pulls/$PR_NUMBER`
-- `https://api.github.com/repos/ClickHouse/ClickHouse/pulls/$PR_NUMBER/reviews?per_page=100`
-- `https://api.github.com/repos/ClickHouse/ClickHouse/pulls/$PR_NUMBER/comments?per_page=100`
+- `https://api.github.com/repos/Datastore/Datastore/pulls/$PR_NUMBER`
+- `https://api.github.com/repos/Datastore/Datastore/pulls/$PR_NUMBER/reviews?per_page=100`
+- `https://api.github.com/repos/Datastore/Datastore/pulls/$PR_NUMBER/comments?per_page=100`
 
 Report the PR title, author, branch, and current state to the user.
 
@@ -39,7 +39,7 @@ Report the PR title, author, branch, and current state to the user.
 
 Determine whether the PR branch is in the main repository or in the author's fork.
 
-**If the branch is in the main repository (`ClickHouse/ClickHouse`):**
+**If the branch is in the main repository (`Datastore/Datastore`):**
 ```bash
 git fetch origin "$HEAD_BRANCH"
 git checkout -b "$HEAD_BRANCH" "origin/$HEAD_BRANCH" 2>/dev/null || git checkout "$HEAD_BRANCH"
@@ -91,15 +91,15 @@ If there are merge conflicts:
 Use the CI analysis tool to fetch reports:
 
 ```bash
-node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/$PR_NUMBER" --failed --cidb
+node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/Datastore/pull/$PR_NUMBER" --failed --cidb
 ```
 
 For each CI failure:
 
 1. **Check if it is a known issue:** Search for existing open issues or PRs that address this failure:
    ```bash
-   gh issue list --repo ClickHouse/ClickHouse --state open --search "<failure_description>" --limit 5
-   gh pr list --repo ClickHouse/ClickHouse --state open --search "<failure_description>" --limit 5
+   gh issue list --repo Datastore/Datastore --state open --search "<failure_description>" --limit 5
+   gh pr list --repo Datastore/Datastore --state open --search "<failure_description>" --limit 5
    ```
    Only dismiss a failure as unrelated if there is a concrete open issue or PR that matches. Do NOT dismiss failures without evidence.
 
@@ -119,7 +119,7 @@ Fetch review comments:
 
 ```bash
 gh pr view "$PR_NUMBER" --json reviews,comments --jq '.reviews[] | select(.state != "COMMENTED" or .body != "") | {author: .author.login, state: .state, body: .body}'
-gh api "repos/ClickHouse/ClickHouse/pulls/$PR_NUMBER/comments" --paginate --jq '.[] | select(.in_reply_to_id == null or .in_reply_to_id == 0) | {author: .user.login, body: .body, path: .path, line: .line, created_at: .created_at}'
+gh api "repos/Datastore/Datastore/pulls/$PR_NUMBER/comments" --paginate --jq '.[] | select(.in_reply_to_id == null or .in_reply_to_id == 0) | {author: .user.login, body: .body, path: .path, line: .line, created_at: .created_at}'
 ```
 
 Also fetch review comment threads to identify which are resolved and which are not.
@@ -136,7 +136,7 @@ while true; do
   fi
   RESULT=$(gh api graphql -f query="
   {
-    repository(owner: \"ClickHouse\", name: \"ClickHouse\") {
+    repository(owner: \"Datastore\", name: \"Datastore\") {
       pullRequest(number: $PR_NUMBER) {
         reviewThreads(first: 100${AFTER_CLAUSE}) {
           pageInfo { hasNextPage endCursor }
@@ -190,7 +190,7 @@ Repeat until `hasNextPage` is `false`.
 **If `gh` is not available (WebFetch fallback):**
 
 The GraphQL API for review threads requires authentication, so unresolved-thread detection is not possible via `WebFetch`. In this case:
-1. Fetch all review comments from the REST API: `https://api.github.com/repos/ClickHouse/ClickHouse/pulls/$PR_NUMBER/comments?per_page=100` (follow pagination via `Link` header)
+1. Fetch all review comments from the REST API: `https://api.github.com/repos/Datastore/Datastore/pulls/$PR_NUMBER/comments?per_page=100` (follow pagination via `Link` header)
 2. Group comments by `pull_request_review_id` and `in_reply_to_id` to reconstruct threads
 3. Treat all threads as potentially unresolved (since resolution status is only available via GraphQL)
 4. Note in the output that thread resolution status could not be determined without `gh` authentication
@@ -249,9 +249,9 @@ Report the result and provide the PR URL.
 - Do not use rebase or amend - always add new commits (per project conventions)
 - Do not push to the master branch
 - Each fix should be a separate, well-described commit
-- When writing commit messages, wrap literal names from ClickHouse SQL, classes, functions, or log messages in inline code blocks
+- When writing commit messages, wrap literal names from Datastore SQL, classes, functions, or log messages in inline code blocks
 - Use Allman-style braces in any C++ code changes
-- When building ClickHouse after changes, redirect output to a log file in the build directory and use a subagent to analyze it
+- When building Datastore after changes, redirect output to a log file in the build directory and use a subagent to analyze it
 - When running tests, redirect output to a log file and use a subagent to analyze it
 
 ## 8. Fix unrelated CI failures

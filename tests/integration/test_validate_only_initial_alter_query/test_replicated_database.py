@@ -29,4 +29,4 @@ def started_cluster():
 
 @pytest.mark.parametrize("engine", ["MergeTree", "ReplicatedMergeTree"])
 def test_validate_only_initial_alter_query_replicated_database(started_cluster, engine):
-    run_test(node1, node2, "Replicated('/clickhouse/databases/{database_name}', '{{shard}}', '{{replica}}')", engine)
+    run_test(node1, node2, "Replicated('/datastore/databases/{database_name}', '{{shard}}', '{{replica}}')", engine)

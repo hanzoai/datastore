@@ -16,7 +16,7 @@ CREATE DICTIONARY flat_dictionary
     decimal_value Decimal256(5)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 
@@ -32,7 +32,7 @@ CREATE DICTIONARY hashed_dictionary
     decimal_value Decimal256(5)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(HASHED());
 
@@ -48,7 +48,7 @@ CREATE DICTIONARY cache_dictionary
     decimal_value Decimal256(5)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(CACHE(SIZE_IN_CELLS 10));
 
@@ -64,7 +64,7 @@ CREATE DICTIONARY direct_dictionary
     decimal_value Decimal256(5)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_source_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Direct dictionary';
@@ -90,7 +90,7 @@ CREATE DICTIONARY ip_trie_dictionary
     decimal_value Decimal256(5)
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(HOST 'localhost' port tcpPort() TABLE 'ip_trie_dictionary_decimal_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' port tcpPort() TABLE 'ip_trie_dictionary_decimal_source_table'))
 LIFETIME(MIN 10 MAX 1000)
 LAYOUT(IP_TRIE());
 
@@ -116,7 +116,7 @@ CREATE DICTIONARY polygon_dictionary
     decimal_value Decimal256(5)
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_polygons_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_decimal_polygons_source_table'))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(POLYGON());
 

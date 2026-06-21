@@ -70,17 +70,17 @@ SELECT stringBytesEntropy(unhex(concat(
     'F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF'
 )));
 8
-SELECT stringBytesUniq(s) FROM (SELECT arrayJoin(['Hello', 'World', 'ClickHouse']) AS s);
+SELECT stringBytesUniq(s) FROM (SELECT arrayJoin(['Hello', 'World', 'Datastore']) AS s);
 4
 5
 10
-SELECT stringBytesEntropy(s) FROM (SELECT arrayJoin(['Hello', 'World', 'ClickHouse']) AS s);
+SELECT stringBytesEntropy(s) FROM (SELECT arrayJoin(['Hello', 'World', 'Datastore']) AS s);
 1.9219280948873623
 2.321928094887362
 3.321928094887362
-SELECT arrayJoin(['Hello', 'World', 'Foo', 'Bar', 'ClickHouse']) AS str, stringBytesUniq(str), stringBytesEntropy(str);
+SELECT arrayJoin(['Hello', 'World', 'Foo', 'Bar', 'Datastore']) AS str, stringBytesUniq(str), stringBytesEntropy(str);
 Hello	4	1.9219280948873623
 World	5	2.321928094887362
 Foo	2	0.9182958340544896
 Bar	3	1.584962500721156
-ClickHouse	10	3.321928094887362
+Datastore	10	3.321928094887362

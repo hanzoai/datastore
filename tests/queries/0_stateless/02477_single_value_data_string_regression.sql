@@ -1,5 +1,5 @@
 
--- Context: https://github.com/ClickHouse/ClickHouse/issues/42916
+-- Context: https://github.com/ClickHouse/Datastore/issues/42916
 
 -- STRING WITH 10 CHARACTERS
 -- SELECT version() AS v, hex(argMaxState('0123456789', number)) AS state FROM numbers(1) FORMAT CSV

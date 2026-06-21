@@ -1,4 +1,4 @@
--- Regression for https://github.com/ClickHouse/ClickHouse/issues/103660
+-- Regression for https://github.com/ClickHouse/Datastore/issues/103660
 -- `KeyCondition::extractPlainRanges` must not treat a relaxed (deduplicated/transformed) set
 -- as exact. For `tuple(i, i) NOT IN (tuple(1, 2))` `MergeTreeSetIndex` deduplicates the tuple
 -- columns to a single key column, producing the relaxed set `{1}`. Building the complement

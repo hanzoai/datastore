@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
    <dictionary>
        <name>postgres_odbc_hashed</name>
        <source>
            <odbc>
-               <table>clickhouse.test_table</table>
+               <table>datastore.test_table</table>
                <connection_string>DSN=postgresql_odbc</connection_string>
                <db>postgres</db>
            </odbc>
@@ -35,4 +35,4 @@
 
        </structure>
    </dictionary>
-</clickhouse>
+</datastore>

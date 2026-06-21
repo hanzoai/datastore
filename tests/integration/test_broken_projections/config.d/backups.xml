@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <backups>
                 <type>local</type>
-                <path>/var/lib/clickhouse/disks/backups/</path>
+                <path>/var/lib/datastore/disks/backups/</path>
             </backups>
         </disks>
     </storage_configuration>
@@ -11,4 +11,4 @@
         <allowed_disk>backups</allowed_disk>
         <test_randomize_order>true</test_randomize_order>
     </backups>
-</clickhouse>
+</datastore>

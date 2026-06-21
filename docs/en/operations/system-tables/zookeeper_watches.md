@@ -1,6 +1,6 @@
 ---
 description: 'System table showing currently active ZooKeeper watches registered by
-  this ClickHouse server.'
+  this Datastore server.'
 keywords: ['system table', 'zookeeper_watches']
 slug: /operations/system-tables/zookeeper_watches
 title: 'system.zookeeper_watches'
@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-Shows currently active [watches](https://zookeeper.apache.org/doc/r3.3.3/zookeeperProgrammers.html#ch_zkWatches) registered by this ClickHouse server on ZooKeeper nodes (including auxiliary ZooKeepers). Each row represents one watch.
+Shows currently active [watches](https://zookeeper.apache.org/doc/r3.3.3/zookeeperProgrammers.html#ch_zkWatches) registered by this Datastore server on ZooKeeper nodes (including auxiliary ZooKeepers). Each row represents one watch.
 
 ## Columns {#columns}
 
@@ -37,7 +37,7 @@ Row 1:
 zookeeper_name:           default
 create_time:              2026-03-16 12:00:00
 create_time_microseconds: 2026-03-16 12:00:00.123456
-path:                     /clickhouse/task_queue/ddl
+path:                     /datastore/task_queue/ddl
 session_id:               106662742089334927
 request_xid:              10858
 op_num:                   List

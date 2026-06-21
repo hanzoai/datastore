@@ -45,7 +45,7 @@ CREATE DICTIONARY discounts_dict (
     amount Float64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'discounts'))
+SOURCE(DATASTORE(TABLE 'discounts'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED(range_lookup_strategy 'max'))
 RANGE(MIN discount_start_date MAX discount_end_date)
@@ -120,7 +120,7 @@ RANGE(MIN StartTimeStamp MAX EndTimeStamp)
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         ...
 
@@ -148,7 +148,7 @@ RANGE(MIN StartTimeStamp MAX EndTimeStamp)
         </structure>
 
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>
@@ -194,7 +194,7 @@ CREATE DICTIONARY discounts_dict
     amount Float64
 )
 PRIMARY KEY advertiser_id
-SOURCE(CLICKHOUSE(TABLE discounts))
+SOURCE(DATASTORE(TABLE discounts))
 LIFETIME(MIN 600 MAX 900)
 LAYOUT(RANGE_HASHED(RANGE_LOOKUP_STRATEGY 'max'))
 RANGE(MIN discount_start_date MAX discount_end_date);
@@ -231,7 +231,7 @@ CREATE DICTIONARY discounts_dict
     amount Float64
 )
 PRIMARY KEY advertiser_id
-SOURCE(CLICKHOUSE(TABLE discounts))
+SOURCE(DATASTORE(TABLE discounts))
 LIFETIME(MIN 600 MAX 900)
 LAYOUT(RANGE_HASHED(RANGE_LOOKUP_STRATEGY 'min'))
 RANGE(MIN discount_start_date MAX discount_end_date);
@@ -273,7 +273,7 @@ CREATE DICTIONARY range_dictionary
   Tax Float64 DEFAULT 0.2
 )
 PRIMARY KEY CountryID, CountryKey
-SOURCE(CLICKHOUSE(TABLE 'date_table'))
+SOURCE(DATASTORE(TABLE 'date_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(COMPLEX_KEY_RANGE_HASHED())
 RANGE(MIN StartDate MAX EndDate);

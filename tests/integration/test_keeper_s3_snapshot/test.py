@@ -83,7 +83,7 @@ def delete_keeper_snapshots_logs(nodex):
         [
             "bash",
             "-c",
-            "rm -rf /var/lib/clickhouse/coordination/log /var/lib/clickhouse/coordination/snapshots",
+            "rm -rf /var/lib/datastore/coordination/log /var/lib/datastore/coordination/snapshots",
         ]
     )
 

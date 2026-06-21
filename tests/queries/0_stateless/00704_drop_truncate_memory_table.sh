@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=none
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=none
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 DROP TABLE IF EXISTS memory;
 CREATE TABLE memory (x UInt64) ENGINE = Memory;
 
@@ -17,17 +17,17 @@ INSERT INTO memory SELECT * FROM numbers(1000);"
 
 
 # NOTE Most of the time this query can start before the table will be dropped.
-# And TRUNCATE or DROP query will test for correct locking inside ClickHouse.
+# And TRUNCATE or DROP query will test for correct locking inside Datastore.
 # But if the table will be dropped before query - just pass.
 # It's Ok, because otherwise the test will depend on the race condition in the test itself.
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 SET max_threads = 1;
 SELECT count() FROM memory WHERE NOT ignore(sleep(0.0001));" 2>&1 | grep -c -P '^1000$|^0$|Exception' &
 
 sleep 0.05;
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 TRUNCATE TABLE memory;
 DROP TABLE memory;
 "

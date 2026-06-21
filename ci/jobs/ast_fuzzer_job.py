@@ -15,7 +15,7 @@ from ci.praktika.info import Info
 from ci.praktika.result import Result
 from ci.praktika.utils import Shell, Utils
 
-IMAGE_NAME = "clickhouse/fuzzer"
+IMAGE_NAME = "datastore/fuzzer"
 
 # Maximum number of reproduce commands to display inline before writing to file
 MAX_INLINE_REPRODUCE_COMMANDS = 20
@@ -63,7 +63,7 @@ def get_run_command(
         # For sysctl
         "--privileged "
         "--network=host "
-        "--tmpfs /tmp/clickhouse:mode=1777 "
+        "--tmpfs /tmp/datastore:mode=1777 "
         f"--volume={WORKSPACE_PATH}:/workspace "
         f"--volume={cwd}:/repo "
         f"{env_str} "
@@ -154,8 +154,8 @@ def run_fuzz_job(check_name: str):
     is_targeted = "targeted" in check_name.lower()
     buzzhouse: bool = check_name.lower().startswith("buzzhouse")
 
-    clickhouse_binary = Path(cwd) / "ci/tmp/clickhouse"
-    assert clickhouse_binary.exists(), "ClickHouse binary not found"
+    clickhouse_binary = Path(cwd) / "ci/tmp/datastore"
+    assert clickhouse_binary.exists(), "Datastore binary not found"
     clickhouse_binary.chmod(clickhouse_binary.stat().st_mode | 0o111)
 
     docker_image = DockerImage.get_docker_image(IMAGE_NAME).pull_image()

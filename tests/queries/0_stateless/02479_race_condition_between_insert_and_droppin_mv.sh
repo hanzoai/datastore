@@ -3,7 +3,7 @@
 
 set -e
 
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL="error"
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL="error"
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -17,7 +17,7 @@ function insert {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CLIENT} -q "INSERT INTO test_race_condition_landing SELECT number, toString(number), toString(number) from system.numbers limit $i, $offset settings ignore_materialized_views_with_dropped_target_table=1"
+        ${DATASTORE_CLIENT} -q "INSERT INTO test_race_condition_landing SELECT number, toString(number), toString(number) from system.numbers limit $i, $offset settings ignore_materialized_views_with_dropped_target_table=1"
         i=$(( $i + $RANDOM % 100 + 400 ))
     done
 }
@@ -27,17 +27,17 @@ function drop_mv {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        ${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv_$index"
-        ${CLICKHOUSE_CLIENT} -q "CREATE MATERIALIZED VIEW IF NOT EXISTS test_race_condition_mv1_$index TO test_race_condition_target AS select count() as number FROM (SELECT a.number, a.n, a.n2, b.number, b.n, b.n2 FROM test_race_condition_landing a CROSS JOIN test_race_condition_landing b)"
-        ${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv1_$index"
-        ${CLICKHOUSE_CLIENT} -q "CREATE MATERIALIZED VIEW IF NOT EXISTS test_race_condition_mv_$index TO test_race_condition_target AS select count() as number FROM (SELECT a.number, a.n, a.n2, b.number, b.n, b.n2 FROM test_race_condition_landing a CROSS JOIN test_race_condition_landing b)"
+        ${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv_$index"
+        ${DATASTORE_CLIENT} -q "CREATE MATERIALIZED VIEW IF NOT EXISTS test_race_condition_mv1_$index TO test_race_condition_target AS select count() as number FROM (SELECT a.number, a.n, a.n2, b.number, b.n, b.n2 FROM test_race_condition_landing a CROSS JOIN test_race_condition_landing b)"
+        ${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv1_$index"
+        ${DATASTORE_CLIENT} -q "CREATE MATERIALIZED VIEW IF NOT EXISTS test_race_condition_mv_$index TO test_race_condition_target AS select count() as number FROM (SELECT a.number, a.n, a.n2, b.number, b.n, b.n2 FROM test_race_condition_landing a CROSS JOIN test_race_condition_landing b)"
     done
 }
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_target"
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_landing"
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE test_race_condition_target (number Int64) Engine=MergeTree ORDER BY number"
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE test_race_condition_landing (number Int64, n String, n2 String) Engine=MergeTree ORDER BY number"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_target"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_landing"
+${DATASTORE_CLIENT} -q "CREATE TABLE test_race_condition_target (number Int64) Engine=MergeTree ORDER BY number"
+${DATASTORE_CLIENT} -q "CREATE TABLE test_race_condition_landing (number Int64, n String, n2 String) Engine=MergeTree ORDER BY number"
 
 for i in {1..4}
 do
@@ -52,12 +52,12 @@ done
 wait
 
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_target"
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_landing"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_target"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_landing"
 for i in {1..4}
 do
-    ${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv_$i"
-    ${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv1_$i"
+    ${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv_$i"
+    ${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS test_race_condition_mv1_$i"
 done
 
 

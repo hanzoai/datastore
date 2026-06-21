@@ -60,7 +60,7 @@ def test_replicated_alters(test_cluster):
         instance,
         """
 CREATE TABLE IF NOT EXISTS merge_for_alter ON CLUSTER cluster (p Date, i Int32)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{layer}-{shard}/hits', '{replica}', p, p, 1)
+ENGINE = ReplicatedMergeTree('/datastore/tables/{layer}-{shard}/hits', '{replica}', p, p, 1)
 """,
     )
 

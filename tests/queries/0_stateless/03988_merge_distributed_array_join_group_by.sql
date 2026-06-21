@@ -1,7 +1,7 @@
 -- Tags: distributed
 
 -- Logical error: Chunk info was not set for chunk in MergingAggregatedTransform.
--- https://github.com/ClickHouse/ClickHouse/issues/97564
+-- https://github.com/ClickHouse/Datastore/issues/97564
 
 DROP TABLE IF EXISTS test_local_1;
 DROP TABLE IF EXISTS test_local_2;

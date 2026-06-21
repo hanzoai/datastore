@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/60223
+-- https://github.com/ClickHouse/Datastore/issues/60223
 
 CREATE TABLE test
 (

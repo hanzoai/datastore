@@ -8,7 +8,7 @@ nodes = [
         "node0",
         main_configs=["configs/clusters.xml"],
         with_zookeeper=True,
-        image="library/clickhouse",
+        image="library/datastore",
         tag="25.1",
         stay_alive=True,
         with_installed_binary=True,

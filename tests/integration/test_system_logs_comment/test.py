@@ -25,7 +25,7 @@ def test_system_logs_comment():
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <engine>ENGINE = MergeTree
                         PARTITION BY (event_date)
@@ -36,8 +36,8 @@ def test_system_logs_comment():
                 </engine>
                 <partition_by remove='remove'/>
             </query_log>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        </datastore>
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )

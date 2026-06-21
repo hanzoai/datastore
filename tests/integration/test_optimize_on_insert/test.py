@@ -36,7 +36,7 @@ def test_empty_parts_optimize(start_cluster):
         node.query(
             """
             CREATE TABLE empty (key UInt32, val UInt32, date Datetime)
-            ENGINE=ReplicatedSummingMergeTree('/clickhouse/01560_optimize_on_insert', '{}', val)
+            ENGINE=ReplicatedSummingMergeTree('/datastore/01560_optimize_on_insert', '{}', val)
             PARTITION BY date ORDER BY key;
         """.format(
                 n + 1

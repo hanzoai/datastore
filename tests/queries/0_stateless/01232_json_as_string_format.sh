@@ -5,11 +5,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS json_as_string";
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS json_as_string";
 
-$CLICKHOUSE_CLIENT --query="CREATE TABLE json_as_string (field String) ENGINE = Memory";
+$DATASTORE_CLIENT --query="CREATE TABLE json_as_string (field String) ENGINE = Memory";
 
-cat << 'EOF' | $CLICKHOUSE_CLIENT --query="INSERT INTO json_as_string FORMAT JSONAsString";
+cat << 'EOF' | $DATASTORE_CLIENT --query="INSERT INTO json_as_string FORMAT JSONAsString";
 {
     "id" : 1,
     "date" : "01.01.2020",
@@ -45,7 +45,7 @@ cat << 'EOF' | $CLICKHOUSE_CLIENT --query="INSERT INTO json_as_string FORMAT JSO
 }
 EOF
 
-cat << 'EOF' | $CLICKHOUSE_CLIENT --query="INSERT INTO json_as_string FORMAT JSONAsString";
+cat << 'EOF' | $DATASTORE_CLIENT --query="INSERT INTO json_as_string FORMAT JSONAsString";
 [
     {
         "id" : 1,
@@ -84,6 +84,6 @@ cat << 'EOF' | $CLICKHOUSE_CLIENT --query="INSERT INTO json_as_string FORMAT JSO
 EOF
 
 
-$CLICKHOUSE_CLIENT --query="SELECT * FROM json_as_string ORDER BY field";
-$CLICKHOUSE_CLIENT --query="DROP TABLE json_as_string"
+$DATASTORE_CLIENT --query="SELECT * FROM json_as_string ORDER BY field";
+$DATASTORE_CLIENT --query="DROP TABLE json_as_string"
 

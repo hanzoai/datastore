@@ -30,7 +30,7 @@ def test_recovery_with_flag(started_cluster):
         (
             num UInt32
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/test_recovery_with_flag', '1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test/test_recovery_with_flag', '1')
         ORDER BY num
     """
     )
@@ -45,7 +45,7 @@ def test_recovery_with_flag(started_cluster):
     ch_node.stop_clickhouse()
 
     zk = cluster.get_kazoo_client("zoo1")
-    zk.delete("/clickhouse", recursive=True)
+    zk.delete("/datastore", recursive=True)
     zk.stop()
 
     ch_node.start_clickhouse()
@@ -58,7 +58,7 @@ def test_recovery_with_flag(started_cluster):
 
     ch_node.stop_clickhouse()
     ch_node.exec_in_container(
-        ["bash", "-c", "touch /var/lib/clickhouse/flags/force_restore_data"],
+        ["bash", "-c", "touch /var/lib/datastore/flags/force_restore_data"],
         privileged=True,
     )
 

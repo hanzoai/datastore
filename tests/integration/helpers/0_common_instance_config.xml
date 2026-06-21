@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <timezone>Etc/UTC</timezone>
     <listen_host>0.0.0.0</listen_host>
     <custom_settings_prefixes>custom_</custom_settings_prefixes>
-    <path>/var/lib/clickhouse/</path>
-    <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+    <path>/var/lib/datastore/</path>
+    <tmp_path>/var/lib/datastore/tmp/</tmp_path>
 
     <!-- For tests which check compatibility with older versions. -->
     <users_config>users.xml</users_config>
@@ -13,12 +13,12 @@
 
   <logger>
         <level>test</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
-        <stderr>/var/log/clickhouse-server/stderr.log</stderr>
-        <stdout>/var/log/clickhouse-server/stdout.log</stdout>
+        <stderr>/var/log/datastore-server/stderr.log</stderr>
+        <stdout>/var/log/datastore-server/stdout.log</stdout>
         <rotateOnOpen>true</rotateOnOpen>
     </logger>
 
@@ -61,4 +61,4 @@
     <asynchronous_metric_log remove="1"/>
     <processors_profile_log remove="1"/>
     <query_thread_log remove="1"/>
-</clickhouse>
+</datastore>

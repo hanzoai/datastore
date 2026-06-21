@@ -205,7 +205,7 @@ protected:
         = 0;
 };
 
-/// ClickHouse Keeper state machine. Wrapper for KeeperStorage.
+/// Datastore Keeper state machine. Wrapper for KeeperStorage.
 /// Responsible for entries commit, snapshots creation and so on.
 template<typename Storage>
 class KeeperStateMachine : public IKeeperStateMachine

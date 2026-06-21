@@ -159,7 +159,7 @@ SELECT 'String' AS String, CAST(123, String);
 
 -- 3. The internal function `_CAST` which is different from `CAST` only by being not dependent on the value of `cast_keep_nullable` setting and other settings.
 
--- This is needed when ClickHouse has to persist an expression for future use, like in table definitions, including primary and partition keys and other indices.
+-- This is needed when Datastore has to persist an expression for future use, like in table definitions, including primary and partition keys and other indices.
 
 -- The function is not intended to be used directly. When a user uses a regular `CAST` operator or function in a table definition, it is transparently converted to `_CAST` to persist its behavior. However, the user can still use the internal version directly:
 
@@ -242,7 +242,7 @@ SELECT accurateCastOrDefault(-1, 'UInt64');
 SELECT accurateCastOrDefault(-1, 'DateTime');
 
 -- Unfortunately, this does not work as expected: SELECT accurateCastOrDefault(-1, $$Enum8('None' = 1, 'Hello' = 2, 'World' = 3)$$);
--- https://github.com/ClickHouse/ClickHouse/issues/61495
+-- https://github.com/ClickHouse/Datastore/issues/61495
 
 -- These functions are case-sensitive, and there are no corresponding operators:
 
@@ -266,7 +266,7 @@ SELECT ACCURATECAST(1, 'String'); -- { serverError UNKNOWN_FUNCTION }.
 
 SELECT toUInt8(-1);
 
--- These are ClickHouse-native conversion functions. They take an argument with the input value, and for some of the data types (`FixedString`, `DateTime`, `DateTime64`, `Decimal`s), the subsequent arguments are constant expressions, defining the parameters of these data types, or the rules to interpret the source value.
+-- These are Datastore-native conversion functions. They take an argument with the input value, and for some of the data types (`FixedString`, `DateTime`, `DateTime64`, `Decimal`s), the subsequent arguments are constant expressions, defining the parameters of these data types, or the rules to interpret the source value.
 
 SELECT toFloat64(123); -- no arguments
 SELECT toFixedString('Hello', 10) FORMAT TSV; -- the parameter of the FixedString data type, the function returns FixedString(10)

@@ -2,7 +2,7 @@
 -- The 'error' hint sets both server_errors and client_errors, so the
 -- PARSING_EXCEPTION handler must fall through to the client error check
 -- instead of rejecting with "Expected server error".
--- See: https://github.com/ClickHouse/ClickHouse/issues/101664
+-- See: https://github.com/ClickHouse/Datastore/issues/101664
 
 -- Basic: 'error' hint on a syntax error should pass
 SELEC 1; -- { error SYNTAX_ERROR }

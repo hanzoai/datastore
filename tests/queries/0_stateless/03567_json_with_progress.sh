@@ -6,14 +6,14 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 on_exit() {
-${CLICKHOUSE_CLIENT} -m --query "
+${DATASTORE_CLIENT} -m --query "
     SYSTEM DISABLE FAILPOINT output_format_sleep_on_progress;
 "
 }
 
 trap on_exit EXIT
 
-${CLICKHOUSE_CLIENT} -m --query "SYSTEM ENABLE FAILPOINT output_format_sleep_on_progress;"
+${DATASTORE_CLIENT} -m --query "SYSTEM ENABLE FAILPOINT output_format_sleep_on_progress;"
 
 query="
 SELECT 1
@@ -25,4 +25,4 @@ SETTINGS="default_format=JSONEachRowWithProgress"
 SETTINGS="${SETTINGS}&interactive_delay=1"
 SETTINGS="${SETTINGS}&max_block_size=1&max_threads=10"
 
-${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&${SETTINGS}" -d "$query" | sed 's/^{"progress":{.*}$//g' | grep -v "^$"
+${DATASTORE_CURL} -sS "${DATASTORE_URL}&${SETTINGS}" -d "$query" | sed 's/^{"progress":{.*}$//g' | grep -v "^$"

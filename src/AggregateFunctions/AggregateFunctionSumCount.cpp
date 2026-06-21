@@ -123,7 +123,7 @@ createAggregateFunctionSumCount(const std::string & name, const DataTypes & argu
 void registerAggregateFunctionSumCount(AggregateFunctionFactory & factory)
 {
     FunctionDocumentation::Description description_sumCount = R"(
-Calculates the sum of the numbers and counts the number of rows at the same time. The function is used by ClickHouse query optimizer: if there are multiple `sum`, `count` or `avg` functions in a query, they can be replaced to single `sumCount` function to reuse the calculations. The function is rarely needed to use explicitly.
+Calculates the sum of the numbers and counts the number of rows at the same time. The function is used by Datastore query optimizer: if there are multiple `sum`, `count` or `avg` functions in a query, they can be replaced to single `sumCount` function to reuse the calculations. The function is rarely needed to use explicitly.
 
 **See also**
 

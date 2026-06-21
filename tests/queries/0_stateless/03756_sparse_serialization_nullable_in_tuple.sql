@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/91380
+-- https://github.com/ClickHouse/Datastore/issues/91380
 DROP TABLE IF EXISTS t0;
 CREATE TABLE t0 (s Nullable(String), t Tuple(a Nullable(String))) ENGINE = MergeTree ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 0.9, serialization_info_version = 'with_types', nullable_serialization_version = 'allow_sparse';
 INSERT INTO t0 SELECT if((number % 13) = 0, toString(number), NULL), (if((number % 11) = 0, number, NULL),) FROM numbers(1000);

@@ -16,8 +16,8 @@ registry = 'sparse+https://index.crates.io/'
 replace-with = 'vendored-sources'
 
 # chdig
-[source."git+https://github.com/azat-rust/clickhouse-rs?branch=next"]
-git = "https://github.com/azat-rust/clickhouse-rs"
+[source."git+https://github.com/azat-rust/datastore-rs?branch=next"]
+git = "https://github.com/azat-rust/datastore-rs"
 branch = "next"
 replace-with = "vendored-sources"
 [source."git+https://github.com/azat-rust/cursive-flexi-logger-view?branch=next"]

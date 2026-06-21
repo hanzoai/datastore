@@ -10,4 +10,4 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # for panic, but just for SYNTAX_ERROR.
 #
 #   [1]: https://github.com/PRQL/prql/pull/4285
-$CLICKHOUSE_CLIENT --dialect prql -q "SELECT id FROM distributed_test_table GROUP BY x -> concat(concat(materialize(toNullable(NULL)))) LIMIT 3" |& grep -o -m1 SYNTAX_ERROR
+$DATASTORE_CLIENT --dialect prql -q "SELECT id FROM distributed_test_table GROUP BY x -> concat(concat(materialize(toNullable(NULL)))) LIMIT 3" |& grep -o -m1 SYNTAX_ERROR

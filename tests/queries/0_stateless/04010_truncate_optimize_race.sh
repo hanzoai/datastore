@@ -16,8 +16,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS t_truncate_optimize_race"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE t_truncate_optimize_race (x UInt64) ENGINE = MergeTree ORDER BY x"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS t_truncate_optimize_race"
+$DATASTORE_CLIENT -q "CREATE TABLE t_truncate_optimize_race (x UInt64) ENGINE = MergeTree ORDER BY x"
 
 # implicit_transaction wraps each query in a MergeTree transaction.
 # When a merge's transaction rolls back, parts revert from merged to pre-merge state.
@@ -28,8 +28,8 @@ function thread_insert()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT $SETTINGS -q "INSERT INTO t_truncate_optimize_race VALUES (rand())" 2>/dev/null ||:
-        $CLICKHOUSE_CLIENT $SETTINGS -q "INSERT INTO t_truncate_optimize_race VALUES (rand())" 2>/dev/null ||:
+        $DATASTORE_CLIENT $SETTINGS -q "INSERT INTO t_truncate_optimize_race VALUES (rand())" 2>/dev/null ||:
+        $DATASTORE_CLIENT $SETTINGS -q "INSERT INTO t_truncate_optimize_race VALUES (rand())" 2>/dev/null ||:
     done
 }
 
@@ -37,7 +37,7 @@ function thread_optimize()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT $SETTINGS -q "OPTIMIZE TABLE t_truncate_optimize_race FINAL" 2>/dev/null ||:
+        $DATASTORE_CLIENT $SETTINGS -q "OPTIMIZE TABLE t_truncate_optimize_race FINAL" 2>/dev/null ||:
     done
 }
 
@@ -45,7 +45,7 @@ function thread_truncate()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT $SETTINGS -q "TRUNCATE TABLE t_truncate_optimize_race" 2>/dev/null ||:
+        $DATASTORE_CLIENT $SETTINGS -q "TRUNCATE TABLE t_truncate_optimize_race" 2>/dev/null ||:
     done
 }
 
@@ -60,6 +60,6 @@ thread_truncate &
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE t_truncate_optimize_race"
+$DATASTORE_CLIENT -q "DROP TABLE t_truncate_optimize_race"
 
 echo "OK"

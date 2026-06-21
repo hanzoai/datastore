@@ -311,4 +311,4 @@ Similar to suffix -ArgMin but processes only the rows that have the maximum valu
 
 ## Related Content {#related-content}
 
-- Blog: [Using Aggregate Combinators in ClickHouse](https://clickhouse.com/blog/aggregate-functions-combinators-in-clickhouse-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)

@@ -33,9 +33,9 @@ Like [`multiSearchAllPositions`](#multiSearchAllPositions) but assumes `haystack
     FunctionDocumentation::Examples examples = {
     {
         "UTF-8 multi-search",
-        "SELECT multiSearchAllPositionsUTF8('ClickHouse',['C','H'])",
+        "SELECT multiSearchAllPositionsUTF8('Datastore',['C','H'])",
         R"(
-┌─multiSearchAllPositionsUTF8('ClickHouse', ['C', 'H'])─┐
+┌─multiSearchAllPositionsUTF8('Datastore', ['C', 'H'])─┐
 │ [1,6]                                                 │
 └───────────────────────────────────────────────────────┘
         )"

@@ -5,11 +5,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-database_name="$CLICKHOUSE_DATABASE"_03278_test_database
-backup_database_name="$CLICKHOUSE_DATABASE"_03278_test_table_backup_database
-backup_path="$CLICKHOUSE_DATABASE"_03278_test_database.test_table
+database_name="$DATASTORE_DATABASE"_03278_test_database
+backup_database_name="$DATASTORE_DATABASE"_03278_test_table_backup_database
+backup_path="$DATASTORE_DATABASE"_03278_test_database.test_table
 
-$CLICKHOUSE_CLIENT "
+$DATASTORE_CLIENT "
 DROP DATABASE IF EXISTS $database_name;
 CREATE DATABASE $database_name;
 

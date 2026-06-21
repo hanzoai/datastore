@@ -6,6 +6,6 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT"
+format="$DATASTORE_FORMAT"
 
 echo "SELECT 1 AS x, x.y FROM (SELECT 'Hello, world' AS y) AS x" | $format

@@ -5,13 +5,13 @@ DROP TABLE IF EXISTS part_log_profile_events_r1 SYNC;
 DROP TABLE IF EXISTS part_log_profile_events_r2 SYNC;
 
 CREATE TABLE part_log_profile_events_r1 (x UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_02378/part_log_profile_events', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_02378/part_log_profile_events', 'r1')
 ORDER BY x
 PARTITION BY x >= 128
 ;
 
 CREATE TABLE part_log_profile_events_r2 (x UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_02378/part_log_profile_events', 'r2')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_02378/part_log_profile_events', 'r2')
 ORDER BY x
 PARTITION BY x >= 128
 ;

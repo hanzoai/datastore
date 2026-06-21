@@ -20,7 +20,7 @@ def copy_policy_xml(local_file_name):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     node.copy_file_to_container(
         os.path.join(script_dir, local_file_name),
-        "/etc/clickhouse-server/users.d/row_policy.xml",
+        "/etc/datastore-server/users.d/row_policy.xml",
     )
     node.query("SYSTEM RELOAD CONFIG")
 

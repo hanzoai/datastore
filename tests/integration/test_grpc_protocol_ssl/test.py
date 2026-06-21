@@ -15,7 +15,7 @@ import clickhouse_grpc_pb2_grpc
 
 # The test cluster is configured with certificate for that host name, see 'server-ext.cnf'.
 # The client have to verify server certificate against that name. Client uses SNI
-SSL_HOST = "integration-tests.clickhouse.com"
+SSL_HOST = "integration-tests.datastore.com"
 GRPC_PORT = 9100
 DEFAULT_ENCODING = "utf-8"
 

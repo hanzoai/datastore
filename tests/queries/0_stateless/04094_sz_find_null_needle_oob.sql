@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/102051
+-- https://github.com/ClickHouse/Datastore/issues/102051
 -- sz_find_skylake OOB read when needle is all null bytes
 
 -- n_length <= 3: tail returns OOB pointer without validation

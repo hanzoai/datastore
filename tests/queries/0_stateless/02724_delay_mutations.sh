@@ -7,7 +7,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./mergetree_mutations.lib
 . "$CURDIR"/mergetree_mutations.lib
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 SET apply_mutations_on_fly = 0;
 
 DROP TABLE IF EXISTS t_delay_mutations SYNC;
@@ -35,17 +35,17 @@ SELECT * FROM t_delay_mutations ORDER BY id;
 SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_delay_mutations' AND NOT is_done;
 "
 
-${CLICKHOUSE_CLIENT} --query "SYSTEM START MERGES t_delay_mutations"
+${DATASTORE_CLIENT} --query "SYSTEM START MERGES t_delay_mutations"
 wait_for_mutation "t_delay_mutations" "mutation_5.txt"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 SELECT * FROM t_delay_mutations ORDER BY id;
 SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_delay_mutations' AND NOT is_done;
 
 DROP TABLE IF EXISTS t_delay_mutations SYNC;
 "
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 SYSTEM FLUSH LOGS query_log;
 
 SELECT
@@ -55,7 +55,7 @@ SELECT
 FROM system.query_log
 WHERE event_date >= yesterday() AND event_time >= now() - 600 AND
     type = 'QueryFinish' AND
-    current_database = '$CLICKHOUSE_DATABASE' AND
+    current_database = '$DATASTORE_DATABASE' AND
     query ILIKE 'ALTER TABLE t_delay_mutations UPDATE%'
 ORDER BY query;
 "

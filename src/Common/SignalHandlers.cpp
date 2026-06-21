@@ -304,10 +304,10 @@ void SignalListener::run()
     }
     else
     {
-        /// This is the case of clickhouse-client and clickhouse-local.
+        /// This is the case of datastore-client and datastore-local.
 #if (defined(__ELF__) && !defined(OS_FREEBSD)) || defined(OS_DARWIN)
-        /// This operation is heavy (0.5 sec under TSan) - we don't do it in constructor to not slow-down clickhouse-client,
-        /// Do it lazily to not slow-down the termination of clickhouse-client.
+        /// This operation is heavy (0.5 sec under TSan) - we don't do it in constructor to not slow-down datastore-client,
+        /// Do it lazily to not slow-down the termination of datastore-client.
         build_id = []{ return SymbolIndex::instance().getBuildIDHex(); };
 #else
         build_id = [] { return String("<unknown>"); };
@@ -635,11 +635,11 @@ try
         /// Approximate support period, upper bound.
         if (time(nullptr) - makeDate(DateLUT::instance(), static_cast<UInt8>(2000 + VERSION_MAJOR), static_cast<UInt8>(VERSION_MINOR), 1) < (365 + 30) * 86400)
         {
-            LOG_FATAL(log, "Report this error to https://github.com/ClickHouse/ClickHouse/issues");
+            LOG_FATAL(log, "Report this error to https://github.com/ClickHouse/Datastore/issues");
         }
         else
         {
-            LOG_FATAL(log, "ClickHouse version {} is old and should be upgraded to the latest version.", VERSION_STRING);
+            LOG_FATAL(log, "Datastore version {} is old and should be upgraded to the latest version.", VERSION_STRING);
         }
     }
 
@@ -725,7 +725,7 @@ void HandledSignals::setupTerminateHandler()
 void HandledSignals::setupCommonDeadlySignalHandlers()
 {
     /// SIGTSTP is added for debugging purposes. To output a stack trace of any running thread at anytime.
-    /// NOTE: that it is also used by clickhouse-test wrapper
+    /// NOTE: that it is also used by datastore-test wrapper
     addSignalHandler({SIGABRT, SIGSEGV, SIGILL, SIGBUS, SIGSYS, SIGFPE, SIGTSTP, SIGTRAP}, signalHandler, true);
 
 #if defined(SANITIZER)

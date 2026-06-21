@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <password></password>
@@ -8,4 +8,4 @@
             <enable_filesystem_cache>0</enable_filesystem_cache>
         </default>
     </users>
-</clickhouse>
+</datastore>

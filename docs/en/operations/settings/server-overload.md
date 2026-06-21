@@ -9,7 +9,7 @@ doc_type: 'reference'
 ## Overview {#overview}
 
 Sometimes server can become overloaded due to different reasons. In order to determine the current CPU overload,
-ClickHouse server calculates the ratio of CPU wait time (`OSCPUWaitMicroseconds` metric) to busy time
+Datastore server calculates the ratio of CPU wait time (`OSCPUWaitMicroseconds` metric) to busy time
 (`OSCPUVirtualTimeMicroseconds` metric). When the server is overloaded above certain ratio,
 it makes sense to discard some queries or even drop connection requests to not increase the load even more.
 
@@ -35,7 +35,7 @@ the connection attempt will be rejected from the server side.
 
 ## Resource overload warnings {#resource-overload-warnings}
 
-ClickHouse also logs CPU and Memory overload warnings to `system.warnings` table when the server is overloaded. You can
+Datastore also logs CPU and Memory overload warnings to `system.warnings` table when the server is overloaded. You can
 customize these thresholds through server configuration.
 
 **Example**

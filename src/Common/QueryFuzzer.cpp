@@ -2024,7 +2024,7 @@ void QueryFuzzer::fuzzTableFunctionName(ASTPtr & table_function)
         {"mysql", "postgresql"},
         /// External databases with connection-style args
         {"sqlite", "mongodb", "redis"},
-        /// Remote ClickHouse clusters
+        /// Remote Datastore clusters
         {"remote", "remoteSecure"},
         /// Named cluster table functions
         {"cluster", "clusterAllReplicas"},

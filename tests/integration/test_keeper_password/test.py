@@ -74,7 +74,7 @@ def test_password_works(started_cluster):
         [
             "bash",
             "-c",
-            "clickhouse keeper-client -h node2 -p 9181 --password foobar -q \"ls '/keeper'\"",
+            "datastore keeper-client -h node2 -p 9181 --password foobar -q \"ls '/keeper'\"",
         ],
         privileged=True,
     )
@@ -99,7 +99,7 @@ def test_password_works(started_cluster):
     print(node3.query("select * from system.zookeeper where path = '/'", timeout=3))
 
     node3.replace_in_config(
-        "/etc/clickhouse-server/config.d/use_keeper_from_second.xml",
+        "/etc/datastore-server/config.d/use_keeper_from_second.xml",
         "foobar",
         "qqqqqq",
     )

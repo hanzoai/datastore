@@ -1,5 +1,5 @@
 -- Test for positiveModulo on tuples: should return modulo results, not division results
--- See https://github.com/ClickHouse/ClickHouse/issues/101699
+-- See https://github.com/ClickHouse/Datastore/issues/101699
 
 -- Basic positive modulo on tuple
 SELECT 'positiveModulo on tuple';

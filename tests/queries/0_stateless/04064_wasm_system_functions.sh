@@ -6,16 +6,16 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} << 'EOF'
+${DATASTORE_CLIENT} << 'EOF'
 DROP FUNCTION IF EXISTS wasm_sf_simple;
 DROP FUNCTION IF EXISTS wasm_sf_buffered;
 DELETE FROM system.webassembly_modules WHERE name = 'wasm_sf_test';
 EOF
 
-cat "${CUR_DIR}/wasm/identity_int.wasm" | ${CLICKHOUSE_CLIENT} \
+cat "${CUR_DIR}/wasm/identity_int.wasm" | ${DATASTORE_CLIENT} \
     --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'wasm_sf_test', code FROM input('code String') FORMAT RawBlob"
 
-${CLICKHOUSE_CLIENT} << 'EOF'
+${DATASTORE_CLIENT} << 'EOF'
 -- RowDirect ABI function with a named argument
 CREATE OR REPLACE FUNCTION wasm_sf_simple
     LANGUAGE WASM ABI ROW_DIRECT FROM 'wasm_sf_test' :: 'identity_raw'

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/54954
+-- https://github.com/ClickHouse/Datastore/issues/54954
 
 DROP TABLE IF EXISTS loans;
 

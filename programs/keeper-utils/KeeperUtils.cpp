@@ -985,15 +985,15 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
 
         if ((vm.contains("help") && !vm.contains("command")) || !vm.contains("command"))
         {
-            std::cout << "ClickHouse Keeper Utils - A utility for managing ClickHouse Keeper data\n\n"
-                      << "Usage:\n  clickhouse-keeper-utils <command> [options]\n\n"
+            std::cout << "Datastore Keeper Utils - A utility for managing Datastore Keeper data\n\n"
+                      << "Usage:\n  datastore-keeper-utils <command> [options]\n\n"
                       << "Available commands:\n"
                       << "  dump-state             Dump Keeper state from snapshot and changelog\n"
                       << "  snapshot-analyzer      Analyze Keeper snapshot files\n"
                       << "  changelog-analyzer     Analyze Keeper changelog files\n"
                       << "  changelog-splicer      Extract a range of entries from a changelog\n"
                       << "  changelog-deserializer Deserialize and display changelog contents\n\n"
-                      << "Use 'clickhouse-keeper-utils <command> --help' for help with a specific command.\n";
+                      << "Use 'datastore-keeper-utils <command> --help' for help with a specific command.\n";
             return 0;
         }
 
@@ -1032,20 +1032,20 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
                     != subcommand_args.end())
                 {
                     std::cout << "Dump Keeper state from snapshot and changelog\n\n"
-                              << "Usage:\n  clickhouse-keeper-utils dump-state [options]\n\n"
+                              << "Usage:\n  datastore-keeper-utils dump-state [options]\n\n"
                               << "Options:\n"
                               << dump_state_options << "\n"
                               << "Examples:\n"
                               << "  # Dump node tree to stdout\n"
-                              << "  clickhouse-keeper-utils dump-state --snapshot-path /path/to/snapshots --log-path /path/to/logs\n\n"
+                              << "  datastore-keeper-utils dump-state --snapshot-path /path/to/snapshots --log-path /path/to/logs\n\n"
                               << "  # Dump node tree to file with custom format\n"
-                              << "  clickhouse-keeper-utils dump-state --snapshot-path /path/to/snapshots \n"
+                              << "  datastore-keeper-utils dump-state --snapshot-path /path/to/snapshots \n"
                               << "      --log-path /path/to/logs --output-file nodes.txt --output-format JSONEachRow\n\n"
                               << "  # Dump session information to stdout\n"
-                              << "  clickhouse-keeper-utils dump-state --snapshot-path /path/to/snapshots \n"
+                              << "  datastore-keeper-utils dump-state --snapshot-path /path/to/snapshots \n"
                               << "      --log-path /path/to/logs --dump-sessions\n\n"
                               << "  # Dump session information to file\n"
-                              << "  clickhouse-keeper-utils dump-state --snapshot-path /path/to/snapshots \n"
+                              << "  datastore-keeper-utils dump-state --snapshot-path /path/to/snapshots \n"
                               << "      --log-path /path/to/logs --output-file sessions.txt --dump-sessions\n";
                     return 0;
                 }
@@ -1075,7 +1075,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
             {
                 std::cerr
                     << "Error in dump-state: " << e.what() << "\n"
-                    << "Usage: clickhouse-keeper-utils dump-state --snapshot-path <snapshot_path> --log-path <log_path>\n"
+                    << "Usage: datastore-keeper-utils dump-state --snapshot-path <snapshot_path> --log-path <log_path>\n"
                     << "       [--debug-mode] [--output-file <output_file>] [--output-format <format>]\n"
                     << "       [--dump-sessions] [--with-acl] [--end-index <index>]\n"
                     << "\n"
@@ -1111,13 +1111,13 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
                     != subcommand_args.end())
                 {
                     std::cout << "Analyze Keeper snapshot and print basic information\n\n"
-                              << "Usage:\n  clickhouse-keeper-utils snapshot-analyzer [options]\n\n"
+                              << "Usage:\n  datastore-keeper-utils snapshot-analyzer [options]\n\n"
                               << "Options:\n"
                               << analyzer_options << "\n"
                               << "Example:\n"
-                              << "  clickhouse-keeper-utils snapshot-analyzer --snapshot-path /path/to/snapshots\n"
-                              << "  clickhouse-keeper-utils snapshot-analyzer --snapshot-path /path/to/snapshots --full-storage\n"
-                              << "  clickhouse-keeper-utils snapshot-analyzer --snapshot-path /path/to/snapshots --with-node-stats\n";
+                              << "  datastore-keeper-utils snapshot-analyzer --snapshot-path /path/to/snapshots\n"
+                              << "  datastore-keeper-utils snapshot-analyzer --snapshot-path /path/to/snapshots --full-storage\n"
+                              << "  datastore-keeper-utils snapshot-analyzer --snapshot-path /path/to/snapshots --with-node-stats\n";
                     return 0;
                 }
 
@@ -1136,7 +1136,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
             catch (const std::exception & e)
             {
                 std::cerr << "Error in snapshot-analyzer: " << e.what() << "\n"
-                          << "Usage: clickhouse-keeper-utils snapshot-analyzer --snapshot-path <snapshots_path>\n";
+                          << "Usage: datastore-keeper-utils snapshot-analyzer --snapshot-path <snapshots_path>\n";
                 return 1;
             }
         }
@@ -1161,14 +1161,14 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
                     != subcommand_args.end())
                 {
                     std::cout << "Analyze Keeper changelogs and print information about them\n\n"
-                              << "Usage:\n  clickhouse-keeper-utils changelog-analyzer [options]\n\n"
+                              << "Usage:\n  datastore-keeper-utils changelog-analyzer [options]\n\n"
                               << "Options:\n"
                               << analyzer_options << "\n"
                               << "Examples:\n"
                               << "  # Analyze all changelog files in the directory\n"
-                              << "  clickhouse-keeper-utils changelog-analyzer --log-path /path/to/logs\n\n"
+                              << "  datastore-keeper-utils changelog-analyzer --log-path /path/to/logs\n\n"
                               << "  # Analyze a specific changelog file\n"
-                              << "  clickhouse-keeper-utils changelog-analyzer --log-path /path/to/logs --changelog changelog_1.bin\n";
+                              << "  datastore-keeper-utils changelog-analyzer --log-path /path/to/logs --changelog changelog_1.bin\n";
                     return 0;
                 }
 
@@ -1186,7 +1186,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
             catch (const std::exception & e)
             {
                 std::cerr << "Error in changelog-analyzer: " << e.what() << "\n"
-                          << "Usage: clickhouse-keeper-utils changelog-analyzer --log-path <logs_path> [--changelog <changelog_file>]\n";
+                          << "Usage: datastore-keeper-utils changelog-analyzer --log-path <logs_path> [--changelog <changelog_file>]\n";
                 return 1;
             }
         }
@@ -1213,15 +1213,15 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
                     != subcommand_args.end())
                 {
                     std::cout << "Extract a range of entries from a changelog to a new file\n\n"
-                              << "Usage:\n  clickhouse-keeper-utils changelog-splicer [options]\n\n"
+                              << "Usage:\n  datastore-keeper-utils changelog-splicer [options]\n\n"
                               << "Options:\n"
                               << splicer_options << "\n"
                               << "Examples:\n"
                               << "  # Extract specific range\n"
-                              << "  clickhouse-keeper-utils changelog-splicer --source /path/to/changelog.bin \\n"
+                              << "  datastore-keeper-utils changelog-splicer --source /path/to/changelog.bin \\n"
                               << "      --destination /output/dir --start-index 100 --end-index 200\n\n"
                               << "  # Extract from beginning of changelog to end-index\n"
-                              << "  clickhouse-keeper-utils changelog-splicer --source /path/to/changelog.bin \\n"
+                              << "  datastore-keeper-utils changelog-splicer --source /path/to/changelog.bin \\n"
                               << "      --destination /output/dir --end-index 200\n";
                     return 0;
                 }
@@ -1246,7 +1246,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
             catch (const std::exception & e)
             {
                 std::cerr << "Error in changelog-splicer: " << e.what() << "\n"
-                          << "Usage: clickhouse-keeper-utils changelog-splicer --source <source_file> "
+                          << "Usage: datastore-keeper-utils changelog-splicer --source <source_file> "
                           << "--destination <dest_dir> [--start-index <start>] --end-index <end>\n"
                           << "If --start-index is not provided, the source changelog's start index will be used.\n"
                           << "The destination should be a directory where the output file will be created.\n"
@@ -1280,17 +1280,17 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
                     != subcommand_args.end())
                 {
                     std::cout << "Deserialize and display contents of a Keeper changelog\n\n"
-                              << "Usage:\n  clickhouse-keeper-utils changelog-deserializer [options]\n\n"
+                              << "Usage:\n  datastore-keeper-utils changelog-deserializer [options]\n\n"
                               << "Options:\n"
                               << deserializer_options << "\n"
                               << "Examples:\n"
                               << "  # Output to console\n"
-                              << "  clickhouse-keeper-utils changelog-deserializer --changelog-path /path/to/changelog.bin\n\n"
+                              << "  datastore-keeper-utils changelog-deserializer --changelog-path /path/to/changelog.bin\n\n"
                               << "  # Save to file with JSON format\n"
-                              << "  clickhouse-keeper-utils changelog-deserializer --changelog-path /path/to/changelog.bin \\n"
+                              << "  datastore-keeper-utils changelog-deserializer --changelog-path /path/to/changelog.bin \\n"
                               << "      --output-file output.json --output-format JSONEachRow\n"
                               << "  # Process a specific range of entries\n"
-                              << "  clickhouse-keeper-utils changelog-deserializer --changelog-path /path/to/changelog.bin \\n"
+                              << "  datastore-keeper-utils changelog-deserializer --changelog-path /path/to/changelog.bin \\n"
                               << "      --start-index 100 --end-index 200\n";
                     return 0;
                 }
@@ -1321,7 +1321,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
             catch (const std::exception & e)
             {
                 std::cerr << "Error in changelog-deserializer: " << e.what() << "\n"
-                          << "Usage: clickhouse-keeper-utils changelog-deserializer --changelog-path <changelog_file> "
+                          << "Usage: datastore-keeper-utils changelog-deserializer --changelog-path <changelog_file> "
                           << "[--output-file <output_file>] [--output-format <format>] [--parallel-output]\n";
                 return 1;
             }
@@ -1335,7 +1335,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
                       << "  changelog-analyzer  Analyze Keeper changelog files\n"
                       << "  changelog-splicer   Extract a range of entries from a changelog\n"
                       << "  changelog-deserializer  Deserialize and display changelog contents\n"
-                      << "\nUse 'clickhouse-keeper-utils <command> --help' for more information about a specific command.\n";
+                      << "\nUse 'datastore-keeper-utils <command> --help' for more information about a specific command.\n";
             return 1;
         }
     }

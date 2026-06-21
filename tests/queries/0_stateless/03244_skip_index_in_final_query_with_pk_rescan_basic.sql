@@ -1,5 +1,5 @@
 -- Tags: no-random-settings
--- Testcase from https://github.com/ClickHouse/ClickHouse/pull/34243
+-- Testcase from https://github.com/ClickHouse/Datastore/pull/34243
 
 DROP TABLE IF EXISTS data_02201;
 

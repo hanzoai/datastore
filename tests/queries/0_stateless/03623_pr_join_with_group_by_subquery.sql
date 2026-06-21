@@ -1,8 +1,8 @@
 drop table if exists users sync;
 drop table if exists messages sync;
 
-create table users (id Int64, name String) engine=ReplicatedMergeTree('/clickhouse/{database}/tables/03623_users', 'r1') order by tuple();
-create table messages (id Int64, user_id Int64, text String) engine=ReplicatedMergeTree('/clickhouse/{database}/tables/03623_messages', 'r1') order by tuple();
+create table users (id Int64, name String) engine=ReplicatedMergeTree('/datastore/{database}/tables/03623_users', 'r1') order by tuple();
+create table messages (id Int64, user_id Int64, text String) engine=ReplicatedMergeTree('/datastore/{database}/tables/03623_messages', 'r1') order by tuple();
 
 insert into users select number, concat('user_', toString(number)) from numbers(10);
 insert into users select 11, concat('user_', toString(11));

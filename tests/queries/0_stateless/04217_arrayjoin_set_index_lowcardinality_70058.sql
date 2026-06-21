@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/70058
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/70058
 -- Previously failed with:
 --   Code: 10. NOT_FOUND_COLUMN_IN_BLOCK: Not found column res_sens_k in block:
 --   while executing 'INPUT : 0 -> res_sens_k Array(LowCardinality(String)) : 0'.

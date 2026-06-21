@@ -1,6 +1,6 @@
-<clickhouse>
-    <path>/var/lib/clickhouse/</path>
+<datastore>
+    <path>/var/lib/datastore/</path>
     <logger>
-        <clickhouse-disks>/clickhouse-disks-interactive.log</clickhouse-disks>
+        <datastore-disks>/datastore-disks-interactive.log</datastore-disks>
     </logger>
-</clickhouse>
+</datastore>

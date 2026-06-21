@@ -11,7 +11,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 # GRANT Statement
 
-- Grants [privileges](#privileges) to ClickHouse user accounts or roles.
+- Grants [privileges](#privileges) to Datastore user accounts or roles.
 - Assigns roles to user accounts or to the other roles.
 
 To revoke privileges, use the [REVOKE](../../sql-reference/statements/revoke.md) statement. Also you can list granted privileges with the [SHOW GRANTS](../../sql-reference/statements/show.md#show-grants) statement.
@@ -23,8 +23,8 @@ GRANT [ON CLUSTER cluster_name] privilege[(column_name [,...])] [,...] ON {db.ta
 ```
 
 - `privilege` — Type of privilege.
-- `role` — ClickHouse user role.
-- `user` — ClickHouse user account.
+- `role` — Datastore user role.
+- `user` — Datastore user account.
 
 The `WITH GRANT OPTION` clause grants `user` or `role` with permission to execute the `GRANT` query. Users can grant privileges of the same scope they have and less.
 The `WITH REPLACE OPTION` clause replace old privileges by new privileges for the `user` or `role`, if is not specified it appends privileges.
@@ -35,8 +35,8 @@ The `WITH REPLACE OPTION` clause replace old privileges by new privileges for th
 GRANT [ON CLUSTER cluster_name] role [,...] TO {user | another_role | CURRENT_USER} [,...] [WITH ADMIN OPTION] [WITH REPLACE OPTION]
 ```
 
-- `role` — ClickHouse user role.
-- `user` — ClickHouse user account.
+- `role` — Datastore user role.
+- `user` — Datastore user account.
 
 The `WITH ADMIN OPTION` clause grants [ADMIN OPTION](#admin-option) privilege to `user` or `role`.
 The `WITH REPLACE OPTION` clause replace old roles by new role for the `user` or `role`, if is not specified it appends roles.
@@ -47,8 +47,8 @@ GRANT CURRENT GRANTS{(privilege[(column_name [,...])] [,...] ON {db.table|db.*|*
 ```
 
 -   `privilege` — Type of privilege.
--   `role` — ClickHouse user role.
--   `user` — ClickHouse user account.
+-   `role` — Datastore user role.
+-   `user` — Datastore user account.
 
 Using the `CURRENT GRANTS` statement allows you to give all specified privileges to the given user or role.
 If none of the privileges were specified, then the given user or role will receive all available privileges for `CURRENT_USER`.
@@ -69,7 +69,7 @@ It means that `john` has the permission to execute:
 - `SELECT x FROM db.table`.
 - `SELECT y FROM db.table`.
 
-`john` can't execute `SELECT z FROM db.table`. The `SELECT * FROM db.table` also is not available. Processing this query, ClickHouse does not return any data, even `x` and `y`. The only exception is if a table contains only `x` and `y` columns. In this case ClickHouse returns all the data.
+`john` can't execute `SELECT z FROM db.table`. The `SELECT * FROM db.table` also is not available. Processing this query, Datastore does not return any data, even `x` and `y`. The only exception is if a table contains only `x` and `y` columns. In this case Datastore returns all the data.
 
 Also `john` has the `GRANT OPTION` privilege, so it can grant other users with privileges of the same or smaller scope.
 
@@ -89,7 +89,7 @@ Also, you can omit database name. In this case privileges are granted for curren
 For example, `GRANT SELECT ON * TO john` grants the privilege on all the tables in the current database, `GRANT SELECT ON mytable TO john` grants the privilege on the `mytable` table in the current database.
 
 :::note
-The feature described below is available starting with the 24.10 ClickHouse version.
+The feature described below is available starting with the 24.10 Datastore version.
 :::
 
 You can also put asterisks at the end of a table or a database name. This feature allows you to grant privileges on an abstract prefix of the table's path.
@@ -136,7 +136,7 @@ A Privilege is a permission given to a user to execute specific kinds of queries
 
 Privileges have a hierarchical structure and a set of permitted queries depends on the privilege scope.
 
-The hierarchy of privileges in ClickHouse is shown below:
+The hierarchy of privileges in Datastore is shown below:
 
 - [`ALL`](#all)
   - [`ACCESS MANAGEMENT`](#access-management)
@@ -388,7 +388,7 @@ Consider the following privilege:
 GRANT SELECT(x,y) ON db.table TO john
 ```
 
-This privilege allows `john` to execute any `SELECT` query that involves data from the `x` and/or `y` columns in `db.table`, for example, `SELECT x FROM db.table`. `john` can't execute `SELECT z FROM db.table`. The `SELECT * FROM db.table` also is not available. Processing this query, ClickHouse does not return any data, even `x` and `y`. The only exception is if a table contains only `x` and `y` columns, in this case ClickHouse returns all the data.
+This privilege allows `john` to execute any `SELECT` query that involves data from the `x` and/or `y` columns in `db.table`, for example, `SELECT x FROM db.table`. `john` can't execute `SELECT z FROM db.table`. The `SELECT * FROM db.table` also is not available. Processing this query, Datastore does not return any data, even `x` and `y`. The only exception is if a table contains only `x` and `y` columns, in this case Datastore returns all the data.
 
 ### INSERT {#insert}
 
@@ -772,7 +772,7 @@ Allows using a specified table engine when creating a table. Applies to [table e
 
 :::note
 By default, for backward compatibility reasons, creating a table with a specific table engine ignores grants,
-however you can change this behaviour by setting [`table_engines_require_grant` to true](https://github.com/ClickHouse/ClickHouse/blob/df970ed64eaf472de1e7af44c21ec95956607ebb/programs/server/config.xml#L853-L855)
+however you can change this behaviour by setting [`table_engines_require_grant` to true](https://github.com/ClickHouse/Datastore/blob/df970ed64eaf472de1e7af44c21ec95956607ebb/programs/server/config.xml#L853-L855)
 in config.xml.
 :::
 
@@ -789,7 +789,7 @@ For example, for the AzureBlobStorage table engine, following grant may be requi
 Grants all the privileges on regulated entity to a user account or a role.
 
 :::note
-The privilege `ALL` is not supported in ClickHouse Cloud, where the `default` user has limited permissions. Users can grant the maximum permissions to a user by granting the `default_role`. See [here](/cloud/security/manage-cloud-users) for further details.
+The privilege `ALL` is not supported in Datastore Cloud, where the `default` user has limited permissions. Users can grant the maximum permissions to a user by granting the `default_role`. See [here](/cloud/security/manage-cloud-users) for further details.
 Users can also use the `GRANT CURRENT GRANTS` as the default user to achieve similar effects to `ALL`.
 :::
 

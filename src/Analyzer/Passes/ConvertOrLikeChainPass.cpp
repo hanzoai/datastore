@@ -168,7 +168,7 @@ namespace DB
 {
 void ConvertOrLikeChainPass::run(QueryTreeNodePtr &, ContextPtr)
 {
-    /// 'multiMatchAny' uses the Vectorscan library. Do nothing if ClickHouse is built without it.
+    /// 'multiMatchAny' uses the Vectorscan library. Do nothing if Datastore is built without it.
 }
 }
 

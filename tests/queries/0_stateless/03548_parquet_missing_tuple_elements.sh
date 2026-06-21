@@ -5,8 +5,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-file=${CLICKHOUSE_TEST_UNIQUE_NAME}.parquet
-CHL="$CLICKHOUSE_LOCAL --input_format_parquet_allow_missing_columns=1"
+file=${DATASTORE_TEST_UNIQUE_NAME}.parquet
+CHL="$DATASTORE_LOCAL --input_format_parquet_allow_missing_columns=1"
 
 $CHL -q "insert into function file('$file', Parquet, 'x Array(Tuple(x Int64, y String))') select arrayMap(i -> (number * 10 + i, toString(number)||'-'||toString(i)), range(number)) from numbers(3)"
 

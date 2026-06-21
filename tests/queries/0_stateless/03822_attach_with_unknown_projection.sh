@@ -12,7 +12,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 #   1) checkDataPart  (ReplicatedMergeTreePartCheckThread)
 #   2) sendPartFromDisk (DataPartsExchange -- inter-replica fetches)
 
-run() { ${CLICKHOUSE_CLIENT} --query "$@"; }
+run() { ${DATASTORE_CLIENT} --query "$@"; }
 
 # ── ReplicatedMergeTree test ────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ do
      run "DROP TABLE IF EXISTS t_unknown_proj_$i SYNC"
 
      run "CREATE TABLE t_unknown_proj_$i (x Int32, y Int32, PROJECTION p (SELECT x, y ORDER BY x))
-          ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_unknown_proj', '$i')
+          ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_unknown_proj', '$i')
           PARTITION BY intDiv(y, 100) ORDER BY y
           SETTINGS max_parts_to_merge_at_once = 1"
 done

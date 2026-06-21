@@ -132,18 +132,18 @@ tr:nth-child(odd) td {{filter: brightness(90%);}}
 {{ text-align: right; }}
 
   </style>
-  <title>ClickHouse performance comparison</title>
+  <title>Datastore performance comparison</title>
 </head>
 <body>
 <div class="main">
 
-<h1>ClickHouse performance comparison</h1>
+<h1>Datastore performance comparison</h1>
 
 <div style="border: 1px solid #ccc; padding: 0 10px; border-radius: 8px; max-width: 1000px; background-color: #fffbea; text-align: center;">
   <h3>Good to know</h3>
   <p>
       You can learn how to interact with this report and find a lot of useful information (e.g., flame graphs) from the
-      <a href="https://github.com/ClickHouse/ClickHouse/blob/master/tests/performance/scripts/README.md#how-to-read-the-report" target="_blank">documentation</a>
+      <a href="https://github.com/ClickHouse/Datastore/blob/master/tests/performance/scripts/README.md#how-to-read-the-report" target="_blank">documentation</a>
   </p>
 </div>
 """
@@ -238,7 +238,7 @@ def tableStart(title):
     return f"""
         <h2 id="{anchor}">
             <a class="cancela" href="#{anchor}">{title}</a>
-            <a class="cancela" href="https://github.com/ClickHouse/ClickHouse/blob/master/tests/performance/scripts/README.md#{help_anchor}"><sup style="color: #888">?</sup></a>
+            <a class="cancela" href="https://github.com/ClickHouse/Datastore/blob/master/tests/performance/scripts/README.md#{help_anchor}"><sup style="color: #888">?</sup></a>
         </h2>
         <table class="{cls}">
     """
@@ -655,7 +655,7 @@ if args.report == "main":
         message_array.append(str(faster_queries) + " faster")
 
     if slower_queries:
-        # This threshold should be synchronized with the value in https://github.com/ClickHouse/ClickHouse/blob/master/tests/ci/performance_comparison_check.py#L225
+        # This threshold should be synchronized with the value in https://github.com/ClickHouse/Datastore/blob/master/tests/ci/performance_comparison_check.py#L225
         # False positives rate should be < 1%: https://shorturl.at/CDEK8
         if slower_queries > 5:
             status = "failure"

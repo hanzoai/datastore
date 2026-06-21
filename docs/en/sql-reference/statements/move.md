@@ -15,7 +15,7 @@ Syntax:
 MOVE {USER, ROLE, QUOTA, SETTINGS PROFILE, ROW POLICY} name1 [, name2, ...] TO access_storage_type
 ```
 
-Currently, there are five access storages in ClickHouse:
+Currently, there are five access storages in Datastore:
 - `local_directory`
 - `memory`
 - `replicated`

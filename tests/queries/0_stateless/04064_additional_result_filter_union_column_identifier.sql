@@ -1,6 +1,6 @@
 -- Regression test for "Column identifier is already registered" exception
 -- when additional_result_filter is used with UNION/EXCEPT queries.
--- https://github.com/ClickHouse/ClickHouse/issues/99931
+-- https://github.com/ClickHouse/Datastore/issues/99931
 
 DROP TABLE IF EXISTS t_04064;
 CREATE TABLE t_04064 (x UInt64) ENGINE = MergeTree ORDER BY x;

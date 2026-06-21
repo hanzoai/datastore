@@ -7,16 +7,16 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST", "127.0.0.1")
-CLICKHOUSE_PORT_HTTP = os.environ.get("CLICKHOUSE_PORT_HTTP", "8123")
-CLICKHOUSE_SERVER_URL_STR = (
-    "http://" + ":".join(str(s) for s in [CLICKHOUSE_HOST, CLICKHOUSE_PORT_HTTP]) + "/"
+DATASTORE_HOST = os.environ.get("DATASTORE_HOST", "127.0.0.1")
+DATASTORE_PORT_HTTP = os.environ.get("DATASTORE_PORT_HTTP", "8123")
+DATASTORE_SERVER_URL_STR = (
+    "http://" + ":".join(str(s) for s in [DATASTORE_HOST, DATASTORE_PORT_HTTP]) + "/"
 )
-CLICKHOUSE_DATABASE = os.environ.get("CLICKHOUSE_DATABASE", "test")
+DATASTORE_DATABASE = os.environ.get("DATASTORE_DATABASE", "test")
 
 
 class ClickHouseClient:
-    def __init__(self, host=CLICKHOUSE_SERVER_URL_STR):
+    def __init__(self, host=DATASTORE_SERVER_URL_STR):
         self.host = host
 
     def query(
@@ -34,7 +34,7 @@ class ClickHouseClient:
         params = {
             "timeout_before_checking_execution_speed": 120,
             "max_execution_time": 6000,
-            "database": CLICKHOUSE_DATABASE,
+            "database": DATASTORE_DATABASE,
         }
 
         # Add extra settings to params
@@ -70,7 +70,7 @@ class ClickHouseClient:
             "query": query,
             "timeout_before_checking_execution_speed": 120,
             "max_execution_time": 6000,
-            "database": CLICKHOUSE_DATABASE,
+            "database": DATASTORE_DATABASE,
         }
 
         headers = {"Content-Type": "application/binary"}

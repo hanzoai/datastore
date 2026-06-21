@@ -140,10 +140,10 @@ using ColumnChunkWriteStates = std::vector<ColumnChunkWriteState>;
 ///
 /// Column chunks can be encoded mostly independently of each other, in parallel.
 /// But there are two small complications:
-///  1. One ClickHouse column can translate to multiple leaf columns in parquet.
+///  1. One Datastore column can translate to multiple leaf columns in parquet.
 ///     E.g. tuples and maps.
 ///     If all primitive columns are in one big tuple, we'd like to encode them in parallel too,
-///     even though they're one top-level ClickHouse column.
+///     even though they're one top-level Datastore column.
 ///  2. At the end of each encoded column chunk there's a footer (struct ColumnMetaData) that
 ///     contains some absolute offsets in the file. We can't encode it until we know the exact
 ///     position in the file where the column chunk will go. So these footers have to be serialized
@@ -153,7 +153,7 @@ using ColumnChunkWriteStates = std::vector<ColumnChunkWriteState>;
 ///
 /// (1) Call writeFileHeader
 /// (2) For each row group:
-///  | (3) For each ClickHouse column:
+///  | (3) For each Datastore column:
 ///  |  | (4) Call prepareColumnForWrite.
 ///  |  |     It'll produce one or more ColumnChunkWriteStates, corresponding to primitive columns
 ///  |  |     that we need to write.

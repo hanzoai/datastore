@@ -1,6 +1,6 @@
 ---
-description: 'System table useful for C++ experts and ClickHouse engineers containing
-  information for introspection of the `clickhouse` binary.'
+description: 'System table useful for C++ experts and Datastore engineers containing
+  information for introspection of the `datastore` binary.'
 keywords: ['system table', 'symbols']
 slug: /operations/system-tables/symbols
 title: 'system.symbols'
@@ -9,8 +9,8 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-Contains information for introspection of `clickhouse` binary. It requires the introspection privilege to access.
-This table is only useful for C++ experts and ClickHouse engineers.
+Contains information for introspection of `datastore` binary. It requires the introspection privilege to access.
+This table is only useful for C++ experts and Datastore engineers.
 
 ## Columns {#columns}
 

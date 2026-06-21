@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <async>1</async>
     </logger>
-</clickhouse>
+</datastore>

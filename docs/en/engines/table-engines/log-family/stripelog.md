@@ -15,7 +15,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 This engine belongs to the family of log engines. See the common properties of log engines and their differences in the [Log Engine Family](../../../engines/table-engines/log-family/index.md) article.
 
-Use this engine in scenarios when you need to write many tables with a small amount of data (less than 1 million rows). For example, this table can be used to store incoming data batches for transformation where atomic processing of them is required. 100k instances of this table type are viable for a ClickHouse server. This table engine should be preferred over [Log](./log.md) when a high number of tables are required. This is at the expense of read efficiency.
+Use this engine in scenarios when you need to write many tables with a small amount of data (less than 1 million rows). For example, this table can be used to store incoming data batches for transformation where atomic processing of them is required. 100k instances of this table type are viable for a Datastore server. This table engine should be preferred over [Log](./log.md) when a high number of tables are required. This is at the expense of read efficiency.
 
 ## Creating a table {#table_engines-stripelog-creating-a-table}
 
@@ -32,9 +32,9 @@ See the detailed description of the [CREATE TABLE](/sql-reference/statements/cre
 
 ## Writing the data {#table_engines-stripelog-writing-the-data}
 
-The `StripeLog` engine stores all the columns in one file. For each `INSERT` query, ClickHouse appends the data block to the end of a table file, writing columns one by one.
+The `StripeLog` engine stores all the columns in one file. For each `INSERT` query, Datastore appends the data block to the end of a table file, writing columns one by one.
 
-For each table ClickHouse writes the files:
+For each table Datastore writes the files:
 
 - `data.bin` — Data file.
 - `index.mrk` — File with marks. Marks contain offsets for each column of each data block inserted.
@@ -43,7 +43,7 @@ The `StripeLog` engine does not support the `ALTER UPDATE` and `ALTER DELETE` op
 
 ## Reading the data {#table_engines-stripelog-reading-the-data}
 
-The file with marks allows ClickHouse to parallelize the reading of data. This means that a `SELECT` query returns rows in an unpredictable order. Use the `ORDER BY` clause to sort rows.
+The file with marks allows Datastore to parallelize the reading of data. This means that a `SELECT` query returns rows in an unpredictable order. Use the `ORDER BY` clause to sort rows.
 
 ## Example of use {#table_engines-stripelog-example-of-use}
 
@@ -68,7 +68,7 @@ INSERT INTO stripe_log_table VALUES (now(),'REGULAR','The second regular message
 
 We used two `INSERT` queries to create two data blocks inside the `data.bin` file.
 
-ClickHouse uses multiple threads when selecting data. Each thread reads a separate data block and returns resulting rows independently as it finishes. As a result, the order of blocks of rows in the output does not match the order of the same blocks in the input in most cases. For example:
+Datastore uses multiple threads when selecting data. Each thread reads a separate data block and returns resulting rows independently as it finishes. As a result, the order of blocks of rows in the output does not match the order of the same blocks in the input in most cases. For example:
 
 ```sql
 SELECT * FROM stripe_log_table

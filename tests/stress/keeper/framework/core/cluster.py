@@ -44,7 +44,7 @@ class ZooNodeWrapper:
 class ZKBackedNode:
     """Unified node for Zookeeper backend: same shape as Keeper (3 nodes, each with 4LW + CH metrics).
 
-    Wraps one ClickHouse instance (for prom, ch_metrics) and one ZK endpoint (for 4LW and workload).
+    Wraps one Datastore instance (for prom, ch_metrics) and one ZK endpoint (for 4LW and workload).
     - 4LW (mntr, srvr, dirs): from ZK container (zoo1, zoo2, zoo3).
     - Container stats: from ZK container (workload hits ZK; we measure ZK CPU/memory).
     - Prom/ch_metrics: from CH instance (keeper1, keeper2, keeper3).
@@ -62,7 +62,7 @@ class ZKBackedNode:
         self.keeper_client_host_port = None
 
     def exec_in_container(self, cmd, detach=False, nothrow=False, **kwargs):
-        """Run in the ClickHouse container (for prom_metrics, ch_metrics via curl/query)."""
+        """Run in the Datastore container (for prom_metrics, ch_metrics via curl/query)."""
         return self._ch.exec_in_container(cmd, detach=detach, nothrow=nothrow, **kwargs)
 
     def exec_in_container_zk(self, cmd, detach=False, nothrow=False, **kwargs):
@@ -73,7 +73,7 @@ class ZKBackedNode:
         )
 
     def query(self, sql, *args, **kwargs):
-        """Run SQL on the ClickHouse instance (for ch_metrics, ch_async_metrics)."""
+        """Run SQL on the Datastore instance (for ch_metrics, ch_async_metrics)."""
         return self._ch.query(sql, *args, **kwargs)
 
 
@@ -136,7 +136,7 @@ class RaftKeeperCluster:
         self.base_dir = pathlib.Path(base_dir)
         self.instances_dir = self.base_dir  # for cleanup path in test_scenarios
         self.env = env
-        self.server_bin_path = os.environ.get("CLICKHOUSE_BINARY", "clickhouse")
+        self.server_bin_path = os.environ.get("DATASTORE_BINARY", "datastore")
         self._container_ids = {}
 
     def get_instance_ip(self, name):
@@ -371,18 +371,18 @@ def _write_keeper_config(conf_dir, name, full_xml):
 def _build_node_config_xml(server_id, peers_xml, coord_settings, feature_flags_xml):
     """Build complete XML config for a single Keeper node."""
     path_block = (
-        "<log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>"
-        "<snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>"
+        "<log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>"
+        "<snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>"
     )
     keeper_server = _keeper_server_xml(
         server_id, peers_xml, path_block, _http_control_xml(), coord_settings, feature_flags_xml
     )
     return (
-        "<clickhouse>"
+        "<datastore>"
         + keeper_server
         + _prometheus_xml()
         + _listen_hosts_xml()
-        + "</clickhouse>"
+        + "</datastore>"
     )
 
 
@@ -397,7 +397,7 @@ class ClusterBuilder:
     def _build_zookeeper_cluster(self, topology, opts):
         """Build cluster with Apache ZooKeeper, same configuration shape as Keeper.
 
-        Starts ZK from compose, then 3 ClickHouse instances (keeper1, keeper2, keeper3)
+        Starts ZK from compose, then 3 Datastore instances (keeper1, keeper2, keeper3)
         with with_zookeeper=True. Nodes are ZKBackedNode: 4LW from ZK container,
         prom/ch_metrics/container from CH instance, so sampler and gates need no ZK-only branches.
         """
@@ -418,10 +418,10 @@ class ClusterBuilder:
         os.environ.pop("KEEPER_PUBLISH_CLIENT", None)
 
         # Base config.xml has <prometheus> commented out; add config.d fragment so /metrics works (sampler, gates).
-        # Use keeper_metrics_only=false so ClickHouse exports ZooKeeper* ProfileEvents (ZK client), not just Keeper* (server).
+        # Use keeper_metrics_only=false so Datastore exports ZooKeeper* ProfileEvents (ZK client), not just Keeper* (server).
         prometheus_cfg = self.conf_dir / "zk_prometheus.xml"
         prometheus_cfg.write_text(
-            "<clickhouse>" + _prometheus_xml(keeper_metrics_only=False) + "</clickhouse>"
+            "<datastore>" + _prometheus_xml(keeper_metrics_only=False) + "</datastore>"
         )
         zk_main_configs = [str(prometheus_cfg)]
 

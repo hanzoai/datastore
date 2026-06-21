@@ -19,10 +19,10 @@ LIMITED_MEM = Utils.physical_memory() - 2 * 1024**3
 KEEPER_DIND_MEM = Utils.physical_memory() * 70 // 100
 
 BINARY_DOCKER_COMMAND = (
-    "clickhouse/binary-builder+--network=host"
+    "datastore/binary-builder+--network=host"
     f"+--memory={Utils.physical_memory() * 95 // 100}"
     f"+--memory-reservation={Utils.physical_memory() * 9 // 10}"
-    f"+--volume=.:/ClickHouse"
+    f"+--volume=.:/Datastore"
 )
 
 if Utils.is_arm():
@@ -55,7 +55,7 @@ fast_test_digest_config = Job.CacheDigestConfig(
         "./ci/jobs/scripts/clickhouse_proc.py",
         "./tests/queries/0_stateless/",
         "./tests/config/",
-        "./tests/clickhouse-test",
+        "./tests/datastore-test",
         "./src",
         "./contrib/",
         "./.gitmodules",
@@ -83,12 +83,12 @@ common_ft_job_config = Job.Config(
     name=JobNames.STATELESS,
     runs_on=[],  # from parametrize
     command='python3 ./ci/jobs/functional_tests.py --options "{PARAMETER}"',
-    # some tests can be flaky due to very slow disks - use tmpfs for temporary ClickHouse files
+    # some tests can be flaky due to very slow disks - use tmpfs for temporary Datastore files
     # --cap-add=SYS_PTRACE and --privileged for gdb in docker
-    # --root/--privileged/--cgroupns=host is required for clickhouse-test --memory-limit
+    # --root/--privileged/--cgroupns=host is required for datastore-test --memory-limit
     # --ulimit nofile is raised so that azurite-rs (the in-process Azure Blob
     # Storage emulator) does not run out of file descriptors under parallel load
-    run_in_docker=f"clickhouse/stateless-test+--memory={LIMITED_MEM}+--cgroupns=host+--cap-add=SYS_PTRACE+--privileged+--security-opt seccomp=unconfined+--ulimit nofile=1048576:1048576+--tmpfs /tmp/clickhouse:mode=1777+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/etc/clickhouse-server1:/etc/clickhouse-server1+--volume=./ci/tmp/etc/clickhouse-server2:/etc/clickhouse-server2+--volume=./ci/tmp/var/log:/var/log+root",
+    run_in_docker=f"datastore/stateless-test+--memory={LIMITED_MEM}+--cgroupns=host+--cap-add=SYS_PTRACE+--privileged+--security-opt seccomp=unconfined+--ulimit nofile=1048576:1048576+--tmpfs /tmp/datastore:mode=1777+--volume=./ci/tmp/var/lib/datastore:/var/lib/datastore+--volume=./ci/tmp/etc/datastore-client:/etc/datastore-client+--volume=./ci/tmp/etc/datastore-server:/etc/datastore-server+--volume=./ci/tmp/etc/datastore-server1:/etc/datastore-server1+--volume=./ci/tmp/etc/datastore-server2:/etc/datastore-server2+--volume=./ci/tmp/var/log:/var/log+root",
     digest_config=Job.CacheDigestConfig(
         include_paths=[
             "./ci/jobs/functional_tests.py",
@@ -97,7 +97,7 @@ common_ft_job_config = Job.Config(
             "./ci/jobs/scripts/functional_tests/setup_log_cluster.sh",
             "./ci/praktika/cidb.py",
             "./tests/queries",
-            "./tests/clickhouse-test",
+            "./tests/datastore-test",
             "./tests/config",
             "./tests/*.txt",
             "./ci/docker/stateless-test",
@@ -112,7 +112,7 @@ common_unit_test_job_config = Job.Config(
     name=JobNames.UNITTEST,
     runs_on=[],  # from parametrize()
     command=f"python3 ./ci/jobs/unit_tests_job.py --gtest_filter=-FunctionsStress.*",
-    run_in_docker="clickhouse/test-base+--privileged",
+    run_in_docker="datastore/test-base+--privileged",
     digest_config=Job.CacheDigestConfig(
         include_paths=[
             "./ci/jobs/unit_tests_job.py",
@@ -131,7 +131,7 @@ common_stress_job_config = Job.Config(
             "./ci/jobs/stress_job.py",
             "./ci/jobs/scripts/clickhouse_proc.py",
             "./ci/jobs/scripts/stress/stress.py",
-            "./tests/clickhouse-test",
+            "./tests/datastore-test",
             "./tests/config",
             "./tests/*.txt",
             "./tests/docker_scripts/",
@@ -157,7 +157,7 @@ common_integration_test_job_config = Job.Config(
             "./ci/jobs/scripts/docker_in_docker.sh",
         ],
     ),
-    run_in_docker=f"clickhouse/integration-tests-runner+root+--memory={LIMITED_MEM}+--privileged+--dns-search='.'+--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--cgroupns=host+--ulimit nofile=262144:262144",
+    run_in_docker=f"datastore/integration-tests-runner+root+--memory={LIMITED_MEM}+--privileged+--dns-search='.'+--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--cgroupns=host+--ulimit nofile=262144:262144",
     post_hooks=[
         "python3 ci/jobs/scripts/job_hooks/docker_volume_clean_up_hook.py",
         "python3 ci/jobs/scripts/job_hooks/promql_compliance_hook.py",
@@ -170,7 +170,7 @@ class JobConfigs:
         name=JobNames.STYLE_CHECK,
         runs_on=RunnerLabels.STYLE_CHECK_ARM,
         command="python3 ./ci/jobs/check_style.py",
-        run_in_docker="clickhouse/style-test",
+        run_in_docker="datastore/style-test",
         enable_commit_status=True,
     )
     code_review = Job.Config(
@@ -184,7 +184,7 @@ class JobConfigs:
         runs_on=RunnerLabels.ARM_LARGE,
         command="python3 ./ci/jobs/ci_tests_job.py",
         timeout=1200,
-        run_in_docker=f"clickhouse/integration-tests-runner+root+--privileged+--dns-search='.'+--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--cgroupns=host",
+        run_in_docker=f"datastore/integration-tests-runner+root+--privileged+--dns-search='.'+--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--cgroupns=host",
         digest_config=Job.CacheDigestConfig(include_paths=["./ci"]),
         post_hooks=["python3 ci/jobs/scripts/job_hooks/docker_volume_clean_up_hook.py"],
     )
@@ -193,7 +193,7 @@ class JobConfigs:
         runs_on=RunnerLabels.AMD_LARGE,
         command="python3 ./ci/jobs/fast_test.py",
         # --network=host required for ec2 metadata http endpoint to work
-        run_in_docker="clickhouse/fasttest+--network=host+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/var/log:/var/log+--volume=.:/ClickHouse",
+        run_in_docker="datastore/fasttest+--network=host+--volume=./ci/tmp/var/lib/datastore:/var/lib/datastore+--volume=./ci/tmp/etc/datastore-client:/etc/datastore-client+--volume=./ci/tmp/etc/datastore-server:/etc/datastore-server+--volume=./ci/tmp/var/log:/var/log+--volume=.:/Datastore",
         digest_config=fast_test_digest_config,
         result_name_for_cidb="Tests",
         needs_submodules=True,
@@ -207,7 +207,7 @@ class JobConfigs:
         force_success=True,
         post_hooks=[
             "python3 ./ci/jobs/scripts/job_hooks/clickhouse_test_cleanup_hook.py",
-            "sudo rm -rf /Users/ec2-user/actions-runner/_work/ClickHouse/ClickHouse/ci/tmp/run* /System/Volumes/Data/System/Library/Caches/com.apple.coresymbolicationd/data",
+            "sudo rm -rf /Users/ec2-user/actions-runner/_work/Datastore/Datastore/ci/tmp/run* /System/Volumes/Data/System/Library/Caches/com.apple.coresymbolicationd/data",
         ],
     ).parametrize(
         Job.ParamSet(
@@ -537,18 +537,18 @@ class JobConfigs:
             requires=[ArtifactNames.CH_ARM_ASAN_UBSAN],
         ),
     )
-    # --root/--privileged/--cgroupns=host is required for clickhouse-test --memory-limit
+    # --root/--privileged/--cgroupns=host is required for datastore-test --memory-limit
     bugfix_validation_ft_pr_job = Job.Config(
         name=JobNames.BUGFIX_VALIDATE_FT,
         runs_on=RunnerLabels.FUNC_TESTER_ARM,
         command="python3 ./ci/jobs/functional_tests.py --options BugfixValidation",
-        # some tests can be flaky due to very slow disks - use tmpfs for temporary ClickHouse files
-        run_in_docker="clickhouse/stateless-test+--network=host+--privileged+--cgroupns=host+root+--security-opt seccomp=unconfined+--ulimit nofile=1048576:1048576+--tmpfs /tmp/clickhouse:mode=1777",
+        # some tests can be flaky due to very slow disks - use tmpfs for temporary Datastore files
+        run_in_docker="datastore/stateless-test+--network=host+--privileged+--cgroupns=host+root+--security-opt seccomp=unconfined+--ulimit nofile=1048576:1048576+--tmpfs /tmp/datastore:mode=1777",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./ci/jobs/functional_tests.py",
                 "./tests/queries",
-                "./tests/clickhouse-test",
+                "./tests/datastore-test",
                 "./tests/config",
                 "./tests/*.txt",
             ],
@@ -557,7 +557,7 @@ class JobConfigs:
     )
     lightweight_functional_tests_job = Job.Config(
         name="Quick functional tests",
-        command="python3 ./ci/jobs/clickhouse_light.py --path ./ci/tmp/clickhouse",
+        command="python3 ./ci/jobs/clickhouse_light.py --path ./ci/tmp/datastore",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./ci/jobs/clickhouse_light.py",
@@ -1016,7 +1016,7 @@ class JobConfigs:
         runs_on=RunnerLabels.ARM_LARGE,
         command="python3 ./ci/jobs/keeper_stress_job.py",
         run_in_docker=(
-            f"clickhouse/integration-tests-runner+root+--memory={KEEPER_DIND_MEM}+--privileged+--dns-search='.'+"
+            f"datastore/integration-tests-runner+root+--memory={KEEPER_DIND_MEM}+--privileged+--dns-search='.'+"
             f"--security-opt seccomp=unconfined+--cap-add=SYS_PTRACE+{docker_sock_mount}+--volume=clickhouse_integration_tests_volume:/var/lib/docker+--ulimit nofile=262144:262144"
         ),
         digest_config=Job.CacheDigestConfig(
@@ -1265,7 +1265,7 @@ class JobConfigs:
         runs_on=["#from param"],
         command='python3 ./ci/jobs/performance_tests.py --test-options "{PARAMETER}"',
         # TODO: switch to stateless-test image
-        run_in_docker="clickhouse/performance-comparison",
+        run_in_docker="datastore/performance-comparison",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./tests/performance/",
@@ -1301,7 +1301,7 @@ class JobConfigs:
         runs_on=["#from param"],
         command='python3 ./ci/jobs/performance_tests.py --test-options "{PARAMETER}"',
         # TODO: switch to stateless-test image
-        run_in_docker="clickhouse/performance-comparison",
+        run_in_docker="datastore/performance-comparison",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
                 "./tests/performance/",
@@ -1334,7 +1334,7 @@ class JobConfigs:
                 "./ci/jobs/scripts/functional_tests/setup_log_cluster.sh",
             ],
         ),
-        run_in_docker="clickhouse/stateless-test+--shm-size=16g+--network=host",
+        run_in_docker="datastore/stateless-test+--shm-size=16g+--network=host",
     ).parametrize(
         Job.ParamSet(
             parameter=BuildTypes.AMD_RELEASE,
@@ -1363,7 +1363,7 @@ class JobConfigs:
                 "./src/Functions",
             ],
         ),
-        run_in_docker="clickhouse/docs-builder",
+        run_in_docker="datastore/docs-builder",
         requires=[ArtifactNames.CH_ARM_BINARY],
         run_after=[JobNames.STYLE_CHECK],
     )
@@ -1390,7 +1390,7 @@ class JobConfigs:
                 "./docs/en/",
             ],
         ),
-        run_in_docker="clickhouse/docs-builder"
+        run_in_docker="datastore/docs-builder"
     )
     docker_server = Job.Config(
         name=JobNames.DOCKER_SERVER,
@@ -1427,7 +1427,7 @@ class JobConfigs:
         digest_config=Job.CacheDigestConfig(
             include_paths=["./ci/jobs/sqlancer_job.sh", "./ci/docker/sqlancer-test"],
         ),
-        run_in_docker="clickhouse/sqlancer-test",
+        run_in_docker="datastore/sqlancer-test",
         timeout=3600,
     ).parametrize(
         Job.ParamSet(
@@ -1446,7 +1446,7 @@ class JobConfigs:
             ],
         ),
         requires=[ArtifactNames.CH_ARM_RELEASE],
-        run_in_docker="clickhouse/stateless-test",
+        run_in_docker="datastore/stateless-test",
         timeout=10800,
     )
     sqllogic_test_master_job = Job.Config(
@@ -1460,7 +1460,7 @@ class JobConfigs:
             ],
         ),
         requires=[ArtifactNames.CH_ARM_RELEASE],
-        run_in_docker="clickhouse/stateless-test",
+        run_in_docker="datastore/stateless-test",
         timeout=10800,
     )
     jepsen_keeper = Job.Config(
@@ -1514,14 +1514,14 @@ class JobConfigs:
     vector_search_stress_job = Job.Config(
         name="Vector Search Stress",
         runs_on=RunnerLabels.ARM_LARGE_STORAGE,
-        run_in_docker="clickhouse/performance-comparison",
+        run_in_docker="datastore/performance-comparison",
         command="python3 ./ci/jobs/vector_search_stress_tests.py",
         timeout=6 * 3600,
     )
     llvm_coverage_job = Job.Config(
         name=JobNames.LLVM_COVERAGE,
         runs_on=RunnerLabels.AMD_SMALL,
-        run_in_docker="clickhouse/test-base",
+        run_in_docker="datastore/test-base",
         requires=[
             ArtifactNames.CH_AMD_LLVM_COVERAGE_BUILD,
             ArtifactNames.UNITTEST_LLVM_COVERAGE,

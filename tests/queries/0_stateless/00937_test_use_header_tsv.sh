@@ -5,10 +5,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS tsv"
-$CLICKHOUSE_CLIENT --query="CREATE TABLE tsv (d Date, u UInt8, str String) ENGINE = TinyLog"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS tsv"
+$DATASTORE_CLIENT --query="CREATE TABLE tsv (d Date, u UInt8, str String) ENGINE = TinyLog"
 
-INSERT_QUERY='$CLICKHOUSE_CLIENT --query="INSERT INTO tsv FORMAT TSVWithNames"'
+INSERT_QUERY='$DATASTORE_CLIENT --query="INSERT INTO tsv FORMAT TSVWithNames"'
 USE_HEADER='--input_format_with_names_use_header=1'
 SKIP_UNKNOWN='--input_format_skip_unknown_fields=1'
 
@@ -34,5 +34,5 @@ echo -ne 'str\tu\nLine16\t1\nLine17\t2\n'                  | eval "$INSERT_QUERY
 echo -ne 'd\tstr\n2019-04-18\tLine18\n2019-04-18\tLine19\n'| eval "$INSERT_QUERY" $USE_HEADER
 echo -ne 'unknown\n\n\n'                                   | eval "$INSERT_QUERY" $USE_HEADER $SKIP_UNKNOWN
 
-$CLICKHOUSE_CLIENT --query="SELECT * FROM tsv ORDER BY ALL"
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS tsv"
+$DATASTORE_CLIENT --query="SELECT * FROM tsv ORDER BY ALL"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS tsv"

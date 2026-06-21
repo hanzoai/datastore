@@ -15,18 +15,18 @@ set -e
 function wait_until()
 {
     local q=$1 && shift
-    while [ "$($CLICKHOUSE_CLIENT -m -q "$q")" != "1" ]; do
+    while [ "$($DATASTORE_CLIENT -m -q "$q")" != "1" ]; do
         sleep 0.5
     done
 }
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     drop table if exists rmt_master;
     drop table if exists rmt_slave;
 
-    create table rmt_master (key Int) engine=ReplicatedMergeTree('/clickhouse/{database}', 'master') order by tuple() settings always_fetch_merged_part=0, old_parts_lifetime=600;
+    create table rmt_master (key Int) engine=ReplicatedMergeTree('/datastore/{database}', 'master') order by tuple() settings always_fetch_merged_part=0, old_parts_lifetime=600;
     -- prefer_fetch_merged_part_*_threshold=0, consider this table as a 'slave'
-    create table rmt_slave (key Int) engine=ReplicatedMergeTree('/clickhouse/{database}', 'slave') order by tuple() settings prefer_fetch_merged_part_time_threshold=0, prefer_fetch_merged_part_size_threshold=0, old_parts_lifetime=600;
+    create table rmt_slave (key Int) engine=ReplicatedMergeTree('/datastore/{database}', 'slave') order by tuple() settings prefer_fetch_merged_part_time_threshold=0, prefer_fetch_merged_part_size_threshold=0, old_parts_lifetime=600;
 
     insert into rmt_master values (1);
 
@@ -41,17 +41,17 @@ $CLICKHOUSE_CLIENT -m -q "
 # the part, and rmt_slave will consider it instead of performing mutation on
 # it's own, otherwise prefer_fetch_merged_part_*_threshold will be simply ignored
 wait_for_mutation rmt_master 0000000000
-$CLICKHOUSE_CLIENT -m -q "system start pulling replication log rmt_slave"
+$DATASTORE_CLIENT -m -q "system start pulling replication log rmt_slave"
 # and wait until rmt_slave to fetch the part and reflect this error in system.part_log
-wait_until "select count()>0 from system.part_log where event_date >= yesterday() AND event_time >= now() - 600 AND table = 'rmt_slave' and database = '$CLICKHOUSE_DATABASE' and error > 0"
-$CLICKHOUSE_CLIENT -m -q "
+wait_until "select count()>0 from system.part_log where event_date >= yesterday() AND event_time >= now() - 600 AND table = 'rmt_slave' and database = '$DATASTORE_DATABASE' and error > 0"
+$DATASTORE_CLIENT -m -q "
     select 'before';
     select table, event_type, error>0, countIf(error=0) from system.part_log where event_date >= yesterday() AND event_time >= now() - 600 AND database = currentDatabase() group by 1, 2, 3 order by 1, 2, 3;
 
     system start replicated sends rmt_master;
 "
 wait_for_mutation rmt_slave 0000000000
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     system sync replica rmt_slave;
 
     system flush logs part_log;

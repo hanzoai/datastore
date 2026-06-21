@@ -10,7 +10,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Test 1: Using --host= syntax with explicit credentials should not cause "option cannot be specified more than once" error
 # This tests that when argv[1] starts with '-', we don't trigger cloud endpoint auto-detection
 echo "Test 1: --host= with --secure should work"
-output=$($CLICKHOUSE_CLIENT_BINARY --host="${CLICKHOUSE_HOST}" --port="${CLICKHOUSE_PORT_TCP}" --user=default --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY --host="${DATASTORE_HOST}" --port="${DATASTORE_PORT_TCP}" --user=default --query "SELECT 1" 2>&1)
 if echo "$output" | grep -q "cannot be specified more than once"; then
     echo "FAILED: duplicate option error"
 else
@@ -19,7 +19,7 @@ fi
 
 # Test 2: Using --host (space) syntax with explicit credentials should work
 echo "Test 2: --host (space) with credentials should work"
-output=$($CLICKHOUSE_CLIENT_BINARY --host "${CLICKHOUSE_HOST}" --port "${CLICKHOUSE_PORT_TCP}" --user default --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY --host "${DATASTORE_HOST}" --port "${DATASTORE_PORT_TCP}" --user default --query "SELECT 1" 2>&1)
 if echo "$output" | grep -q "cannot be specified more than once"; then
     echo "FAILED: duplicate option error"
 else
@@ -28,7 +28,7 @@ fi
 
 # Test 3: Verify --host= with --port= doesn't cause connection string mixing error
 echo "Test 3: --host= with --port= should work"
-output=$($CLICKHOUSE_CLIENT_BINARY --host="${CLICKHOUSE_HOST}" --port="${CLICKHOUSE_PORT_TCP}" --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY --host="${DATASTORE_HOST}" --port="${DATASTORE_PORT_TCP}" --query "SELECT 1" 2>&1)
 if echo "$output" | grep -q "Mixing a connection string"; then
     echo "FAILED: connection string mixing error"
 else
@@ -37,7 +37,7 @@ fi
 
 # Test 4: Verify --host= with --port (space) doesn't cause connection string mixing error  
 echo "Test 4: --host= with --port (space) should work"
-output=$($CLICKHOUSE_CLIENT_BINARY --host="${CLICKHOUSE_HOST}" --port "${CLICKHOUSE_PORT_TCP}" --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY --host="${DATASTORE_HOST}" --port "${DATASTORE_PORT_TCP}" --query "SELECT 1" 2>&1)
 if echo "$output" | grep -q "Mixing a connection string"; then
     echo "FAILED: connection string mixing error"
 else
@@ -46,7 +46,7 @@ fi
 
 # Test 5: Test with a config file containing credentials - should use config credentials
 # Create a temporary config file with user/password
-CONFIG_FILE="${CLICKHOUSE_TMP}/test_client_config_$$.xml"
+CONFIG_FILE="${DATASTORE_TMP}/test_client_config_$$.xml"
 cat > "$CONFIG_FILE" << EOF
 <config>
     <user>default</user>
@@ -55,7 +55,7 @@ cat > "$CONFIG_FILE" << EOF
 EOF
 
 echo "Test 5: Config file credentials should be respected"
-output=$($CLICKHOUSE_CLIENT_BINARY --config-file="$CONFIG_FILE" --host="${CLICKHOUSE_HOST}" --port="${CLICKHOUSE_PORT_TCP}" --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY --config-file="$CONFIG_FILE" --host="${DATASTORE_HOST}" --port="${DATASTORE_PORT_TCP}" --query "SELECT 1" 2>&1)
 if echo "$output" | grep -qi "login\|OAuth\|browser"; then
     echo "FAILED: OAuth login triggered despite config credentials"
 else
@@ -65,7 +65,7 @@ fi
 rm -f "$CONFIG_FILE"
 
 echo "Test 6: Connection string with only user should not trigger OAuth"
-output=$($CLICKHOUSE_CLIENT_BINARY "clickhouse://default@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT_TCP}/" --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY "datastore://default@${DATASTORE_HOST}:${DATASTORE_PORT_TCP}/" --query "SELECT 1" 2>&1)
 if echo "$output" | grep -qi "login\|OAuth\|browser"; then
     echo "FAILED: OAuth login triggered despite connection string credentials"
 else
@@ -73,7 +73,7 @@ else
 fi
 
 echo "Test 7: Connection string with user:password@ should not trigger OAuth"
-output=$($CLICKHOUSE_CLIENT_BINARY "clickhouse://default:super-secret@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT_TCP}/" --query "SELECT 1" 2>&1)
+output=$($DATASTORE_CLIENT_BINARY "datastore://default:super-secret@${DATASTORE_HOST}:${DATASTORE_PORT_TCP}/" --query "SELECT 1" 2>&1)
 if echo "$output" | grep -qi "login\|OAuth\|browser"; then
     echo "FAILED: OAuth login triggered despite connection string credentials"
 else
@@ -84,10 +84,10 @@ fi
 echo "Test 8: Multiple host/port format variations"
 failed=0
 for cmd in \
-    "$CLICKHOUSE_CLIENT_BINARY --host=${CLICKHOUSE_HOST} --port=${CLICKHOUSE_PORT_TCP} --query 'SELECT 1'" \
-    "$CLICKHOUSE_CLIENT_BINARY --host ${CLICKHOUSE_HOST} --port=${CLICKHOUSE_PORT_TCP} --query 'SELECT 1'" \
-    "$CLICKHOUSE_CLIENT_BINARY --host=${CLICKHOUSE_HOST} --port ${CLICKHOUSE_PORT_TCP} --query 'SELECT 1'" \
-    "$CLICKHOUSE_CLIENT_BINARY --host ${CLICKHOUSE_HOST} --port ${CLICKHOUSE_PORT_TCP} --query 'SELECT 1'"
+    "$DATASTORE_CLIENT_BINARY --host=${DATASTORE_HOST} --port=${DATASTORE_PORT_TCP} --query 'SELECT 1'" \
+    "$DATASTORE_CLIENT_BINARY --host ${DATASTORE_HOST} --port=${DATASTORE_PORT_TCP} --query 'SELECT 1'" \
+    "$DATASTORE_CLIENT_BINARY --host=${DATASTORE_HOST} --port ${DATASTORE_PORT_TCP} --query 'SELECT 1'" \
+    "$DATASTORE_CLIENT_BINARY --host ${DATASTORE_HOST} --port ${DATASTORE_PORT_TCP} --query 'SELECT 1'"
 do
     output=$(eval "$cmd" 2>&1)
     if echo "$output" | grep -qiE "error|BAD_ARGUMENTS|cannot be specified"; then

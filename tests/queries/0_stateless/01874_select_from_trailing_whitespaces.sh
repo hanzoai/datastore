@@ -24,7 +24,7 @@ queries=(
 )
 for q in "${queries[@]}"; do
     echo "# $q"
-    $CLICKHOUSE_FORMAT <<<"$q"
+    $DATASTORE_FORMAT <<<"$q"
     echo "# /* oneline */ $q"
-    $CLICKHOUSE_FORMAT --oneline <<<"$q"
+    $DATASTORE_FORMAT --oneline <<<"$q"
 done

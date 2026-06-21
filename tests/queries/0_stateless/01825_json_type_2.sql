@@ -6,7 +6,7 @@ SET input_format_json_infer_array_of_dynamic_from_array_of_different_types = 0;
 DROP TABLE IF EXISTS t_json_2;
 
 CREATE TABLE t_json_2(id UInt64, data JSON)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_01825_2/t_json_2', 'r1') ORDER BY tuple();
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_01825_2/t_json_2', 'r1') ORDER BY tuple();
 
 INSERT INTO t_json_2 FORMAT JSONEachRow {"id": 1, "data": {"k1": 1, "k2" : 2}} {"id": 2, "data": {"k2": 3, "k3" : 4}};
 

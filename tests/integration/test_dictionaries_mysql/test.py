@@ -52,7 +52,7 @@ def started_cluster():
         create_mysql_db(mysql_connection, "test")
         mysql_connection.close()
 
-        # Create database in ClickHouse
+        # Create database in Datastore
         instance.query("DROP DATABASE IF EXISTS test")
         instance.query("CREATE DATABASE test")
 

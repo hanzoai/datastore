@@ -9,7 +9,7 @@ SELECT reverseBySeparator('');
 SELECT reverseBySeparator('a/b/c', '');
 
 -- Test with column input
-SELECT reverseBySeparator(domain) FROM (SELECT arrayJoin(['www.google.com', 'mail.yahoo.com', 'clickhouse.com']) AS domain);
+SELECT reverseBySeparator(domain) FROM (SELECT arrayJoin(['www.google.com', 'mail.yahoo.com', 'datastore.com']) AS domain);
 
 -- Edge cases
 SELECT reverseBySeparator('...', '.');

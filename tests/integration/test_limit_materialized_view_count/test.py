@@ -10,9 +10,9 @@ node = cluster.add_instance(
     stay_alive=True,
 )
 
-config = """<clickhouse>
+config = """<datastore>
     <max_materialized_views_count_for_table>2</max_materialized_views_count_for_table>
-</clickhouse>
+</datastore>
 """
 
 
@@ -39,7 +39,7 @@ def test_limit_materialized_view_count(started_cluster):
         "CREATE MATERIALIZED VIEW test_view2 ENGINE = MergeTree ORDER BY a AS SELECT * FROM test_tb;"
     )
 
-    node.replace_config("/etc/clickhouse-server/config.d/max_num_limit.xml", config)
+    node.replace_config("/etc/datastore-server/config.d/max_num_limit.xml", config)
     node.restart_clickhouse()
 
     node.query(

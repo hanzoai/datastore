@@ -38,7 +38,7 @@ All standard [SQL JOIN](https://en.wikipedia.org/wiki/Join_(SQL)) types are supp
 - An alternative syntax for `CROSS JOIN` is specifying multiple tables in the [`FROM` clause](../../../sql-reference/statements/select/from.md) separated by commas.
 - If there are no matching columns for a `NATURAL JOIN`, it functions like a `CROSS JOIN`.
 
-Additional join types available in ClickHouse are:
+Additional join types available in Datastore are:
 
 | Type                                        | Description                                                                                                                               |
 |---------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
@@ -56,7 +56,7 @@ When [join_algorithm](../../../operations/settings/settings.md#join_algorithm) i
 
 The default join type can be overridden using [`join_default_strictness`](../../../operations/settings/settings.md#join_default_strictness) setting.
 
-The behavior of the ClickHouse server for `ANY JOIN` operations depends on the [`any_join_distinct_right_table_keys`](../../../operations/settings/settings.md#any_join_distinct_right_table_keys) setting.
+The behavior of the Datastore server for `ANY JOIN` operations depends on the [`any_join_distinct_right_table_keys`](../../../operations/settings/settings.md#any_join_distinct_right_table_keys) setting.
 
 **See also**
 
@@ -67,7 +67,7 @@ The behavior of the ClickHouse server for `ANY JOIN` operations depends on the [
 - [`join_on_disk_max_files_to_merge`](../../../operations/settings/settings.md#join_on_disk_max_files_to_merge)
 - [`any_join_distinct_right_table_keys`](../../../operations/settings/settings.md#any_join_distinct_right_table_keys)
 
-Use the `cross_to_inner_join_rewrite` setting to define the behavior when ClickHouse fails to rewrite a `CROSS JOIN` as an `INNER JOIN`. The default value is `1`, which  allows the join to continue but it will be slower. Set `cross_to_inner_join_rewrite` to `0` if you want an error to be thrown, and set it to `2` to not run the cross joins but instead force a rewrite of all comma/cross joins. If the rewriting fails when the value is `2`, you will receive an error message stating "Please, try to simplify `WHERE` section".
+Use the `cross_to_inner_join_rewrite` setting to define the behavior when Datastore fails to rewrite a `CROSS JOIN` as an `INNER JOIN`. The default value is `1`, which  allows the join to continue but it will be slower. Set `cross_to_inner_join_rewrite` to `0` if you want an error to be thrown, and set it to `2` to not run the cross joins but instead force a rewrite of all comma/cross joins. If the rewriting fails when the value is `2`, you will receive an error message stating "Please, try to simplify `WHERE` section".
 
 ## ON section conditions {#on-section-conditions}
 
@@ -436,7 +436,7 @@ returns the set:
 
 ### Processing of empty or NULL cells {#processing-of-empty-or-null-cells}
 
-While joining tables, the empty cells may appear. The setting [join_use_nulls](../../../operations/settings/settings.md#join_use_nulls) define how ClickHouse fills these cells.
+While joining tables, the empty cells may appear. The setting [join_use_nulls](../../../operations/settings/settings.md#join_use_nulls) define how Datastore fills these cells.
 
 If the `JOIN` keys are [Nullable](../../../sql-reference/data-types/nullable.md) fields, the rows where at least one of the keys has the value [NULL](/sql-reference/syntax#null) are not joined.
 
@@ -470,14 +470,14 @@ If you need a `JOIN` for joining with dimension tables (these are relatively sma
 
 ### Memory limitations {#memory-limitations}
 
-By default, ClickHouse uses the [hash join](https://en.wikipedia.org/wiki/Hash_join) algorithm. ClickHouse takes the right_table and creates a hash table for it in RAM. If `join_algorithm = 'auto'` is enabled, then after some threshold of memory consumption, ClickHouse falls back to [merge](https://en.wikipedia.org/wiki/Sort-merge_join) join algorithm. For `JOIN` algorithms description see the [join_algorithm](../../../operations/settings/settings.md#join_algorithm) setting.
+By default, Datastore uses the [hash join](https://en.wikipedia.org/wiki/Hash_join) algorithm. Datastore takes the right_table and creates a hash table for it in RAM. If `join_algorithm = 'auto'` is enabled, then after some threshold of memory consumption, Datastore falls back to [merge](https://en.wikipedia.org/wiki/Sort-merge_join) join algorithm. For `JOIN` algorithms description see the [join_algorithm](../../../operations/settings/settings.md#join_algorithm) setting.
 
 If you need to restrict `JOIN` operation memory consumption use the following settings:
 
 - [max_rows_in_join](/operations/settings/settings#max_rows_in_join) — Limits number of rows in the hash table.
 - [max_bytes_in_join](/operations/settings/settings#max_bytes_in_join) — Limits size of the hash table.
 
-When any of these limits is reached, ClickHouse acts as the [join_overflow_mode](/operations/settings/settings#join_overflow_mode)
+When any of these limits is reached, Datastore acts as the [join_overflow_mode](/operations/settings/settings#join_overflow_mode)
 setting instructs.
 
 ## Examples {#examples}
@@ -525,7 +525,7 @@ LIMIT 10
 
 ## Related content {#related-content}
 
-- Blog: [ClickHouse: A Blazingly Fast DBMS with Full SQL Join Support - Part 1](https://clickhouse.com/blog/clickhouse-fully-supports-joins)
-- Blog: [ClickHouse: A Blazingly Fast DBMS with Full SQL Join Support - Under the Hood - Part 2](https://clickhouse.com/blog/clickhouse-fully-supports-joins-hash-joins-part2)
-- Blog: [ClickHouse: A Blazingly Fast DBMS with Full SQL Join Support - Under the Hood - Part 3](https://clickhouse.com/blog/clickhouse-fully-supports-joins-full-sort-partial-merge-part3)
-- Blog: [ClickHouse: A Blazingly Fast DBMS with Full SQL Join Support - Under the Hood - Part 4](https://clickhouse.com/blog/clickhouse-fully-supports-joins-direct-join-part4)
+- Blog: [Datastore: A Blazingly Fast DBMS with Full SQL Join Support - Part 1](https://datastore.com/blog/datastore-fully-supports-joins)
+- Blog: [Datastore: A Blazingly Fast DBMS with Full SQL Join Support - Under the Hood - Part 2](https://datastore.com/blog/datastore-fully-supports-joins-hash-joins-part2)
+- Blog: [Datastore: A Blazingly Fast DBMS with Full SQL Join Support - Under the Hood - Part 3](https://datastore.com/blog/datastore-fully-supports-joins-full-sort-partial-merge-part3)
+- Blog: [Datastore: A Blazingly Fast DBMS with Full SQL Join Support - Under the Hood - Part 4](https://datastore.com/blog/datastore-fully-supports-joins-direct-join-part4)

@@ -112,7 +112,7 @@ def test_delete_after_processing(started_cluster, mode, engine_name):
     files_num = 5
     row_num = 10
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     if engine_name == "S3Queue":
         storage = "s3"
     else:
@@ -197,7 +197,7 @@ def test_tag_after_processing(started_cluster, engine_name):
     files_num = 5
     row_num = 10
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     if engine_name == "S3Queue":
         storage = "s3"
     else:
@@ -312,7 +312,7 @@ def test_move_after_processing(started_cluster, engine_name, move_to):
     files_num = 5
     row_num = 10
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     if engine_name == "S3Queue":
         storage = "s3"
     else:
@@ -412,7 +412,7 @@ def test_auxiliary_zookeeper_keeper_path(started_cluster, engine_name):
     files_path = f"{table_name}_data"
     files_num = 3
     row_num = 2
-    keeper_suffix = f"/clickhouse/test_{table_name}"
+    keeper_suffix = f"/datastore/test_{table_name}"
     keeper_path_with_aux = f"{AUXILIARY_ZOOKEEPER_NAME}:{keeper_suffix}"
 
     storage = "s3" if engine_name == "S3Queue" else "azure"
@@ -466,7 +466,7 @@ def test_auxiliary_zookeeper_missing_configuration(started_cluster):
     node = started_cluster.instances["instance"]
     table_name = f"aux_keeper_missing_{generate_random_string()}"
     files_path = f"{table_name}_data"
-    keeper_path = f"unknown_keeper:/clickhouse/test_{table_name}"
+    keeper_path = f"unknown_keeper:/datastore/test_{table_name}"
 
     error = create_table(
         started_cluster,
@@ -490,7 +490,7 @@ def test_failed_retry(started_cluster, mode, engine_name):
     files_path = f"{table_name}_data"
     file_path = f"{files_path}/trash_test.csv"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     retries_num = 3
 
     values = [
@@ -554,7 +554,7 @@ def test_direct_select_file(started_cluster, mode):
     node = started_cluster.instances["instance_no_keeper_fault_injection"]
     table_name = f"direct_select_file_{mode}"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{mode}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{mode}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     file_path = f"{files_path}/test.csv"
 
@@ -674,7 +674,7 @@ def test_direct_select_multiple_files(started_cluster, mode):
     table_name = f"direct_select_multiple_files_{mode}"
     files_path = f"{table_name}_data"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
 
     create_table(
         started_cluster,
@@ -712,7 +712,7 @@ def test_streaming_to_view(started_cluster, mode):
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
 
     total_values = generate_random_files(started_cluster, files_path, 10)
     create_table(
@@ -743,7 +743,7 @@ def test_streaming_to_view(started_cluster, mode):
 def test_streaming_to_many_views(started_cluster, mode):
     node = started_cluster.instances["instance"]
     table_name = f"streaming_to_many_views_{mode}"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
 
     loading_retries = 2
@@ -876,7 +876,7 @@ def test_multiple_tables_meta_mismatch(started_cluster):
     node = started_cluster.instances["instance"]
     table_name = f"multiple_tables_meta_mismatch"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
 
     create_table(
@@ -965,7 +965,7 @@ def test_virtual_columns(started_cluster):
     node = started_cluster.instances["instance"]
     table_name = f"test_s3queue_virtual_columns_{generate_random_string()}"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
 

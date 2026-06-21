@@ -50,7 +50,7 @@ def _install_missing_tools(nodes, missing_tools):
     """Attempt to install missing tools via apt-get inside Docker containers.
 
     Installation happens INSIDE containers (not on host), so host OS (Mac/Ubuntu/ARM)
-    doesn't matter. ClickHouse integration test containers use Ubuntu/Debian on all
+    doesn't matter. Datastore integration test containers use Ubuntu/Debian on all
     architectures (AMD64/ARM64), so apt-get should work everywhere.
     """
     if not missing_tools or not nodes:

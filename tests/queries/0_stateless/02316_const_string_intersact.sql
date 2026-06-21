@@ -1,2 +1,2 @@
 
-SELECT 'Play ClickHouse' InterSect SELECT 'Play ClickHouse'
+SELECT 'Play Datastore' InterSect SELECT 'Play Datastore'

@@ -18,19 +18,19 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATA_FILE="${CLICKHOUSE_TEST_UNIQUE_NAME}.parquet"
-DATA_FILE_NO_NULLS="${CLICKHOUSE_TEST_UNIQUE_NAME}_no_nulls.parquet"
+DATA_FILE="${DATASTORE_TEST_UNIQUE_NAME}.parquet"
+DATA_FILE_NO_NULLS="${DATASTORE_TEST_UNIQUE_NAME}_no_nulls.parquet"
 
 # Create a Parquet file with a Nullable(String) column containing NULLs.
 # Every row where id % 3 == 0 has val = NULL.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     INSERT INTO FUNCTION file('$DATA_FILE', Parquet)
     SELECT number AS id, if(number % 3 = 0, NULL, toString(number)) AS val
     FROM numbers(20)
 "
 
 # Create a second Parquet file with a Nullable(String) column but NO NULLs.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     INSERT INTO FUNCTION file('$DATA_FILE_NO_NULLS', Parquet)
     SELECT number AS id, toString(number) AS val
     FROM numbers(20)
@@ -38,7 +38,7 @@ $CLICKHOUSE_CLIENT -q "
 
 # 1) Reading with null_as_default=1 (default) — NULLs become empty strings.
 echo "--- null_as_default=1 non-nullable ---"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT id, val FROM file('$DATA_FILE', Parquet, 'id UInt64, val String')
     WHERE id IN (0, 3, 6) ORDER BY id
     SETTINGS input_format_null_as_default = 1
@@ -46,7 +46,7 @@ $CLICKHOUSE_CLIENT -q "
 
 # 2) Reading nullable output — NULLs preserved.
 echo "--- nullable output ---"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT id, val FROM file('$DATA_FILE', Parquet, 'id UInt64, val Nullable(String)')
     WHERE id IN (0, 3, 6) ORDER BY id
 "
@@ -56,7 +56,7 @@ $CLICKHOUSE_CLIENT -q "
 #    Use head -1 because CI's --send_logs_level=warning can cause the error code
 #    to appear in both a server log line and the exception message.
 echo "--- non-nullable null_as_default=0 should error ---"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT id, val FROM file('$DATA_FILE', Parquet, 'id UInt64, val String')
     WHERE id = 0
     SETTINGS input_format_null_as_default = 0
@@ -65,7 +65,7 @@ $CLICKHOUSE_CLIENT -q "
 # 4) Non-nullable with null_as_default=0 reading from a file with NO nulls — should succeed.
 #    (Tests that the fix doesn't break the non-null case.)
 echo "--- non-nullable null_as_default=0 no nulls in file ---"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT id, val FROM file('$DATA_FILE_NO_NULLS', Parquet, 'id UInt64, val String')
     WHERE id IN (1, 2, 4) ORDER BY id
     SETTINGS input_format_null_as_default = 0

@@ -9,7 +9,7 @@ SET max_threads=5, async_socket_for_remote=1, prefer_localhost_replica=1, optimi
 SET use_concurrency_control=0;
 
 -- we use query_thread_log to check peak thread usage
--- after https://github.com/ClickHouse/ClickHouse/issues/53417 there is a simpler way to check it
+-- after https://github.com/ClickHouse/Datastore/issues/53417 there is a simpler way to check it
 -- but that will not allow to backport the test to older versions
 SET log_query_threads=1;
 
@@ -18,7 +18,7 @@ SET log_query_threads=1;
 SELECT 'prefer_localhost_replica=1, remote query with a lot of union all' AS testname;
 
 -- query with lot of dummy union all will create a lot of streams
--- let's check how many threads clickhouse will start for that
+-- let's check how many threads datastore will start for that
 
 select count() from remote('127.0.0.1:9000', view(
 {% for n in range(77) -%}
@@ -86,7 +86,7 @@ SELECT 'prefer_localhost_replica=1, async_socket_for_remote=0, remote query with
 
 -- that is actually a bad behaviour, but it used to work like that for a long time.
 -- now is happens only for async_socket_for_remote=0 (while it is 1 by default)
--- see https://github.com/ClickHouse/ClickHouse/issues/53287
+-- see https://github.com/ClickHouse/Datastore/issues/53287
 
 select count() from remote('127.0.0.1:9000', view(
 {% for n in range(77) -%}
@@ -117,7 +117,7 @@ WHERE
             ORDER BY event_time DESC LIMIT 1
     );
 
--- less synthetic testcase from the issue https://github.com/ClickHouse/ClickHouse/issues/53287
+-- less synthetic testcase from the issue https://github.com/ClickHouse/Datastore/issues/53287
 -- it creates lot of streams because of many parts (one per part) + optimize_read_in_order=1 feature
 
 SELECT 'prepare test schema' AS stage;

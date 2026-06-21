@@ -36,7 +36,7 @@ def randomize_table_name(table_name, random_suffix_length=10):
 def test_aliases_in_default_expr_not_break_table_structure(start_cluster, engine):
     """
     Making sure that using aliases in columns' default expressions does not lead to having different columns metadata in ZooKeeper and on disk.
-    Issue: https://github.com/ClickHouse/clickhouse-private/issues/5150
+    Issue: https://github.com/ClickHouse/datastore-private/issues/5150
     """
 
     data = '{"event": {"col1-key": "col1-val", "col2-key": "col2-val"}}'

@@ -41,13 +41,13 @@ def test_memory_tracking_total():
         [
             "bash",
             "-c",
-            "clickhouse local -q \"SELECT arrayStringConcat(arrayMap(x->toString(cityHash64(x)), range(1000)), ' ') from numbers(10000)\" > data.jsonl",
+            "datastore local -q \"SELECT arrayStringConcat(arrayMap(x->toString(cityHash64(x)), range(1000)), ' ') from numbers(10000)\" > data.jsonl",
         ]
     )
 
     for it in range(0, 20):
         # the problem can be triggered only via HTTP,
-        # since clickhouse-client parses the data by itself.
+        # since datastore-client parses the data by itself.
         assert (
             instance.exec_in_container(
                 [

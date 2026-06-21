@@ -7,16 +7,16 @@
 # The bug requires concurrent queries on the same Memory table: multiple
 # connections share ColumnVariant blocks via COW, and the permute optimization
 # used assumeMutable() on non-active variants, corrupting shared columns.
-# https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=4d4a583a5ad2322918638a3f6a01acd7e0ed7019&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_tsan%29
+# https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=4d4a583a5ad2322918638a3f6a01acd7e0ed7019&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_tsan%29
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-CH_CLIENT="$CLICKHOUSE_CLIENT --allow_experimental_variant_type=1 --allow_suspicious_types_in_order_by=1 --use_variant_default_implementation_for_comparisons=0 --max_execution_time=10"
+CH_CLIENT="$DATASTORE_CLIENT --allow_experimental_variant_type=1 --allow_suspicious_types_in_order_by=1 --use_variant_default_implementation_for_comparisons=0 --max_execution_time=10"
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_variant_distinct"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE test_variant_distinct (v1 Variant(String, UInt64, Array(UInt32)), v2 Variant(String, UInt64, Array(UInt32))) ENGINE = Memory"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_variant_distinct"
+$DATASTORE_CLIENT -q "CREATE TABLE test_variant_distinct (v1 Variant(String, UInt64, Array(UInt32)), v2 Variant(String, UInt64, Array(UInt32))) ENGINE = Memory"
 
 # Each INSERT creates a separate block in the Memory engine.
 # Concurrent queries will share these blocks via COW pointers.
@@ -57,5 +57,5 @@ done
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE test_variant_distinct"
+$DATASTORE_CLIENT -q "DROP TABLE test_variant_distinct"
 echo "OK"

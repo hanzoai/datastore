@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <coordination_settings>
             <check_node_acl_on_remove>0</check_node_acl_on_remove>
         </coordination_settings>
     </keeper_server>
-</clickhouse>
+</datastore>

@@ -16,7 +16,7 @@ doc_type: 'reference'
 ## Description {#description}
 
 :::tip
-The output of the JSONColumns* formats provides the ClickHouse field name and then the content of each row in the table for that field;
+The output of the JSONColumns* formats provides the Datastore field name and then the content of each row in the table for that field;
 visually, the data is rotated 90 degrees to the left.
 :::
 

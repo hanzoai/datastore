@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <named_collections>
     <s3>
         <url>http://minio1:9001/root/</url>
@@ -12,4 +12,4 @@
     <local>
     </local>
   </named_collections>
-</clickhouse>
+</datastore>

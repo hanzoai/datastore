@@ -22,7 +22,7 @@ def test_local_table_safety(started_cluster_iceberg_with_spark):
     write_iceberg_from_df(spark, generate_data(spark, 0, 100), TABLE_NAME)
 
     downloader.upload_directory(
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
         f"/iceberg_data/default/{TABLE_NAME}/"
     )
 

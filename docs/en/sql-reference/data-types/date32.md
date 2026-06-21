@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Date32 data type in ClickHouse, which stores dates
+description: 'Documentation for the Date32 data type in Datastore, which stores dates
   with an extended range compared to Date'
 sidebar_label: 'Date32'
 sidebar_position: 14

@@ -14,7 +14,7 @@ from helpers.ssl_context import WrapSSLContextWithSNI
 
 # The test cluster is configured with certificate for that host name, see 'server-ext.cnf'.
 # The client have to verify server certificate against that name. Client uses SNI
-SSL_HOST = "integration-tests.clickhouse.com"
+SSL_HOST = "integration-tests.datastore.com"
 HTTPS_PORT = 8443
 # It's important for the node to work at this IP because 'server-cert.pem' requires that (see server-ext.cnf).
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -43,7 +43,7 @@ def started_cluster():
         cluster.shutdown()
 
 
-config = """<clickhouse>
+config = """<datastore>
     <openSSL>
         <client>
             <verificationMode>strict</verificationMode>
@@ -52,7 +52,7 @@ config = """<clickhouse>
             <caConfig>{caConfig}</caConfig>
         </client>
     </openSSL>
-</clickhouse>"""
+</datastore>"""
 
 
 def execute_query_native(node, query, user, cert_name, password=None):
@@ -112,7 +112,7 @@ def test_native_wrong_cert():
     assert "AUTHENTICATION_FAILED" in str(err.value)
 
     # Wrong certificate: self-signed certificate.
-    # In this case clickhouse-client itself will throw an error
+    # In this case datastore-client itself will throw an error
     with pytest.raises(Exception) as err:
         execute_query_native(
             instance, "SELECT currentUser()", user="john", cert_name="wrong"
@@ -169,11 +169,11 @@ def execute_query_https(
         f"https://{instance.ip_address}:{HTTPS_PORT}/?query={urllib.parse.quote(query)}"
     )
     request = urllib.request.Request(url)
-    request.add_header("X-ClickHouse-User", user)
+    request.add_header("X-Datastore-User", user)
     if enable_ssl_auth:
-        request.add_header("X-ClickHouse-SSL-Certificate-Auth", "on")
+        request.add_header("X-Datastore-SSL-Certificate-Auth", "on")
     if password:
-        request.add_header("X-ClickHouse-Key", password)
+        request.add_header("X-Datastore-Key", password)
     response = urllib.request.urlopen(
         request, context=get_ssl_context(cert_name)
     ).read()

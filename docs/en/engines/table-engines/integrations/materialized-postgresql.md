@@ -1,5 +1,5 @@
 ---
-description: 'Creates a ClickHouse table with an initial data dump of a PostgreSQL
+description: 'Creates a Datastore table with an initial data dump of a PostgreSQL
   table and starts the replication process.'
 sidebar_label: 'MaterializedPostgreSQL'
 sidebar_position: 130
@@ -17,10 +17,10 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 <CloudNotSupportedBadge/>
 
 :::note
-ClickHouse Cloud users are recommended to use [ClickPipes](/integrations/clickpipes) for PostgreSQL replication to ClickHouse. This natively supports high-performance Change Data Capture (CDC) for PostgreSQL.
+Datastore Cloud users are recommended to use [ClickPipes](/integrations/clickpipes) for PostgreSQL replication to Datastore. This natively supports high-performance Change Data Capture (CDC) for PostgreSQL.
 :::
 
-Creates ClickHouse table with an initial data dump of PostgreSQL table and starts the replication process, i.e. it executes a background job to apply new changes as they happen on PostgreSQL table in the remote PostgreSQL database.
+Creates Datastore table with an initial data dump of PostgreSQL table and starts the replication process, i.e. it executes a background job to apply new changes as they happen on PostgreSQL table in the remote PostgreSQL database.
 
 :::note
 This table engine is experimental. To use it, set `allow_experimental_materialized_postgresql_table` to 1 in your configuration files or by using the `SET` command:

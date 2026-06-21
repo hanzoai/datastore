@@ -8,7 +8,7 @@
 #   - XRAY_<ARCH>_SOURCES / XRAY_<ARCH>_ASM_SOURCES ← upstream
 #     x86_64_SOURCES / arm64_SOURCES / etc., one per supported arch.
 # Each runtime mode is bundled into a separate static archive in upstream
-# (clang_rt.xray-fdr, clang_rt.xray-basic, ...). ClickHouse links a single
+# (clang_rt.xray-fdr, clang_rt.xray-basic, ...). Datastore links a single
 # combined libclang_rt_xray.a that includes all of them.
 
 set(XRAY_COMMON_SOURCES

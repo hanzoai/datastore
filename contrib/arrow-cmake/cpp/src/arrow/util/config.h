@@ -26,7 +26,7 @@
 #define ARROW_FULL_SO_VERSION "2300.0.0"
 
 #define ARROW_CXX_COMPILER_ID "Clang"
-#define ARROW_CXX_COMPILER_VERSION "ClickHouse"
+#define ARROW_CXX_COMPILER_VERSION "Datastore"
 
 #define ARROW_BUILD_TYPE ""
 

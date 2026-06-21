@@ -5,7 +5,7 @@ import pytest
 
 from helpers.cluster import ClickHouseCluster
 
-log_dir = "/var/log/clickhouse-server/"
+log_dir = "/var/log/datastore-server/"
 cluster = ClickHouseCluster(__file__)
 
 
@@ -19,8 +19,8 @@ def started_cluster():
     )
     cluster.add_instance(
         "file-names-from-params",
-        clickhouse_log_file=log_dir + "clickhouse-server-%Y-%m.log",
-        clickhouse_error_log_file=log_dir + "clickhouse-server-%Y-%m.err.log",
+        clickhouse_log_file=log_dir + "datastore-server-%Y-%m.log",
+        clickhouse_error_log_file=log_dir + "datastore-server-%Y-%m.err.log",
     )
     try:
         cluster.start()
@@ -31,8 +31,8 @@ def started_cluster():
 
 def test_check_file_names(started_cluster):
     now = datetime.now()
-    log_file = log_dir + f"clickhouse-server-{now.strftime('%Y-%m')}.log"
-    err_log_file = log_dir + f"clickhouse-server-{now.strftime('%Y-%m')}.err.log"
+    log_file = log_dir + f"datastore-server-{now.strftime('%Y-%m')}.log"
+    err_log_file = log_dir + f"datastore-server-{now.strftime('%Y-%m')}.err.log"
     logging.debug(f"log_file {log_file} err_log_file {err_log_file}")
 
     for name, instance in started_cluster.instances.items():

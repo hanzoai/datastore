@@ -13,7 +13,7 @@ function test_snapshot_sharing()
     local query_settings=( "$@" )
     query_settings+=( "--merge_tree_storage_snapshot_sleep_ms=$((delay*1000))" )
 
-    $CLICKHOUSE_CLIENT -nm --query "
+    $DATASTORE_CLIENT -nm --query "
     DROP TABLE IF EXISTS events;
     CREATE TABLE events
     (
@@ -26,8 +26,8 @@ function test_snapshot_sharing()
     INSERT INTO events VALUES (2, 200);
     "
 
-    local query_id="${CLICKHOUSE_DATABASE}_${RANDOM}${RANDOM}_sharing"
-    $CLICKHOUSE_CLIENT --query_id="$query_id" "${query_settings[@]}" --query "
+    local query_id="${DATASTORE_DATABASE}_${RANDOM}${RANDOM}_sharing"
+    $DATASTORE_CLIENT --query_id="$query_id" "${query_settings[@]}" --query "
         SELECT count() FROM events WHERE (_part, _part_offset) IN (
             SELECT _part, _part_offset FROM events WHERE user_id = 2
         )" &
@@ -35,9 +35,9 @@ function test_snapshot_sharing()
 
     local found_delay=0
     for _ in $( seq 1 $(((delay+1)*10)) ); do
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d "SYSTEM FLUSH LOGS text_log"
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d "SYSTEM FLUSH LOGS text_log"
         # We need to wait until the second subquery will enter MergeTreeData::getStorageSnapshot(), and then before the artificial delay finishes inject OPTIMIZE
-        if [[ $(${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d "SELECT count() FROM system.text_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '$query_id' AND message_format_string = 'Injecting {}ms artificial delay before taking storage snapshot' SETTINGS max_rows_to_read = 0") -eq 2 ]]; then
+        if [[ $(${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d "SELECT count() FROM system.text_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '$query_id' AND message_format_string = 'Injecting {}ms artificial delay before taking storage snapshot' SETTINGS max_rows_to_read = 0") -eq 2 ]]; then
             found_delay=1
             break
         fi
@@ -49,14 +49,14 @@ function test_snapshot_sharing()
         return
     fi
 
-    $CLICKHOUSE_CLIENT --query "OPTIMIZE TABLE events FINAL"
+    $DATASTORE_CLIENT --query "OPTIMIZE TABLE events FINAL"
 
     # NOTE: we can additionally ensure that the between injecting the sleep and
     # OPTIMIZE query did not processed further, to add additional guarantees,
     # but it does not worth it.
     #
-    # $CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS text_log"
-    # if [[ $($CLICKHOUSE_CLIENT --query "SELECT argMax(message_format_string, _part_starting_offset + _part_offset) like 'Injecting {}ms artificial delay before taking storage snapshot' FROM system.text_log WHERE event_date >= yesterday() AND query_id = '$query_id' SETTINGS max_rows_to_read = 0") -eq 0 ]]; then
+    # $DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS text_log"
+    # if [[ $($DATASTORE_CLIENT --query "SELECT argMax(message_format_string, _part_starting_offset + _part_offset) like 'Injecting {}ms artificial delay before taking storage snapshot' FROM system.text_log WHERE event_date >= yesterday() AND query_id = '$query_id' SETTINGS max_rows_to_read = 0") -eq 0 ]]; then
     #     wait $PID
     #     echo "Query progressed before optimize completed; test result is unreliable"
     #     return
@@ -67,7 +67,7 @@ function test_snapshot_sharing()
     # This will print either 0/1 (depends on whether snapshot had been shared or not)
     wait $PID
 
-    $CLICKHOUSE_CLIENT --query "DROP TABLE events"
+    $DATASTORE_CLIENT --query "DROP TABLE events"
 }
 
 function test_snapshot_shared()

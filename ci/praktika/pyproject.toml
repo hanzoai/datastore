@@ -9,7 +9,7 @@ description = "CI Infrastructure Toolbox"
 requires-python = ">=3.8"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "Max Kainov", email = "max.kainov@clickhouse.com"}
+    {name = "Max Kainov", email = "max.kainov@datastore.com"}
 ]
 keywords = ["ci", "cd", "continuous-integration", "automation", "github-actions"]
 classifiers = [
@@ -60,9 +60,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ClickHouse/ClickHouse"
-Repository = "https://github.com/ClickHouse/ClickHouse"
-Issues = "https://github.com/ClickHouse/ClickHouse/issues"
+Homepage = "https://github.com/ClickHouse/Datastore"
+Repository = "https://github.com/ClickHouse/Datastore"
+Issues = "https://github.com/ClickHouse/Datastore/issues"
 
 [project.scripts]
 praktika = "praktika.__main__:main"

@@ -40,6 +40,6 @@ database:              default
 table:                 test
 uuid:                  03141bb2-e97a-4d7c-a172-95cc066bb3bd
 engine:                MergeTree
-metadata_dropped_path: /data/ClickHouse/build/programs/data/metadata_dropped/default.test.03141bb2-e97a-4d7c-a172-95cc066bb3bd.sql
+metadata_dropped_path: /data/Datastore/build/programs/data/metadata_dropped/default.test.03141bb2-e97a-4d7c-a172-95cc066bb3bd.sql
 table_dropped_time:    2023-03-16 23:43:31
 ```

@@ -1,4 +1,4 @@
--- the test from simPod, https://github.com/ClickHouse/ClickHouse/issues/5608
+-- the test from simPod, https://github.com/ClickHouse/Datastore/issues/5608
 
 DROP TABLE IF EXISTS joint; -- the table name from the original issue.
 DROP TABLE IF EXISTS t;

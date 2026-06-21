@@ -49,22 +49,22 @@ SELECT joinGet('join_string_key', 'x', 'abc'), joinGet('join_string_key', 'k', '
 
 USE default;
 
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_any_inner;
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_any_left;
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_any_left_null;
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_all_inner;
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_all_left;
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_string_key;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_any_inner;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_any_left;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_any_left_null;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_all_inner;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_all_left;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_string_key;
 
 -- test provided by Alexander Zaitsev
-DROP TABLE IF EXISTS {CLICKHOUSE_DATABASE:Identifier}.join_test;
-CREATE TABLE {CLICKHOUSE_DATABASE:Identifier}.join_test (a UInt8, b UInt8) Engine = Join(ANY, LEFT, a);
+DROP TABLE IF EXISTS {DATASTORE_DATABASE:Identifier}.join_test;
+CREATE TABLE {DATASTORE_DATABASE:Identifier}.join_test (a UInt8, b UInt8) Engine = Join(ANY, LEFT, a);
 
-USE {CLICKHOUSE_DATABASE:Identifier};
+USE {DATASTORE_DATABASE:Identifier};
 select joinGet('join_test', 'b', 1);
 
 USE system;
-SELECT joinGet({CLICKHOUSE_DATABASE:String} || '.join_test', 'b', 1);
+SELECT joinGet({DATASTORE_DATABASE:String} || '.join_test', 'b', 1);
 
 USE default;
-DROP TABLE {CLICKHOUSE_DATABASE:Identifier}.join_test;
+DROP TABLE {DATASTORE_DATABASE:Identifier}.join_test;

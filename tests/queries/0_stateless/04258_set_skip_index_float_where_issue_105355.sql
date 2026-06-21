@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/105355
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/105355
 -- `__bitWrapperFunc` only supports integer arguments. The set skip index used
 -- to wrap any WHERE atom (including atoms whose result type is `Float`) with
 -- `__bitWrapperFunc`, which threw the internal "It's a bug!" exception at

@@ -140,7 +140,7 @@ endforeach ()
 include(ExternalProject)
 
 # -- The build needs protobuf files. The original build scripts download them from a remote server (see target 'googleapis_download').
-#    This is too unreliable in the context of ClickHouse ... we instead ship the downloaded archive with the ClickHouse source and
+#    This is too unreliable in the context of Datastore ... we instead ship the downloaded archive with the Datastore source and
 #    extract it into the build directory directly.
 
 # Dummy googleapis_download target. This needs to exist because lots of other targets depend on it

@@ -12,13 +12,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 set -e
 
 failpoint_name="rmt_lightweight_update_sleep_after_block_allocation"
-storage_policy=`$CLICKHOUSE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
+storage_policy=`$DATASTORE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
 
 if [[ "$storage_policy" == "s3_with_keeper" ]]; then
     failpoint_name="smt_lightweight_update_sleep_after_block_allocation"
 fi
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET insert_keeper_fault_injection_probability = 0.0;
     DROP TABLE IF EXISTS t_lwu_block_number SYNC;
 
@@ -33,15 +33,15 @@ $CLICKHOUSE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT $failpoint_name;
 "
 
-$CLICKHOUSE_CLIENT --query "UPDATE t_lwu_block_number SET s = 'foo' WHERE id >= 500" --enable_lightweight_update 1 &
+$DATASTORE_CLIENT --query "UPDATE t_lwu_block_number SET s = 'foo' WHERE id >= 500" --enable_lightweight_update 1 &
 
-wait_for_block_allocated "/zookeeper/$CLICKHOUSE_DATABASE/t_lwu_block_number/block_numbers/all" "block-0000000001"
+wait_for_block_allocated "/zookeeper/$DATASTORE_DATABASE/t_lwu_block_number/block_numbers/all" "block-0000000001"
 
-$CLICKHOUSE_CLIENT --query "INSERT INTO t_lwu_block_number SELECT number, number FROM numbers(1000, 1000)"
+$DATASTORE_CLIENT --query "INSERT INTO t_lwu_block_number SELECT number, number FROM numbers(1000, 1000)"
 
 wait
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT count() FROM t_lwu_block_number WHERE s = 'foo' SETTINGS apply_patch_parts = 1;
     SELECT sum(rows) FROM system.parts WHERE database = currentDatabase() AND table = 't_lwu_block_number' AND startsWith(name, 'patch');
     DROP TABLE t_lwu_block_number SYNC;

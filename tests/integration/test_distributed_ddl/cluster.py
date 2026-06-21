@@ -149,14 +149,14 @@ class ClickHouseClusterWithDDLHelpers(ClickHouseCluster):
                 [
                     "bash",
                     "-c",
-                    'echo "${NEW_CONFIG:?}" > /etc/clickhouse-server/config.d/clusters.xml',
+                    'echo "${NEW_CONFIG:?}" > /etc/datastore-server/config.d/clusters.xml',
                 ],
                 environment={"NEW_CONFIG": clusters_config},
                 privileged=True,
             )
             # ensure that the config had been applied successfully
             self.instances[inst_name].exec_in_container(
-                ["clickhouse", "client", "-q", "system reload config"]
+                ["datastore", "client", "-q", "system reload config"]
             )
 
     @staticmethod

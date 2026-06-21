@@ -9,7 +9,7 @@ CREATE TABLE join_inner_table__fuzz_146_replicated
     `value2` String,
     `time` Nullable(Int64)
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/join_inner_table__fuzz_146_replicated', '{replica}')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/join_inner_table__fuzz_146_replicated', '{replica}')
 ORDER BY (id, number, key)
 SETTINGS index_granularity = 8192;
 

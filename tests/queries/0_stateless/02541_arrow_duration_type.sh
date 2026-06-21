@@ -9,5 +9,5 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 DATA_DIR=$CUR_DIR/data_arrow
 
-$CLICKHOUSE_LOCAL -q "desc file('$DATA_DIR/duration.arrow')"
-$CLICKHOUSE_LOCAL -q "select count() from file('$DATA_DIR/duration.arrow')"
+$DATASTORE_LOCAL -q "desc file('$DATA_DIR/duration.arrow')"
+$DATASTORE_LOCAL -q "select count() from file('$DATA_DIR/duration.arrow')"

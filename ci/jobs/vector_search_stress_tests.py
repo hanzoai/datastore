@@ -1,5 +1,5 @@
-# vector_search_stress_tests.py : Stress testing of ClickHouse Vector Search
-# Documentation : https://clickhouse.com/docs/engines/table-engines/mergetree-family/annindexes
+# vector_search_stress_tests.py : Stress testing of Datastore Vector Search
+# Documentation : https://datastore.com/docs/engines/table-engines/mergetree-family/annindexes
 
 import os
 import random
@@ -52,7 +52,7 @@ TRUTH_SET_QUERY_SOURCE_VECTOR = "vector"
 dataset_hackernews_openai = {
     TABLE: "hackernews_openai",
     S3_URLS: [
-        "https://clickhouse-datasets.s3.amazonaws.com/hackernews-openai/hackernews_openai_part_1_of_1.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/hackernews-openai/hackernews_openai_part_1_of_1.parquet",
     ],
     SCHEMA: """
         id            UInt32,
@@ -74,7 +74,7 @@ dataset_hackernews_openai = {
 dataset_cohere_wiki_20m = {
     TABLE: "cohere_wiki_20m",
     S3_URLS: [
-        "https://clickhouse-datasets.s3.amazonaws.com/cohere-20M/cohere_wiki_20m.npy",
+        "https://datastore-datasets.s3.amazonaws.com/cohere-20M/cohere_wiki_20m.npy",
     ],
     SCHEMA: """
         id            UInt32,
@@ -94,16 +94,16 @@ dataset_laion_5b_100m = {
     TABLE: "laion5b_100m",
     # individual files, so that load progress can be seen
     S3_URLS: [
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_1_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_2_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_3_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_4_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_5_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_6_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_7_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_8_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_9_of_10.parquet",
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_10_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_1_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_2_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_3_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_4_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_5_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_6_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_7_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_8_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_9_of_10.parquet",
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_10_of_10.parquet",
     ],
     SCHEMA: """
      """,
@@ -118,7 +118,7 @@ dataset_laion_5b_100m = {
 dataset_laion_5b_mini_for_quick_test = {
     TABLE: "laion_test",
     S3_URLS: [
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_1_of_10.parquet"
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion5b_100m_part_1_of_10.parquet"
     ],
     SCHEMA: """
         id Int32,
@@ -136,7 +136,7 @@ test_params_laion_5b_full_run = {
     # Pass a filename to reuse a pre-generated truth set, else test will generate truth set (default)
     # Running 10000 brute force KNN queries over a 100 million dataset could take time.
     TRUTH_SET_FILES: [
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/truth_set_10k.tar"
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/truth_set_10k.tar"
     ],
     QUANTIZATION: "bf16",  # 'b1' for binary quantization
     HNSW_M: 64,
@@ -153,7 +153,7 @@ test_params_laion_5b_full_run = {
 test_params_laion_5b_quick_test = {
     LIMIT_N: 100000,  # Adds a LIMIT clause to load exact number of rows
     TRUTH_SET_FILES: [
-        "https://clickhouse-datasets.s3.amazonaws.com/laion-5b/laion_100k_1k.tar"
+        "https://datastore-datasets.s3.amazonaws.com/laion-5b/laion_100k_1k.tar"
     ],
     QUANTIZATION: "bf16",
     HNSW_M: 16,
@@ -191,7 +191,7 @@ test_params_laion_5b_1m = {
 test_params_hackernews_10m = {
     LIMIT_N: None,
     TRUTH_SET_FILES: [
-        "https://clickhouse-datasets.s3.amazonaws.com/hackernews-openai/hackernews_openai_10m_1k.tar"
+        "https://datastore-datasets.s3.amazonaws.com/hackernews-openai/hackernews_openai_10m_1k.tar"
     ],
     QUANTIZATION: "bf16",
     HNSW_M: 64,
@@ -211,7 +211,7 @@ test_params_hackernews_10m = {
 test_params_cohere_wiki_20m = {
     LIMIT_N: None,
     TRUTH_SET_FILES: [
-        "https://clickhouse-datasets.s3.amazonaws.com/cohere-20M/cohere_wiki_20m_25k.tar"
+        "https://datastore-datasets.s3.amazonaws.com/cohere-20M/cohere_wiki_20m_25k.tar"
     ],
     QUANTIZATION: "bf16",
     HNSW_M: 64,
@@ -789,25 +789,25 @@ def install_and_start_clickhouse():
     info = Info()
 
     if Utils.is_arm():
-        latest_ch_master_url = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
+        latest_ch_master_url = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/aarch64/datastore"
     elif Utils.is_amd():
-        latest_ch_master_url = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
+        latest_ch_master_url = "https://datastore-builds.s3.us-east-1.amazonaws.com/master/amd64/datastore"
     else:
         assert False, f"Unknown processor architecture"
 
     if True:
-        step_name = "Download ClickHouse"
+        step_name = "Download Datastore"
         logger(step_name)
         commands = [
             f"wget -nv -P {temp_dir} {latest_ch_master_url}",
-            f"chmod +x {temp_dir}/clickhouse",
-            f"{temp_dir}/clickhouse --version",
+            f"chmod +x {temp_dir}/datastore",
+            f"{temp_dir}/datastore --version",
         ]
         results.append(Result.from_commands_run(name=step_name, command=commands))
         res = results[-1].is_ok()
 
     if res:
-        step_name = "Install ClickHouse"
+        step_name = "Install Datastore"
         print(step_name)
 
         def install():
@@ -820,7 +820,7 @@ def install_and_start_clickhouse():
         res = results[-1].is_ok()
 
     if res:
-        step_name = "Start ClickHouse"
+        step_name = "Start Datastore"
         print(step_name)
 
         def start():

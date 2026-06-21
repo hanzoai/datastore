@@ -12,13 +12,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 set -e
 
 failpoint_name="rmt_lightweight_update_sleep_after_block_allocation"
-storage_policy=`$CLICKHOUSE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
+storage_policy=`$DATASTORE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
 
 if [[ "$storage_policy" == "s3_with_keeper" ]]; then
     failpoint_name="smt_lightweight_update_sleep_after_block_allocation"
 fi
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_future_reads SYNC;
 
     CREATE TABLE t_lwu_future_reads (id UInt64, v UInt64)
@@ -32,14 +32,14 @@ $CLICKHOUSE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT $failpoint_name;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET enable_lightweight_update = 1;
     UPDATE t_lwu_future_reads SET v = v + 1000 WHERE id >= 100 AND id < 200
 " &
 
-wait_for_block_allocated "/zookeeper/$CLICKHOUSE_DATABASE/t_lwu_future_reads/block_numbers/all" "block-0000000001"
+wait_for_block_allocated "/zookeeper/$DATASTORE_DATABASE/t_lwu_future_reads/block_numbers/all" "block-0000000001"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET enable_lightweight_update = 1;
     UPDATE t_lwu_future_reads SET v = v + 2000 WHERE id >= 200 AND id < 300;
     OPTIMIZE TABLE t_lwu_future_reads PARTITION ID 'all' FINAL;
@@ -47,7 +47,7 @@ $CLICKHOUSE_CLIENT --query "
 
 wait
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT sum(v) FROM t_lwu_future_reads SETTINGS apply_patch_parts = 1;
     SELECT sum(multiIf (number >= 100 AND number < 200, number + 1000, number >= 200 AND number < 300, number + 2000, number)) FROM numbers(1000);
 

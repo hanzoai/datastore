@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Map data type in ClickHouse'
+description: 'Documentation for the Map data type in Datastore'
 sidebar_label: 'Map(K, V)'
 sidebar_position: 36
 slug: /sql-reference/data-types/map
@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 Data type `Map(K, V)` stores key-value pairs.
 
-Unlike other databases, maps are not unique in ClickHouse, i.e. a map can contain two elements with the same key.
+Unlike other databases, maps are not unique in Datastore, i.e. a map can contain two elements with the same key.
 (The reason for that is that maps are internally implemented as `Array(Tuple(K, V))`.)
 
 You can use use syntax `m[k]` to obtain the value for key `k` in map `m`.
@@ -189,7 +189,7 @@ If bucketed `Map` serialization does not fit your use case, there are two altern
 
 #### Using the JSON Data Type {#using-the-json-data-type}
 
-The [JSON](/sql-reference/data-types/newjson) data type stores each frequent path as a separate dynamic subcolumn. Paths that exceed the `max_dynamic_paths` limit go into a [shared data structure](/sql-reference/data-types/newjson#shared-data-structure), which can use `advanced` serialization for optimized single-path reads. See the [blog post](https://clickhouse.com/blog/json-data-type-gets-even-better) for a detailed overview of the `advanced` serialization.
+The [JSON](/sql-reference/data-types/newjson) data type stores each frequent path as a separate dynamic subcolumn. Paths that exceed the `max_dynamic_paths` limit go into a [shared data structure](/sql-reference/data-types/newjson#shared-data-structure), which can use `advanced` serialization for optimized single-path reads. See the [blog post](https://datastore.com/blog/json-data-type-gets-even-better) for a detailed overview of the `advanced` serialization.
 
 | Aspect             | `Map` with buckets                                                                             | `JSON`                                                                                                                                                           |
 |--------------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -236,4 +236,4 @@ Manual sharding is beneficial when vertical merges are important for reducing me
 
 ## Related content {#related-content}
 
-- Blog: [Building an Observability Solution with ClickHouse - Part 2 - Traces](https://clickhouse.com/blog/storing-traces-and-spans-open-telemetry-in-clickhouse)
+- Blog: [Building an Observability Solution with Datastore - Part 2 - Traces](https://datastore.com/blog/storing-traces-and-spans-open-telemetry-in-datastore)

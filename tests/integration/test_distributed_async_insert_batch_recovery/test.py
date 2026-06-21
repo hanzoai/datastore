@@ -49,7 +49,7 @@ def _shard_queue_path(node, table):
 
 def test_recover_batch_with_broken_middle_file(started_cluster):
     """
-    Regression test for https://github.com/ClickHouse/ClickHouse/issues/101745.
+    Regression test for https://github.com/ClickHouse/Datastore/issues/101745.
 
     `DistributedAsyncInsertBatch::recoverBatch` iterated over `files` but read
     `files.back()` inside the loop, so it only validated the last file's header.

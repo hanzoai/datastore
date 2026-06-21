@@ -112,7 +112,7 @@ def test_cluster_recovery(started_cluster):
 
         nodes[0].copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper1_solo.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
 
         nodes[0].start_clickhouse()

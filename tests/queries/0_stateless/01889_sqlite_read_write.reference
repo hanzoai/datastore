@@ -62,13 +62,13 @@ col2	Nullable(Int64)
 col1	Nullable(String)					
 col2	Nullable(Int64)					
 SQLite truncated int64 value #73141
-clickhouse
+datastore
 2147483648
-sqlite from clickhouse
+sqlite from datastore
 2147483648
 sqlite
 2147483648
-test path in clickhouse-local
+test path in datastore-local
 line1	1
 line2	2
 line3	3

@@ -12,7 +12,7 @@ Some of the calculations that you can do are similar to those that can be done w
 
 ## Standard window functions {#standard-window-functions}
 
-ClickHouse supports the standard grammar for defining windows and window functions. The table below indicates whether a feature is currently supported.
+Datastore supports the standard grammar for defining windows and window functions. The table below indicates whether a feature is currently supported.
 
 | Feature                                                                  | Supported?                                                                                                                                                                       |
 |--------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -30,9 +30,9 @@ ClickHouse supports the standard grammar for defining windows and window functio
 | `lag/lead(value, offset)`                                                          | ✅ <br/> You can also use one of the following workarounds:<br/> 1) `any(value) over (.... rows between <offset> preceding and <offset> preceding)`, or `following` for `lead` <br/> 2) `lagInFrame/leadInFrame`, which are analogous, but respect the window frame. To get behavior identical to `lag/lead`, use `rows between unbounded preceding and unbounded following`                                                                 |
 | ntile(buckets) | ✅ <br/> Specify window like, (partition by x order by y rows between unbounded preceding and unbounded following). |
 
-## ClickHouse-specific window functions {#clickhouse-specific-window-functions}
+## Datastore-specific window functions {#datastore-specific-window-functions}
 
-There is also the following ClickHouse specific window function:
+There is also the following Datastore specific window function:
 
 ### nonNegativeDerivative(metric_column, timestamp_column[, INTERVAL X UNITS]) {#nonnegativederivativemetric_column-timestamp_column-interval-x-units}
 
@@ -749,17 +749,17 @@ ORDER BY
 
 ### GitHub Issues {#github-issues}
 
-The roadmap for the initial support of window functions is [in this issue](https://github.com/ClickHouse/ClickHouse/issues/18097).
+The roadmap for the initial support of window functions is [in this issue](https://github.com/ClickHouse/Datastore/issues/18097).
 
-All GitHub issues related to window functions have the [comp-window-functions](https://github.com/ClickHouse/ClickHouse/labels/comp-window-functions) tag.
+All GitHub issues related to window functions have the [comp-window-functions](https://github.com/ClickHouse/Datastore/labels/comp-window-functions) tag.
 
 ### Tests {#tests}
 
 These tests contain the examples of the currently supported grammar:
 
-https://github.com/ClickHouse/ClickHouse/blob/master/tests/performance/window_functions.xml
+https://github.com/ClickHouse/Datastore/blob/master/tests/performance/window_functions.xml
 
-https://github.com/ClickHouse/ClickHouse/blob/master/tests/queries/0_stateless/01591_window_functions.sql
+https://github.com/ClickHouse/Datastore/blob/master/tests/queries/0_stateless/01591_window_functions.sql
 
 ### Postgres Docs {#postgres-docs}
 
@@ -781,6 +781,6 @@ https://dev.mysql.com/doc/refman/8.0/en/window-functions-frames.html
 
 ## Related Content {#related-content}
 
-- Blog: [Working with time series data in ClickHouse](https://clickhouse.com/blog/working-with-time-series-data-and-functions-ClickHouse)
-- Blog: [Window and array functions for Git commit sequences](https://clickhouse.com/blog/clickhouse-window-array-functions-git-commits)
-- Blog: [Getting Data Into ClickHouse - Part 3 - Using S3](https://clickhouse.com/blog/getting-data-into-clickhouse-part-3-s3)
+- Blog: [Working with time series data in Datastore](https://datastore.com/blog/working-with-time-series-data-and-functions-Datastore)
+- Blog: [Window and array functions for Git commit sequences](https://datastore.com/blog/datastore-window-array-functions-git-commits)
+- Blog: [Getting Data Into Datastore - Part 3 - Using S3](https://datastore.com/blog/getting-data-into-datastore-part-3-s3)

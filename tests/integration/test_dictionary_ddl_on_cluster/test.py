@@ -54,7 +54,7 @@ def test_dictionary_ddl_on_cluster(started_cluster):
         )
         PRIMARY KEY key
         LAYOUT(FLAT())
-        SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'sometbl' DB 'default'))
+        SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'sometbl' DB 'default'))
         LIFETIME(10)
         """
     )

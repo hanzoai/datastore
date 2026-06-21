@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- no-fasttest: JIT compilation is not available in fasttest
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/96619
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/96619
 -- When JIT-compiling expressions that convert DateTime to DateTime64,
 -- the scale multiplier was not applied, causing the value to be
 -- reinterpreted instead of converted (e.g., seconds treated as milliseconds).

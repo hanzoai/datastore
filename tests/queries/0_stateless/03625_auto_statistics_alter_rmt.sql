@@ -12,7 +12,7 @@ CREATE TABLE t_alter_auto_statistics
     b UInt64 STATISTICS (minmax),
     c String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_alter_auto_statistics', '1') ORDER BY a SETTINGS auto_statistics_types = '';
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_alter_auto_statistics', '1') ORDER BY a SETTINGS auto_statistics_types = '';
 
 INSERT INTO t_alter_auto_statistics VALUES (1, 1, 'xxx');
 

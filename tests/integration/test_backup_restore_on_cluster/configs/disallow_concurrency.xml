@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <backups>
@@ -12,4 +12,4 @@
         <allow_concurrent_backups>false</allow_concurrent_backups>
         <allow_concurrent_restores>false</allow_concurrent_restores>
     </backups>
-</clickhouse>
+</datastore>

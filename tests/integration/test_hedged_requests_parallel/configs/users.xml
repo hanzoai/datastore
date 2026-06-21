@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <load_balancing>in_order</load_balancing>
@@ -10,4 +10,4 @@
             <allow_changing_replica_until_first_data_packet>1</allow_changing_replica_until_first_data_packet>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

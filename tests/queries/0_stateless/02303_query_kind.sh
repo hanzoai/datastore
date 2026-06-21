@@ -12,11 +12,11 @@ opts=(
 
 function run_query()
 {
-    echo "clickhouse-client $*"
-    $CLICKHOUSE_CLIENT "$@"
+    echo "datastore-client $*"
+    $DATASTORE_CLIENT "$@"
 
-    echo "clickhouse-local $*"
-    $CLICKHOUSE_LOCAL "$@"
+    echo "datastore-local $*"
+    $DATASTORE_LOCAL "$@"
 }
 run_query "${opts[@]}" --query_kind secondary_query -q "explain plan header=1 select toString(dummy) as dummy from system.one group by dummy"
 run_query "${opts[@]}" --query_kind initial_query -q "explain plan header=1 select toString(dummy) as dummy from system.one group by dummy"

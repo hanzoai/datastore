@@ -5,10 +5,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-user="user03928_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user="user03928_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.secret (id UInt32, secret String) ENGINE = MergeTree ORDER BY id;
 INSERT INTO $db.secret VALUES (1, 'flag1'), (2, 'flag2');
 
@@ -22,12 +22,12 @@ CREATE ROW POLICY rp_secret ON $db.secret FOR SELECT USING id = 1 TO $user;
 EOF
 
 echo "--- Direct SELECT (row policy should filter to one row) ---"
-${CLICKHOUSE_CLIENT} --user $user --query "SELECT * FROM $db.secret"
+${DATASTORE_CLIENT} --user $user --query "SELECT * FROM $db.secret"
 
 echo "--- loop() must also respect row policy ---"
-${CLICKHOUSE_CLIENT} --user $user --query "SELECT * FROM loop('$db', 'secret') LIMIT 4"
+${DATASTORE_CLIENT} --user $user --query "SELECT * FROM loop('$db', 'secret') LIMIT 4"
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP ROW POLICY IF EXISTS rp_secret ON $db.secret;
 DROP USER IF EXISTS $user;
 DROP TABLE IF EXISTS $db.secret;

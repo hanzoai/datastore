@@ -157,7 +157,7 @@ ColumnsDescription StorageSystemFunctions::getColumnsDescription()
         {"parameters", std::make_shared<DataTypeString>(), "The function parameters (only for aggregate function)."},
         {"returned_value", std::make_shared<DataTypeString>(), "What does the function return."},
         {"examples", std::make_shared<DataTypeString>(), "Usage example."},
-        {"introduced_in", std::make_shared<DataTypeString>(), "ClickHouse version in which the function was first introduced."},
+        {"introduced_in", std::make_shared<DataTypeString>(), "Datastore version in which the function was first introduced."},
         {"categories", std::make_shared<DataTypeString>(), "The category of the function."},
         {"deterministic", std::make_shared<DataTypeNullable>(std::make_shared<DataTypeUInt8>()),
             "Whether the function returns the same result for the same arguments. NULL when unknown (e.g. aggregate or user-defined functions)."},

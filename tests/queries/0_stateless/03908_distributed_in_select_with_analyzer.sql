@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/76182
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/76182
 -- Distributed query with IN in the SELECT section should not throw
 -- ILLEGAL_TYPE_OF_ARGUMENT when using the analyzer.
 

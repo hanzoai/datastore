@@ -1,10 +1,10 @@
 -- Tags: no-parallel
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
-USE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE_1:Identifier};
+USE {DATASTORE_DATABASE_1:Identifier};
 
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table
 (
    id UInt64,
    id_key String,
@@ -13,11 +13,11 @@ CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_simple_attributes_so
 )
 ENGINE = TinyLog;
 
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table VALUES(0, 'id_key_0', 'value_0', 'value_second_0');
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table VALUES(1, 'id_key_1', 'value_1', 'value_second_1');
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table VALUES(2, 'id_key_2', 'value_2', 'value_second_2');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table VALUES(0, 'id_key_0', 'value_0', 'value_second_0');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table VALUES(1, 'id_key_1', 'value_1', 'value_second_1');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table VALUES(2, 'id_key_2', 'value_2', 'value_second_2');
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_key_simple_attributes
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.cache_dictionary_complex_key_simple_attributes
 (
    id UInt64,
    id_key String,
@@ -25,7 +25,7 @@ CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_ke
    value_second String DEFAULT 'value_second_default'
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_simple_attributes_source_table' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_simple_attributes_source_table' DB currentDatabase()))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(COMPLEX_KEY_CACHE(SIZE_IN_CELLS 10));
 
@@ -45,12 +45,12 @@ SELECT dictGetOrDefault('cache_dictionary_complex_key_simple_attributes', 'value
 SELECT 'dictHas';
 SELECT dictHas('cache_dictionary_complex_key_simple_attributes', (number, concat('id_key_', toString(number)))) FROM system.numbers LIMIT 4;
 SELECT 'select all values as input stream';
-SELECT * FROM {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_key_simple_attributes ORDER BY id;
+SELECT * FROM {DATASTORE_DATABASE_1:Identifier}.cache_dictionary_complex_key_simple_attributes ORDER BY id;
 
-DROP DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_key_simple_attributes;
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table;
+DROP DICTIONARY {DATASTORE_DATABASE_1:Identifier}.cache_dictionary_complex_key_simple_attributes;
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.complex_key_simple_attributes_source_table;
 
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table
 (
    id UInt64,
    id_key String,
@@ -59,11 +59,11 @@ CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_complex_attributes_s
 )
 ENGINE = TinyLog;
 
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table VALUES(0, 'id_key_0', 'value_0', 'value_second_0');
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table VALUES(1, 'id_key_1', 'value_1', NULL);
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table VALUES(2, 'id_key_2', 'value_2', 'value_second_2');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table VALUES(0, 'id_key_0', 'value_0', 'value_second_0');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table VALUES(1, 'id_key_1', 'value_1', NULL);
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table VALUES(2, 'id_key_2', 'value_2', 'value_second_2');
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_key_complex_attributes
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.cache_dictionary_complex_key_complex_attributes
 (
     id UInt64,
     id_key String,
@@ -72,7 +72,7 @@ CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_ke
     value_second Nullable(String) DEFAULT 'value_second_default'
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_complex_attributes_source_table' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_complex_attributes_source_table' DB currentDatabase()))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(COMPLEX_KEY_CACHE(SIZE_IN_CELLS 10));
 
@@ -92,9 +92,9 @@ SELECT dictGetOrDefault('cache_dictionary_complex_key_complex_attributes', 'valu
 SELECT 'dictHas';
 SELECT dictHas('cache_dictionary_complex_key_complex_attributes', (number, concat('id_key_', toString(number)))) FROM system.numbers LIMIT 4;
 SELECT 'select all values as input stream';
-SELECT * FROM {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_key_complex_attributes ORDER BY id;
+SELECT * FROM {DATASTORE_DATABASE_1:Identifier}.cache_dictionary_complex_key_complex_attributes ORDER BY id;
 
-DROP DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.cache_dictionary_complex_key_complex_attributes;
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table;
+DROP DICTIONARY {DATASTORE_DATABASE_1:Identifier}.cache_dictionary_complex_key_complex_attributes;
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.complex_key_complex_attributes_source_table;
 
-DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE {DATASTORE_DATABASE_1:Identifier};

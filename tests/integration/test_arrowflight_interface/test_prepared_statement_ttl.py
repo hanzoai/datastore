@@ -31,7 +31,7 @@ def get_client(username=None, password=None):
         disable_server_verification=True,
         username=username,
         password=password,
-        metadata={'x-clickhouse-session-id': session_id},
+        metadata={'x-datastore-session-id': session_id},
         features={'metadata-reflection': 'true'},
     )
 

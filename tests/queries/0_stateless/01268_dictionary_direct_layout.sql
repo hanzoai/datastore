@@ -64,7 +64,7 @@ CREATE DICTIONARY db_01268.dict1
   third_column String DEFAULT 'qqq'
 )
 PRIMARY KEY key_column
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict1' PASSWORD '' DB 'database_for_dict_01268'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict1' PASSWORD '' DB 'database_for_dict_01268'))
 LAYOUT(DIRECT()) SETTINGS(max_result_bytes=1);
 
 CREATE DICTIONARY db_01268.dict2
@@ -74,7 +74,7 @@ CREATE DICTIONARY db_01268.dict2
   region_name String DEFAULT ''
 )
 PRIMARY KEY region_id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict2' PASSWORD '' DB 'database_for_dict_01268'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict2' PASSWORD '' DB 'database_for_dict_01268'))
 LAYOUT(DIRECT()) SETTINGS(dictionary_use_async_executor=1, max_threads=8);
 
 CREATE DICTIONARY db_01268.dict3
@@ -84,7 +84,7 @@ CREATE DICTIONARY db_01268.dict3
   region_name String DEFAULT ''
 )
 PRIMARY KEY region_id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict3' PASSWORD '' DB 'database_for_dict_01268'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict3' PASSWORD '' DB 'database_for_dict_01268'))
 LAYOUT(DIRECT());
 
 SELECT 'INITIALIZING DICTIONARY';

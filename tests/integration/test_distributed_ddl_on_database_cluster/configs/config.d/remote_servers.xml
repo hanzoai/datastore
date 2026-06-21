@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
     </remote_servers>
-</clickhouse>
+</datastore>

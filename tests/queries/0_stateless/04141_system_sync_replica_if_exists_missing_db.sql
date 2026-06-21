@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103629
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103629
 -- `SYSTEM SYNC REPLICA <db>.<tbl> IF EXISTS` must silently succeed when the
 -- database does not exist, the same way it does when the table does not exist.
 -- Before the fix, `InterpreterSystemQuery::execute` called `resolveStorageID`

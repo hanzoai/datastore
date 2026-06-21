@@ -5,14 +5,14 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --optimize_on_insert=1"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --optimize_on_insert=1"
 
 # Wait for number of parts in table $1 to become $2.
 # Print the changed value. If no changes for $3 seconds, prints initial value.
 wait_for_number_of_parts() {
     for _ in `seq $3`
     do
-        res=`$CLICKHOUSE_CLIENT -q "SELECT count(*) FROM system.parts WHERE database = currentDatabase() AND table='$1' AND active"`
+        res=`$DATASTORE_CLIENT -q "SELECT count(*) FROM system.parts WHERE database = currentDatabase() AND table='$1' AND active"`
         if [ "$res" -eq "$2" ]
         then
             echo "$res"
@@ -23,7 +23,7 @@ wait_for_number_of_parts() {
     echo "$res (FAIL)"
 }
 
-$CLICKHOUSE_CLIENT -mq "
+$DATASTORE_CLIENT -mq "
 SET alter_sync = 2;
 
 DROP TABLE IF EXISTS replacing;
@@ -54,7 +54,7 @@ OPTIMIZE TABLE replacing FINAL CLEANUP;
 # OPTIMIZE FINAL CLEANUP will replace the part with empty, but only cleaner thread will clean it, so we still need to wait
 wait_for_number_of_parts 'replacing' 0 30
 
-$CLICKHOUSE_CLIENT -mq "
+$DATASTORE_CLIENT -mq "
 DROP TABLE IF EXISTS replacing2;
 
 CREATE TABLE replacing2 (key int, value int, version int, deleted UInt8) ENGINE = ReplacingMergeTree(version, deleted) ORDER BY key
@@ -76,13 +76,13 @@ INSERT INTO replacing2 VALUES (1, 1, 2, 1);"
 
 wait_for_number_of_parts 'replacing2' 0 30
 
-$CLICKHOUSE_CLIENT -mq "
+$DATASTORE_CLIENT -mq "
 SET alter_sync = 2;
 
 DROP TABLE IF EXISTS t03357_replacing_replicated;
 
 CREATE TABLE t03357_replacing_replicated (key int, value int, version int, deleted UInt8)
-ENGINE = ReplicatedReplacingMergeTree('/clickhouse/tables/{database}/t03357_replacing_replicated', 'node', version, deleted)
+ENGINE = ReplicatedReplacingMergeTree('/datastore/tables/{database}/t03357_replacing_replicated', 'node', version, deleted)
 ORDER BY key
 SETTINGS
     cleanup_delay_period = 1,
@@ -113,10 +113,10 @@ OPTIMIZE TABLE t03357_replacing_replicated FINAL CLEANUP;
 # OPTIMIZE FINAL CLEANUP will replace the part with empty, but only cleaner thread will clean it, so we still need to wait
 wait_for_number_of_parts 't03357_replacing_replicated' 0 30
 
-$CLICKHOUSE_CLIENT -mq "
+$DATASTORE_CLIENT -mq "
 DROP TABLE IF EXISTS t03357_replacing_replicated2;
 
-CREATE TABLE t03357_replacing_replicated2 (key int, value int, version int, deleted UInt8) ENGINE = ReplicatedReplacingMergeTree('/clickhouse/tables/{database}/t03357_replacing_replicated2', 'node', version, deleted) ORDER BY key
+CREATE TABLE t03357_replacing_replicated2 (key int, value int, version int, deleted UInt8) ENGINE = ReplicatedReplacingMergeTree('/datastore/tables/{database}/t03357_replacing_replicated2', 'node', version, deleted) ORDER BY key
 SETTINGS allow_experimental_replacing_merge_with_cleanup = true,
     enable_replacing_merge_with_cleanup_for_min_age_to_force_merge = true,
     number_of_free_entries_in_pool_to_execute_optimize_entire_partition = 1,
@@ -135,7 +135,7 @@ INSERT INTO t03357_replacing_replicated2 VALUES (1, 1, 2, 1);
 
 wait_for_number_of_parts 't03357_replacing_replicated2' 0 30
 
-$CLICKHOUSE_CLIENT -mq "
+$DATASTORE_CLIENT -mq "
 DROP TABLE replacing;
 DROP TABLE replacing2;
 DROP TABLE t03357_replacing_replicated;

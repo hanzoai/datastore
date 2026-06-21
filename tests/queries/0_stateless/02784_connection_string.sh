@@ -5,24 +5,24 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 USER_INFOS=('default' '')
-HOSTS_PORTS=("$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP" "$CLICKHOUSE_HOST" "$CLICKHOUSE_HOST:" ":$CLICKHOUSE_PORT_TCP"  "127.0.0.1" "127.0.0.1:$CLICKHOUSE_PORT_TCP" "$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP,invalid_host:9000" "[0000:0000:0000:0000:0000:0000:0000:0001]" "[::1]"  "[::1]:$CLICKHOUSE_PORT_TCP" "" )
-DATABASES=("$CLICKHOUSE_DATABASE" "")
+HOSTS_PORTS=("$DATASTORE_HOST:$DATASTORE_PORT_TCP" "$DATASTORE_HOST" "$DATASTORE_HOST:" ":$DATASTORE_PORT_TCP"  "127.0.0.1" "127.0.0.1:$DATASTORE_PORT_TCP" "$DATASTORE_HOST:$DATASTORE_PORT_TCP,invalid_host:9000" "[0000:0000:0000:0000:0000:0000:0000:0001]" "[::1]"  "[::1]:$DATASTORE_PORT_TCP" "" )
+DATABASES=("$DATASTORE_DATABASE" "")
 
 TEST_INDEX=0
 
 function runClient()
 {
-    $CLICKHOUSE_CLIENT_BINARY "$@" -q "SELECT $TEST_INDEX" --log_comment 02766_connection_string.sh --send_logs_level=warning
+    $DATASTORE_CLIENT_BINARY "$@" -q "SELECT $TEST_INDEX" --log_comment 02766_connection_string.sh --send_logs_level=warning
     ((++TEST_INDEX))
 }
 
 function testConnectionString()
 {
     if [ "$database" == "" ]; then
-        runClient "clickhouse:$1"
-        runClient "clickhouse:$1/"
+        runClient "datastore:$1"
+        runClient "datastore:$1/"
     else
-        runClient "clickhouse:$1/$database"
+        runClient "datastore:$1/$database"
     fi
 }
 
@@ -57,103 +57,103 @@ TEST_USER_PASSWORD="zyx%$&abc"
 # %, $, & percent encoded
 TEST_USER_PASSWORD_ENCODED="zyx%25%24%26abc"
 
-$CLICKHOUSE_CLIENT -q "CREATE USER '$TEST_USER_NAME'"
-$CLICKHOUSE_CLIENT -q "CREATE USER '$TEST_USER_EMAIL_NAME' IDENTIFIED WITH plaintext_password BY '$TEST_USER_PASSWORD'"
+$DATASTORE_CLIENT -q "CREATE USER '$TEST_USER_NAME'"
+$DATASTORE_CLIENT -q "CREATE USER '$TEST_USER_EMAIL_NAME' IDENTIFIED WITH plaintext_password BY '$TEST_USER_PASSWORD'"
 
-runClient "clickhouse://$TEST_USER_NAME@$CLICKHOUSE_HOST/$CLICKHOUSE_DATABASE"
-runClient "clickhouse://$TEST_USER_EMAIL_NAME_ENCODED:$TEST_USER_PASSWORD_ENCODED@$CLICKHOUSE_HOST/$CLICKHOUSE_DATABASE"
+runClient "datastore://$TEST_USER_NAME@$DATASTORE_HOST/$DATASTORE_DATABASE"
+runClient "datastore://$TEST_USER_EMAIL_NAME_ENCODED:$TEST_USER_PASSWORD_ENCODED@$DATASTORE_HOST/$DATASTORE_DATABASE"
 
-$CLICKHOUSE_CLIENT -q "DROP USER '$TEST_USER_NAME'"
-$CLICKHOUSE_CLIENT -q "DROP USER '$TEST_USER_EMAIL_NAME'"
+$DATASTORE_CLIENT -q "DROP USER '$TEST_USER_NAME'"
+$DATASTORE_CLIENT -q "DROP USER '$TEST_USER_EMAIL_NAME'"
 
 # Percent-encoded database in non-ascii symbols
 UTF8_DATABASE="БазаДанных_$$"
 UTF8_DATABASE_PERCENT_ENCODED="%D0%91%D0%B0%D0%B7%D0%B0%D0%94%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_$$"
-$CLICKHOUSE_CLIENT -q "CREATE DATABASE IF NOT EXISTS \`$UTF8_DATABASE\`"
-runClient "clickhouse://default@$CLICKHOUSE_HOST/$UTF8_DATABASE_PERCENT_ENCODED"
-$CLICKHOUSE_CLIENT -q "DROP DATABASE IF EXISTS \`$UTF8_DATABASE\`"
+$DATASTORE_CLIENT -q "CREATE DATABASE IF NOT EXISTS \`$UTF8_DATABASE\`"
+runClient "datastore://default@$DATASTORE_HOST/$UTF8_DATABASE_PERCENT_ENCODED"
+$DATASTORE_CLIENT -q "DROP DATABASE IF EXISTS \`$UTF8_DATABASE\`"
 
-# clickhouse-client extra options cases
+# datastore-client extra options cases
 TEST_INDEX=1000
 
-runClient "clickhouse://$CLICKHOUSE_HOST/" --user 'default'
-runClient "clickhouse://$CLICKHOUSE_HOST/default" --user 'default'
-runClient "clickhouse:" --database "$CLICKHOUSE_DATABASE"
+runClient "datastore://$DATASTORE_HOST/" --user 'default'
+runClient "datastore://$DATASTORE_HOST/default" --user 'default'
+runClient "datastore:" --database "$DATASTORE_DATABASE"
 
 # User 'default' and default host
-runClient "clickhouse://default@"
+runClient "datastore://default@"
 
 # Invalid URI cases
 TEST_INDEX=10000
-runClient "clickhouse://default:@$CLICKHOUSE_HOST/" --user 'default' 2>&1 | grep -o 'Bad arguments'
-runClient "clickhouse://default:pswrd@$CLICKHOUSE_HOST/" --user 'default' 2>&1 | grep -o 'Bad arguments'
-runClient "clickhouse://default:pswrd@$CLICKHOUSE_HOST/" --password 'pswrd' 2>&1 | grep -o 'Bad arguments'
-runClient "clickhouse:///$CLICKHOUSE_DATABASE" --database "$CLICKHOUSE_DATABASE" 2>&1 | grep -o 'Bad arguments'
-runClient "clickhouse://$CLICKHOUSE_HOST/$CLICKHOUSE_DATABASE" --database "$CLICKHOUSE_DATABASE" 2>&1 | grep -o 'Bad arguments'
-runClient "clickhouse://$CLICKHOUSE_HOST/$CLICKHOUSE_DATABASE?s" --database "$CLICKHOUSE_DATABASE" 2>&1 | grep -o 'Bad arguments'
-runClient "clickhouse:/$CLICKHOUSE_DATABASE?s" --database "$CLICKHOUSE_DATABASE" 2>&1 | grep -o 'Bad arguments'
+runClient "datastore://default:@$DATASTORE_HOST/" --user 'default' 2>&1 | grep -o 'Bad arguments'
+runClient "datastore://default:pswrd@$DATASTORE_HOST/" --user 'default' 2>&1 | grep -o 'Bad arguments'
+runClient "datastore://default:pswrd@$DATASTORE_HOST/" --password 'pswrd' 2>&1 | grep -o 'Bad arguments'
+runClient "datastore:///$DATASTORE_DATABASE" --database "$DATASTORE_DATABASE" 2>&1 | grep -o 'Bad arguments'
+runClient "datastore://$DATASTORE_HOST/$DATASTORE_DATABASE" --database "$DATASTORE_DATABASE" 2>&1 | grep -o 'Bad arguments'
+runClient "datastore://$DATASTORE_HOST/$DATASTORE_DATABASE?s" --database "$DATASTORE_DATABASE" 2>&1 | grep -o 'Bad arguments'
+runClient "datastore:/$DATASTORE_DATABASE?s" --database "$DATASTORE_DATABASE" 2>&1 | grep -o 'Bad arguments'
 
 runClient "http://" 2>&1 | grep -o 'BAD_ARGUMENTS'
 runClient "click_house:" 2>&1 | grep -o 'BAD_ARGUMENTS'
 
 TEST_INDEX=1000087
 # Using connection string prohibits to use --host and --port options
-runClient "clickhouse://default:@$CLICKHOUSE_HOST/" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://default:@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://default:@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" --port "$CLICKHOUSE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://default:@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://default:@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" --host "$CLICKHOUSE_HOST" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://default:@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" --port "$CLICKHOUSE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://default:@$CLICKHOUSE_HOST/" --port "$CLICKHOUSE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://$CLICKHOUSE_HOST/" --port "$CLICKHOUSE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://:@$CLICKHOUSE_HOST/" --port "$CLICKHOUSE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://$CLICKHOUSE_HOST/" --port "$CLICKHOUSE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:" --port "$CLICKHOUSE_PORT_TCP" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://" --port "$CLICKHOUSE_PORT_TCP" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:///" --port "$CLICKHOUSE_PORT_TCP" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:///?" --port "$CLICKHOUSE_PORT_TCP" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://:/?" --port "$CLICKHOUSE_PORT_TCP" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:" --database "$CLICKHOUSE_DATABASE" --port "$CLICKHOUSE_PORT_TCP" --host "$CLICKHOUSE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST/" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" --port "$DATASTORE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" --host "$DATASTORE_HOST" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" --port "$DATASTORE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST/" --port "$DATASTORE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://$DATASTORE_HOST/" --port "$DATASTORE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://:@$DATASTORE_HOST/" --port "$DATASTORE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://$DATASTORE_HOST/" --port "$DATASTORE_PORT_TCP" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:" --port "$DATASTORE_PORT_TCP" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://" --port "$DATASTORE_PORT_TCP" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:///" --port "$DATASTORE_PORT_TCP" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:///?" --port "$DATASTORE_PORT_TCP" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://:/?" --port "$DATASTORE_PORT_TCP" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:" --database "$DATASTORE_DATABASE" --port "$DATASTORE_PORT_TCP" --host "$DATASTORE_HOST" 2>&1 | grep -o 'BAD_ARGUMENTS'
 
-# Using clickhouse-client and connection is prohibited
-runClient "clickhouse:" --connection "connection" 2>&1 | grep -o 'BAD_ARGUMENTS'
+# Using datastore-client and connection is prohibited
+runClient "datastore:" --connection "connection" 2>&1 | grep -o 'BAD_ARGUMENTS'
 
 # Space is used in connection string (This is prohibited).
-runClient " clickhouse:" 2>&1 | grep -o 'SYNTAX_ERROR'
-runClient "clickhouse: " 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://host1 /" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://host1, host2/" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://host1 ,host2/" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://host1 host2/" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://host1/ database:" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://user :password@host1" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://user: password@host1" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient " datastore:" 2>&1 | grep -o 'SYNTAX_ERROR'
+runClient "datastore: " 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://host1 /" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://host1, host2/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://host1 ,host2/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://host1 host2/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://host1/ database:" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://user :password@host1" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://user: password@host1" 2>&1 | grep -o 'BAD_ARGUMENTS'
 
 # Connection string is not first argument
-runClient --multiline "clickhouse://default:@$CLICKHOUSE_HOST/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient --multiline "datastore://default:@$DATASTORE_HOST/" 2>&1 | grep -o 'BAD_ARGUMENTS'
 # Connection string used as the first and the second argument of client
-runClient "clickhouse://default:@$CLICKHOUSE_HOST/" "clickhouse://default:@$CLICKHOUSE_HOST/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://default:@$DATASTORE_HOST/" "datastore://default:@$DATASTORE_HOST/" 2>&1 | grep -o 'BAD_ARGUMENTS'
 
 # Invalid hosts
-runClient "clickhouse://host1,,," 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse://," 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://host1,,," 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://," 2>&1 | grep -o 'BAD_ARGUMENTS'
 
 # Invalid parameters
-runClient "clickhouse:?invalid_parameter" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:?invalid_parameter&secure" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:?s&invalid_parameter" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:?s&invalid_parameter=val" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:?invalid_parameter=arg" 2>&1 | grep -o 'BAD_ARGUMENTS'
-runClient "clickhouse:?invalid_parameter=arg&s" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:?invalid_parameter" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:?invalid_parameter&secure" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:?s&invalid_parameter" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:?s&invalid_parameter=val" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:?invalid_parameter=arg" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore:?invalid_parameter=arg&s" 2>&1 | grep -o 'BAD_ARGUMENTS'
 # Several users prohibited
-runClient "clickhouse://user1@localhost,default@localhost/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://user1@localhost,default@localhost/" 2>&1 | grep -o 'BAD_ARGUMENTS'
 # Using '@' in user name is prohibited. User name should be percent-encoded.
-runClient "clickhouse://my_mail@email.com@host/" 2>&1 | grep -o 'BAD_ARGUMENTS'
+runClient "datastore://my_mail@email.com@host/" 2>&1 | grep -o 'BAD_ARGUMENTS'
 
 # Wrong input cases
 TEST_INDEX=100000
 # Invalid user name
-runClient "clickhouse://non_exist_user@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" 2>&1 | grep -o 'Authentication failed'
+runClient "datastore://non_exist_user@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" 2>&1 | grep -o 'Authentication failed'
 # Invalid password
-runClient "clickhouse://default:invalid_password@$CLICKHOUSE_HOST:$CLICKHOUSE_PORT_TCP/" 2>&1 | grep -o 'Authentication failed'
+runClient "datastore://default:invalid_password@$DATASTORE_HOST:$DATASTORE_PORT_TCP/" 2>&1 | grep -o 'Authentication failed'

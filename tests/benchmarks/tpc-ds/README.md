@@ -1,12 +1,12 @@
 # List of known problems
 ## Q17
-The query returns `nan` instead of `NULL` when `stddev_samp` is called on a single value. Corresponding issue: https://github.com/ClickHouse/ClickHouse/issues/94683. Otherwise, the result is correct.
+The query returns `nan` instead of `NULL` when `stddev_samp` is called on a single value. Corresponding issue: https://github.com/ClickHouse/Datastore/issues/94683. Otherwise, the result is correct.
 
 ## Q35
 Memory Limit Exceeded with reasonable amount of memory.
 
 ## Q47
-The query doesn't work out-of-the-box due to https://github.com/ClickHouse/ClickHouse/issues/94858. The alternative formulation with a minor fix works.
+The query doesn't work out-of-the-box due to https://github.com/ClickHouse/Datastore/issues/94858. The alternative formulation with a minor fix works.
 
 Original:
 ```sql
@@ -129,10 +129,10 @@ LIMIT 100;
 ```
 
 ## Q51
-The result contains ᴺᵁᴸᴸ. This is correct, but we were using format_tsv_null_representation='' setting to represent nulls as empty strings. This is due to https://github.com/ClickHouse/ClickHouse/issues/95168. Note: running this query for the first time may produce '', but consecutive runs will produce 'ᴺᵁᴸᴸ'.
+The result contains ᴺᵁᴸᴸ. This is correct, but we were using format_tsv_null_representation='' setting to represent nulls as empty strings. This is due to https://github.com/ClickHouse/Datastore/issues/95168. Note: running this query for the first time may produce '', but consecutive runs will produce 'ᴺᵁᴸᴸ'.
 
 ## Q57
-The query doesn't work out-of-the-box due to https://github.com/ClickHouse/ClickHouse/issues/94858. The alternative formulation with a minor fix works.
+The query doesn't work out-of-the-box due to https://github.com/ClickHouse/Datastore/issues/94858. The alternative formulation with a minor fix works.
 
 Original:
 ```sql
@@ -247,7 +247,7 @@ LIMIT 100;
 ```
 
 ## Q58
-The query doesn't work out-of-the-box due to https://github.com/ClickHouse/ClickHouse/issues/94976. The alternative formulation with a minor fix works.
+The query doesn't work out-of-the-box due to https://github.com/ClickHouse/Datastore/issues/94976. The alternative formulation with a minor fix works.
 
 Original:
 ```sql
@@ -418,11 +418,11 @@ LIMIT 100;
 ```
 
 ## Q64-65
-The result contains ᴺᵁᴸᴸ. This is correct, but we were using format_tsv_null_representation='' setting to represent nulls as empty strings. This is due to https://github.com/ClickHouse/ClickHouse/issues/95168. Note: running this query for the first time may produce '', but consecutive runs will produce 'ᴺᵁᴸᴸ'.
+The result contains ᴺᵁᴸᴸ. This is correct, but we were using format_tsv_null_representation='' setting to represent nulls as empty strings. This is due to https://github.com/ClickHouse/Datastore/issues/95168. Note: running this query for the first time may produce '', but consecutive runs will produce 'ᴺᵁᴸᴸ'.
 
 
 ## Q75
-The query doesn't work out-of-the-box due to https://github.com/ClickHouse/ClickHouse/issues/94671. The alternative formulation with a minor fix works.
+The query doesn't work out-of-the-box due to https://github.com/ClickHouse/Datastore/issues/94671. The alternative formulation with a minor fix works.
 
 Original:
 ```sql

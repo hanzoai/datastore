@@ -32,7 +32,7 @@ notLike(haystack, pattern)
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT notLike('ClickHouse', '%House%');",
+        "SELECT notLike('Datastore', '%House%');",
         R"(
 ┌─notLike('Cli⋯ '%House%')─┐
 │                        0 │
@@ -41,7 +41,7 @@ notLike(haystack, pattern)
     },
     {
         "Non-matching pattern",
-        "SELECT notLike('ClickHouse', '%SQL%');",
+        "SELECT notLike('Datastore', '%SQL%');",
         R"(
 ┌─notLike('Cli⋯', '%SQL%')─┐
 │                        1 │

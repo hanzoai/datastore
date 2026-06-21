@@ -5,8 +5,8 @@
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
-TABLE_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_delta_traversal"
-SECRET_FILE="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_delta_secret.txt"
+TABLE_DIR="${DATASTORE_TMP}/${DATASTORE_DATABASE}_delta_traversal"
+SECRET_FILE="${DATASTORE_TMP}/${DATASTORE_DATABASE}_delta_secret.txt"
 
 rm -rf "${TABLE_DIR}"
 mkdir -p "${TABLE_DIR}/_delta_log"
@@ -28,11 +28,11 @@ check_reader() {
     local kernel="$1"
     echo "--- allow_experimental_delta_kernel_rs = ${kernel} ---"
 
-    ${CLICKHOUSE_LOCAL} --allow_experimental_delta_kernel_rs="${kernel}" -q \
+    ${DATASTORE_LOCAL} --allow_experimental_delta_kernel_rs="${kernel}" -q \
         "SELECT * FROM deltaLakeLocal('${TABLE_DIR}', 'RawBLOB') LIMIT 100 FORMAT TabSeparated" 2>&1 \
         | grep -q 'PATH_ACCESS_DENIED' && echo "GOT ACCESS DENIED ERROR"
 
-    ${CLICKHOUSE_LOCAL} --allow_experimental_delta_kernel_rs="${kernel}" -q \
+    ${DATASTORE_LOCAL} --allow_experimental_delta_kernel_rs="${kernel}" -q \
         "SELECT * FROM deltaLakeLocal('${TABLE_DIR}', 'RawBLOB') LIMIT 100 FORMAT TabSeparated" 2>&1 \
         | grep -q 'TOP_SECRET_CONTENTS' && echo "LEAKED" || echo "NO LEAK"
 }

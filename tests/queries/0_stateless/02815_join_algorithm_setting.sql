@@ -74,7 +74,7 @@ CREATE DICTIONARY dict(
   id UInt64,
   s  String
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'src' DB currentDatabase()))
+SOURCE(DATASTORE(TABLE 'src' DB currentDatabase()))
 LIFETIME (MIN 0 MAX 0)
 LAYOUT(HASHED());
 

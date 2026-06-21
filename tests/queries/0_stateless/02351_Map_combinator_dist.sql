@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/35359
+-- https://github.com/ClickHouse/Datastore/issues/35359
 
 -- sumMap
 SELECT x[67]

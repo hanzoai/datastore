@@ -617,18 +617,18 @@ void WebTerminalRequestHandler::handleWebSocket(HTTPServerRequest & request, HTT
     static constexpr int DEFAULT_COLS = 80;
     static constexpr int DEFAULT_ROWS = 24;
 
-    /// `xterm-256color` is the terminfo entry advertised to clickhouse-client
+    /// `xterm-256color` is the terminfo entry advertised to datastore-client
     /// inside the PTY. It is the most broadly-available entry that signals
     /// 256-color and modern xterm-style escape sequences. We do not request a
     /// truecolor entry like `xterm-direct`, because terminfo databases inside
-    /// the container may not include it; clickhouse-client itself emits 24-bit
+    /// the container may not include it; datastore-client itself emits 24-bit
     /// (truecolor) ANSI escape sequences directly, so the chosen TERM only
     /// affects libraries (e.g. ncurses) that consult terminfo.
     auto pty_descriptors = std::make_unique<PtyClientDescriptorSet>("xterm-256color", DEFAULT_COLS, DEFAULT_ROWS, 0, 0);
     auto client_runner = std::make_unique<ClientEmbeddedRunner>(std::move(pty_descriptors), std::move(session));
 
     /// `ClientEmbedded::run` interprets each entry of this map as a
-    /// `--key value` pair appended to the embedded `clickhouse-client`
+    /// `--key value` pair appended to the embedded `datastore-client`
     /// command line (see `ClientEmbedded.cpp`). The map must therefore stay
     /// empty here: the web terminal does not have a safe path for the
     /// user-facing browser to set arbitrary CLI flags on the embedded

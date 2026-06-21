@@ -80,7 +80,7 @@ def test_simple_select(started_cluster):
     system_warnings_query = "SELECT count() >= 1 FROM system.warnings WHERE message LIKE '%MongoDB%path%ignored%'"
 
     # Need to restart to clear system.warning from previous run in flaky check
-    # FIXME: we can do `TRUNCATE` after https://github.com/ClickHouse/ClickHouse/pull/82087
+    # FIXME: we can do `TRUNCATE` after https://github.com/ClickHouse/Datastore/pull/82087
     node.restart_clickhouse()
 
     assert node.query(system_warnings_query) == "0\n"
@@ -661,7 +661,7 @@ def test_string_casting(started_cluster):
         "k_doubleN": -6.66,
         "k_date": datetime.datetime(1999, 2, 28, 0, 0, 0),
         "k_timestamp": datetime.datetime(1999, 2, 28, 12, 46, 34),
-        "k_string": "ClickHouse",
+        "k_string": "Datastore",
         "k_document": {
             "Hello": "world!",
             "meow123": True,
@@ -712,7 +712,7 @@ def test_string_casting(started_cluster):
     assert (
         node.query("SELECT k_timestamp FROM strings_table") == "1999-02-28 12:46:34\n"
     )
-    assert node.query("SELECT k_string FROM strings_table") == "ClickHouse\n"
+    assert node.query("SELECT k_string FROM strings_table") == "Datastore\n"
     assert json.dumps(
         json.loads(node.query("SELECT k_document FROM strings_table"))
     ) == json.dumps(data["k_document"])
@@ -1077,7 +1077,7 @@ def test_oid(started_cluster):
         CREATE OR REPLACE TABLE oid_table(
         _id  String,
         key  String
-        ) ENGINE = MongoDB('mongo1:27017', 'test', 'oid_table', 'root', 'clickhouse', '', 'key')
+        ) ENGINE = MongoDB('mongo1:27017', 'test', 'oid_table', 'root', 'datastore', '', 'key')
         """
     )
     with pytest.raises(QueryRuntimeException):

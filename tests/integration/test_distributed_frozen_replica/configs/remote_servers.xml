@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -53,4 +53,4 @@
             </shard>
         </test_cluster_secure>
     </remote_servers>
-</clickhouse>
+</datastore>

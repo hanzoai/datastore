@@ -1,7 +1,7 @@
 #include "config.h"
 
 #include <Storages/MergeTree/MergeTreePartInfo.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Storages/SharedMergeTree/MergeMutateIntention.h>
 #endif
 

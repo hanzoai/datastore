@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test>
             <shard>
@@ -40,7 +40,7 @@
                 `value` String
                 )
                 PRIMARY KEY key
-                SOURCE(CLICKHOUSE(QUERY `SELECT 'key' as key, 'value' as value`))
+                SOURCE(DATASTORE(QUERY `SELECT 'key' as key, 'value' as value`))
                 LIFETIME(30)
                 LAYOUT(HASHED);
             </query>
@@ -48,10 +48,10 @@
         </scripts>
 
         <scripts>
-            <query>CREATE DATABASE replicated ON CLUSTER test Engine=Replicated('/clickhouse/databases/replicated', '{shard}', '{replica}')</query>
+            <query>CREATE DATABASE replicated ON CLUSTER test Engine=Replicated('/datastore/databases/replicated', '{shard}', '{replica}')</query>
         </scripts>
         <scripts>
             <query>CREATE TABLE replicated.test_replica (key Int) Engine=ReplicatedMergeTree() ORDER BY ()</query>
         </scripts>
     </startup_scripts>
-</clickhouse>
+</datastore>

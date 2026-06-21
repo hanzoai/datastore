@@ -159,7 +159,7 @@ def test_with_replicated_merge_tree(cluster):
     create_query = " ".join(
         (
             "CREATE TABLE {} (a UInt64, b Array(UInt64))".format(table_name),
-            "ENGINE=ReplicatedMergeTree('/clickhouse/tables/test/{}', 'node')".format(
+            "ENGINE=ReplicatedMergeTree('/datastore/tables/test/{}', 'node')".format(
                 table_name
             ),
             "ORDER BY a",
@@ -188,7 +188,7 @@ def test_with_replicated_merge_tree_multithread(cluster):
     create_query = " ".join(
         (
             "CREATE TABLE {} (a UInt64, b Array(UInt64))".format(table_name),
-            "ENGINE=ReplicatedMergeTree('/clickhouse/tables/test/{}', 'node')".format(
+            "ENGINE=ReplicatedMergeTree('/datastore/tables/test/{}', 'node')".format(
                 table_name
             ),
             "ORDER BY a",

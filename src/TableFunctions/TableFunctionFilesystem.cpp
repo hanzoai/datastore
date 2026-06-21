@@ -35,7 +35,7 @@ Provides access to file system to list files and return their metadata and conte
 
 In server mode, the function is restricted to the `user_files` directory (controlled by the `user_files_path` server config).
 Paths are resolved relative to `user_files`. Symlinks whose resolved path leaves the `user_files` subtree are skipped during traversal.
-In `clickhouse-local` mode, any path on the local filesystem is accessible.
+In `datastore-local` mode, any path on the local filesystem is accessible.
 
 The `FILE` source access type is required.
 
@@ -77,7 +77,7 @@ SELECT name, size FROM filesystem('my_data')
 )", ""},
                 {"List files with an absolute path", R"(
 ```sql
-SELECT * FROM filesystem('/var/lib/clickhouse/user_files')
+SELECT * FROM filesystem('/var/lib/datastore/user_files')
 ```
 )", ""},
             },
@@ -167,7 +167,7 @@ StoragePtr TableFunctionFilesystem::executeImpl(const ASTPtr &, ContextPtr conte
     /// Keep `user_files_path` in the same lexical namespace as user input: `fileOrSymlinkPathStartsWith`
     /// compares lexically-normalized absolute paths, so canonicalizing the prefix would reject otherwise
     /// valid absolute paths whenever `user_files_path` itself is a symlink. This also removes the
-    /// requirement that `user_files_path` exist on disk (relevant for `clickhouse-local`).
+    /// requirement that `user_files_path` exist on disk (relevant for `datastore-local`).
     fs::path user_files_path(context->getUserFilesPath());
     String user_files_absolute_path_string = fs::absolute(user_files_path).lexically_normal().string();
 

@@ -12,7 +12,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS t_txn_mutation_race" 2>/dev/null || true
+    $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS t_txn_mutation_race" 2>/dev/null || true
 }
 
 trap cleanup EXIT
@@ -20,7 +20,7 @@ trap cleanup EXIT
 cleanup
 
 # Create a MergeTree table with partitioning to prevent automatic merges across partitions
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     CREATE TABLE t_txn_mutation_race (key UInt64, value UInt64)
     ENGINE = MergeTree
     PARTITION BY key % 5
@@ -28,10 +28,10 @@ $CLICKHOUSE_CLIENT -q "
 "
 
 # Insert data - each insert goes to multiple partitions
-$CLICKHOUSE_CLIENT -q "INSERT INTO t_txn_mutation_race SELECT number, 1 FROM numbers(100)"
+$DATASTORE_CLIENT -q "INSERT INTO t_txn_mutation_race SELECT number, 1 FROM numbers(100)"
 
 # Verify we have multiple parts (one per partition)
-PARTS_COUNT=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_txn_mutation_race' AND active")
+PARTS_COUNT=$($DATASTORE_CLIENT -q "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_txn_mutation_race' AND active")
 if [ "$PARTS_COUNT" -lt 3 ]; then
     echo "FAILED: Expected at least 3 parts, got $PARTS_COUNT"
     exit 1
@@ -41,7 +41,7 @@ fi
 # Each iteration starts a transaction, issues a mutation, and commits immediately
 # The commit happens before the mutation finishes applying to all parts
 for i in {1..3}; do
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         BEGIN TRANSACTION;
         ALTER TABLE t_txn_mutation_race UPDATE value = value + 1 WHERE 1;
         COMMIT;
@@ -50,7 +50,7 @@ done
 
 # Wait for all mutations to complete
 for _ in {1..60}; do
-    PENDING=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_txn_mutation_race' AND is_done = 0")
+    PENDING=$($DATASTORE_CLIENT -q "SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_txn_mutation_race' AND is_done = 0")
     if [ "$PENDING" -eq 0 ]; then
         break
     fi
@@ -58,7 +58,7 @@ for _ in {1..60}; do
 done
 
 # Check that all mutations succeeded (no failed mutations)
-FAILED_MUTATIONS=$($CLICKHOUSE_CLIENT -q "
+FAILED_MUTATIONS=$($DATASTORE_CLIENT -q "
     SELECT count()
     FROM system.mutations
     WHERE database = currentDatabase()
@@ -68,7 +68,7 @@ FAILED_MUTATIONS=$($CLICKHOUSE_CLIENT -q "
 
 if [ "$FAILED_MUTATIONS" -gt 0 ]; then
     echo "FAILED: Found $FAILED_MUTATIONS failed mutations"
-    $CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "
         SELECT mutation_id, latest_fail_reason
         FROM system.mutations
         WHERE database = currentDatabase()
@@ -79,7 +79,7 @@ if [ "$FAILED_MUTATIONS" -gt 0 ]; then
 fi
 
 # Check mutations completed
-PENDING=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_txn_mutation_race' AND is_done = 0")
+PENDING=$($DATASTORE_CLIENT -q "SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_txn_mutation_race' AND is_done = 0")
 if [ "$PENDING" -gt 0 ]; then
     echo "FAILED: $PENDING mutations still pending"
     exit 1

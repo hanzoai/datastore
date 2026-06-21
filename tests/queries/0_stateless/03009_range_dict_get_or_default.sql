@@ -21,7 +21,7 @@ CREATE DICTIONARY range_dictionary
   value Nullable(UInt64) DEFAULT NULL
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'range_dictionary_nullable_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'range_dictionary_nullable_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start_date MAX end_date);

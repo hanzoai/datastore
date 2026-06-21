@@ -5,9 +5,9 @@ import os
 import socket
 import uuid
 
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST", "127.0.0.1")
-CLICKHOUSE_PORT = int(os.environ.get("CLICKHOUSE_PORT_TCP", "900000"))
-CLICKHOUSE_DATABASE = os.environ.get("CLICKHOUSE_DATABASE", "default")
+DATASTORE_HOST = os.environ.get("DATASTORE_HOST", "127.0.0.1")
+DATASTORE_PORT = int(os.environ.get("DATASTORE_PORT_TCP", "900000"))
+DATASTORE_DATABASE = os.environ.get("DATASTORE_DATABASE", "default")
 CLIENT_NAME = "simple native protocol"
 
 
@@ -218,13 +218,13 @@ def readException(s):
 def insertValidLowCardinalityRow():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(30)
-        s.connect((CLICKHOUSE_HOST, CLICKHOUSE_PORT))
+        s.connect((DATASTORE_HOST, DATASTORE_PORT))
         sendHello(s)
         receiveHello(s)
         sendQuery(
             s,
             "insert into {}.tab settings input_format_defaults_for_omitted_fields=0 format TSV".format(
-                CLICKHOUSE_DATABASE
+                DATASTORE_DATABASE
             ),
         )
 
@@ -261,13 +261,13 @@ def insertValidLowCardinalityRow():
 def insertLowCardinalityRowWithIndexOverflow():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(30)
-        s.connect((CLICKHOUSE_HOST, CLICKHOUSE_PORT))
+        s.connect((DATASTORE_HOST, DATASTORE_PORT))
         sendHello(s)
         receiveHello(s)
         sendQuery(
             s,
             "insert into {}.tab settings input_format_defaults_for_omitted_fields=0 format TSV".format(
-                CLICKHOUSE_DATABASE
+                DATASTORE_DATABASE
             ),
         )
 
@@ -302,13 +302,13 @@ def insertLowCardinalityRowWithIndexOverflow():
 def insertLowCardinalityRowWithIncorrectDictType():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(30)
-        s.connect((CLICKHOUSE_HOST, CLICKHOUSE_PORT))
+        s.connect((DATASTORE_HOST, DATASTORE_PORT))
         sendHello(s)
         receiveHello(s)
         sendQuery(
             s,
             "insert into {}.tab settings input_format_defaults_for_omitted_fields=0 format TSV".format(
-                CLICKHOUSE_DATABASE
+                DATASTORE_DATABASE
             ),
         )
 
@@ -343,13 +343,13 @@ def insertLowCardinalityRowWithIncorrectDictType():
 def insertLowCardinalityRowWithIncorrectAdditionalKeys():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(30)
-        s.connect((CLICKHOUSE_HOST, CLICKHOUSE_PORT))
+        s.connect((DATASTORE_HOST, DATASTORE_PORT))
         sendHello(s)
         receiveHello(s)
         sendQuery(
             s,
             "insert into {}.tab settings input_format_defaults_for_omitted_fields=0 format TSV".format(
-                CLICKHOUSE_DATABASE
+                DATASTORE_DATABASE
             ),
         )
 

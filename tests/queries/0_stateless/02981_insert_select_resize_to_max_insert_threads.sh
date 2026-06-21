@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-${CLICKHOUSE_CLIENT} -q """
+${DATASTORE_CLIENT} -q """
     CREATE TABLE t1_local
     (
         n UInt64,
@@ -24,7 +24,7 @@ ${CLICKHOUSE_CLIENT} -q """
     (
         n UInt64,
     )
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/02981_insert_select', '1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/02981_insert_select', '1')
     ORDER BY n;
 
     SYSTEM STOP MERGES t1_local;
@@ -35,21 +35,21 @@ ${CLICKHOUSE_CLIENT} -q """
 max_insert_threads=8
 
 echo "inserting into a remote table from local with concurrency equal to max_insert_threads"
-${CLICKHOUSE_CLIENT} --max_insert_threads "$max_insert_threads" -q """
+${DATASTORE_CLIENT} --max_insert_threads "$max_insert_threads" -q """
     EXPLAIN PIPELINE
     INSERT INTO t3_dist
     SELECT * FROM t1_local;
 """ | grep -v EmptySink | grep -c Sink
 
 echo "inserting into a remote table from remote with concurrency max_insert_threads"
-${CLICKHOUSE_CLIENT} --max_insert_threads "$max_insert_threads" --parallel_distributed_insert_select 0 -q """
+${DATASTORE_CLIENT} --max_insert_threads "$max_insert_threads" --parallel_distributed_insert_select 0 -q """
     EXPLAIN PIPELINE
     INSERT INTO t3_dist
     SELECT * FROM t3_dist;
 """ | grep -v EmptySink | grep -c Sink
 
 echo "inserting into a remote table from remote (reading with parallel replicas) with concurrency max_insert_threads"
-${CLICKHOUSE_CLIENT} --max_insert_threads "$max_insert_threads" --enable_parallel_replicas 2 --cluster_for_parallel_replicas 'parallel_replicas' --max_parallel_replicas 3 -q """
+${DATASTORE_CLIENT} --max_insert_threads "$max_insert_threads" --enable_parallel_replicas 2 --cluster_for_parallel_replicas 'parallel_replicas' --max_parallel_replicas 3 -q """
     EXPLAIN PIPELINE
     INSERT INTO t3_dist
     SELECT * FROM t4_pr;

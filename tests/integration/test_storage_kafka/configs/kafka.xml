@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <background_message_broker_schedule_pool_size>128</background_message_broker_schedule_pool_size>
     <kafka>
         <!-- Debugging of possible issues, like:
@@ -62,4 +62,4 @@
         </producer>
     </kafka>
 
-</clickhouse>
+</datastore>

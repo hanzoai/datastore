@@ -1,4 +1,4 @@
--- Test from https://github.com/ClickHouse/ClickHouse/issues/45880
+-- Test from https://github.com/ClickHouse/Datastore/issues/45880
 
 -- { echo }
 SELECT number FROM numbers(5) SETTINGS output_format_json_array_of_rows = 1 FORMAT JSONEachRow;

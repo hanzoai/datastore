@@ -43,7 +43,7 @@ def get_client():
         port=8888,
         insecure=True,
         disable_server_verification=True,
-        metadata={'x-clickhouse-session-id': session_id},
+        metadata={'x-datastore-session-id': session_id},
         features={'metadata-reflection': 'true'}, # makes the client emit metadata retrieval commands upon connection
     )
 
@@ -149,7 +149,7 @@ def test_streaming_insert():
 
     Note: This test uses a workaround due to Arrow Flight SQL version limitations.
     Arrow Flight SQL v11 lacks bulk ingestion functionality (CommandStatementIngest),
-    which was introduced in v12. ClickHouse supports a non-standard approach using
+    which was introduced in v12. Datastore supports a non-standard approach using
     CommandStatementUpdate, but this is not supported by the flightsql-dbapi module.
 
     This implementation uses a mix of the underlying Flight API with the Flight SQL
@@ -208,7 +208,7 @@ def test_get_sql_info():
         info[table.column("info_name")[i].as_py()] = table.column("value")[i].as_py()
 
     # FLIGHT_SQL_SERVER_NAME = 0
-    assert info[0] == "ClickHouse"
+    assert info[0] == "Datastore"
     # FLIGHT_SQL_SERVER_READ_ONLY = 3
     assert info[3] == False
     # FLIGHT_SQL_SERVER_SQL = 4
@@ -231,7 +231,7 @@ def test_get_sql_info_filtered():
 
 
 def test_get_catalogs():
-    """CommandGetCatalogs returns empty result (ClickHouse has no catalogs)."""
+    """CommandGetCatalogs returns empty result (Datastore has no catalogs)."""
     client = get_client()
     flight_info = client.get_catalogs()
     reader = client.do_get(flight_info.endpoints[0].ticket)
@@ -341,7 +341,7 @@ def test_get_primary_keys():
 #
 
 def test_set_session_options():
-    """SetSessionOptions sets ClickHouse settings."""
+    """SetSessionOptions sets Datastore settings."""
     client = get_client()
     result = client.set_session_options({"max_threads": "4"})
     assert len(result.errors) == 0
@@ -647,7 +647,7 @@ def test_enum_data_type():
 
 def test_session_state_persistence():
     """Session ID preserves state across requests (e.g., temp tables, settings)."""
-    client = get_client()  # already uses x-clickhouse-session-id
+    client = get_client()  # already uses x-datastore-session-id
 
     client.execute_update("SET max_threads = 2")
 
@@ -667,12 +667,12 @@ def test_different_sessions_are_independent():
     client1 = FlightSQLClient(
         host=node.ip_address, port=8888, insecure=True,
         disable_server_verification=True,
-        metadata={'x-clickhouse-session-id': session_id_1},
+        metadata={'x-datastore-session-id': session_id_1},
     )
     client2 = FlightSQLClient(
         host=node.ip_address, port=8888, insecure=True,
         disable_server_verification=True,
-        metadata={'x-clickhouse-session-id': session_id_2},
+        metadata={'x-datastore-session-id': session_id_2},
     )
 
     client1.execute_update("SET max_threads = 3")

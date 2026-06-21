@@ -8,14 +8,14 @@ SET send_logs_level = 'fatal';
 
 DROP TABLE IF EXISTS old_style;
 set allow_deprecated_syntax_for_merge_tree=1;
-CREATE TABLE old_style(d Date, x UInt32) ENGINE ReplicatedMergeTree('/clickhouse/tables/{database}/test_00754/old_style', 'r1', d, x, 8192);
+CREATE TABLE old_style(d Date, x UInt32) ENGINE ReplicatedMergeTree('/datastore/tables/{database}/test_00754/old_style', 'r1', d, x, 8192);
 ALTER TABLE old_style ADD COLUMN y UInt32, MODIFY ORDER BY (x, y); -- { serverError BAD_ARGUMENTS }
 DROP TABLE old_style;
 
 DROP TABLE IF EXISTS summing_r1;
 DROP TABLE IF EXISTS summing_r2;
-CREATE TABLE summing_r1(x UInt32, y UInt32, val UInt32) ENGINE ReplicatedSummingMergeTree('/clickhouse/tables/{database}/test_00754/summing', 'r1') ORDER BY (x, y);
-CREATE TABLE summing_r2(x UInt32, y UInt32, val UInt32) ENGINE ReplicatedSummingMergeTree('/clickhouse/tables/{database}/test_00754/summing', 'r2') ORDER BY (x, y);
+CREATE TABLE summing_r1(x UInt32, y UInt32, val UInt32) ENGINE ReplicatedSummingMergeTree('/datastore/tables/{database}/test_00754/summing', 'r1') ORDER BY (x, y);
+CREATE TABLE summing_r2(x UInt32, y UInt32, val UInt32) ENGINE ReplicatedSummingMergeTree('/datastore/tables/{database}/test_00754/summing', 'r2') ORDER BY (x, y);
 
 /* Can't add an expression with existing column to ORDER BY. */
 ALTER TABLE summing_r1 MODIFY ORDER BY (x, y, -val); -- { serverError BAD_ARGUMENTS }

@@ -1,10 +1,10 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/105021
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/105021
 --
 -- After `EXCHANGE TABLES a, b` where a materialized view `mv` reads from `a`,
 -- inserts into `a` must continue to feed the `MV` target table. `INSERT INTO b`
 -- must not fire the `MV` (b is now an unrelated table at that name).
 --
--- Was broken by https://github.com/ClickHouse/ClickHouse/pull/98779 — both
+-- Was broken by https://github.com/ClickHouse/Datastore/pull/98779 — both
 -- inserts silently dropped because the source-view edge had been cross-swapped
 -- to follow the data instead of the name. Restored by keying source-view edges
 -- by name on exchange.

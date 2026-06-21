@@ -12,7 +12,7 @@ def fill_nodes(nodes, shard):
                 CREATE DATABASE test;
 
                 CREATE TABLE test.test_table(date Date, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test{shard}/replicated', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date)
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test{shard}/replicated', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date)
                 SETTINGS min_replicated_logs_to_keep=3, max_replicated_logs_to_keep=5,
                 cleanup_delay_period=0, cleanup_delay_period_random_add=0, cleanup_thread_preferred_points_per_iteration=0;
             """.format(
@@ -234,7 +234,7 @@ def test_broken_tables_readonly_metric(start_cluster):
     try:
         tbl_uuid = node1.query("SELECT generateUUIDv4()").strip()
         node1.query(
-            f"CREATE TABLE test.broken_table_readonly(initial_name Int8) ENGINE = ReplicatedMergeTree('/clickhouse/broken_table_readonly_{tbl_uuid}', 'replica') ORDER BY tuple()"
+            f"CREATE TABLE test.broken_table_readonly(initial_name Int8) ENGINE = ReplicatedMergeTree('/datastore/broken_table_readonly_{tbl_uuid}', 'replica') ORDER BY tuple()"
         )
         assert_eq_with_retry(
             node1,

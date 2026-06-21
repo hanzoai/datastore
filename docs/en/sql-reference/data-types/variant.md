@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Variant data type in ClickHouse'
+description: 'Documentation for the Variant data type in Datastore'
 sidebar_label: 'Variant(T1, T2, ...)'
 sidebar_position: 40
 slug: /sql-reference/data-types/variant
@@ -301,7 +301,7 @@ SELECT v::Variant(UInt64, String, Array(UInt64)) FROM test;
 
 ## Reading Variant type from the data {#reading-variant-type-from-the-data}
 
-All text formats (TSV, CSV, CustomSeparated, Values, JSONEachRow, etc) supports reading `Variant` type. During data parsing ClickHouse tries to insert value into most appropriate variant type.
+All text formats (TSV, CSV, CustomSeparated, Values, JSONEachRow, etc) supports reading `Variant` type. During data parsing Datastore tries to insert value into most appropriate variant type.
 
 Example:
 
@@ -494,8 +494,8 @@ SELECT JSONExtractKeysAndValues('{"a" : 42, "b" : "Hello", "c" : [1,2,3]}', 'Var
 
 ## Functions with Variant arguments {#functions-with-variant-arguments}
 
-Most functions in ClickHouse automatically support `Variant` type arguments through a **default implementation for Variant**. 
-Starting from version `26.1` onwards, when a function that doesn't explicitly handle Variant types receives a Variant column, ClickHouse:
+Most functions in Datastore automatically support `Variant` type arguments through a **default implementation for Variant**. 
+Starting from version `26.1` onwards, when a function that doesn't explicitly handle Variant types receives a Variant column, Datastore:
 
 1. Extracts each variant type from the Variant column
 2. Executes the function separately for each variant type

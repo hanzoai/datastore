@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-CH_PATH=${CH_PATH:=clickhouse}
+CH_PATH=${CH_PATH:=datastore}
 
 WORK_TREE="$1"
 

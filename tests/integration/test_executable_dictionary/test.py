@@ -26,9 +26,9 @@ def copy_file_to_container(local_path, dist_path, container_id):
     )
 
 
-config = """<clickhouse>
-    <dictionaries_config>/etc/clickhouse-server/dictionaries/*_dictionary.xml</dictionaries_config>
-</clickhouse>"""
+config = """<datastore>
+    <dictionaries_config>/etc/datastore-server/dictionaries/*_dictionary.xml</dictionaries_config>
+</datastore>"""
 
 
 @pytest.fixture(scope="module")
@@ -37,17 +37,17 @@ def started_cluster():
         cluster.start()
 
         node.replace_config(
-            "/etc/clickhouse-server/config.d/dictionaries_config.xml", config
+            "/etc/datastore-server/config.d/dictionaries_config.xml", config
         )
 
         copy_file_to_container(
             os.path.join(SCRIPT_DIR, "dictionaries/."),
-            "/etc/clickhouse-server/dictionaries",
+            "/etc/datastore-server/dictionaries",
             node.docker_id,
         )
         copy_file_to_container(
             os.path.join(SCRIPT_DIR, "user_scripts/."),
-            "/var/lib/clickhouse/user_scripts",
+            "/var/lib/datastore/user_scripts",
             node.docker_id,
         )
 

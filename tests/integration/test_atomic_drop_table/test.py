@@ -27,7 +27,7 @@ def start_cluster():
         node1.query(
             """
             CREATE TABLE zktest.atomic_drop_table (n UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/zktest/tables/atomic_drop_table', 'node1')
+            ENGINE = ReplicatedMergeTree('/datastore/zktest/tables/atomic_drop_table', 'node1')
             PARTITION BY n ORDER BY n
             """
         )

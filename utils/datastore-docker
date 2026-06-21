@@ -1,0 +1,57 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]
+then
+cat << HELP
+
+datastore-docker -- open datastore-client of desired version in docker container (automatically removed after you exit bash shell).
+
+EXAMPLE:
+    - start latest version:
+       datastore-docker latest
+
+    - start version 20.1:
+       datastore-docker 20.1
+
+    - list available versions:
+       datastore-docker list
+HELP
+exit
+fi
+
+param="$1"
+
+if [ "${param}" = "list" ]
+then
+    # https://stackoverflow.com/a/39454426/1555175
+    wget -nv https://registry.hub.docker.com/v1/repositories/datastore/datastore-server/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'
+else
+    docker pull datastore/datastore-server:${param}
+    tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX) # older version require /nonexistent folder to exist to run datastore client :D
+    chmod 777 ${tmp_dir}
+    set -e
+    containerid=`docker run -v${tmp_dir}:/nonexistent -d datastore/datastore-server:${param}`
+    set +e
+    while :
+    do
+        # that trick with init-file allows to start datastore client inside bash shell (nice if you need exit to bash, check smth, and get back to datastore-client)
+        docker exec -it ${containerid} bash -c 'bash --init-file <(echo "datastore client -m")'
+
+        printf "\n\nYou exited the session. What next?\n"
+        echo " [Q]uit and remove container."
+        echo " [R]estart datastore and run datastore-client in shell again."
+        echo "You can also hit Ctrl+C to exit and keep container running."
+
+        while :
+        do
+            read -p "Quit or restart [Q/R]?" choice
+            case "$choice" in
+            q|Q|exit ) break 2;;
+            r|R|restart ) echo "Restarting container ..."; docker restart ${containerid} > /dev/null; break 1;;
+            * ) echo "I don't understand. Please type Q or R" ;;
+            esac
+        done
+    done
+    docker rm -f ${containerid} > /dev/null
+    rm -rf ${tmp_dir}
+fi

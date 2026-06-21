@@ -60,12 +60,12 @@ class BuzzHouseGenerator(Generator):
         )
 
         if server_settings is None:
-            root = ET.Element("clickhouse")
+            root = ET.Element("datastore")
         else:
             tree = ET.parse(server_settings)
             root = tree.getroot()
-            if root.tag != "clickhouse":
-                raise Exception("<clickhouse> element not found")
+            if root.tag != "datastore":
+                raise Exception("<datastore> element not found")
 
         # Load configuration
         buzz_config = {}
@@ -79,7 +79,7 @@ class BuzzHouseGenerator(Generator):
         buzz_config["client_file_path"] = (
             f"{Path(cluster.instances_dir) / 'node0' / 'database' / 'user_files'}"
         )
-        buzz_config["server_file_path"] = "/var/lib/clickhouse/user_files"
+        buzz_config["server_file_path"] = "/var/lib/datastore/user_files"
         # Set available servers
         for entry in [
             ("remote_servers", "9000"),
@@ -147,7 +147,7 @@ class BuzzHouseGenerator(Generator):
                 "server_hostname": cluster.redis_host,
                 "port": cluster.redis_port,
                 "user": "",
-                "password": "clickhouse",
+                "password": "datastore",
             }
         if args.with_nginx:
             buzz_config["http"] = {

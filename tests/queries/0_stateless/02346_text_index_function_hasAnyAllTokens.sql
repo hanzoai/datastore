@@ -514,10 +514,10 @@ ENGINE = MergeTree
 ORDER BY (id)
 SETTINGS index_granularity = 1;
 
-INSERT INTO tab SELECT number, 'Hello, ClickHouse' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Hello, Datastore' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'Hello, World' FROM numbers(1024);
-INSERT INTO tab SELECT number, 'Hallo, ClickHouse' FROM numbers(1024);
-INSERT INTO tab SELECT number, 'ClickHouse is fast, really fast!' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Hallo, Datastore' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Datastore is fast, really fast!' FROM numbers(1024);
 
 SELECT 'hasAnyTokens is used during index analysis';
 
@@ -596,7 +596,7 @@ LIMIT 2, 3;
 SELECT 'Text index should choose 3 parts and 3072 granules out of 4 parts and 4096 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE hasAnyTokens(message, ['ClickHouse'])
+    SELECT count() FROM tab WHERE hasAnyTokens(message, ['Datastore'])
 )
 WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
@@ -604,7 +604,7 @@ LIMIT 2, 3;
 SELECT 'Text index should choose all 4 parts and 4096 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE hasAnyTokens(message, ['ClickHouse', 'World'])
+    SELECT count() FROM tab WHERE hasAnyTokens(message, ['Datastore', 'World'])
 )
 WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
@@ -702,7 +702,7 @@ LIMIT 2, 3;
 SELECT 'Text index should choose 3 parts and 3072 granules out of 4 parts and 4096 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE hasAllTokens(message, ['ClickHouse'])
+    SELECT count() FROM tab WHERE hasAllTokens(message, ['Datastore'])
 )
 WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
@@ -710,7 +710,7 @@ LIMIT 2, 3;
 SELECT 'Text index should choose none';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE hasAllTokens(message, ['ClickHouse', 'World'])
+    SELECT count() FROM tab WHERE hasAllTokens(message, ['Datastore', 'World'])
 )
 WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
@@ -734,10 +734,10 @@ INSERT INTO tab
 SELECT
     number,
     CASE
-        WHEN modulo(number, 4) = 0 THEN 'Hello, ClickHouse'
+        WHEN modulo(number, 4) = 0 THEN 'Hello, Datastore'
         WHEN modulo(number, 4) = 1 THEN 'Hello, World'
-        WHEN modulo(number, 4) = 2 THEN 'Hallo, ClickHouse'
-        WHEN modulo(number, 4) = 3 THEN 'ClickHouse is the fast, really fast!'
+        WHEN modulo(number, 4) = 2 THEN 'Hallo, Datastore'
+        WHEN modulo(number, 4) = 3 THEN 'Datastore is the fast, really fast!'
     END
 FROM numbers(1024);
 
@@ -752,7 +752,7 @@ LIMIT 2, 3;
 SELECT 'Text index should choose all granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE hasAnyTokens(message, ['Hello', 'ClickHouse'])
+    SELECT count() FROM tab WHERE hasAnyTokens(message, ['Hello', 'Datastore'])
 )
 WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;

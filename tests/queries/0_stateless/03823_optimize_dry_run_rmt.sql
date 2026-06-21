@@ -2,7 +2,7 @@ SET insert_keeper_fault_injection_probability = 0;
 
 DROP TABLE IF EXISTS t_dry_run;
 
-CREATE TABLE t_dry_run (key UInt64, value String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_dry_run', '1') ORDER BY key;
+CREATE TABLE t_dry_run (key UInt64, value String) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_dry_run', '1') ORDER BY key;
 
 SYSTEM STOP MERGES t_dry_run;
 

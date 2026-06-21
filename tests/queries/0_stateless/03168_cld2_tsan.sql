@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- Tag no-fasttest: depends on cld2
 
--- https://github.com/ClickHouse/ClickHouse/issues/64931
+-- https://github.com/ClickHouse/Datastore/issues/64931
 SELECT detectLanguageMixed(materialize('二兎を追う者は一兎をも得ず二兎を追う者は一兎をも得ず A vaincre sans peril, on triomphe sans gloire.'))
 GROUP BY
     GROUPING SETS (

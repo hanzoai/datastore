@@ -56,7 +56,7 @@ def generate_keeper_configs(configs_dir, clusters):
                 f"            </server>"
             )
         return (
-            f"<clickhouse>\n"
+            f"<datastore>\n"
             + (f"{storage_block}\n" if storage_block else "")
             + f"    <keeper_server>{snapshot_disk_line}\n"
             f"        <tcp_port>9181</tcp_port>\n"
@@ -75,7 +75,7 @@ def generate_keeper_configs(configs_dir, clusters):
             + "\n".join(servers) + "\n"
             f"        </raft_configuration>\n"
             f"    </keeper_server>\n"
-            f"</clickhouse>\n"
+            f"</datastore>\n"
         )
 
     os.makedirs(configs_dir, exist_ok=True)
@@ -85,9 +85,9 @@ def generate_keeper_configs(configs_dir, clusters):
     small_buf_path = os.path.join(configs_dir, "small_remote_buf_user.xml")
     with open(small_buf_path, "w") as f:
         f.write(
-            "<clickhouse>\n<profiles>\n    <default>\n"
+            "<datastore>\n<profiles>\n    <default>\n"
             "        <max_read_buffer_size_remote_fs>1024</max_read_buffer_size_remote_fs>\n"
-            "    </default>\n</profiles>\n</clickhouse>\n"
+            "    </default>\n</profiles>\n</datastore>\n"
         )
     for cluster_def in clusters:
         filenames, hosts, chunk_size = cluster_def[:3]

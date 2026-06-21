@@ -14,9 +14,9 @@ client_opts=(
 
 for STORAGE_POLICY in 's3_cache' 'local_cache' 's3_cache_multi' 'azure_cache'; do
     echo "Using storage policy: $STORAGE_POLICY"
-    $CLICKHOUSE_CLIENT --query "SYSTEM CLEAR FILESYSTEM CACHE"
+    $DATASTORE_CLIENT --query "SYSTEM CLEAR FILESYSTEM CACHE"
 
-    $CLICKHOUSE_CLIENT "${client_opts[@]}" --query "DROP TABLE IF EXISTS test_02313" > /dev/null
+    $DATASTORE_CLIENT "${client_opts[@]}" --query "DROP TABLE IF EXISTS test_02313" > /dev/null
 
     # `s3_cache_multi` storage policy is incompatible with types that use multiple streams.
     # To ensure compatibility, force `serialization_info_version` to `default` in this case.
@@ -26,24 +26,24 @@ for STORAGE_POLICY in 's3_cache' 'local_cache' 's3_cache_multi' 'azure_cache'; d
         STRING_SERIALIZE_SETTING=""
     fi
 
-    $CLICKHOUSE_CLIENT "${client_opts[@]}" --query "CREATE TABLE test_02313 (id Int32, val String)
+    $DATASTORE_CLIENT "${client_opts[@]}" --query "CREATE TABLE test_02313 (id Int32, val String)
     ENGINE = MergeTree()
     ORDER BY tuple()
     SETTINGS storage_policy = '$STORAGE_POLICY' $STRING_SERIALIZE_SETTING" > /dev/null
 
-    $CLICKHOUSE_CLIENT --enable_filesystem_cache_on_write_operations=0 --query "INSERT INTO test_02313
+    $DATASTORE_CLIENT --enable_filesystem_cache_on_write_operations=0 --query "INSERT INTO test_02313
     SELECT * FROM
         generateRandom('id Int32, val String')
     LIMIT 100000"
 
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
+    $DATASTORE_CLIENT --query "SELECT * FROM test_02313 WHERE val LIKE concat('%', randomPrintableASCII(3), '%') FORMAT Null"
 
-    $CLICKHOUSE_CLIENT "${client_opts[@]}" --query "DROP TABLE test_02313" > /dev/null
+    $DATASTORE_CLIENT "${client_opts[@]}" --query "DROP TABLE test_02313" > /dev/null
 
 done

@@ -22,7 +22,7 @@ public:
         std::ostream & err);
     virtual ~JWTProvider() = default;
 
-    /// Returns a valid ClickHouse JWT.
+    /// Returns a valid Datastore JWT.
     /// Implementations are responsible for handling the entire lifecycle,
     /// including initial login and subsequent refreshes.
     virtual std::string getJWT();

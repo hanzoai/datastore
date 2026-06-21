@@ -6,8 +6,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q "select * from numbers(10) format Parquet" > $CLICKHOUSE_TMP/data.parquet
-$CLICKHOUSE_LOCAL -q "select * from table" --file="-" < $CLICKHOUSE_TMP/data.parquet 
+$DATASTORE_CLIENT -q "select * from numbers(10) format Parquet" > $DATASTORE_TMP/data.parquet
+$DATASTORE_LOCAL -q "select * from table" --file="-" < $DATASTORE_TMP/data.parquet 
 
-echo "1,\"String\", \"[1, 2, 3]\"" | $CLICKHOUSE_LOCAL -q "select * from table" --input-format=CSV
+echo "1,\"String\", \"[1, 2, 3]\"" | $DATASTORE_LOCAL -q "select * from table" --input-format=CSV
 

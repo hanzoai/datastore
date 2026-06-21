@@ -239,8 +239,8 @@ Clangd
 ClickBench
 ClickCat
 ClickHaskell
-ClickHouse
-ClickHouse's
+Datastore
+Datastore's
 ClickHouseClient
 ClickHouseMigrator
 ClickHouseNIO
@@ -2198,7 +2198,7 @@ clangd
 cli
 clickcache
 clickcat
-clickhouse
+datastore
 clickhousectl
 clickhousedb
 clickhousex

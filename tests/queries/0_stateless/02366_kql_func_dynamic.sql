@@ -13,7 +13,7 @@ print array_length(dynamic(['John', 'Denver', 'Bob', 'Marley'])) == 4;
 print array_length(dynamic([1, 2, 3])) == 3;
 print '-- array_sum()';
 -- `arraySum` does not support `Array(Dynamic)` type — fails with
--- `ILLEGAL_TYPE_OF_ARGUMENT` in `clickhouse-server` (passes in `clickhouse-local`).
+-- `ILLEGAL_TYPE_OF_ARGUMENT` in `datastore-server` (passes in `datastore-local`).
 print array_sum(dynamic([2, 5, 3])) == 10; -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sum(dynamic([2.5, 5.5, 3])) == 11; -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print '-- array_index_of()';
@@ -79,11 +79,11 @@ print array_split(dynamic([1,2,3,4,5]), 2);
 -- print array_split(dynamic([1,2,3,4,5]), dynamic([-1,-2]));
 print '-- array_sort_asc()';
 -- Nested type `Dynamic` cannot be inside `Nullable` type — `kql_array_sort_asc` fails with `Array(Dynamic)`
--- on `clickhouse-server` (passes in `clickhouse-local`).
+-- on `datastore-server` (passes in `datastore-local`).
 print array_sort_asc(dynamic([null, 'd', 'a', 'c', 'c'])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_asc(dynamic([4, 1, 3, 2])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_asc(dynamic(['b', 'a', 'c']), dynamic(['q', 'p', 'r']))[0]; -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
-print array_sort_asc(dynamic(['q', 'p', 'r']), dynamic(['clickhouse','hello', 'world'])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
+print array_sort_asc(dynamic(['q', 'p', 'r']), dynamic(['datastore','hello', 'world'])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_asc( dynamic(['d', null, 'a', 'c', 'c']) , false); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_asc( dynamic(['d', null, 'a', 'c', 'c']) , 1 > 2); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_asc( dynamic([null, null, null]) , false); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
@@ -94,11 +94,11 @@ print array_sort_asc(dynamic([null,"blue","yellow","green",null])); -- { serverE
 print array_sort_asc(dynamic([null,"blue","yellow","green",null]), false); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print '-- array_sort_desc()';
 -- Nested type `Dynamic` cannot be inside `Nullable` type — `kql_array_sort_desc` fails with `Array(Dynamic)`
--- on `clickhouse-server` (passes in `clickhouse-local`).
+-- on `datastore-server` (passes in `datastore-local`).
 print array_sort_desc(dynamic([null, 'd', 'a', 'c', 'c'])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_desc(dynamic([4, 1, 3, 2])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_desc(dynamic(['b', 'a', 'c']), dynamic(['q', 'p', 'r']))[0]; -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
-print array_sort_desc(dynamic(['q', 'p', 'r']), dynamic(['clickhouse','hello', 'world'])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
+print array_sort_desc(dynamic(['q', 'p', 'r']), dynamic(['datastore','hello', 'world'])); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_desc( dynamic(['d', null, 'a', 'c', 'c']) , false); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_desc( dynamic(['d', null, 'a', 'c', 'c']) , 1 > 2); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 print array_sort_desc( dynamic([null, null, null]) , false); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }

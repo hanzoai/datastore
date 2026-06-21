@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/86268
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/86268
 -- `PREWHERE` + `FINAL` on `ReplacingMergeTree` with `is_deleted` used to drop the version column and throw `NOT_FOUND_COLUMN_IN_BLOCK`.
 
 DROP TABLE IF EXISTS repro_86268;

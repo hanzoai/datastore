@@ -16,9 +16,9 @@ It is designed exclusively for use with the [`regexp_tree`](../layouts/regexp-tr
 and provides hierarchical regex-to-attribute mappings for pattern-based lookups such as user agent parsing.
 
 :::note
-The `YAMLRegExpTree` source is only available in ClickHouse Open Source.
-For ClickHouse Cloud, export the dictionary to CSV and load it via a [ClickHouse table source](./clickhouse.md) instead.
-See [Using regexp_tree dictionaries in ClickHouse Cloud](../layouts/regexp-tree#use-regular-expression-tree-dictionary-in-clickhouse-cloud) for details.
+The `YAMLRegExpTree` source is only available in Datastore Open Source.
+For Datastore Cloud, export the dictionary to CSV and load it via a [Datastore table source](./datastore.md) instead.
+See [Using regexp_tree dictionaries in Datastore Cloud](../layouts/regexp-tree#use-regular-expression-tree-dictionary-in-datastore-cloud) for details.
 :::
 
 ## Configuration {#configuration}
@@ -31,7 +31,7 @@ CREATE DICTIONARY regexp_dict
     version String
 )
 PRIMARY KEY(regexp)
-SOURCE(YAMLRegExpTree(PATH '/var/lib/clickhouse/user_files/regexp_tree.yaml'))
+SOURCE(YAMLRegExpTree(PATH '/var/lib/datastore/user_files/regexp_tree.yaml'))
 LAYOUT(regexp_tree)
 LIFETIME(0);
 ```

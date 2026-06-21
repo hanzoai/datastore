@@ -69,7 +69,7 @@ public:
 
     /// Some catalogs (Unity or Glue) may store not only Iceberg/DeltaLake tables but other kinds of "tables"
     /// as simple files or some in-memory tables, or even DataLake tables but in some private storages.
-    /// ClickHouse can see these tables via catalog, but obviously cannot read them.
+    /// Datastore can see these tables via catalog, but obviously cannot read them.
     /// So we use these methods to identify such tables and show them in SHOW TABLES and
     /// SHOW CREATE TABLE queries.
     void setTableIsNotReadable(const std::string & reason)

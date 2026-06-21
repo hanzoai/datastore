@@ -46,7 +46,7 @@ def remove_part_from_disk(node, table, part_name):
 def test_lost_part_during_startup(start_cluster):
     for i, node in enumerate([node1, node2]):
         node.query(
-            f"CREATE TABLE test_lost (value UInt64) Engine = ReplicatedMergeTree('/clickhouse/test_lost', '{i + 1}') ORDER BY tuple()"
+            f"CREATE TABLE test_lost (value UInt64) Engine = ReplicatedMergeTree('/datastore/test_lost', '{i + 1}') ORDER BY tuple()"
         )
 
     for i in range(4):

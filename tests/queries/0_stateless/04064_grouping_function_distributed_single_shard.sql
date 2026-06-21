@@ -1,6 +1,6 @@
 -- Tags: shard
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/71270
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/71270
 -- The `grouping` function on a Distributed table with a single shard used to
 -- fail with "Method executeImpl is not supported for 'grouping' function".
 

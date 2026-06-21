@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- HTTP API with TLS (HTTPS).
          You have to configure certificate to enable this interface.
          See the openSSL section below.
@@ -15,10 +15,10 @@
     <openSSL replace="replace">
         <server> <!-- Used for https server AND secure tcp port -->
             <cacheSessions>false</cacheSessions>
-            <certificateFile>/etc/clickhouse-server/config.d/server-cert.pem</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server-key.pem</privateKeyFile>
-            <dhParamsFile>/etc/clickhouse-server/config.d/dhparam4096.pem</dhParamsFile>
-            <caConfig>/etc/clickhouse-server/config.d/ca-cert.pem</caConfig>
+            <certificateFile>/etc/datastore-server/config.d/server-cert.pem</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server-key.pem</privateKeyFile>
+            <dhParamsFile>/etc/datastore-server/config.d/dhparam4096.pem</dhParamsFile>
+            <caConfig>/etc/datastore-server/config.d/ca-cert.pem</caConfig>
             <disableProtocols>sslv2,sslv3,tlsv1,tlsv1_1,tlsv1_2</disableProtocols>            
             <!-- <loadDefaultCAFile>true</loadDefaultCAFile> -->
             <preferServerCiphers>true</preferServerCiphers>            
@@ -40,5 +40,5 @@
             <verificationMode>relaxed</verificationMode>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>
   

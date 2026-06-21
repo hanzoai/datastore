@@ -101,11 +101,11 @@ def clone_submodules():
 
 
 def update_path_ch_config(config_file_path=""):
-    print("Updating path in clickhouse config")
+    print("Updating path in datastore config")
     config_file_path = (
-        config_file_path or f"{temp_dir}/etc/clickhouse-server/config.xml"
+        config_file_path or f"{temp_dir}/etc/datastore-server/config.xml"
     )
-    ssl_config_file_path = f"{temp_dir}/etc/clickhouse-server/config.d/ssl_certs.xml"
+    ssl_config_file_path = f"{temp_dir}/etc/datastore-server/config.d/ssl_certs.xml"
     try:
         with open(config_file_path, "r", encoding="utf-8") as file:
             content = file.read()
@@ -139,7 +139,7 @@ def _load_darwin_skip_tests():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Fast Test Job")
+    parser = argparse.ArgumentParser(description="Datastore Fast Test Job")
     parser.add_argument(
         "--test",
         help="Optional. Space-separated test name patterns",
@@ -170,28 +170,28 @@ def main():
             stages.pop(0)
         stages.insert(0, stage)
 
-    clickhouse_bin_path = Path(f"{build_dir}/programs/clickhouse")
+    clickhouse_bin_path = Path(f"{build_dir}/programs/datastore")
 
     for path in [
-        Path(temp_dir) / "clickhouse",
+        Path(temp_dir) / "datastore",
         clickhouse_bin_path,
-        Path(current_directory) / "clickhouse",
+        Path(current_directory) / "datastore",
     ]:
         if path.is_file():
             clickhouse_bin_path = path
-            print(f"NOTE: clickhouse binary is found [{clickhouse_bin_path}] - skip the build")
+            print(f"NOTE: datastore binary is found [{clickhouse_bin_path}] - skip the build")
 
             stages = [JobStages.CONFIG, JobStages.TEST]
             resolved_clickhouse_bin_path = clickhouse_bin_path.resolve()
-            Utils.link(resolved_clickhouse_bin_path, resolved_clickhouse_bin_path.parent / "clickhouse-server")
-            Utils.link(resolved_clickhouse_bin_path, resolved_clickhouse_bin_path.parent / "clickhouse-client")
-            Utils.link(resolved_clickhouse_bin_path, resolved_clickhouse_bin_path.parent / "clickhouse-local")
+            Utils.link(resolved_clickhouse_bin_path, resolved_clickhouse_bin_path.parent / "datastore-server")
+            Utils.link(resolved_clickhouse_bin_path, resolved_clickhouse_bin_path.parent / "datastore-client")
+            Utils.link(resolved_clickhouse_bin_path, resolved_clickhouse_bin_path.parent / "datastore-local")
             Shell.check(f"chmod +x {resolved_clickhouse_bin_path}", strict=True)
 
             break
     else:
         print(
-            f"NOTE: clickhouse binary is not found [{clickhouse_bin_path}] - will be built"
+            f"NOTE: datastore binary is not found [{clickhouse_bin_path}] - will be built"
         )
 
     # Global sccache settings for local and CI runs
@@ -213,7 +213,7 @@ def main():
             os.environ["SCCACHE_S3_NO_CREDENTIALS"] = "true"
     else:
         os.environ["CH_HOSTNAME"] = (
-            "https://build-cache.eu-west-1.aws.clickhouse-staging.com"
+            "https://build-cache.eu-west-1.aws.datastore-staging.com"
         )
         os.environ["CH_USER"] = "ci_builder"
         os.environ["CH_PASSWORD"] = chcache_secret.get_value()
@@ -268,9 +268,9 @@ def main():
         Shell.check("sccache --show-stats")
         results.append(
             Result.from_commands_run(
-                name="Build ClickHouse",
+                name="Build Datastore",
                 command=f"command time -v cmake --build {build_dir_normalized} --"
-                " clickhouse-bundle clickhouse-stripped lexer_test",
+                " datastore-bundle datastore-stripped lexer_test",
             )
         )
         Shell.check(f"{build_dir}/rust/chcache/chcache stats")
@@ -280,7 +280,7 @@ def main():
     if res and JobStages.BUILD in stages:
         commands = [
             "sccache --show-stats",
-            "clickhouse-client --version",
+            "datastore-client --version",
         ]
         results.append(
             Result.from_commands_run(
@@ -293,31 +293,31 @@ def main():
 
     if res and JobStages.CONFIG in stages:
         commands = [
-            f"mkdir -p {temp_dir}/etc/clickhouse-server",
-            f"cp ./programs/server/config.xml ./programs/server/users.xml {temp_dir}/etc/clickhouse-server/",
-            f"./tests/config/install.sh {temp_dir}/etc/clickhouse-server {temp_dir}/etc/clickhouse-client --fast-test",
-            # f"cp -a {current_directory}/programs/server/config.d/log_to_console.xml {temp_dir}/etc/clickhouse-server/config.d/",
-            f"rm -f {temp_dir}/etc/clickhouse-server/config.d/secure_ports.xml",
+            f"mkdir -p {temp_dir}/etc/datastore-server",
+            f"cp ./programs/server/config.xml ./programs/server/users.xml {temp_dir}/etc/datastore-server/",
+            f"./tests/config/install.sh {temp_dir}/etc/datastore-server {temp_dir}/etc/datastore-client --fast-test",
+            # f"cp -a {current_directory}/programs/server/config.d/log_to_console.xml {temp_dir}/etc/datastore-server/config.d/",
+            f"rm -f {temp_dir}/etc/datastore-server/config.d/secure_ports.xml",
             update_path_ch_config,
         ]
         results.append(
             Result.from_commands_run(
-                name="Install ClickHouse Config",
+                name="Install Datastore Config",
                 command=commands,
             )
         )
         res = results[-1].is_ok()
 
     CH = ClickHouseProc(
-        ch_config_dir=f"{temp_dir}/etc/clickhouse-server",
-        ch_var_lib_dir=f"{temp_dir}/var/lib/clickhouse",
+        ch_config_dir=f"{temp_dir}/etc/datastore-server",
+        ch_var_lib_dir=f"{temp_dir}/var/lib/datastore",
     )
     CH.install_configs()
 
     attach_debug = False
     if res and JobStages.TEST in stages:
         stop_watch_ = Utils.Stopwatch()
-        step_name = "Start ClickHouse Server"
+        step_name = "Start Datastore Server"
         print(step_name)
         res = CH.start()
         res = res and CH.wait_ready()
@@ -336,7 +336,7 @@ def main():
         # so we can use more parallelism than the default cpu_count/2.
         nproc_fast = max(1, int(Utils.cpu_count() * 3 / 4))
 
-        fast_test_command = f"cd {temp_dir} && clickhouse-test --hung-check --trace --capture-client-stacktrace --no-random-settings --no-random-merge-tree-settings --no-long --testname --shard --check-zookeeper-session --order random --report-logs-stats --fast-tests-only --no-stateful --timeout 60 --jobs {nproc_fast}"
+        fast_test_command = f"cd {temp_dir} && datastore-test --hung-check --trace --capture-client-stacktrace --no-random-settings --no-random-merge-tree-settings --no-long --testname --shard --check-zookeeper-session --order random --report-logs-stats --fast-tests-only --no-stateful --timeout 60 --jobs {nproc_fast}"
         if args.skip:
             skip_args = " ".join(args.skip)
             fast_test_command += f" --skip {skip_args}"

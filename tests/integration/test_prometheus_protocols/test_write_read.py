@@ -21,7 +21,7 @@ node = cluster.add_instance(
 )
 
 
-# Waits until Prometheus scrapes some data and sends it to ClickHouse via the RemoteWrite protocol.
+# Waits until Prometheus scrapes some data and sends it to Datastore via the RemoteWrite protocol.
 def wait_for_scraped_data():
     start_time = time.monotonic()
     assert_eq_with_retry(
@@ -39,7 +39,7 @@ def wait_for_scraped_data():
     )
 
 
-# Sends lots of data to ClickHouse via the RemoteWrite protocol.
+# Sends lots of data to Datastore via the RemoteWrite protocol.
 def send_big_data(metric_name="big_data", start_time=1724112000, end_time=1724115600, count=75000):
     time_series = []
     step = (end_time - start_time) / count
@@ -51,7 +51,7 @@ def send_big_data(metric_name="big_data", start_time=1724112000, end_time=172411
     send_protobuf_to_remote_write(node.ip_address, 9093, "/write", protobuf)
 
 
-# Executes a query in the "prometheus_reader" service. This service uses the RemoteRead protocol to get data from ClickHouse.
+# Executes a query in the "prometheus_reader" service. This service uses the RemoteRead protocol to get data from Datastore.
 def execute_query_in_prometheus_reader(query, timestamp):
     return execute_query_via_http_api(
         cluster.prometheus_ip["reader"],
@@ -62,7 +62,7 @@ def execute_query_in_prometheus_reader(query, timestamp):
     )
 
 
-# Executes a query in the "prometheus_writer" service. This service sends data to ClickHouse via the RemoteWrite protocol.
+# Executes a query in the "prometheus_writer" service. This service sends data to Datastore via the RemoteWrite protocol.
 def execute_query_in_prometheus_writer(query, timestamp):
     return execute_query_via_http_api(
         cluster.prometheus_ip["writer"],
@@ -74,7 +74,7 @@ def execute_query_in_prometheus_writer(query, timestamp):
 
 
 # Executes a query in both prometheus services - the results should be the same regardless of
-# whether the data comes through ClickHouse or now.
+# whether the data comes through Datastore or now.
 def execute_query_in_prometheus(query, timestamp):
     r1 = execute_query_in_prometheus_reader(query, timestamp)
     r2 = execute_query_in_prometheus_writer(query, timestamp)
@@ -82,7 +82,7 @@ def execute_query_in_prometheus(query, timestamp):
     return r1
 
 
-# Executes a prometheus query in ClickHouse
+# Executes a prometheus query in Datastore
 def execute_query_in_clickhouse(query, timestamp):
     return node.query(
         f"SELECT * FROM prometheusQuery(prometheus, '{query}', {timestamp})"

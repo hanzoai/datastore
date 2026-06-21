@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function run_test_once()
 {
-    $CLICKHOUSE_CLIENT -m -q "
+    $DATASTORE_CLIENT -m -q "
         DROP TABLE IF EXISTS simple_key_source_table_01863;
         CREATE TABLE simple_key_source_table_01863
         (
@@ -24,18 +24,18 @@ function run_test_once()
             value String
         )
         PRIMARY KEY id
-        SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'simple_key_source_table_01863'))
+        SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'simple_key_source_table_01863'))
         LAYOUT(CACHE(SIZE_IN_CELLS 100000))
         LIFETIME(MIN 0 MAX 1000);
     "
 
-    prev=$($CLICKHOUSE_CLIENT -m -q "SELECT value FROM system.events WHERE event = 'DictCacheKeysRequestedMiss' SETTINGS system_events_show_zero_values=1")
-    curr=$($CLICKHOUSE_CLIENT -m -q "
+    prev=$($DATASTORE_CLIENT -m -q "SELECT value FROM system.events WHERE event = 'DictCacheKeysRequestedMiss' SETTINGS system_events_show_zero_values=1")
+    curr=$($DATASTORE_CLIENT -m -q "
         SELECT toUInt64(1) as key, dictGet('simple_key_cache_dictionary_01863', 'value', key) FORMAT Null;
         SELECT value FROM system.events WHERE event = 'DictCacheKeysRequestedMiss' SETTINGS system_events_show_zero_values=1
     ")
 
-    $CLICKHOUSE_CLIENT -m -q "
+    $DATASTORE_CLIENT -m -q "
         DROP DICTIONARY simple_key_cache_dictionary_01863;
         DROP TABLE simple_key_source_table_01863;
     "

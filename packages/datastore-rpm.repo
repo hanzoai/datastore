@@ -1,0 +1,31 @@
+[datastore-stable]
+name=Datastore - Stable Repository
+baseurl=https://packages.datastore.com/rpm/stable/
+gpgkey=https://packages.datastore.com/rpm/stable/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=0
+
+[datastore-lts]
+name=Datastore - LTS Repository
+baseurl=https://packages.datastore.com/rpm/lts/
+gpgkey=https://packages.datastore.com/rpm/lts/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=0
+
+[datastore-prestable]
+name=Datastore - Pre-stable Repository
+baseurl=https://packages.datastore.com/rpm/prestable/
+gpgkey=https://packages.datastore.com/rpm/prestable/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=0
+
+[datastore-testing]
+name=Datastore - Testing Repository
+baseurl=https://packages.datastore.com/rpm/testing/
+gpgkey=https://packages.datastore.com/rpm/testing/repodata/repomd.xml.key
+gpgcheck=0
+repo_gpgcheck=1
+enabled=1

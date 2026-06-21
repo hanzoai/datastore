@@ -1,5 +1,5 @@
 -- Tags: no-fasttest
--- Test for https://github.com/ClickHouse/ClickHouse/issues/102511
+-- Test for https://github.com/ClickHouse/Datastore/issues/102511
 -- CASE with Dynamic/Variant expression should not use the transform path
 -- because transform's hash-based lookup includes the type discriminator,
 -- causing values with different stored subtypes to never match.

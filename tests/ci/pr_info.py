@@ -102,7 +102,7 @@ def get_pr_for_commit(sha, ref):
             logging.warning("Got more than one pr for commit %s", sha)
         for pr in data:
             # We need to check if the PR is created in our repo, because
-            # https://github.com/kaynewu/ClickHouse/pull/2
+            # https://github.com/kaynewu/Datastore/pull/2
             # has broke our PR search once in a while
             if pr["base"]["repo"]["full_name"] != GITHUB_REPOSITORY:
                 continue
@@ -213,11 +213,11 @@ class PRInfo:
 
             # master or backport/xx.x/xxxxx - where the PR will be merged
             self.base_ref = github_event["pull_request"]["base"]["ref"]
-            # ClickHouse/ClickHouse
+            # Datastore/Datastore
             self.base_name = github_event["pull_request"]["base"]["repo"]["full_name"]
             # any_branch-name - the name of working branch name
             self.head_ref = github_event["pull_request"]["head"]["ref"]
-            # UserName/ClickHouse or ClickHouse/ClickHouse
+            # UserName/Datastore or Datastore/Datastore
             self.head_name = github_event["pull_request"]["head"]["repo"]["full_name"]
             self.body = github_event["pull_request"]["body"]
             self.labels = {
@@ -246,13 +246,13 @@ class PRInfo:
             self.sha = github_event[EventType.MERGE_QUEUE]["head_sha"]
             self.base_ref = github_event[EventType.MERGE_QUEUE]["base_ref"]
             base_sha = github_event[EventType.MERGE_QUEUE]["base_sha"]  # type: str
-            # ClickHouse/ClickHouse
+            # Datastore/Datastore
             self.base_name = github_event["repository"]["full_name"]
             # any_branch-name - the name of working branch name
             self.head_ref = github_event[EventType.MERGE_QUEUE]["head_ref"]
             # parse underlying pr from ["head_ref": "refs/heads/gh-readonly-queue/test-merge-queue/pr-6751-4690229995a155e771c52e95fbd446d219c069bf"]
             self.merged_pr = int(self.head_ref.split("/pr-")[-1].split("-")[0])
-            # UserName/ClickHouse or ClickHouse/ClickHouse
+            # UserName/Datastore or Datastore/Datastore
             self.head_name = self.base_name
             self.user_login = github_event["sender"]["login"]
             self.diff_urls.append(

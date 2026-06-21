@@ -1,5 +1,5 @@
 ---
-description: 'When performing queries, ClickHouse uses different caches.'
+description: 'When performing queries, Datastore uses different caches.'
 sidebar_label: 'Caches'
 sidebar_position: 65
 slug: /operations/caches
@@ -8,7 +8,7 @@ keywords: ['cache']
 doc_type: 'reference'
 ---
 
-When performing queries, ClickHouse uses different caches to speed up queries
+When performing queries, Datastore uses different caches to speed up queries
 and reduce the need to read from or write to disk.
 
 The main cache types are:

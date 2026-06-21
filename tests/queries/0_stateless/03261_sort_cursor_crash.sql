@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/70779
+-- https://github.com/ClickHouse/Datastore/issues/70779
 -- Crash in SortCursorImpl with the old analyzer, which produces a block with 0 columns and 1 row
 DROP TABLE IF EXISTS t0;
 DROP TABLE IF EXISTS t1;

@@ -35,7 +35,7 @@ def started_cluster():
 class DisksClient(object):
     SEPARATOR = b"\a\a\a\a\n"
     local_client: Optional["DisksClient"] = None  # static variable
-    default_disk_root_directory: str = "/var/lib/clickhouse"
+    default_disk_root_directory: str = "/var/lib/datastore"
 
     def __init__(self, bin_path: str, config_path: str, working_path: str):
         self.bin_path = bin_path
@@ -200,7 +200,7 @@ class DisksClient(object):
     @staticmethod
     def getLocalDisksClient(refresh: bool):
         if (DisksClient.local_client is None) or refresh:
-            binary_file = os.environ.get("CLICKHOUSE_TESTS_SERVER_BIN_PATH")
+            binary_file = os.environ.get("DATASTORE_TESTS_SERVER_BIN_PATH")
             current_working_directory = str(pathlib.Path().resolve())
             config_file = f"{current_working_directory}/test_disks_app_interactive/configs/config.xml"
             if not os.path.exists(DisksClient.default_disk_root_directory):

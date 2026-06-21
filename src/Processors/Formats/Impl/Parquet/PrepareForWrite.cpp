@@ -50,7 +50,7 @@
 /// This means scanning the whole array for each Array/Nullable nesting level, which is probably not
 /// the most efficient way to do it. But there's usually at most one nesting level, so it's fine.
 ///
-/// Most of this is moot because ClickHouse doesn't support nullable arrays or tuples right now, so
+/// Most of this is moot because Datastore doesn't support nullable arrays or tuples right now, so
 /// almost none of the tricky cases can happen. We implement it in full generality anyway (mostly
 /// because I only learned the previous sentence after writing most of the code).
 
@@ -109,7 +109,7 @@ void updateRepDefLevelsAndFilterColumnForNullable(ColumnChunkWriteState & s, con
     }
 
     /// Weird general case: Nullable(Array), Nullable(Nullable), or any arbitrary nesting like that.
-    /// This is currently not allowed in ClickHouse, but let's support it anyway just in case.
+    /// This is currently not allowed in Datastore, but let's support it anyway just in case.
 
     IColumn::Filter filter;
     size_t row_idx = static_cast<size_t>(-1);
@@ -505,7 +505,7 @@ void prepareColumnNullable(
     else
     {
         /// Weird case: Nullable(Nullable(...)). Or Nullable(Tuple(Nullable(...))), etc.
-        /// This is probably not allowed in ClickHouse, but let's support it just in case.
+        /// This is probably not allowed in Datastore, but let's support it just in case.
         /// The nested column already has a nontrivial repetition type, so we have to wrap it in a
         /// group and assign repetition type OPTIONAL to the group.
         auto & schema = *schemas.insert(schemas.begin() + child_schema_idx, {});
@@ -552,7 +552,7 @@ void prepareColumnTuple(
     size_t num_elements = type_tuple->getElements().size();
 
     /// We artificially disallow empty tuples because they're not widely supported.
-    /// But they're supported in clickhouse; if we remove this check, nothing breaks, and clickhouse
+    /// But they're supported in datastore; if we remove this check, nothing breaks, and datastore
     /// can write and read such columns.
     if (num_elements == 0)
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "Parquet doesn't support empty tuples");

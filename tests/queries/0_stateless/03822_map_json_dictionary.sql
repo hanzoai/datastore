@@ -1,4 +1,4 @@
--- ClickHouse dictionary tests for `Map` and `JSON`.
+-- Datastore dictionary tests for `Map` and `JSON`.
 --
 -- Coverage overview:
 -- - Unified source with `Map` + `JSON` attributes across layouts:
@@ -82,7 +82,7 @@ CREATE DICTIONARY IF NOT EXISTS mixed_test_flat
     metadata_json JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -106,7 +106,7 @@ CREATE DICTIONARY IF NOT EXISTS mixed_test_hashed
     metadata_json JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -130,7 +130,7 @@ CREATE DICTIONARY IF NOT EXISTS mixed_test_hashed_array
     metadata_json JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -154,7 +154,7 @@ CREATE DICTIONARY IF NOT EXISTS mixed_test_cache
     metadata_json JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -180,7 +180,7 @@ CREATE DICTIONARY IF NOT EXISTS mixed_test_range_hashed
     metadata_json JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -513,7 +513,7 @@ CREATE DICTIONARY IF NOT EXISTS typed_json_dict_test_flat
     )
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -565,7 +565,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_map_dict_test
     m Nullable(Map(String, String))
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -582,7 +582,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_array_dict_test
     a Nullable(Array(String))
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -628,7 +628,7 @@ CREATE DICTIONARY IF NOT EXISTS deep_json_test_flat
     complex_hierarchy JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -649,7 +649,7 @@ CREATE DICTIONARY IF NOT EXISTS deep_json_test_hashed
     complex_hierarchy JSON
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -721,7 +721,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_json_test_flat
     email Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -741,7 +741,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_json_test_hashed_array
     email Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -761,7 +761,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_json_test_hashed
     email Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -781,7 +781,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_json_test_cache
     email Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -803,7 +803,7 @@ CREATE DICTIONARY IF NOT EXISTS nullable_json_test_range_hashed
     email Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'
@@ -940,7 +940,7 @@ CREATE DICTIONARY IF NOT EXISTS ip_trie_test_combined
     ip_profile JSON
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     HOST '127.0.0.1'
     PORT tcpPort()
     USER 'default'

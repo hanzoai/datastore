@@ -15,7 +15,7 @@ CREATE DICTIONARY 02181_test_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02181_test_table'))
+SOURCE(DATASTORE(TABLE '02181_test_table'))
 LAYOUT(HASHED())
 LIFETIME(0);
 

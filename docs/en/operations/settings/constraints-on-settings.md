@@ -11,7 +11,7 @@ doc_type: 'reference'
 
 ## Overview {#overview}
 
-In ClickHouse, "constraints" on settings refer to limitations and rules which
+In Datastore, "constraints" on settings refer to limitations and rules which
 you can assign to settings. These constraints can be applied to maintain 
 stability, security and predictable behavior of your database.
 
@@ -63,7 +63,7 @@ setting remains unchanged.
 
 ## Types of constraints {#types-of-constraints}
 
-There are a few types of constraints supported in ClickHouse:
+There are a few types of constraints supported in Datastore:
 - `min`
 - `max`
 - `disallowed`

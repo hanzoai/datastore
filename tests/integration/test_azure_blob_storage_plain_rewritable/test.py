@@ -21,7 +21,7 @@ def generate_cluster_def(port, node_name):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <storage_configuration>
         <disks>
             <blob_storage_disk>
@@ -75,7 +75,7 @@ def generate_cluster_def(port, node_name):
             </blob_storage_encrypted_policy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
         )
     return path

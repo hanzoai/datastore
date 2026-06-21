@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 Aggregate functions work in the [normal](http://www.sql-tutorial.com/sql-aggregate-functions-sql-tutorial) way as expected by database experts.
 
-ClickHouse also supports:
+Datastore also supports:
 
 - [Parametric aggregate functions](/sql-reference/aggregate-functions/parametric-functions), which accept other parameters in addition to columns.
 - [Combinators](/sql-reference/aggregate-functions/combinators), which change the behavior of aggregate functions.

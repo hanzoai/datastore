@@ -68,34 +68,34 @@ then
     exit 1
 fi
 
-clickhouse_download_filename_prefix="clickhouse"
-clickhouse="$clickhouse_download_filename_prefix"
+clickhouse_download_filename_prefix="datastore"
+datastore="$clickhouse_download_filename_prefix"
 
-if [ -f "$clickhouse" ]
+if [ -f "$datastore" ]
 then
-    read -p "ClickHouse binary ${clickhouse} already exists. Overwrite? [y/N] " answer
+    read -p "Datastore binary ${datastore} already exists. Overwrite? [y/N] " answer
     if [ "$answer" = "y" -o "$answer" = "Y" ]
     then
-        rm -f "$clickhouse"
+        rm -f "$datastore"
     else
         i=0
-        while [ -f "$clickhouse" ]
+        while [ -f "$datastore" ]
         do
-            clickhouse="${clickhouse_download_filename_prefix}.${i}"
+            datastore="${clickhouse_download_filename_prefix}.${i}"
             i=$(($i+1))
         done
     fi
 fi
 
-URL="https://builds.clickhouse.com/master/${DIR}/clickhouse"
+URL="https://builds.datastore.com/master/${DIR}/datastore"
 echo
-echo "Will download ${URL} into ${clickhouse}"
+echo "Will download ${URL} into ${datastore}"
 echo
-curl "${URL}" -o "${clickhouse}" && chmod a+x "${clickhouse}" || exit 1
+curl "${URL}" -o "${datastore}" && chmod a+x "${datastore}" || exit 1
 echo
-echo "Successfully downloaded the ClickHouse binary, you can run it as:
-    ./${clickhouse}"
+echo "Successfully downloaded the Datastore binary, you can run it as:
+    ./${datastore}"
 
 echo
 echo "You can also install it:
-sudo ./${clickhouse} install"
+sudo ./${datastore} install"

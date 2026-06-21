@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <query_log>
         <database>system</database>
         <table>query_log</table>
@@ -9,4 +9,4 @@
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </query_log>
-</clickhouse>
+</datastore>

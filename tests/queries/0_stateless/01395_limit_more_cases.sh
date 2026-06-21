@@ -20,4 +20,4 @@ for OFFSET in {0..15}; do
             FROM (SELECT * FROM numbers($SIZE) LIMIT $OFFSET, $LIMIT);
         "
     done
-done | $CLICKHOUSE_CLIENT --max_block_size 5
+done | $DATASTORE_CLIENT --max_block_size 5

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/101693.
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/101693.
 -- The combination of `ARRAY JOIN`, window functions and a filter that references
 -- window-output columns used to cause `removeUnusedColumns` and `mergeExpressions`
 -- to oscillate forever, eventually exceeding the optimization limit and throwing

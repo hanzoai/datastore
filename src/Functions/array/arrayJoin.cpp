@@ -78,7 +78,7 @@ REGISTER_FUNCTION(ArrayJoin)
 {
     FunctionDocumentation::Description description = R"(
 The `arrayJoin` function takes a row that contains an array and unfolds it, generating multiple rows – one for each element in the array.
-This is in contrast to Regular Functions in ClickHouse which map input values to output values within the same row,
+This is in contrast to Regular Functions in Datastore which map input values to output values within the same row,
 and Aggregate Functions which take a group of rows and "compress" or "reduce" them into a single summary row
 (or a single value within a summary row if used with `GROUP BY`).
 

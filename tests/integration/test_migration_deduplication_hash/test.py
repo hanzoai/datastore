@@ -14,7 +14,7 @@ def cluster():
             "node_2512",
             macros={"replica": "node_2512"},
             with_installed_binary=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="25.12",
             with_zookeeper=True,
         )
@@ -80,7 +80,7 @@ def test_replicated_table_migration(cluster, insert_type):
     DROP TABLE IF EXISTS test_replicated_table_migration;
 
     CREATE TABLE test_replicated_table_migration (key UInt32, value UInt32)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_replicated_table_migration/', '{replica}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/test_replicated_table_migration/', '{replica}')
     PRIMARY KEY key ORDER BY key
 """
 
@@ -138,32 +138,32 @@ def test_not_replicated_table_migration(cluster):
 
     config_old = \
 """
-<clickhouse>
+<datastore>
     <insert_deduplication_version>old_separate_hashes</insert_deduplication_version>
-</clickhouse>
+</datastore>
 """
 
     config_compatible = \
 """
-<clickhouse>
+<datastore>
     <insert_deduplication_version>compatible_double_hashes</insert_deduplication_version>
-</clickhouse>
+</datastore>
 """
 
     config_new = \
 """
-<clickhouse>
+<datastore>
     <insert_deduplication_version>new_unified_hash</insert_deduplication_version>
-</clickhouse>
+</datastore>
 """
 
     def check_insert_deduplicated_across_configs(node, first_config, second_config):
-        node.replace_config("/etc/clickhouse-server/config.d/migration_restart.xml", first_config)
+        node.replace_config("/etc/datastore-server/config.d/migration_restart.xml", first_config)
         node.restart_clickhouse()
 
         node.query("INSERT INTO test_not_replicated_table_migration VALUES (1, 100), (2, 200), (3, 300)")
 
-        node.replace_config("/etc/clickhouse-server/config.d/migration_restart.xml", second_config)
+        node.replace_config("/etc/datastore-server/config.d/migration_restart.xml", second_config)
         node.restart_clickhouse()
 
         node.query("INSERT INTO test_not_replicated_table_migration VALUES (1, 100), (2, 200), (3, 300)")
@@ -194,7 +194,7 @@ def test_sync_async_deduplicated(cluster, first_insert_type, second_insert_type,
     DROP TABLE IF EXISTS test_sync_async_deduplicated;
 
     CREATE TABLE test_sync_async_deduplicated (key UInt32, value UInt32)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_sync_async_deduplicated/', '{replica}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/test_sync_async_deduplicated/', '{replica}')
     PRIMARY KEY key ORDER BY key
 """
 
@@ -239,7 +239,7 @@ def test_sync_async_deduplicated_with_2512(cluster, insert_type):
     DROP TABLE IF EXISTS test_sync_async_deduplicated_with_2512;
 
     CREATE TABLE test_sync_async_deduplicated_with_2512 (key UInt32, value UInt32)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_sync_async_deduplicated_with_2512/', '{replica}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/test_sync_async_deduplicated_with_2512/', '{replica}')
     PRIMARY KEY key ORDER BY key
 """
 
@@ -285,7 +285,7 @@ def test_new_unified_hash_self_deduplication_variable_length(cluster):
     DROP TABLE IF EXISTS test_unified_self_dedup;
 
     CREATE TABLE test_unified_self_dedup (key UInt32, s String, a Array(UInt32))
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_unified_self_dedup/', '{replica}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/test_unified_self_dedup/', '{replica}')
     ORDER BY key
 """
 

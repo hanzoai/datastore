@@ -6,4 +6,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_FORMAT --oneline <<<"ALTER TABLE replicated_constraints1 ADD CONSTRAINT IF NOT EXISTS b_constraint CHECK b > 10"
+$DATASTORE_FORMAT --oneline <<<"ALTER TABLE replicated_constraints1 ADD CONSTRAINT IF NOT EXISTS b_constraint CHECK b > 10"

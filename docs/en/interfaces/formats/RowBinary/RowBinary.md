@@ -68,7 +68,7 @@ Boolean values are encoded as a single byte, and can be deserialized similarly t
 
 ### BFloat16 {#bfloat16}
 
-[BFloat16](https://clickhouse.com/docs/sql-reference/data-types/float#bfloat16) (Brain Floating Point) is a 16-bit floating point format with the range of Float32 and reduced precision, making it useful for machine learning workloads. The wire format is essentially the top 16 bits of a Float32 value. If your language doesn't support it natively, the easiest way to handle it is to read and write as UInt16, converting to and from Float32:
+[BFloat16](https://datastore.com/docs/sql-reference/data-types/float#bfloat16) (Brain Floating Point) is a 16-bit floating point format with the range of Float32 and reduced precision, making it useful for machine learning workloads. The wire format is essentially the top 16 bits of a Float32 value. If your language doesn't support it natively, the easiest way to handle it is to read and write as UInt16, converting to and from Float32:
 
 To convert BFloat16 to Float32 (pseudocode):
 
@@ -126,11 +126,11 @@ let scale_multiplier = 10 ** scale
 let result = whole_part * scale_multiplier + fractional_part
 ```
 
-See more details in the [Decimal types ClickHouse docs](https://clickhouse.com/docs/sql-reference/data-types/decimal).
+See more details in the [Decimal types Datastore docs](https://datastore.com/docs/sql-reference/data-types/decimal).
 
 ### String {#string}
 
-ClickHouse strings are **arbitrary byte sequences**. They are not required to be valid UTF-8. The length prefix is the **byte length**, not the character count.
+Datastore strings are **arbitrary byte sequences**. They are not required to be valid UTF-8. The length prefix is the **byte length**, not the character count.
 
 Encoded in two parts:
 
@@ -154,7 +154,7 @@ For example, a string `foobar` will be encoded using *seven* bytes as follows:
 Unlike `String`, `FixedString` has a fixed length, which is defined in the schema. It is encoded as a sequence of bytes, padded with trailing zero bytes if the value is shorter than `N`.
 
 :::note
-When reading a `FixedString`, trailing zero bytes may be either padding or actual `\0` characters in the data, they are indistinguishable on the wire. ClickHouse itself preserves all `N` bytes as-is.
+When reading a `FixedString`, trailing zero bytes may be either padding or actual `\0` characters in the data, they are indistinguishable on the wire. Datastore itself preserves all `N` bytes as-is.
 :::
 
 An empty `FixedString(3)` contains only padding zeroes:
@@ -531,7 +531,7 @@ This only applies to RowBinary. In the Native format, `LowCardinality` uses a di
 A column can be defined as `LowCardinality(Nullable(T))`, but it is not possible to define it as `Nullable(LowCardinality(T))` - it will always result in an error from the server.
 :::
 
-While testing, [allow_suspicious_low_cardinality_types](https://clickhouse.com/docs/operations/settings/settings#allow_suspicious_low_cardinality_types) can be set to `1` to allow most of the data types inside `LowCardinality` for better coverage.
+While testing, [allow_suspicious_low_cardinality_types](https://datastore.com/docs/operations/settings/settings#allow_suspicious_low_cardinality_types) can be set to `1` to allow most of the data types inside `LowCardinality` for better coverage.
 
 ### Array {#array}
 
@@ -727,17 +727,17 @@ SELECT NULL :: Variant(UInt32, String)
 0xFF, // discriminant = NULL
 ```
 
-The [allow_suspicious_variant_types](https://clickhouse.com/docs/operations/settings/settings#allow_suspicious_variant_types) setting can be used to allow more exhaustive testing of the `Variant` type.
+The [allow_suspicious_variant_types](https://datastore.com/docs/operations/settings/settings#allow_suspicious_variant_types) setting can be used to allow more exhaustive testing of the `Variant` type.
 
 ### Dynamic {#dynamic}
 
-The `Dynamic` type can hold values of any type, determined at runtime. In RowBinary format, each value is self-describing: the first part is the type specification in [this format](https://clickhouse.com/docs/sql-reference/data-types/data-types-binary-encoding). The contents then follow, with the value encoding as described in this document. So to parse a value you just need to use the type index to determine the right parser and then re-use the RowBinary parsing you already have elsewhere.
+The `Dynamic` type can hold values of any type, determined at runtime. In RowBinary format, each value is self-describing: the first part is the type specification in [this format](https://datastore.com/docs/sql-reference/data-types/data-types-binary-encoding). The contents then follow, with the value encoding as described in this document. So to parse a value you just need to use the type index to determine the right parser and then re-use the RowBinary parsing you already have elsewhere.
 
 ```text
 [BinaryTypeIndex][type-specific parameters...][value]
 ```
 
-Where `BinaryTypeIndex` is a single byte identifying the type. See the reference [here](https://clickhouse.com/docs/sql-reference/data-types/data-types-binary-encoding) for the type indices and parameters.
+Where `BinaryTypeIndex` is a single byte identifying the type. See the reference [here](https://datastore.com/docs/sql-reference/data-types/data-types-binary-encoding) for the type indices and parameters.
 
 A `NULL` Dynamic value is encoded with `BinaryTypeIndex` `0x00` (the `Nothing` type), with no additional bytes:
 
@@ -1211,7 +1211,7 @@ SELECT minState(toUInt32(number)) FROM numbers(0)
 ```
 
 :::note
-More complex functions like `uniq`, `quantile`, or `groupArray` use implementation-specific formats. If you need to read or write these states, consult the ClickHouse source code for the specific function.
+More complex functions like `uniq`, `quantile`, or `groupArray` use implementation-specific formats. If you need to read or write these states, consult the Datastore source code for the specific function.
 :::
 
 ### QBit {#qbit}

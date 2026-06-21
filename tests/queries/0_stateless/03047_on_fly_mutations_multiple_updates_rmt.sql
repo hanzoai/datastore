@@ -9,7 +9,7 @@ SET enable_filesystem_cache = 0;
 SET read_through_distributed_cache=0;
 
 CREATE TABLE t_lightweight_mut_5 (id UInt64, s1 String, s2 String)
-ENGINE = ReplicatedMergeTree('/clickhouse/zktest/tables/{database}/t_lightweight_mut_1', '1') ORDER BY id
+ENGINE = ReplicatedMergeTree('/datastore/zktest/tables/{database}/t_lightweight_mut_1', '1') ORDER BY id
 SETTINGS min_bytes_for_wide_part = 0,
     min_bytes_for_full_part_storage = 0,
     primary_key_lazy_load = 0,

@@ -144,7 +144,7 @@ def test_reload_while_loading(started_cluster):
 
     # Changing the configuration file should restart loading again.
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/slow.xml", "sleep 100", "sleep 0"
+        instance, "/etc/datastore-server/dictionaries/slow.xml", "sleep 100", "sleep 0"
     )
     query("SYSTEM RELOAD CONFIG")
 
@@ -165,14 +165,14 @@ def test_reload_after_loading(started_cluster):
 
     # Change the dictionaries' data.
     # FIXME we sleep before this, because Poco 1.x has one-second granularity
-    # for mtime, and clickhouse will miss the update if we change the file too
+    # for mtime, and datastore will miss the update if we change the file too
     # soon. Should probably be fixed by switching to use std::filesystem.
     time.sleep(1)
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/executable.xml", "8", "81"
+        instance, "/etc/datastore-server/dictionaries/executable.xml", "8", "81"
     )
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/file.txt", "10", "101"
+        instance, "/etc/datastore-server/dictionaries/file.txt", "10", "101"
     )
 
     # SYSTEM RELOAD 'name' reloads only the specified dictionary.
@@ -187,10 +187,10 @@ def test_reload_after_loading(started_cluster):
     # SYSTEM RELOAD DICTIONARIES reloads all loaded dictionaries.
     time.sleep(1)  # see the comment above
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/executable.xml", "81", "82"
+        instance, "/etc/datastore-server/dictionaries/executable.xml", "81", "82"
     )
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/file.txt", "101", "102"
+        instance, "/etc/datastore-server/dictionaries/file.txt", "101", "102"
     )
     query("SYSTEM RELOAD DICTIONARY 'file'")
     query("SYSTEM RELOAD DICTIONARY 'executable'")
@@ -201,10 +201,10 @@ def test_reload_after_loading(started_cluster):
     # Wait slightly more, to be sure it did reload.
     time.sleep(1)  # see the comment above
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/executable.xml", "82", "83"
+        instance, "/etc/datastore-server/dictionaries/executable.xml", "82", "83"
     )
     replace_in_file_in_container(
-        instance, "/etc/clickhouse-server/dictionaries/file.txt", "102", "103"
+        instance, "/etc/datastore-server/dictionaries/file.txt", "102", "103"
     )
     time.sleep(10)
     assert query("SELECT dictGetInt32('file', 'a', toUInt64(9))") == "103\n"
@@ -237,7 +237,7 @@ def test_reload_after_fail_by_system_reload(started_cluster):
     # Creating the file source makes the dictionary able to load.
     instance.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/dictionaries/file.txt"),
-        "/etc/clickhouse-server/dictionaries/no_file.txt",
+        "/etc/datastore-server/dictionaries/no_file.txt",
     )
     query("SYSTEM RELOAD DICTIONARY 'no_file'")
     query("SELECT dictGetInt32('no_file', 'a', toUInt64(9))") == "10\n"
@@ -245,7 +245,7 @@ def test_reload_after_fail_by_system_reload(started_cluster):
 
     # Removing the file source should not spoil the loaded dictionary.
     instance.exec_in_container(
-        ["rm", "/etc/clickhouse-server/dictionaries/no_file.txt"]
+        ["rm", "/etc/datastore-server/dictionaries/no_file.txt"]
     )
     assert no_such_file_error in instance.query_and_get_error(
         "SYSTEM RELOAD DICTIONARY 'no_file'"
@@ -279,13 +279,13 @@ def test_reload_after_fail_by_timer(started_cluster):
     # Creating the file source makes the dictionary able to load.
     instance.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/dictionaries/file.txt"),
-        "/etc/clickhouse-server/dictionaries/no_file_2.txt",
+        "/etc/datastore-server/dictionaries/no_file_2.txt",
     )
     # Check that file appears in container and wait if needed.
-    while not instance.path_exists("/etc/clickhouse-server/dictionaries/no_file_2.txt"):
+    while not instance.path_exists("/etc/datastore-server/dictionaries/no_file_2.txt"):
         time.sleep(1)
     assert "9\t10\n" == instance.exec_in_container(
-        ["cat", "/etc/clickhouse-server/dictionaries/no_file_2.txt"]
+        ["cat", "/etc/datastore-server/dictionaries/no_file_2.txt"]
     )
     instance.query("SYSTEM RELOAD DICTIONARY no_file_2")
     instance.query("SELECT dictGetInt32('no_file_2', 'a', toUInt64(9))") == "10\n"
@@ -293,7 +293,7 @@ def test_reload_after_fail_by_timer(started_cluster):
 
     # Removing the file source should not spoil the loaded dictionary.
     instance.exec_in_container(
-        ["rm", "/etc/clickhouse-server/dictionaries/no_file_2.txt"]
+        ["rm", "/etc/datastore-server/dictionaries/no_file_2.txt"]
     )
     time.sleep(6)
     instance.query("SELECT dictGetInt32('no_file_2', 'a', toUInt64(9))") == "10\n"

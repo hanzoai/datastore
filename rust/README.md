@@ -1,3 +1,3 @@
 Read more about the Rust integration in the blog:
 
-## https://clickhouse.com/blog/rust
+## https://datastore.com/blog/rust

@@ -38,7 +38,7 @@ def has_new_unit_tests(changed_files):
 
 
 def has_ci_report_link(pr_body):
-    return "s3.amazonaws.com/clickhouse-test-reports" in pr_body
+    return "s3.amazonaws.com/datastore-test-reports" in pr_body
 
 
 def check():

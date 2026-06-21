@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- Using named collections 22.4+ -->
-<clickhouse>
+<datastore>
     <url_scheme_mappers>
         <minio>
             <to>http://minio1:9001/root/{bucket}</to>
@@ -10,4 +10,4 @@
             <to>http://minio1:9001/root/{bucket}</to>
         </s3>
     </url_scheme_mappers>
-</clickhouse>
+</datastore>

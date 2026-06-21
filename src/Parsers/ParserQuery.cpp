@@ -133,7 +133,7 @@ bool ParserQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
     {
         /// SELECT queries are already attempted to parse by ParserQueryWithOutput,
         /// but here we also try "implicit SELECT" after all other options.
-        /// It allows to use ClickHouse as a calculator, to process queries like `1 + 2` without the SELECT keyword.
+        /// It allows to use Datastore as a calculator, to process queries like `1 + 2` without the SELECT keyword.
         ParserSelectQuery implicit_select_p(true);
         res = implicit_select_p.parse(pos, node, expected);
 

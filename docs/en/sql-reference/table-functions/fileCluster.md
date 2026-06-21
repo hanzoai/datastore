@@ -43,16 +43,16 @@ A table with the specified format and structure and with data from files matchin
 Given a cluster named `my_cluster` and given the following value of setting `user_files_path`:
 
 ```bash
-$ grep user_files_path /etc/clickhouse-server/config.xml
-    <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+$ grep user_files_path /etc/datastore-server/config.xml
+    <user_files_path>/var/lib/datastore/user_files/</user_files_path>
 ```
 Also, given there are files `test1.csv` and `test2.csv` inside `user_files_path` of each cluster node, and their content is identical across different nodes:
 ```bash
-$ cat /var/lib/clickhouse/user_files/test1.csv
+$ cat /var/lib/datastore/user_files/test1.csv
     1,"file1"
     11,"file11"
 
-$ cat /var/lib/clickhouse/user_files/test2.csv
+$ cat /var/lib/datastore/user_files/test2.csv
     2,"file2"
     22,"file22"
 ```

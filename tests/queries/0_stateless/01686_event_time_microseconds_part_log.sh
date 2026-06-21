@@ -5,9 +5,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} -q 'DROP TABLE IF EXISTS table_with_single_pk'
+${DATASTORE_CLIENT} -q 'DROP TABLE IF EXISTS table_with_single_pk'
 
-${CLICKHOUSE_CLIENT} -q '
+${DATASTORE_CLIENT} -q '
     CREATE TABLE table_with_single_pk
     (
       key UInt8,
@@ -18,11 +18,11 @@ ${CLICKHOUSE_CLIENT} -q '
     SETTINGS old_parts_lifetime=0
 '
 
-${CLICKHOUSE_CLIENT} -q 'INSERT INTO table_with_single_pk SELECT number, toString(number % 10) FROM numbers(1000000)'
+${DATASTORE_CLIENT} -q 'INSERT INTO table_with_single_pk SELECT number, toString(number % 10) FROM numbers(1000000)'
 
 # Check NewPart
-${CLICKHOUSE_CLIENT} -q 'SYSTEM FLUSH LOGS part_log'
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q 'SYSTEM FLUSH LOGS part_log'
+${DATASTORE_CLIENT} -q "
     WITH (
          SELECT (event_time, event_time_microseconds)
          FROM system.part_log
@@ -33,12 +33,12 @@ ${CLICKHOUSE_CLIENT} -q "
   SELECT if(dateDiff('second', toDateTime(time.2), toDateTime(time.1)) = 0, 'ok', 'fail')"
 
 # Now let's check RemovePart
-${CLICKHOUSE_CLIENT} -q 'TRUNCATE TABLE table_with_single_pk'
+${DATASTORE_CLIENT} -q 'TRUNCATE TABLE table_with_single_pk'
 
 # Wait until parts are removed
 function get_inactive_parts_count() {
     table_name=$1
-    ${CLICKHOUSE_CLIENT} -q "
+    ${DATASTORE_CLIENT} -q "
         SELECT
             count()
         FROM
@@ -48,7 +48,7 @@ function get_inactive_parts_count() {
         AND
             active = 0
         AND
-            database = '${CLICKHOUSE_DATABASE}'
+            database = '${DATASTORE_DATABASE}'
     "
 }
 
@@ -71,8 +71,8 @@ function wait_table_inactive_parts_are_gone() {
 
 wait_table_inactive_parts_are_gone table_with_single_pk
 
-${CLICKHOUSE_CLIENT} -q 'SYSTEM FLUSH LOGS part_log;'
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q 'SYSTEM FLUSH LOGS part_log;'
+${DATASTORE_CLIENT} -q "
     WITH (
          SELECT (event_time, event_time_microseconds)
          FROM system.part_log
@@ -82,4 +82,4 @@ ${CLICKHOUSE_CLIENT} -q "
     ) AS time
     SELECT if(dateDiff('second', toDateTime(time.2), toDateTime(time.1)) = 0, 'ok', 'fail')"
 
-${CLICKHOUSE_CLIENT} -q 'DROP TABLE table_with_single_pk'
+${DATASTORE_CLIENT} -q 'DROP TABLE table_with_single_pk'

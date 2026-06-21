@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ClickHouse Jemalloc Stats</title>
+    <title>Datastore Jemalloc Stats</title>
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDExIDEwIj48c3R5bGU+LmJne2ZpbGw6IzAwMH0ub3tmaWxsOiNmZjB9PC9zdHlsZT48cmVjdCBjbGFzcz0iYmciIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiLz48cGF0aCBkPSJNMSwxIGgxIHY4IGgtMSB6IiBjbGFzcz0ibyIvPjxwYXRoIGQ9Ik0zLDEgaDEgdjggaC0xIHoiIGNsYXNzPSJvIi8+PHBhdGggZD0iTTUsMSBoMSB2OCBoLTEgeiIgY2xhc3M9Im8iLz48cGF0aCBkPSJNNywxIGgxIHY4IGgtMSB6IiBjbGFzcz0ibyIvPjxwYXRoIGQ9Ik05LDQuMjUgaDEgdjEuNSBoLTEgeiIgY2xhc3M9Im8iLz48L3N2Zz4">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.21/dist/uPlot.min.css">
     <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.21/dist/uPlot.iife.min.js"></script>
@@ -445,7 +445,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>ClickHouse Jemalloc Statistics</h1>
+        <h1>Datastore Jemalloc Statistics</h1>
         <div class="controls">
             <div class="connection-params">
                 <input spellcheck="false" id="url" type="text" value="" placeholder="URL" />
@@ -531,7 +531,7 @@
         const isKeeper = (window.JEMALLOC_CONFIG || {}).mode === 'keeper';
 
         if (isKeeper) {
-            document.title = 'ClickHouse Keeper \u2014 Jemalloc Profiler';
+            document.title = 'Datastore Keeper \u2014 Jemalloc Profiler';
             document.querySelector('.header h1').textContent = 'Keeper Jemalloc Profiler';
             document.querySelector('.connection-params').style.display = 'none';
             document.querySelector('[onclick*="query-profile"]').style.display = 'none';
@@ -2369,7 +2369,7 @@
                     ${isKeeper ? '' : `<div style="margin-top: 0.75rem; padding: 0.6rem 1rem; border-left: 4px solid var(--success-color); background: var(--table-header-bg); border-radius: 0 4px 4px 0; font-size: 0.85rem; line-height: 1.6;">
                         The <strong>Collapsed</strong> format is best for analysis with AI tools.
                         For help analyzing it with Claude, you can fetch the
-                        <a href="https://github.com/ClickHouse/ClickHouse/blob/master/.claude/skills/alloc-profile/SKILL.md" target="_blank" style="color: var(--link-color);">alloc-profile skill</a>
+                        <a href="https://github.com/ClickHouse/Datastore/blob/master/.claude/skills/alloc-profile/SKILL.md" target="_blank" style="color: var(--link-color);">alloc-profile skill</a>
                         into your Claude Code project and use it with <code style="background: var(--card-background); padding: 0.1rem 0.3rem; border-radius: 3px;">/alloc-profile</code>.
                     </div>`}
                 </div>

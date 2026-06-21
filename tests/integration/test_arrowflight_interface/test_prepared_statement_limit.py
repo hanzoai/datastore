@@ -32,7 +32,7 @@ def get_client(username=None, password=None):
         disable_server_verification=True,
         username=username,
         password=password,
-        metadata={'x-clickhouse-session-id': session_id},
+        metadata={'x-datastore-session-id': session_id},
         features={'metadata-reflection': 'true'},
     )
 
@@ -230,7 +230,7 @@ def test_prepared_statement_parameter_types(test_case):
     result = stmt.execute()
 
     if isinstance(expected, bytes):
-        # ClickHouse returns binary data in a String column, which Arrow maps to utf8.
+        # Datastore returns binary data in a String column, which Arrow maps to utf8.
         # Cast to binary to avoid pyarrow's UTF-8 decoding.
         actual = result.column("result").cast(pa.binary()).to_pylist()[0]
     else:
@@ -391,7 +391,7 @@ def test_session_close_does_not_affect_other_user_same_session_id():
         disable_server_verification=True,
         username="user_ps1",
         password="pass1",
-        metadata={'x-clickhouse-session-id': shared_session_id},
+        metadata={'x-datastore-session-id': shared_session_id},
         features={'metadata-reflection': 'true'},
     )
     client2 = FlightSQLClient(
@@ -401,7 +401,7 @@ def test_session_close_does_not_affect_other_user_same_session_id():
         disable_server_verification=True,
         username="user_ps2",
         password="pass2",
-        metadata={'x-clickhouse-session-id': shared_session_id},
+        metadata={'x-datastore-session-id': shared_session_id},
         features={'metadata-reflection': 'true'},
     )
 
@@ -418,8 +418,8 @@ def test_session_close_does_not_affect_other_user_same_session_id():
         username="user_ps1",
         password="pass1",
         metadata={
-            'x-clickhouse-session-id': shared_session_id,
-            'x-clickhouse-session-close': '1',
+            'x-datastore-session-id': shared_session_id,
+            'x-datastore-session-close': '1',
         },
         features={'metadata-reflection': 'true'},
     )

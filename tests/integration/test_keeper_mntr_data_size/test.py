@@ -10,7 +10,7 @@ from helpers.cluster import ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 
-# clickhouse itself will use external zookeeper
+# datastore itself will use external zookeeper
 node = cluster.add_instance(
     "node",
     main_configs=["configs/enable_keeper.xml"],
@@ -46,7 +46,7 @@ def restart_clickhouse():
 
 def start_clean_clickhouse():
     node.stop_clickhouse()
-    node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination"])
+    node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination"])
     node.start_clickhouse()
 
 

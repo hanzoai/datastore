@@ -9,19 +9,19 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # "max_parts_to_merge_at_once = 1" prevents merges to start in background before our own OPTIMIZE FINAL
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 drop table if exists many_mutations;
 create table many_mutations (x UInt32, y UInt32) engine = MergeTree order by x settings number_of_mutations_to_delay = 0, number_of_mutations_to_throw = 0, max_parts_to_merge_at_once = 1, lock_acquire_timeout_for_background_operations=600;
 insert into many_mutations select number, number + 1 from numbers(2000);
 system stop merges many_mutations;
 "
 
-$CLICKHOUSE_CLIENT -q "select count() from many_mutations"
+$DATASTORE_CLIENT -q "select count() from many_mutations"
 
 job()
 {
    for i in {1..1000}; do
-     $CLICKHOUSE_CURL -sS $CLICKHOUSE_URL -d "alter table many_mutations delete where y = ${i} * 2 settings mutations_sync = 0"
+     $DATASTORE_CURL -sS $DATASTORE_URL -d "alter table many_mutations delete where y = ${i} * 2 settings mutations_sync = 0"
    done
 }
 
@@ -49,7 +49,7 @@ job &
 wait
 
 # truncate before drop, avoid removing all the mutations (it's slow) in DatabaseCatalog's thread (may affect other tests)
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select count() from system.mutations where database = currentDatabase() and table = 'many_mutations' and not is_done;
 system start merges many_mutations;
 optimize table many_mutations final SETTINGS optimize_throw_if_noop = 1;

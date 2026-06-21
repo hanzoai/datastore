@@ -50,12 +50,12 @@ A table with the specified structure for reading or writing data in the specifie
 
 ## Examples {#examples}
 
-Select the data from all the files in the `/root/data/clickhouse` and `/root/data/database/` folders, using all the nodes in the `cluster_simple` cluster:
+Select the data from all the files in the `/root/data/datastore` and `/root/data/database/` folders, using all the nodes in the `cluster_simple` cluster:
 
 ```sql
 SELECT * FROM s3Cluster(
     'cluster_simple',
-    'http://minio1:9001/root/data/{clickhouse,database}/*',
+    'http://minio1:9001/root/data/{datastore,database}/*',
     'minio',
     'ClickHouse_Minio_P@ssw0rd',
     'CSV',

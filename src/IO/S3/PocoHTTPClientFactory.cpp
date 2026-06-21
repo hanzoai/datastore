@@ -17,7 +17,7 @@ namespace DB::S3
 std::shared_ptr<Aws::Http::HttpClient>
 PocoHTTPClientFactory::CreateHttpClient(const Aws::Client::ClientConfiguration & client_configuration) const
 {
-    if (client_configuration.userAgent.starts_with("ClickHouse"))
+    if (client_configuration.userAgent.starts_with("Datastore"))
     {
         const auto & poco_client_configuration = static_cast<const PocoHTTPClientConfiguration &>(client_configuration);
         if (Poco::toLower(poco_client_configuration.http_client) == "gcp_oauth")

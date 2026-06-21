@@ -14,7 +14,7 @@ CREATE TABLE tab
     v3 Float32,
     v4 Float64
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/tab/2870', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/tab/2870', 'r1')
 ORDER BY id
 SETTINGS min_bytes_for_wide_part = 1;
 

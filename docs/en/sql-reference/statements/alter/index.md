@@ -57,7 +57,7 @@ There is no atomicity — parts are substituted for mutated parts as soon as the
 
 Mutations are totally ordered by their creation order and are applied to each part in that order. Mutations are also partially ordered with `INSERT INTO` queries: data that was inserted into the table before the mutation was submitted will be mutated and data that was inserted after that will not be mutated. Note that mutations do not block inserts in any way.
 
-A mutation query returns immediately after the mutation entry is added (in case of replicated tables to ZooKeeper, for non-replicated tables - to the filesystem). The mutation itself executes asynchronously using the system profile settings. To track the progress of mutations you can use the [`system.mutations`](/operations/system-tables/mutations) table. A mutation that was successfully submitted will continue to execute even if ClickHouse servers are restarted. There is no way to roll back the mutation once it is submitted, but if the mutation is stuck for some reason it can be cancelled with the [`KILL MUTATION`](/sql-reference/statements/kill.md/#kill-mutation) query.
+A mutation query returns immediately after the mutation entry is added (in case of replicated tables to ZooKeeper, for non-replicated tables - to the filesystem). The mutation itself executes asynchronously using the system profile settings. To track the progress of mutations you can use the [`system.mutations`](/operations/system-tables/mutations) table. A mutation that was successfully submitted will continue to execute even if Datastore servers are restarted. There is no way to roll back the mutation once it is submitted, but if the mutation is stuck for some reason it can be cancelled with the [`KILL MUTATION`](/sql-reference/statements/kill.md/#kill-mutation) query.
 
 Entries for finished mutations are not deleted right away (the number of preserved entries is determined by the `finished_mutations_to_keep` storage engine parameter). Older mutation entries are deleted.
 
@@ -77,4 +77,4 @@ For all `ALTER` queries, if `alter_sync = 2` and some replicas are not active fo
 
 ## Related content {#related-content}
 
-- Blog: [Handling Updates and Deletes in ClickHouse](https://clickhouse.com/blog/handling-updates-and-deletes-in-clickhouse)
+- Blog: [Handling Updates and Deletes in Datastore](https://datastore.com/blog/handling-updates-and-deletes-in-datastore)

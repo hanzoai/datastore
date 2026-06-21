@@ -4,10 +4,10 @@ using CommandLine;
 
 class Program
 {
-    [Option('h', "host", HelpText = "Host of ClickHouse server")]
+    [Option('h', "host", HelpText = "Host of Datastore server")]
     public string Host { get; set; }
 
-    [Option('p', "port", HelpText = "Port of ClickHouse server")]
+    [Option('p', "port", HelpText = "Port of Datastore server")]
     public string Port { get; set; }
 
     [Option('u', "username", HelpText = "Username")]

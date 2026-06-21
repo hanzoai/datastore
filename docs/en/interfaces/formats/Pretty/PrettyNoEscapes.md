@@ -25,7 +25,7 @@ This is necessary for displaying the format in a browser, as well as for using t
 Example:
 
 ```bash
-$ watch -n1 "clickhouse-client --query='SELECT event, value FROM system.events FORMAT PrettyCompactNoEscapes'"
+$ watch -n1 "datastore-client --query='SELECT event, value FROM system.events FORMAT PrettyCompactNoEscapes'"
 ```
 
 :::note

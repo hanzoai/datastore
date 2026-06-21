@@ -8,8 +8,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-KAFKA_TOPIC=$(echo "${CLICKHOUSE_TEST_UNIQUE_NAME}" | tr '_' '-')
-KAFKA_GROUP="${CLICKHOUSE_TEST_UNIQUE_NAME}_group"
+KAFKA_TOPIC=$(echo "${DATASTORE_TEST_UNIQUE_NAME}" | tr '_' '-')
+KAFKA_GROUP="${DATASTORE_TEST_UNIQUE_NAME}_group"
 KAFKA_BROKER="127.0.0.1:9092"
 
 cleanup()
@@ -19,9 +19,9 @@ cleanup()
     trap - EXIT INT TERM
     set +e
 
-    $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_TEST_UNIQUE_NAME}_mv" 2>/dev/null
-    $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_TEST_UNIQUE_NAME}_dst" 2>/dev/null
-    $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_TEST_UNIQUE_NAME}_kafka" 2>/dev/null
+    $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_TEST_UNIQUE_NAME}_mv" 2>/dev/null
+    $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_TEST_UNIQUE_NAME}_dst" 2>/dev/null
+    $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_TEST_UNIQUE_NAME}_kafka" 2>/dev/null
     timeout 10 rpk topic delete $KAFKA_TOPIC --brokers $KAFKA_BROKER > /dev/null 2>&1
 
     exit $exit_code
@@ -40,8 +40,8 @@ for i in $(seq 1 5); do
 done | timeout 30 rpk topic produce $KAFKA_TOPIC --brokers $KAFKA_BROKER > /dev/null 2>&1
 
 # Create Kafka engine table
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_kafka (key UInt64, value String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_kafka (key UInt64, value String)
     ENGINE = Kafka
     SETTINGS kafka_broker_list = '$KAFKA_BROKER',
              kafka_topic_list = '$KAFKA_TOPIC',
@@ -51,24 +51,24 @@ $CLICKHOUSE_CLIENT -q "
 "
 
 # Create destination table
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_dst (key UInt64, value String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_dst (key UInt64, value String)
     ENGINE = MergeTree ORDER BY key;
 "
 
 # Create materialized view
-$CLICKHOUSE_CLIENT -q "
-    CREATE MATERIALIZED VIEW ${CLICKHOUSE_TEST_UNIQUE_NAME}_mv TO ${CLICKHOUSE_TEST_UNIQUE_NAME}_dst AS
-    SELECT * FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_kafka;
+$DATASTORE_CLIENT -q "
+    CREATE MATERIALIZED VIEW ${DATASTORE_TEST_UNIQUE_NAME}_mv TO ${DATASTORE_TEST_UNIQUE_NAME}_dst AS
+    SELECT * FROM ${DATASTORE_TEST_UNIQUE_NAME}_kafka;
 "
 
 # Wait for messages to be consumed (120s to allow for slow consumer group assignment)
 for i in $(seq 1 120); do
-    count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_dst")
+    count=$($DATASTORE_CLIENT -q "SELECT count() FROM ${DATASTORE_TEST_UNIQUE_NAME}_dst")
     if [ "$count" -ge 5 ]; then
         break
     fi
     sleep 1
 done
 
-$CLICKHOUSE_CLIENT -q "SELECT key, value FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_dst ORDER BY key"
+$DATASTORE_CLIENT -q "SELECT key, value FROM ${DATASTORE_TEST_UNIQUE_NAME}_dst ORDER BY key"

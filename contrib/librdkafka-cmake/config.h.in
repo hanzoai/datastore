@@ -81,7 +81,7 @@
 #define MKL_APP_VERSION "2.8.0"
 // disable C11 threads for compatibility with old libc, also C11 threads are condireder harmful
 #define WITH_C11THREADS 0
-// WITH_PLUGINS - see rd_kafka_plugin_new: it allow to dload some external plugins (no plans to support it in ClickHouse)
+// WITH_PLUGINS - see rd_kafka_plugin_new: it allow to dload some external plugins (no plans to support it in Datastore)
 #define WITH_PLUGINS 0
 // libdl
 #define WITH_LIBDL 0

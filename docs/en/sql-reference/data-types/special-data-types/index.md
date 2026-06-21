@@ -1,5 +1,5 @@
 ---
-description: 'Overview of special data types in ClickHouse that are used for intermediate
+description: 'Overview of special data types in Datastore that are used for intermediate
   results during query execution'
 sidebar_label: 'Special Data Types'
 sidebar_position: 55

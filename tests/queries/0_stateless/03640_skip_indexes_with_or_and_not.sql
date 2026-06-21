@@ -1,4 +1,4 @@
--- Testcase for https://github.com/ClickHouse/ClickHouse/issues/94020
+-- Testcase for https://github.com/ClickHouse/Datastore/issues/94020
 -- Test for skip indexes with OR and NOT in the WHERE clause
 
 SET use_skip_indexes = 1;

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103617
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103617
 --
 -- Before the fix, `JSONExtract` into a `Variant` that contained both an integer
 -- and a floating-point member silently truncated fractional JSON numbers: the

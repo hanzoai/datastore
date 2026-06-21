@@ -1,5 +1,5 @@
 ---
-description: 'Page describing usage recommendations for open-source ClickHouse'
+description: 'Page describing usage recommendations for open-source Datastore'
 sidebar_label: 'OSS usage recommendations'
 sidebar_position: 58
 slug: /operations/tips
@@ -43,9 +43,9 @@ Permanent huge pages also do not need to be allocated.
 
 The recommended amount of RAM is 32 GB or more.
 
-If your system has less than 16 GB of RAM, you may experience various memory exceptions because default settings do not match this amount of memory. You can use ClickHouse in a system with a small amount of RAM (as low as 2 GB), but these setups require additional tuning and can only ingest at a low rate.
+If your system has less than 16 GB of RAM, you may experience various memory exceptions because default settings do not match this amount of memory. You can use Datastore in a system with a small amount of RAM (as low as 2 GB), but these setups require additional tuning and can only ingest at a low rate.
 
-When using ClickHouse with less than 16GB of RAM, we recommend the following:
+When using Datastore with less than 16GB of RAM, we recommend the following:
 
 - Lower the size of the mark cache in the `config.xml`. It can be set as low as 500 MB, but it cannot be set to zero.
 - Lower the number of query processing threads down to `1`.
@@ -87,7 +87,7 @@ $ echo 4096 | sudo tee /sys/block/md2/md/stripe_cache_size
 
 Calculate the exact number from the number of devices and the block size, using the formula: `2 * num_devices * chunk_size_in_bytes / 4096`.
 
-A block size of 64 KB is sufficient for most RAID configurations. The average clickhouse-server write size is approximately 1 MB (1024 KB), and thus the recommended stripe size is also 1 MB. The block size can be optimized if needed when set to 1 MB divided by the number of non-parity disks in the RAID array, such that each write is parallelized across all available non-parity disks.
+A block size of 64 KB is sufficient for most RAID configurations. The average datastore-server write size is approximately 1 MB (1024 KB), and thus the recommended stripe size is also 1 MB. The block size can be optimized if needed when set to 1 MB divided by the number of non-parity disks in the RAID array, such that each write is parallelized across all available non-parity disks.
 Never set the block size too small or too large.
 
 You can use RAID-0 on SSD.
@@ -105,10 +105,10 @@ Most other file systems should also work fine.
 
 FAT-32 and exFAT are not supported due to lack of hard links.
 
-Do not use compressed filesystems, because ClickHouse does compression on its own and better.
-It's not recommended to use encrypted filesystems, because you can use builtin encryption in ClickHouse, which is better.
+Do not use compressed filesystems, because Datastore does compression on its own and better.
+It's not recommended to use encrypted filesystems, because you can use builtin encryption in Datastore, which is better.
 
-While ClickHouse can work over NFS, it is not the best idea.
+While Datastore can work over NFS, it is not the best idea.
 
 ## Linux Kernel {#linux-kernel}
 
@@ -123,7 +123,7 @@ Use at least a 10 GB network, if possible. 1 Gb will also work, but it will be m
 
 ## Huge Pages {#huge-pages}
 
-Always set transparent huge pages to `madvise`. On older kernels (before 5.9), THP set to `always` can cause significant performance degradation — the kernel spends excessive time on memory defragmentation, especially on systems with 64 GB+ of RAM. Kernel 5.9 introduced proactive compaction, which handles THP much better, but ClickHouse still warns at startup if THP is set to `always`, so `madvise` is the recommended setting regardless of kernel version.
+Always set transparent huge pages to `madvise`. On older kernels (before 5.9), THP set to `always` can cause significant performance degradation — the kernel spends excessive time on memory defragmentation, especially on systems with 64 GB+ of RAM. Kernel 5.9 introduced proactive compaction, which handles THP much better, but Datastore still warns at startup if THP is set to `always`, so `madvise` is the recommended setting regardless of kernel version.
 
 ```bash
 $ echo 'madvise' | sudo tee /sys/kernel/mm/transparent_hugepage/enabled
@@ -151,12 +151,12 @@ If you are using libvirt, set
 ```
 in XML configuration.
 
-This is important for ClickHouse to be able to get correct information with `cpuid` instruction.
+This is important for Datastore to be able to get correct information with `cpuid` instruction.
 Otherwise you may get `Illegal instruction` crashes when hypervisor is run on old CPU models.
 
-## ClickHouse Keeper and ZooKeeper {#zookeeper}
+## Datastore Keeper and ZooKeeper {#zookeeper}
 
-ClickHouse Keeper is recommended to replace ZooKeeper for ClickHouse clusters.  See the documentation for [ClickHouse Keeper](../guides/sre/keeper/index.md)
+Datastore Keeper is recommended to replace ZooKeeper for Datastore clusters.  See the documentation for [Datastore Keeper](../guides/sre/keeper/index.md)
 
 If you would like to continue using ZooKeeper then it is best to use a fresh version of ZooKeeper – 3.4.9 or later. The version in stable Linux distributions may be outdated.
 
@@ -164,12 +164,12 @@ You should never use manually written scripts to transfer data between different
 
 If you want to divide an existing ZooKeeper cluster into two, the correct way is to increase the number of its replicas and then reconfigure it as two independent clusters.
 
-You can run ClickHouse Keeper on the same server as ClickHouse in test environments, or in environments with low ingestion rate.
-For production environments we suggest to use separate servers for ClickHouse and ZooKeeper/Keeper, or place ClickHouse files and Keeper files on to separate disks. Because ZooKeeper/Keeper are very sensitive for disk latency and ClickHouse may utilize all available system resources.
+You can run Datastore Keeper on the same server as Datastore in test environments, or in environments with low ingestion rate.
+For production environments we suggest to use separate servers for Datastore and ZooKeeper/Keeper, or place Datastore files and Keeper files on to separate disks. Because ZooKeeper/Keeper are very sensitive for disk latency and Datastore may utilize all available system resources.
 
-You can have ZooKeeper observers in an ensemble but ClickHouse servers should not interact with observers.
+You can have ZooKeeper observers in an ensemble but Datastore servers should not interact with observers.
 
-Do not change `minSessionTimeout` setting, large values may affect ClickHouse restart stability.
+Do not change `minSessionTimeout` setting, large values may affect Datastore restart stability.
 
 With the default settings, ZooKeeper is a time bomb:
 
@@ -198,7 +198,7 @@ maxClientCnxns=2000
 
 # It is the maximum value that client may request and the server will accept.
 # It is Ok to have high maxSessionTimeout on server to allow clients to work with high session timeout if they want.
-# But we request session timeout of 30 seconds by default (you can change it with session_timeout_ms in ClickHouse config).
+# But we request session timeout of 30 seconds by default (you can change it with session_timeout_ms in Datastore config).
 maxSessionTimeout=60000000
 # the directory where the snapshot is stored.
 dataDir=/opt/zookeeper/{{ '{{' }} cluster['name'] {{ '}}' }}/data
@@ -313,8 +313,8 @@ end script
 
 ## Antivirus software {#antivirus-software}
 
-If you use antivirus software configure it to skip folders with ClickHouse datafiles (`/var/lib/clickhouse`) otherwise performance may be reduced and you may experience unexpected errors during data ingestion and background merges.
+If you use antivirus software configure it to skip folders with Datastore datafiles (`/var/lib/datastore`) otherwise performance may be reduced and you may experience unexpected errors during data ingestion and background merges.
 
 ## Related Content {#related-content}
 
-- [Getting started with ClickHouse? Here are 13 "Deadly Sins" and how to avoid them](https://clickhouse.com/blog/common-getting-started-issues-with-clickhouse)
+- [Getting started with Datastore? Here are 13 "Deadly Sins" and how to avoid them](https://datastore.com/blog/common-getting-started-issues-with-datastore)

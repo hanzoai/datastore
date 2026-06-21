@@ -79,8 +79,8 @@ class CIDB:
     def __init__(self, url, user, passwd):
         self.url = url
         self.auth = {
-            "X-ClickHouse-User": user,
-            "X-ClickHouse-Key": passwd,
+            "X-Datastore-User": user,
+            "X-Datastore-Key": passwd,
         }
 
     def get_link_to_test_case_statistics(
@@ -105,7 +105,7 @@ class CIDB:
             failure_patterns: List of substring patterns configured in CI settings (Settings.TEST_FAILURE_PATTERNS)
             test_output: The current test failure output to match against patterns
             url: Optional base URL (defaults to self.url)
-            user: Optional username for ClickHouse Play authentication
+            user: Optional username for Datastore Play authentication
             pr_base_branches: Optional list of base branches to include PR runs. If provided, includes PRs targeting any of these branches. If omitted, only main branch runs are included.
 
         Pattern Matching Logic:

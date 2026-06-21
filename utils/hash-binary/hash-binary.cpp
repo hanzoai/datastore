@@ -1,8 +1,8 @@
-/// Tool to compute the same hash as ClickHouse's getHashOfLoadedBinary() from a file.
+/// Tool to compute the same hash as Datastore's getHashOfLoadedBinary() from a file.
 /// Useful for cross-compilation when you can't execute the target binary.
 ///
-/// NOTE: This file is intentionally standalone with no ClickHouse dependencies.
-/// We cannot reuse src/Common/SipHash.h because it depends on ClickHouse-specific
+/// NOTE: This file is intentionally standalone with no Datastore dependencies.
+/// We cannot reuse src/Common/SipHash.h because it depends on Datastore-specific
 /// headers (base/types.h, base/extended_types.h, wide_integer_impl.h, etc.) that
 /// pull in boost and other dependencies not available during cross-compilation.
 /// This tool must be compilable with just the host compiler.
@@ -29,7 +29,7 @@ uint64_t rotl64(uint64_t value, unsigned int count)
 
 
 /// Standalone SipHash implementation (SipHash 2-4 variant with 128-bit output).
-/// This is a simplified version of ClickHouse's SipHash, producing identical results.
+/// This is a simplified version of Datastore's SipHash, producing identical results.
 class SipHash
 {
 private:
@@ -226,7 +226,7 @@ int main(int argc, char ** argv)
         if (argc != 2)
         {
             std::cerr << "Usage: " << argv[0] << " <elf-file>\n"
-                      << "\nComputes the same hash as 'clickhouse hash-binary' but from a file.\n"
+                      << "\nComputes the same hash as 'datastore hash-binary' but from a file.\n"
                       << "Useful for cross-compilation when you can't execute the target binary.\n";
             return 1;
         }
@@ -246,7 +246,7 @@ int main(int argc, char ** argv)
         uint64_t hi = 0;
         hash.get128(lo, hi);
 
-        /// Output format matches ClickHouse's getHexUIntUppercase for UInt128
+        /// Output format matches Datastore's getHexUIntUppercase for UInt128
         std::cout << std::uppercase << std::hex << std::setfill('0')
                   << std::setw(16) << hi << std::setw(16) << lo;
         return 0;

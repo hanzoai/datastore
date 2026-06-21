@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS test_system_zookeeper_auxiliary;
 CREATE TABLE test_system_zookeeper_auxiliary (
     key UInt64
 )
-ENGINE ReplicatedMergeTree('zookeeper2:/clickhouse/{database}/02731_test_system_zookeeper_auxiliary/{shard}', '{replica}')
+ENGINE ReplicatedMergeTree('zookeeper2:/datastore/{database}/02731_test_system_zookeeper_auxiliary/{shard}', '{replica}')
 ORDER BY tuple();
 
 SELECT DISTINCT zookeeperName FROM system.zookeeper WHERE path = '/' AND zookeeperName = 'default';

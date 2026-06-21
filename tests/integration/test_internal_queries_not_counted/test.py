@@ -38,7 +38,7 @@ def test_dictionary_internal_queries_not_counted(started_cluster):
     node.query("""
         CREATE DICTIONARY test_dict (dummy UInt8)
         PRIMARY KEY dummy
-        SOURCE(CLICKHOUSE(QUERY 'SELECT dummy from system.one'))
+        SOURCE(DATASTORE(QUERY 'SELECT dummy from system.one'))
         LAYOUT(DIRECT())
     """)
 

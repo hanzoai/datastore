@@ -43,7 +43,7 @@ def create_tables():
                 node = cluster.instances["node_{}_{}".format(shard, replica)]
                 node.query(
                     f"CREATE TABLE replicated (d Date, x UInt32) ENGINE = "
-                    f"ReplicatedMergeTree('/clickhouse/tables/{shard}/replicated_{seqno}', '{node.name}') PARTITION BY toYYYYMM(d) ORDER BY d"
+                    f"ReplicatedMergeTree('/datastore/tables/{shard}/replicated_{seqno}', '{node.name}') PARTITION BY toYYYYMM(d) ORDER BY d"
                 )
 
         node_1_1.query(

@@ -10,13 +10,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 readonly failpoint="query_metric_log_pause_before_finish"
-readonly query_id="query_metric_log_final_row_failpoint_${CLICKHOUSE_DATABASE}"
+readonly query_id="query_metric_log_final_row_failpoint_${DATASTORE_DATABASE}"
 
 query_pid=""
 
 cleanup()
 {
-    $CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM DISABLE FAILPOINT ${failpoint}" >/dev/null 2>&1 || true
+    $DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM DISABLE FAILPOINT ${failpoint}" >/dev/null 2>&1 || true
 
     if [ -n "${query_pid:-}" ]; then
         wait "$query_pid" 2>/dev/null || true
@@ -25,9 +25,9 @@ cleanup()
 
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM ENABLE FAILPOINT ${failpoint}"
+$DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM ENABLE FAILPOINT ${failpoint}"
 
-$CLICKHOUSE_CLIENT --query-id="${query_id}" -q "
+$DATASTORE_CLIENT --query-id="${query_id}" -q "
     SELECT sleep(0.35)
     SETTINGS
         query_metric_log_interval=100,
@@ -39,15 +39,15 @@ $CLICKHOUSE_CLIENT --query-id="${query_id}" -q "
 
 query_pid=$!
 
-timeout 30 $CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM WAIT FAILPOINT ${failpoint} PAUSE"
+timeout 30 $DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM WAIT FAILPOINT ${failpoint} PAUSE"
 
-pause_time=$($CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SELECT now64(6)")
+pause_time=$($DATASTORE_CLIENT --query_metric_log_interval=0 -q "SELECT now64(6)")
 late_periodic_seen=0
 
 for _ in {1..60}; do
-    $CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM FLUSH LOGS query_metric_log"
+    $DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM FLUSH LOGS query_metric_log"
 
-    late_periodic_count=$($CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "
+    late_periodic_count=$($DATASTORE_CLIENT --query_metric_log_interval=0 -q "
         SELECT count()
         FROM system.query_metric_log
         WHERE event_date >= yesterday()
@@ -64,17 +64,17 @@ for _ in {1..60}; do
     sleep 0.5
 done
 
-$CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM NOTIFY FAILPOINT ${failpoint}"
+$DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM NOTIFY FAILPOINT ${failpoint}"
 wait "$query_pid"
 query_pid=""
 
-$CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM DISABLE FAILPOINT ${failpoint}"
-$CLICKHOUSE_CLIENT --query_metric_log_interval=0 -q "SYSTEM FLUSH LOGS query_log, query_metric_log"
+$DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM DISABLE FAILPOINT ${failpoint}"
+$DATASTORE_CLIENT --query_metric_log_interval=0 -q "SYSTEM FLUSH LOGS query_log, query_metric_log"
 
 echo "--Check that a periodic row overtook the paused final row"
 echo "$late_periodic_seen"
 
-$CLICKHOUSE_CLIENT --query_metric_log_interval=0 -m -q "
+$DATASTORE_CLIENT --query_metric_log_interval=0 -m -q "
     SELECT '--Check that failpoint-delayed finish still emits final query metric row';
     WITH
     (

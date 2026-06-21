@@ -8,7 +8,7 @@ FROM (
 GROUP BY k;
 
 -- Simplified version of the reproducer provided in [1].
---   [1]: https://github.com/ClickHouse/ClickHouse/issues/37045
+--   [1]: https://github.com/ClickHouse/Datastore/issues/37045
 SELECT dummy
 FROM remote('127.{1,2}', system.one)
 WHERE dummy IN (SELECT 0)

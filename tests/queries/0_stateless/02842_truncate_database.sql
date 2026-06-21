@@ -43,7 +43,7 @@ CREATE DICTIONARY dest_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB 'test_truncate_database' TABLE 'source_table_dictionary'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB 'test_truncate_database' TABLE 'source_table_dictionary'))
 LAYOUT(FLAT())
 LIFETIME(MIN 0 MAX 1000);
 

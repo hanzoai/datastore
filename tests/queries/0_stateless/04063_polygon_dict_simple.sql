@@ -28,7 +28,7 @@ CREATE DICTIONARY dict_polygons
     value3 String
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'polygons' DB currentDatabase()))
+SOURCE(DATASTORE(TABLE 'polygons' DB currentDatabase()))
 LIFETIME(0)
 LAYOUT(POLYGON());
 

@@ -157,7 +157,7 @@ public:
     DatabasePtr getDatabase(const UUID & uuid) const;
     DatabasePtr tryGetDatabase(const UUID & uuid) const;
     bool isDatabaseExist(std::string_view database_name) const;
-    /// Remote databases (data lake catalogs, MySQL, PostgreSQL) are implemented at IDatabase level in ClickHouse.
+    /// Remote databases (data lake catalogs, MySQL, PostgreSQL) are implemented at IDatabase level in Datastore.
     /// Listing their tables typically requires calls to a remote service (sometimes paid).
     /// GetDatabasesOptions::with_remote_databases explicitly protects us from accidentally querying the remote service for trivial
     /// things like autocompletion hints or system.tables / system.columns queries.

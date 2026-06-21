@@ -568,7 +568,7 @@ auto StatementGenerator::getQueryTableLambda()
         return tt.isAttached()
             /* When comparing query success results, don't use tables from other RDBMS, SQL is very undefined */
             && (this->allow_engine_udf || !tt.isAnotherRelationalDatabaseEngine())
-            /* When a query is going to be compared against another ClickHouse server, make sure all tables exist in that server */
+            /* When a query is going to be compared against another Datastore server, make sure all tables exist in that server */
             && (this->peer_query != PeerQuery::ClickHouseOnly || tt.hasClickHousePeer())
             /* Don't use tables backing not deterministic views in query oracles */
             && (tt.is_deterministic || this->allow_not_deterministic)

@@ -31,8 +31,8 @@ Used envs:
   VERSION_STRING='${VERSION_STRING}' - the package version to overwrite
 "
 
-CLICKHOUSE_VERSION_STRING=${VERSION_STRING}
-export CLICKHOUSE_VERSION_STRING
+DATASTORE_VERSION_STRING=${VERSION_STRING}
+export DATASTORE_VERSION_STRING
 
 
 while [[ $1 == --* ]]
@@ -69,7 +69,7 @@ function deb2tgz {
     local FILE PKG_NAME PKG_DIR PKG_PATH TARBALL
     FILE=$1
     PKG_NAME=${FILE##*/}; PKG_NAME=${PKG_NAME%%_*}
-    PKG_DIR="$PKG_NAME-$CLICKHOUSE_VERSION_STRING"
+    PKG_DIR="$PKG_NAME-$DATASTORE_VERSION_STRING"
     PKG_PATH="$OUTPUT_DIR/$PKG_DIR"
     TARBALL="$OUTPUT_DIR/$PKG_DIR-$DEB_ARCH.tgz"
     rm -rf "$PKG_PATH"
@@ -126,10 +126,10 @@ if [[ "$PKG_ROOT" != "$SOURCE" ]]; then
     ln -sf "$SOURCE" "$PKG_SOURCE"
 fi
 
-CLICKHOUSE_VERSION_STRING+=$VERSION_POSTFIX
-echo -e "\nCurrent version is $CLICKHOUSE_VERSION_STRING"
+DATASTORE_VERSION_STRING+=$VERSION_POSTFIX
+echo -e "\nCurrent version is $DATASTORE_VERSION_STRING"
 
-for config in clickhouse*.yaml; do
+for config in datastore*.yaml; do
     if [ -n "$MAKE_DEB" ] || [ -n "$MAKE_TGZ" ]; then
         echo "Building deb package for $config"
         PKG_PATH=$(nfpm package --target "$OUTPUT_DIR" --config "$config" --packager deb | tee /dev/stderr | grep "created package:" | sed 's/.*created package: //')

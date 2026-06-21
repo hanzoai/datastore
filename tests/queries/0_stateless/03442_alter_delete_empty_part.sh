@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     DROP TABLE IF EXISTS t_delete_empty_part;
 
     CREATE TABLE t_delete_empty_part (a UInt64, b UInt64)
@@ -23,8 +23,8 @@ ${CLICKHOUSE_CLIENT} --query "
 # Mutation query may return before the entry is added to part log.
 # So, we may have to retry the flush of logs until all entries are actually flushed.
 for _ in {1..10}; do
-    ${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS part_log"
-    res=$(${CLICKHOUSE_CLIENT} --query "SELECT count() FROM system.part_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND database = currentDatabase() AND table = 't_delete_empty_part' AND event_type = 'MutatePart'")
+    ${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS part_log"
+    res=$(${DATASTORE_CLIENT} --query "SELECT count() FROM system.part_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND database = currentDatabase() AND table = 't_delete_empty_part' AND event_type = 'MutatePart'")
 
     if [[ $res -eq 3 ]]; then
         break
@@ -33,7 +33,7 @@ for _ in {1..10}; do
     sleep 2.0
 done
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SELECT
         part_name,
         ProfileEvents['MutationTotalParts'],

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_local>
@@ -22,4 +22,4 @@
             </encrypted_policy>
          </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

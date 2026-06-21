@@ -454,7 +454,7 @@ def test_nullable_handling(node, manager, sales_table):
 
 
 def test_primitive_types(node, manager, types_table):
-    """Iceberg to ClickHouse type mapping for all primitive types."""
+    """Iceberg to Datastore type mapping for all primitive types."""
     tf = _tf(manager, types_table)
     prim_cols = [
         "col_bool", "col_int32", "col_int64", "col_float32", "col_float64",
@@ -852,7 +852,7 @@ def test_compaction(request, node, manager):
     if request.node.callspec.params.get("manager") == "azure":
         pytest.xfail(
             "Compaction fails on Azure HNS-enabled storage: "
-            "'This operation is not permitted on a non-empty directory' (ClickHouse bug)"
+            "'This operation is not permitted on a non-empty directory' (Datastore bug)"
         )
     ch_tbl = f"iceberg_compact_{uuid.uuid4().hex[:8]}"
     sql, _ = manager.create_writable_table_sql(

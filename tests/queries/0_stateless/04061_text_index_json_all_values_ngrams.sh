@@ -7,15 +7,15 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-MY_CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --enable_analyzer 1"
+MY_DATASTORE_CLIENT="${DATASTORE_CLIENT} --enable_analyzer 1"
 
 function run_query()
 {
     local query=$1
     echo "$query"
-    $MY_CLICKHOUSE_CLIENT --query "$query"
+    $MY_DATASTORE_CLIENT --query "$query"
 
-    $MY_CLICKHOUSE_CLIENT --query "
+    $MY_DATASTORE_CLIENT --query "
         SELECT trimLeft(explain) FROM (
             EXPLAIN indexes = 1 $query
         )
@@ -24,7 +24,7 @@ function run_query()
     "
 }
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS tab;
 
     CREATE TABLE tab
@@ -64,7 +64,7 @@ run_query "SELECT id FROM tab WHERE data.key1::String IN ('the quick brown fox',
 
 echo "-- JSON values that are arrays"
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE tab;
 
     CREATE TABLE tab
@@ -89,7 +89,7 @@ run_query "SELECT id FROM tab WHERE hasAllTokens(data.tags::String, 'not_an_arra
 
 echo "-- Nested JSON subcolumns"
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE tab;
 
     CREATE TABLE tab
@@ -108,4 +108,4 @@ $MY_CLICKHOUSE_CLIENT --query "
 
 run_query "SELECT id FROM tab WHERE data.a.b = 'deep value one' ORDER BY id"
 
-$MY_CLICKHOUSE_CLIENT --query "DROP TABLE tab;"
+$MY_DATASTORE_CLIENT --query "DROP TABLE tab;"

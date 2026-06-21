@@ -27,7 +27,7 @@ FROM (
       FROM t
 );
 
--- This test case triggers a logical error in fuzzing tests. The issue existed on master prior to this PR. See https://github.com/ClickHouse/ClickHouse/pull/81610
+-- This test case triggers a logical error in fuzzing tests. The issue existed on master prior to this PR. See https://github.com/ClickHouse/Datastore/pull/81610
 --SELECT replaceRegexpAll(explain, 'ReadFromRemoteParallelReplicas.*', 'ReadFromRemoteParallelReplicas')
 --FROM (
 --   EXPLAIN distributed = 1

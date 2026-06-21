@@ -5,8 +5,8 @@ import sys
 CURDIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(CURDIR, "helpers"))
 
-CLICKHOUSE_URL = os.environ.get("CLICKHOUSE_URL")
-CLICKHOUSE_TMP = os.environ.get("CLICKHOUSE_TMP")
+DATASTORE_URL = os.environ.get("DATASTORE_URL")
+DATASTORE_TMP = os.environ.get("DATASTORE_TMP")
 
 from pure_http_client import ClickHouseClient
 

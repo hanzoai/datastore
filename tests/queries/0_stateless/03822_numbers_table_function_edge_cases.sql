@@ -1,5 +1,5 @@
--- From PR: https://github.com/ClickHouse/ClickHouse/pull/94288
--- Fix for GitHub issue https://github.com/ClickHouse/ClickHouse/issues/93913:
+-- From PR: https://github.com/ClickHouse/Datastore/pull/94288
+-- Fix for GitHub issue https://github.com/ClickHouse/Datastore/issues/93913:
 -- Numbers function can result in infinite loop with large offset and WHERE clause.
 
 -- { echo }

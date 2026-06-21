@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <mongo1>
             <user>root</user>
@@ -21,4 +21,4 @@
             <collection>simple_table</collection>
         </mongo1_nc>
     </named_collections>
-</clickhouse>
+</datastore>

@@ -1,11 +1,11 @@
-<clickhouse>
+<datastore>
     <user_directories replace="replace">
         <local_directory>
-            <path>/var/lib/clickhouse/access6a/</path>
+            <path>/var/lib/datastore/access6a/</path>
         </local_directory>
         <memory/>
     </user_directories>
 
-    <users_config>/etc/clickhouse-server/users6.xml</users_config>
-    <access_control_path>/var/lib/clickhouse/access6/</access_control_path>
-</clickhouse>
+    <users_config>/etc/datastore-server/users6.xml</users_config>
+    <access_control_path>/var/lib/datastore/access6/</access_control_path>
+</datastore>

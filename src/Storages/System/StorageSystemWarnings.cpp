@@ -13,7 +13,7 @@ ColumnsDescription StorageSystemWarnings::getColumnsDescription()
 {
     return ColumnsDescription
     {
-        {"message", std::make_shared<DataTypeString>(), "A warning message issued by ClickHouse server."},
+        {"message", std::make_shared<DataTypeString>(), "A warning message issued by Datastore server."},
         {"message_format_string", std::make_shared<DataTypeLowCardinality>(std::make_shared<DataTypeString>()), "A format string that was used to format the message."},
     };
 }

@@ -9,8 +9,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./transactions.lib
 . "$CURDIR"/transactions.lib
 
-$CLICKHOUSE_CLIENT -q "drop table if exists mt"
-$CLICKHOUSE_CLIENT -q "create table mt (n int) engine=MergeTree order by n"
+$DATASTORE_CLIENT -q "drop table if exists mt"
+$DATASTORE_CLIENT -q "create table mt (n int) engine=MergeTree order by n"
 
 tx 1 "begin transaction"
 tx 1 "insert into mt values (1)"
@@ -29,7 +29,7 @@ tx 2                                            "commit"
 tx 1 "commit"
 
 echo ''
-$CLICKHOUSE_CLIENT -q "select 5, n from mt order by n"
+$DATASTORE_CLIENT -q "select 5, n from mt order by n"
 echo ''
 
 tx 4 "begin transaction"
@@ -49,11 +49,11 @@ tx 3                                            "rollback"
 tx 4 "commit"
 
 echo ''
-$CLICKHOUSE_CLIENT -q "select 10, n from mt order by n"
+$DATASTORE_CLIENT -q "select 10, n from mt order by n"
 echo ''
 
-$CLICKHOUSE_CLIENT -q "drop table if exists another_mt"
-$CLICKHOUSE_CLIENT -q "create table another_mt (n int) engine=MergeTree order by n"
+$DATASTORE_CLIENT -q "drop table if exists another_mt"
+$DATASTORE_CLIENT -q "create table another_mt (n int) engine=MergeTree order by n"
 
 tx 5 "begin transaction"
 tx 5 "insert into another_mt values (11)"
@@ -66,8 +66,8 @@ tx 5 "alter table another_mt attach partition id 'all' from mt"
 tx 5 "commit"
 tx 6                                            "commit"
 
-$CLICKHOUSE_CLIENT -q "select 11, n from mt order by n"
-$CLICKHOUSE_CLIENT -q "select 12, n from another_mt order by n"
+$DATASTORE_CLIENT -q "select 11, n from mt order by n"
+$DATASTORE_CLIENT -q "select 12, n from another_mt order by n"
 
-$CLICKHOUSE_CLIENT -q "drop table another_mt"
-$CLICKHOUSE_CLIENT -q "drop table mt"
+$DATASTORE_CLIENT -q "drop table another_mt"
+$DATASTORE_CLIENT -q "drop table mt"

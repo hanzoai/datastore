@@ -2,7 +2,7 @@
 -- no-replicated-database: TRUNCATE ALL TABLES is not supported for Replicated databases.
 
 -- Regression test: TRUNCATE ALL TABLES should skip views and dictionaries that don't support truncation.
--- https://github.com/ClickHouse/ClickHouse/issues/78165
+-- https://github.com/ClickHouse/Datastore/issues/78165
 
 DROP TABLE IF EXISTS truncate_test_data;
 DROP VIEW IF EXISTS truncate_test_view;
@@ -19,14 +19,14 @@ CREATE DICTIONARY truncate_test_dict
     name String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'truncate_test_data' DB currentDatabase()))
+SOURCE(DATASTORE(TABLE 'truncate_test_data' DB currentDatabase()))
 LAYOUT(FLAT())
 LIFETIME(0);
 
 SELECT count() FROM truncate_test_data;
 SELECT count() FROM truncate_test_view;
 
-TRUNCATE ALL TABLES FROM {CLICKHOUSE_DATABASE:Identifier};
+TRUNCATE ALL TABLES FROM {DATASTORE_DATABASE:Identifier};
 
 SELECT count() FROM truncate_test_data;
 SELECT count() FROM truncate_test_view;
@@ -36,7 +36,7 @@ INSERT INTO truncate_test_data VALUES (3, 'Charlie');
 
 SELECT count() FROM truncate_test_data;
 
-TRUNCATE ALL TABLES FROM {CLICKHOUSE_DATABASE:Identifier} LIKE '%';
+TRUNCATE ALL TABLES FROM {DATASTORE_DATABASE:Identifier} LIKE '%';
 
 SELECT count() FROM truncate_test_data;
 SELECT count() FROM truncate_test_view;

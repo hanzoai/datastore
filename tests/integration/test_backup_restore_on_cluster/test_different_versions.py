@@ -25,7 +25,7 @@ new_node = cluster.add_instance(
 
 old_node = cluster.add_instance(
     "old_node",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="24.9.2.42",
     with_installed_binary=True,
     main_configs=main_configs,
@@ -78,7 +78,7 @@ def test_different_versions():
     new_node.query(
         "CREATE TABLE tbl"
         " ON CLUSTER 'cluster_ver'"
-        " (x UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        " (x UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         " ORDER BY tuple()"
     )
 

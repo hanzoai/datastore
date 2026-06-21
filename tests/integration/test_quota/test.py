@@ -66,7 +66,7 @@ def copy_quota_xml(local_file_name, reload_immediately=True):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     instance.copy_file_to_container(
         os.path.join(script_dir, local_file_name),
-        "/etc/clickhouse-server/users.d/myquota.xml",
+        "/etc/datastore-server/users.d/myquota.xml",
     )
     if reload_immediately:
         # We use the special user 'user_with_no_quota' here because

@@ -35,13 +35,13 @@ uint32_t test_func(uint32_t terminate) {
 
     char buf[64];
     char * p = buf;
-    p += copy_str("Hello, ClickHouse ", p, 18);
+    p += copy_str("Hello, Datastore ", p, 18);
     p += int_to_str(version, p);
     p += copy_str("!", p, 1);
     clickhouse_log(LOG_DEBUG, buf, p - buf);
 
     if (terminate) {
-        clickhouse_throw("Goodbye, ClickHouse!", 20);
+        clickhouse_throw("Goodbye, Datastore!", 20);
     }
     return 0;
 }

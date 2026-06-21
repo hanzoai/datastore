@@ -1,12 +1,12 @@
-# Contributing to ClickHouse Documentation
+# Contributing to Datastore Documentation
 
-## Why Do You Need to Document ClickHouse
+## Why Do You Need to Document Datastore
 
-The main reason is that ClickHouse is an open source project, and if you don't write the docs, nobody does. "Incomplete or Confusing Documentation" is the top complaint about open source software by the results of a [Github Open Source Survey](http://opensourcesurvey.org/2017/) of 2017. Documentation is highly valued but often overlooked. One of the most important contributions someone can make to an open source repository is a documentation update.
+The main reason is that Datastore is an open source project, and if you don't write the docs, nobody does. "Incomplete or Confusing Documentation" is the top complaint about open source software by the results of a [Github Open Source Survey](http://opensourcesurvey.org/2017/) of 2017. Documentation is highly valued but often overlooked. One of the most important contributions someone can make to an open source repository is a documentation update.
 
-Many developers can say that the code is the best docs by itself, and they are right. But, ClickHouse is not a project for C++ developers. Most of its users don't know C++, and they can't understand the code quickly. ClickHouse is large enough to absorb almost any change without a noticeable trace. Nobody will find your very useful function, or an important setting, or a very informative new column in a system table if it is not referenced in the documentation.
+Many developers can say that the code is the best docs by itself, and they are right. But, Datastore is not a project for C++ developers. Most of its users don't know C++, and they can't understand the code quickly. Datastore is large enough to absorb almost any change without a noticeable trace. Nobody will find your very useful function, or an important setting, or a very informative new column in a system table if it is not referenced in the documentation.
 
-If you want to help ClickHouse with documentation you can face, for example, the following questions:
+If you want to help Datastore with documentation you can face, for example, the following questions:
 
 - "I don't know how to write."
 
@@ -20,43 +20,43 @@ Writing the docs is extremely useful for project's users and developers, and gro
 
 **Contents**
 
-- [What is the ClickHouse Documentation](#clickhouse-docs)
-- [How to Contribute to ClickHouse Documentation](#how-to-contribute)
+- [What is the Datastore Documentation](#datastore-docs)
+- [How to Contribute to Datastore Documentation](#how-to-contribute)
     - [Markdown Dialect Cheatsheet](#markdown-cheatsheet)
     - [Adding a New File](#adding-a-new-file)
     - [Adding a New Language](#adding-a-new-language)
--  [How to Write Content for ClickHouse Documentation](#what-to-write)
+-  [How to Write Content for Datastore Documentation](#what-to-write)
     - [Documentation for Different Audience](#target-audience)
     - [Common Recommendations](#common-recommendations)
     - [Description Templates](#templates)
 - [How to Build Documentation](#how-to-build-docs)
 
 
-<a name="clickhouse-docs"/>
+<a name="datastore-docs"/>
 
-## What is the ClickHouse Documentation
+## What is the Datastore Documentation
 
-The documentation contains information about all the aspects of the ClickHouse lifecycle: developing, testing, installing, operating, and using. The base language of the documentation is English. The English version is the most current. All other languages are supported by contributors from different countries as much as possible.
+The documentation contains information about all the aspects of the Datastore lifecycle: developing, testing, installing, operating, and using. The base language of the documentation is English. The English version is the most current. All other languages are supported by contributors from different countries as much as possible.
 
-At the moment, [documentation](https://clickhouse.com/docs) exists in English, Russian, and Chinese. We store the reference documentation alongside the ClickHouse source code in the [GitHub repository](https://github.com/ClickHouse/ClickHouse/tree/master/docs), and user guides in a separate repo [ClickHouse/clickhouse-docs](https://github.com/ClickHouse/clickhouse-docs).
+At the moment, [documentation](https://datastore.com/docs) exists in English, Russian, and Chinese. We store the reference documentation alongside the Datastore source code in the [GitHub repository](https://github.com/ClickHouse/Datastore/tree/master/docs), and user guides in a separate repo [Datastore/datastore-docs](https://github.com/ClickHouse/datastore-docs).
 
-To get the latter launch the `get-clickhouse-docs.sh` script.
+To get the latter launch the `get-datastore-docs.sh` script.
 
 Each language lies in the corresponding folder. Files that are not translated from English are symbolic links to the English ones.
 
 <a name="how-to-contribute"/>
 
-## How to Contribute to ClickHouse Documentation
+## How to Contribute to Datastore Documentation
 
 You can contribute to the documentation in many ways, for example:
 
-- Fork the ClickHouse and ClickHouse-docs repositories, edit, commit, push, and open a pull request.
+- Fork the Datastore and Datastore-docs repositories, edit, commit, push, and open a pull request.
 
     Add the `pr-documentation` label to this pull request for proper automatic checks applying. If you do not have permission to add labels, then the reviewer of your PR will add it.
 
-- Open a required file in the ClickHouse repository and edit it from the GitHub web interface.
+- Open a required file in the Datastore repository and edit it from the GitHub web interface.
 
-    You can do it on GitHub, or on the [ClickHouse Documentation](https://clickhouse.com/docs/en/) site. Each page of ClickHouse Documentation site contains an "Edit this page" (🖋) element in the upper right corner. Clicking this symbol, you get to the ClickHouse docs file opened for editing.
+    You can do it on GitHub, or on the [Datastore Documentation](https://datastore.com/docs/en/) site. Each page of Datastore Documentation site contains an "Edit this page" (🖋) element in the upper right corner. Clicking this symbol, you get to the Datastore docs file opened for editing.
 
     When you are saving a file, GitHub opens a pull-request for your contribution. Add the `documentation` label to this pull request for proper automatic checks applying. If you have no permissions for adding labels, the reviewer of your PR adds it.
 
@@ -75,7 +75,7 @@ Contribute all new information in English. Other languages are translations from
 - Bold text: `**asterisks**` or `__underlines__`.
 - Links: `[link text](uri)`. Examples:
 
-    - External link: `[ClickHouse repo](https://github.com/ClickHouse/ClickHouse)`
+    - External link: `[Datastore repo](https://github.com/ClickHouse/Datastore)`
     - Cross link: `[How to build docs](tools/README.md)`
 
 - Images: `![Exclamation sign](uri)`. You can refer to local images as well as remote in internet.
@@ -133,7 +133,7 @@ Contribute all new information in English. Other languages are translations from
 - Make symbolic links for all other languages. You can use the following commands:
 
     ```bash
-    $ cd /ClickHouse/clone/directory/docs
+    $ cd /Datastore/clone/directory/docs
     $ ln -sr en/new/file.md lang/new/file.md
     ```
 ##}
@@ -149,7 +149,7 @@ When everything is ready, we will add the new language to the website.
 
 <a name="what-to-write"/>
 
-## How to Write Content for ClickHouse Documentation
+## How to Write Content for Datastore Documentation
 
 
 <a name="target-audience"/>
@@ -158,7 +158,7 @@ When everything is ready, we will add the new language to the website.
 
 When writing documentation, think about the people who read it. Each audience has specific requirements for terms they use in communications.
 
-ClickHouse documentation can be divided up by the audience for the following parts:
+Datastore documentation can be divided up by the audience for the following parts:
 
 - Conceptual topics like tutorials and overviews.
 
@@ -166,15 +166,15 @@ ClickHouse documentation can be divided up by the audience for the following par
 
 - Query language reference and related topics.
 
-    These parts of the documentation are dedicated to those who use ClickHouse for data analysis. Carefully describe syntax, input, and output data for expressions. Don't forget the examples.
+    These parts of the documentation are dedicated to those who use Datastore for data analysis. Carefully describe syntax, input, and output data for expressions. Don't forget the examples.
 
 - Description of table engines and operation details.
 
-    Operation engineers who help data analysts to solve their tasks should know how to install/update a ClickHouse server, maintain the ClickHouse cluster, how to integrate it with other tools and systems, how to get the maximum performance of their entire environment.
+    Operation engineers who help data analysts to solve their tasks should know how to install/update a Datastore server, maintain the Datastore cluster, how to integrate it with other tools and systems, how to get the maximum performance of their entire environment.
 
 - Developer's guides.
 
-    The documentation provides code writers with information about how to write code for ClickHouse and how to build it in different environments.
+    The documentation provides code writers with information about how to write code for Datastore and how to build it in different environments.
 
 <a name="common-recommendations"/>
 
@@ -184,7 +184,7 @@ ClickHouse documentation can be divided up by the audience for the following par
 - Group entities. For example, if several functions solve similar tasks or belong to a specific group by use case or an application type, place them together.
 - Try to avoid slang. Use the most common and specific terms possible. If some terms are used as synonyms, state this explicitly.
 - Add examples for all the functionality. Add basic examples to show how the function works by itself. Add use case examples to show how the function participates in solving specific tasks.
-- Any text concerning politics, religion, or other social related themes are strictly prohibited in all the ClickHouse texts.
+- Any text concerning politics, religion, or other social related themes are strictly prohibited in all the Datastore texts.
 - Proofread your text before publishing. Look for typos, missing punctuation, or repetitions that could be avoided.
 
 <a name="templates"/>
@@ -207,4 +207,4 @@ Templates:
 
 ## How to Build Documentation
 
-You can build your documentation manually by following the instructions in the docs repo [contrib-writing-guide](https://github.com/ClickHouse/clickhouse-docs/blob/main/contribute/contrib-writing-guide.md). Also, our CI runs the documentation build after the `documentation` label is added to PR. You can see the results of a build in the GitHub interface. If you have no permissions to add labels, a reviewer of your PR will add it.
+You can build your documentation manually by following the instructions in the docs repo [contrib-writing-guide](https://github.com/ClickHouse/datastore-docs/blob/main/contribute/contrib-writing-guide.md). Also, our CI runs the documentation build after the `documentation` label is added to PR. You can see the results of a build in the GitHub interface. If you have no permissions to add labels, a reviewer of your PR will add it.

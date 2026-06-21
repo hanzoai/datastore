@@ -36,21 +36,21 @@ def update_interserver_http_address(node, new_address):
         [
             "bash",
             "-c",
-            'echo "${NEW_CONFIG}" > /etc/clickhouse-server/config.d/interserver_host.xml',
+            'echo "${NEW_CONFIG}" > /etc/datastore-server/config.d/interserver_host.xml',
         ],
         environment={"NEW_CONFIG": config_content},
     )
 
     # Verify the file was written
     result = node.exec_in_container(
-        ["cat", "/etc/clickhouse-server/config.d/interserver_host.xml"]
+        ["cat", "/etc/datastore-server/config.d/interserver_host.xml"]
     )
     print(f"Verification - Config file on {node.name}:\n{result}")
 
     # IMPORTANT: interserver_http_host is only loaded at startup, not by SYSTEM RELOAD CONFIG
-    # So we need to restart ClickHouse
+    # So we need to restart Datastore
     print(
-        f"Restarting ClickHouse on {node.name} to apply interserver_http_host config..."
+        f"Restarting Datastore on {node.name} to apply interserver_http_host config..."
     )
     node.restart_clickhouse()
 
@@ -80,16 +80,16 @@ def test_replicated_database_uses_interserver_host(started_cluster):
         update_interserver_http_address(node, node.ip_address)
 
     node1.query(
-        "CREATE DATABASE test_db ENGINE = Replicated('/clickhouse/databases/test_db', 'shard1', 'node1')"
+        "CREATE DATABASE test_db ENGINE = Replicated('/datastore/databases/test_db', 'shard1', 'node1')"
     )
     node2.query(
-        "CREATE DATABASE test_db ENGINE = Replicated('/clickhouse/databases/test_db', 'shard1', 'node2')"
+        "CREATE DATABASE test_db ENGINE = Replicated('/datastore/databases/test_db', 'shard1', 'node2')"
     )
 
     node1.query("SYSTEM SYNC DATABASE REPLICA test_db")
     node2.query("SYSTEM SYNC DATABASE REPLICA test_db")
 
-    zk_path = "/clickhouse/databases/test_db/replicas"
+    zk_path = "/datastore/databases/test_db/replicas"
     host_ids = node1.query(
         f"SELECT value FROM system.zookeeper WHERE path = '{zk_path}'"
     )
@@ -123,10 +123,10 @@ def test_replicated_database_uses_interserver_host_changed(started_cluster):
     """Test that interserver_http_host changed, and Replicated database is still able to be attached after restarting"""
 
     node1.query(
-        "CREATE DATABASE test_db ENGINE = Replicated('/clickhouse/databases/test_db', 'shard1', 'node1')"
+        "CREATE DATABASE test_db ENGINE = Replicated('/datastore/databases/test_db', 'shard1', 'node1')"
     )
     node2.query(
-        "CREATE DATABASE test_db ENGINE = Replicated('/clickhouse/databases/test_db', 'shard1', 'node2')"
+        "CREATE DATABASE test_db ENGINE = Replicated('/datastore/databases/test_db', 'shard1', 'node2')"
     )
 
     node1.query("CREATE TABLE test_db.t (x INT, y INT) ENGINE=MergeTree ORDER BY x")
@@ -142,7 +142,7 @@ def test_replicated_database_uses_interserver_host_changed(started_cluster):
                 FROM system.text_log
                 WHERE (level='Error')
                   AND (logger_name='DatabaseReplicated (test_db)')
-                  AND (message LIKE '%replicated database at /clickhouse/databases/test_db already exists%')
+                  AND (message LIKE '%replicated database at /datastore/databases/test_db already exists%')
                 """
             ).strip()
             == "0"

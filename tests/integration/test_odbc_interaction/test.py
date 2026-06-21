@@ -28,11 +28,11 @@ node1 = cluster.add_instance(
 
 
 drop_table_sql_template = """
-    DROP TABLE IF EXISTS `clickhouse`.`{}`
+    DROP TABLE IF EXISTS `datastore`.`{}`
     """
 
 create_table_sql_template = """
-    CREATE TABLE `clickhouse`.`{}` (
+    CREATE TABLE `datastore`.`{}` (
     `id` int(11) NOT NULL,
     `name` varchar(50) NOT NULL,
     `age` int  NOT NULL default 0,
@@ -42,7 +42,7 @@ create_table_sql_template = """
     """
 
 create_table_sql_nullable_template = """
-    CREATE TABLE `clickhouse`.`{}` (
+    CREATE TABLE `datastore`.`{}` (
         `id`   integer not null,
         `col1` integer,
         `col2` decimal(15,10),
@@ -192,18 +192,18 @@ def started_cluster():
         mysql_conn = get_mysql_conn()
         logging.debug("mysql connection received")
         ## create mysql db and table
-        create_mysql_db(mysql_conn, "clickhouse")
+        create_mysql_db(mysql_conn, "datastore")
         logging.debug("mysql database created")
 
         postgres_conn = get_postgres_conn(cluster)
         logging.debug("postgres connection received")
 
-        create_postgres_db(postgres_conn, "clickhouse")
+        create_postgres_db(postgres_conn, "datastore")
         logging.debug("postgres db created")
 
         cursor = postgres_conn.cursor()
         cursor.execute(
-            "create table if not exists clickhouse.test_table (id int primary key, column1 int not null, column2 varchar(40) not null)"
+            "create table if not exists datastore.test_table (id int primary key, column1 int not null, column2 varchar(40) not null)"
         )
 
         yield cluster
@@ -224,12 +224,12 @@ def test_mysql_odbc_select_nullable(started_cluster):
     create_mysql_nullable_table(conn, table_name)
     with conn.cursor() as cursor:
         cursor.execute(
-            "INSERT INTO clickhouse.{} VALUES(1, 1, 1.23456, 'data1', '2010-01-01 00:00:00');".format(
+            "INSERT INTO datastore.{} VALUES(1, 1, 1.23456, 'data1', '2010-01-01 00:00:00');".format(
                 table_name
             )
         )
         cursor.execute(
-            "INSERT INTO clickhouse.{} VALUES(2, NULL, NULL, NULL, NULL);".format(
+            "INSERT INTO datastore.{} VALUES(2, NULL, NULL, NULL, NULL);".format(
                 table_name
             )
         )
@@ -237,7 +237,7 @@ def test_mysql_odbc_select_nullable(started_cluster):
 
     node1.query(
         """
-        CREATE TABLE {}(id UInt32, col1 Nullable(UInt32), col2 Nullable(Decimal(15, 10)), col3 Nullable(String), col4 Nullable(DateTime)) ENGINE = ODBC('DSN={}', 'clickhouse', '{}');
+        CREATE TABLE {}(id UInt32, col1 Nullable(UInt32), col2 Nullable(Decimal(15, 10)), col3 Nullable(String), col4 Nullable(DateTime)) ENGINE = ODBC('DSN={}', 'datastore', '{}');
         """.format(
             table_name, mysql_setup["DSN"], table_name
         )
@@ -267,7 +267,7 @@ def test_mysql_simple_select_works(started_cluster):
     # Check that NULL-values are handled correctly by the ODBC-bridge
     with conn.cursor() as cursor:
         cursor.execute(
-            "INSERT INTO clickhouse.{} VALUES(50, 'null-guy', 127, 255, NULL), (100, 'non-null-guy', 127, 255, 511);".format(
+            "INSERT INTO datastore.{} VALUES(50, 'null-guy', 127, 255, NULL), (100, 'non-null-guy', 127, 255, 511);".format(
                 table_name
             )
         )
@@ -293,7 +293,7 @@ def test_mysql_simple_select_works(started_cluster):
 
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32, column_x Nullable(UInt32)) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}');"""
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32, column_x Nullable(UInt32)) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}');"""
     )
 
     node1.query(
@@ -347,7 +347,7 @@ def test_table_function_odbc_with_named_collection(started_cluster):
     # Check that NULL-values are handled correctly by the ODBC-bridge
     with conn.cursor() as cursor:
         cursor.execute(
-            "INSERT INTO clickhouse.{} VALUES(50, 'name1', 127, 255, 512), (100, 'name2', 127, 255, 511);".format(
+            "INSERT INTO datastore.{} VALUES(50, 'name1', 127, 255, 512), (100, 'name2', 127, 255, 511);".format(
                 table_name
             )
         )
@@ -711,15 +711,15 @@ def test_postgres_insert(started_cluster):
 
     try:
         node1.query(
-            "create table pg_insert (id UInt64, column1 UInt8, column2 String) engine=ODBC('DSN=postgresql_odbc;Servername=postgre-sql.local', 'clickhouse', 'test_table')"
+            "create table pg_insert (id UInt64, column1 UInt8, column2 String) engine=ODBC('DSN=postgresql_odbc;Servername=postgre-sql.local', 'datastore', 'test_table')"
         )
         node1.query("insert into pg_insert values (1, 1, 'hello'), (2, 2, 'world')")
         assert node1.query("select * from pg_insert") == "1\t1\thello\n2\t2\tworld\n"
         node1.query(
-            "insert into table function odbc('DSN=postgresql_odbc', 'clickhouse', 'test_table') format CSV 3,3,test"
+            "insert into table function odbc('DSN=postgresql_odbc', 'datastore', 'test_table') format CSV 3,3,test"
         )
         node1.query(
-            "insert into table function odbc('DSN=postgresql_odbc;Servername=postgre-sql.local', 'clickhouse', 'test_table')"
+            "insert into table function odbc('DSN=postgresql_odbc;Servername=postgre-sql.local', 'datastore', 'test_table')"
             " select number, number, 's' || toString(number) from numbers (4, 7)"
         )
         assert (
@@ -728,13 +728,13 @@ def test_postgres_insert(started_cluster):
         )
         assert (
             node1.query(
-                "select sum(n), count(n) from (select (*,).1 as n from (select * from odbc('DSN=postgresql_odbc', 'clickhouse', 'test_table')))"
+                "select sum(n), count(n) from (select (*,).1 as n from (select * from odbc('DSN=postgresql_odbc', 'datastore', 'test_table')))"
             )
             == "55\t10\n"
         )
     finally:
         node1.query("DROP TABLE IF EXISTS pg_insert")
-        conn.cursor().execute("truncate table clickhouse.test_table")
+        conn.cursor().execute("truncate table datastore.test_table")
 
 
 def test_postgres_odbc_hashed_dictionary_with_schema(started_cluster):
@@ -744,7 +744,7 @@ def test_postgres_odbc_hashed_dictionary_with_schema(started_cluster):
         conn = get_postgres_conn(started_cluster)
         cursor = conn.cursor()
         cursor.execute(
-            "insert into clickhouse.test_table values(1, 1, 'hello'),(2, 2, 'world')"
+            "insert into datastore.test_table values(1, 1, 'hello'),(2, 2, 'world')"
         )
         node1.query("SYSTEM RELOAD DICTIONARY postgres_odbc_hashed")
         node1.exec_in_container(
@@ -762,7 +762,7 @@ def test_postgres_odbc_hashed_dictionary_with_schema(started_cluster):
             "world",
         )
     finally:
-        cursor.execute("truncate table clickhouse.test_table")
+        cursor.execute("truncate table datastore.test_table")
 
 
 def test_postgres_odbc_hashed_dictionary_no_tty_pipe_overflow(started_cluster):
@@ -771,7 +771,7 @@ def test_postgres_odbc_hashed_dictionary_no_tty_pipe_overflow(started_cluster):
     try:
         conn = get_postgres_conn(started_cluster)
         cursor = conn.cursor()
-        cursor.execute("insert into clickhouse.test_table values(3, 3, 'xxx')")
+        cursor.execute("insert into datastore.test_table values(3, 3, 'xxx')")
         # for first reload dictionary, we will wait for odbc-bridge start-up
         node1.query("system reload dictionary postgres_odbc_hashed", timeout=120)
         for i in range(100):
@@ -786,7 +786,7 @@ def test_postgres_odbc_hashed_dictionary_no_tty_pipe_overflow(started_cluster):
             "xxx",
         )
     finally:
-        cursor.execute("truncate table clickhouse.test_table")
+        cursor.execute("truncate table datastore.test_table")
 
 
 def test_no_connection_pooling(started_cluster):
@@ -796,7 +796,7 @@ def test_no_connection_pooling(started_cluster):
         conn = get_postgres_conn(started_cluster)
         cursor = conn.cursor()
         cursor.execute(
-            "insert into clickhouse.test_table values(1, 1, 'hello'),(2, 2, 'world')"
+            "insert into datastore.test_table values(1, 1, 'hello'),(2, 2, 'world')"
         )
         node1.exec_in_container(
             ["ss", "-K", "dport", "5432"], privileged=True, user="root"
@@ -818,7 +818,7 @@ def test_no_connection_pooling(started_cluster):
             ["ss", "-H", "dport", "5432"], privileged=True, user="root"
         )
     finally:
-        cursor.execute("truncate table clickhouse.test_table")
+        cursor.execute("truncate table datastore.test_table")
 
 
 def test_odbc_postgres_date_data_type(started_cluster):
@@ -828,25 +828,25 @@ def test_odbc_postgres_date_data_type(started_cluster):
         conn = get_postgres_conn(started_cluster)
         cursor = conn.cursor()
         cursor.execute(
-            "CREATE TABLE clickhouse.test_date (id integer, column1 integer, column2 date)"
+            "CREATE TABLE datastore.test_date (id integer, column1 integer, column2 date)"
         )
 
-        cursor.execute("INSERT INTO clickhouse.test_date VALUES (1, 1, '2020-12-01')")
-        cursor.execute("INSERT INTO clickhouse.test_date VALUES (2, 2, '2020-12-02')")
-        cursor.execute("INSERT INTO clickhouse.test_date VALUES (3, 3, '2020-12-03')")
+        cursor.execute("INSERT INTO datastore.test_date VALUES (1, 1, '2020-12-01')")
+        cursor.execute("INSERT INTO datastore.test_date VALUES (2, 2, '2020-12-02')")
+        cursor.execute("INSERT INTO datastore.test_date VALUES (3, 3, '2020-12-03')")
         conn.commit()
 
         node1.query(
             """
             CREATE TABLE test_date (id UInt64, column1 UInt64, column2 Date)
-            ENGINE=ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_date')"""
+            ENGINE=ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_date')"""
         )
 
         expected = "1\t1\t2020-12-01\n2\t2\t2020-12-02\n3\t3\t2020-12-03\n"
         result = node1.query("SELECT * FROM test_date")
         assert result == expected
     finally:
-        cursor.execute("DROP TABLE clickhouse.test_date")
+        cursor.execute("DROP TABLE datastore.test_date")
         node1.query("DROP TABLE IF EXISTS test_date")
 
 
@@ -858,7 +858,7 @@ def test_odbc_postgres_conversions(started_cluster):
         cursor = conn.cursor()
 
         cursor.execute(
-            """CREATE TABLE clickhouse.test_types (
+            """CREATE TABLE datastore.test_types (
             a smallint, b integer, c bigint, d real, e double precision, f serial, g bigserial,
             h timestamp)"""
         )
@@ -866,14 +866,14 @@ def test_odbc_postgres_conversions(started_cluster):
         node1.query(
             """
             INSERT INTO TABLE FUNCTION
-            odbc('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_types')
+            odbc('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_types')
             VALUES (-32768, -2147483648, -9223372036854775808, 1.12345, 1.1234567890, 2147483647, 9223372036854775807, '2000-05-12 12:12:12')"""
         )
 
         result = node1.query(
             """
             SELECT a, b, c, d, e, f, g, h
-            FROM odbc('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_types')
+            FROM odbc('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_types')
             """
         )
 
@@ -881,16 +881,16 @@ def test_odbc_postgres_conversions(started_cluster):
             result
             == "-32768\t-2147483648\t-9223372036854775808\t1.12345\t1.123456789\t2147483647\t9223372036854775807\t2000-05-12 12:12:12\n"
         )
-        cursor.execute("DROP TABLE IF EXISTS clickhouse.test_types")
+        cursor.execute("DROP TABLE IF EXISTS datastore.test_types")
 
         cursor.execute(
-            """CREATE TABLE clickhouse.test_types (column1 Timestamp, column2 Numeric)"""
+            """CREATE TABLE datastore.test_types (column1 Timestamp, column2 Numeric)"""
         )
 
         node1.query(
             """
             CREATE TABLE test_types (column1 DateTime64, column2 Decimal(5, 1))
-            ENGINE=ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_types')"""
+            ENGINE=ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_types')"""
         )
 
         node1.query(
@@ -904,7 +904,7 @@ def test_odbc_postgres_conversions(started_cluster):
         result = node1.query("SELECT * FROM test_types")
         assert result == expected
     finally:
-        cursor.execute("DROP TABLE IF EXISTS clickhouse.test_types")
+        cursor.execute("DROP TABLE IF EXISTS datastore.test_types")
         node1.query("DROP TABLE IF EXISTS test_types")
 
 
@@ -914,22 +914,22 @@ def test_odbc_cyrillic_with_varchar(started_cluster):
     conn = get_postgres_conn(started_cluster)
     cursor = conn.cursor()
 
-    cursor.execute("DROP TABLE IF EXISTS clickhouse.test_cyrillic")
-    cursor.execute("CREATE TABLE clickhouse.test_cyrillic (name varchar(11))")
+    cursor.execute("DROP TABLE IF EXISTS datastore.test_cyrillic")
+    cursor.execute("CREATE TABLE datastore.test_cyrillic (name varchar(11))")
 
     node1.query(
         """
         CREATE TABLE test_cyrillic (name String)
-        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_cyrillic')"""
+        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_cyrillic')"""
     )
 
-    cursor.execute("INSERT INTO clickhouse.test_cyrillic VALUES ('A-nice-word')")
-    cursor.execute("INSERT INTO clickhouse.test_cyrillic VALUES ('Красивенько')")
+    cursor.execute("INSERT INTO datastore.test_cyrillic VALUES ('A-nice-word')")
+    cursor.execute("INSERT INTO datastore.test_cyrillic VALUES ('Красивенько')")
 
     result = node1.query(""" SELECT * FROM test_cyrillic ORDER BY name""")
     assert result == "A-nice-word\nКрасивенько\n"
     result = node1.query(
-        """ SELECT name FROM odbc('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_cyrillic') """
+        """ SELECT name FROM odbc('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_cyrillic') """
     )
     assert result == "A-nice-word\nКрасивенько\n"
     node1.query("DROP TABLE test_cyrillic")
@@ -941,13 +941,13 @@ def test_many_connections(started_cluster):
     conn = get_postgres_conn(started_cluster)
     cursor = conn.cursor()
 
-    cursor.execute("CREATE TABLE clickhouse.test_pg_table (key integer, value integer)")
+    cursor.execute("CREATE TABLE datastore.test_pg_table (key integer, value integer)")
 
     node1.query(
         """
         DROP TABLE IF EXISTS test_pg_table;
         CREATE TABLE test_pg_table (key UInt32, value UInt32)
-        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_pg_table')"""
+        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_pg_table')"""
     )
 
     node1.query("INSERT INTO test_pg_table SELECT number, number FROM numbers(10)")
@@ -958,7 +958,7 @@ def test_many_connections(started_cluster):
     query += "SELECT key FROM {t})"
 
     assert_eq_with_retry(node1, query.format(t="test_pg_table"), "250")
-    cursor.execute("DROP TABLE clickhouse.test_pg_table")
+    cursor.execute("DROP TABLE datastore.test_pg_table")
 
 
 def test_concurrent_queries(started_cluster):
@@ -971,11 +971,11 @@ def test_concurrent_queries(started_cluster):
         """
         DROP TABLE IF EXISTS test_pg_table;
         CREATE TABLE test_pg_table (key UInt32, value UInt32)
-        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_pg_table')"""
+        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_pg_table')"""
     )
 
-    cursor.execute("DROP TABLE IF EXISTS clickhouse.test_pg_table")
-    cursor.execute("CREATE TABLE clickhouse.test_pg_table (key integer, value integer)")
+    cursor.execute("DROP TABLE IF EXISTS datastore.test_pg_table")
+    cursor.execute("CREATE TABLE datastore.test_pg_table (key integer, value integer)")
 
     def node_insert(_):
         for i in range(5):
@@ -1012,7 +1012,7 @@ def test_concurrent_queries(started_cluster):
     )
 
     node1.query("DROP TABLE test_pg_table;")
-    cursor.execute("DROP TABLE clickhouse.test_pg_table;")
+    cursor.execute("DROP TABLE datastore.test_pg_table;")
 
 
 def test_odbc_long_column_names(started_cluster):
@@ -1022,7 +1022,7 @@ def test_odbc_long_column_names(started_cluster):
     cursor = conn.cursor()
 
     column_name = "column" * 8
-    create_table = "CREATE TABLE clickhouse.test_long_column_names ("
+    create_table = "CREATE TABLE datastore.test_long_column_names ("
     for i in range(1000):
         if i != 0:
             create_table += ", "
@@ -1030,7 +1030,7 @@ def test_odbc_long_column_names(started_cluster):
     create_table += ")"
     cursor.execute(create_table)
     insert = (
-        "INSERT INTO clickhouse.test_long_column_names SELECT i"
+        "INSERT INTO datastore.test_long_column_names SELECT i"
         + ", i" * 999
         + " FROM generate_series(0, 99) as t(i)"
     )
@@ -1042,14 +1042,14 @@ def test_odbc_long_column_names(started_cluster):
         if i != 0:
             create_table += ", "
         create_table += "{} UInt32".format(column_name + str(i))
-    create_table += ") ENGINE=ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_long_column_names')"
+    create_table += ") ENGINE=ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_long_column_names')"
     result = node1.query(create_table)
 
     result = node1.query("SELECT * FROM test_long_column_names")
     expected = node1.query("SELECT number" + ", number" * 999 + " FROM numbers(100)")
     assert result == expected
 
-    cursor.execute("DROP TABLE IF EXISTS clickhouse.test_long_column_names")
+    cursor.execute("DROP TABLE IF EXISTS datastore.test_long_column_names")
     node1.query("DROP TABLE IF EXISTS test_long_column_names")
 
 
@@ -1058,12 +1058,12 @@ def test_odbc_long_text(started_cluster):
 
     conn = get_postgres_conn(started_cluster)
     cursor = conn.cursor()
-    cursor.execute("create table clickhouse.test_long_text(flen int, field1 text)")
+    cursor.execute("create table datastore.test_long_text(flen int, field1 text)")
 
     # sample test from issue 9363
     text_from_issue = """BEGIN These examples only show the order that data is arranged in. The values from different columns are stored separately, and data from the same column is stored together.      Examples of a column-oriented DBMS: Vertica, Paraccel (Actian Matrix and Amazon Redshift), Sybase IQ, Exasol, Infobright, InfiniDB, MonetDB (VectorWise and Actian Vector), LucidDB, SAP HANA, Google Dremel, Google PowerDrill, Druid, and kdb+.      Different orders for storing data are better suited to different scenarios. The data access scenario refers to what queries are made, how often, and in what proportion; how much data is read for each type of query – rows, columns, and bytes; the relationship between reading and updating data; the working size of the data and how locally it is used; whether transactions are used, and how isolated they are; requirements for data replication and logical integrity; requirements for latency and throughput for each type of query, and so on.      The higher the load on the system, the more important it is to customize the system set up to match the requirements of the usage scenario, and the more fine grained this customization becomes. There is no system that is equally well-suited to significantly different scenarios. If a system is adaptable to a wide set of scenarios, under a high load, the system will handle all the scenarios equally poorly, or will work well for just one or few of possible scenarios.   Key Properties of OLAP Scenario¶          The vast majority of requests are for read access.       Data is updated in fairly large batches (> 1000 rows), not by single rows; or it is not updated at all.       Data is added to the DB but is not modified.       For reads, quite a large number of rows are extracted from the DB, but only a small subset of columns.       Tables are "wide," meaning they contain a large number of columns.       Queries are relatively rare (usually hundreds of queries per server or less per second).       For simple queries, latencies around 50 ms are allowed.       Column values are fairly small: numbers and short strings (for example, 60 bytes per URL).       Requires high throughput when processing a single query (up to billions of rows per second per server).       Transactions are not necessary.       Low requirements for data consistency.       There is one large table per query. All tables are small, except for one.       A query result is significantly smaller than the source data. In other words, data is filtered or aggregated, so the result fits in a single server"s RAM.      It is easy to see that the OLAP scenario is very different from other popular scenarios (such as OLTP or Key-Value access). So it doesn"t make sense to try to use OLTP or a Key-Value DB for processing analytical queries if you want to get decent performance. For example, if you try to use MongoDB or Redis for analytics, you will get very poor performance compared to OLAP databases.   Why Column-Oriented Databases Work Better in the OLAP Scenario¶      Column-oriented databases are better suited to OLAP scenarios: they are at least 100 times faster in processing most queries. The reasons are explained in detail below, but the fact is easier to demonstrate visually. END"""
     cursor.execute(
-        """insert into clickhouse.test_long_text (flen, field1) values (3248, '{}')""".format(
+        """insert into datastore.test_long_text (flen, field1) values (3248, '{}')""".format(
             text_from_issue
         )
     )
@@ -1072,18 +1072,18 @@ def test_odbc_long_text(started_cluster):
         """
         DROP TABLE IF EXISTS test_long_test;
         CREATE TABLE test_long_text (flen UInt32, field1 String)
-        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'clickhouse', 'test_long_text')"""
+        ENGINE = ODBC('DSN=postgresql_odbc; Servername=postgre-sql.local', 'datastore', 'test_long_text')"""
     )
     result = node1.query("select field1 from test_long_text;")
     assert result.strip() == text_from_issue
 
     long_text = "text" * 1000000
     cursor.execute(
-        """insert into clickhouse.test_long_text (flen, field1) values (400000, '{}')""".format(
+        """insert into datastore.test_long_text (flen, field1) values (400000, '{}')""".format(
             long_text
         )
     )
     result = node1.query("select field1 from test_long_text where flen=400000;")
     assert result.strip() == long_text
     node1.query("DROP TABLE test_long_text")
-    cursor.execute("drop table clickhouse.test_long_text")
+    cursor.execute("drop table datastore.test_long_text")

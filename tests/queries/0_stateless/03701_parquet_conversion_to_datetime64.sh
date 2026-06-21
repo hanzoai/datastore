@@ -4,7 +4,7 @@
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --optimize_trivial_insert_select=0"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --optimize_trivial_insert_select=0"
 
 FILE_NAME=conversion_to_datetime64_test.parquet
 cp "$CURDIR/data_parquet/$FILE_NAME" "$USER_FILES_PATH/$FILE_NAME"
@@ -21,24 +21,24 @@ cp "$CURDIR/data_parquet/$FILE_NAME" "$USER_FILES_PATH/$FILE_NAME"
 
 echo 'FROM ts:'
 
-${CLICKHOUSE_CLIENT} --query "CREATE TABLE test (ts DateTime64(9, 'UTC')) ENGINE=MergeTree ORDER BY tuple()"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO test (ts) SELECT ts FROM file('conversion_to_datetime64_test.parquet')"
-${CLICKHOUSE_CLIENT} --query "SELECT * from test"
+${DATASTORE_CLIENT} --query "CREATE TABLE test (ts DateTime64(9, 'UTC')) ENGINE=MergeTree ORDER BY tuple()"
+${DATASTORE_CLIENT} --query "INSERT INTO test (ts) SELECT ts FROM file('conversion_to_datetime64_test.parquet')"
+${DATASTORE_CLIENT} --query "SELECT * from test"
 echo '---'
-${CLICKHOUSE_CLIENT} --query "TRUNCATE TABLE test"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO test (ts) SELECT ts FROM file('conversion_to_datetime64_test.par?uet')"
-${CLICKHOUSE_CLIENT} --query "SELECT * from test"
+${DATASTORE_CLIENT} --query "TRUNCATE TABLE test"
+${DATASTORE_CLIENT} --query "INSERT INTO test (ts) SELECT ts FROM file('conversion_to_datetime64_test.par?uet')"
+${DATASTORE_CLIENT} --query "SELECT * from test"
 echo '---'
-${CLICKHOUSE_CLIENT} --query "TRUNCATE TABLE test"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO test (ts) SELECT ts FROM file('{conversion_to_datetime64_test.parquet, conversion_to_datetime64_test.parquet}')"
-${CLICKHOUSE_CLIENT} --query "SELECT * from test"
+${DATASTORE_CLIENT} --query "TRUNCATE TABLE test"
+${DATASTORE_CLIENT} --query "INSERT INTO test (ts) SELECT ts FROM file('{conversion_to_datetime64_test.parquet, conversion_to_datetime64_test.parquet}')"
+${DATASTORE_CLIENT} --query "SELECT * from test"
 
 echo -e '\nFROM ts_plus_tz:'
 
-${CLICKHOUSE_CLIENT} --query "TRUNCATE TABLE test"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO test (ts) SELECT ts_plus_tz FROM file('conversion_to_datetime64_test.parquet')" 2>&1 | grep -q "Cannot parse string '2020-01-01 14:00:00+00:00' as DateTime64(9, 'UTC')" && echo "CANNOT_PARSE" || echo "FAIL"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO test (ts) SELECT ts_plus_tz FROM file('conversion_to_datetime64_test.par?uet')" 2>&1 | grep -q "Cannot parse string '2020-01-01 14:00:00+00:00' as DateTime64(9, 'UTC')" && echo "CANNOT_PARSE" || echo "FAIL"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO test (ts) SELECT ts_plus_tz FROM file('{conversion_to_datetime64_test.parquet, conversion_to_datetime64_test.parquet}')" 2>&1 | grep -q "Cannot parse string '2020-01-01 14:00:00+00:00' as DateTime64(9, 'UTC')" && echo "CANNOT_PARSE" || echo "FAIL"
-${CLICKHOUSE_CLIENT} --query "SELECT * from test"
+${DATASTORE_CLIENT} --query "TRUNCATE TABLE test"
+${DATASTORE_CLIENT} --query "INSERT INTO test (ts) SELECT ts_plus_tz FROM file('conversion_to_datetime64_test.parquet')" 2>&1 | grep -q "Cannot parse string '2020-01-01 14:00:00+00:00' as DateTime64(9, 'UTC')" && echo "CANNOT_PARSE" || echo "FAIL"
+${DATASTORE_CLIENT} --query "INSERT INTO test (ts) SELECT ts_plus_tz FROM file('conversion_to_datetime64_test.par?uet')" 2>&1 | grep -q "Cannot parse string '2020-01-01 14:00:00+00:00' as DateTime64(9, 'UTC')" && echo "CANNOT_PARSE" || echo "FAIL"
+${DATASTORE_CLIENT} --query "INSERT INTO test (ts) SELECT ts_plus_tz FROM file('{conversion_to_datetime64_test.parquet, conversion_to_datetime64_test.parquet}')" 2>&1 | grep -q "Cannot parse string '2020-01-01 14:00:00+00:00' as DateTime64(9, 'UTC')" && echo "CANNOT_PARSE" || echo "FAIL"
+${DATASTORE_CLIENT} --query "SELECT * from test"
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE test"
+${DATASTORE_CLIENT} --query "DROP TABLE test"

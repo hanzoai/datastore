@@ -76,7 +76,7 @@ bool ParserKQLStatement::parseImpl(Pos & pos, ASTPtr & node, Expected & expected
         {
             /// Clear let bindings when the parsed `SET` actually changes `dialect`.
             /// Inspecting the AST avoids substring false positives (unrelated settings
-            /// whose text happens to contain "kql"/"clickhouse") and case-sensitivity
+            /// whose text happens to contain "kql"/"datastore") and case-sensitivity
             /// gaps (`SET dialect = 'KQL'`) that the raw text check used to have.
             if (const auto * set_ast = node ? node->as<ASTSetQuery>() : nullptr)
             {
@@ -139,7 +139,7 @@ bool ParserKQLWithUnionQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & exp
 
 bool ParserKQLParenExpression::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
 {
-    /// TODO: This code is idiotic, see https://github.com/ClickHouse/ClickHouse/issues/61742
+    /// TODO: This code is idiotic, see https://github.com/ClickHouse/Datastore/issues/61742
 
     ParserToken lparen(TokenType::OpeningRoundBracket);
 

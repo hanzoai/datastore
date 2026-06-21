@@ -33,7 +33,7 @@ def clear_after_test():
 create_query = """
     CREATE DICTIONARY test_dict(x Int32, y Int32) PRIMARY KEY x
     LAYOUT(FLAT())
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'test_table' DB 'default'))
+    SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'test_table' DB 'default'))
     LIFETIME(0)
     """
 

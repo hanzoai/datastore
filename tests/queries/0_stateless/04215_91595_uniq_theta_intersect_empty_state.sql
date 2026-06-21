@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- ^ no-fasttest because uniqTheta requires the DataSketches library
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/91595
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/91595
 -- `uniqThetaIntersect` previously returned the cardinality of the first
 -- argument when the second argument was a freshly-created (never-updated)
 -- state. Such states arise naturally from

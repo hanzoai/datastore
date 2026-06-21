@@ -26,7 +26,7 @@ def generate_cluster_def(port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <storage_configuration>
         <disks>
             <blob_storage_disk>
@@ -59,7 +59,7 @@ def generate_cluster_def(port):
             </blob_storage_policy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
         )
     return path
@@ -140,7 +140,7 @@ def test_read_after_cache_is_wiped(cluster):
     # Wipe cache
     cluster.exec_in_container(
         cluster.get_container_id(NODE_NAME),
-        ["rm", "-rf", "/var/lib/clickhouse/disks/blob_storage_disk/cache/"],
+        ["rm", "-rf", "/var/lib/datastore/disks/blob_storage_disk/cache/"],
     )
 
     # After cache is populated again, only .bin files should be accessed from Blob Storage.

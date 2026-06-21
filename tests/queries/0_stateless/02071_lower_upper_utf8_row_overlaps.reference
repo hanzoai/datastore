@@ -10,7 +10,7 @@ select length(str), if(l_ == '\xe2', h_, l_), if(u_ == '\xe2', h_, u_) from utf8
 1,"0xE2","0xE2"
 15,"foo⚊barbazbam","FOO⚊BARBAZBAM"
 -- NOTE: regression test for introduced bug
--- https://github.com/ClickHouse/ClickHouse/issues/42756
+-- https://github.com/ClickHouse/Datastore/issues/42756
 SELECT lowerUTF8('КВ АМ И СЖ');
 кв ам и сж
 SELECT upperUTF8('кв ам и сж');

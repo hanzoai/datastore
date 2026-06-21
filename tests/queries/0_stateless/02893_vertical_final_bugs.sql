@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/64543
+-- https://github.com/ClickHouse/Datastore/issues/64543
 DROP TABLE IF EXISTS foo;
 DROP TABLE IF EXISTS bar;
 CREATE TABLE foo (id UInt64, seq UInt64) ENGINE = Memory;

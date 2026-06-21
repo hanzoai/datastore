@@ -180,7 +180,7 @@ Settings:
 - `optimize` — Controls whether query plan optimizations are applied before displaying the plan. Default: 1.
 - `header` — Prints output header for step. Default: 0.
 - `description` — Prints step description. Default: 1.
-- `indexes` — Shows used indexes, the number of filtered parts and the number of filtered granules for every index applied. Default: 0. Supported for [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) tables. Starting from ClickHouse >= v25.9, this statement only shows reasonable output when used with `SETTINGS use_query_condition_cache = 0, use_skip_indexes_on_data_read = 0`.
+- `indexes` — Shows used indexes, the number of filtered parts and the number of filtered granules for every index applied. Default: 0. Supported for [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) tables. Starting from Datastore >= v25.9, this statement only shows reasonable output when used with `SETTINGS use_query_condition_cache = 0, use_skip_indexes_on_data_read = 0`.
 - `projections` — Shows all analyzed projections and their effect on part-level filtering based on projection primary key conditions. For each projection, this section includes statistics such as the number of parts, rows, marks, and ranges that were evaluated using the projection's primary key. It also shows how many data parts were skipped due to this filtering, without reading from the projection itself. Whether a projection was actually used for reading or only analyzed for filtering can be determined by the `description` field. Default: 0. Supported for [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) tables.
 - `actions` — Prints detailed information about step actions. Default: 0.
 - `sorting` — Prints the sort description for each plan step that produces sorted output. Default: 0.
@@ -666,7 +666,7 @@ CREATE TABLE db.tbl (
 ```
 
 ```sql title="Query"
-EXPLAIN TABLE OVERRIDE mysql('127.0.0.1:3306', 'db', 'tbl', 'root', 'clickhouse')
+EXPLAIN TABLE OVERRIDE mysql('127.0.0.1:3306', 'db', 'tbl', 'root', 'datastore')
 PARTITION BY toYYYYMM(assumeNotNull(created))
 ```
 

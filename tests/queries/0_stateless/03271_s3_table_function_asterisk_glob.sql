@@ -23,11 +23,11 @@ SELECT * FROM s3Cluster('test_cluster_two_shards_localhost', s3_conn, filename='
 SET s3_skip_empty_files = 1;
 
 SELECT *
-FROM s3('https://clickhouse-public-datasets.s3.amazonaws.com/wikistat/original/*', NOSIGN)
+FROM s3('https://datastore-public-datasets.s3.amazonaws.com/wikistat/original/*', NOSIGN)
 LIMIT 1
 FORMAT Null;
 
 SELECT *
-FROM s3Cluster('test_cluster_two_shards_localhost', 'https://clickhouse-public-datasets.s3.amazonaws.com/wikistat/original/*', NOSIGN)
+FROM s3Cluster('test_cluster_two_shards_localhost', 'https://datastore-public-datasets.s3.amazonaws.com/wikistat/original/*', NOSIGN)
 LIMIT 1
 Format Null;

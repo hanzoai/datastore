@@ -12,9 +12,9 @@ query_id="my_id_$(random_str 8)"
 
 # Capture the server-reported port (in the http_response) and curl's actual local port (writeout).
 set +e
-${CLICKHOUSE_CURL} --fail-with-body -sS \
+${DATASTORE_CURL} --fail-with-body -sS \
     -w 'PORT:%{local_port}\n' \
-    "${CLICKHOUSE_URL}&query_id=${query_id}&query=SELECT+port+FROM+system.processes+WHERE+query_id%3D%27${query_id}%27+ORDER+BY+elapsed+LIMIT+1" \
+    "${DATASTORE_URL}&query_id=${query_id}&query=SELECT+port+FROM+system.processes+WHERE+query_id%3D%27${query_id}%27+ORDER+BY+elapsed+LIMIT+1" \
     -o "$tmpdir/http_response" >"$tmpdir/writeout" 2>"$tmpdir/curl_stderr"
 curl_status=$?
 set -e

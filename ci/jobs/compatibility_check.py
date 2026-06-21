@@ -7,8 +7,8 @@ from ci.praktika.info import Info
 from ci.praktika.result import Result
 from ci.praktika.utils import Shell, Utils
 
-IMAGE_UBUNTU = "clickhouse/test-old-ubuntu"
-IMAGE_CENTOS = "clickhouse/test-old-centos"
+IMAGE_UBUNTU = "datastore/test-old-ubuntu"
+IMAGE_CENTOS = "datastore/test-old-centos"
 DOWNLOAD_RETRIES_COUNT = 5
 
 temp_path = Path(f"{Utils.cwd()}/ci/tmp")
@@ -25,11 +25,11 @@ def process_glibc_check():
 
     commands = (
         [
-            f"readelf -s --wide {temp_path}/clickhouse | grep '@GLIBC_' > {temp_path}/glibc.log",
+            f"readelf -s --wide {temp_path}/datastore | grep '@GLIBC_' > {temp_path}/glibc.log",
             # FIXME: odbc bridge is not present in the deb package
-            # f"readelf -s --wide {temp_path}/clickhouse-odbc-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
+            # f"readelf -s --wide {temp_path}/datastore-odbc-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
             # FIXME: library bridge is not present in the deb package
-            # f"readelf -s --wide {temp_path}/clickhouse-library-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
+            # f"readelf -s --wide {temp_path}/datastore-library-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
         ],
     )
 
@@ -80,11 +80,11 @@ def main():
                 strict=True,
             )
     Shell.check(
-        f"mv {temp_path}/usr/bin/clickhouse {temp_path}/clickhouse",
+        f"mv {temp_path}/usr/bin/datastore {temp_path}/datastore",
         verbose=True,
         strict=True,
     )
-    # Shell.check(f"chmod +x {temp_path}/clickhouse", verbose=True, strict=True)
+    # Shell.check(f"chmod +x {temp_path}/datastore", verbose=True, strict=True)
 
     test_results = []
 
@@ -101,7 +101,7 @@ def main():
             Result.from_commands_run(
                 name="ubuntu12",
                 command=[
-                    f"docker run --volume={temp_path}/clickhouse:/clickhouse ubuntu:12.04 /clickhouse local --query 'select 1'",
+                    f"docker run --volume={temp_path}/datastore:/datastore ubuntu:12.04 /datastore local --query 'select 1'",
                 ],
                 with_info=True,
             )
@@ -110,7 +110,7 @@ def main():
             Result.from_commands_run(
                 name="centos5",
                 command=[
-                    f"docker run --volume={temp_path}/clickhouse:/clickhouse centos:5 /clickhouse local --query 'select 1'"
+                    f"docker run --volume={temp_path}/datastore:/datastore centos:5 /datastore local --query 'select 1'"
                 ],
                 with_info=True,
             )

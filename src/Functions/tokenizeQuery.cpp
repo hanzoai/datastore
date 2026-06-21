@@ -51,11 +51,11 @@ REGISTER_FUNCTION(TokenizeQuery)
 {
     factory.registerFunction<FunctionQueryTokenization<TokenizeQueryImpl>>(FunctionDocumentation{
         .description = R"(
-Tokenizes a ClickHouse SQL query string and returns an array of tokens.
+Tokenizes a Datastore SQL query string and returns an array of tokens.
 Each token is a named tuple with the beginning position (in bytes), the end position, and the token type.
 )",
         .syntax = "tokenizeQuery(query)",
-        .arguments = {{"query", "A ClickHouse SQL query string. String."}},
+        .arguments = {{"query", "A Datastore SQL query string. String."}},
         .returned_value = {"An array of named tuples `(begin UInt64, end UInt64, type Enum8(...))` representing the tokens of the query.", {"Array(Tuple(begin UInt64, end UInt64, type Enum8(...)))"}},
         .examples = {{"simple", "SELECT tokenizeQuery('SELECT 1')", R"([(0,6,'BareWord'),(6,7,'Whitespace'),(7,8,'Number')])"}},
         .introduced_in = {26, 5},

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse clickhouse-benchmark log files into JSON.
+"""Parse datastore-benchmark log files into JSON.
 
 Output formats:
   Combined (default): {"Q0.log":[[concurrency,qps,p0,...,p99_99],...], ...}
@@ -77,7 +77,7 @@ def parse_file(path: str):
 
 def usage():
     print("Usage: logs2json.py [-L|--lines] [log files]\n"
-          "Parse clickhouse-benchmark log files into JSON.\n"
+          "Parse datastore-benchmark log files into JSON.\n"
           "  -L, --lines  Emit one JSON object per line (one file per line)\n"
           "  -h, --help   Show this help", file=sys.stderr)
 

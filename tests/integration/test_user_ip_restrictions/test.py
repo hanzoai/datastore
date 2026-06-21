@@ -77,7 +77,7 @@ def test_ipv4(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 10.5.172.77 --query 'select 1'",
+                "/usr/bin/datastore client --host 10.5.172.77 --query 'select 1'",
             ],
             privileged=True,
             user="root",
@@ -92,7 +92,7 @@ def test_ipv4(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 10.5.172.77 --query 'select 1'",
+                "/usr/bin/datastore client --host 10.5.172.77 --query 'select 1'",
             ],
             privileged=True,
             user="root",
@@ -107,7 +107,7 @@ def test_ipv4(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 10.5.172.77 --query 'select 1'",
+                "/usr/bin/datastore client --host 10.5.172.77 --query 'select 1'",
             ],
             privileged=True,
             user="root",
@@ -122,7 +122,7 @@ def test_ipv4(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 10.5.172.77 --query 'select 1'",
+                "/usr/bin/datastore client --host 10.5.172.77 --query 'select 1'",
             ],
             privileged=True,
             user="root",
@@ -142,7 +142,7 @@ def test_ipv6(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 2001:3984:3989::1:1000 --query 'select 1'",
+                "/usr/bin/datastore client --host 2001:3984:3989::1:1000 --query 'select 1'",
             ],
             privileged=True,
             user="root",
@@ -158,7 +158,7 @@ def test_ipv6(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 2001:3984:3989:0:0:0:1:1000 --query 'select 1'",
+                "/usr/bin/datastore client --host 2001:3984:3989:0:0:0:1:1000 --query 'select 1'",
             ],
             privileged=True,
             user="root",
@@ -173,7 +173,7 @@ def test_ipv6(setup_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --host 2001:3984:3989:0:0:0:1:1000 --query 'select 1'",
+                "/usr/bin/datastore client --host 2001:3984:3989:0:0:0:1:1000 --query 'select 1'",
             ],
             privileged=True,
             user="root",

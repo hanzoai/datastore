@@ -17,7 +17,7 @@ def started_cluster():
 
 
 def test_range_hashed_dict(started_cluster):
-    script = "echo '4990954156238030839\t2018-12-31 21:00:00\t2020-12-30 20:59:59\t0.1\tRU' > /var/lib/clickhouse/user_files/rates.tsv"
+    script = "echo '4990954156238030839\t2018-12-31 21:00:00\t2020-12-30 20:59:59\t0.1\tRU' > /var/lib/datastore/user_files/rates.tsv"
     node1.exec_in_container(["bash", "-c", script])
     node1.query(
         """
@@ -31,7 +31,7 @@ def test_range_hashed_dict(started_cluster):
     )
     PRIMARY KEY hash_id
     SOURCE(file(
-        path '/var/lib/clickhouse/user_files/rates.tsv'
+        path '/var/lib/datastore/user_files/rates.tsv'
         format 'TSV'
     ))
     LAYOUT(RANGE_HASHED())

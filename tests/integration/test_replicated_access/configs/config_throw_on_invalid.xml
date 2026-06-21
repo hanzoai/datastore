@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <default>
             <shard>
@@ -16,10 +16,10 @@
     </remote_servers>
     <user_directories replace="replace">
         <replicated>
-            <zookeeper_path>/clickhouse/access</zookeeper_path>
+            <zookeeper_path>/datastore/access</zookeeper_path>
         </replicated>
     </user_directories>
     <access_control_improvements>
         <throw_on_invalid_replicated_access_entities>true</throw_on_invalid_replicated_access_entities>
     </access_control_improvements>
-</clickhouse>
+</datastore>

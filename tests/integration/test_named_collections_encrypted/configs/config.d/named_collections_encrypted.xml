@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <named_collections_storage>
     <type>local_encrypted</type>
     <key_hex>bebec0cabebec0cabebec0cabebec0ca</key_hex>
@@ -11,4 +11,4 @@
   </named_collections>
 
   <display_secrets_in_show_and_select>1</display_secrets_in_show_and_select>
-</clickhouse>
+</datastore>

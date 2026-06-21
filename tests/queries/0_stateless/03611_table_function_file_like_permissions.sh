@@ -7,11 +7,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-USER="user_3611_${CLICKHOUSE_DATABASE}"
+USER="user_3611_${DATASTORE_DATABASE}"
 
 function cleanup()
 {
-    ${CLICKHOUSE_CLIENT} -q "DROP USER IF EXISTS ${USER}"
+    ${DATASTORE_CLIENT} -q "DROP USER IF EXISTS ${USER}"
 }
 trap cleanup EXIT
 
@@ -22,14 +22,14 @@ function run_table_functions()
     EXPECTED_ERROR=$1
 
     for table_function in "file" "icebergLocal" "deltaLakeLocal"; do
-        ${CLICKHOUSE_CLIENT} --user="${USER}" --query "SELECT * FROM ${table_function}('${FILE}') -- { serverError ${EXPECTED_ERROR} }"
+        ${DATASTORE_CLIENT} --user="${USER}" --query "SELECT * FROM ${table_function}('${FILE}') -- { serverError ${EXPECTED_ERROR} }"
     done
 }
 
-${CLICKHOUSE_CLIENT} -q "CREATE USER ${USER}"
-${CLICKHOUSE_CLIENT} -q "GRANT CREATE TEMPORARY TABLE ON *.* TO ${USER};"
+${DATASTORE_CLIENT} -q "CREATE USER ${USER}"
+${DATASTORE_CLIENT} -q "GRANT CREATE TEMPORARY TABLE ON *.* TO ${USER};"
 run_table_functions "ACCESS_DENIED"
-${CLICKHOUSE_CLIENT} -q "GRANT FILE ON *.* TO ${USER};"
+${DATASTORE_CLIENT} -q "GRANT FILE ON *.* TO ${USER};"
 run_table_functions "FILE_DOESNT_EXIST, DELTA_KERNEL_ERROR, CANNOT_STAT"
-${CLICKHOUSE_CLIENT} -q "REVOKE FILE ON *.* FROM ${USER};"
+${DATASTORE_CLIENT} -q "REVOKE FILE ON *.* FROM ${USER};"
 run_table_functions "ACCESS_DENIED"

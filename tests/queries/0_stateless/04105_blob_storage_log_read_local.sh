@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS test_local_blob_log_read;
 
     CREATE TABLE test_local_blob_log_read (a Int32, b String)

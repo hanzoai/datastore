@@ -217,7 +217,7 @@ std::pair<std::string_view, MainFunc> examples[] =
 
 void printHelp()
 {
-    std::cerr << "Usage: clickhouse-examples <example-name> [args]" << std::endl;
+    std::cerr << "Usage: datastore-examples <example-name> [args]" << std::endl;
     std::cerr << std::endl;
     std::cerr << "Available examples:" << std::endl;
     for (const auto & example : examples)
@@ -236,7 +236,7 @@ int main(int argc, char ** argv)
         return 1;
     }
 
-    /// Check if invoked via symlink (e.g., hash_map -> clickhouse-examples)
+    /// Check if invoked via symlink (e.g., hash_map -> datastore-examples)
     std::string binary_name = std::filesystem::path(args[0]).filename().string();
 
     for (const auto & [name, func] : examples)

@@ -18,7 +18,7 @@ function wait_for_mutation_partially()
     for i in {1..100}
     do
         sleep 0.1
-        if [[ $(${CLICKHOUSE_CLIENT} --query="SELECT parts_to_do FROM system.mutations WHERE database='${CLICKHOUSE_DATABASE}' AND table='$table' AND mutation_id='$mutation_id'") -eq $parts_to_do ]]; then
+        if [[ $(${DATASTORE_CLIENT} --query="SELECT parts_to_do FROM system.mutations WHERE database='${DATASTORE_DATABASE}' AND table='$table' AND mutation_id='$mutation_id'") -eq $parts_to_do ]]; then
             break
         fi
 
@@ -33,15 +33,15 @@ function wait_for_mutation_partially()
 # Replica 1 should have 1 mutated part, 1 not mutated.
 # Replica 2 should have 2 not mutated parts.
 
-${CLICKHOUSE_CLIENT} -n --query "
+${DATASTORE_CLIENT} -n --query "
 DROP TABLE IF EXISTS t_mutation_events_1 SYNC;
 DROP TABLE IF EXISTS t_mutation_events_2 SYNC;
 
 CREATE TABLE t_mutation_events_1 (id UInt64, v UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_mutation_events', '1') ORDER BY id;
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_mutation_events', '1') ORDER BY id;
 
 CREATE TABLE t_mutation_events_2 (id UInt64, v UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_mutation_events', '2') ORDER BY id;
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_mutation_events', '2') ORDER BY id;
 
 INSERT INTO t_mutation_events_1 VALUES (1, 10);
 SYSTEM SYNC REPLICA t_mutation_events_2;
@@ -56,7 +56,7 @@ ALTER TABLE t_mutation_events_1 UPDATE v = v * v WHERE 1;
 
 wait_for_mutation_partially t_mutation_events_1 0000000000 1
 
-${CLICKHOUSE_CLIENT} -n --query "
+${DATASTORE_CLIENT} -n --query "
 SYSTEM STOP MERGES t_mutation_events_1;
 SYSTEM START FETCHES t_mutation_events_1;
 

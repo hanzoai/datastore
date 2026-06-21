@@ -135,7 +135,7 @@ class FileBlockBase:
     @staticmethod
     def convert_request(sql):
         if sql.startswith("CREATE TABLE"):
-            # ClickHouse handles SQLite types (INTEGER, TEXT, VARCHAR) natively,
+            # Datastore handles SQLite types (INTEGER, TEXT, VARCHAR) natively,
             # and `default_table_engine`, `allow_create_index_without_type`,
             # `create_index_ignore_unique` settings handle the rest.
             # We only need to add SETTINGS for nullable keys and block columns.
@@ -177,7 +177,7 @@ class FileBlockBase:
                 request, last_line = FileBlockBase.__parse_request(
                     parser, line + 1, end
                 )
-                if parser.dbms_name == "ClickHouse":
+                if parser.dbms_name == "Datastore":
                     request = FileBlockBase.convert_request(request)
                 assert last_line == end
                 line = last_line
@@ -189,7 +189,7 @@ class FileBlockBase:
                 request, last_line = FileBlockBase.__parse_request(
                     parser, line + 1, end
                 )
-                if parser.dbms_name == "ClickHouse":
+                if parser.dbms_name == "Datastore":
                     request = FileBlockBase.convert_request(request)
                 result_line = last_line
                 line = last_line

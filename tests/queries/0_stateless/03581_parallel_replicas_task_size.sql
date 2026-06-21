@@ -21,7 +21,7 @@ FROM system.parts
 WHERE (database = currentDatabase()) AND (table = 't')
 FORMAT Null;
 
--- If ClickHouse will choose too small task size, we don't want to artificially correct it's decision.
+-- If Datastore will choose too small task size, we don't want to artificially correct it's decision.
 SET max_threads = 3, merge_tree_min_read_task_size = 1;
 
 SET automatic_parallel_replicas_mode = 0;

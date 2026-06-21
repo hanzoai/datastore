@@ -7,7 +7,7 @@ title: 'Operators'
 doc_type: 'reference'
 ---
 
-ClickHouse transforms operators to their corresponding functions at the query parsing stage according to their priority, precedence, and associativity.
+Datastore transforms operators to their corresponding functions at the query parsing stage according to their priority, precedence, and associativity.
 
 ## Access Operators {#access-operators}
 
@@ -89,12 +89,12 @@ Before 25.10 it could only be used in JOIN expressions, for example:
 
 ```sql
 CREATE TABLE a (x String) ENGINE = Memory;
-INSERT INTO a VALUES ('ClickHouse');
+INSERT INTO a VALUES ('Datastore');
 
 SELECT * FROM a AS a1 JOIN a AS a2 ON a1.x <=> a2.x;
 
 ┌─x──────────┬─a2.x───────┐
-│ ClickHouse │ ClickHouse │
+│ Datastore │ Datastore │
 └────────────┴────────────┘
 ```
 :::
@@ -105,7 +105,7 @@ Two `NULL` values are considered equal, and a `NULL` compared to any non-`NULL` 
 
 ```sql
 SELECT
-  'ClickHouse' <=> NULL,
+  'Datastore' <=> NULL,
   NULL <=> NULL
 ```
 
@@ -263,7 +263,7 @@ FROM test.Orders;
 └───────────┴────────────┴──────────┴───────────┴─────────────┴─────────────┘
 ```
 
-You can see more examples in [tests](https://github.com/ClickHouse/ClickHouse/blob/master/tests/queries/0_stateless/00619_extract.sql).
+You can see more examples in [tests](https://github.com/ClickHouse/Datastore/blob/master/tests/queries/0_stateless/00619_extract.sql).
 
 ### INTERVAL {#interval}
 
@@ -451,7 +451,7 @@ For efficiency, the `and` and `or` functions accept any number of arguments. The
 
 ## Checking for `NULL` {#checking-for-null}
 
-ClickHouse supports the `IS NULL` and `IS NOT NULL` operators.
+Datastore supports the `IS NULL` and `IS NOT NULL` operators.
 
 ### IS NULL {#is_null}
 
@@ -497,7 +497,7 @@ Can be optimized by enabling the [optimize_functions_to_subcolumns](/operations/
 
 ## Checking Boolean Values {#checking-boolean-values}
 
-ClickHouse supports the `IS TRUE`, `IS FALSE`, `IS UNKNOWN`, `IS NOT TRUE`, `IS NOT FALSE`, and `IS NOT UNKNOWN` operators.
+Datastore supports the `IS TRUE`, `IS FALSE`, `IS UNKNOWN`, `IS NOT TRUE`, `IS NOT FALSE`, and `IS NOT UNKNOWN` operators.
 They are used with [Bool](../../sql-reference/data-types/boolean.md) and `Nullable(Bool)` expressions.
 
 - `expr IS TRUE` returns `1` only if `expr` is `true`.

@@ -1,6 +1,6 @@
 -- Rewritten: `order by item_id` -> `order by ss_items.item_id`.
 -- By SQL standard, former should also work (Chapter 7.13, syntax rule 28, case ii).
--- Issue: https://github.com/ClickHouse/ClickHouse/issues/94976
+-- Issue: https://github.com/ClickHouse/Datastore/issues/94976
 
 -- Also added casts like sum(ss_ext_sales_price) ss_item_rev -> sum(CAST(ss_ext_sales_price AS Float64) ss_item_rev) for precision reasons.
 -- This is legal in TPC-DS specification.

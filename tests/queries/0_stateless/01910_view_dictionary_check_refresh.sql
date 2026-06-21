@@ -27,7 +27,7 @@ CREATE DICTIONARY IF NOT EXISTS TestTblDict
     `val` String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE TestTbl_view DB currentDatabase()))
+SOURCE(DATASTORE(TABLE TestTbl_view DB currentDatabase()))
 LIFETIME(1)
 LAYOUT(COMPLEX_KEY_HASHED());
 

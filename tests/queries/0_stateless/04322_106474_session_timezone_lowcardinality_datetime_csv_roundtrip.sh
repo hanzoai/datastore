@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Regression test for https://github.com/ClickHouse/ClickHouse/issues/106474.
+# Regression test for https://github.com/ClickHouse/Datastore/issues/106474.
 # The reproduction needs the same process to (a) pre-warm the
 # `LowCardinality(DateTime)` cache entry under one effective timezone and then
 # (b) write a CSV under a different `session_timezone`. Earlier in-memory
@@ -8,11 +8,11 @@
 # query that wrote the CSV, so the test exercises the canonical
 # `INSERT INTO TABLE FUNCTION file(...)` write path reported in the issue.
 #
-# The whole repro runs inside a single private `clickhouse-local` process with
+# The whole repro runs inside a single private `datastore-local` process with
 # an isolated working directory. The bug lives in the process-global
 # `SerializationObjectPool`, so running against the shared stateless server made
 # an earlier variant of this test flaky (other parallel tests warmed the pool);
-# `clickhouse-local` keeps the pool uncontended and the result deterministic.
+# `datastore-local` keeps the pool uncontended and the result deterministic.
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -20,7 +20,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-workdir="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}.workdir"
+workdir="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}.workdir"
 rm -rf "${workdir}"
 mkdir -p "${workdir}"
 
@@ -30,10 +30,10 @@ cleanup() {
 trap cleanup EXIT
 
 # `file()` resolves relative paths against the current working directory in
-# clickhouse-local, so run from the isolated workdir to keep the CSV files there.
+# datastore-local, so run from the isolated workdir to keep the CSV files there.
 (
     cd "${workdir}"
-    ${CLICKHOUSE_LOCAL} -nm --query "
+    ${DATASTORE_LOCAL} -nm --query "
 SET allow_suspicious_low_cardinality_types = 1;
 SET engine_file_truncate_on_insert = 1;
 

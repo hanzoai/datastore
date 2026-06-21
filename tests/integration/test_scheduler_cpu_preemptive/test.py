@@ -58,7 +58,7 @@ def with_custom_config(request):
             [
                 "bash",
                 "-c",
-                f"echo '<clickhouse>{xml}</clickhouse>' > /etc/clickhouse-server/config.d/99-custom_config.xml",
+                f"echo '<datastore>{xml}</datastore>' > /etc/datastore-server/config.d/99-custom_config.xml",
             ]
         )
         node.query("system reload config")
@@ -69,7 +69,7 @@ def with_custom_config(request):
             [
                 "bash",
                 "-c",
-                f"rm -f /etc/clickhouse-server/config.d/99-custom_config.xml",
+                f"rm -f /etc/datastore-server/config.d/99-custom_config.xml",
             ]
         )
         node.query("system reload config")

@@ -114,8 +114,8 @@ ENGINE = MergeTree
 ORDER BY (id)
 SETTINGS index_granularity = 1;
 
-INSERT INTO tab SELECT number, 'Hello ClickHouse' FROM numbers(1024);
-INSERT INTO tab SELECT number, 'Hello World, ClickHouse is fast!' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Hello Datastore' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Hello World, Datastore is fast!' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'Hallo xClickHouse' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'ClickHousez rocks' FROM numbers(1024);
 
@@ -150,7 +150,7 @@ LIMIT 2, 3;
 SELECT '-- Text index for ILIKE function should choose all 4 parts and 4096 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE message ILIKE '%clickhouse%'
+    SELECT count() FROM tab WHERE message ILIKE '%datastore%'
 ) WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
 
@@ -206,25 +206,25 @@ SET use_text_index_like_evaluation_by_dictionary_scan = 0;
 
 SELECT '-- without optimization';
 
-SELECT groupArray(id) FROM tab WHERE tag ILIKE '%clickhouse%';
-SELECT groupArray(id) FROM tab WHERE tag ILIKE '%CLICKHOUSE%';
-SELECT groupArray(id) FROM tab WHERE tag NOT ILIKE '%clickhouse%';
+SELECT groupArray(id) FROM tab WHERE tag ILIKE '%datastore%';
+SELECT groupArray(id) FROM tab WHERE tag ILIKE '%DATASTORE%';
+SELECT groupArray(id) FROM tab WHERE tag NOT ILIKE '%datastore%';
 SELECT groupArray(id) FROM tab WHERE tag ILIKE '%nonexistent%';
 SELECT groupArray(id) FROM tab WHERE tag ILIKE '%sql%';
 SELECT groupArray(id) FROM tab WHERE tag ILIKE '%server%';
-SELECT groupArray(id) FROM tab WHERE tag ILIKE '%clickhouse%' AND tag ILIKE '%cloud%';
+SELECT groupArray(id) FROM tab WHERE tag ILIKE '%datastore%' AND tag ILIKE '%cloud%';
 
 SELECT '-- with optimization';
 
 SET use_text_index_like_evaluation_by_dictionary_scan = 1;
 
-SELECT groupArray(id) FROM tab WHERE tag ILIKE '%clickhouse%';
-SELECT groupArray(id) FROM tab WHERE tag ILIKE '%CLICKHOUSE%';
-SELECT groupArray(id) FROM tab WHERE tag NOT ILIKE '%clickhouse%';
+SELECT groupArray(id) FROM tab WHERE tag ILIKE '%datastore%';
+SELECT groupArray(id) FROM tab WHERE tag ILIKE '%DATASTORE%';
+SELECT groupArray(id) FROM tab WHERE tag NOT ILIKE '%datastore%';
 SELECT groupArray(id) FROM tab WHERE tag ILIKE '%nonexistent%';
 SELECT groupArray(id) FROM tab WHERE tag ILIKE '%sql%';
 SELECT groupArray(id) FROM tab WHERE tag ILIKE '%server%';
-SELECT groupArray(id) FROM tab WHERE tag ILIKE '%clickhouse%' AND tag ILIKE '%cloud%';
+SELECT groupArray(id) FROM tab WHERE tag ILIKE '%datastore%' AND tag ILIKE '%cloud%';
 
 DROP TABLE tab;
 
@@ -273,7 +273,7 @@ LIMIT 2, 3;
 SELECT '-- Text index for ILIKE function with array tokenizer should choose all 4 parts and 4096 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE tag ILIKE '%clickhouse%'
+    SELECT count() FROM tab WHERE tag ILIKE '%datastore%'
 ) WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
 

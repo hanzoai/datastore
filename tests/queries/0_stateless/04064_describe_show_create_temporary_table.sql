@@ -1,4 +1,4 @@
--- Test for https://github.com/ClickHouse/ClickHouse/issues/14004
+-- Test for https://github.com/ClickHouse/Datastore/issues/14004
 -- SHOW CREATE TABLE and DESCRIBE TABLE should be consistent with respect to TEMPORARY tables.
 
 SET describe_compact_output = 1;

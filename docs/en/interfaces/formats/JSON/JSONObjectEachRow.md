@@ -95,18 +95,18 @@ DESCRIBE file('data.json', JSONObjectEachRow) SETTING format_json_object_each_ro
 INSERT INTO UserActivity FORMAT JSONEachRow {"PageViews":5, "UserID":"4324182021466249494", "Duration":146,"Sign":-1} {"UserID":"4324182021466249494","PageViews":6,"Duration":185,"Sign":1}
 ```
 
-ClickHouse allows:
+Datastore allows:
 
 - Any order of key-value pairs in the object.
 - Omitting some values.
 
-ClickHouse ignores spaces between elements and commas after the objects. You can pass all the objects in one line. You do not have to separate them with line breaks.
+Datastore ignores spaces between elements and commas after the objects. You can pass all the objects in one line. You do not have to separate them with line breaks.
 
 #### Omitted values processing {#omitted-values-processing}
 
-ClickHouse substitutes omitted values with the default values for the corresponding [data types](/sql-reference/data-types/index.md).
+Datastore substitutes omitted values with the default values for the corresponding [data types](/sql-reference/data-types/index.md).
 
-If `DEFAULT expr` is specified, ClickHouse uses different substitution rules depending on the [input_format_defaults_for_omitted_fields](/operations/settings/settings-formats.md/#input_format_defaults_for_omitted_fields) setting.
+If `DEFAULT expr` is specified, Datastore uses different substitution rules depending on the [input_format_defaults_for_omitted_fields](/operations/settings/settings-formats.md/#input_format_defaults_for_omitted_fields) setting.
 
 Consider the following table:
 
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS example_table
 - If `input_format_defaults_for_omitted_fields = 1`, then the default value for `x` equals `0`, but the default value of `a` equals `x * 2`.
 
 :::note
-When inserting data with `input_format_defaults_for_omitted_fields = 1`, ClickHouse consumes more computational resources, compared to insertion with `input_format_defaults_for_omitted_fields = 0`.
+When inserting data with `input_format_defaults_for_omitted_fields = 1`, Datastore consumes more computational resources, compared to insertion with `input_format_defaults_for_omitted_fields = 0`.
 :::
 
 ### Selecting data {#json-selecting-data}
@@ -159,7 +159,7 @@ For example, consider the following table:
 CREATE TABLE json_each_row_nested (n Nested (s String, i Int32) ) ENGINE = Memory
 ```
 
-As you can see in the `Nested` data type description, ClickHouse treats each component of the nested structure as a separate column (`n.s` and `n.i` for our table). You can insert data in the following way:
+As you can see in the `Nested` data type description, Datastore treats each component of the nested structure as a separate column (`n.s` and `n.i` for our table). You can insert data in the following way:
 
 ```sql title="Query"
 INSERT INTO json_each_row_nested FORMAT JSONEachRow {"n.s": ["abc", "def"], "n.i": [1, 23]}
@@ -176,7 +176,7 @@ To insert data as a hierarchical JSON object, set [`input_format_import_nested_j
 }
 ```
 
-Without this setting, ClickHouse throws an exception.
+Without this setting, Datastore throws an exception.
 
 ```sql title="Query"
 SELECT name, value FROM system.settings WHERE name = 'input_format_import_nested_json'

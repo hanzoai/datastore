@@ -10,7 +10,7 @@ from helpers.iceberg_utils import (
 def test_metadata_file_path_security(started_cluster_iceberg_with_spark):
     """
     Test security fixes for absolute path and null byte injection in iceberg_metadata_file_path.
-    Related to: https://github.com/ClickHouse/clickhouse-private/issues/46354
+    Related to: https://github.com/ClickHouse/datastore-private/issues/46354
     """
     instance = started_cluster_iceberg_with_spark.instances["node1"]
     spark = started_cluster_iceberg_with_spark.spark_session
@@ -31,12 +31,12 @@ def test_metadata_file_path_security(started_cluster_iceberg_with_spark):
             f"INSERT INTO {TABLE_NAME} select id, char(id + ascii('a')) from range(10)"
         )
 
-    # Upload to ClickHouse accessible storage
+    # Upload to Datastore accessible storage
     default_upload_directory(
         started_cluster_iceberg_with_spark,
         "local",
         f"/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     # Test 1: Absolute path outside table directory should be rejected
@@ -150,7 +150,7 @@ def test_metadata_file_path_security(started_cluster_iceberg_with_spark):
         instance,
         TABLE_NAME,
         started_cluster_iceberg_with_spark,
-        explicit_metadata_path=f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/metadata/v6.metadata.json"
+        explicit_metadata_path=f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/metadata/v6.metadata.json"
     )
 
     result = int(instance.query(f"SELECT count() FROM {TABLE_NAME}"))

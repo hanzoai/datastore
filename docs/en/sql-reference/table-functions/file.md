@@ -42,7 +42,7 @@ file(['file1.csv', 'file2.csv'], 'CSV', 'column1 UInt32, column2 UInt32')
 | `compression`     | The existing compression type when used in a `SELECT` query, or the desired compression type when used in an `INSERT` query. Supported compression types are `gz`, `br`, `xz`, `zst`, `lz4`, and `bz2`.                                                                                                       |
 
 :::tip
-When the `structure` argument is omitted, ClickHouse infers the schema from the format itself.
+When the `structure` argument is omitted, Datastore infers the schema from the format itself.
 Different formats produce different default column names and types.
 To see the schema for a specific format, use [`DESC`](/sql-reference/statements/describe-table) with the [`format`](/sql-reference/table-functions/format) table function.
 
@@ -76,7 +76,7 @@ VALUES (1, 2, 3), (3, 2, 1), (1, 3, 2)
 As a result, the data is written into the file `test.tsv`:
 
 ```bash
-# cat /var/lib/clickhouse/user_files/test.tsv
+# cat /var/lib/datastore/user_files/test.tsv
 1    2    3
 3    2    1
 1    3    2
@@ -96,13 +96,13 @@ VALUES (1, 2, 3), (3, 2, 1), (1, 3, 2)
 As a result, the data is written into three files: `test_1.tsv`, `test_2.tsv`, and `test_3.tsv`.
 
 ```bash
-# cat /var/lib/clickhouse/user_files/test_1.tsv
+# cat /var/lib/datastore/user_files/test_1.tsv
 3    2    1
 
-# cat /var/lib/clickhouse/user_files/test_2.tsv
+# cat /var/lib/datastore/user_files/test_2.tsv
 1    3    2
 
-# cat /var/lib/clickhouse/user_files/test_3.tsv
+# cat /var/lib/datastore/user_files/test_3.tsv
 1    2    3
 ```
 
@@ -113,10 +113,10 @@ As a result, the data is written into three files: `test_1.tsv`, `test_2.tsv`, a
 First, set `user_files_path` in the server configuration and prepare a file `test.csv`:
 
 ```bash
-$ grep user_files_path /etc/clickhouse-server/config.xml
-    <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+$ grep user_files_path /etc/datastore-server/config.xml
+    <user_files_path>/var/lib/datastore/user_files/</user_files_path>
 
-$ cat /var/lib/clickhouse/user_files/test.csv
+$ cat /var/lib/datastore/user_files/test.csv
     1,2,3
     3,2,1
     78,43,45
@@ -244,7 +244,7 @@ SELECT count(*) FROM file('big_dir/**/file002', 'CSV', 'name String, value UInt3
 
 ## use_hive_partitioning setting {#hive-style-partitioning}
 
-When setting `use_hive_partitioning` is set to 1, ClickHouse will detect Hive-style partitioning in the path (`/name=value/`) and will allow to use partition columns as virtual columns in the query. These virtual columns will have the same names as in the partitioned path.
+When setting `use_hive_partitioning` is set to 1, Datastore will detect Hive-style partitioning in the path (`/name=value/`) and will allow to use partition columns as virtual columns in the query. These virtual columns will have the same names as in the partitioned path.
 
 **Example**
 
@@ -262,7 +262,7 @@ SELECT * FROM file('data/path/date=*/country=*/code=*/*.parquet') WHERE date > '
 | [engine_file_truncate_on_insert](/operations/settings/settings#engine_file_truncate_on_insert)                     | allows to truncate file before insert into it. Disabled by default.                                                                                                         |
 | [engine_file_allow_create_multiple_files](operations/settings/settings.md#engine_file_allow_create_multiple_files) | allows to create a new file on each insert if format has suffix. Disabled by default.                                                                                       |
 | [engine_file_skip_empty_files](operations/settings/settings.md#engine_file_skip_empty_files)                       | allows to skip empty files while reading. Disabled by default.                                                                                                              |
-| [storage_file_read_method](/operations/settings/settings#engine_file_empty_if_not_exists)                          | method of reading data from storage file, one of: read, pread, mmap (only for clickhouse-local). Default value: `pread` for clickhouse-server, `mmap` for clickhouse-local. |
+| [storage_file_read_method](/operations/settings/settings#engine_file_empty_if_not_exists)                          | method of reading data from storage file, one of: read, pread, mmap (only for datastore-local). Default value: `pread` for datastore-server, `mmap` for datastore-local. |
 
 ## Related {#related}
 

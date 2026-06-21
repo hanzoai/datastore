@@ -58,7 +58,7 @@ SELECT * FROM system.backup_log WHERE id = 'e5b74ecb-f6f1-426a-80be-872f90043885
 ```response
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2023-08-19
 event_time_microseconds: 2023-08-19 11:05:21.998566
 id:                      e5b74ecb-f6f1-426a-80be-872f90043885
@@ -77,7 +77,7 @@ bytes_read:              0
 
 Row 2:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2023-08-19
 event_time:              2023-08-19 11:08:56
 event_time_microseconds: 2023-08-19 11:08:56.916192
@@ -112,7 +112,7 @@ SELECT * FROM system.backup_log WHERE id = 'cdf1f731-52ef-42da-bc65-2e1bfcd4ce90
 ```response
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2023-08-19
 event_time_microseconds: 2023-08-19 11:09:19.718077
 id:                      cdf1f731-52ef-42da-bc65-2e1bfcd4ce90
@@ -131,7 +131,7 @@ bytes_read:              0
 
 Row 2:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2023-08-19
 event_time_microseconds: 2023-08-19 11:09:29.334234
 id:                      cdf1f731-52ef-42da-bc65-2e1bfcd4ce90

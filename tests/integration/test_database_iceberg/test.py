@@ -861,7 +861,7 @@ def test_system_tables_with_nullptr_table(started_cluster):
     """
     Test that querying system.tables does not crash when DataLake database
     returns nullptr for some tables (e.g. when table metadata fetch fails).
-    Reproduces: https://github.com/ClickHouse/clickhouse-core-incidents/issues/1434
+    Reproduces: https://github.com/ClickHouse/datastore-core-incidents/issues/1434
     """
     node = started_cluster.instances["node1"]
 

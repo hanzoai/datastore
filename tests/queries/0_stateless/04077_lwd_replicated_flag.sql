@@ -4,7 +4,7 @@
 DROP TABLE IF EXISTS t_lwd_rmt_flag SYNC;
 
 CREATE TABLE t_lwd_rmt_flag (a UInt32, b String)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lwd_rmt_flag', '1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lwd_rmt_flag', '1')
     ORDER BY a
     SETTINGS min_bytes_for_wide_part = 0;
 

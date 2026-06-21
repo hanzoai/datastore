@@ -1,7 +1,7 @@
 -- Tags: no-random-settings, no-random-merge-tree-settings
 
 -- Test for projection as secondary index with multiple parts
--- This is a regression test for https://github.com/ClickHouse/ClickHouse/issues/90953
+-- This is a regression test for https://github.com/ClickHouse/Datastore/issues/90953
 
 SET enable_analyzer = 1;
 SET optimize_use_projections = 1;

@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Check that we have memory_usage in progress and summary
 CURL_OUTPUT="$(
-    ${CLICKHOUSE_CURL} -s -S -v -N -G "${CLICKHOUSE_URL}" \
+    ${DATASTORE_CURL} -s -S -v -N -G "${DATASTORE_URL}" \
     --data-urlencode "query=SELECT number, avg(number) FROM numbers(1e6) GROUP BY number FORMAT Null" \
     --data-urlencode "send_progress_in_http_headers=1" \
     --data-urlencode "http_headers_progress_interval_ms=10" \
@@ -14,26 +14,26 @@ CURL_OUTPUT="$(
     --data-urlencode "timeout_before_checking_execution_speed=0" 2>&1
 )"
 
-echo "$CURL_OUTPUT" | grep -m1 'X-ClickHouse-Progress:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
-echo "$CURL_OUTPUT" | grep 'X-ClickHouse-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep -m1 'X-Datastore-Progress:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep 'X-Datastore-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
 
 # Check that we have memory_usage in summary without progress headers
 CURL_OUTPUT="$(
-    ${CLICKHOUSE_CURL} -s -S -v -N -G "${CLICKHOUSE_URL}" \
+    ${DATASTORE_CURL} -s -S -v -N -G "${DATASTORE_URL}" \
         --data-urlencode "query=SELECT number, avg(number) FROM numbers(1e5) GROUP BY number FORMAT Null" \
         --data-urlencode "send_progress_in_http_headers=0" 2>&1
 )"
 
-echo "$CURL_OUTPUT" | grep -m1 'X-ClickHouse-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep -m1 'X-Datastore-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
 
 # Check that we have memory_usage in summary for 241 OOM errors
 CURL_OUTPUT="$(
-    ${CLICKHOUSE_CURL} -s -S -v -N -G "${CLICKHOUSE_URL}" \
+    ${DATASTORE_CURL} -s -S -v -N -G "${DATASTORE_URL}" \
     --data-urlencode "query=SELECT number, avg(number) FROM numbers(1e12) GROUP BY number FORMAT Null SETTINGS max_rows_to_read = 0" \
     --data-urlencode "max_memory_usage=20000000" \
     --data-urlencode "max_bytes_before_external_group_by=0" \
     --data-urlencode "max_bytes_ratio_before_external_group_by=0" 2>&1
 )"
 
-echo "$CURL_OUTPUT" | grep 'X-ClickHouse-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
-echo "$CURL_OUTPUT" | grep -q 'X-ClickHouse-Exception-Code: 241' && echo "Ok"
+echo "$CURL_OUTPUT" | grep 'X-Datastore-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep -q 'X-Datastore-Exception-Code: 241' && echo "Ok"

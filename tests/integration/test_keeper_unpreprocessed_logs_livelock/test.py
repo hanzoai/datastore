@@ -143,7 +143,7 @@ def test_unpreprocessed_logs_livelock(started_cluster):
     # Sanity: there are real changelog files (logs that need preprocessing) and
     # no snapshot for node1 (the eventual leader).
     log_files = node1.exec_in_container(
-        ["bash", "-c", "ls /var/lib/clickhouse/coordination/log 2>/dev/null || true"]
+        ["bash", "-c", "ls /var/lib/datastore/coordination/log 2>/dev/null || true"]
     ).strip()
     logging.info("node1 log files: %s", log_files)
     assert log_files != ""

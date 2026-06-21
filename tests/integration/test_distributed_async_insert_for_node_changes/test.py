@@ -20,7 +20,7 @@ node3 = cluster.add_instance(
     main_configs=["configs/remote_servers.xml"],
 )
 
-config1 = """<clickhouse>
+config1 = """<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -57,9 +57,9 @@ config1 = """<clickhouse>
             </shard>
         </test_cluster_with_replication>
     </remote_servers>
-</clickhouse>"""
+</datastore>"""
 
-config2 = """<clickhouse>
+config2 = """<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -98,7 +98,7 @@ config2 = """<clickhouse>
             </shard>
         </test_cluster_with_replication>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 
@@ -128,13 +128,13 @@ def test_distributed_async_insert(started_cluster):
     assert int(node1.query("select count() from dist_local where c2 = 'A'")) == 5
 
     # Add node2
-    node1.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config2)
+    node1.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config2)
     node1.query("SYSTEM RELOAD CONFIG;")
 
-    node2.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config2)
+    node2.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config2)
     node2.query("SYSTEM RELOAD CONFIG;")
 
-    node3.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config2)
+    node3.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config2)
     node3.query("SYSTEM RELOAD CONFIG;")
 
     node1.query("insert into dist select number,'B' from system.numbers limit 12;")
@@ -145,13 +145,13 @@ def test_distributed_async_insert(started_cluster):
     assert int(node3.query("select count() from dist_local where c2 = 'B'")) == 4
 
     # Delete node2
-    node1.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config1)
+    node1.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config1)
     node1.query("SYSTEM RELOAD CONFIG;")
 
-    node2.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config1)
+    node2.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config1)
     node2.query("SYSTEM RELOAD CONFIG;")
 
-    node3.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config1)
+    node3.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config1)
     node3.query("SYSTEM RELOAD CONFIG;")
 
     node1.query("insert into dist select number,'C' from system.numbers limit 10;")
@@ -181,13 +181,13 @@ def test_distributed_async_insert_with_replica(started_cluster):
     assert (node2_res == 0 and node3_res == 5) or (node2_res == 5 and node3_res == 0)
 
     # Delete node2
-    node1.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config2)
+    node1.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config2)
     node1.query("SYSTEM RELOAD CONFIG;")
 
-    node2.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config2)
+    node2.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config2)
     node2.query("SYSTEM RELOAD CONFIG;")
 
-    node3.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config2)
+    node3.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config2)
     node3.query("SYSTEM RELOAD CONFIG;")
 
     node1.query(
@@ -206,13 +206,13 @@ def test_distributed_async_insert_with_replica(started_cluster):
     )
 
     # Add node2
-    node1.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config1)
+    node1.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config1)
     node1.query("SYSTEM RELOAD CONFIG;")
 
-    node2.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config1)
+    node2.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config1)
     node2.query("SYSTEM RELOAD CONFIG;")
 
-    node3.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config1)
+    node3.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config1)
     node3.query("SYSTEM RELOAD CONFIG;")
 
     node1.query(

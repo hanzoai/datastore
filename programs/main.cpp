@@ -76,7 +76,7 @@ const char * __ubsan_default_options()
 #pragma clang diagnostic pop
 #endif
 
-/// Universal executable for various clickhouse applications
+/// Universal executable for various datastore applications
 int mainEntryClickHouseBenchmark(int argc, char ** argv);
 int mainEntryClickHouseCheckMarks(int argc, char ** argv);
 int mainEntryClickHouseChecksumForCompressedBlock(int, char **);
@@ -100,24 +100,24 @@ int mainEntryClickHouseHashBinary(int argc, char ** argv)
 {
     if (argc > 1 && (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))
     {
-        std::cout << "Usage: clickhouse hash-binary\n"
-                     "Prints hash of ClickHouse binary.\n"
+        std::cout << "Usage: datastore hash-binary\n"
+                     "Prints hash of Datastore binary.\n"
                      "  -h, --help   Print this message\n"
                      "Result is intentionally without newline. So you can run:\n"
-                     "objcopy --add-section .clickhouse.hash=<(./clickhouse hash-binary) clickhouse\n\n"
+                     "objcopy --add-section .datastore.hash=<(./datastore hash-binary) datastore\n\n"
                      "Current binary hash: ";
     }
     std::cout << getHashOfLoadedBinaryHex();
     return 0;
 }
 
-#if ENABLE_CLICKHOUSE_KEEPER
+#if ENABLE_DATASTORE_KEEPER
 int mainEntryClickHouseKeeper(int argc, char ** argv);
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CONVERTER
+#if ENABLE_DATASTORE_KEEPER_CONVERTER
 int mainEntryClickHouseKeeperConverter(int argc, char ** argv);
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
+#if ENABLE_DATASTORE_KEEPER_CLIENT
 int mainEntryClickHouseKeeperClient(int argc, char ** argv);
 #endif
 #if USE_RAPIDJSON && USE_NURAFT
@@ -144,7 +144,7 @@ int mainEntryClickHouseStatus(int argc, char ** argv);
 int mainEntryClickHouseRestart(int argc, char ** argv);
 
 /// Private-only programs
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 int mainEntryClickHouseSharedCatalogUtil(int argc, char ** argv);
 #if ENABLE_DISTRIBUTED_CACHE
 int mainEntryClickHouseDistributedCache(int argc, char ** argv);
@@ -176,8 +176,8 @@ int printHelpOnError(int, char **)
 }
 
 /// Add an item here to register new application.
-/// This list has a "priority" - e.g. we need to disambiguate clickhouse --format being
-/// either clickouse-format or clickhouse-{local, client} --format.
+/// This list has a "priority" - e.g. we need to disambiguate datastore --format being
+/// either clickouse-format or datastore-{local, client} --format.
 /// Currently we will prefer the latter option.
 std::pair<std::string_view, MainFunc> clickhouse_applications[] =
 {
@@ -205,13 +205,13 @@ std::pair<std::string_view, MainFunc> clickhouse_applications[] =
     {"zookeeper-remove-by-list", mainEntryClickHouseZooKeeperRemoveByList},
 
     // keeper
-#if ENABLE_CLICKHOUSE_KEEPER
+#if ENABLE_DATASTORE_KEEPER
     {"keeper", mainEntryClickHouseKeeper},
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CONVERTER
+#if ENABLE_DATASTORE_KEEPER_CONVERTER
     {"keeper-converter", mainEntryClickHouseKeeperConverter},
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
+#if ENABLE_DATASTORE_KEEPER_CLIENT
     {"keeper-client", mainEntryClickHouseKeeperClient},
 #endif
 #if USE_RAPIDJSON && USE_NURAFT
@@ -231,7 +231,7 @@ std::pair<std::string_view, MainFunc> clickhouse_applications[] =
     {"help", mainEntryHelp},
 
 /// Private-only programs
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     {"shared-merge-tree-garbage-cleaner", mainEntryClickHouseSharedMergeTreeGarbageCleaner},
     {"clear-zookeeper-locks", mainEntryClickHouseClearZooKeeperLocks},
     {"shared-catalog-util", mainEntryClickHouseSharedCatalogUtil},
@@ -247,7 +247,7 @@ void printHelp(std::ostream & out)
 {
     out << "Use one of the following commands:" << std::endl;
     for (const auto & application : clickhouse_applications)
-        out << "clickhouse " << application.first << " [args] " << std::endl;
+        out << "datastore " << application.first << " [args] " << std::endl;
 }
 
 /// Add an item here to register a new short name
@@ -274,7 +274,7 @@ bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
     {
         auto first_arg = argv.begin() + 1;
 
-        /// 'clickhouse --client ...' and 'clickhouse client ...' are Ok
+        /// 'datastore --client ...' and 'datastore client ...' are Ok
         if (*first_arg == app_suffix
             || (std::string_view(*first_arg).starts_with("--") && std::string_view(*first_arg).substr(2) == app_suffix))
         {
@@ -283,12 +283,12 @@ bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
         }
     }
 
-    /// Use app if clickhouse binary is run through symbolic link with name clickhouse-app
-    std::string app_name = "clickhouse-" + std::string(app_suffix);
+    /// Use app if datastore binary is run through symbolic link with name datastore-app
+    std::string app_name = "datastore-" + std::string(app_suffix);
     return !argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name));
 }
 
-/// Don't allow dlopen in the main ClickHouse binary, because it is harmful and insecure.
+/// Don't allow dlopen in the main Datastore binary, because it is harmful and insecure.
 /// We don't use it. But it can be used by some libraries for implementation of "plugins".
 /// We absolutely discourage the ancient technique of loading
 /// 3rd-party uncontrolled dangerous libraries into the process address space,
@@ -316,7 +316,7 @@ extern "C"
 
     const char * dlerror()
     {
-        return "ClickHouse does not allow dynamic library loading";
+        return "Datastore does not allow dynamic library loading";
     }
 }
 #endif
@@ -383,8 +383,8 @@ int main(int argc_, char ** argv_)
 #endif
 
     /// This is used for testing. For example,
-    /// clickhouse-local should be able to run a simple query without throw/catch.
-    if (getenv("CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
+    /// datastore-local should be able to run a simple query without throw/catch.
+    if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 
     /// Reset new handler to default (that throws std::bad_alloc)
@@ -408,7 +408,7 @@ int main(int argc_, char ** argv_)
     /// Top-level --help / -h / -? (as the sole argument) should show the dispatcher
     /// help listing all subcommands and exit with code 0. Without this carve-out,
     /// `--help` would match the `startsWith(argv[i], "-h")` rule below and be routed
-    /// into clickhouse-client, which treats anything starting with "-h" as a --host
+    /// into datastore-client, which treats anything starting with "-h" as a --host
     /// specification and fails.
     if (main_func == printHelpOnError && argv.size() == 2)
     {
@@ -417,8 +417,8 @@ int main(int argc_, char ** argv_)
             main_func = mainEntryHelp;
     }
 
-    /// If host/port arguments are passed to clickhouse/ch shortcuts,
-    /// interpret it as clickhouse-client invocation for usability.
+    /// If host/port arguments are passed to datastore/ch shortcuts,
+    /// interpret it as datastore-client invocation for usability.
     if (main_func == printHelpOnError && argv.size() >= 2)
     {
         for (size_t i = 1, num_args = argv.size(); i < num_args; ++i)
@@ -434,14 +434,14 @@ int main(int argc_, char ** argv_)
     }
 
     /// Interpret binary without argument or with arguments starts with dash
-    /// ('-') as clickhouse-local for better usability:
+    /// ('-') as datastore-local for better usability:
     ///
-    ///     clickhouse help # dumps help
-    ///     clickhouse -q 'select 1' # use local
-    ///     clickhouse # spawn local
-    ///     clickhouse local # spawn local
-    ///     clickhouse "select ..." # spawn local
-    ///     clickhouse /tmp/repro --enable-analyzer
+    ///     datastore help # dumps help
+    ///     datastore -q 'select 1' # use local
+    ///     datastore # spawn local
+    ///     datastore local # spawn local
+    ///     datastore "select ..." # spawn local
+    ///     datastore /tmp/repro --enable-analyzer
     ///
     std::error_code ec;
     if (main_func == printHelpOnError && !argv.empty()
@@ -454,13 +454,13 @@ int main(int argc_, char ** argv_)
 
     /// If the argument looks like a file path but doesn't exist, provide a helpful error
     /// instead of the generic "Use one of the following commands" message.
-    /// The check above routes existing files to clickhouse-local, but when the file
+    /// The check above routes existing files to datastore-local, but when the file
     /// doesn't exist, we fall through to `printHelp` which is confusing:
-    ///     $ clickhouse tests/queries/0_stateless/my_test.sql
+    ///     $ datastore tests/queries/0_stateless/my_test.sql
     ///     Use one of the following commands: ...
     /// We detect file-like arguments by the presence of `/` (path separator)
     /// or `.` (file extension), which distinguishes them from mistyped subcommand
-    /// names like "clickhouse sever" where the generic help is appropriate.
+    /// names like "datastore sever" where the generic help is appropriate.
     if (main_func == printHelpOnError && argv.size() >= 2)
     {
         std::string_view arg(argv[1]);

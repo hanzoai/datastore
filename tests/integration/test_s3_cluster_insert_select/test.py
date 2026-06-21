@@ -117,7 +117,7 @@ def test_distributed_insert_select_to_rmt(started_cluster):
     node1.query(
         f"""
     CREATE TABLE {table} ON CLUSTER {cluster_name} (a String, b UInt64)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/b0612a53-5f58-4df0-a28f-a154e0cdb797/{table}', '{{replica}}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/b0612a53-5f58-4df0-a28f-a154e0cdb797/{table}', '{{replica}}')
     ORDER BY (a, b);
         """
     )
@@ -158,7 +158,7 @@ def test_distributed_insert_select_to_rmt_limit(started_cluster):
     node1.query(
         f"""
     CREATE TABLE {table} ON CLUSTER {cluster_name} (a String, b UInt64)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/32c614a9-13af-43c5-848c-a3f62a78e390/{table}', '{{replica}}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/32c614a9-13af-43c5-848c-a3f62a78e390/{table}', '{{replica}}')
     ORDER BY (a, b);
         """
     )
@@ -198,7 +198,7 @@ def test_distributed_insert_select_to_rmt_where(started_cluster):
     node1.query(
         f"""
     CREATE TABLE {table} ON CLUSTER {cluster_name} (a String, b UInt64)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/32c614a9-13af-43c5-848c-a3f62a78e390/{table}', '{{replica}}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/32c614a9-13af-43c5-848c-a3f62a78e390/{table}', '{{replica}}')
     ORDER BY (a, b);
         """
     )
@@ -242,7 +242,7 @@ def test_distributed_insert_select_to_rmt_cte_const(started_cluster):
     node1.query(
         f"""
     CREATE TABLE {table} ON CLUSTER {cluster_name} (a String, b UInt64)
-    ENGINE=ReplicatedMergeTree('/clickhouse/tables/178ed413-b055-46eb-9657-442811aef552/{table}', '{{replica}}')
+    ENGINE=ReplicatedMergeTree('/datastore/tables/178ed413-b055-46eb-9657-442811aef552/{table}', '{{replica}}')
     ORDER BY (a, b);
         """
     )

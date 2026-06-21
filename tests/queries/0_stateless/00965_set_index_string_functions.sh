@@ -4,9 +4,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS set_idx;"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS set_idx;"
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 CREATE TABLE set_idx
 (
     k UInt64,
@@ -16,9 +16,9 @@ CREATE TABLE set_idx
 ORDER BY k
 SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi';"
 
-$CLICKHOUSE_CLIENT --query="INSERT INTO set_idx VALUES
-(0, 'ClickHouse - столбцовая система управления базами данных (СУБД)'),
-(1, 'ClickHouse is a column-oriented database management system (DBMS)'),
+$DATASTORE_CLIENT --query="INSERT INTO set_idx VALUES
+(0, 'Datastore - столбцовая система управления базами данных (СУБД)'),
+(1, 'Datastore is a column-oriented database management system (DBMS)'),
 (2, 'column-oriented database management system'),
 (3, 'columns'),
 (4, 'какая-то строка'),
@@ -35,19 +35,19 @@ $CLICKHOUSE_CLIENT --query="INSERT INTO set_idx VALUES
 (15, 'cadabraabra')"
 
 # STARTS_WITH
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra')"
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra') FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra')"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra') FORMAT JSON" | grep "rows_read"
 
 # ENDS_WITH
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE endsWith(s, 'abra')"
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE endsWith(s, 'abra') FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE endsWith(s, 'abra')"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE endsWith(s, 'abra') FORMAT JSON" | grep "rows_read"
 
 # COMBINED
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra') AND endsWith(s, 'abra')"
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra') AND endsWith(s, 'abra') FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra') AND endsWith(s, 'abra')"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE startsWith(s, 'abra') AND endsWith(s, 'abra') FORMAT JSON" | grep "rows_read"
 
 # MULTY_SEARCH_ANY
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE multiSearchAny(s, ['data', 'base'])"
-$CLICKHOUSE_CLIENT --query="SELECT * FROM set_idx WHERE multiSearchAny(s, ['data', 'base']) FORMAT JSON" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE multiSearchAny(s, ['data', 'base'])"
+$DATASTORE_CLIENT --query="SELECT * FROM set_idx WHERE multiSearchAny(s, ['data', 'base']) FORMAT JSON" | grep "rows_read"
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE set_idx;"
+$DATASTORE_CLIENT --query="DROP TABLE set_idx;"

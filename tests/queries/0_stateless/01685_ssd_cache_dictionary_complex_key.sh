@@ -4,7 +4,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
     CREATE TABLE complex_key_simple_attributes_source_table
     (
     id UInt64,
@@ -26,9 +26,9 @@ $CLICKHOUSE_CLIENT --query="
     value_second String DEFAULT 'value_second_default'
     )
     PRIMARY KEY id, id_key
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_simple_attributes_source_table' DB '${CLICKHOUSE_DATABASE}'))
+    SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_simple_attributes_source_table' DB '${DATASTORE_DATABASE}'))
     LIFETIME(MIN 1 MAX 1000)
-    LAYOUT(COMPLEX_KEY_SSD_CACHE(BLOCK_SIZE 4096 FILE_SIZE 8192 PATH '$USER_FILES_PATH/${CLICKHOUSE_DATABASE}_dic'));
+    LAYOUT(COMPLEX_KEY_SSD_CACHE(BLOCK_SIZE 4096 FILE_SIZE 8192 PATH '$USER_FILES_PATH/${DATASTORE_DATABASE}_dic'));
 
     SELECT 'Dictionary cache_dictionary_complex_key_simple_attributes';
     SELECT 'dictGet existing value';
@@ -73,7 +73,7 @@ $CLICKHOUSE_CLIENT --query="
         value_second Nullable(String) DEFAULT 'value_second_default'
     )
     PRIMARY KEY id, id_key
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_complex_attributes_source_table' DB '${CLICKHOUSE_DATABASE}'))
+    SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'complex_key_complex_attributes_source_table' DB '${DATASTORE_DATABASE}'))
     LIFETIME(MIN 1 MAX 1000)
     LAYOUT(COMPLEX_KEY_SSD_CACHE(BLOCK_SIZE 4096 FILE_SIZE 8192 PATH '$USER_FILES_PATH/1d'));
 

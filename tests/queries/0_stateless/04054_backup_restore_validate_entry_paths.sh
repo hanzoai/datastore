@@ -5,11 +5,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS tbl_backup_traversal"
-${CLICKHOUSE_CLIENT} --query "CREATE TABLE tbl_backup_traversal (id UInt64, data String) ENGINE = MergeTree ORDER BY id"
-${CLICKHOUSE_CLIENT} --query "INSERT INTO tbl_backup_traversal VALUES (1, 'hello')"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS tbl_backup_traversal"
+${DATASTORE_CLIENT} --query "CREATE TABLE tbl_backup_traversal (id UInt64, data String) ENGINE = MergeTree ORDER BY id"
+${DATASTORE_CLIENT} --query "INSERT INTO tbl_backup_traversal VALUES (1, 'hello')"
 
-backups_disk_root=$(${CLICKHOUSE_CLIENT} --query "SELECT path FROM system.disks WHERE name='backups'" 2>/dev/null)
+backups_disk_root=$(${DATASTORE_CLIENT} --query "SELECT path FROM system.disks WHERE name='backups'" 2>/dev/null)
 
 if [ -z "${backups_disk_root}" ]; then
     echo "backups disk is not configured, skipping test"
@@ -32,9 +32,9 @@ inject_and_restore() {
     local injected_name="$2"
     local expected_error="$3"
     local injected_data_file="${4:-${extra_data_path}}"
-    local bname="${CLICKHOUSE_TEST_UNIQUE_NAME}_${suffix}"
+    local bname="${DATASTORE_TEST_UNIQUE_NAME}_${suffix}"
 
-    ${CLICKHOUSE_CLIENT} --query "BACKUP TABLE tbl_backup_traversal TO Disk('backups', '${bname}')" > /dev/null 2>&1
+    ${DATASTORE_CLIENT} --query "BACKUP TABLE tbl_backup_traversal TO Disk('backups', '${bname}')" > /dev/null 2>&1
 
     local bpath="${backups_disk_root}/${bname}"
     mkdir -p "${bpath}/$(dirname "${extra_data_path}")"
@@ -42,14 +42,14 @@ inject_and_restore() {
 
     sed -i "s|</contents>|<file><name>${injected_name}</name><size>${extra_size}</size><checksum>${extra_checksum}</checksum><data_file>${injected_data_file}</data_file></file></contents>|" "${bpath}/.backup"
 
-    ${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS tbl_backup_traversal"
-    ${CLICKHOUSE_CLIENT} -m -q "RESTORE TABLE tbl_backup_traversal FROM Disk('backups', '${bname}'); -- { serverError ${expected_error} }"
+    ${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS tbl_backup_traversal"
+    ${DATASTORE_CLIENT} -m -q "RESTORE TABLE tbl_backup_traversal FROM Disk('backups', '${bname}'); -- { serverError ${expected_error} }"
 }
 
 # Helper to recreate the table between tests.
 recreate_table() {
-    ${CLICKHOUSE_CLIENT} --query "CREATE TABLE IF NOT EXISTS tbl_backup_traversal (id UInt64, data String) ENGINE = MergeTree ORDER BY id"
-    ${CLICKHOUSE_CLIENT} --query "INSERT INTO tbl_backup_traversal VALUES (1, 'hello')"
+    ${DATASTORE_CLIENT} --query "CREATE TABLE IF NOT EXISTS tbl_backup_traversal (id UInt64, data String) ENGINE = MergeTree ORDER BY id"
+    ${DATASTORE_CLIENT} --query "INSERT INTO tbl_backup_traversal VALUES (1, 'hello')"
 }
 
 # Test 1: relative path traversal in <name>.
@@ -89,12 +89,12 @@ inject_and_restore "abs_datafile" "data/default/tbl_backup_traversal/extra_paylo
 
 # Test 8: normal backup/restore still works after the validation was added.
 recreate_table
-normal_backup="${CLICKHOUSE_TEST_UNIQUE_NAME}_normal"
-${CLICKHOUSE_CLIENT} --query "BACKUP TABLE tbl_backup_traversal TO Disk('backups', '${normal_backup}')" > /dev/null 2>&1
-${CLICKHOUSE_CLIENT} --query "DROP TABLE tbl_backup_traversal"
-${CLICKHOUSE_CLIENT} --query "RESTORE TABLE tbl_backup_traversal FROM Disk('backups', '${normal_backup}')" > /dev/null 2>&1
-${CLICKHOUSE_CLIENT} --query "SELECT * FROM tbl_backup_traversal"
+normal_backup="${DATASTORE_TEST_UNIQUE_NAME}_normal"
+${DATASTORE_CLIENT} --query "BACKUP TABLE tbl_backup_traversal TO Disk('backups', '${normal_backup}')" > /dev/null 2>&1
+${DATASTORE_CLIENT} --query "DROP TABLE tbl_backup_traversal"
+${DATASTORE_CLIENT} --query "RESTORE TABLE tbl_backup_traversal FROM Disk('backups', '${normal_backup}')" > /dev/null 2>&1
+${DATASTORE_CLIENT} --query "SELECT * FROM tbl_backup_traversal"
 
 # Clean up.
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS tbl_backup_traversal"
-rm -rf "${backups_disk_root:?}/${CLICKHOUSE_TEST_UNIQUE_NAME}"_* 2>/dev/null || true
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS tbl_backup_traversal"
+rm -rf "${backups_disk_root:?}/${DATASTORE_TEST_UNIQUE_NAME}"_* 2>/dev/null || true

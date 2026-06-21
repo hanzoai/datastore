@@ -26,14 +26,14 @@ def started_cluster():
 def test_user_grants():
     instance.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/users.xml"),
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
     )
     instance.query("system reload users")
     instance.wait_for_log_line("performing update on configuration")
     assert instance.query("show grants for user1") == ""
     
     instance.query("create role if not exists role1")
-    instance.replace_in_config("/etc/clickhouse-server/users.d/users.xml", "<grants></grants>", "<grants><query>GRANT role1</query></grants>")
+    instance.replace_in_config("/etc/datastore-server/users.d/users.xml", "<grants></grants>", "<grants><query>GRANT role1</query></grants>")
     instance.query("system reload users")
     instance.wait_for_log_line("performing update on configuration")
     assert instance.query("show grants for user1") == "GRANT role1 TO user1\n"

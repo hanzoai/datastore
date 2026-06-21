@@ -13,13 +13,13 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 The `regexp_tree` dictionary lets you map keys to values based on hierarchical regular-expression patterns.
 It's optimized for pattern-match lookups (e.g. classifying strings like user agent strings by matching regex patterns) rather than exact key matching.
 
-<iframe width="1024" height="576" src="https://www.youtube.com/embed/ESlAhUJMoz8?si=sY2OVm-zcuxlDRaX" title="An intro to ClickHouse regex tree dictionaries" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="1024" height="576" src="https://www.youtube.com/embed/ESlAhUJMoz8?si=sY2OVm-zcuxlDRaX" title="An intro to Datastore regex tree dictionaries" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Use the regular expression tree dictionary with YAMLRegExpTree source {#use-regular-expression-tree-dictionary-in-clickhouse-open-source}
+## Use the regular expression tree dictionary with YAMLRegExpTree source {#use-regular-expression-tree-dictionary-in-datastore-open-source}
 
 <CloudNotSupportedBadge/>
 
-Regular expression tree dictionaries are defined in ClickHouse open-source using the [`YAMLRegExpTree`](../sources/yamlregexptree.md) source which is provided the path to a YAML file containing the regular expression tree.
+Regular expression tree dictionaries are defined in Datastore open-source using the [`YAMLRegExpTree`](../sources/yamlregexptree.md) source which is provided the path to a YAML file containing the regular expression tree.
 
 ```sql title="Query"
 CREATE DICTIONARY regexp_dict
@@ -29,7 +29,7 @@ CREATE DICTIONARY regexp_dict
     version String
 )
 PRIMARY KEY(regexp)
-SOURCE(YAMLRegExpTree(PATH '/var/lib/clickhouse/user_files/regexp_tree.yaml'))
+SOURCE(YAMLRegExpTree(PATH '/var/lib/datastore/user_files/regexp_tree.yaml'))
 LAYOUT(regexp_tree)
 ...
 ```
@@ -78,7 +78,7 @@ The dictionary then continues to look into the child nodes and finds that the st
 As a result, the value of attribute `name` is `Android` (defined in the first layer) and the value of attribute `version` is `12` (defined in the child node).
 
 With a sophisticated YAML configuration file, you can use a regexp tree dictionaries as a user agent string parser.
-ClickHouse supports [uap-core](https://github.com/ua-parser/uap-core) and you can see how to use it in the functional test [02504_regexp_dictionary_ua_parser](https://github.com/ClickHouse/ClickHouse/blob/master/tests/queries/0_stateless/02504_regexp_dictionary_ua_parser.sh)
+Datastore supports [uap-core](https://github.com/ua-parser/uap-core) and you can see how to use it in the functional test [02504_regexp_dictionary_ua_parser](https://github.com/ClickHouse/Datastore/blob/master/tests/queries/0_stateless/02504_regexp_dictionary_ua_parser.sh)
 
 ### Collecting attribute values {#collecting-attribute-values}
 
@@ -98,22 +98,22 @@ CREATE DICTIONARY regexp_dict
     parent String
 )
 PRIMARY KEY(regexp)
-SOURCE(YAMLRegExpTree(PATH '/var/lib/clickhouse/user_files/regexp_tree.yaml'))
+SOURCE(YAMLRegExpTree(PATH '/var/lib/datastore/user_files/regexp_tree.yaml'))
 LAYOUT(regexp_tree)
 LIFETIME(0)
 ```
 
 ```yaml
-# /var/lib/clickhouse/user_files/regexp_tree.yaml
-- regexp: 'clickhouse\.com'
-  tag: 'ClickHouse'
+# /var/lib/datastore/user_files/regexp_tree.yaml
+- regexp: 'datastore\.com'
+  tag: 'Datastore'
   topological_index: 1
   paths:
-    - regexp: 'clickhouse\.com/docs(.*)'
-      tag: 'ClickHouse Documentation'
+    - regexp: 'datastore\.com/docs(.*)'
+      tag: 'Datastore Documentation'
       topological_index: 0
       captured: '\1'
-      parent: 'ClickHouse'
+      parent: 'Datastore'
 
 - regexp: '/docs(/|$)'
   tag: 'Documentation'
@@ -127,15 +127,15 @@ LIFETIME(0)
 
 ```sql title="Query"
 CREATE TABLE urls (url String) ENGINE=MergeTree ORDER BY url;
-INSERT INTO urls VALUES ('clickhouse.com'), ('clickhouse.com/docs/en'), ('github.com/clickhouse/tree/master/docs');
+INSERT INTO urls VALUES ('datastore.com'), ('datastore.com/docs/en'), ('github.com/datastore/tree/master/docs');
 SELECT url, dictGetAll('regexp_dict', ('tag', 'topological_index', 'captured', 'parent'), url, 2) FROM urls;
 ```
 
 ```text title="Response"
 ┌─url────────────────────────────────────┬─dictGetAll('regexp_dict', ('tag', 'topological_index', 'captured', 'parent'), url, 2)─┐
-│ clickhouse.com                         │ (['ClickHouse'],[1],[],[])                                                            │
-│ clickhouse.com/docs/en                 │ (['ClickHouse Documentation','ClickHouse'],[0,1],['/en'],['ClickHouse'])              │
-│ github.com/clickhouse/tree/master/docs │ (['Documentation','GitHub'],[2,3],[NULL],[])                                          │
+│ datastore.com                         │ (['Datastore'],[1],[],[])                                                            │
+│ datastore.com/docs/en                 │ (['Datastore Documentation','Datastore'],[0,1],['/en'],['Datastore'])              │
+│ github.com/datastore/tree/master/docs │ (['Documentation','GitHub'],[2,3],[NULL],[])                                          │
 └────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -145,10 +145,10 @@ Pattern matching behavior can be modified with certain dictionary settings:
 - `regexp_dict_flag_case_insensitive`: Use case-insensitive matching (defaults to `false`). Can be overridden in individual expressions with `(?i)` and `(?-i)`.
 - `regexp_dict_flag_dotall`: Allow '.' to match newline characters (defaults to `false`).
 
-## Use regular expression tree dictionary in ClickHouse Cloud {#use-regular-expression-tree-dictionary-in-clickhouse-cloud}
+## Use regular expression tree dictionary in Datastore Cloud {#use-regular-expression-tree-dictionary-in-datastore-cloud}
 
-The [`YAMLRegExpTree`](../sources/yamlregexptree.md) source works in ClickHouse Open Source but not in ClickHouse Cloud.
-To use regexp tree dictionaries in ClickHouse Cloud, first create a regexp tree dictionary from a YAML file locally in ClickHouse Open Source, then dump this dictionary into a CSV file using the `dictionary` table function and the [INTO OUTFILE](/sql-reference/statements/select/into-outfile.md) clause.
+The [`YAMLRegExpTree`](../sources/yamlregexptree.md) source works in Datastore Open Source but not in Datastore Cloud.
+To use regexp tree dictionaries in Datastore Cloud, first create a regexp tree dictionary from a YAML file locally in Datastore Open Source, then dump this dictionary into a CSV file using the `dictionary` table function and the [INTO OUTFILE](/sql-reference/statements/select/into-outfile.md) clause.
 
 ```sql
 SELECT * FROM dictionary(regexp_dict) INTO OUTFILE('regexp_dict.csv')
@@ -173,7 +173,7 @@ The schema of dumped file is:
 - `keys Array(String)`: the names of user-defined attributes.
 - `values Array(String)`: the values of user-defined attributes.
 
-To create the dictionary in ClickHouse Cloud, first create a table `regexp_dictionary_source_table` with below table structure:
+To create the dictionary in Datastore Cloud, first create a table `regexp_dictionary_source_table` with below table structure:
 
 ```sql
 CREATE TABLE regexp_dictionary_source_table
@@ -189,7 +189,7 @@ CREATE TABLE regexp_dictionary_source_table
 Then update the local CSV by
 
 ```bash
-clickhouse client \
+datastore client \
     --host MY_HOST \
     --secure \
     --password MY_PASSWORD \
@@ -208,7 +208,7 @@ CREATE DICTIONARY regexp_dict
     name String,
     version String
 PRIMARY KEY(regexp)
-SOURCE(CLICKHOUSE(TABLE 'regexp_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'regexp_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(regexp_tree);
 ```

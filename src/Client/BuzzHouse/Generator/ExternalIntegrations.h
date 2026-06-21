@@ -388,7 +388,7 @@ private:
     std::unique_ptr<AzuriteIntegration> azurite;
     std::unique_ptr<HTTPIntegration> http;
     std::unique_ptr<DolorIntegration> dolor;
-    std::unique_ptr<MySQLIntegration> clickhouse;
+    std::unique_ptr<MySQLIntegration> datastore;
 
     std::filesystem::path default_sqlite_path;
     size_t requires_external_call_check = 0;
@@ -437,7 +437,7 @@ public:
 
     bool hasHTTPConnection() const { return http != nullptr; }
 
-    bool hasClickHouseExtraServerConnection() const { return clickhouse != nullptr; }
+    bool hasClickHouseExtraServerConnection() const { return datastore != nullptr; }
 
     const std::filesystem::path & getSQLitePath() const { return sqlite ? sqlite->sqlite_path : default_sqlite_path; }
 

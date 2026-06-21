@@ -10,11 +10,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-FILE_PATH="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_race_test.parquet"
+FILE_PATH="${DATASTORE_TMP}/${DATASTORE_DATABASE}_race_test.parquet"
 
 # Create a parquet file with many small row groups to maximize parallelism
 # and increase the chance of hitting the race condition.
-${CLICKHOUSE_LOCAL} -q "
+${DATASTORE_LOCAL} -q "
     INSERT INTO FUNCTION file('${FILE_PATH}')
     SELECT number, randomString(100) as s
     FROM numbers(100000)
@@ -26,7 +26,7 @@ ${CLICKHOUSE_LOCAL} -q "
 # and scheduleTasksIfNeeded checks is_privileged_task while another
 # thread is initializing next_subgroup_for_step.
 for _ in {1..20}; do
-    ${CLICKHOUSE_LOCAL} -q "
+    ${DATASTORE_LOCAL} -q "
         SELECT count()
         FROM file('${FILE_PATH}')
         SETTINGS

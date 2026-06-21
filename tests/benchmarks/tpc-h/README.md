@@ -5,7 +5,7 @@ The `FRACTION` parameter in the `HAVING` clause is defined as `0.0001 / SF` (spe
 
 # List of known problems
 ## Q6
-The query doesn't work out-of-the-box due to https://github.com/ClickHouse/ClickHouse/issues/70136. The alternative formulation with a minor fix works.
+The query doesn't work out-of-the-box due to https://github.com/ClickHouse/Datastore/issues/70136. The alternative formulation with a minor fix works.
 
 Original:
 ```sql

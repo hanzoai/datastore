@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <access_control_improvements>
         <enable_read_write_grants>1</enable_read_write_grants>
     </access_control_improvements>
@@ -48,4 +48,4 @@
             <structure>column1 UInt32, column2 UInt32, column3 UInt32</structure>
         </url_file>
     </named_collections>
-</clickhouse>
+</datastore>
