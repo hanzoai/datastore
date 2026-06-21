@@ -30,7 +30,7 @@ datastore/
 ├── cmd/zap-bridge/                    ← Go ZAP→ClickHouse bridge
 ├── hanzo/                             ← Hanzo overlay: compose, config.xml, schema.sql
 ├── packages/, pkg/                    ← RPM/deb packaging
-├── docker/, Dockerfile.hanzo          ← Hanzo image build
+├── docker/, Dockerfile          ← Hanzo image build
 └── ci/                                ← upstream + Hanzo CI
 ```
 
@@ -54,7 +54,7 @@ markers intact and the draft PR is labelled `upstream-sync,conflict`.
 
 There is exactly one upstream sync workflow. Do not add a second.
 
-The Hanzo overlay (`hanzo/`, `cmd/zap-bridge/`, `Dockerfile.hanzo`) is kept
+The Hanzo overlay (`hanzo/`, `cmd/zap-bridge/`, `Dockerfile`) is kept
 disjoint from upstream paths to minimize collisions, so most syncs land
 clean. Watch areas for conflicts: `docker/`, `programs/server/config.xml`,
 top-level `CMakeLists.txt`, and any upstream rename of `cmd/`.
@@ -69,7 +69,7 @@ top-level `CMakeLists.txt`, and any upstream rename of `cmd/`.
   - `ENABLE_DATASTORE_KEEPER` (was `${ENABLE_DATASTORE_ALL}`) — drops the standalone keeper entry-point and the `datastore-keeper` symlink from the multipurpose binary.
   - `ENABLE_DATASTORE_KEEPER_CONVERTER` (was `${ENABLE_DATASTORE_ALL}`) — drops the ZooKeeper→Keeper snapshot converter tool.
   - `ENABLE_DATASTORE_KEEPER_CLIENT` (was `${ENABLE_DATASTORE_ALL}`) — drops the standalone keeper CLI client.
-- `Dockerfile.hanzo` — removed the `datastore-keeper` and `hanzo-datastore-keeper` symlink lines.
+- `Dockerfile` — removed the `datastore-keeper` and `hanzo-datastore-keeper` symlink lines.
 - `BUILD_STANDALONE_KEEPER` already defaulted `OFF` upstream; left untouched.
 
 ### What did NOT change (and why)
@@ -85,7 +85,7 @@ top-level `CMakeLists.txt`, and any upstream rename of `cmd/`.
 
 ### `programs/install/Install.cpp:440-441`
 
-`Install.cpp` (the `datastore install` system-installer subcommand, separate from the `install/` packaging recipes) still lists `datastore-keeper` and `datastore-keeper-converter` in its `tools` symlink array. Those `fs::create_symlink` calls are no-ops on a binary that no longer claims those modes — the symlinks would point at the multipurpose `datastore` binary which would dispatch by `argv[0]` and fail. We don't ship `datastore install` from `Dockerfile.hanzo`, so this only matters for the deb/rpm path. Cleanup is queued for Phase 1.1; not load-bearing for this image.
+`Install.cpp` (the `datastore install` system-installer subcommand, separate from the `install/` packaging recipes) still lists `datastore-keeper` and `datastore-keeper-converter` in its `tools` symlink array. Those `fs::create_symlink` calls are no-ops on a binary that no longer claims those modes — the symlinks would point at the multipurpose `datastore` binary which would dispatch by `argv[0]` and fail. We don't ship `datastore install` from `Dockerfile`, so this only matters for the deb/rpm path. Cleanup is queued for Phase 1.1; not load-bearing for this image.
 
 ### Validation
 

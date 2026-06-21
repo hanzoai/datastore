@@ -1,6 +1,6 @@
 // zap-bridge is a per-package Go module — the existing C++/CMake build of
 // hanzo-datastore stays untouched. This module is built only by the
-// Dockerfile.hanzo `zap-builder` stage.
+// Dockerfile `zap-builder` stage.
 module github.com/hanzoai/datastore/cmd/zap-bridge
 
 go 1.26.4
