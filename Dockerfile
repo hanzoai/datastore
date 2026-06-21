@@ -1,6 +1,6 @@
 # Hanzo Datastore — Columnar analytics engine + native ZAP duplex listener
 # This is the production build. Uses docker/server/Dockerfile.alpine as source.
-# Build: docker build -t ghcr.io/hanzoai/datastore:latest -f Dockerfile.hanzo docker/server/
+# Build: docker build -t ghcr.io/hanzoai/datastore:latest -f Dockerfile docker/server/
 #
 # The image runs two processes in one container:
 #   PID 1: hanzo-datastore server (HTTP 8123, native TCP 9000, replication 9009)
