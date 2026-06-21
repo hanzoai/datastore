@@ -684,7 +684,7 @@ void DatabaseAtomic::tryCreateMetadataSymlink()
     if (!db_disk->isSymlinkSupported())
         return;
 
-    /// Symlinks in data/db_name/ directory and metadata/db_name/ are not used by ClickHouse,
+    /// Symlinks in data/db_name/ directory and metadata/db_name/ are not used by Datastore,
     /// it's needed only for convenient introspection.
     chassert(path_to_metadata_symlink != metadata_path);
     if (db_disk->existsFileOrDirectory(path_to_metadata_symlink))

@@ -7,12 +7,12 @@ title: 'Syntax'
 doc_type: 'reference'
 ---
 
-In this section, we will take a look at ClickHouse's SQL syntax. 
-ClickHouse uses a syntax based on SQL but offers a number of extensions and optimizations.
+In this section, we will take a look at Datastore's SQL syntax. 
+Datastore uses a syntax based on SQL but offers a number of extensions and optimizations.
 
 ## Query Parsing {#query-parsing}
 
-There are two types of parsers in ClickHouse:
+There are two types of parsers in Datastore:
 - _A full SQL parser_ (a recursive descent parser).
 - _A data format parser_ (a fast stream parser).
 
@@ -35,14 +35,14 @@ You can also turn on the full parser for the data
 by using the [`input_format_values_interpret_expressions`](../operations/settings/settings-formats.md#input_format_values_interpret_expressions) setting. 
 
 When the aforementioned setting is set to `1`, 
-ClickHouse first tries to parse values with the fast stream parser. 
-If it fails, ClickHouse tries to use the full parser for the data, treating it like an SQL [expression](#expressions).
+Datastore first tries to parse values with the fast stream parser. 
+If it fails, Datastore tries to use the full parser for the data, treating it like an SQL [expression](#expressions).
 </details>
 
 The data can have any format. 
 When a query is received, the server calculates no more than [max_query_size](../operations/settings/settings.md#max_query_size) bytes of the request in RAM 
 (by default, 1 MB), and the rest is stream parsed.
-This is to allow for avoiding issues with large `INSERT` queries, which is the recommended way to insert your data in ClickHouse.
+This is to allow for avoiding issues with large `INSERT` queries, which is the recommended way to insert your data in Datastore.
 
 When using the [`Values`](/interfaces/formats/Values) format in an `INSERT` query, 
 it may appear that data is parsed the same as for expressions in a `SELECT` query however this is not the case. 
@@ -61,7 +61,7 @@ For more information about format parsers, see the [Formats](../interfaces/forma
 
 ## Comments {#comments}
 
-ClickHouse supports both SQL-style and C-style comments:
+Datastore supports both SQL-style and C-style comments:
 
 - SQL-style comments begin with `--`, `#!` or `# ` and continue to the end of the line. A space after `--` and `#!` can be omitted.
 - C-style comments:
@@ -85,7 +85,7 @@ SELECT
 
 ## Keywords {#keywords}
 
-Keywords in ClickHouse can be either _case-sensitive_ or _case-insensitive_ depending on the context.
+Keywords in Datastore can be either _case-sensitive_ or _case-insensitive_ depending on the context.
 
 Keywords are **case-insensitive** when they correspond to:
 
@@ -141,7 +141,7 @@ Use underscores (`_`) or another separator instead of dots in column names unles
 
 ## Literals {#literals}
 
-In ClickHouse, a literal is a value which is directly represented in a query.
+In Datastore, a literal is a value which is directly represented in a query.
 In other words it is a fixed value which does not change during query execution.
 
 Literals can be:
@@ -299,7 +299,7 @@ all placeholders are resolved and replaced by the actual query parameter values.
 Query parameters can be defined in several ways:
 
 - `SET param_<name>=<value>` — using a `SET` command in a query.
-- `--param_<name>='<value>'` — as an argument to `clickhouse-client` on the command line.
+- `--param_<name>='<value>'` — as an argument to `datastore-client` on the command line.
 - `param_<name>=<value>` — as a URL query string parameter for the HTTP interface.
 
 A query parameter can be referenced in a query using `{<name>: <datatype>}`, where `<name>` is the query parameter name and `<datatype>` is the datatype it is converted to.
@@ -326,12 +326,12 @@ SELECT
 </details>
 
 <details>
-<summary>Example with clickhouse-client</summary>
+<summary>Example with datastore-client</summary>
 
-If you are using `clickhouse-client`, the parameters are specified as `--param_name=value`. For example, the following parameter has the name `message` and it is retrieved as a `String`:
+If you are using `datastore-client`, the parameters are specified as `--param_name=value`. For example, the following parameter has the name `message` and it is retrieved as a `String`:
 
 ```bash
-clickhouse-client --param_message='hello' --query="SELECT {message: String}"
+datastore-client --param_message='hello' --query="SELECT {message: String}"
 
 hello
 ```
@@ -452,7 +452,7 @@ The parts of the syntax above are explained below.
 | Part of syntax | Description                                                                                                                                      | Example                                                                 | Notes                                                                                                                                                |
 |----------------|--------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `AS`           | The keyword for defining aliases. You can define the alias for a table name or a column name in a `SELECT` clause without using the `AS` keyword.| `SELECT table_name_alias.column_name FROM table_name table_name_alias`. | In the [CAST](/sql-reference/functions/type-conversion-functions#CAST) function, the `AS` keyword has another meaning. See the description of the function. |
-| `expr`         | Any expression supported by ClickHouse.                                                                                                          | `SELECT column_name * 2 AS double FROM some_table`                      |                                                                                                                                                      |
+| `expr`         | Any expression supported by Datastore.                                                                                                          | `SELECT column_name * 2 AS double FROM some_table`                      |                                                                                                                                                      |
 | `alias`        | Name for `expr`. Aliases should comply with the [identifiers](#identifiers) syntax.                                                                       | `SELECT "table t".column_name FROM table_name AS "table t"`.            |                                                                                                                                                      |
 
 ### Notes on Usage {#notes-on-usage}
@@ -463,7 +463,7 @@ The parts of the syntax above are explained below.
 SELECT (1 AS n) + 2, n`.
 ```
 
-- Aliases are not visible in subqueries and between subqueries. For example, while executing the following query ClickHouse generates the exception `Unknown identifier: num`:
+- Aliases are not visible in subqueries and between subqueries. For example, while executing the following query Datastore generates the exception `Unknown identifier: num`:
 
 ```sql
 `SELECT (SELECT sum(b.a) + num FROM b) - a.a AS num FROM a`
@@ -497,7 +497,7 @@ Code: 184. DB::Exception: Received from localhost:9000, 127.0.0.1. DB::Exception
 In the preceding example, we declared table `t` with column `b`. 
 Then, when selecting data, we defined the `sum(b) AS b` alias. 
 As aliases are global, 
-ClickHouse substituted the literal `b` in the expression `argMax(a, b)` with the expression `sum(b)`. 
+Datastore substituted the literal `b` in the expression `argMax(a, b)` with the expression `sum(b)`. 
 This substitution caused the exception.
 
 :::note

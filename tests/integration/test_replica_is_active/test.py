@@ -21,7 +21,7 @@ def start_cluster():
             node.query(
                 """
                 CREATE TABLE test_table(date Date, id UInt32, dummy UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_table', '{}')
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test_table', '{}')
                 PARTITION BY date ORDER BY id
                 """.format(
                     node_name

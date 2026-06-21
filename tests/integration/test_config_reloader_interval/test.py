@@ -37,7 +37,7 @@ def test_reload_config(start_cluster):
             == "1000\n"
         )
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/config_reloader.xml",
+            "/etc/datastore-server/config.d/config_reloader.xml",
             "1000",
             "7777",
         )
@@ -52,7 +52,7 @@ def test_reload_config(start_cluster):
         )
     finally:
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/config_reloader.xml",
+            "/etc/datastore-server/config.d/config_reloader.xml",
             "7777",
             "1000",
         )

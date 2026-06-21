@@ -170,13 +170,13 @@ def test_enabled_endpoint_serves_html():
     """When the experimental gate is open, plain `GET /webterminal` returns the HTML page."""
     response = instance.http_request("webterminal", method="GET")
     assert response.status_code == 200
-    assert "ClickHouse" in response.text or "webterminal" in response.text.lower()
+    assert "Datastore" in response.text or "webterminal" in response.text.lower()
 
 
 def test_successful_auth_handshake():
     """A valid auth frame on the enabled endpoint must establish a session.
 
-    The embedded `clickhouse-client` writes its banner / prompt to the PTY,
+    The embedded `datastore-client` writes its banner / prompt to the PTY,
     which the server forwards as a binary WebSocket frame. The presence of
     such a frame (rather than an immediate close) signals a successful
     handshake and authentication.
@@ -188,7 +188,7 @@ def test_successful_auth_handshake():
         frame = _ws_read_frame(sock, timeout=15.0)
         assert frame is not None, "Server closed the connection without sending any frame"
         opcode, payload = frame
-        # 0x02 = binary frame (PTY data forwarded from clickhouse-client).
+        # 0x02 = binary frame (PTY data forwarded from datastore-client).
         # 0x08 = close frame, which would indicate auth or protocol failure.
         assert opcode == 0x02, (
             f"Expected binary PTY data after successful auth, got opcode={opcode:#x} payload={payload!r}"

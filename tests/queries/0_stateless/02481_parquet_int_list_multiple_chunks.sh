@@ -34,9 +34,9 @@ echo "Parquet"
 #pq.write_table(table, "int-list-zero-based-chunked-array.parquet")
 
 DATA_FILE=$CUR_DIR/data_parquet/int-list-zero-based-chunked-array.parquet
-${CLICKHOUSE_CLIENT} --query="DROP TABLE IF EXISTS parquet_load"
-${CLICKHOUSE_CLIENT} --query="CREATE TABLE parquet_load (arr Array(Int64)) ENGINE = Memory"
-cat "$DATA_FILE" | ${CLICKHOUSE_CLIENT} -q "INSERT INTO parquet_load FORMAT Parquet"
-${CLICKHOUSE_CLIENT} --query="SELECT * FROM parquet_load SETTINGS max_threads=1" | md5sum
-${CLICKHOUSE_CLIENT} --query="SELECT count() FROM parquet_load"
-${CLICKHOUSE_CLIENT} --query="drop table parquet_load"
+${DATASTORE_CLIENT} --query="DROP TABLE IF EXISTS parquet_load"
+${DATASTORE_CLIENT} --query="CREATE TABLE parquet_load (arr Array(Int64)) ENGINE = Memory"
+cat "$DATA_FILE" | ${DATASTORE_CLIENT} -q "INSERT INTO parquet_load FORMAT Parquet"
+${DATASTORE_CLIENT} --query="SELECT * FROM parquet_load SETTINGS max_threads=1" | md5sum
+${DATASTORE_CLIENT} --query="SELECT count() FROM parquet_load"
+${DATASTORE_CLIENT} --query="drop table parquet_load"

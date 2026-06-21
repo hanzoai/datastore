@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/redis
 title: 'Redis dictionary source'
 sidebar_position: 10
 sidebar_label: 'Redis'
-description: 'Configure Redis as a dictionary source in ClickHouse.'
+description: 'Configure Redis as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 

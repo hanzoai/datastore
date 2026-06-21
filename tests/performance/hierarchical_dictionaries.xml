@@ -40,7 +40,7 @@
             parent_id UInt64 HIERARCHICAL
         )
         PRIMARY KEY id
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'hierarchical_dictionary_source_table'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'hierarchical_dictionary_source_table'))
         LAYOUT({dictionary_layout}(SHARDS {dictionary_shards}))
         LIFETIME(0);
     </create_query>
@@ -52,7 +52,7 @@
             parent_id UInt64 HIERARCHICAL
         )
         PRIMARY KEY id
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'hierarchical_dictionary_source_table'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'hierarchical_dictionary_source_table'))
         LAYOUT(FLAT(max_array_size 1000001))
         LIFETIME(0);
     </create_query>

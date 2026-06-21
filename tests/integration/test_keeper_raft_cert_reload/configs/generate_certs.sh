@@ -19,7 +19,7 @@ echo "Generating root CA..."
 openssl genrsa -out rootCA.key 2048
 openssl req -x509 -new -nodes -key rootCA.key -sha256 -days $DAYS_VALID \
     -out rootCA.pem \
-    -subj "/C=US/ST=Test/L=Test/O=ClickHouse Test/CN=Test Root CA"
+    -subj "/C=US/ST=Test/L=Test/O=Datastore Test/CN=Test Root CA"
 
 # Create OpenSSL config for server certs with SANs
 cat > server.cnf << 'EOF'
@@ -32,7 +32,7 @@ prompt = no
 C = US
 ST = Test
 L = Test
-O = ClickHouse Test
+O = Datastore Test
 CN = localhost
 
 [v3_req]

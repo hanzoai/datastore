@@ -29,7 +29,7 @@ class JobStages(metaclass=MetaClasses.WithIter):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Run ClickHouse functional tests (CI job)"
+        description="Run Datastore functional tests (CI job)"
     )
     parser.add_argument(
         "--options",
@@ -56,7 +56,7 @@ def parse_args():
     )
     parser.add_argument(
         "--path",
-        help="Optional. Path to a directory that contains the clickhouse binary",
+        help="Optional. Path to a directory that contains the datastore binary",
         type=str,
         default="",
     )
@@ -67,7 +67,7 @@ def parse_args():
     )
     parser.add_argument(
         "--debug",
-        help="Optional. Open clickhouse-client console after test run",
+        help="Optional. Open datastore-client console after test run",
         default=False,
         action="store_true",
     )
@@ -95,9 +95,9 @@ def run_tests(
     # Remove --report-logs-stats, it hides sanitizer errors in def reportLogStats(args): clickhouse_execute(args, "SYSTEM FLUSH LOGS")
     memory_limit = 10 * 2**30 if "asan_ubsan" in Info().job_name else 5 * 2**30
     # `set -o pipefail` is required so that the pipeline's exit code reflects
-    # `clickhouse-test`'s exit code rather than `tee`'s. Without it, a non-zero
-    # exit from `clickhouse-test` is silently swallowed by `tee` returning 0.
-    command = f"set -o pipefail; clickhouse-test --testname --check-zookeeper-session --hung-check --memory-limit {memory_limit} --trace \
+    # `datastore-test`'s exit code rather than `tee`'s. Without it, a non-zero
+    # exit from `datastore-test` is silently swallowed by `tee` returning 0.
+    command = f"set -o pipefail; datastore-test --testname --check-zookeeper-session --hung-check --memory-limit {memory_limit} --trace \
                 --capture-client-stacktrace --queries ./tests/queries --test-runs {rerun_count} \
                 {extra_args} \
                 --queries ./tests/queries {('--order=random' if random_order else '')} -- {' '.join(tests) if tests else ''} | ts '%Y-%m-%d %H:%M:%S' \
@@ -295,9 +295,9 @@ def main():
     if is_bugfix_validation:
         os.environ["GLOBAL_TAGS"] = "no-random-settings"
         ch_path = temp_dir
-        if not info.is_local_run or not (Path(temp_dir) / "clickhouse").is_file():
+        if not info.is_local_run or not (Path(temp_dir) / "datastore").is_file():
             link_arch = "aarch64" if Utils.is_arm() else "amd64"
-            link_to_master_head_binary = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/{link_arch}/clickhouse"
+            link_to_master_head_binary = f"https://datastore-builds.s3.us-east-1.amazonaws.com/master/{link_arch}/datastore"
             Shell.run(
                 f"wget -nv -P {temp_dir} {link_to_master_head_binary}",
                 verbose=True,
@@ -308,9 +308,9 @@ def main():
         ch_path = str(Path(args.path).absolute())
     else:
         paths_to_check = [
-            f"{temp_dir}/clickhouse",  # it's set for CI runs, but we need to check it
-            f"{Utils.cwd()}/build/programs/clickhouse",
-            f"{Utils.cwd()}/clickhouse",
+            f"{temp_dir}/datastore",  # it's set for CI runs, but we need to check it
+            f"{Utils.cwd()}/build/programs/datastore",
+            f"{Utils.cwd()}/datastore",
         ]
         for path in paths_to_check:
             if Path(path).is_file():
@@ -323,7 +323,7 @@ def main():
                 + ". You can also specify path to binary via --path argument"
             )
 
-    Shell.check(f"chmod +x {ch_path}/clickhouse")
+    Shell.check(f"chmod +x {ch_path}/datastore")
 
     stop_watch = Utils.Stopwatch()
 
@@ -451,22 +451,22 @@ def main():
                 print("skip log export config for local run")
 
         commands = [
-            f"rm -rf /etc/clickhouse-client/* /etc/clickhouse-server/* /etc/clickhouse-server1/* /etc/clickhouse-server2/*",
+            f"rm -rf /etc/datastore-client/* /etc/datastore-server/* /etc/datastore-server1/* /etc/datastore-server2/*",
             # google *.proto files
-            f"mkdir -p /usr/share/clickhouse/ && ln -sf /usr/local/include /usr/share/clickhouse/protos",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-server",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-client",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-compressor",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-local",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-disks",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-obfuscator",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/clickhouse-format",
-            f"ln -sf {ch_path}/clickhouse {ch_path}/ch",
-            f"ln -sf /usr/bin/clickhouse-odbc-bridge {ch_path}/clickhouse-odbc-bridge",
-            f"cp programs/server/config.xml programs/server/users.xml /etc/clickhouse-server/",
-            f"./tests/config/install.sh /etc/clickhouse-server /etc/clickhouse-client {config_installs_args}",
-            f"clickhouse-server --version",
-            f"sed -i 's|>/test/chroot|>{temp_dir}/chroot|' /etc/clickhouse-server**/config.d/*.xml",
+            f"mkdir -p /usr/share/datastore/ && ln -sf /usr/local/include /usr/share/datastore/protos",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-server",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-client",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-compressor",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-local",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-disks",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-obfuscator",
+            f"ln -sf {ch_path}/datastore {ch_path}/datastore-format",
+            f"ln -sf {ch_path}/datastore {ch_path}/ch",
+            f"ln -sf /usr/bin/datastore-odbc-bridge {ch_path}/datastore-odbc-bridge",
+            f"cp programs/server/config.xml programs/server/users.xml /etc/datastore-server/",
+            f"./tests/config/install.sh /etc/datastore-server /etc/datastore-client {config_installs_args}",
+            f"datastore-server --version",
+            f"sed -i 's|>/test/chroot|>{temp_dir}/chroot|' /etc/datastore-server**/config.d/*.xml",
             CH.set_random_timezone,
         ]
 
@@ -477,24 +477,24 @@ def main():
                 commands.append(lambda: CH.set_memory_ratio(0.8))
 
         os.environ["MALLOC_CONF"] = (
-            f"prof_prefix:{temp_dir}/jemalloc_profiles/clickhouse.jemalloc"
+            f"prof_prefix:{temp_dir}/jemalloc_profiles/datastore.jemalloc"
         )
 
         if not is_llvm_coverage:
             commands.append(configure_log_export)
 
         results.append(
-            Result.from_commands_run(name="Install ClickHouse", command=commands)
+            Result.from_commands_run(name="Install Datastore", command=commands)
         )
         res = results[-1].is_ok()
 
     assert (
-        Path(ch_path + "/clickhouse").is_file()
-        or Path(ch_path + "/clickhouse").is_symlink()
-    ), f"clickhouse binary not found under [{ch_path}]"
+        Path(ch_path + "/datastore").is_file()
+        or Path(ch_path + "/datastore").is_symlink()
+    ), f"datastore binary not found under [{ch_path}]"
 
     if res and JobStages.START in stages:
-        step_name = "Start ClickHouse Server"
+        step_name = "Start Datastore Server"
         print(step_name)
 
         def start():
@@ -642,7 +642,7 @@ def main():
                 10 * 2**30 if "asan_ubsan" in Info().job_name else 5 * 2**30
             )
             diag_command = (
-                f"clickhouse-test --testname --check-zookeeper-session --hung-check"
+                f"datastore-test --testname --check-zookeeper-session --hung-check"
                 f" --memory-limit {memory_limit} --trace --capture-client-stacktrace"
                 f" --queries ./tests/queries --shard --zookeeper"
                 f" --diagnose-random-settings"
@@ -683,7 +683,7 @@ def main():
                     # Coverage binaries are slow and prone to timing-related flakiness
                     # (e.g. TIMEOUT_EXCEEDED on SystemLogQueue). Don't penalise them
                     # for it — mark the test green so it doesn't block coverage jobs.
-                    # See: https://github.com/ClickHouse/ClickHouse/pull/95763
+                    # See: https://github.com/ClickHouse/Datastore/pull/95763
                     test_case.set_status(Result.Status.OK)
             if diag_exit_code != 0:
                 diag_status = Result.Status.FAIL
@@ -705,8 +705,8 @@ def main():
             )
 
     if args.debug:
-        print("\n\n=== Debug mode enabled, starting clickhouse-client ===\n")
-        subprocess.call("clickhouse-client", shell=True)
+        print("\n\n=== Debug mode enabled, starting datastore-client ===\n")
+        subprocess.call("datastore-client", shell=True)
 
     CH.terminate()
 

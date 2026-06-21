@@ -33,7 +33,7 @@ def start_cluster():
         ),
         pytest.param(
             "test_db_repl",
-            "Replicated('/clickhouse/tables/test_table','shard1', 'replica1')",
+            "Replicated('/datastore/tables/test_table','shard1', 'replica1')",
             "ReplicatedMergeTree",
             "ORDER BY n",
             id="Replicated db with ReplicatedMergeTree table",

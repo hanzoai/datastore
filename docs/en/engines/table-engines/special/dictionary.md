@@ -1,5 +1,5 @@
 ---
-description: 'The `Dictionary` engine displays the dictionary data as a ClickHouse
+description: 'The `Dictionary` engine displays the dictionary data as a Datastore
   table.'
 sidebar_label: 'Dictionary'
 sidebar_position: 20
@@ -8,7 +8,7 @@ title: 'Dictionary table engine'
 doc_type: 'reference'
 ---
 
-The `Dictionary` engine displays the [dictionary](../../../sql-reference/statements/create/dictionary/overview.md) data as a ClickHouse table.
+The `Dictionary` engine displays the [dictionary](../../../sql-reference/statements/create/dictionary/overview.md) data as a Datastore table.
 
 ## Example {#example}
 

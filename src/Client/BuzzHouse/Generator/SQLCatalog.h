@@ -44,7 +44,7 @@ enum class PeerTableDatabase
     MySQL = 1,
     PostgreSQL = 2,
     SQLite = 3,
-    ClickHouse = 4
+    Datastore = 4
 };
 
 enum class PeerQuery

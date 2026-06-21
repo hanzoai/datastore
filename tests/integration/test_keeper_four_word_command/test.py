@@ -169,7 +169,7 @@ def test_cmd_mntr(started_cluster):
 
         # contains:
         #   10 nodes created by test
-        #   3 nodes created by clickhouse "/clickhouse/task_queue/ddl"
+        #   3 nodes created by datastore "/datastore/task_queue/ddl"
         #   1 root node, 3 keeper system nodes
         assert int(result["zk_znode_count"]) == 14
         assert int(result["zk_watch_count"]) == 2
@@ -233,10 +233,10 @@ def test_cmd_conf(started_cluster):
     assert "superdigest" not in result
 
     assert result["four_letter_word_allow_list"] == "*"
-    assert result["log_storage_path"] == "/var/lib/clickhouse/coordination/log"
+    assert result["log_storage_path"] == "/var/lib/datastore/coordination/log"
     assert result["log_storage_disk"] == "LocalLogDisk"
     assert (
-        result["snapshot_storage_path"] == "/var/lib/clickhouse/coordination/snapshots"
+        result["snapshot_storage_path"] == "/var/lib/datastore/coordination/snapshots"
     )
     assert result["snapshot_storage_disk"] == "LocalSnapshotDisk"
 
@@ -316,7 +316,7 @@ def test_cmd_srvr(started_cluster):
             if len(row) != 0:
                 result[row[0].strip()] = row[1].strip()
 
-        assert "ClickHouse Keeper version" in result
+        assert "Datastore Keeper version" in result
         assert "Latency min/avg/max" in result
         assert result["Received"] == "10"
         assert result["Sent"] == "10"
@@ -356,7 +356,7 @@ def test_cmd_stat(started_cluster):
             if len(row) != 0:
                 result[row[0].strip()] = row[1].strip()
 
-        assert "ClickHouse Keeper version" in result
+        assert "Datastore Keeper version" in result
         assert "Latency min/avg/max" in result
         assert result["Received"] == "10"
         assert result["Sent"] == "10"

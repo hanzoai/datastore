@@ -566,7 +566,7 @@ def test_dictionary_with_named_collection(cluster):
     node1.query("DROP DICTIONARY IF EXISTS test_dict")
     node1.query("""
         CREATE DICTIONARY test_dict (id UInt64, name String) PRIMARY KEY id
-        SOURCE(CLICKHOUSE(NAME dict_coll)) LAYOUT(FLAT()) LIFETIME(0)
+        SOURCE(DATASTORE(NAME dict_coll)) LAYOUT(FLAT()) LIFETIME(0)
     """)
 
     assert node1.query("SELECT dictGet('test_dict', 'name', toUInt64(2))").strip() == "two"

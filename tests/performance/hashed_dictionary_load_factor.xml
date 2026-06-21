@@ -43,7 +43,7 @@
             value_int UInt64
         )
         PRIMARY KEY id
-        SOURCE(CLICKHOUSE(TABLE 'simple_key_dictionary_source_table'))
+        SOURCE(DATASTORE(TABLE 'simple_key_dictionary_source_table'))
         LAYOUT({layout_suffix}(MAX_LOAD_FACTOR 0.{load_factor}))
         LIFETIME(0)
     </create_query>
@@ -56,7 +56,7 @@
             value_int UInt64
         )
         PRIMARY KEY id, id_key
-        SOURCE(CLICKHOUSE(TABLE 'complex_key_dictionary_source_table'))
+        SOURCE(DATASTORE(TABLE 'complex_key_dictionary_source_table'))
         LAYOUT(COMPLEX_KEY_{layout_suffix}(MAX_LOAD_FACTOR 0.{load_factor}))
         LIFETIME(0)
     </create_query>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <proxy>
         <https>
             <resolver>
@@ -9,4 +9,4 @@
             </resolver>
         </https>
     </proxy>
-</clickhouse>
+</datastore>

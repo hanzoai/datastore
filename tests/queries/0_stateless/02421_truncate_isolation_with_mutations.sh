@@ -11,21 +11,21 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./parts.lib
 . "$CURDIR"/parts.lib
 
-CLICKHOUSE_CLIENT="$CLICKHOUSE_CLIENT --apply_mutations_on_fly 0"
+DATASTORE_CLIENT="$DATASTORE_CLIENT --apply_mutations_on_fly 0"
 
 function reset_table()
 {
     table=${1:-"tt"}
     settings=${2:-""}
-    $CLICKHOUSE_CLIENT -q "drop table if exists $table"
-    $CLICKHOUSE_CLIENT -q "create table $table (n int) engine=MergeTree order by tuple() $settings"
+    $DATASTORE_CLIENT -q "drop table if exists $table"
+    $DATASTORE_CLIENT -q "create table $table (n int) engine=MergeTree order by tuple() $settings"
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (1), (2), (3)" # inserts all_1_1_0
+    $DATASTORE_CLIENT -q "insert into $table values (1), (2), (3)" # inserts all_1_1_0
 }
 
 function concurrent_delete_before()
 {
-    $CLICKHOUSE_CLIENT -q "select 'concurrent_delete_before'"
+    $DATASTORE_CLIENT -q "select 'concurrent_delete_before'"
 
     reset_table tt
 
@@ -40,14 +40,14 @@ function concurrent_delete_before()
     tx 12                                            "insert into tt values (4)"
     tx 12                                            "commit"
 
-    $CLICKHOUSE_CLIENT -q "select n from tt order by n"
+    $DATASTORE_CLIENT -q "select n from tt order by n"
 }
 
 concurrent_delete_before
 
 function concurrent_delete_after()
 {
-    $CLICKHOUSE_CLIENT -q "select 'concurrent_delete_after'"
+    $DATASTORE_CLIENT -q "select 'concurrent_delete_after'"
 
     reset_table tt
 
@@ -60,14 +60,14 @@ function concurrent_delete_after()
     tx 21 "commit"
     tx 22                                            "rollback"
 
-    $CLICKHOUSE_CLIENT -q "select n from tt order by n"
+    $DATASTORE_CLIENT -q "select n from tt order by n"
 }
 
 concurrent_delete_after
 
 function concurrent_delete_rollback()
 {
-    $CLICKHOUSE_CLIENT -q "select 'concurrent_delete_rollback'"
+    $DATASTORE_CLIENT -q "select 'concurrent_delete_rollback'"
 
     reset_table tt
 
@@ -82,7 +82,7 @@ function concurrent_delete_rollback()
     tx 31 "truncate table tt"
     tx 31 "commit"
 
-    $CLICKHOUSE_CLIENT -q "select count() from tt"
+    $DATASTORE_CLIENT -q "select count() from tt"
 }
 
 concurrent_delete_rollback
@@ -90,7 +90,7 @@ concurrent_delete_rollback
 
 function concurrent_optimize_table_not_start()
 {
-    $CLICKHOUSE_CLIENT -q "select 'concurrent_optimize_table_not_start'"
+    $DATASTORE_CLIENT -q "select 'concurrent_optimize_table_not_start'"
 
     reset_table tt
 
@@ -104,7 +104,7 @@ function concurrent_optimize_table_not_start()
     tx 41 "select count() from tt"
     tx 41 "commit"
 
-    $CLICKHOUSE_CLIENT -q "select count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select count(), _part from tt group by _part order by _part"
 }
 
 concurrent_optimize_table_not_start
@@ -112,11 +112,11 @@ concurrent_optimize_table_not_start
 
 function concurrent_optimize_table()
 {
-    $CLICKHOUSE_CLIENT -q "select 'concurrent_optimize_table'"
+    $DATASTORE_CLIENT -q "select 'concurrent_optimize_table'"
 
     reset_table tt
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (4), (5)" # inserts all_2_2_0
+    $DATASTORE_CLIENT -q "insert into $table values (4), (5)" # inserts all_2_2_0
 
     tx 41 "begin transaction"
     tx 41 "optimize table tt final"
@@ -132,14 +132,14 @@ function concurrent_optimize_table()
     tx 43                                            "commit" | grep -Eo "INVALID_TRANSACTION" | uniq
     tx 41 "commit"
 
-    $CLICKHOUSE_CLIENT -q "select count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select count(), _part from tt group by _part order by _part"
 }
 
 concurrent_optimize_table
 
 function concurrent_optimize_table_before()
 {
-    $CLICKHOUSE_CLIENT -q "select 'concurrent_optimize_table_before'"
+    $DATASTORE_CLIENT -q "select 'concurrent_optimize_table_before'"
 
     reset_table tt
 
@@ -150,25 +150,25 @@ function concurrent_optimize_table_before()
     tx 52             "alter table tt drop partition id 'all'" | grep -vwe "PART_IS_TEMPORARILY_LOCKED" ||: # conflict with all_1_1_1
     tx 52             "rollback"
 
-    $CLICKHOUSE_CLIENT -q "select count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select count(), _part from tt group by _part order by _part"
 }
 
 concurrent_optimize_table_before
 
 function drop_parts_which_already_outdated()
 {
-    $CLICKHOUSE_CLIENT -q "select 'drop_parts_which_already_outdated'"
+    $DATASTORE_CLIENT -q "select 'drop_parts_which_already_outdated'"
 
     reset_table tt "settings old_parts_lifetime=0"
 
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_1*/"
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_2*/"
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_3*/"
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_4*/"
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_5*/"
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_6*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_1*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_2*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_3*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_4*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_5*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_6*/"
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
+    $DATASTORE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
 
     tx 69             "begin transaction"
     tx 69             "select 'before optimize', count(), _part from tt group by _part order by _part"
@@ -186,21 +186,21 @@ function drop_parts_which_already_outdated()
 
     tx 62 "rollback"
 
-    $CLICKHOUSE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
 }
 
 drop_parts_which_already_outdated
 
 function unable_drop_one_part_which_outdated_but_visible()
 {
-    $CLICKHOUSE_CLIENT -q "select 'unable_drop_one_part_which_outdated_but_visible'"
+    $DATASTORE_CLIENT -q "select 'unable_drop_one_part_which_outdated_but_visible'"
 
     reset_table tt "settings old_parts_lifetime=0"
 
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_1*/"
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_2*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_1*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_2*/"
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
+    $DATASTORE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
 
     tx 79             "begin transaction"
     tx 79             "select 'before optimize', count(), _part from tt group by _part order by _part"
@@ -214,20 +214,20 @@ function unable_drop_one_part_which_outdated_but_visible()
 
     tx 71 "rollback"
 
-    $CLICKHOUSE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
 }
 
 unable_drop_one_part_which_outdated_but_visible
 
 function drop_one_part_which_outdated_and_reverted()
 {
-    $CLICKHOUSE_CLIENT -q "select 'drop_one_part_which_outdated_and_reverted'"
+    $DATASTORE_CLIENT -q "select 'drop_one_part_which_outdated_and_reverted'"
 
     reset_table tt "settings old_parts_lifetime=0"
 
-    $CLICKHOUSE_CLIENT -q "optimize table tt final /*all_1_1_1*/"
+    $DATASTORE_CLIENT -q "optimize table tt final /*all_1_1_1*/"
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
+    $DATASTORE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
 
     tx 89             "begin transaction"
     tx 89             "select 'before optimize', count(), _part from tt group by _part order by _part"
@@ -242,18 +242,18 @@ function drop_one_part_which_outdated_and_reverted()
     tx 89             "alter table tt drop part 'all_2_2_0'"
     tx 89             "commit"
 
-    $CLICKHOUSE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
 }
 
 drop_one_part_which_outdated_and_reverted
 
 function drop_one_part_which_outdated_and_reverted_no_name_intersection()
 {
-    $CLICKHOUSE_CLIENT -q "select 'drop_one_part_which_outdated_and_reverted_no_name_intersection'"
+    $DATASTORE_CLIENT -q "select 'drop_one_part_which_outdated_and_reverted_no_name_intersection'"
 
     reset_table tt "settings old_parts_lifetime=0"
 
-    $CLICKHOUSE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
+    $DATASTORE_CLIENT -q "insert into $table values (4)" # inserts all_2_2_0
 
     tx 99             "begin transaction"
     tx 99             "select 'before optimize', count(), _part from tt group by _part order by _part"
@@ -268,7 +268,7 @@ function drop_one_part_which_outdated_and_reverted_no_name_intersection()
     tx 99             "alter table tt drop part 'all_2_2_0'"
     tx 99             "commit"
 
-    $CLICKHOUSE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
+    $DATASTORE_CLIENT -q "select 'at the end', count(), _part from tt group by _part order by _part"
 }
 
 drop_one_part_which_outdated_and_reverted_no_name_intersection

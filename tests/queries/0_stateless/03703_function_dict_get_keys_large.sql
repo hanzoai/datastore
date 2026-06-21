@@ -22,7 +22,7 @@ CREATE DICTIONARY dict_big
     grp_round String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src_big'))
+SOURCE(DATASTORE(TABLE 'dict_src_big'))
 LIFETIME(0)
 LAYOUT(HASHED());
 

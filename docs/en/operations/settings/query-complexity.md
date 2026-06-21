@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 ## Overview {#overview}
 
-As part of the [settings](/operations/settings/overview), ClickHouse offers
+As part of the [settings](/operations/settings/overview), Datastore offers
 the ability to place restrictions on query complexity. This helps protect against
 potentially resource-intensive queries, ensuring safer and more predictable 
 execution, particularly when using the user interface.
@@ -17,7 +17,7 @@ execution, particularly when using the user interface.
 Almost all the restrictions only apply to `SELECT` queries, and for distributed 
 query processing, restrictions are applied on each server separately.
 
-ClickHouse generally checks the restrictions only after data parts have been 
+Datastore generally checks the restrictions only after data parts have been 
 fully processed, rather than checking the restrictions for each row. This can
 result in a situation where restrictions are violated while the part is being
 processed.
@@ -95,12 +95,12 @@ which means that it is "unrestricted".
 | [`transfer_overflow_mode`](/operations/settings/settings#transfer_overflow_mode)                                       | Sets what happens when the amount of data exceeds one of the limits.                                                                                            |
 | [`max_rows_in_join`](/operations/settings/settings#max_rows_in_join)                                                   | Limits the number of rows in the hash table that is used when joining tables.                                                                                   |
 | [`max_bytes_in_join`](/operations/settings/settings#max_bytes_in_join)                                                 | The maximum size in number of bytes of the hash table used when joining tables.                                                                                 |
-| [`join_overflow_mode`](/operations/settings/settings#join_overflow_mode)                                               | Defines what action ClickHouse performs when any of the following join limits is reached.                                                                       |
+| [`join_overflow_mode`](/operations/settings/settings#join_overflow_mode)                                               | Defines what action Datastore performs when any of the following join limits is reached.                                                                       |
 | [`max_partitions_per_insert_block`](/operations/settings/settings#max_partitions_per_insert_block)                     | Limits the maximum number of partitions in a single inserted block and an exception is thrown if the block contains too many partitions.                        |
 | [`throw_on_max_partitions_per_insert_block`](/operations/settings/settings#throw_on_max_partitions_per_insert_block)   | Allows you to control the behaviour when `max_partitions_per_insert_block` is reached.                                                                          |
 | [`max_temporary_data_on_disk_size_for_user`](/operations/settings/settings#throw_on_max_partitions_per_insert_block)   | The maximum amount of data consumed by temporary files on disk in bytes for all concurrently running user queries.                                              |
 | [`max_temporary_data_on_disk_size_for_query`](/operations/settings/settings#max_temporary_data_on_disk_size_for_query) | The maximum amount of data consumed by temporary files on disk in bytes for all concurrently running queries.                                                   |
-| [`max_sessions_for_user`](/operations/settings/settings#max_sessions_for_user)                                         | Maximum number of simultaneous sessions per authenticated user to the ClickHouse server.                                                                        |
+| [`max_sessions_for_user`](/operations/settings/settings#max_sessions_for_user)                                         | Maximum number of simultaneous sessions per authenticated user to the Datastore server.                                                                        |
 | [`max_partitions_to_read`](/operations/settings/settings#max_partitions_to_read)                                       | Limits the maximum number of partitions that can be accessed in a single query.                                                                                 |
 
 ## Obsolete settings {#obsolete-settings}

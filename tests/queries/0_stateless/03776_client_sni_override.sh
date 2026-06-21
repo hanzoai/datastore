@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # This test verifies that the --tls-sni-override option correctly sets the SNI field in TLS connections
 
 # Generate a self-signed certificate for testing
-CERT_DIR="${CLICKHOUSE_TMP}/sni_test_$$"
+CERT_DIR="${DATASTORE_TMP}/sni_test_$$"
 mkdir -p "${CERT_DIR}"
 
 # Generate a private key and self-signed certificate
@@ -48,7 +48,7 @@ if [ -z "${TEST_PORT}" ]; then
     exit 1
 fi
 
-# Test 1: Connect with clickhouse-client using --tls-sni-override
+# Test 1: Connect with datastore-client using --tls-sni-override
 echo "Test 1: With --tls-sni-override=custom.example.com"
 
 # Try to make a TLS connection with SNI override
@@ -57,7 +57,7 @@ echo "Test 1: With --tls-sni-override=custom.example.com"
 # --accept-invalid-certificate is needed for the self-signed cert
 
 CLIENT_LOG="${CERT_DIR}/client.log"
-${CLICKHOUSE_CLIENT} --host 127.0.0.1 --port ${TEST_PORT} --secure \
+${DATASTORE_CLIENT} --host 127.0.0.1 --port ${TEST_PORT} --secure \
     --tls-sni-override=custom.example.com --accept-invalid-certificate -q "SELECT 1" >"${CLIENT_LOG}" 2>&1 &
 CLIENT_PID=$!
 

@@ -43,7 +43,7 @@ CREATE DICTIONARY hierarchical_dictionary
     name String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'hierarchy_source'))
+SOURCE(DATASTORE(TABLE 'hierarchy_source'))
 LAYOUT(HASHED())
 LIFETIME(0);
 

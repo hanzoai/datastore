@@ -57,11 +57,11 @@ def setup_nodes(cluster):
     p = Pool(len(nodes))
     waiters = []
     for node in nodes:
-        node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/log"])
+        node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/log"])
         node.exec_in_container(
-            ["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"]
+            ["rm", "-rf", "/var/lib/datastore/coordination/snapshots"]
         )
-        node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/state"])
+        node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/state"])
 
         waiters.append(p.apply_async(start_clickhouse, (node,)))
 

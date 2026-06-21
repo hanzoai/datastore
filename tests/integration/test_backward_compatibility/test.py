@@ -1,13 +1,13 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 node1 = cluster.add_instance(
     "node1",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
@@ -24,7 +24,7 @@ def start_cluster():
     try:
         cluster.start()
         create_query = """CREATE TABLE t(date Date, id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/t', '{}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/t', '{}')
             PARTITION BY toYYYYMM(date)
             ORDER BY id"""
         node1.query(create_query.format(1))

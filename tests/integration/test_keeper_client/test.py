@@ -26,7 +26,7 @@ def started_cluster():
 
 @pytest.fixture(scope="function")
 def client(started_cluster):
-    with KeeperClient.from_cluster(cluster, "zoo1", identity="clickhouse:password") as keeper_client:
+    with KeeperClient.from_cluster(cluster, "zoo1", identity="datastore:password") as keeper_client:
         yield keeper_client
 
 
@@ -107,25 +107,25 @@ def test_find_super_nodes(client: KeeperClient):
 
 
 def test_delete_stale_backups(client: KeeperClient):
-    client.touch("/clickhouse")
-    client.touch("/clickhouse/backups")
-    client.touch("/clickhouse/backups/1")
-    client.touch("/clickhouse/backups/1/stage")
-    client.touch("/clickhouse/backups/1/stage/alive123")
-    client.touch("/clickhouse/backups/2")
-    client.touch("/clickhouse/backups/2/stage")
-    client.touch("/clickhouse/backups/2/stage/dead123")
+    client.touch("/datastore")
+    client.touch("/datastore/backups")
+    client.touch("/datastore/backups/1")
+    client.touch("/datastore/backups/1/stage")
+    client.touch("/datastore/backups/1/stage/alive123")
+    client.touch("/datastore/backups/2")
+    client.touch("/datastore/backups/2/stage")
+    client.touch("/datastore/backups/2/stage/dead123")
 
     response = client.delete_stale_backups()
 
     assert response == (
-        'Found backup "/clickhouse/backups/1", checking if it\'s active\n'
-        'Backup "/clickhouse/backups/1" is active, not going to delete\n'
-        'Found backup "/clickhouse/backups/2", checking if it\'s active\n'
-        'Backup "/clickhouse/backups/2" is not active, deleting it'
+        'Found backup "/datastore/backups/1", checking if it\'s active\n'
+        'Backup "/datastore/backups/1" is active, not going to delete\n'
+        'Found backup "/datastore/backups/2", checking if it\'s active\n'
+        'Backup "/datastore/backups/2" is not active, deleting it'
     )
 
-    assert client.ls("/clickhouse/backups") == ["1"]
+    assert client.ls("/datastore/backups") == ["1"]
 
 
 def test_base_commands(client: KeeperClient):
@@ -281,4 +281,4 @@ def test_get_all_children_number(client: KeeperClient):
 
 def test_get_acl(client: KeeperClient):
     client.touch("/test_get_acl")
-    assert client.get_acl("/test_get_acl") == "[digest] clickhouse:sMa7nZnCETJITpLiCPtfC4GnbwY= ALL"
+    assert client.get_acl("/test_get_acl") == "[digest] datastore:sMa7nZnCETJITpLiCPtfC4GnbwY= ALL"

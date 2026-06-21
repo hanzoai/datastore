@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/47552
+-- https://github.com/ClickHouse/Datastore/issues/47552
 
 DROP TABLE IF EXISTS clickhouse_alias_issue_1;
 DROP TABLE IF EXISTS clickhouse_alias_issue_2;

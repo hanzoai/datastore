@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_LOCAL --multiquery "
+$DATASTORE_LOCAL --multiquery "
     CREATE DATABASE db_to_drop;
     CREATE DATABASE db_to_keep;
 

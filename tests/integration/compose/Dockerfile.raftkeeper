@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Download RaftKeeper v2.3.0 ClickHouse-compatible Linux x86_64 release (amd64 only)
+# Download RaftKeeper v2.3.0 Datastore-compatible Linux x86_64 release (amd64 only)
 ENV RAFTKEEPER_VERSION=v2.3.0
-ENV RAFTKEEPER_TAR=RaftKeeper-v2.3.0-linux-x86_64-clickhouse.tar.gz
+ENV RAFTKEEPER_TAR=RaftKeeper-v2.3.0-linux-x86_64-datastore.tar.gz
 RUN if [ "${TARGETARCH:-amd64}" = "amd64" ]; then \
     wget -q "https://github.com/JDRaftKeeper/RaftKeeper/releases/download/${RAFTKEEPER_VERSION}/${RAFTKEEPER_TAR}" -O /tmp/raftkeeper.tar.gz \
     && tar -xzf /tmp/raftkeeper.tar.gz -C /tmp \

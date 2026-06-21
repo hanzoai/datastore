@@ -26,9 +26,9 @@ def copy_file_to_container(local_path, dist_path, container_id):
 
 
 # Config with both working and broken UDFs
-config = """<clickhouse>
-    <user_defined_executable_functions_config>/etc/clickhouse-server/functions/*.xml</user_defined_executable_functions_config>
-</clickhouse>"""
+config = """<datastore>
+    <user_defined_executable_functions_config>/etc/datastore-server/functions/*.xml</user_defined_executable_functions_config>
+</datastore>"""
 
 # Working UDF config with comprehensive configuration options
 working_udf_config = """<functions>
@@ -87,36 +87,36 @@ def started_cluster():
         cluster.start()
 
         node.replace_config(
-            "/etc/clickhouse-server/config.d/executable_user_defined_functions_config.xml",
+            "/etc/datastore-server/config.d/executable_user_defined_functions_config.xml",
             config,
         )
 
         # Create functions directory if it doesn't exist
         node.exec_in_container(
-            ["bash", "-c", "mkdir -p /etc/clickhouse-server/functions"]
+            ["bash", "-c", "mkdir -p /etc/datastore-server/functions"]
         )
 
         # Write working UDF config
         node.exec_in_container(
-            ["bash", "-c", f"echo '{working_udf_config}' > /etc/clickhouse-server/functions/working_udf.xml"]
+            ["bash", "-c", f"echo '{working_udf_config}' > /etc/datastore-server/functions/working_udf.xml"]
         )
 
         # Write broken UDF config
         node.exec_in_container(
-            ["bash", "-c", f"echo '{broken_udf_config}' > /etc/clickhouse-server/functions/broken_udf.xml"]
+            ["bash", "-c", f"echo '{broken_udf_config}' > /etc/datastore-server/functions/broken_udf.xml"]
         )
 
         # Create user_scripts directory if it doesn't exist
         node.exec_in_container(
-            ["bash", "-c", "mkdir -p /var/lib/clickhouse/user_scripts"]
+            ["bash", "-c", "mkdir -p /var/lib/datastore/user_scripts"]
         )
 
         # Create working script
         node.exec_in_container(
-            ["bash", "-c", "echo '#!/bin/bash\nwhile read line; do echo \"Result: $line\"; done' > /var/lib/clickhouse/user_scripts/working_script.sh"]
+            ["bash", "-c", "echo '#!/bin/bash\nwhile read line; do echo \"Result: $line\"; done' > /var/lib/datastore/user_scripts/working_script.sh"]
         )
         node.exec_in_container(
-            ["bash", "-c", "chmod +x /var/lib/clickhouse/user_scripts/working_script.sh"]
+            ["bash", "-c", "chmod +x /var/lib/datastore/user_scripts/working_script.sh"]
         )
 
         node.restart_clickhouse()

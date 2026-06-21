@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --allow_experimental_analyzer=1 << EOF
+${DATASTORE_CLIENT} --allow_experimental_analyzer=1 << EOF
 
 DROP FUNCTION IF EXISTS huge_allocate;
 DROP FUNCTION IF EXISTS infinite_loop;
@@ -17,9 +17,9 @@ DELETE FROM system.webassembly_modules WHERE name = 'faulty';
 
 EOF
 
-cat ${CUR_DIR}/wasm/faulty.wasm | ${CLICKHOUSE_CLIENT} --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'faulty', code FROM input('code String') FORMAT RawBlob"
+cat ${CUR_DIR}/wasm/faulty.wasm | ${DATASTORE_CLIENT} --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'faulty', code FROM input('code String') FORMAT RawBlob"
 
-${CLICKHOUSE_CLIENT} --allow_experimental_analyzer=1 << EOF
+${DATASTORE_CLIENT} --allow_experimental_analyzer=1 << EOF
 
 -- this function tries to grow number of pages specified in the argument
 -- and stops on unsuccessful allocation returning the number of successfully allocated pages

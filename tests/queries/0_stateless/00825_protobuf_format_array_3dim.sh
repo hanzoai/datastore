@@ -9,7 +9,7 @@ SCHEMADIR=$CURDIR/format_schemas
 set -eo pipefail
 
 # Run the client.
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE IF EXISTS array_3dim_protobuf_00825;
 
 CREATE TABLE array_3dim_protobuf_00825
@@ -23,7 +23,7 @@ SELECT * FROM array_3dim_protobuf_00825;
 EOF
 
 BINARY_FILE_PATH=$(mktemp "$CURDIR/00825_protobuf_format_array_3dim.XXXXXX.binary")
-$CLICKHOUSE_CLIENT --query "SELECT * FROM array_3dim_protobuf_00825 FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_array_3dim:ABC'" > "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM array_3dim_protobuf_00825 FORMAT Protobuf SETTINGS format_schema = '$SCHEMADIR/00825_protobuf_format_array_3dim:ABC'" > "$BINARY_FILE_PATH"
 
 # Check the output in the protobuf format
 echo
@@ -31,8 +31,8 @@ $CURDIR/helpers/protobuf_length_delimited_encoder.py --decode_and_check --format
 
 # Check the input in the protobuf format (now the table contains the same data twice).
 echo
-$CLICKHOUSE_CLIENT --query "INSERT INTO array_3dim_protobuf_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_array_3dim:ABC' FORMAT Protobuf" < "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM array_3dim_protobuf_00825"
+$DATASTORE_CLIENT --query "INSERT INTO array_3dim_protobuf_00825 SETTINGS format_schema='$SCHEMADIR/00825_protobuf_format_array_3dim:ABC' FORMAT Protobuf" < "$BINARY_FILE_PATH"
+$DATASTORE_CLIENT --query "SELECT * FROM array_3dim_protobuf_00825"
 
 rm "$BINARY_FILE_PATH"
-$CLICKHOUSE_CLIENT --query "DROP TABLE array_3dim_protobuf_00825"
+$DATASTORE_CLIENT --query "DROP TABLE array_3dim_protobuf_00825"

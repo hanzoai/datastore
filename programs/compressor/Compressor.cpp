@@ -106,10 +106,10 @@ int mainEntryClickHouseCompressor(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: clickhouse compressor [options] < INPUT > OUTPUT" << std::endl;
-            std::cout << "Alternative usage: clickhouse compressor [options] INPUT OUTPUT" << std::endl;
+            std::cout << "Usage: datastore compressor [options] < INPUT > OUTPUT" << std::endl;
+            std::cout << "Alternative usage: datastore compressor [options] INPUT OUTPUT" << std::endl;
             std::cout << desc << std::endl;
-            std::cout << "\nSee also: https://clickhouse.com/docs/en/operations/utilities/clickhouse-compressor/\n";
+            std::cout << "\nSee also: https://datastore.com/docs/en/operations/utilities/datastore-compressor/\n";
             return 0;
         }
 

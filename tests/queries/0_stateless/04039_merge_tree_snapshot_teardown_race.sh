@@ -8,13 +8,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TABLE="test_04039_snapshot_teardown_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-TABLE_PROJ="test_04039_proj_teardown_${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TABLE="test_04039_snapshot_teardown_${DATASTORE_TEST_UNIQUE_NAME}"
+TABLE_PROJ="test_04039_proj_teardown_${DATASTORE_TEST_UNIQUE_NAME}"
 ITERATIONS=20
 
 function run_query()
 {
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d "$1" 2>/dev/null
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d "$1" 2>/dev/null
 }
 
 function cleanup()
@@ -53,14 +53,14 @@ function wait_for_reading()
 function run_iteration_proj()
 {
     local iteration=$1 && shift
-    local query_id="04039_proj_${CLICKHOUSE_TEST_UNIQUE_NAME}_${iteration}"
+    local query_id="04039_proj_${DATASTORE_TEST_UNIQUE_NAME}_${iteration}"
     local log_file
-    log_file=$(mktemp "${CLICKHOUSE_TMP}/04039_proj.XXXXXX.log")
+    log_file=$(mktemp "${DATASTORE_TMP}/04039_proj.XXXXXX.log")
 
     # Exercise the projection-index read-pool path (MergeTreeReadPoolProjectionIndex)
     # during teardown. The WHERE clause on `bucket` triggers the projection index reader
     # which calls createReaders -> data_part->storage.getSettings().
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query_id "$query_id" \
         --format Null \
         --max_threads 1 \
@@ -103,13 +103,13 @@ function run_iteration_proj()
 function run_iteration()
 {
     local iteration=$1 && shift
-    local query_id="04039_${CLICKHOUSE_TEST_UNIQUE_NAME}_${iteration}"
+    local query_id="04039_${DATASTORE_TEST_UNIQUE_NAME}_${iteration}"
     local log_file
-    log_file=$(mktemp "${CLICKHOUSE_TMP}/04039.XXXXXX.log")
+    log_file=$(mktemp "${DATASTORE_TMP}/04039.XXXXXX.log")
 
     # Kill the query after readers are initialized so teardown runs while the
     # pool still owns parts that came from the stripped snapshot.
-    $CLICKHOUSE_CLIENT \
+    $DATASTORE_CLIENT \
         --query_id "$query_id" \
         --format Null \
         --max_threads 1 \
@@ -152,7 +152,7 @@ trap cleanup EXIT
 
 cleanup
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE ${TABLE}
     (
         key UInt64,
@@ -165,13 +165,13 @@ $CLICKHOUSE_CLIENT --query "
     SETTINGS index_granularity = 1
 "
 
-$CLICKHOUSE_CLIENT --query "SYSTEM STOP MERGES ${TABLE}"
+$DATASTORE_CLIENT --query "SYSTEM STOP MERGES ${TABLE}"
 
 for i in {0..31}; do
     bucket=$((i % 8))
     offset=$((i * 256))
 
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         INSERT INTO ${TABLE}
         SELECT
             number + ${offset},
@@ -185,7 +185,7 @@ for iteration in $(seq 1 "${ITERATIONS}"); do
     run_iteration "$iteration"
 done
 
-$CLICKHOUSE_CLIENT --query "SELECT count() = 8192 FROM ${TABLE}"
+$DATASTORE_CLIENT --query "SELECT count() = 8192 FROM ${TABLE}"
 
 # -----------------------------------------------------------------------
 # Part 2: projection-index read-pool teardown race
@@ -193,7 +193,7 @@ $CLICKHOUSE_CLIENT --query "SELECT count() = 8192 FROM ${TABLE}"
 # dereferences data_part->storage.getSettings() on projection parts.
 # -----------------------------------------------------------------------
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     CREATE TABLE ${TABLE_PROJ}
     (
         key UInt64,
@@ -211,13 +211,13 @@ $CLICKHOUSE_CLIENT --query "
         enable_vertical_merge_algorithm = 0
 "
 
-$CLICKHOUSE_CLIENT --query "SYSTEM STOP MERGES ${TABLE_PROJ}"
+$DATASTORE_CLIENT --query "SYSTEM STOP MERGES ${TABLE_PROJ}"
 
 for i in {0..31}; do
     bucket=$((i % 8))
     offset=$((i * 256))
 
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         INSERT INTO ${TABLE_PROJ}
         SELECT
             number + ${offset},
@@ -231,4 +231,4 @@ for iteration in $(seq 1 "${ITERATIONS}"); do
     run_iteration_proj "$iteration"
 done
 
-$CLICKHOUSE_CLIENT --query "SELECT count() = 8192 FROM ${TABLE_PROJ}"
+$DATASTORE_CLIENT --query "SELECT count() = 8192 FROM ${TABLE_PROJ}"

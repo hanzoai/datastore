@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/27115
+-- https://github.com/ClickHouse/Datastore/issues/27115
 SET enable_analyzer=1;
 drop table if exists fill_ex;
 

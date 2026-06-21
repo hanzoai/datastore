@@ -1,6 +1,6 @@
 -- Tags: no-parallel-replicas
 --
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/104263
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/104263
 --
 -- PR #98242 (commit ebc5cb49baa594b87f4631850ae9902424414113, 26.3) introduced an
 -- unconditional `skip_partition_pruning = !exprs_match && !columns_match` branch in

@@ -18,25 +18,25 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS t_zk_race;
     CREATE TABLE t_zk_race (key UInt64)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/t_zk_race', 'r1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/t_zk_race', 'r1')
     ORDER BY key;
 "
 
-ZK_PATH="/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/t_zk_race"
+ZK_PATH="/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/t_zk_race"
 
 # Flood the server's shared ZK connection with concurrent reads from
 # system.zookeeper. Each SELECT issues ZK list/get requests that go through
 # sendThread (addRootPath + operations map insert) and receiveThread
 # (operations map read for timeout + response handling) on the same session.
 #
-# Use clickhouse-benchmark for maximum ZK operations/sec on a single session.
+# Use datastore-benchmark for maximum ZK operations/sec on a single session.
 # --timelimit ensures the test runs long enough for TSAN to catch the race.
 echo "SELECT count() FROM system.zookeeper WHERE path = '$ZK_PATH' FORMAT Null" | \
-    ${CLICKHOUSE_BENCHMARK} --concurrency 30 --iterations 100000 --timelimit 10 2>&1 | grep -q "Executed" || true
+    ${DATASTORE_BENCHMARK} --concurrency 30 --iterations 100000 --timelimit 10 2>&1 | grep -q "Executed" || true
 
 echo "OK"
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS t_zk_race"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS t_zk_race"

@@ -12,7 +12,7 @@ create table 03732_table
     id   UInt32,
     name String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/03732_table', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/03732_table', 'replica1')
 order by id;
 
 create table 03732_table_mv_dst
@@ -20,7 +20,7 @@ create table 03732_table_mv_dst
     id   UInt32,
     name String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/03732_table_mv_dst', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/03732_table_mv_dst', 'replica1')
 order by id;
 
 create materialized view 03732_table_mv
@@ -66,7 +66,7 @@ create table 03732_table_join
     id   UInt32,
     surname String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/03732_table_join', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/03732_table_join', 'replica1')
 order by id;
 
 insert into 03732_table_join values (1, 'Smith'), (2, 'Johnson');
@@ -79,7 +79,7 @@ create table 03732_table_join_mv_dst
     name    String,
     surname String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/test/{database}/03732_table_join_mv_dst', 'replica1')
+engine = ReplicatedMergeTree('/datastore/tables/test/{database}/03732_table_join_mv_dst', 'replica1')
 order by id;
 
 create materialized view 03732_table_join_mv

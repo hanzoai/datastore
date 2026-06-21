@@ -7,7 +7,7 @@ services:
             LDAP_ROOT: dc=example,dc=org
             LDAP_ADMIN_DN: cn=admin,dc=example,dc=org
             LDAP_ADMIN_USERNAME: admin
-            LDAP_ADMIN_PASSWORD: clickhouse
+            LDAP_ADMIN_PASSWORD: datastore
             LDAP_USER_DC: users
             LDAP_USERS: janedoe,johndoe
             LDAP_PASSWORDS: qwerty,qwertz

@@ -5,10 +5,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-user="user03702_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user="user03702_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP USER IF EXISTS $user;
 CREATE USER $user;
 GRANT CREATE TABLE, SELECT, INSERT ON $db.numbers_copy TO $user;
@@ -21,7 +21,7 @@ CREATE TABLE $db.zeros (x Int32) ORDER BY x;
 INSERT INTO $db.numbers SELECT * FROM numbers(10);
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user <<EOF
+${DATASTORE_CLIENT} --user $user <<EOF
 CREATE MATERIALIZED VIEW $db.mv TO $db.numbers_copy
 AS SELECT n.x AS x
 FROM $db.zeros
@@ -32,6 +32,6 @@ INNER JOIN
 ) AS n ON 1 = 1; -- { serverError ACCESS_DENIED }
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP USER IF EXISTS $user;
 EOF

@@ -27,9 +27,9 @@ odbc(named_collection)
 
 These parameters can also be passed using [named collections](operations/named-collections.md).
 
-To safely implement ODBC connections, ClickHouse uses a separate program `clickhouse-odbc-bridge`. If the ODBC driver is loaded directly from `clickhouse-server`, driver problems can crash the ClickHouse server. ClickHouse automatically starts `clickhouse-odbc-bridge` when it is required. The ODBC bridge program is installed from the same package as the `clickhouse-server`.
+To safely implement ODBC connections, Datastore uses a separate program `datastore-odbc-bridge`. If the ODBC driver is loaded directly from `datastore-server`, driver problems can crash the Datastore server. Datastore automatically starts `datastore-odbc-bridge` when it is required. The ODBC bridge program is installed from the same package as the `datastore-server`.
 
-The fields with the `NULL` values from the external table are converted into the default values for the base data type. For example, if a remote MySQL table field has the `INT NULL` type it is converted to 0 (the default value for ClickHouse `Int32` data type).
+The fields with the `NULL` values from the external table are converted into the default values for the base data type. For example, if a remote MySQL table field has the `INT NULL` type it is converted to 0 (the default value for Datastore `Int32` data type).
 
 ## Usage Example {#usage-example}
 
@@ -39,15 +39,15 @@ This example is checked for Ubuntu Linux 18.04 and MySQL server 5.7.
 
 Ensure that unixODBC and MySQL Connector are installed.
 
-By default (if installed from packages), ClickHouse starts as user `clickhouse`. Thus you need to create and configure this user in the MySQL server.
+By default (if installed from packages), Datastore starts as user `datastore`. Thus you need to create and configure this user in the MySQL server.
 
 ```bash
 $ sudo mysql
 ```
 
 ```sql
-mysql> CREATE USER 'clickhouse'@'localhost' IDENTIFIED BY 'clickhouse';
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'clickhouse'@'clickhouse' WITH GRANT OPTION;
+mysql> CREATE USER 'datastore'@'localhost' IDENTIFIED BY 'datastore';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'datastore'@'datastore' WITH GRANT OPTION;
 ```
 
 Then configure the connection in `/etc/odbc.ini`.
@@ -59,8 +59,8 @@ DRIVER = /usr/local/lib/libmyodbc5w.so
 SERVER = 127.0.0.1
 PORT = 3306
 DATABASE = test
-USERNAME = clickhouse
-PASSWORD = clickhouse
+USERNAME = datastore
+PASSWORD = datastore
 ```
 
 You can check the connection using the `isql` utility from the unixODBC installation.
@@ -96,7 +96,7 @@ mysql> select * from test;
 1 row in set (0,00 sec)
 ```
 
-Retrieving data from the MySQL table in ClickHouse:
+Retrieving data from the MySQL table in Datastore:
 
 ```sql
 SELECT * FROM odbc('DSN=mysqlconn', 'test', 'test')

@@ -1,6 +1,6 @@
--- Test for https://github.com/ClickHouse/ClickHouse/issues/88558
+-- Test for https://github.com/ClickHouse/Datastore/issues/88558
 -- Multiple index conditions over the same `arrayConcat` expression used to throw
--- `NOT_FOUND_COLUMN_IN_BLOCK`. Fixed by https://github.com/ClickHouse/ClickHouse/pull/94515.
+-- `NOT_FOUND_COLUMN_IN_BLOCK`. Fixed by https://github.com/ClickHouse/Datastore/pull/94515.
 
 DROP TABLE IF EXISTS t_88558_json;
 

@@ -1,13 +1,13 @@
 ---
 description: 'It is an alias for any but it was introduced for compatibility with
   Window Functions, where sometimes it is necessary to process `NULL` values (by default
-  all ClickHouse aggregate functions ignore NULL values).'
+  all Datastore aggregate functions ignore NULL values).'
 slug: /sql-reference/aggregate-functions/reference/first_value
 title: 'first_value'
 doc_type: 'reference'
 ---
 
-It is an alias for [`any`](../../../sql-reference/aggregate-functions/reference/any.md) but it was introduced for compatibility with [Window Functions](../../window-functions/index.md), where sometimes it's necessary to process `NULL` values (by default all ClickHouse aggregate functions ignore NULL values).
+It is an alias for [`any`](../../../sql-reference/aggregate-functions/reference/any.md) but it was introduced for compatibility with [Window Functions](../../window-functions/index.md), where sometimes it's necessary to process `NULL` values (by default all Datastore aggregate functions ignore NULL values).
 
 It supports declaring a modifier to respect nulls (`RESPECT NULLS`), both under [Window Functions](../../window-functions/index.md) and in normal aggregations.
 

@@ -10,7 +10,7 @@ CREATE TABLE partitioned_table (
     partitioner UInt8,
     value String
 )
-ENGINE ReplicatedMergeTree('/clickhouse/{database}/01650_drop_part_and_deduplication_partitioned_table', '1')
+ENGINE ReplicatedMergeTree('/datastore/{database}/01650_drop_part_and_deduplication_partitioned_table', '1')
 ORDER BY key
 PARTITION BY partitioner;
 
@@ -23,7 +23,7 @@ SELECT '~~~~source parts~~~~~';
 
 SELECT partition_id, name FROM system.parts WHERE table = 'partitioned_table' AND database = currentDatabase() and active ORDER BY name;
 
-SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/clickhouse/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
+SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/datastore/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
 
 INSERT INTO partitioned_table VALUES (33, 3, 'CC'); -- must be deduplicated
 
@@ -31,7 +31,7 @@ SELECT '~~~~parts after deduplication~~~~~';
 
 SELECT partition_id, name FROM system.parts WHERE table = 'partitioned_table' AND database = currentDatabase() and active ORDER BY name;
 
-SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/clickhouse/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
+SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/datastore/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
 
 ALTER TABLE partitioned_table DROP PART '3_1_1_0';
 
@@ -39,7 +39,7 @@ SELECT '~~~~parts after drop 3_1_1_0~~~~~';
 
 SELECT partition_id, name FROM system.parts WHERE table = 'partitioned_table' AND database = currentDatabase() and active ORDER BY name;
 
-SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/clickhouse/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
+SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/datastore/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
 
 INSERT INTO partitioned_table VALUES (33, 3, 'CC'); -- mustn't be deduplicated
 
@@ -47,6 +47,6 @@ SELECT '~~~~parts after new part without deduplication~~~~~';
 
 SELECT partition_id, name FROM system.parts WHERE table = 'partitioned_table' AND database = currentDatabase() and active ORDER BY name;
 
-SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/clickhouse/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
+SELECT substring(name, 1, 2), value FROM system.zookeeper WHERE path='/datastore/' || currentDatabase() || '/01650_drop_part_and_deduplication_partitioned_table/blocks/' ORDER BY value;
 
 DROP TABLE IF EXISTS partitioned_table SYNC;

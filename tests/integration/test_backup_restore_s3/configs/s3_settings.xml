@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <s3>
         <use_environment_credentials>0</use_environment_credentials>
         <use_adaptive_timeouts>false</use_adaptive_timeouts>
@@ -22,4 +22,4 @@
     </s3>
     <backup_threads>1</backup_threads>
     <restore_threads>1</restore_threads>
-</clickhouse>
+</datastore>

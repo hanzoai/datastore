@@ -10,7 +10,7 @@ doc_type: 'reference'
 Optional prepared data structure for usage in [JOIN](/sql-reference/statements/select/join) operations.
 
 :::note
-In ClickHouse Cloud, if your service was created with a version earlier than 25.4, you will need to set the compatibility to at least 25.4 using  `SET compatibility=25.4`.
+In Datastore Cloud, if your service was created with a version earlier than 25.4, you will need to set the compatibility to at least 25.4 using  `SET compatibility=25.4`.
 :::
 
 ## Creating a table {#creating-a-table}
@@ -39,13 +39,13 @@ See the detailed description of the [CREATE TABLE](/sql-reference/statements/cre
 
 `k1[, k2, ...]` – Key columns from the `USING` clause that the `JOIN` operation is made with.
 
-Enter `join_strictness` and `join_type` parameters without quotes, for example, `Join(ANY, LEFT, col1)`. They must match the `JOIN` operation that the table will be used for. If the parameters do not match, ClickHouse does not throw an exception and may return incorrect data.
+Enter `join_strictness` and `join_type` parameters without quotes, for example, `Join(ANY, LEFT, col1)`. They must match the `JOIN` operation that the table will be used for. If the parameters do not match, Datastore does not throw an exception and may return incorrect data.
 
 ## Specifics and recommendations {#specifics-and-recommendations}
 
 ### Data storage {#data-storage}
 
-`Join` table data is always located in the RAM. When inserting rows into a table, ClickHouse writes data blocks to the directory on the disk so that they can be restored when the server restarts.
+`Join` table data is always located in the RAM. When inserting rows into a table, Datastore writes data blocks to the directory on the disk so that they can be restored when the server restarts.
 
 If the server restarts incorrectly, the data block on the disk might get lost or damaged. In this case, you may need to manually delete the file with damaged data.
 

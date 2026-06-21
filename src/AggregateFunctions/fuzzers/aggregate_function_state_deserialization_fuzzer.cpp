@@ -202,7 +202,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
         catch (const Exception &)
         {
             /// If parsing fails due to depth limits or other parsing errors,
-            /// this is the expected behavior - ClickHouse will throw proper exceptions
+            /// this is the expected behavior - Datastore will throw proper exceptions
             return 0;
         }
 

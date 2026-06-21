@@ -11,7 +11,7 @@ function thread_query()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "SELECT count() FROM numbers_mt(10000) WHERE rand() = 0 FORMAT Null";
+        $DATASTORE_CLIENT --query "SELECT count() FROM numbers_mt(10000) WHERE rand() = 0 FORMAT Null";
     done
 }
 
@@ -20,7 +20,7 @@ function thread_cancel()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "KILL QUERY WHERE current_database = '$CLICKHOUSE_DATABASE' SYNC FORMAT Null";
+        $DATASTORE_CLIENT --query "KILL QUERY WHERE current_database = '$DATASTORE_DATABASE' SYNC FORMAT Null";
     done
 }
 

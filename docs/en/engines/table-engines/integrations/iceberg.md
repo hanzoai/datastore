@@ -9,9 +9,9 @@ doc_type: 'reference'
 ---
 
 :::warning 
-We recommend using the [Iceberg Table Function](/sql-reference/table-functions/iceberg.md) for working with Iceberg data in ClickHouse. The Iceberg Table Function currently provides sufficient functionality, offering a partial read-only interface for Iceberg tables.
+We recommend using the [Iceberg Table Function](/sql-reference/table-functions/iceberg.md) for working with Iceberg data in Datastore. The Iceberg Table Function currently provides sufficient functionality, offering a partial read-only interface for Iceberg tables.
 
-The Iceberg Table Engine is available but may have limitations. ClickHouse wasn't originally designed to support tables with externally changing schemas, which can affect the functionality of the Iceberg Table Engine. As a result, some features that work with regular tables may be unavailable or may not function correctly, especially when using the old analyzer.
+The Iceberg Table Engine is available but may have limitations. Datastore wasn't originally designed to support tables with externally changing schemas, which can affect the functionality of the Iceberg Table Engine. As a result, some features that work with regular tables may be unavailable or may not function correctly, especially when using the old analyzer.
 
 For optimal compatibility, we suggest using the Iceberg Table Function while we continue to improve support for the Iceberg Table Engine.
 :::
@@ -41,28 +41,28 @@ CREATE TABLE iceberg_table_local
 Description of the arguments coincides with description of arguments in engines `S3`, `AzureBlobStorage`, `HDFS` and `File` correspondingly.
 `format` stands for the format of data files in the Iceberg table.
 
-For `IcebergS3`, an optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in ClickHouse Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
+For `IcebergS3`, an optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in Datastore Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
 
 Engine parameters can be specified using [Named Collections](../../../operations/named-collections.md)
 
 ### Example {#example}
 
 ```sql
-CREATE TABLE iceberg_table ENGINE=IcebergS3('http://test.s3.amazonaws.com/clickhouse-bucket/test_table', 'test', 'test')
+CREATE TABLE iceberg_table ENGINE=IcebergS3('http://test.s3.amazonaws.com/datastore-bucket/test_table', 'test', 'test')
 ```
 
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <iceberg_conf>
-            <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
+            <url>http://test.s3.amazonaws.com/datastore-bucket/</url>
             <access_key_id>test</access_key_id>
             <secret_access_key>test</secret_access_key>
         </iceberg_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql
@@ -76,11 +76,11 @@ Table engine `Iceberg` is an alias to `IcebergS3` now.
 
 ## Data types {#data-types}
 
-The following table shows how Iceberg data types are mapped to ClickHouse data types during schema inference (for reading purposes).
+The following table shows how Iceberg data types are mapped to Datastore data types during schema inference (for reading purposes).
 
 ### Primitive types {#primitive-types}
 
-| Iceberg type | ClickHouse type | Notes |
+| Iceberg type | Datastore type | Notes |
 |---|---|---|
 | `boolean` | `Bool` | |
 | `int` | `Int32` | |
@@ -100,14 +100,14 @@ The following table shows how Iceberg data types are mapped to ClickHouse data t
 
 ### Complex types {#complex-types}
 
-| Iceberg type | ClickHouse type |
+| Iceberg type | Datastore type |
 |---|---|
 | `list` | `Array` |
 | `map` | `Map` |
 | `struct` | `Tuple` |
 
 ## Schema evolution {#schema-evolution}
-ClickHouse supports reading Iceberg tables whose schema has evolved over time. This includes tables where columns have been added, removed, or reordered, as well as columns changed from required to nullable. Additionally, the following type casts are supported:
+Datastore supports reading Iceberg tables whose schema has evolved over time. This includes tables where columns have been added, removed, or reordered, as well as columns changed from required to nullable. Additionally, the following type casts are supported:
 
 * int -> long
 * float -> double
@@ -119,15 +119,15 @@ To read a table where the schema has changed after its creation with dynamic sch
 
 ## Partition pruning {#partition-pruning}
 
-ClickHouse supports partition pruning during SELECT queries for Iceberg tables, which helps optimize query performance by skipping irrelevant data files. To enable partition pruning, set `use_iceberg_partition_pruning = 1`. For more information about iceberg partition pruning address https://iceberg.apache.org/spec/#partitioning
+Datastore supports partition pruning during SELECT queries for Iceberg tables, which helps optimize query performance by skipping irrelevant data files. To enable partition pruning, set `use_iceberg_partition_pruning = 1`. For more information about iceberg partition pruning address https://iceberg.apache.org/spec/#partitioning
 
 ## Time travel {#time-travel}
 
-ClickHouse supports time travel for Iceberg tables, allowing you to query historical data with a specific timestamp or snapshot ID.
+Datastore supports time travel for Iceberg tables, allowing you to query historical data with a specific timestamp or snapshot ID.
 
 ## Processing of tables with deleted rows {#deleted-rows}
 
-ClickHouse supports reading Iceberg tables that use the following deletion methods:
+Datastore supports reading Iceberg tables that use the following deletion methods:
 
 - [Position deletes](https://iceberg.apache.org/spec/#position-delete-files)
 - [Equality deletes](https://iceberg.apache.org/spec/#equality-delete-files) (supported from version 25.8+)
@@ -284,7 +284,7 @@ The second one is that while doing time travel you can't get state of table befo
 In Clickhouse the behavior is consistent with Spark. You can mentally replace Spark Select queries with Clickhouse Select queries and it will work the same way.
 
 ## Metadata file resolution {#metadata-file-resolution}
-When using the `Iceberg` table engine in ClickHouse, the system needs to locate the correct metadata.json file that describes the Iceberg table structure. Here's how this resolution process works:
+When using the `Iceberg` table engine in Datastore, the system needs to locate the correct metadata.json file that describes the Iceberg table structure. Here's how this resolution process works:
 
 ### Candidates search {#candidate-search}
 
@@ -318,7 +318,7 @@ CREATE TABLE example_table ENGINE = Iceberg(
 ) SETTINGS iceberg_metadata_table_uuid = '6f6f6407-c6a5-465f-a808-ea8900e35a38';
 ```
 
-**Note**: While Iceberg Catalogs typically handle metadata resolution, the `Iceberg` table engine in ClickHouse directly interprets files stored in S3 as Iceberg tables, which is why understanding these resolution rules is important.
+**Note**: While Iceberg Catalogs typically handle metadata resolution, the `Iceberg` table engine in Datastore directly interprets files stored in S3 as Iceberg tables, which is why understanding these resolution rules is important.
 
 ## Data cache {#data-cache}
 

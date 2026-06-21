@@ -157,8 +157,8 @@ def test_DROP_DNS_CACHE(started_cluster):
 
 
 def test_RELOAD_CONFIG_AND_MACROS(started_cluster):
-    macros = "<clickhouse><macros><mac>ro</mac></macros></clickhouse>"
-    create_macros = 'echo "{}" > /etc/clickhouse-server/config.d/macros.xml'.format(
+    macros = "<datastore><macros><mac>ro</mac></macros></datastore>"
+    create_macros = 'echo "{}" > /etc/datastore-server/config.d/macros.xml'.format(
         macros
     )
 

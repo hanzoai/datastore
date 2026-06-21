@@ -4,7 +4,7 @@
 -- variant columns without updating variant_info type metadata, causing column/type mismatches
 -- in Set::appendSetElements when serializing values into shared variant storage.
 -- max_threads=1 is needed to reliably trigger the runtime filter code path.
--- https://github.com/ClickHouse/ClickHouse/issues/97847
+-- https://github.com/ClickHouse/Datastore/issues/97847
 DROP TABLE IF EXISTS t0;
 CREATE TABLE t0 (`c0` Dynamic(max_types=1)) ENGINE = MergeTree ORDER BY tuple();
 SYSTEM STOP MERGES t0;

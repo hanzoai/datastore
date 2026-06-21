@@ -7,13 +7,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS t; CREATE TABLE t (x UInt64) ENGINE = Memory;"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS t; CREATE TABLE t (x UInt64) ENGINE = Memory;"
 
 # Rate limit is chosen for operation to spent more than one second.
-seq 1 1000 | pv --quiet --rate-limit 400 | ${CLICKHOUSE_CLIENT} --query "INSERT INTO t FORMAT TSV"
+seq 1 1000 | pv --quiet --rate-limit 400 | ${DATASTORE_CLIENT} --query "INSERT INTO t FORMAT TSV"
 
 # We check that the value of NetworkReceiveElapsedMicroseconds correctly includes the time spent waiting data from the client.
-result=$(${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS query_log;
+result=$(${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS query_log;
     WITH ProfileEvents['NetworkReceiveElapsedMicroseconds'] AS elapsed_us
     SELECT elapsed_us FROM system.query_log
     WHERE current_database = currentDatabase() AND query_kind = 'Insert' AND event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish'
@@ -26,10 +26,10 @@ if [[ "$elapsed_us" -ge "$min_elapsed_us" ]]; then
     echo 1
 else
     # Print debug info
-    ${CLICKHOUSE_CLIENT} --query "
+    ${DATASTORE_CLIENT} --query "
     WITH ProfileEvents['NetworkReceiveElapsedMicroseconds'] AS elapsed_us
     SELECT query_start_time_microseconds, event_time_microseconds, query_duration_ms, elapsed_us, query FROM system.query_log
     WHERE current_database = currentDatabase() and event_date >= yesterday() AND event_time >= now() - 600 AND type = 'QueryFinish' ORDER BY query_start_time;"
 fi
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE t"
+${DATASTORE_CLIENT} --query "DROP TABLE t"

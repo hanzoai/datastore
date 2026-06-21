@@ -111,7 +111,7 @@ def test_ordered_mode_with_hive(started_cluster, engine_name, processing_threads
     )
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
 
     put_file_content(started_cluster, engine_name, f"{files_path}/date=2025-01-01/city=Amsterdam/file1.csv", b"1,1,1\n")
     put_file_content(started_cluster, engine_name, f"{files_path}/date=2025-01-01/city=Amsterdam/file3.csv", b"1,1,3\n")
@@ -318,7 +318,7 @@ def test_ordered_mode_with_regex_partitioning(started_cluster, engine_name, proc
     table_name = f"test_regex_partition_{engine_name}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
 
     # Regex patterns for hostname-based partitioning
     # Extract all named groups from filename, use 'hostname' as partition key
@@ -455,7 +455,7 @@ def test_ordered_mode_with_regex_partitioning(started_cluster, engine_name, proc
         data += node.query(f"SELECT column1, column2, column3 FROM {dst_table_name} ORDER BY column1, column2, column3 FORMAT CSV")
     compare_data(data, expected_data)
 
-    # Step 4: Restart ClickHouse node (test persistence)
+    # Step 4: Restart Datastore node (test persistence)
     instances[0].restart_clickhouse()
 
     data = ""
@@ -521,7 +521,7 @@ def test_ordered_mode_with_regex_partitioning_large_num_files(started_cluster, e
     table_name = f"test_regex_large_{engine_name}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
 
     # Regex patterns for hostname-based partitioning
     partition_regex = r'(?P<hostname>server-\d+)_(?P<timestamp>\d{8}T\d{6}\.\d{6}Z)_(?P<sequence>\d+)'
@@ -647,7 +647,7 @@ def test_bucketing_mode_with_regex_partitioning(started_cluster, engine_name, bu
     if bucketing_mode == "partition":
         validation_table = f"test_validation_{engine_name}_{generate_random_string()}"
         validation_path = f"{validation_table}_data"
-        validation_keeper = f"/clickhouse/test_{validation_table}_{generate_random_string()}"
+        validation_keeper = f"/datastore/test_{validation_table}_{generate_random_string()}"
 
         # Should fail without partitioning_mode
         with pytest.raises(Exception) as exc_info:
@@ -674,7 +674,7 @@ def test_bucketing_mode_with_regex_partitioning(started_cluster, engine_name, bu
     table_name = f"test_bucketing_{bucketing_mode}_{engine_name}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
 
     # Regex patterns for hostname-based partitioning
     partition_regex = r'(?P<hostname>server-\d+)_(?P<timestamp>\d{8}T\d{6}\.\d{6}Z)_(?P<sequence>\d+)'

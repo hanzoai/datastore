@@ -33,4 +33,4 @@ The synchronicity of the query processing is defined by the [mutations_sync](/op
 
 ## Related content {#related-content}
 
-- Blog: [Handling Updates and Deletes in ClickHouse](https://clickhouse.com/blog/handling-updates-and-deletes-in-clickhouse)
+- Blog: [Handling Updates and Deletes in Datastore](https://datastore.com/blog/handling-updates-and-deletes-in-datastore)

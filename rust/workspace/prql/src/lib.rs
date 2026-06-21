@@ -33,7 +33,7 @@ pub unsafe extern "C" fn prql_to_sql_impl(
 
     let opts = Options {
         format: true,
-        target: Target::Sql(Some(Dialect::ClickHouse)),
+        target: Target::Sql(Some(Dialect::Datastore)),
         signature_comment: false,
         color: false,
         display: prqlc::DisplayOptions::Plain,

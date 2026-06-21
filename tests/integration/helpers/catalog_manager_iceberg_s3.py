@@ -75,7 +75,7 @@ class IcebergS3CatalogManager:
     def from_env(cls) -> "IcebergS3CatalogManager":
         region = os.getenv("E2E_AWS_REGION", "")
         bucket = os.getenv("E2E_AWS_S3_BUCKET", "")
-        prefix = os.getenv("E2E_AWS_S3_PREFIX", "clickhouse-e2e-iceberg-s3")
+        prefix = os.getenv("E2E_AWS_S3_PREFIX", "datastore-e2e-iceberg-s3")
         access_key_id = os.getenv("E2E_AWS_ACCESS_KEY_ID", "")
         secret_access_key = os.getenv("E2E_AWS_SECRET_ACCESS_KEY", "")
 

@@ -1,5 +1,5 @@
 ---
-description: 'Built-in geobase dictionaries in ClickHouse'
+description: 'Built-in geobase dictionaries in Datastore'
 sidebar_label: 'Embedded dictionaries'
 sidebar_position: 6
 slug: /sql-reference/statements/create/dictionary/embedded
@@ -11,7 +11,7 @@ import SelfManaged from '@site/docs/_snippets/_self_managed_only_no_roadmap.md';
 
 <SelfManaged />
 
-ClickHouse contains a built-in feature for working with a geobase.
+Datastore contains a built-in feature for working with a geobase.
 
 This allows you to:
 

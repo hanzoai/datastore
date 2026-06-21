@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/odbc
 title: 'ODBC dictionary source'
 sidebar_position: 6
 sidebar_label: 'ODBC'
-description: 'Configure an ODBC connection as a dictionary source in ClickHouse.'
+description: 'Configure an ODBC connection as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 
@@ -61,7 +61,7 @@ Setting fields:
 The `table` and `query` fields cannot be used together. And either one of the `table` or `query` fields must be declared.
 :::
 
-ClickHouse receives quoting symbols from ODBC-driver and quote all settings in queries to driver, so it's necessary to set table name accordingly to table name case in database.
+Datastore receives quoting symbols from ODBC-driver and quote all settings in queries to driver, so it's necessary to set table name accordingly to table name case in database.
 
 If you have a problems with encodings when using Oracle, see the corresponding [FAQ](/knowledgebase/oracle-odbc) item.
 
@@ -104,7 +104,7 @@ Installing unixODBC and the ODBC driver for PostgreSQL:
 $ sudo apt-get install -y unixodbc odbcinst odbc-postgresql
 ```
 
-Configuring `/etc/odbc.ini` (or `~/.odbc.ini` if you signed in under a user that runs ClickHouse):
+Configuring `/etc/odbc.ini` (or `~/.odbc.ini` if you signed in under a user that runs Datastore):
 
 ```text
     [DEFAULT]
@@ -125,7 +125,7 @@ Configuring `/etc/odbc.ini` (or `~/.odbc.ini` if you signed in under a user that
     ConnSettings        =
 ```
 
-The dictionary configuration in ClickHouse:
+The dictionary configuration in Datastore:
 
 <Tabs>
 <TabItem value="ddl" label="DDL" default>
@@ -145,7 +145,7 @@ LIFETIME(MIN 300 MAX 360)
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         <name>table_name</name>
         <source>
@@ -174,7 +174,7 @@ LIFETIME(MIN 300 MAX 360)
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>
@@ -219,7 +219,7 @@ Configuring the driver:
     UsageCount      = 5
 
     $ cat /etc/odbc.ini
-    # $ cat ~/.odbc.ini # if you signed in under a user that runs ClickHouse
+    # $ cat ~/.odbc.ini # if you signed in under a user that runs Datastore
 
     [MSSQL]
     Description     = FreeTDS
@@ -238,7 +238,7 @@ Configuring the driver:
 Remarks:
 - to determine the earliest TDS version that is supported by a particular SQL Server version, refer to the product documentation or look at [MS-TDS Product Behavior](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-tds/135d0ebe-5c4c-4a94-99bf-1811eccb9f4a)
 
-Configuring the dictionary in ClickHouse:
+Configuring the dictionary in Datastore:
 
 <Tabs>
 <TabItem value="ddl" label="DDL" default>
@@ -258,7 +258,7 @@ LIFETIME(MIN 300 MAX 360)
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         <name>test</name>
         <source>
@@ -288,7 +288,7 @@ LIFETIME(MIN 300 MAX 360)
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>

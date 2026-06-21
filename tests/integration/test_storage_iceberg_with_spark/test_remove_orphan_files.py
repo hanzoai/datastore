@@ -16,8 +16,8 @@ ICEBERG_SETTINGS = {
     "allow_iceberg_remove_orphan_files": 1,
 }
 
-LOCAL_TABLE_PREFIX = "/var/lib/clickhouse/user_files/iceberg_data/default"
-S3_TABLE_PREFIX = "var/lib/clickhouse/user_files/iceberg_data/default"
+LOCAL_TABLE_PREFIX = "/var/lib/datastore/user_files/iceberg_data/default"
+S3_TABLE_PREFIX = "var/lib/datastore/user_files/iceberg_data/default"
 
 
 # ---------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class OrphanTestEnv:
                  f"mkdir -p {target_dir} && echo 'orphan_data' > {target_dir}/{filename}"]
             )
         elif self.storage_type == "azure":
-            blob_path = f"/var/lib/clickhouse/user_files/iceberg_data/default/{self.table_name}/{subdir}/{filename}"
+            blob_path = f"/var/lib/datastore/user_files/iceberg_data/default/{self.table_name}/{subdir}/{filename}"
             blob_client = self.cluster.blob_service_client.get_blob_client(
                 self.cluster.azure_container_name, blob_path,
             )
@@ -88,7 +88,7 @@ class OrphanTestEnv:
             ).strip()
             return ret == "exists"
         elif self.storage_type == "azure":
-            blob_path = f"/var/lib/clickhouse/user_files/iceberg_data/default/{self.table_name}/{subdir}/{filename}"
+            blob_path = f"/var/lib/datastore/user_files/iceberg_data/default/{self.table_name}/{subdir}/{filename}"
             blob_client = self.cluster.blob_service_client.get_blob_client(
                 self.cluster.azure_container_name, blob_path,
             )
@@ -113,7 +113,7 @@ class OrphanTestEnv:
             ).strip()
             return output.split("\n") if output else []
         elif self.storage_type == "azure":
-            prefix = f"/var/lib/clickhouse/user_files/iceberg_data/default/{self.table_name}/"
+            prefix = f"/var/lib/datastore/user_files/iceberg_data/default/{self.table_name}/"
             container_client = self.cluster.blob_service_client.get_container_client(
                 self.cluster.azure_container_name,
             )

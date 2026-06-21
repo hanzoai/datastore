@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/59919
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/59919
 SET enable_analyzer=1;
 
 SELECT toTypeName(sum(toNullable('a') IN toNullable('a'))) AS x;

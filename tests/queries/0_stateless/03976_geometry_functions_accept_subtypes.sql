@@ -1,6 +1,6 @@
 -- Test that geometry functions (perimeterSpherical, areaSpherical, etc.) accept
 -- individual geometry subtypes (Polygon, Ring, etc.) in addition to the Geometry variant type.
--- https://github.com/ClickHouse/ClickHouse/issues/95880
+-- https://github.com/ClickHouse/Datastore/issues/95880
 
 SELECT 'perimeterSpherical with readWKTPolygon';
 SELECT perimeterSpherical(readWKTPolygon('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'));

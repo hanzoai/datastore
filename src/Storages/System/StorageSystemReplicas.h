@@ -11,7 +11,7 @@ class Context;
 template <typename T, typename ...Ts>
 class StatusRequestsPools;
 class StorageReplicatedMergeTree;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 class StorageSharedMergeTree;
 #endif
 
@@ -20,7 +20,7 @@ class StorageSharedMergeTree;
 class StorageSystemReplicas final : public StorageWithCommonVirtualColumns
 {
 public:
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     using TPools = StatusRequestsPools<StorageReplicatedMergeTree, StorageSharedMergeTree>;
 #else
     using TPools = StatusRequestsPools<StorageReplicatedMergeTree>;

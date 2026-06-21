@@ -1,5 +1,5 @@
 -- Verify that printf supports dynamic (non-constant) format strings.
--- See https://github.com/ClickHouse/ClickHouse/issues/89547
+-- See https://github.com/ClickHouse/Datastore/issues/89547
 
 -- Test 1: Constant format string still works
 SELECT printf('%s: %d', 'count', 42);

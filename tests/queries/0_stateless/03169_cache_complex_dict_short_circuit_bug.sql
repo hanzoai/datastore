@@ -20,7 +20,7 @@ CREATE DICTIONARY cache_dictionary_complex_key_simple_attributes_short_circuit
     `value_second` String DEFAULT 'value_second_default'
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(TABLE 'complex_key_simple_attributes_source_short_circuit_table'))
+SOURCE(DATASTORE(TABLE 'complex_key_simple_attributes_source_short_circuit_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(COMPLEX_KEY_CACHE(SIZE_IN_CELLS 10));
 

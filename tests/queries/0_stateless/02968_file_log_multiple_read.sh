@@ -10,7 +10,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-logs_dir=${USER_FILES_PATH}/${CLICKHOUSE_TEST_UNIQUE_NAME}
+logs_dir=${USER_FILES_PATH}/${DATASTORE_TEST_UNIQUE_NAME}
 
 rm -rf ${logs_dir}
 
@@ -21,7 +21,7 @@ do
 	echo $i >> ${logs_dir}/a.txt
 done
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 DROP TABLE IF EXISTS file_log;
 DROP TABLE IF EXISTS table_to_store_data;
 DROP TABLE IF EXISTS file_log_mv;
@@ -51,7 +51,7 @@ CREATE MATERIALIZED VIEW file_log_mv TO table_to_store_data AS
 
 function count()
 {
-	COUNT=$(${CLICKHOUSE_CLIENT} --query "select count() from table_to_store_data;")
+	COUNT=$(${DATASTORE_CLIENT} --query "select count() from table_to_store_data;")
 	echo $COUNT
 }
 
@@ -77,7 +77,7 @@ function wait_for_row_count()
 
 wait_for_row_count 1
 
-${CLICKHOUSE_CLIENT} --query "SELECT * FROM table_to_store_data ORDER BY id;"
+${DATASTORE_CLIENT} --query "SELECT * FROM table_to_store_data ORDER BY id;"
 
 for i in {1..20}
 do
@@ -86,9 +86,9 @@ done
 
 wait_for_row_count 11
 
-${CLICKHOUSE_CLIENT} --query "SELECT * FROM table_to_store_data ORDER BY id;"
+${DATASTORE_CLIENT} --query "SELECT * FROM table_to_store_data ORDER BY id;"
 
-${CLICKHOUSE_CLIENT} --query="
+${DATASTORE_CLIENT} --query="
 DROP TABLE file_log;
 DROP TABLE table_to_store_data;
 DROP TABLE file_log_mv;

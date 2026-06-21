@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <s3_conf1>
             <url>http://minio1:9001/root/test_table</url>
@@ -40,4 +40,4 @@
             <no_sign_request>true</no_sign_request>
         </s3_json_no_sign>
     </named_collections>
-</clickhouse>
+</datastore>

@@ -1,6 +1,6 @@
 ---
 description: 'Allows to connect to SQLite databases and perform `INSERT` and `SELECT`
-  queries to exchange data between ClickHouse and SQLite.'
+  queries to exchange data between Datastore and SQLite.'
 sidebar_label: 'SQLite'
 sidebar_position: 55
 slug: /engines/database-engines/sqlite
@@ -8,7 +8,7 @@ title: 'SQLite'
 doc_type: 'reference'
 ---
 
-Allows to connect to [SQLite](https://www.sqlite.org/index.html) database and perform `INSERT` and `SELECT` queries to exchange data between ClickHouse and SQLite.
+Allows to connect to [SQLite](https://www.sqlite.org/index.html) database and perform `INSERT` and `SELECT` queries to exchange data between Datastore and SQLite.
 
 ## Creating a database {#creating-a-database}
 
@@ -23,9 +23,9 @@ Allows to connect to [SQLite](https://www.sqlite.org/index.html) database and pe
 
 ## Data types support {#data_types-support}
 
-The table below shows the default type mapping when ClickHouse automatically infers schema from SQLite:
+The table below shows the default type mapping when Datastore automatically infers schema from SQLite:
 
-|  SQLite   | ClickHouse                                              |
+|  SQLite   | Datastore                                              |
 |---------------|---------------------------------------------------------|
 | INTEGER       | [Int32](../../sql-reference/data-types/int-uint.md)     |
 | REAL          | [Float32](../../sql-reference/data-types/float.md)      |
@@ -33,7 +33,7 @@ The table below shows the default type mapping when ClickHouse automatically inf
 | TEXT          | [UUID](../../sql-reference/data-types/uuid.md)          |
 | BLOB          | [String](../../sql-reference/data-types/string.md)      |
 
-When you explicitly define a table with specific ClickHouse types using the [SQLite table engine](../../engines/table-engines/integrations/sqlite.md), the following ClickHouse types can be parsed from SQLite TEXT columns:
+When you explicitly define a table with specific Datastore types using the [SQLite table engine](../../engines/table-engines/integrations/sqlite.md), the following Datastore types can be parsed from SQLite TEXT columns:
 
 - [Date](../../sql-reference/data-types/date.md), [Date32](../../sql-reference/data-types/date32.md)
 - [DateTime](../../sql-reference/data-types/datetime.md), [DateTime64](../../sql-reference/data-types/datetime64.md)
@@ -44,7 +44,7 @@ When you explicitly define a table with specific ClickHouse types using the [SQL
 - All integer types ([UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64](../../sql-reference/data-types/int-uint.md))
 - [Float32, Float64](../../sql-reference/data-types/float.md)
 
-SQLite has dynamic typing, and its type access functions perform automatic type coercion. For example, reading a TEXT column as an integer will return 0 if the text cannot be parsed as a number. This means that if a ClickHouse table is defined with a different type than the underlying SQLite column, values may be silently coerced rather than causing an error.
+SQLite has dynamic typing, and its type access functions perform automatic type coercion. For example, reading a TEXT column as an integer will return 0 if the text cannot be parsed as a number. This means that if a Datastore table is defined with a different type than the underlying SQLite column, values may be silently coerced rather than causing an error.
 
 ## Specifics and recommendations {#specifics-and-recommendations}
 
@@ -53,7 +53,7 @@ SQLite does not require service management (such as startup scripts) or access c
 
 ## Usage example {#usage-example}
 
-Database in ClickHouse, connected to the SQLite:
+Database in Datastore, connected to the SQLite:
 
 ```sql
 CREATE DATABASE sqlite_db ENGINE = SQLite('sqlite.db');
@@ -80,7 +80,7 @@ SELECT * FROM sqlite_db.table1;
 │ line3 │    3 │
 └───────┴──────┘
 ```
-Inserting data into SQLite table from ClickHouse table:
+Inserting data into SQLite table from Datastore table:
 
 ```sql
 CREATE TABLE clickhouse_table(`col1` String,`col2` Int16) ENGINE = MergeTree() ORDER BY col2;

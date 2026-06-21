@@ -1,6 +1,6 @@
 -- Tags: no-fasttest, no-parallel-replicas
 -- Correlated subquery with a table function should not fail with "Context has expired".
--- https://github.com/ClickHouse/ClickHouse/issues/92991
+-- https://github.com/ClickHouse/Datastore/issues/92991
 
 SET enable_analyzer = 1;
 

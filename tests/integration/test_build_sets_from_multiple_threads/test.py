@@ -20,7 +20,7 @@ def start_cluster():
         cluster.shutdown()
 
 
-# See https://github.com/ClickHouse/ClickHouse/issues/55279
+# See https://github.com/ClickHouse/Datastore/issues/55279
 def test_set():
     node.query(
         """

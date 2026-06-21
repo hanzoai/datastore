@@ -1,5 +1,5 @@
--- Regression test from `clickhouse-gh[bot]` review on PR #105847
--- (https://github.com/ClickHouse/ClickHouse/pull/105847#discussion_r3346245939).
+-- Regression test from `datastore-gh[bot]` review on PR #105847
+-- (https://github.com/ClickHouse/Datastore/pull/105847#discussion_r3346245939).
 --
 -- `filterMutationCommands` may drop a later `UPDATE` whose target the current
 -- query does not need. If the on-fly skip set were built from the original

@@ -28,17 +28,17 @@ def start_cluster():
 )
 def test_fetch_part_from_allowed_zookeeper(start_cluster, part, date, part_name):
     node.query(
-        "CREATE TABLE IF NOT EXISTS simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE IF NOT EXISTS simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
 
     node.query("""INSERT INTO simple VALUES ('{date}', 1)""".format(date=date))
 
     node.query(
-        "CREATE TABLE IF NOT EXISTS simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE IF NOT EXISTS simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
 
     node.query(
-        """ALTER TABLE simple2 FETCH {part} '{part_name}' FROM 'zookeeper2:/clickhouse/tables/0/simple';""".format(
+        """ALTER TABLE simple2 FETCH {part} '{part_name}' FROM 'zookeeper2:/datastore/tables/0/simple';""".format(
             part=part, part_name=part_name
         )
     )
@@ -51,7 +51,7 @@ def test_fetch_part_from_allowed_zookeeper(start_cluster, part, date, part_name)
 
     with pytest.raises(QueryRuntimeException):
         node.query(
-            """ALTER TABLE simple2 FETCH {part} '{part_name}' FROM 'zookeeper:/clickhouse/tables/0/simple';""".format(
+            """ALTER TABLE simple2 FETCH {part} '{part_name}' FROM 'zookeeper:/datastore/tables/0/simple';""".format(
                 part=part, part_name=part_name
             )
         )

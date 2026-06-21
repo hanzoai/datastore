@@ -33,7 +33,7 @@ def start_cluster():
 def test_replicated_engine_with_arguments(start_cluster):
     node1.query("DROP DATABASE IF EXISTS r")
     node1.query(
-        f"CREATE DATABASE r ENGINE=Replicated('/clickhouse/databases/r', '{{shard}}', '{{replica}}')"
+        f"CREATE DATABASE r ENGINE=Replicated('/datastore/databases/r', '{{shard}}', '{{replica}}')"
     )
     node1.query(
         "CREATE TABLE r.t1 (x UInt8, y String) ENGINE=ReplicatedMergeTree ORDER BY x"
@@ -44,7 +44,7 @@ def test_replicated_engine_with_arguments(start_cluster):
     node1.query(
         "SET database_replicated_allow_replicated_engine_arguments=0; CREATE TABLE r.t2 AS r.t1"
     )  # should not fail
-    expected = "CREATE TABLE r.t2\\n(\\n    `x` UInt8,\\n    `y` String\\n)\\nENGINE = ReplicatedMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY x\\nSETTINGS index_granularity = 8192\n"
+    expected = "CREATE TABLE r.t2\\n(\\n    `x` UInt8,\\n    `y` String\\n)\\nENGINE = ReplicatedMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY x\\nSETTINGS index_granularity = 8192\n"
     # ensure that t2 was created with the correct default engine args
     assert node1.query("SHOW CREATE TABLE r.t2") == expected
     node1.query("DROP DATABASE r")

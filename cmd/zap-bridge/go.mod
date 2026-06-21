@@ -6,7 +6,7 @@ module github.com/hanzoai/datastore/cmd/zap-bridge
 go 1.26.4
 
 require (
-	github.com/ClickHouse/clickhouse-go/v2 v2.30.0
+	github.com/ClickHouse/datastore-go/v2 v2.30.0
 	github.com/luxfi/zap v0.2.1
 )
 

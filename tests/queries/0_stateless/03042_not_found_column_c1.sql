@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/42399
+-- https://github.com/ClickHouse/Datastore/issues/42399
 SET enable_analyzer=1;
 
 CREATE TABLE IF NOT EXISTS t0 (c0 Int32) ENGINE = Memory() ;

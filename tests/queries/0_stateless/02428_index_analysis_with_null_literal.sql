@@ -1,4 +1,4 @@
--- From https://github.com/ClickHouse/ClickHouse/issues/41814
+-- From https://github.com/ClickHouse/Datastore/issues/41814
 drop table if exists test;
 
 create table test(a UInt64, m UInt64, d DateTime) engine MergeTree partition by toYYYYMM(d) order by (a, m, d) SETTINGS index_granularity = 8192, index_granularity_bytes = '10Mi';
@@ -9,7 +9,7 @@ select count() from test where a = (select toUInt64(1) where 1 = 2) settings ena
 
 drop table test;
 
--- From https://github.com/ClickHouse/ClickHouse/issues/34063
+-- From https://github.com/ClickHouse/Datastore/issues/34063
 drop table if exists test_null_filter;
 
 create table test_null_filter(key UInt64, value UInt32) engine MergeTree order by key SETTINGS index_granularity = 8192, index_granularity_bytes = '10Mi';

@@ -27,7 +27,7 @@ For more detail on window function syntax see: [Window Functions - Syntax](./ind
 
 **Example**
 
-The following example is based on the example provided in the video instructional [Ranking window functions in ClickHouse](https://youtu.be/Yku9mmBYm_4?si=XIMu1jpYucCQEoXA).
+The following example is based on the example provided in the video instructional [Ranking window functions in Datastore](https://youtu.be/Yku9mmBYm_4?si=XIMu1jpYucCQEoXA).
 
 ```sql title="Query"
 CREATE TABLE salaries

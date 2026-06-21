@@ -15,15 +15,15 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-The `Npy` format is designed to load a NumPy array from a `.npy` file into ClickHouse. 
+The `Npy` format is designed to load a NumPy array from a `.npy` file into Datastore. 
 The NumPy file format is a binary format used for efficiently storing arrays of numerical data. 
-During import, ClickHouse treats the top level dimension as an array of rows with a single column. 
+During import, Datastore treats the top level dimension as an array of rows with a single column. 
 
-The table below gives the supported Npy data types and their corresponding type in ClickHouse:
+The table below gives the supported Npy data types and their corresponding type in Datastore:
 
 ## Data types matching {#data_types-matching}
 
-| Npy data type (`INSERT`) | ClickHouse data type                                            | Npy data type (`SELECT`) |
+| Npy data type (`INSERT`) | Datastore data type                                            | Npy data type (`SELECT`) |
 |--------------------------|-----------------------------------------------------------------|-------------------------|
 | `i1`                     | [Int8](/sql-reference/data-types/int-uint.md)           | `i1`                    |
 | `i2`                     | [Int16](/sql-reference/data-types/int-uint.md)          | `i2`                    |
@@ -48,7 +48,7 @@ arr = np.array([[[1],[2],[3]],[[4],[5],[6]]])
 np.save('example_array.npy', arr)
 ```
 
-### Reading a NumPy file in ClickHouse {#reading-a-numpy-file-in-clickhouse}
+### Reading a NumPy file in Datastore {#reading-a-numpy-file-in-datastore}
 
 ```sql title="Query"
 SELECT *
@@ -64,10 +64,10 @@ FROM file('example_array.npy', Npy)
 
 ### Selecting data {#selecting-data}
 
-You can select data from a ClickHouse table and save it into a file in the Npy format using the following command with clickhouse-client:
+You can select data from a Datastore table and save it into a file in the Npy format using the following command with datastore-client:
 
 ```bash
-$ clickhouse-client --query="SELECT {column} FROM {some_table} FORMAT Npy" > {filename.npy}
+$ datastore-client --query="SELECT {column} FROM {some_table} FORMAT Npy" > {filename.npy}
 ```
 
 ## Format settings {#format-settings}

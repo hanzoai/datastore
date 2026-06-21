@@ -1,5 +1,5 @@
 ---
-description: 'Page describing the `Shared` database engine, available in ClickHouse Cloud'
+description: 'Page describing the `Shared` database engine, available in Datastore Cloud'
 sidebar_label: 'Shared'
 sidebar_position: 10
 slug: /engines/database-engines/shared
@@ -33,7 +33,7 @@ For end users, using Shared Catalog and the Shared database engine requires no a
 CREATE DATABASE my_database;
 ```
 
-ClickHouse Cloud automatically assigns the Shared database engine to databases. Any tables created within such a database using stateless engines will automatically benefit from Shared Catalog’s replication and coordination capabilities.
+Datastore Cloud automatically assigns the Shared database engine to databases. Any tables created within such a database using stateless engines will automatically benefit from Shared Catalog’s replication and coordination capabilities.
 
 :::tip
 For more information on Shared Catalog and it's benefits, see ["Shared catalog and shared database engine"](/cloud/reference/shared-catalog) in the Cloud reference section.

@@ -22,7 +22,7 @@ CREATE DICTIONARY dict_neg
 )
 
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src_neg'))
+SOURCE(DATASTORE(TABLE 'dict_src_neg'))
 LIFETIME(0)
 LAYOUT(HASHED());
 
@@ -64,7 +64,7 @@ CREATE DICTIONARY dict_simple_kv
     attr Int32
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src_simple_kv'))
+SOURCE(DATASTORE(TABLE 'dict_src_simple_kv'))
 LIFETIME(0)
 LAYOUT(HASHED());
 
@@ -96,7 +96,7 @@ CREATE DICTIONARY dict_complex2_kv
     attr Int32
 )
 PRIMARY KEY k1, k2
-SOURCE(CLICKHOUSE(TABLE 'dict_src_complex2_kv'))
+SOURCE(DATASTORE(TABLE 'dict_src_complex2_kv'))
 LIFETIME(0)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -125,7 +125,7 @@ CREATE DICTIONARY dict_complex1_kv
     attr Int32
 )
 PRIMARY KEY k1
-SOURCE(CLICKHOUSE(TABLE 'dict_src_complex1_kv'))
+SOURCE(DATASTORE(TABLE 'dict_src_complex1_kv'))
 LIFETIME(0)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -170,7 +170,7 @@ CREATE DICTIONARY dict_complex_wide_kv
 )
 
 PRIMARY KEY a1, a2, a3, a4, a5, a6, a7, a8
-SOURCE(CLICKHOUSE(TABLE 'dict_src_complex_wide_kv'))
+SOURCE(DATASTORE(TABLE 'dict_src_complex_wide_kv'))
 LIFETIME(0)
 LAYOUT(COMPLEX_KEY_HASHED());
 
@@ -257,7 +257,7 @@ CREATE DICTIONARY dict_types
     n_str Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src_types'))
+SOURCE(DATASTORE(TABLE 'dict_src_types'))
 LIFETIME(0)
 LAYOUT(HASHED());
 
@@ -333,7 +333,7 @@ CREATE DICTIONARY dict_valexpr
     u64   UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src_valexpr'))
+SOURCE(DATASTORE(TABLE 'dict_src_valexpr'))
 LIFETIME(0)
 LAYOUT(HASHED());
 
@@ -388,7 +388,7 @@ CREATE DICTIONARY dict_match
     grp String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_src_match'))
+SOURCE(DATASTORE(TABLE 'dict_src_match'))
 LIFETIME(0)
 LAYOUT(HASHED());
 

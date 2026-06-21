@@ -21,7 +21,7 @@ def start_cluster():
 
 
 def test_fix_metadata_version(start_cluster):
-    zookeeper_path = "/clickhouse/test_fix_metadata_version"
+    zookeeper_path = "/datastore/test_fix_metadata_version"
     replica = "replica1"
     replica_path = f"{zookeeper_path}/replicas/{replica}"
 

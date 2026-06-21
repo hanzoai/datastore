@@ -19,11 +19,11 @@ The `Protobuf` format is the [Protocol Buffers](https://protobuf.dev/) format.
 
 This format requires an external format schema, which is cached between queries.
 
-ClickHouse supports:
+Datastore supports:
 - both `proto2` and `proto3` syntaxes.
 - `Repeated`/`optional`/`required` fields.
 
-To find the correspondence between table columns and fields of the Protocol Buffers' message type, ClickHouse compares their names.
+To find the correspondence between table columns and fields of the Protocol Buffers' message type, Datastore compares their names.
 This comparison is case-insensitive and the characters `_` (underscore) and `.` (dot) are considered as equal.
 If the types of a column and a field of the Protocol Buffers' message are different, then the necessary conversion is applied.
 
@@ -41,7 +41,7 @@ message MessageType {
 };
 ```
 
-ClickHouse tries to find a column named `x.y.z` (or `x_y_z` or `X.y_Z` and so on).
+Datastore tries to find a column named `x.y.z` (or `x_y_z` or `X.y_Z` and so on).
 
 Nested messages are suitable for input or output of a [nested data structures](/sql-reference/data-types/nested-data-structures/index.md).
 
@@ -55,7 +55,7 @@ message MessageType {
 }
 ```
 
-If a message contains [oneof](https://protobuf.dev/programming-guides/proto3/#oneof) and `input_format_protobuf_oneof_presence` is set, ClickHouse fills column that indicates which field of oneof was found.
+If a message contains [oneof](https://protobuf.dev/programming-guides/proto3/#oneof) and `input_format_protobuf_oneof_presence` is set, Datastore fills column that indicates which field of oneof was found.
 
 ```capnp
 syntax = "proto3";
@@ -91,7 +91,7 @@ Enum (as well as Enum8 or Enum16) must contain all oneof' possible tags plus 0 t
 
 The setting [`input_format_protobuf_oneof_presence`](/operations/settings/settings-formats.md#input_format_protobuf_oneof_presence) is disabled by default
 
-ClickHouse inputs and outputs protobuf messages in the `length-delimited` format.
+Datastore inputs and outputs protobuf messages in the `length-delimited` format.
 This means that before every message its length should be written as a [variable width integer (varint)](https://developers.google.com/protocol-buffers/docs/encoding#varints).
 
 ## Example usage {#example-usage}
@@ -102,7 +102,7 @@ This means that before every message its length should be written as a [variable
 The files used in this example are available in the [examples repository](https://github.com/ClickHouse/formats/ProtoBuf)
 :::
 
-In this example we will read some data from a file `protobuf_message.bin` into a ClickHouse table. We'll then write it
+In this example we will read some data from a file `protobuf_message.bin` into a Datastore table. We'll then write it
 back out to a file called `protobuf_message_from_clickhouse.bin` using the `Protobuf` format.
 
 Given the file `schemafile.proto`:
@@ -123,7 +123,7 @@ message MessageType {
 
 If you already know how to serialize and deserialize data in the `Protobuf` format, you can skip this step.
 
-We'll use Python to serialize some data into `protobuf_message.bin` and read it into ClickHouse.
+We'll use Python to serialize some data into `protobuf_message.bin` and read it into Datastore.
 If there is another language you want to use, see also: ["How to read/write length-delimited Protobuf messages in popular languages"](https://cwiki.apache.org/confluence/display/GEODE/Delimiting+Protobuf+Messages).
 
 Run the following command to generate a Python file named `schemafile_pb2.py` in
@@ -234,7 +234,7 @@ python generate_protobuf_data.py
 
 </details>
 
-Create a ClickHouse table matching the schema:
+Create a Datastore table matching the schema:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS test;
@@ -251,7 +251,7 @@ ORDER BY tuple()
 Insert the data into the table from the command line:
 
 ```bash
-cat protobuf_messages.bin | clickhouse-client --query "INSERT INTO test.protobuf_messages SETTINGS format_schema='schemafile:MessageType' FORMAT Protobuf"
+cat protobuf_messages.bin | datastore-client --query "INSERT INTO test.protobuf_messages SETTINGS format_schema='schemafile:MessageType' FORMAT Protobuf"
 ```
 
 You can also write the data back to a binary file using the `Protobuf` format:
@@ -260,15 +260,15 @@ You can also write the data back to a binary file using the `Protobuf` format:
 SELECT * FROM test.protobuf_messages INTO OUTFILE 'protobuf_message_from_clickhouse.bin' FORMAT Protobuf SETTINGS format_schema = 'schemafile:MessageType'
 ```
 
-With your Protobuf schema, you can now deserialize the data which was written out from ClickHouse to file `protobuf_message_from_clickhouse.bin`.
+With your Protobuf schema, you can now deserialize the data which was written out from Datastore to file `protobuf_message_from_clickhouse.bin`.
 
-### Reading and writing data using ClickHouse Cloud {#basic-examples-cloud}
+### Reading and writing data using Datastore Cloud {#basic-examples-cloud}
 
-With ClickHouse Cloud you are not able to upload a Protobuf schema file. However, you can use the `format_protobuf_schema`
+With Datastore Cloud you are not able to upload a Protobuf schema file. However, you can use the `format_protobuf_schema`
 setting to specify the schema in the query. In this example, we show you how to read serialized data from your local
-machine and insert it into a table in ClickHouse Cloud.
+machine and insert it into a table in Datastore Cloud.
 
-As in the previous example, create the table according to the schema of your Protobuf schema in ClickHouse Cloud:
+As in the previous example, create the table according to the schema of your Protobuf schema in Datastore Cloud:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS test;
@@ -291,16 +291,16 @@ Possible values:
 
 ### `format_schema_source='string'` {#format-schema-source-string}
 
-Insert the data into ClickHouse Cloud, specifying the schema as a string, run:
+Insert the data into Datastore Cloud, specifying the schema as a string, run:
 
 ```bash
-cat protobuf_messages.bin | clickhouse client --host <hostname> --secure --password <password> --query "INSERT INTO testing.protobuf_messages SETTINGS format_schema_source='syntax = "proto3";message MessageType {  string name = 1;  string surname = 2;  uint32 birthDate = 3;  repeated string phoneNumbers = 4;};', format_schema='schemafile:MessageType' FORMAT Protobuf"
+cat protobuf_messages.bin | datastore client --host <hostname> --secure --password <password> --query "INSERT INTO testing.protobuf_messages SETTINGS format_schema_source='syntax = "proto3";message MessageType {  string name = 1;  string surname = 2;  uint32 birthDate = 3;  repeated string phoneNumbers = 4;};', format_schema='schemafile:MessageType' FORMAT Protobuf"
 ```
 
 Select the data inserted into the table:
 
 ```sql
-clickhouse client --host <hostname> --secure --password <password> --query "SELECT * FROM testing.protobuf_messages"
+datastore client --host <hostname> --secure --password <password> --query "SELECT * FROM testing.protobuf_messages"
 ```
 
 ```response
@@ -313,7 +313,7 @@ Mei Ling 19980616 ['(555) 956-1834','(555) 403-7682']
 
 You can also store your Protobuf schema in a table.
 
-Create a table on ClickHouse Cloud to insert data into:
+Create a table on Datastore Cloud to insert data into:
 
 ```sql
 CREATE TABLE testing.protobuf_schema (
@@ -327,16 +327,16 @@ ORDER BY tuple();
 INSERT INTO testing.protobuf_schema VALUES ('syntax = "proto3";message MessageType {  string name = 1;  string surname = 2;  uint32 birthDate = 3;  repeated string phoneNumbers = 4;};');
 ```
 
-Insert the data into ClickHouse Cloud, specifying the schema as a query to run:
+Insert the data into Datastore Cloud, specifying the schema as a query to run:
 
 ```bash
-cat protobuf_messages.bin | clickhouse client --host <hostname> --secure --password <password> --query "INSERT INTO testing.protobuf_messages SETTINGS format_schema_source='SELECT schema FROM testing.protobuf_schema', format_schema='schemafile:MessageType' FORMAT Protobuf"
+cat protobuf_messages.bin | datastore client --host <hostname> --secure --password <password> --query "INSERT INTO testing.protobuf_messages SETTINGS format_schema_source='SELECT schema FROM testing.protobuf_schema', format_schema='schemafile:MessageType' FORMAT Protobuf"
 ```
 
 Select the data inserted into the table:
 
 ```sql
-clickhouse client --host <hostname> --secure --password <password> --query "SELECT * FROM testing.protobuf_messages"
+datastore client --host <hostname> --secure --password <password> --query "SELECT * FROM testing.protobuf_messages"
 ```
 
 ```response
@@ -356,13 +356,13 @@ For example:
 SELECT * FROM test.hits format Protobuf SETTINGS format_protobuf_use_autogenerated_schema=1
 ```
 
-In this case, ClickHouse will autogenerate the Protobuf schema according to the table structure using function
+In this case, Datastore will autogenerate the Protobuf schema according to the table structure using function
 [`structureToProtobufSchema`](/sql-reference/functions/other-functions#structureToProtobufSchema). It will then use this schema to serialize data in the Protobuf format.
 
 You can also read a Protobuf file with the autogenerated schema. In this case it is necessary for the file to be created using the same schema:
 
 ```bash
-$ cat hits.bin | clickhouse-client --query "INSERT INTO test.hits SETTINGS format_protobuf_use_autogenerated_schema=1 FORMAT Protobuf"
+$ cat hits.bin | datastore-client --query "INSERT INTO test.hits SETTINGS format_protobuf_use_autogenerated_schema=1 FORMAT Protobuf"
 ```
 
 The setting [`format_protobuf_use_autogenerated_schema`](/operations/settings/settings-formats.md#format_protobuf_use_autogenerated_schema) is enabled by default and applies if [`format_schema`](/operations/settings/formats#format_schema) is not set.

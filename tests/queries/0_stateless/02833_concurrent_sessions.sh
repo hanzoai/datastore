@@ -28,9 +28,9 @@ readonly ALL_USERS_SQL_COLLECTION_STRING
 readonly SESSION_LOG_MATCHING_FIELDS="auth_id, auth_type, client_version_major, client_version_minor, client_version_patch, interface"
 
 for user in "${ALL_USERS[@]}"; do
-    ${CLICKHOUSE_CLIENT} -q "CREATE USER IF NOT EXISTS ${user} IDENTIFIED WITH plaintext_password BY 'pass'"
-    ${CLICKHOUSE_CLIENT} -q "GRANT SELECT ON system.* TO ${user}"
-    ${CLICKHOUSE_CLIENT} -q "GRANT SELECT ON INFORMATION_SCHEMA.* TO ${user}";
+    ${DATASTORE_CLIENT} -q "CREATE USER IF NOT EXISTS ${user} IDENTIFIED WITH plaintext_password BY 'pass'"
+    ${DATASTORE_CLIENT} -q "GRANT SELECT ON system.* TO ${user}"
+    ${DATASTORE_CLIENT} -q "GRANT SELECT ON INFORMATION_SCHEMA.* TO ${user}";
 done
 
 # All <type>_session functions execute in separate threads.
@@ -43,9 +43,9 @@ function tcp_session()
     local i=0
     while (( (i++) < 3 )); do
         # login logout
-        ${CLICKHOUSE_CLIENT} -q "SELECT 1, sleep(0.01${RANDOM})" --user="${user}" --password="pass"
+        ${DATASTORE_CLIENT} -q "SELECT 1, sleep(0.01${RANDOM})" --user="${user}" --password="pass"
         # login failure
-        ${CLICKHOUSE_CLIENT} -q "SELECT 2" --user="${user}" --password 'invalid'
+        ${DATASTORE_CLIENT} -q "SELECT 2" --user="${user}" --password 'invalid'
     done
 }
 
@@ -55,10 +55,10 @@ function http_session()
     local i=0
     while (( (i++) < 3 )); do
         # login logout
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&user=${user}&password=pass" -d "SELECT 3, sleep(0.01${RANDOM})"
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&user=${user}&password=pass" -d "SELECT 3, sleep(0.01${RANDOM})"
 
         # login failure
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&user=${user}&password=wrong" -d "SELECT 4"
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&user=${user}&password=wrong" -d "SELECT 4"
     done
 }
 
@@ -68,10 +68,10 @@ function http_with_session_id_session()
     local i=0
     while (( (i++) < 3 )); do
         # login logout
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&session_id=${user}&user=${user}&password=pass" -d "SELECT 5, sleep 0.01${RANDOM}"
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&session_id=${user}&user=${user}&password=pass" -d "SELECT 5, sleep 0.01${RANDOM}"
 
         # login failure
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&session_id=${user}&user=${user}&password=wrong" -d "SELECT 6"
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&session_id=${user}&user=${user}&password=wrong" -d "SELECT 6"
     done
 }
 
@@ -81,15 +81,15 @@ function mysql_session()
     local i=0
     while (( (i++) < 3 )); do
         # login logout
-        ${CLICKHOUSE_CLIENT} -q "SELECT 1, sleep(0.01${RANDOM}) FROM mysql('127.0.0.1:9004', 'system', 'one', '${user}', 'pass')"
+        ${DATASTORE_CLIENT} -q "SELECT 1, sleep(0.01${RANDOM}) FROM mysql('127.0.0.1:9004', 'system', 'one', '${user}', 'pass')"
 
         # login failure
-        ${CLICKHOUSE_CLIENT} -q "SELECT 1 FROM mysql('127.0.0.1:9004', 'system', 'one', '${user}', 'wrong', SETTINGS connection_max_tries=1)"
+        ${DATASTORE_CLIENT} -q "SELECT 1 FROM mysql('127.0.0.1:9004', 'system', 'one', '${user}', 'wrong', SETTINGS connection_max_tries=1)"
     done
 }
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
-${CLICKHOUSE_CLIENT} -q "DELETE FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING})"
+${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
+${DATASTORE_CLIENT} -q "DELETE FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING})"
 
 export -f tcp_session;
 export -f http_session;
@@ -114,28 +114,28 @@ done
 
 wait
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
+${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
 
 echo "sessions:"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING})"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING})"
 
 echo "port_0_sessions:"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING}) AND client_port = 0"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING}) AND client_port = 0"
 
 echo "address_0_sessions:"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING}) AND client_address = toIPv6('::')"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${ALL_USERS_SQL_COLLECTION_STRING}) AND client_address = toIPv6('::')"
 
 echo "tcp_sessions"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${TCP_USERS_SQL_COLLECTION_STRING}) AND interface = 'TCP'"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${TCP_USERS_SQL_COLLECTION_STRING}) AND interface = 'TCP'"
 echo "http_sessions"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${HTTP_USERS_SQL_COLLECTION_STRING}) AND interface = 'HTTP'"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${HTTP_USERS_SQL_COLLECTION_STRING}) AND interface = 'HTTP'"
 echo "http_with_session_id_sessions"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${HTTP_WITH_SESSION_ID_USERS_SQL_COLLECTION_STRING}) AND interface = 'HTTP'"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${HTTP_WITH_SESSION_ID_USERS_SQL_COLLECTION_STRING}) AND interface = 'HTTP'"
 echo "mysql_sessions"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${MYSQL_USERS_SQL_COLLECTION_STRING}) AND interface = 'MySQL'"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user IN (${MYSQL_USERS_SQL_COLLECTION_STRING}) AND interface = 'MySQL'"
 
 for user in "${ALL_USERS[@]}"; do
-    ${CLICKHOUSE_CLIENT} -q "DROP USER ${user}"
+    ${DATASTORE_CLIENT} -q "DROP USER ${user}"
     echo "Corresponding LoginSuccess/Logout"
 
     # The client can exit sooner than the server records its disconnection and closes the session.
@@ -145,7 +145,7 @@ for user in "${ALL_USERS[@]}"; do
     # We cannot expect that after the control is returned to the shell, the server records the logout event.
     while true
     do
-        [[ 3 -eq $(${CLICKHOUSE_CLIENT} -q "
+        [[ 3 -eq $(${DATASTORE_CLIENT} -q "
             SELECT COUNT(*) FROM (
                 SELECT ${SESSION_LOG_MATCHING_FIELDS} FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${user}' AND type = 'LoginSuccess'
                 INTERSECT
@@ -155,5 +155,5 @@ for user in "${ALL_USERS[@]}"; do
     done
 
     echo "LoginFailure"
-    ${CLICKHOUSE_CLIENT} -q "SELECT COUNT(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${user}' AND type = 'LoginFailure'"
+    ${DATASTORE_CLIENT} -q "SELECT COUNT(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${user}' AND type = 'LoginFailure'"
  done

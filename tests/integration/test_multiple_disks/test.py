@@ -67,7 +67,7 @@ def test_system_tables(start_cluster):
     expected_disks_data = [
         {
             "name": "default",
-            "path": "/var/lib/clickhouse/",
+            "path": "/var/lib/datastore/",
             "keep_free_space": 1024,
         },
         {
@@ -384,7 +384,7 @@ def test_query_parser(start_cluster):
         pytest.param("test_alter_policy", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_test_alter_policy",
-            "ReplicatedMergeTree('/clickhouse/test_alter_policy', '1')",
+            "ReplicatedMergeTree('/datastore/test_alter_policy', '1')",
             id="replicated",
         ),
     ],
@@ -490,7 +490,7 @@ def get_used_parts_for_table(node, table_name):
 def test_no_warning_about_zero_max_data_part_size(start_cluster):
     def get_log(node):
         return node.exec_in_container(
-            ["bash", "-c", "cat /var/log/clickhouse-server/clickhouse-server.log"]
+            ["bash", "-c", "cat /var/log/datastore-server/datastore-server.log"]
         )
 
     for node in (node1, node2):
@@ -517,7 +517,7 @@ def test_no_warning_about_zero_max_data_part_size(start_cluster):
         pytest.param("mt_on_jbod", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_mt_on_jbod",
-            "ReplicatedMergeTree('/clickhouse/replicated_mt_on_jbod', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_mt_on_jbod', '1')",
             id="replicated",
         ),
     ],
@@ -576,7 +576,7 @@ def test_round_robin(start_cluster, name, engine):
         pytest.param("mt_with_huge_part", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_mt_with_huge_part",
-            "ReplicatedMergeTree('/clickhouse/replicated_mt_with_huge_part', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_mt_with_huge_part', '1')",
             id="replicated",
         ),
     ],
@@ -625,7 +625,7 @@ def test_max_data_part_size(start_cluster, name, engine):
         pytest.param("mt_with_overflow", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_mt_with_overflow",
-            "ReplicatedMergeTree('/clickhouse/replicated_mt_with_overflow', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_mt_with_overflow', '1')",
             id="replicated",
         ),
     ],
@@ -711,7 +711,7 @@ def test_jbod_overflow(start_cluster, name, engine):
         pytest.param("moving_mt", "MergeTree()", id="mt"),
         pytest.param(
             "moving_replicated_mt",
-            "ReplicatedMergeTree('/clickhouse/moving_replicated_mt', '1')",
+            "ReplicatedMergeTree('/datastore/moving_replicated_mt', '1')",
             id="replicated",
         ),
     ],
@@ -779,7 +779,7 @@ def test_background_move(start_cluster, name, engine):
         pytest.param("stopped_moving_mt", "MergeTree()", id="mt"),
         pytest.param(
             "stopped_moving_replicated_mt",
-            "ReplicatedMergeTree('/clickhouse/stopped_moving_replicated_mt', '1')",
+            "ReplicatedMergeTree('/datastore/stopped_moving_replicated_mt', '1')",
             id="replicated",
         ),
     ],
@@ -1185,7 +1185,7 @@ def produce_alter_move(node, name):
         pytest.param("detach_attach_mt", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_detach_attach_mt",
-            "ReplicatedMergeTree('/clickhouse/replicated_detach_attach_mt', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_detach_attach_mt', '1')",
             id="replicated",
         ),
     ],
@@ -1236,7 +1236,7 @@ def test_detach_attach(start_cluster, name, engine):
         pytest.param("mutating_mt", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_mutating_mt",
-            "ReplicatedMergeTree('/clickhouse/replicated_mutating_mt', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_mutating_mt', '1')",
             id="replicated",
         ),
     ],
@@ -1316,7 +1316,7 @@ def test_mutate_to_another_disk(start_cluster, name, engine):
         pytest.param("alter_modifying_mt", "MergeTree()", id="mt"),
         pytest.param(
             "replicated_alter_modifying_mt",
-            "ReplicatedMergeTree('/clickhouse/replicated_alter_modifying_mt', '1')",
+            "ReplicatedMergeTree('/datastore/replicated_alter_modifying_mt', '1')",
             id="replicated",
         ),
     ],
@@ -1436,7 +1436,7 @@ def test_simple_replication_and_moves(start_cluster):
                 """
                 CREATE TABLE IF NOT EXISTS replicated_table_for_moves (
                     s1 String
-                ) ENGINE = ReplicatedMergeTree('/clickhouse/replicated_table_for_moves', '{}')
+                ) ENGINE = ReplicatedMergeTree('/datastore/replicated_table_for_moves', '{}')
                 ORDER BY tuple()
                 SETTINGS storage_policy='moving_jbod_with_external', old_parts_lifetime=1,
                 cleanup_delay_period=1, cleanup_delay_period_random_add=2, cleanup_thread_preferred_points_per_iteration=0
@@ -1518,7 +1518,7 @@ def test_download_appropriate_disk(start_cluster):
                 """
                 CREATE TABLE IF NOT EXISTS replicated_table_for_download (
                     s1 String
-                ) ENGINE = ReplicatedMergeTree('/clickhouse/replicated_table_for_download', '{}')
+                ) ENGINE = ReplicatedMergeTree('/datastore/replicated_table_for_download', '{}')
                 ORDER BY tuple()
                 SETTINGS storage_policy='moving_jbod_with_external', old_parts_lifetime=1,
                 cleanup_delay_period=1, cleanup_delay_period_random_add=2, cleanup_thread_preferred_points_per_iteration=0
@@ -1729,7 +1729,7 @@ def test_kill_while_insert(start_cluster):
         try:
             node1.query(f"DROP TABLE IF EXISTS {name} SYNC")
         except:
-            """ClickHouse may be inactive at this moment and we don't want to mask a meaningful exception."""
+            """Datastore may be inactive at this moment and we don't want to mask a meaningful exception."""
 
 
 def test_move_while_merge(start_cluster):

@@ -1,12 +1,12 @@
 -- { echoOn }
--- https://github.com/ClickHouse/ClickHouse/issues/68895
+-- https://github.com/ClickHouse/Datastore/issues/68895
 SELECT arrayMax(x -> toFixedString('.', 1), []);
 
--- https://github.com/ClickHouse/ClickHouse/issues/69600
+-- https://github.com/ClickHouse/Datastore/issues/69600
 SELECT arrayMax(x -> (-x), [1, 2, 4]) AS res;
 SELECT arrayMax(x -> toUInt16(-x), [1, 2, 4]) AS res;
 
--- https://github.com/ClickHouse/ClickHouse/pull/69640
+-- https://github.com/ClickHouse/Datastore/pull/69640
 SELECT arrayMin(x1 -> (x1 * toNullable(-1)), materialize([1, 2, 3]));
 SELECT arrayMin(x1 -> x1 * -1, [1,2,3]);
 

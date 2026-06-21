@@ -7,11 +7,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS a"
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS b"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS a"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS b"
 
-$CLICKHOUSE_CLIENT --query "CREATE TABLE a (x UInt8) ENGINE = MergeTree ORDER BY tuple()"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE b (x UInt8) ENGINE = MergeTree ORDER BY tuple()"
+$DATASTORE_CLIENT --query "CREATE TABLE a (x UInt8) ENGINE = MergeTree ORDER BY tuple()"
+$DATASTORE_CLIENT --query "CREATE TABLE b (x UInt8) ENGINE = MergeTree ORDER BY tuple()"
 
 
 function thread1()
@@ -19,8 +19,8 @@ function thread1()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        # NOTE: database = $CLICKHOUSE_DATABASE is unwanted
-        seq 1 100 | awk '{ print "SELECT x FROM a WHERE x IN (SELECT toUInt8(count()) FROM system.tables);" }' | $CLICKHOUSE_CLIENT -n
+        # NOTE: database = $DATASTORE_DATABASE is unwanted
+        seq 1 100 | awk '{ print "SELECT x FROM a WHERE x IN (SELECT toUInt8(count()) FROM system.tables);" }' | $DATASTORE_CLIENT -n
     done
 }
 
@@ -29,8 +29,8 @@ function thread2()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        # NOTE: database = $CLICKHOUSE_DATABASE is unwanted
-        seq 1 100 | awk '{ print "SELECT x FROM b WHERE x IN (SELECT toUInt8(count()) FROM system.tables);" }' | $CLICKHOUSE_CLIENT -n
+        # NOTE: database = $DATASTORE_DATABASE is unwanted
+        seq 1 100 | awk '{ print "SELECT x FROM b WHERE x IN (SELECT toUInt8(count()) FROM system.tables);" }' | $DATASTORE_CLIENT -n
     done
 }
 
@@ -39,8 +39,8 @@ function thread3()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE a MODIFY COLUMN x Nullable(UInt8)"
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE a MODIFY COLUMN x UInt8"
+        $DATASTORE_CLIENT --query "ALTER TABLE a MODIFY COLUMN x Nullable(UInt8)"
+        $DATASTORE_CLIENT --query "ALTER TABLE a MODIFY COLUMN x UInt8"
     done
 }
 
@@ -49,8 +49,8 @@ function thread4()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE b MODIFY COLUMN x Nullable(UInt8)"
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE b MODIFY COLUMN x UInt8"
+        $DATASTORE_CLIENT --query "ALTER TABLE b MODIFY COLUMN x Nullable(UInt8)"
+        $DATASTORE_CLIENT --query "ALTER TABLE b MODIFY COLUMN x UInt8"
     done
 }
 
@@ -63,5 +63,5 @@ thread4 2> /dev/null &
 
 wait
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE a"
-$CLICKHOUSE_CLIENT --query "DROP TABLE b"
+$DATASTORE_CLIENT --query "DROP TABLE a"
+$DATASTORE_CLIENT --query "DROP TABLE b"

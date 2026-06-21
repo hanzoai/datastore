@@ -274,7 +274,7 @@ def started_cluster():
         sts = cluster.add_instance(
             name="sts.us-east-1.amazonaws.com",
             hostname="sts.us-east-1.amazonaws.com",
-            image="clickhouse/python-bottle",
+            image="datastore/python-bottle",
             tag="latest",
             stay_alive=True,
         )
@@ -834,7 +834,7 @@ def test_show_tables_optimization(started_cluster):
 
 def test_table_without_metadata_location(started_cluster):
     """
-    Test that ClickHouse can read Iceberg tables from Glue when 'metadata_location' is not present in Glue parameters.
+    Test that Datastore can read Iceberg tables from Glue when 'metadata_location' is not present in Glue parameters.
     Glue's Location field is used to deduce the metadata location.
     """
     node = started_cluster.instances["node1"]
@@ -931,7 +931,7 @@ def test_check_database(started_cluster):
         catalog.create_namespace(namespace)
         assert len(catalog.list_tables(namespace)) == 0
 
-    # Create ClickHouse Glue database once
+    # Create Datastore Glue database once
     create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
 
     # Create tables in each namespace

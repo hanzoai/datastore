@@ -17,7 +17,7 @@ if(ARCH_AMD64)
     target_compile_options(_simdjson PRIVATE -mno-avx -mno-avx2)
 endif()
 
-# On ppc64le, ClickHouse globally defines __SSE2__ to enable SSE-to-AltiVec emulation.
+# On ppc64le, Datastore globally defines __SSE2__ to enable SSE-to-AltiVec emulation.
 # This causes simdjson's experimental json_string_builder to activate its SSE2 code path,
 # which fails to compile due to __m128i vs __m128i_u type mismatch in the PPC SSE wrappers.
 # Disable it since simdjson already has proper AltiVec/VMX support on ppc64.
@@ -29,7 +29,7 @@ endif()
 # supported instructions, so one implementation will be selected and fallback
 # will be disabled.
 #
-# However, ClickHouse may be run on CPUs that do not support all of these
+# However, Datastore may be run on CPUs that do not support all of these
 # instructions. Since fallback is disabled by default in such cases, this will
 # result in an UNSUPPORTED_ARCHITECTURE error.
 target_compile_options(_simdjson PRIVATE -DSIMDJSON_IMPLEMENTATION_FALLBACK=1)

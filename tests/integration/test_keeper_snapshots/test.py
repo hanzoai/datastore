@@ -12,7 +12,7 @@ from helpers.cluster import ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 
-# clickhouse itself will use external zookeeper
+# datastore itself will use external zookeeper
 node = cluster.add_instance(
     "node",
     main_configs=["configs/enable_keeper.xml"],
@@ -173,7 +173,7 @@ def test_invalid_snapshot(started_cluster, request):
         keeper_utils.send_4lw_cmd(started_cluster, node, "csnp")
         node.stop_clickhouse()
         snapshots = (
-            node.exec_in_container(["ls", "/var/lib/clickhouse/coordination/snapshots"])
+            node.exec_in_container(["ls", "/var/lib/datastore/coordination/snapshots"])
             .strip()
             .split("\n")
         )
@@ -190,7 +190,7 @@ def test_invalid_snapshot(started_cluster, request):
                 "truncate",
                 "-s",
                 "0",
-                f"/var/lib/clickhouse/coordination/snapshots/{last_snapshot}",
+                f"/var/lib/datastore/coordination/snapshots/{last_snapshot}",
             ]
         )
         node.start_clickhouse(start_wait_sec=120, expected_to_fail=True)
@@ -203,7 +203,7 @@ def test_invalid_snapshot(started_cluster, request):
         node.exec_in_container(
             [
                 "rm",
-                f"/var/lib/clickhouse/coordination/snapshots/{last_snapshot}",
+                f"/var/lib/datastore/coordination/snapshots/{last_snapshot}",
             ]
         )
         node.start_clickhouse()

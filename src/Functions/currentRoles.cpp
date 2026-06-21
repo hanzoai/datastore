@@ -113,7 +113,7 @@ SELECT currentRoles();
         )",
         R"(
 ┌─currentRoles()─────────────────────────────────┐
-│ ['sql-console-role:jane.smith@clickhouse.com'] │
+│ ['sql-console-role:jane.smith@datastore.com'] │
 └────────────────────────────────────────────────┘
         )"
     }
@@ -136,7 +136,7 @@ SELECT enabledRoles();
         )",
         R"(
 ┌─enabledRoles()─────────────────────────────────────────────────┐
-│ ['general_data', 'sql-console-role:jane.smith@clickhouse.com'] │
+│ ['general_data', 'sql-console-role:jane.smith@datastore.com'] │
 └────────────────────────────────────────────────────────────────┘
         )"
     }
@@ -159,7 +159,7 @@ SELECT defaultRoles();
         )",
         R"(
 ┌─defaultRoles()─────────────────────────────────┐
-│ ['sql-console-role:jane.smith@clickhouse.com'] │
+│ ['sql-console-role:jane.smith@datastore.com'] │
 └────────────────────────────────────────────────┘
         )"
     }

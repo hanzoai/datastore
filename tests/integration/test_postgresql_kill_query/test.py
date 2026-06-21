@@ -235,7 +235,7 @@ def test_kill_infinite_query(setup_infinite_query):
 
     query_thread.join()
 
-    # Verify that query was successfully cancelled in ClickHouse server
+    # Verify that query was successfully cancelled in Datastore server
     result = node1.query(
         f"SELECT count(*) FROM system.processes WHERE query_id='{query_id}'"
     )
@@ -281,7 +281,7 @@ SETTINGS max_block_size = 10000""",
 
     query_thread.join()
 
-    # Verify that query was successfully cancelled in ClickHouse server
+    # Verify that query was successfully cancelled in Datastore server
     result = node1.query(
         f"SELECT count(*) FROM system.processes WHERE query_id='{query_id}'"
     )
@@ -312,7 +312,7 @@ def test_cancel_infinite_query(setup_infinite_query):
             [
                 "bash",
                 "-c",
-                f"""/usr/bin/clickhouse client --query "{query}" """,
+                f"""/usr/bin/datastore client --query "{query}" """,
             ]
         )
 
@@ -348,7 +348,7 @@ SETTINGS max_block_size = 10000"""
             [
                 "bash",
                 "-c",
-                f"""/usr/bin/clickhouse client --query "{query}" """,
+                f"""/usr/bin/datastore client --query "{query}" """,
             ]
         )
 

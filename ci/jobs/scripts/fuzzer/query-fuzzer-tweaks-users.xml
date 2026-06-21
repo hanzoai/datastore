@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_execution_time>10</max_execution_time>
@@ -119,4 +119,4 @@
             <parallel_replicas_allow_materialized_views>1</parallel_replicas_allow_materialized_views>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
     DROP TABLE IF EXISTS dictionary_nullable_source_table;
     CREATE TABLE dictionary_nullable_source_table
     (
@@ -30,7 +30,7 @@ $CLICKHOUSE_CLIENT --query="
         value Nullable(UInt64) DEFAULT NULL
     )
     PRIMARY KEY id
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
+    SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_nullable_source_table'))
     LIFETIME(MIN 1 MAX 1000)
     LAYOUT(SSD_CACHE(BLOCK_SIZE 4096 FILE_SIZE 8192 PATH '$USER_FILES_PATH/0d'));
 

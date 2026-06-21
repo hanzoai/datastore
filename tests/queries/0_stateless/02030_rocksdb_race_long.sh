@@ -12,7 +12,7 @@ echo "
 	DROP TABLE IF EXISTS rocksdb_race;
 	CREATE TABLE rocksdb_race (key String, value UInt32) Engine=EmbeddedRocksDB PRIMARY KEY(key);
     INSERT INTO rocksdb_race SELECT '1_' || toString(number), number FROM numbers(100000);
-" | $CLICKHOUSE_CLIENT
+" | $DATASTORE_CLIENT
 
 function read_stat_thread()
 {
@@ -20,7 +20,7 @@ function read_stat_thread()
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         echo "
             SELECT * FROM system.rocksdb FORMAT Null;
-        " | $CLICKHOUSE_CLIENT
+        " | $DATASTORE_CLIENT
     done
 }
 
@@ -31,7 +31,7 @@ function truncate_thread()
         sleep 3s;
         echo "
             TRUNCATE TABLE rocksdb_race;
-        " | $CLICKHOUSE_CLIENT
+        " | $DATASTORE_CLIENT
     done
 }
 
@@ -42,4 +42,4 @@ truncate_thread 2> /dev/null &
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE rocksdb_race"
+$DATASTORE_CLIENT -q "DROP TABLE rocksdb_race"

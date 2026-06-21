@@ -35,5 +35,5 @@ def test_projection_rebuild_uses_only_required_columns(started_cluster):
     cnt = node1.query("select count() from system.text_log where query_id like '{}::all_%_2' and message like '%Reading%from part p_%from the beginning of the part%'".format(uuid))
     # One projection part per source part
     assert (cnt == '3\n')
-    # Here we check that _parent_part_offset is calculated properly. It was fixed in https://github.com/ClickHouse/ClickHouse/pull/93827
+    # Here we check that _parent_part_offset is calculated properly. It was fixed in https://github.com/ClickHouse/Datastore/pull/93827
     assert(node1.query("select min(_parent_part_offset), max(_parent_part_offset) from mergeTreeProjection(default, tab, 'p')") == '0\t29999\n')

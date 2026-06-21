@@ -56,10 +56,10 @@ private:
     std::condition_variable cond;
     std::optional<ThreadFromGlobalPool> thread;
 
-    static constexpr auto profile_events_path_prefix = "ClickHouse.ProfileEvents.";
-    static constexpr auto profile_events_cumulative_path_prefix = "ClickHouse.ProfileEventsCumulative.";
-    static constexpr auto current_metrics_path_prefix = "ClickHouse.Metrics.";
-    static constexpr auto asynchronous_metrics_path_prefix = "ClickHouse.AsynchronousMetrics.";
+    static constexpr auto profile_events_path_prefix = "Datastore.ProfileEvents.";
+    static constexpr auto profile_events_cumulative_path_prefix = "Datastore.ProfileEventsCumulative.";
+    static constexpr auto current_metrics_path_prefix = "Datastore.Metrics.";
+    static constexpr auto asynchronous_metrics_path_prefix = "Datastore.AsynchronousMetrics.";
 };
 
 }

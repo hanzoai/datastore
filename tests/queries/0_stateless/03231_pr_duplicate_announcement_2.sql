@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS ANIMAL SYNC;
 
-CREATE TABLE ANIMAL ( ANIMAL Nullable(String) ) ENGINE = ReplicatedMergeTree('/clickhouse/test/{database}/animal', 'r1') ORDER BY tuple();
+CREATE TABLE ANIMAL ( ANIMAL Nullable(String) ) ENGINE = ReplicatedMergeTree('/datastore/test/{database}/animal', 'r1') ORDER BY tuple();
 
 INSERT INTO ANIMAL (ANIMAL) VALUES ('CAT'), ('FISH'), ('DOG'), ('HORSE'), ('BIRD');
 

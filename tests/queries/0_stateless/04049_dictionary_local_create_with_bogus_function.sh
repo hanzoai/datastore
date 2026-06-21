@@ -4,17 +4,17 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-# Verify that clickhouse-local doesn't crash when CREATE DICTIONARY
+# Verify that datastore-local doesn't crash when CREATE DICTIONARY
 # contains a non-existing function in a list value (e.g., Decimal(18, 8)
 # parsed as a function call). Should produce INCORRECT_DICTIONARY_DEFINITION.
-$CLICKHOUSE_LOCAL -q "
+$DATASTORE_LOCAL -q "
 CREATE DICTIONARY default.currency_conversion_dict
 (
     \`a\` String,
     \`b\` Decimal(18, 8)
 )
 PRIMARY KEY a
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     TABLE ''
     STRUCTURE (
         a String

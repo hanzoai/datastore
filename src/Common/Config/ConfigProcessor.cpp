@@ -75,7 +75,7 @@ ConfigProcessor::ConfigProcessor(
     , throw_on_bad_incl(throw_on_bad_incl_)
     , throw_on_bad_include_from(throw_on_bad_include_from_)
     , substitutions(substitutions_)
-    /// We need larger name pool to allow to support vast amount of users in users.xml files for ClickHouse.
+    /// We need larger name pool to allow to support vast amount of users in users.xml files for Datastore.
     /// Size is prime because Poco::XML::NamePool uses bad (inefficient, low quality)
     ///  hash function internally, and its size was prime by default.
     , name_pool(new Poco::XML::NamePool(65521))
@@ -403,14 +403,14 @@ bool ConfigProcessor::merge(XMLDocumentPtr config, XMLDocumentPtr with)
     std::string config_root_node_name = config_root->nodeName();
     std::string merged_root_node_name = with_root->nodeName();
 
-    /// For compatibility, we treat 'yandex' and 'clickhouse' equivalent.
-    /// See https://clickhouse.com/blog/en/2021/clickhouse-inc/
+    /// For compatibility, we treat 'yandex' and 'datastore' equivalent.
+    /// See https://datastore.com/blog/en/2021/datastore-inc/
 
     if (config_root_node_name != merged_root_node_name
-        && !((config_root_node_name == "yandex" || config_root_node_name == "clickhouse")
-            && (merged_root_node_name == "yandex" || merged_root_node_name == "clickhouse")))
+        && !((config_root_node_name == "yandex" || config_root_node_name == "datastore")
+            && (merged_root_node_name == "yandex" || merged_root_node_name == "datastore")))
     {
-        if (config_root_node_name != "clickhouse" && config_root_node_name != "yandex")
+        if (config_root_node_name != "datastore" && config_root_node_name != "yandex")
             return false;
 
         throw Poco::Exception("Root element doesn't have the corresponding root element as the config file."
@@ -974,7 +974,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
             std::replace(new_path.begin(), new_path.end(), '/', '_');
 
             /// If we have config file in YAML format, the preprocessed config will inherit .yaml extension
-            /// but will contain config in XML format, so some tools like clickhouse extract-from-config won't work
+            /// but will contain config in XML format, so some tools like datastore extract-from-config won't work
             new_path = fs::path(new_path).replace_extension(".xml").string();
 
             if (preprocessed_dir.empty())
@@ -1023,24 +1023,24 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
     (but they will not be able to decrypt encrypted elements). If there are no `encryption_codecs` tags with `from_zk` attributes, we can decrypt anyways.
 
     Config example we process here:
-    <clickhouse>
+    <datastore>
       <encryption_codecs>
         <aes_128_gcm_siv>
             <key_hex>00112233445566778899aabbccddeeff</key_hex>
         </aes_128_gcm_siv>
       </encryption_codecs>
       <max_table_size_to_drop encrypted_by="AES_128_GCM_SIV">96260000000B0000000000E8FE3C087CED2205A5071078B29FD5C3B97F824911DED3217E980C</max_table_size_to_drop>
-    </clickhouse>
+    </datastore>
 
     Config example we do not process here:
-    <clickhouse>
+    <datastore>
       <encryption_codecs>
         <aes_128_gcm_siv>
-            <key_hex from_zk="/clickhouse/aes128_key_hex"/>
+            <key_hex from_zk="/datastore/aes128_key_hex"/>
         </aes_128_gcm_siv>
       </encryption_codecs>
       <max_table_size_to_drop encrypted_by="AES_128_GCM_SIV">96260000000B0000000000E8FE3C087CED2205A5071078B29FD5C3B97F824911DED3217E980C</max_table_size_to_drop>
-    </clickhouse>
+    </datastore>
     */
     constexpr auto encryption_codecs_key = "encryption_codecs";
     if (!skip_zk_encryption_keys || !hasNodeWithNameAndChildNodeWithAttribute(loaded_config, encryption_codecs_key, "from_zk"))

@@ -46,7 +46,7 @@ def get_zookeeper_which_node_connected_to(node: ClickHouseInstance) -> str:
     result = pattern.findall(line)
     assert (
         len(result) == 1
-    ), "ClickHouse must be connected only to one Zookeeper at a time"
+    ), "Datastore must be connected only to one Zookeeper at a time"
     assert isinstance(result[0], str)
     return result[0]
 
@@ -474,7 +474,7 @@ def replace_zookeeper_config(
     if not isinstance(nodes, Sequence):
         nodes = (nodes,)
     for node in nodes:
-        node.replace_config("/etc/clickhouse-server/conf.d/zookeeper.xml", new_config)
+        node.replace_config("/etc/datastore-server/conf.d/zookeeper.xml", new_config)
         node.query("SYSTEM RELOAD CONFIG")
 
 

@@ -13,9 +13,9 @@ import SystemTableCloud from '@site/docs/_snippets/_system_table_cloud.md';
 
 ## Description {#description}
 
-The `system.iceberg_metadata_log` table records metadata access and parsing events for Iceberg tables read by ClickHouse. It provides detailed information about each metadata file or entry processed, which is useful for debugging, auditing, and understanding Iceberg table structure evolution.
+The `system.iceberg_metadata_log` table records metadata access and parsing events for Iceberg tables read by Datastore. It provides detailed information about each metadata file or entry processed, which is useful for debugging, auditing, and understanding Iceberg table structure evolution.
 
-This table logs every metadata file and entry read from Iceberg tables, including root metadata files, manifest lists, and manifest entries. It helps users trace how ClickHouse interprets Iceberg table metadata and diagnose issues related to schema evolution, file resolution, or query planning.
+This table logs every metadata file and entry read from Iceberg tables, including root metadata files, manifest lists, and manifest entries. It helps users trace how Datastore interprets Iceberg table metadata and diagnose issues related to schema evolution, file resolution, or query planning.
 
 :::note
 This table is primarily intended for debugging purposes.

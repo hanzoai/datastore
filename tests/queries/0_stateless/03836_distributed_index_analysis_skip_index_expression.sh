@@ -3,7 +3,7 @@
 # - no-random-merge-tree-settings -- may change number of parts
 
 # There will be warnings in logs for unavailable replicas that we have in parallel_replicas cluster.
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=error
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=error
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -32,7 +32,7 @@ function jq_pk_filter()
   }'
 }
 
-$CLICKHOUSE_CLIENT -nm -q "
+$DATASTORE_CLIENT -nm -q "
   drop table if exists test_skip_with_expr;
   create table test_skip_with_expr (timestamp DateTime64(9), value Int,
     index ts_idx toStartOfHour(timestamp) type minmax granularity 1)
@@ -50,14 +50,14 @@ $CLICKHOUSE_CLIENT -nm -q "
 "
 
 echo "with skip index, distributed_index_analysis=0"
-$CLICKHOUSE_CLIENT --format=LineAsString -q "
+$DATASTORE_CLIENT --format=LineAsString -q "
   explain indexes=1, json=1
   select * from test_skip_with_expr
   where timestamp = toDateTime64('2024-01-01 00:05:00', 9)
 " | jq_pk_filter
 
 echo "with skip index, distributed_index_analysis=1 (wrong Condition, correct Selected Granules)"
-$CLICKHOUSE_CLIENT "${explain_opts[@]}" -q "
+$DATASTORE_CLIENT "${explain_opts[@]}" -q "
   explain indexes=1, json=1
   select * from test_skip_with_expr
   where timestamp = toDateTime64('2024-01-01 00:05:00', 9)

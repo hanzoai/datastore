@@ -6,9 +6,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-if [[ -z "$CLICKHOUSE_GRPC_CLIENT" ]]; then
-  CLICKHOUSE_GRPC_CLIENT="$CURDIR/../../../utils/grpc-client/clickhouse-grpc-client.py"
+if [[ -z "$DATASTORE_GRPC_CLIENT" ]]; then
+  DATASTORE_GRPC_CLIENT="$CURDIR/../../../utils/grpc-client/datastore-grpc-client.py"
 fi
 
 # Simple test.
-$CLICKHOUSE_GRPC_CLIENT --query "SELECT 'ok'"
+$DATASTORE_GRPC_CLIENT --query "SELECT 'ok'"

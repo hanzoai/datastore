@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/local-file
 title: 'Local File dictionary source'
 sidebar_position: 2
 sidebar_label: 'Local File'
-description: 'Configure a local file as a dictionary source in ClickHouse.'
+description: 'Configure a local file as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 
@@ -45,7 +45,7 @@ Setting fields:
 | `path` | The absolute path to the file. |
 | `format` | The file format. All the formats described in [Formats](/sql-reference/formats) are supported. |
 
-When a dictionary with source `FILE` is created via DDL command (`CREATE DICTIONARY ...`), the source file needs to be located in the `user_files` directory to prevent DB users from accessing arbitrary files on the ClickHouse node.
+When a dictionary with source `FILE` is created via DDL command (`CREATE DICTIONARY ...`), the source file needs to be located in the `user_files` directory to prevent DB users from accessing arbitrary files on the Datastore node.
 
 **See Also**
 

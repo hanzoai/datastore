@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/90802
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/90802
 -- Text-index direct-read optimization used to throw `NOT_FOUND_COLUMN_IN_BLOCK`
 -- when `LIKE '%x%'` appeared both in `SELECT` and `WHERE`.
 

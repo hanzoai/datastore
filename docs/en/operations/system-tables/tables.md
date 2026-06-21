@@ -77,8 +77,8 @@ name:                       t1
 uuid:                       81b1c20a-b7c6-4116-a2ce-7583fb6b6736
 engine:                     MergeTree
 is_temporary:               0
-data_paths:                 ['/var/lib/clickhouse/store/81b/81b1c20a-b7c6-4116-a2ce-7583fb6b6736/']
-metadata_path:              /var/lib/clickhouse/store/461/461cf698-fd0b-406d-8c01-5d8fd5748a91/t1.sql
+data_paths:                 ['/var/lib/datastore/store/81b/81b1c20a-b7c6-4116-a2ce-7583fb6b6736/']
+metadata_path:              /var/lib/datastore/store/461/461cf698-fd0b-406d-8c01-5d8fd5748a91/t1.sql
 metadata_modification_time: 2021-01-25 19:14:32
 dependencies_database:      []
 dependencies_table:         []
@@ -108,8 +108,8 @@ name:                       53r93yleapyears
 uuid:                       00000000-0000-0000-0000-000000000000
 engine:                     MergeTree
 is_temporary:               0
-data_paths:                 ['/var/lib/clickhouse/data/default/53r93yleapyears/']
-metadata_path:              /var/lib/clickhouse/metadata/default/53r93yleapyears.sql
+data_paths:                 ['/var/lib/datastore/data/default/53r93yleapyears/']
+metadata_path:              /var/lib/datastore/metadata/default/53r93yleapyears.sql
 metadata_modification_time: 2020-09-23 09:05:36
 dependencies_database:      []
 dependencies_table:         []

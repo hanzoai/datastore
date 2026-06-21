@@ -12,7 +12,7 @@ CREATE TABLE test_zk_watches_04035
     key UInt64,
     value String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/04035_zk_watches', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/04035_zk_watches', '1')
 ORDER BY key;
 
 INSERT INTO test_zk_watches_04035 VALUES (1, 'a');

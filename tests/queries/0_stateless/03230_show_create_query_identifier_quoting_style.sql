@@ -122,7 +122,7 @@ CREATE DICTIONARY uk_mortgage_rates_dict (
 )
 PRIMARY KEY date
 SOURCE(
-  CLICKHOUSE(TABLE 'uk_mortgage_rates')
+  DATASTORE(TABLE 'uk_mortgage_rates')
 )
 LAYOUT(COMPLEX_KEY_HASHED())
 LIFETIME(2628000000);

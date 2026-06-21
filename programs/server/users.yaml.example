@@ -33,7 +33,7 @@ users:
         #
         # If you want to specify SHA256, place it in 'password_sha256_hex' element.
         # Example: password_sha256_hex: 65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5
-        # Restrictions of SHA256: impossibility to connect to ClickHouse using MySQL JS client (as of July 2019).
+        # Restrictions of SHA256: impossibility to connect to Datastore using MySQL JS client (as of July 2019).
         #
         # If you want to specify double SHA1, place it in 'password_double_sha1_hex' element.
         # Example: password_double_sha1_hex: e395796d6546b1b65db9d665cd43f0e858dd4303
@@ -74,9 +74,9 @@ users:
         # Each element of list has one of the following forms:
         # ip: IP-address or network mask. Examples: 213.180.204.3 or 10.0.0.1/8 or 10.0.0.1/255.255.255.0
         # 2a02:6b8::3 or 2a02:6b8::3/64 or 2a02:6b8::3/ffff:ffff:ffff:ffff::.
-        # host: Hostname. Example: server01.clickhouse.com.
+        # host: Hostname. Example: server01.datastore.com.
         # To check access, DNS query is performed, and all received addresses compared to peer address.
-        # host_regexp: Regular expression for host names. Example, ^server\d\d-\d\d-\d\.clickhouse\.com$
+        # host_regexp: Regular expression for host names. Example, ^server\d\d-\d\d-\d\.datastore\.com$
         # To check access, DNS PTR query is performed for peer address and then regexp is applied.
         # Then, for result of PTR query, another DNS query is performed and all received addresses compared to peer address.
         # Strongly recommended that regexp is ends with $ and take all expression in ''
@@ -94,7 +94,7 @@ users:
         # User can create other users and grant rights to them.
         # access_management: 1
 
-        # SQL expressions for grants available for that user - https://clickhouse.com/docs/sql-reference/statements/grant
+        # SQL expressions for grants available for that user - https://datastore.com/docs/sql-reference/statements/grant
         # grants:
         #   - query: GRANT ALL ON *.*
 

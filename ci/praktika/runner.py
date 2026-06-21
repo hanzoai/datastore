@@ -312,7 +312,7 @@ class Runner:
         if preserve_stdio:
             print("WARNING: Preserving stdio")
 
-        # work around for old clickhouse jobs
+        # work around for old datastore jobs
         os.environ["PRAKTIKA"] = "1"
         if env.WORKFLOW_CONFIG:
             try:

@@ -74,14 +74,14 @@ def test_writes_with_partitioned_table(started_cluster_iceberg_with_spark, forma
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
-    with open(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/metadata/version-hint.text", "wb") as f:
+    with open(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/metadata/version-hint.text", "wb") as f:
         f.write(b"3")
 
-    df = spark.read.format("iceberg").load(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}").collect()
+    df = spark.read.format("iceberg").load(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}").collect()
     assert len(df) == 10
 
 
@@ -107,8 +107,8 @@ def test_writes_with_partitioned_table_count_partitions(started_cluster_iceberg_
     files = default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     num_pq_files = 0

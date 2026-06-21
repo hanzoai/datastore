@@ -49,7 +49,7 @@ def test_drop_replica_in_auxiliary_zookeeper(started_cluster):
         node.query(
             """
                 CREATE TABLE test_auxiliary_zookeeper(a Int32)
-                ENGINE = ReplicatedMergeTree('zookeeper2:/clickhouse/tables/test/test_auxiliary_zookeeper', '{replica}')
+                ENGINE = ReplicatedMergeTree('zookeeper2:/datastore/tables/test/test_auxiliary_zookeeper', '{replica}')
                 ORDER BY a;
             """.format(
                 replica=node.name
@@ -67,7 +67,7 @@ def test_drop_replica_in_auxiliary_zookeeper(started_cluster):
     while True:
         if (
             zk.exists(
-                "/clickhouse/tables/test/test_auxiliary_zookeeper/replicas/node2/is_active"
+                "/datastore/tables/test/test_auxiliary_zookeeper/replicas/node2/is_active"
             )
             is None
         ):
@@ -81,8 +81,8 @@ def test_drop_replica_in_auxiliary_zookeeper(started_cluster):
     # drop replica node2
     node1.query("SYSTEM DROP REPLICA 'node2'")
 
-    assert zk.exists("/clickhouse/tables/test/test_auxiliary_zookeeper")
+    assert zk.exists("/datastore/tables/test/test_auxiliary_zookeeper")
     assert (
-        zk.exists("/clickhouse/tables/test/test_auxiliary_zookeeper/replicas/node2")
+        zk.exists("/datastore/tables/test/test_auxiliary_zookeeper/replicas/node2")
         is None
     )

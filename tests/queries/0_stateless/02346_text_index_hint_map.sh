@@ -7,9 +7,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-MY_CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --use_skip_indexes_on_data_read 1 --query_plan_text_index_add_hint 1 --use_query_condition_cache 0 --enable_analyzer 1 --query_plan_optimize_prewhere 1 --optimize_move_to_prewhere 1"
+MY_DATASTORE_CLIENT="${DATASTORE_CLIENT} --use_skip_indexes_on_data_read 1 --query_plan_text_index_add_hint 1 --use_query_condition_cache 0 --enable_analyzer 1 --query_plan_optimize_prewhere 1 --optimize_move_to_prewhere 1"
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS tab;
 
     CREATE TABLE tab
@@ -26,9 +26,9 @@ function run()
 {
     query=$1
     echo "$query"
-    $MY_CLICKHOUSE_CLIENT --query "$query"
+    $MY_DATASTORE_CLIENT --query "$query"
 
-    $MY_CLICKHOUSE_CLIENT --query "
+    $MY_DATASTORE_CLIENT --query "
         SELECT trim(explain) AS str FROM
         (
             EXPLAIN actions = 1, indexes = 1 $query SETTINGS use_skip_indexes_on_data_read = 1, optimize_functions_to_subcolumns = 0, query_plan_remove_unused_columns = 1, query_plan_direct_read_from_text_index = 1
@@ -50,7 +50,7 @@ run "SELECT count() FROM tab WHERE empty(m['k18'])"
 run "SELECT count() FROM tab WHERE toUInt64OrZero(extract(m['k18'], '[0-9]+')) = 18"
 run "SELECT count() FROM tab WHERE toUInt64OrZero(extract(m['k18'], '[0-9]+')) = 0"
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE tab;
 
     CREATE TABLE tab
@@ -66,4 +66,4 @@ $MY_CLICKHOUSE_CLIENT --query "
 run "SELECT count() FROM tab WHERE mapContainsKeyLike(m, '%k18%')"
 run "SELECT count() FROM tab WHERE mapContainsValueLike(m, '%v18%')"
 
-$MY_CLICKHOUSE_CLIENT --query "DROP TABLE tab;"
+$MY_DATASTORE_CLIENT --query "DROP TABLE tab;"

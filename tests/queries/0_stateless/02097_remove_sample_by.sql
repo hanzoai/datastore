@@ -13,7 +13,7 @@ SELECT * FROM t_remove_sample_by SAMPLE 1 / 10; -- { serverError SAMPLING_NOT_SU
 DROP TABLE t_remove_sample_by;
 
 CREATE TABLE t_remove_sample_by(id UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/t_remove_sample_by', '1')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/t_remove_sample_by', '1')
 ORDER BY id SAMPLE BY id;
 
 ALTER TABLE t_remove_sample_by REMOVE SAMPLE BY;

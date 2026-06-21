@@ -37,7 +37,7 @@ def copy_policy_xml(local_file_name, reload_immediately=True):
     for current_node in nodes:
         current_node.copy_file_to_container(
             os.path.join(script_dir, local_file_name),
-            "/etc/clickhouse-server/users.d/row_policy.xml",
+            "/etc/datastore-server/users.d/row_policy.xml",
         )
         if reload_immediately:
             current_node.query("SYSTEM RELOAD CONFIG")
@@ -836,7 +836,7 @@ def test_miscellaneous_engines():
     # ReplicatedMergeTree
     node.query("DROP TABLE IF EXISTS mydb.other_table SYNC")
     node.query(
-        "CREATE TABLE mydb.other_table (a UInt8, b UInt8) ENGINE ReplicatedMergeTree('/clickhouse/tables/00-00/filtered_table1', 'replica1') ORDER BY a"
+        "CREATE TABLE mydb.other_table (a UInt8, b UInt8) ENGINE ReplicatedMergeTree('/datastore/tables/00-00/filtered_table1', 'replica1') ORDER BY a"
     )
     node.query("INSERT INTO mydb.other_table values (0, 0), (0, 1), (1, 0), (1, 1)")
     assert node.query("SELECT * FROM mydb.other_table") == TSV([[1, 0], [1, 1]])
@@ -852,7 +852,7 @@ def test_miscellaneous_engines():
     # ReplicatedCollapsingMergeTree
     node.query("DROP TABLE mydb.other_table SYNC")
     node.query(
-        "CREATE TABLE mydb.other_table (a UInt8, b Int8) ENGINE ReplicatedCollapsingMergeTree('/clickhouse/tables/00-01/filtered_table1', 'replica1', b) ORDER BY a"
+        "CREATE TABLE mydb.other_table (a UInt8, b Int8) ENGINE ReplicatedCollapsingMergeTree('/datastore/tables/00-01/filtered_table1', 'replica1', b) ORDER BY a"
     )
     node.query("INSERT INTO mydb.other_table values (0, 1), (0, 1), (1, 1), (1, 1)")
     assert node.query("SELECT * FROM mydb.other_table") == TSV([[1, 1], [1, 1]])

@@ -25,18 +25,18 @@ function check_output() {
 
 # TCP CLIENT
 echo "TCP CLIENT"
-OUTPUT=$($CLICKHOUSE_CLIENT --max_rows_to_read 0 --max_execution_time $MAX_TIMEOUT_SEC -q "SELECT count() FROM system.numbers" 2>&1 || true)
+OUTPUT=$($DATASTORE_CLIENT --max_rows_to_read 0 --max_execution_time $MAX_TIMEOUT_SEC -q "SELECT count() FROM system.numbers" 2>&1 || true)
 check_output "${OUTPUT}"
 
 echo "TCP CLIENT WITH SETTINGS IN QUERY"
-OUTPUT=$($CLICKHOUSE_CLIENT --max_rows_to_read 0 -q "SELECT count() FROM system.numbers SETTINGS max_execution_time=${MAX_TIMEOUT_SEC}" 2>&1 || true)
+OUTPUT=$($DATASTORE_CLIENT --max_rows_to_read 0 -q "SELECT count() FROM system.numbers SETTINGS max_execution_time=${MAX_TIMEOUT_SEC}" 2>&1 || true)
 check_output "${OUTPUT}"
 
 # HTTP CLIENT
 echo "HTTP CLIENT"
-OUTPUT=$(${CLICKHOUSE_CURL_COMMAND} -q -sS "$CLICKHOUSE_URL&max_execution_time=${MAX_TIMEOUT_SEC}&max_rows_to_read=0" -d "SELECT count() FROM system.numbers" || true)
+OUTPUT=$(${DATASTORE_CURL_COMMAND} -q -sS "$DATASTORE_URL&max_execution_time=${MAX_TIMEOUT_SEC}&max_rows_to_read=0" -d "SELECT count() FROM system.numbers" || true)
 check_output "${OUTPUT}"
 
 # CHECK system.settings
 echo "TABLE: system.settings"
-echo "SELECT name, value, changed FROM system.settings WHERE name = 'max_execution_time'" | $CLICKHOUSE_CLIENT_BINARY --max_execution_time 30.5
+echo "SELECT name, value, changed FROM system.settings WHERE name = 'max_execution_time'" | $DATASTORE_CLIENT_BINARY --max_execution_time 30.5

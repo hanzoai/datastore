@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/28777
+-- https://github.com/ClickHouse/Datastore/issues/28777
 SET enable_analyzer=1;
 SELECT
     sum(q0.a2) AS a1,

@@ -8,12 +8,12 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CLICKHOUSE_ROOT="${SCRIPT_DIR}/../.."
+DATASTORE_ROOT="${SCRIPT_DIR}/../.."
 
 # Default paths - can be overridden with arguments
-BUILD_DIR="${CLICKHOUSE_ROOT}/build"
-# The profiler binary is part of the clickhouse-examples multi-call binary (src/Examples/)
-PROFILER="${BUILD_DIR}/src/Examples/clickhouse-examples"
+BUILD_DIR="${DATASTORE_ROOT}/build"
+# The profiler binary is part of the datastore-examples multi-call binary (src/Examples/)
+PROFILER="${BUILD_DIR}/src/Examples/datastore-examples"
 JEPROF="${HOME}/github/jemalloc/bin/jeprof"
 FLAMEGRAPH="${HOME}/FlameGraph/flamegraph.pl"
 
@@ -37,15 +37,15 @@ usage() {
     echo "Options:"
     echo "  -q, --queries FILE    Input queries file (default: test_queries.txt)"
     echo "  -o, --output DIR      Output directory name (default: profiler_output)"
-    echo "  -b, --build DIR       ClickHouse build directory (default: ../../build)"
-    echo "  -p, --profiler PATH   Path to clickhouse-examples binary"
+    echo "  -b, --build DIR       Datastore build directory (default: ../../build)"
+    echo "  -p, --profiler PATH   Path to datastore-examples binary"
     echo "  -j, --jeprof PATH     Path to jeprof binary"
     echo "  -f, --flamegraph PATH Path to flamegraph.pl"
     echo "  -h, --help            Show this help"
     echo ""
     echo "Prerequisites:"
-    echo "  1. Build clickhouse-examples:"
-    echo "     cd build && ninja clickhouse-examples"
+    echo "  1. Build datastore-examples:"
+    echo "     cd build && ninja datastore-examples"
     echo ""
     echo "  2. Install jeprof (for detailed profiling):"
     echo "     git clone https://github.com/jemalloc/jemalloc ~/github/jemalloc"
@@ -87,7 +87,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -b|--build)
             BUILD_DIR="$2"
-            PROFILER="${BUILD_DIR}/src/Examples/clickhouse-examples"
+            PROFILER="${BUILD_DIR}/src/Examples/datastore-examples"
             shift 2
             ;;
         -p|--profiler)
@@ -119,8 +119,8 @@ check_prerequisites() {
     local missing=0
     
     if [[ ! -x "$PROFILER" ]]; then
-        echo -e "${RED}Error: clickhouse-examples not found at: $PROFILER${NC}"
-        echo "Build it with: cd ${BUILD_DIR} && ninja clickhouse-examples"
+        echo -e "${RED}Error: datastore-examples not found at: $PROFILER${NC}"
+        echo "Build it with: cd ${BUILD_DIR} && ninja datastore-examples"
         missing=1
     fi
     

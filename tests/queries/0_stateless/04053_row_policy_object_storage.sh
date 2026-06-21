@@ -9,17 +9,17 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-user="user04053_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user="user04053_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP TABLE IF EXISTS ${db}.source_data;
 CREATE TABLE ${db}.source_data (id UInt32, value String) ENGINE = MergeTree ORDER BY id;
 INSERT INTO ${db}.source_data VALUES (1, 'a'), (2, 'b'), (3, 'c');
 
 DROP TABLE IF EXISTS ${db}.url_parquet;
 CREATE TABLE ${db}.url_parquet (id UInt32, value String)
-ENGINE = URL('http://127.0.0.1:${CLICKHOUSE_PORT_HTTP}/?query=SELECT+*+FROM+${db}.source_data+FORMAT+Parquet', 'Parquet');
+ENGINE = URL('http://127.0.0.1:${DATASTORE_PORT_HTTP}/?query=SELECT+*+FROM+${db}.source_data+FORMAT+Parquet', 'Parquet');
 
 DROP USER IF EXISTS ${user};
 CREATE USER ${user} IDENTIFIED WITH no_password;
@@ -30,15 +30,15 @@ CREATE ROW POLICY rp_04053 ON ${db}.url_parquet FOR SELECT USING id <= 2 TO ${us
 EOF
 
 echo "--- Row policy filters URL Parquet table ---"
-${CLICKHOUSE_CLIENT} --user ${user} --query "SELECT * FROM ${db}.url_parquet ORDER BY id"
+${DATASTORE_CLIENT} --user ${user} --query "SELECT * FROM ${db}.url_parquet ORDER BY id"
 
 echo "--- Row policy with WHERE on URL Parquet table ---"
-${CLICKHOUSE_CLIENT} --user ${user} --query "SELECT * FROM ${db}.url_parquet WHERE value = 'a' ORDER BY id"
+${DATASTORE_CLIENT} --user ${user} --query "SELECT * FROM ${db}.url_parquet WHERE value = 'a' ORDER BY id"
 
 echo "--- Row policy count on URL Parquet table ---"
-${CLICKHOUSE_CLIENT} --user ${user} --query "SELECT count() FROM ${db}.url_parquet"
+${DATASTORE_CLIENT} --user ${user} --query "SELECT count() FROM ${db}.url_parquet"
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP ROW POLICY IF EXISTS rp_04053 ON ${db}.url_parquet;
 DROP USER IF EXISTS ${user};
 DROP TABLE IF EXISTS ${db}.url_parquet;

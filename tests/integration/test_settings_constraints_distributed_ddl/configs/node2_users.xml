@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_memory_usage>10000000000</max_memory_usage>
@@ -10,4 +10,4 @@
             </constraints>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

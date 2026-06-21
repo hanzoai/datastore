@@ -43,7 +43,7 @@ def _make_client(session_id):
         port=8888,
         insecure=True,
         disable_server_verification=True,
-        metadata={"x-clickhouse-session-id": session_id},
+        metadata={"x-datastore-session-id": session_id},
         features={"metadata-reflection": "true"},
     )
 
@@ -139,7 +139,7 @@ def _raw_bind_parameters(session_id, handle, schema_header, batch_header, batch_
             request_serializer=lambda b: b,
             response_deserializer=lambda b: b,
         )
-        list(do_put(requests, metadata=[("x-clickhouse-session-id", session_id)], timeout=30))
+        list(do_put(requests, metadata=[("x-datastore-session-id", session_id)], timeout=30))
     finally:
         channel.close()
 

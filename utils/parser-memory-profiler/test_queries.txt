@@ -142,7 +142,7 @@ CREATE TABLE test_mergetree (id UInt64, name String, created DateTime) ENGINE = 
 
 CREATE TABLE test_mergetree_partition (id UInt64, date Date, value Float64) ENGINE = MergeTree() PARTITION BY toYYYYMM(date) ORDER BY (date, id);
 
-CREATE TABLE test_replicated (id UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/test', '{replica}') ORDER BY id;
+CREATE TABLE test_replicated (id UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/test', '{replica}') ORDER BY id;
 
 CREATE TABLE test_ttl (id UInt64, created DateTime, data String TTL created + INTERVAL 1 DAY) ENGINE = MergeTree() ORDER BY id;
 

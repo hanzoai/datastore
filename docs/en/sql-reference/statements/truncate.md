@@ -7,7 +7,7 @@ title: 'TRUNCATE Statements'
 doc_type: 'reference'
 ---
 
-The `TRUNCATE` statement in ClickHouse is used to quickly remove all data from a table or database while preserving their structure.
+The `TRUNCATE` statement in Datastore is used to quickly remove all data from a table or database while preserving their structure.
 
 ## TRUNCATE TABLE {#truncate-table}
 ```sql

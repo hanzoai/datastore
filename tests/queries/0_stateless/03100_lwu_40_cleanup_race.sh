@@ -10,12 +10,12 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_cleanup_1 SYNC;
     DROP TABLE IF EXISTS t_lwu_cleanup_2 SYNC;
 
     CREATE TABLE t_lwu_cleanup_1 (k UInt64, v String)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lwu_cleanup', '1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lwu_cleanup', '1')
     ORDER BY k
     SETTINGS
         enable_block_number_column = 1,
@@ -25,7 +25,7 @@ $CLICKHOUSE_CLIENT --query "
         cleanup_delay_period_random_add = 0;
 
     CREATE TABLE t_lwu_cleanup_2 (k UInt64, v String)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_lwu_cleanup', '2')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t_lwu_cleanup', '2')
     ORDER BY k
     SETTINGS
         enable_block_number_column = 1,
@@ -67,7 +67,7 @@ $CLICKHOUSE_CLIENT --query "
 # Cleanup is stopped on both replicas, so the patch part is still present
 # on both replicas. On replica 2 it is obsolete (mutation incorporated it
 # into all_0_0_0_2) but not yet cleaned up.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET apply_patch_parts =  1;
 
     SELECT _part, * FROM t_lwu_cleanup_1 ORDER BY k;
@@ -84,20 +84,20 @@ $CLICKHOUSE_CLIENT --query "
 wait_for_mutation "t_lwu_cleanup_1" "0000000000"
 
 # Start cleanup on both replicas after the mutation has completed on both.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SYSTEM START CLEANUP t_lwu_cleanup_1;
     SYSTEM START CLEANUP t_lwu_cleanup_2;
 "
 
 for _ in {0..50}; do
-    res=$($CLICKHOUSE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table IN ('t_lwu_cleanup_1', 't_lwu_cleanup_2') AND active AND startsWith(name, 'patch')")
+    res=$($DATASTORE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table IN ('t_lwu_cleanup_1', 't_lwu_cleanup_2') AND active AND startsWith(name, 'patch')")
     if [[ $res == "0" ]]; then
         break
     fi
     sleep 1.0
 done
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET apply_patch_parts =  0;
 
     SELECT _part, * FROM t_lwu_cleanup_1 ORDER BY k;

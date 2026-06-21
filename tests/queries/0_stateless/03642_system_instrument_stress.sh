@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+    $DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
 }
 
 trap cleanup EXIT
@@ -16,7 +16,7 @@ trap cleanup EXIT
 # In this test, we just care of sending several queries in parallel so make sure the server
 # can handle them without race conditions that may cause a crash.
 
-query_id_prefix="${CLICKHOUSE_DATABASE}"
+query_id_prefix="${DATASTORE_DATABASE}"
 
 statements=(
     "SELECT * FROM system.instrumentation FORMAT NULL"
@@ -41,7 +41,7 @@ function send_requests()
     for i in $(seq 1 100); do
         query_id="${query_id_prefix}_${i}_${RANDOM}"
         statement=${statements[$(($RANDOM % $statements_nr))]}
-        $CLICKHOUSE_CLIENT --query-id=$query_id -q "$statement" 2> /dev/null >&1
+        $DATASTORE_CLIENT --query-id=$query_id -q "$statement" 2> /dev/null >&1
     done
 }
 
@@ -53,7 +53,7 @@ done
 
 wait
 
-$CLICKHOUSE_CLIENT -q """
+$DATASTORE_CLIENT -q """
     SYSTEM INSTRUMENT REMOVE ALL;
     SYSTEM FLUSH LOGS system.text_log, system.trace_log;
     SELECT count() >= 1 FROM system.text_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id ILIKE '$query_id_prefix%';

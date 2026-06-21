@@ -189,7 +189,7 @@ def test_create_replicated_table(started_cluster):
 
     expected = (
         "CREATE TABLE create_replicated_table.replicated_table\\n(\\n    `d` Date,\\n    `k` UInt64,\\n    `i32` Int32\\n)\\n"
-        "ENGINE = ReplicatedMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')\\n"
+        "ENGINE = ReplicatedMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')\\n"
         "PARTITION BY toYYYYMM(d)\\nORDER BY k\\nSETTINGS index_granularity = 8192"
     )
     assert_create_query(
@@ -245,7 +245,7 @@ def test_simple_alter_table(started_cluster, engine):
     full_engine = (
         engine
         if not "Replicated" in engine
-        else engine + "(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')"
+        else engine + "(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')"
     )
     expected = (
         "CREATE TABLE {}\\n(\\n    `CounterID` UInt32,\\n    `StartDate` Date,\\n    `UserID` UInt32,\\n"
@@ -272,7 +272,7 @@ def test_simple_alter_table(started_cluster, engine):
     full_engine = (
         engine
         if not "Replicated" in engine
-        else engine + "(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')"
+        else engine + "(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')"
     )
     expected = (
         "CREATE TABLE {}\\n(\\n    `CounterID` UInt32,\\n    `StartDate` Date,\\n    `UserID` UInt32,\\n"
@@ -559,7 +559,7 @@ def test_alter_fetch(started_cluster):
     main_node.query("INSERT INTO alter_fetch.fetch_source VALUES (123)")
     table_uuid = get_table_uuid("alter_fetch", "fetch_source")
     main_node.query(
-        f"ALTER TABLE alter_fetch.fetch_target FETCH PART 'all_0_0_0' FROM '/clickhouse/tables/{table_uuid}/{{shard}}' "
+        f"ALTER TABLE alter_fetch.fetch_target FETCH PART 'all_0_0_0' FROM '/datastore/tables/{table_uuid}/{{shard}}' "
     )
     detached_parts_query = "SELECT name FROM system.detached_parts WHERE database='alter_fetch' AND table='fetch_target'"
     assert main_node.query(detached_parts_query) == "all_0_0_0\n"
@@ -652,7 +652,7 @@ def test_alters_from_different_replicas(started_cluster):
     expected = (
         "CREATE TABLE alters_from_different_replicas.concurrent_test\\n(\\n    `CounterID` UInt32,\\n    `StartDate` Date,\\n    `UserID` UInt32,\\n"
         "    `VisitID` UInt32,\\n    `NestedColumn.A` Array(UInt8),\\n    `NestedColumn.S` Array(String),\\n    `ToDrop` UInt32\\n)\\n"
-        "ENGINE = ReplicatedMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY CounterID\\nSETTINGS index_granularity = 8192"
+        "ENGINE = ReplicatedMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY CounterID\\nSETTINGS index_granularity = 8192"
     )
 
     assert_create_query(
@@ -671,7 +671,7 @@ def test_alters_from_different_replicas(started_cluster):
     expected = (
         "CREATE TABLE alters_from_different_replicas.concurrent_test\\n(\\n    `CounterID` UInt32,\\n    `StartDate` Date,\\n    `UserID` UInt32,\\n"
         "    `VisitID` UInt32,\\n    `NestedColumn.A` Array(UInt8),\\n    `NestedColumn.S` Array(String),\\n    `ToDrop` UInt32\\n)\\n"
-        "ENGINE = ReplicatedMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY CounterID\\nSETTINGS index_granularity = 8192"
+        "ENGINE = ReplicatedMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY CounterID\\nSETTINGS index_granularity = 8192"
     )
 
     # test_snapshot_and_snapshot_recover
@@ -722,7 +722,7 @@ def test_alters_from_different_replicas(started_cluster):
     expected = (
         "CREATE TABLE alters_from_different_replicas.concurrent_test\\n(\\n    `CounterID` UInt32,\\n    `StartDate` Date,\\n    `UserID` UInt32,\\n"
         "    `VisitID` UInt32,\\n    `NestedColumn.A` Array(UInt8),\\n    `NestedColumn.S` Array(String),\\n    `ToDrop` UInt32\\n)\\n"
-        "ENGINE = ReplicatedMergeTree(\\'/clickhouse/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY CounterID\\nSETTINGS index_granularity = 8192"
+        "ENGINE = ReplicatedMergeTree(\\'/datastore/tables/{uuid}/{shard}\\', \\'{replica}\\')\\nORDER BY CounterID\\nSETTINGS index_granularity = 8192"
     )
 
     assert_create_query(
@@ -800,12 +800,12 @@ def create_some_tables(db):
     )
     main_node.query(
         f"CREATE DICTIONARY {db}.d1 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB 'recover')) "
+        "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB 'recover')) "
         "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT())"
     )
     dummy_node.query(
         f"CREATE DICTIONARY {db}.d2 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt2' PASSWORD '' DB 'recover')) "
+        "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt2' PASSWORD '' DB 'recover')) "
         "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT())"
     )
 
@@ -822,13 +822,13 @@ def create_table_for_exchanges(db):
 
 def test_recover_staled_replica(started_cluster):
     main_node.query(
-        "CREATE DATABASE recover ENGINE = Replicated('/clickhouse/databases/recover', 'shard1', 'replica1');"
+        "CREATE DATABASE recover ENGINE = Replicated('/datastore/databases/recover', 'shard1', 'replica1');"
     )
     started_cluster.get_kazoo_client("zoo1").set(
-        "/clickhouse/databases/recover/logs_to_keep", b"10"
+        "/datastore/databases/recover/logs_to_keep", b"10"
     )
     dummy_node.query(
-        "CREATE DATABASE recover ENGINE = Replicated('/clickhouse/databases/recover', 'shard1', 'replica2');"
+        "CREATE DATABASE recover ENGINE = Replicated('/datastore/databases/recover', 'shard1', 'replica2');"
     )
 
     settings = {"distributed_ddl_task_timeout": 0}
@@ -868,7 +868,7 @@ def test_recover_staled_replica(started_cluster):
         main_node.query_with_retry("DROP DICTIONARY recover.d2", settings=settings)
         main_node.query_with_retry(
             "CREATE DICTIONARY recover.d2 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-            "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB 'recover')) "
+            "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB 'recover')) "
             "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT());",
             settings=settings,
         )
@@ -1020,13 +1020,13 @@ def test_recover_staled_replica_many_mvs(started_cluster):
     dummy_node.query("DROP DATABASE IF EXISTS recover_mvs SYNC")
 
     main_node.query_with_retry(
-        "CREATE DATABASE recover_mvs ENGINE = Replicated('/clickhouse/databases/recover_mvs', 'shard1', 'replica1');"
+        "CREATE DATABASE recover_mvs ENGINE = Replicated('/datastore/databases/recover_mvs', 'shard1', 'replica1');"
     )
     started_cluster.get_kazoo_client("zoo1").set(
-        "/clickhouse/databases/recover_mvs/logs_to_keep", b"10"
+        "/datastore/databases/recover_mvs/logs_to_keep", b"10"
     )
     dummy_node.query_with_retry(
-        "CREATE DATABASE recover_mvs ENGINE = Replicated('/clickhouse/databases/recover_mvs', 'shard1', 'replica2');"
+        "CREATE DATABASE recover_mvs ENGINE = Replicated('/datastore/databases/recover_mvs', 'shard1', 'replica2');"
     )
 
     settings = {"distributed_ddl_task_timeout": 0}
@@ -1138,7 +1138,7 @@ def test_recover_staled_replica_many_mvs(started_cluster):
             main_node.query_with_retry(
                 f"""CREATE DICTIONARY recover_mvs.`11111d{identifier}` (n UInt64)
                 PRIMARY KEY n
-                SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'double_cascade_mv{identifier}' DB 'recover_mvs'))
+                SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'double_cascade_mv{identifier}' DB 'recover_mvs'))
                 LAYOUT(FLAT()) LIFETIME(1)""",
                 settings=settings,
             )
@@ -1166,11 +1166,11 @@ def test_startup_without_zk(started_cluster):
     with PartitionManager() as pm:
         pm.drop_instance_zk_connections(main_node)
         err = main_node.query_and_get_error(
-            "CREATE DATABASE startup ENGINE = Replicated('/clickhouse/databases/startup', 'shard1', 'replica1');"
+            "CREATE DATABASE startup ENGINE = Replicated('/datastore/databases/startup', 'shard1', 'replica1');"
         )
         assert "ZooKeeper" in err or "Coordination::Exception" in err
     main_node.query(
-        "CREATE DATABASE startup ENGINE = Replicated('/clickhouse/databases/startup', 'shard1', 'replica1');"
+        "CREATE DATABASE startup ENGINE = Replicated('/datastore/databases/startup', 'shard1', 'replica1');"
     )
     main_node.query(
         "CREATE TABLE startup.rmt (n int) ENGINE=ReplicatedMergeTree order by n"
@@ -1282,13 +1282,13 @@ def test_force_synchronous_settings(started_cluster):
         "DROP DATABASE IF EXISTS test_force_synchronous_settings SYNC"
     )
     main_node.query(
-        "CREATE DATABASE test_force_synchronous_settings ENGINE = Replicated('/clickhouse/databases/test2', 'shard1', 'replica1');"
+        "CREATE DATABASE test_force_synchronous_settings ENGINE = Replicated('/datastore/databases/test2', 'shard1', 'replica1');"
     )
     dummy_node.query(
-        "CREATE DATABASE test_force_synchronous_settings ENGINE = Replicated('/clickhouse/databases/test2', 'shard1', 'replica2');"
+        "CREATE DATABASE test_force_synchronous_settings ENGINE = Replicated('/datastore/databases/test2', 'shard1', 'replica2');"
     )
     snapshotting_node.query(
-        "CREATE DATABASE test_force_synchronous_settings ENGINE = Replicated('/clickhouse/databases/test2', 'shard2', 'replica1');"
+        "CREATE DATABASE test_force_synchronous_settings ENGINE = Replicated('/datastore/databases/test2', 'shard2', 'replica1');"
     )
     main_node.query(
         "CREATE TABLE test_force_synchronous_settings.t (n int) ENGINE=ReplicatedMergeTree('/test/same/path/{shard}', '{replica}') ORDER BY tuple()"
@@ -1359,13 +1359,13 @@ def test_replicated_table_structure_alter(started_cluster):
     competing_node.query("DROP DATABASE IF EXISTS table_structure SYNC")
 
     main_node.query(
-        "CREATE DATABASE table_structure ENGINE = Replicated('/clickhouse/databases/table_structure', 'shard1', 'replica1');"
+        "CREATE DATABASE table_structure ENGINE = Replicated('/datastore/databases/table_structure', 'shard1', 'replica1');"
     )
     dummy_node.query(
-        "CREATE DATABASE table_structure ENGINE = Replicated('/clickhouse/databases/table_structure', 'shard1', 'replica2');"
+        "CREATE DATABASE table_structure ENGINE = Replicated('/datastore/databases/table_structure', 'shard1', 'replica2');"
     )
     competing_node.query(
-        "CREATE DATABASE table_structure ENGINE = Replicated('/clickhouse/databases/table_structure', 'shard1', 'replica3');"
+        "CREATE DATABASE table_structure ENGINE = Replicated('/datastore/databases/table_structure', 'shard1', 'replica3');"
     )
 
     competing_node.query("CREATE TABLE table_structure.mem (n int) ENGINE=Memory")
@@ -1394,10 +1394,10 @@ def test_replicated_table_structure_alter(started_cluster):
     db_disk_name = get_database_disk_name(competing_node)
     competing_node.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "-C",
-            "/etc/clickhouse-server/config.xml",
+            "/etc/datastore-server/config.xml",
             "--disk",
             f"{db_disk_name}",
             "--save-logs",
@@ -1478,10 +1478,10 @@ def test_table_metadata_corruption(started_cluster):
     dummy_node.query("DROP DATABASE IF EXISTS table_metadata_corruption SYNC")
 
     main_node.query(
-        "CREATE DATABASE table_metadata_corruption ENGINE = Replicated('/clickhouse/databases/table_metadata_corruption', 'shard1', 'replica1');"
+        "CREATE DATABASE table_metadata_corruption ENGINE = Replicated('/datastore/databases/table_metadata_corruption', 'shard1', 'replica1');"
     )
     dummy_node.query(
-        "CREATE DATABASE table_metadata_corruption ENGINE = Replicated('/clickhouse/databases/table_metadata_corruption', 'shard1', 'replica2');"
+        "CREATE DATABASE table_metadata_corruption ENGINE = Replicated('/datastore/databases/table_metadata_corruption', 'shard1', 'replica2');"
     )
 
     create_some_tables("table_metadata_corruption")
@@ -1505,7 +1505,7 @@ def test_table_metadata_corruption(started_cluster):
     )
     expected = main_node.query(query)
 
-    # We expect clickhouse server to shutdown without LOGICAL_ERRORs or deadlocks.
+    # We expect datastore server to shutdown without LOGICAL_ERRORs or deadlocks.
     # Use try/finally to ensure dummy_node is always recovered for subsequent tests.
     start_failed_as_expected = False
     try:
@@ -1543,10 +1543,10 @@ def test_auto_recovery(started_cluster):
     )
 
     dummy_node.query(
-        "CREATE DATABASE auto_recovery ENGINE = Replicated('/clickhouse/databases/auto_recovery', 'shard1', 'replica1');"
+        "CREATE DATABASE auto_recovery ENGINE = Replicated('/datastore/databases/auto_recovery', 'shard1', 'replica1');"
     )
     bad_settings_node.query(
-        "CREATE DATABASE auto_recovery ENGINE = Replicated('/clickhouse/databases/auto_recovery', 'shard1', 'replica2') SETTINGS max_retries_before_automatic_recovery=3;"
+        "CREATE DATABASE auto_recovery ENGINE = Replicated('/datastore/databases/auto_recovery', 'shard1', 'replica2') SETTINGS max_retries_before_automatic_recovery=3;"
     )
 
     dummy_node.query(
@@ -1590,10 +1590,10 @@ def test_all_groups_cluster(started_cluster):
     dummy_node.query("DROP DATABASE IF EXISTS db_cluster SYNC")
     bad_settings_node.query("DROP DATABASE IF EXISTS db_cluster SYNC")
     dummy_node.query(
-        "CREATE DATABASE db_cluster ENGINE = Replicated('/clickhouse/databases/all_groups_cluster', 'shard1', 'replica1');"
+        "CREATE DATABASE db_cluster ENGINE = Replicated('/datastore/databases/all_groups_cluster', 'shard1', 'replica1');"
     )
     bad_settings_node.query(
-        "CREATE DATABASE db_cluster ENGINE = Replicated('/clickhouse/databases/all_groups_cluster', 'shard1', 'replica2');"
+        "CREATE DATABASE db_cluster ENGINE = Replicated('/datastore/databases/all_groups_cluster', 'shard1', 'replica2');"
     )
 
     assert "dummy_node\n" == dummy_node.query(
@@ -1610,7 +1610,7 @@ def test_all_groups_cluster(started_cluster):
 def test_detach_attach_table(started_cluster):
     main_node.query("DROP DATABASE IF EXISTS detach_attach_db SYNC")
     main_node.query(
-        "CREATE DATABASE detach_attach_db ENGINE = Replicated('/clickhouse/databases/detach_attach_db');"
+        "CREATE DATABASE detach_attach_db ENGINE = Replicated('/datastore/databases/detach_attach_db');"
     )
     main_node.query(
         "CREATE TABLE detach_attach_db.detach_attach_table (k UInt64) ENGINE=ReplicatedMergeTree ORDER BY k;"
@@ -1631,11 +1631,11 @@ def test_alter_rename(started_cluster):
     res = main_node.query(
         """
         DROP DATABASE IF EXISTS bug SYNC;
-        CREATE DATABASE bug ENGINE = Replicated('/clickhouse/databases/bug');
+        CREATE DATABASE bug ENGINE = Replicated('/datastore/databases/bug');
         CREATE TABLE bug.table (`date` DateTime, `id` String) ENGINE = ReplicatedReplacingMergeTree(date) ORDER BY id SETTINGS deduplicate_merge_projection_mode = 'drop';
         ALTER TABLE bug.table ADD PROJECTION max_date (SELECT max(date));
         RENAME TABLE bug.table TO bug.table2;
-        SELECT value from system.zookeeper WHERE path = '/clickhouse/databases/bug/metadata';
+        SELECT value from system.zookeeper WHERE path = '/datastore/databases/bug/metadata';
         """,
         settings=settings,
     )
@@ -1648,10 +1648,10 @@ def test_create_alter_sleeping(started_cluster, engine):
     dummy_node.query("DROP DATABASE IF EXISTS create_alter_sleeping")
 
     competing_node.query(
-        "CREATE DATABASE create_alter_sleeping ENGINE = Replicated('/clickhouse/databases/create_alter_sleeping', 'shard1', 'replica1');"
+        "CREATE DATABASE create_alter_sleeping ENGINE = Replicated('/datastore/databases/create_alter_sleeping', 'shard1', 'replica1');"
     )
     dummy_node.query(
-        "CREATE DATABASE create_alter_sleeping ENGINE = Replicated('/clickhouse/databases/create_alter_sleeping', 'shard1', 'replica2');"
+        "CREATE DATABASE create_alter_sleeping ENGINE = Replicated('/datastore/databases/create_alter_sleeping', 'shard1', 'replica2');"
     )
 
     dummy_node.stop_clickhouse()
@@ -1680,7 +1680,7 @@ def test_lag_after_recovery(started_cluster):
     dummy_node.query("drop database if exists lag_after_recovery")
 
     main_node.query(
-        "create database lag_after_recovery engine=Replicated('/clickhouse/databases/lag_after_recovery', 'shard1', 'replica1')"
+        "create database lag_after_recovery engine=Replicated('/datastore/databases/lag_after_recovery', 'shard1', 'replica1')"
     )
     main_node.query(
         "create table lag_after_recovery.t (n int) engine=ReplicatedMergeTree order by n"
@@ -1691,7 +1691,7 @@ def test_lag_after_recovery(started_cluster):
         "system enable failpoint database_replicated_delay_entry_execution"
     )
     dummy_node.query(
-        "create database lag_after_recovery engine=Replicated('/clickhouse/databases/lag_after_recovery', 'shard1', 'replica2') settings max_replication_lag_to_enqueue=1"
+        "create database lag_after_recovery engine=Replicated('/datastore/databases/lag_after_recovery', 'shard1', 'replica2') settings max_replication_lag_to_enqueue=1"
     )
 
     settings = {"distributed_ddl_task_timeout": 0}
@@ -1901,11 +1901,11 @@ def test_correct_skip_indexes(started_cluster):
     dummy_node.query("DROP DATABASE IF EXISTS correct_skip_indexes")
 
     competing_node.query(
-        "CREATE DATABASE correct_skip_indexes ENGINE = Replicated('/clickhouse/databases/correct_skip_indexes', 'shard1', 'replica1');"
+        "CREATE DATABASE correct_skip_indexes ENGINE = Replicated('/datastore/databases/correct_skip_indexes', 'shard1', 'replica1');"
         "CREATE TABLE correct_skip_indexes.test (`id` UInt64, `a` String, `b` String ALIAS a, INDEX bf_a assumeNotNull(b) TYPE bloom_filter(0.01) GRANULARITY 1) ENGINE = ReplicatedMergeTree ORDER BY (id);"
     )
     dummy_node.query(
-        "CREATE DATABASE correct_skip_indexes ENGINE = Replicated('/clickhouse/databases/correct_skip_indexes', 'shard1', 'replica2');"
+        "CREATE DATABASE correct_skip_indexes ENGINE = Replicated('/datastore/databases/correct_skip_indexes', 'shard1', 'replica2');"
         "SYSTEM SYNC DATABASE REPLICA correct_skip_indexes;"
     )
 
@@ -1915,12 +1915,12 @@ def test_implicit_index(started_cluster):
     dummy_node.query("DROP DATABASE IF EXISTS implicit_index")
 
     competing_node.query(
-        "CREATE DATABASE implicit_index ENGINE = Replicated('/clickhouse/databases/implicit_index', 'shard1', 'replica1');"
+        "CREATE DATABASE implicit_index ENGINE = Replicated('/datastore/databases/implicit_index', 'shard1', 'replica1');"
         "CREATE TABLE implicit_index.t0 (c0 Int) ENGINE = ReplicatedMergeTree() ORDER BY tuple() SETTINGS add_minmax_index_for_numeric_columns = 1;"
         "ALTER TABLE implicit_index.t0 MODIFY SETTING replicated_can_become_leader = 0;"
     )
     dummy_node.query(
-        "CREATE DATABASE implicit_index ENGINE = Replicated('/clickhouse/databases/implicit_index', 'shard1', 'replica2');"
+        "CREATE DATABASE implicit_index ENGINE = Replicated('/datastore/databases/implicit_index', 'shard1', 'replica2');"
         "SYSTEM SYNC DATABASE REPLICA implicit_index;"
     )
 
@@ -1930,12 +1930,12 @@ def test_timeseries(started_cluster):
         node.query("DROP DATABASE IF EXISTS ts_db SYNC")
 
     competing_node.query(
-        "CREATE DATABASE ts_db ENGINE = Replicated('/clickhouse/databases/ts_db', '1', '3');"  # any fixed values, macros not defined here
+        "CREATE DATABASE ts_db ENGINE = Replicated('/datastore/databases/ts_db', '1', '3');"  # any fixed values, macros not defined here
     )
 
     main_node.query(
         """
-        CREATE DATABASE ts_db ENGINE = Replicated('/clickhouse/databases/ts_db', '{shard}', '{replica}');
+        CREATE DATABASE ts_db ENGINE = Replicated('/datastore/databases/ts_db', '{shard}', '{replica}');
         CREATE TABLE ts_db.table ENGINE = TimeSeries SETTINGS store_min_time_and_max_time = false
         DATA ENGINE = ReplicatedMergeTree ORDER BY (id, timestamp)
         TAGS ENGINE = ReplicatedAggregatingMergeTree PRIMARY KEY metric_name ORDER BY (metric_name, id)
@@ -1945,7 +1945,7 @@ def test_timeseries(started_cluster):
     )
 
     dummy_node.query(
-        "CREATE DATABASE ts_db ENGINE = Replicated('/clickhouse/databases/ts_db', '{shard}', '{replica}');"
+        "CREATE DATABASE ts_db ENGINE = Replicated('/datastore/databases/ts_db', '{shard}', '{replica}');"
     )
 
     for node in [competing_node, main_node, dummy_node]:
@@ -1966,7 +1966,7 @@ def test_mv_false_cyclic_dependency(started_cluster):
 
     main_node.query(
         f"""
-        CREATE DATABASE {db_name} ENGINE = Replicated('/clickhouse/databases/{db_name}', '{{shard}}', '{{replica}}');
+        CREATE DATABASE {db_name} ENGINE = Replicated('/datastore/databases/{db_name}', '{{shard}}', '{{replica}}');
         CREATE TABLE {db_name}.table_1 (id Int32) ENGINE = MergeTree ORDER BY id;
         CREATE MATERIALIZED VIEW {db_name}.table_2 (id Int32) ENGINE = MergeTree ORDER BY id AS WITH table_3 AS (SELECT id AS id FROM {db_name}.table_1) SELECT * FROM table_3;
         CREATE MATERIALIZED VIEW {db_name}.table_3 (id Int32) ENGINE = MergeTree ORDER BY id AS SELECT id AS id FROM {db_name}.table_2;
@@ -1975,7 +1975,7 @@ def test_mv_false_cyclic_dependency(started_cluster):
     dummy_node.query(
         f"""
         DROP DATABASE IF EXISTS {db_name};
-        CREATE DATABASE {db_name} ENGINE = Replicated('/clickhouse/databases/{db_name}', '{{shard}}', '{{replica}}');
+        CREATE DATABASE {db_name} ENGINE = Replicated('/datastore/databases/{db_name}', '{{shard}}', '{{replica}}');
         SYSTEM SYNC DATABASE REPLICA {db_name};
         DROP DATABASE {db_name} SYNC;
         CREATE DATABASE {db_name};
@@ -1998,11 +1998,11 @@ def test_ignore_cluster_name_setting(started_cluster):
         node.query(f"DROP DATABASE IF EXISTS {db_name} SYNC")
 
     for node in [main_node, dummy_node]:
-        node.query(f"CREATE DATABASE {db_name} ENGINE = Replicated('/clickhouse/databases/{db_name}', '{{shard}}', '{{replica}}')")
+        node.query(f"CREATE DATABASE {db_name} ENGINE = Replicated('/datastore/databases/{db_name}', '{{shard}}', '{{replica}}')")
 
     create_query = f"""
         CREATE TABLE {db_name}.replicated_table ON CLUSTER 'some_cluster' (d Date, k UInt64, i32 Int32)
-        ENGINE=ReplicatedMergeTree('/clickhouse/{db_name}/{{table}}/{{shard}}', '{{replica}}') ORDER BY k PARTITION BY toYYYYMM(d);
+        ENGINE=ReplicatedMergeTree('/datastore/{db_name}/{{table}}/{{shard}}', '{{replica}}') ORDER BY k PARTITION BY toYYYYMM(d);
         """
 
     assert (
@@ -2025,7 +2025,7 @@ def test_alias_with_dropped_target(started_cluster):
 
     main_node.query(
         f"""
-        CREATE DATABASE {db_name} ENGINE = Replicated('/clickhouse/databases/{db_name}', '{{shard}}', '{{replica}}');
+        CREATE DATABASE {db_name} ENGINE = Replicated('/datastore/databases/{db_name}', '{{shard}}', '{{replica}}');
         SET allow_experimental_alias_table_engine = 1;
         CREATE TABLE {db_name}.base_table (id UInt32, value String) ENGINE = MergeTree ORDER BY id;
         CREATE TABLE {db_name}.alias_table ENGINE = Alias('{db_name}', 'base_table');
@@ -2036,7 +2036,7 @@ def test_alias_with_dropped_target(started_cluster):
     dummy_node.query(
         f"""
         DROP DATABASE IF EXISTS {db_name} SYNC;
-        CREATE DATABASE {db_name} ENGINE = Replicated('/clickhouse/databases/{db_name}', '{{shard}}', '{{replica}}');
+        CREATE DATABASE {db_name} ENGINE = Replicated('/datastore/databases/{db_name}', '{{shard}}', '{{replica}}');
         SYSTEM SYNC DATABASE REPLICA {db_name};
         """
     )

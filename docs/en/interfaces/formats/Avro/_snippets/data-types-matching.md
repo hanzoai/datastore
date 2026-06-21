@@ -1,6 +1,6 @@
-The table below shows all data types supported by the Apache Avro format, and their corresponding ClickHouse [data types](/sql-reference/data-types/index.md) in `INSERT` and `SELECT` queries.
+The table below shows all data types supported by the Apache Avro format, and their corresponding Datastore [data types](/sql-reference/data-types/index.md) in `INSERT` and `SELECT` queries.
 
-| Avro data type `INSERT`                     | ClickHouse data type                                                                                                          | Avro data type `SELECT`         |
+| Avro data type `INSERT`                     | Datastore data type                                                                                                          | Avro data type `SELECT`         |
 |---------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 | `boolean`, `int`, `long`, `float`, `double` | [Int(8\16\32)](/sql-reference/data-types/int-uint.md), [UInt(8\16\32)](/sql-reference/data-types/int-uint.md) | `int`                           |
 | `boolean`, `int`, `long`, `float`, `double` | [Int64](/sql-reference/data-types/int-uint.md), [UInt64](/sql-reference/data-types/int-uint.md)               | `long`                          |
@@ -29,7 +29,7 @@ The table below shows all data types supported by the Apache Avro format, and th
 \* `bytes` is default, controlled by setting [`output_format_avro_string_column_pattern`](/operations/settings/settings-formats.md/#output_format_avro_string_column_pattern)
 
 \**  The [Variant type](/sql-reference/data-types/variant) implicitly accepts `null` as a field value, so for example the Avro `union(T1, T2, null)` will be converted to `Variant(T1, T2)`.
-As a result, when producing Avro from ClickHouse, we have to always include the `null` type to the Avro `union` type set as we don't know if any value is actually `null` during the schema inference.
+As a result, when producing Avro from Datastore, we have to always include the `null` type to the Avro `union` type set as we don't know if any value is actually `null` during the schema inference.
 
 \**\* [Avro logical types](https://avro.apache.org/docs/current/spec.html#Logical+Types)
 

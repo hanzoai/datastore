@@ -8,12 +8,12 @@ from ci.praktika.result import Result
 from ci.praktika.utils import Shell
 
 
-def fetch_org_contributors(org: str = "ClickHouse", limit: int = 1000) -> set:
+def fetch_org_contributors(org: str = "Datastore", limit: int = 1000) -> set:
     """
     Fetch organization members using gh CLI.
 
     Args:
-        org: Organization name (default: ClickHouse)
+        org: Organization name (default: Datastore)
         limit: Maximum number of members to fetch (default: 500)
 
     Returns:
@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
     def fetch_contributors():
         global org_contributors
-        org_contributors = fetch_org_contributors(org="ClickHouse", limit=1000)
+        org_contributors = fetch_org_contributors(org="Datastore", limit=1000)
         return len(org_contributors) > 0
 
     results.append(

@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 
 <CloudDetails />
 
-A dictionary can be connected to ClickHouse from many different sources.
+A dictionary can be connected to Datastore from many different sources.
 The source is configured in the `source` section for configuration file and using the `SOURCE` clause for DDL statement.
 
 <Tabs>
@@ -34,7 +34,7 @@ SOURCE(SOURCE_TYPE(param1 val1 ... paramN valN)) -- Source configuration
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
   <dictionary>
     ...
     <source>
@@ -45,7 +45,7 @@ SOURCE(SOURCE_TYPE(param1 val1 ... paramN valN)) -- Source configuration
     ...
   </dictionary>
   ...
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>
@@ -64,7 +64,7 @@ The following source types (`SOURCE_TYPE`/`source_type`) are available:
 - DBMS
   - [ODBC](./odbc.md)
   - [MySQL](./mysql.md)
-  - [ClickHouse](./clickhouse.md)
+  - [Datastore](./datastore.md)
   - [MongoDB](./mongodb.md)
   - [Redis](./redis.md)
   - [Cassandra](./cassandra.md)
@@ -73,7 +73,7 @@ The following source types (`SOURCE_TYPE`/`source_type`) are available:
 - [YAMLRegExpTree](./yamlregexptree.md)
 - [Null](./null.md)
 
-For source types [Local file](./local-file.md), [Executable file](./executable-file.md), [HTTP(s)](./http.md), [ClickHouse](./clickhouse.md)
+For source types [Local file](./local-file.md), [Executable file](./executable-file.md), [HTTP(s)](./http.md), [Datastore](./datastore.md)
 optional settings are available:
 
 <Tabs>

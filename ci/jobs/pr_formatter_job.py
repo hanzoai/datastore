@@ -13,7 +13,7 @@ if __name__ == "__main__":
     output_file = "./ci/tmp/pr_body_generated.md"
 
     prompt = f"""
-Generate a formatted PR body for PR #{info.pr_number} following ClickHouse conventions.
+Generate a formatted PR body for PR #{info.pr_number} following Datastore conventions.
 
 ## Required Sections
 
@@ -35,7 +35,7 @@ Header: "### Changelog category (leave one):"
 - Not for changelog (changelog entry is not required)
 
 ### 2. Changelog Entry
-Header: "### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/ClickHouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):"
+Header: "### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/Datastore/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):"
 - Always keep this section if an entry is present in the original PR body, even if the category says "changelog entry is not required"
 - If no entry exists and category says "changelog entry is not required", omit this section
 - If no entry exists and category requires one, generate from PR title

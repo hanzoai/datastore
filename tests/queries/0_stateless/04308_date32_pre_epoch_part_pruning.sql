@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/106419
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/106419
 --
 -- A `WHERE` filter of the form `toStartOfYear(<Date32 column>) < toStartOfYear(<Date constant>)`
 -- returned 0 rows when the `Date32` column contained a few pre-1970 values inside a merge-formed

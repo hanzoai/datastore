@@ -1,6 +1,6 @@
 -- Test that PruneArrayJoinColumnsPass correctly rewrites numeric tupleElement
 -- indices after pruning unused nested subcolumns.
--- https://github.com/ClickHouse/ClickHouse/issues/100026
+-- https://github.com/ClickHouse/Datastore/issues/100026
 
 SET enable_analyzer = 1;
 

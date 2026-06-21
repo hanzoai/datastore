@@ -54,10 +54,10 @@ echo "Available profdata files in $(pwd):"
 ls -lh *.profdata 2>/dev/null || echo "No profdata files found"
 
 echo "Checking for binaries..."
-ls -lh clickhouse unit_tests_dbms 2>/dev/null || echo "Warning: Some binaries not found"
+ls -lh datastore unit_tests_dbms 2>/dev/null || echo "Warning: Some binaries not found"
 
 # Make binaries executable
-chmod +x clickhouse unit_tests_dbms 2>/dev/null || true
+chmod +x datastore unit_tests_dbms 2>/dev/null || true
 
 MERGE_OUTPUT=$("$LLVM_PROFDATA" merge -sparse -failure-mode=warn *.profdata -o merged.profdata 2>&1)
 MERGE_EXIT_CODE=$?
@@ -76,7 +76,7 @@ else
     exit 1
 fi
 
-./clickhouse --version
+./datastore --version
 
 # Generate HTML coverage report
 echo "Generating coverage report..."
@@ -94,7 +94,7 @@ echo "Using workspace path: $WORKSPACE_PATH"
 
 "$LLVM_COV" export   \
         -instr-profile=merged.profdata   \
-        -object ./clickhouse   \
+        -object ./datastore   \
         -object ./unit_tests_dbms   \
         -format=lcov   \
         -path-equivalence=ci/tmp/build,$WORKSPACE_PATH \
@@ -115,12 +115,12 @@ genhtml --version
 html_escape() { printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g'; }
 export -f html_escape
 
-HEADER_TITLE="ClickHouse coverage report"
+HEADER_TITLE="Datastore coverage report"
 if [ -n "${PR_NUMBER}" ] && [ "${PR_NUMBER}" -gt 0 ]; then
-  PR_URL="https://github.com/ClickHouse/ClickHouse/pull/${PR_NUMBER}"
+  PR_URL="https://github.com/ClickHouse/Datastore/pull/${PR_NUMBER}"
   HEADER_TITLE="${HEADER_TITLE} &middot; <a href=\"${PR_URL}\">#${PR_NUMBER}</a>"
 elif [ -n "${CURRENT_COMMIT}" ]; then
-  COMMIT_URL="https://github.com/ClickHouse/ClickHouse/commit/${CURRENT_COMMIT}"
+  COMMIT_URL="https://github.com/ClickHouse/Datastore/commit/${CURRENT_COMMIT}"
   COMMIT_SHORT="${CURRENT_COMMIT:0:12}"
   COMMIT_MSG=$(html_escape "$(git -C "$WORKSPACE_PATH" log -1 --format="%s" "${CURRENT_COMMIT}" 2>/dev/null | cut -c1-120 || true)")
   COMMIT_DATE=$(html_escape "$(git -C "$WORKSPACE_PATH" log -1 --format="%cs" "${CURRENT_COMMIT}" 2>/dev/null || true)")

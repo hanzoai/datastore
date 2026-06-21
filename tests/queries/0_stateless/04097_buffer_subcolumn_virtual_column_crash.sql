@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/102104
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/102104
 -- Selecting subcolumns (e.g. .null, .size0, tuple elements, map keys/values)
 -- through a Buffer table used to crash with:
 --   "Logical error: Unknown virtual column: 'c0.null'"

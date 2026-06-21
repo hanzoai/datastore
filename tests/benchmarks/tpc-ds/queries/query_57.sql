@@ -10,7 +10,7 @@
 --         case when v1.avg_monthly_sales > 0 then abs(v1.sum_sales - v1.avg_monthly_sales) / v1.avg_monthly_sales else null end > 0.1
 --  order by v1.sum_sales - v1.avg_monthly_sales, v1.cc_name
 
--- Original query doesn't work because of https://github.com/ClickHouse/ClickHouse/issues/94858. When it's fixed, we need to remove the hack.
+-- Original query doesn't work because of https://github.com/ClickHouse/Datastore/issues/94858. When it's fixed, we need to remove the hack.
 
 WITH
     v1 AS

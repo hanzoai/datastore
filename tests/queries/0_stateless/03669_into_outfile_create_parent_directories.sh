@@ -3,12 +3,12 @@
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
-BASE_DIR="${CUR_DIR}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+BASE_DIR="${CUR_DIR}/${DATASTORE_TEST_UNIQUE_NAME}"
 CLIENT_OUTDIR="${BASE_DIR}/client"
 
 rm -rf "$BASE_DIR" 2>/dev/null || true
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 DROP TABLE IF EXISTS test_outfile;
 CREATE TABLE test_outfile (id UInt32, value String) ENGINE = Memory;
 INSERT INTO test_outfile VALUES (1, 'test1'), (2, 'test2'), (3, 'test3');

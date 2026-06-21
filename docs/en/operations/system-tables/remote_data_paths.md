@@ -19,8 +19,8 @@ Each row represents one remote blob object associated with a data file.
 - `disk_name` ([String](/sql-reference/data-types/string)) — Disk name.
 - `path` ([String](/sql-reference/data-types/string)) — Disk path.
 - `cache_base_path` ([String](/sql-reference/data-types/string)) — Base directory of cache files.
-- `local_path` ([String](/sql-reference/data-types/string)) — Path of ClickHouse file, also used as metadata path.
-- `remote_path` ([String](/sql-reference/data-types/string)) — Blob path in object storage, with which ClickHouse file is associated with.
+- `local_path` ([String](/sql-reference/data-types/string)) — Path of Datastore file, also used as metadata path.
+- `remote_path` ([String](/sql-reference/data-types/string)) — Blob path in object storage, with which Datastore file is associated with.
 - `size` ([UInt64](/sql-reference/data-types/int-uint)) — Size of the file (compressed).
 - `common_prefix_for_blobs` ([String](/sql-reference/data-types/string)) — Common prefix for blobs in object storage.
 - `cache_paths` ([Array(String)](/sql-reference/data-types/array)) — Cache files for corresponding blob.
@@ -36,13 +36,13 @@ SELECT * FROM system.remote_data_paths LIMIT 1 FORMAT Vertical;
 Row 1:
 ──────
 disk_name:              s3
-path:                   /var/lib/clickhouse/disks/s3/
-cache_base_path:        /var/lib/clickhouse/disks/s3_cache/
+path:                   /var/lib/datastore/disks/s3/
+cache_base_path:        /var/lib/datastore/disks/s3_cache/
 local_path:             store/123/1234abcd-1234-1234-1234-1234abcd1234/all_0_0_0/data.bin
 remote_path:            abc123/all_0_0_0/data.bin
 size:                   1048576
 common_prefix_for_blobs:
-cache_paths:            ['/var/lib/clickhouse/disks/s3_cache/a1/b2/c3d4e5f6']
+cache_paths:            ['/var/lib/datastore/disks/s3_cache/a1/b2/c3d4e5f6']
 ```
 
 ## See Also {#see-also}

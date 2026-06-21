@@ -1,5 +1,5 @@
 ---
-description: 'This table function allows integrating ClickHouse with Redis.'
+description: 'This table function allows integrating Datastore with Redis.'
 sidebar_label: 'redis'
 sidebar_position: 170
 slug: /sql-reference/table-functions/redis
@@ -7,7 +7,7 @@ title: 'redis'
 doc_type: 'reference'
 ---
 
-This table function allows integrating ClickHouse with [Redis](https://redis.io/).
+This table function allows integrating Datastore with [Redis](https://redis.io/).
 
 ## Syntax {#syntax}
 
@@ -21,7 +21,7 @@ redis(host:port, key, structure[, db_index[, password[, pool_size]]])
 |-------------|------------------------------------------------------------------------------------------------------------|
 | `host:port` | Redis server address, you can ignore port and default Redis port 6379 will be used.                          |
 | `key`       | any column name in the column list.                                                                        |
-| `structure` | The schema for the ClickHouse table returned from this function.                                             |
+| `structure` | The schema for the Datastore table returned from this function.                                             |
 | `db_index`  | Redis db index range from 0 to 15, default is 0.                                                             |
 | `password`  | User password, default is blank string.                                                                    |
 | `pool_size` | Redis max connection pool size, default is 16.                                                               |

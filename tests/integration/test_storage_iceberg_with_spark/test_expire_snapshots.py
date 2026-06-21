@@ -27,7 +27,7 @@ AGGRESSIVE_RETENTION = {
 # ---------------------------------------------------------------------------
 
 def _read_iceberg_metadata(instance, table_name):
-    metadata_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/metadata"
+    metadata_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/metadata"
     latest = instance.exec_in_container(
         ["bash", "-c", f"ls -v {metadata_dir}/v*.metadata.json | tail -1"]
     ).strip()
@@ -36,7 +36,7 @@ def _read_iceberg_metadata(instance, table_name):
 
 
 def _write_iceberg_metadata(instance, table_name, meta, prev_path):
-    metadata_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/metadata"
+    metadata_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/metadata"
     meta["last-updated-ms"] = int(time.time() * 1000)
     version_match = re.search(r"/v(\d+)[^/]*\.metadata\.json$", prev_path)
     new_version = int(version_match.group(1)) + 1
@@ -60,10 +60,10 @@ def update_iceberg_metadata(instance, table_name, updater_fn):
 
 def _fix_version_hint_for_spark(table_name):
     """Rewrite version-hint.text as a plain version number.
-    ClickHouse writes the full filename (e.g. 'v3.metadata.json');
+    Datastore writes the full filename (e.g. 'v3.metadata.json');
     Spark's Hadoop catalog expects just the number (e.g. '3').
     """
-    metadata_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/metadata"
+    metadata_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/metadata"
     latest = 0
     for f in glob.glob(os.path.join(metadata_dir, "*.metadata.json")):
         m = re.search(r"v(\d+)", os.path.basename(f))
@@ -74,7 +74,7 @@ def _fix_version_hint_for_spark(table_name):
 
 
 def spark_alter_table(cluster, spark, storage_type, table_name, *sql_fragments):
-    """Execute Spark SQL ALTER TABLE on a ClickHouse-created Iceberg table.
+    """Execute Spark SQL ALTER TABLE on a Datastore-created Iceberg table.
 
     Downloads the table from storage to the host (so Spark can see it),
     executes the SQL statements, then uploads the result back.
@@ -82,7 +82,7 @@ def spark_alter_table(cluster, spark, storage_type, table_name, *sql_fragments):
     Each sql_fragment is appended to 'ALTER TABLE {table_name} '.
     Example: spark_alter_table(..., "SET TBLPROPERTIES('key' = 'val')")
     """
-    table_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/"
+    table_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/"
     default_download_directory(cluster, storage_type, table_dir, table_dir)
     _fix_version_hint_for_spark(table_name)
     for fragment in sql_fragments:
@@ -308,7 +308,7 @@ def test_expire_snapshots_files_cleaned(started_cluster_iceberg_with_spark, stor
         else:
             expired_manifest_lists.append(ml)
 
-    table_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/"
+    table_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/"
     files_before = default_download_directory(
         started_cluster_iceberg_with_spark, storage_type, table_dir, table_dir,
     )
@@ -908,7 +908,7 @@ def test_expire_snapshots_shared_manifest_no_double_count(started_cluster_iceber
 
     time.sleep(1)
 
-    metadata_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/metadata"
+    metadata_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/metadata"
     avro_before = set(
         instance.exec_in_container(
             ["bash", "-c", f"ls {metadata_dir}/*.avro 2>/dev/null || true"]

@@ -110,7 +110,7 @@ class SparkAndClickHouseCheck:
             ch_count = int(ch_count_str.rstrip())
             if spark_count != ch_count:
                 self.logger.error(
-                    f"The row count for table {table.get_clickhouse_path()}{extra_predicate} doesn't match between Spark: {spark_count} and ClickHouse: {ch_count}"
+                    f"The row count for table {table.get_clickhouse_path()}{extra_predicate} doesn't match between Spark: {spark_count} and Datastore: {ch_count}"
                 )
                 return False
 
@@ -152,9 +152,9 @@ class SparkAndClickHouseCheck:
             result = spark.sql(query).collect()
             spark_hash = result[0]["table_hash"]
 
-            # ClickHouse hash
+            # Datastore hash
             # Convert all columns to string and concatenate
-            # ClickHouse arrays as strings don't have a space after the comma, add it
+            # Datastore arrays as strings don't have a space after the comma, add it
             clickhouse_strings = {
                 col.column_name: (
                     f"'[' || arrayStringConcat(arrayMap(x -> toString(x), {col.column_name}), ', ') || ']'"
@@ -166,7 +166,7 @@ class SparkAndClickHouseCheck:
             concat_cols = " || '||' || ".join(
                 [col.column_name for col in order_by_cols]
             )
-            # Generate hash for each row in ClickHouse
+            # Generate hash for each row in Datastore
             clickhouse_hash = client.query(f"""
             SELECT lower(hex(MD5(arrayStringConcat(groupArray(row_hash), '')))) as table_hash
             FROM (
@@ -181,7 +181,7 @@ class SparkAndClickHouseCheck:
                 return False
             if spark_hash != clickhouse_hash.rstrip():
                 self.logger.error(
-                    f"The hash for table {table.get_clickhouse_path()}{extra_predicate} doesn't match between Spark and ClickHouse"
+                    f"The hash for table {table.get_clickhouse_path()}{extra_predicate} doesn't match between Spark and Datastore"
                 )
                 return False
         except Exception as e:

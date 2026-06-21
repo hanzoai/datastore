@@ -8,7 +8,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-Differs from `JSONEachRow`/`JSONStringsEachRow` in that ClickHouse will also yield progress information as JSON values.
+Differs from `JSONEachRow`/`JSONStringsEachRow` in that Datastore will also yield progress information as JSON values.
 
 ## Example usage {#example-usage}
 

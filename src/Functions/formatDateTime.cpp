@@ -2070,9 +2070,9 @@ The example column in the table below shows formatting result for `2018-01-02 22
 | %z | Time offset from UTC as +HHMM or -HHMM | -0500 |
 | %% | a % sign | % |
 
-- In ClickHouse versions earlier than v23.4, `%f` prints a single zero (0) if the formatted value is a Date, Date32 or DateTime (which have no fractional seconds) or a DateTime64 with a precision of 0.
-- In ClickHouse versions earlier than v25.1, `%f` prints as many digits as specified by the scale of the DateTime64 instead of fixed 6 digits.
-- In ClickHouse versions earlier than v23.4, `%M` prints the minute (00-59) instead of the full month name (January-December).
+- In Datastore versions earlier than v23.4, `%f` prints a single zero (0) if the formatted value is a Date, Date32 or DateTime (which have no fractional seconds) or a DateTime64 with a precision of 0.
+- In Datastore versions earlier than v25.1, `%f` prints as many digits as specified by the scale of the DateTime64 instead of fixed 6 digits.
+- In Datastore versions earlier than v23.4, `%M` prints the minute (00-59) instead of the full month name (January-December).
     )";
     FunctionDocumentation::Syntax syntax_formatDateTime = R"(
 formatDateTime(datetime, format[, timezone])

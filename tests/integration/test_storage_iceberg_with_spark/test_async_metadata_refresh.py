@@ -8,7 +8,7 @@ from helpers.iceberg_utils import (
     default_upload_directory,
 )
 
-_ASYNC_CACHE_REFRESH_CONFIG_PATH = "/etc/clickhouse-server/config.d/iceberg_async_cache_refresh.xml"
+_ASYNC_CACHE_REFRESH_CONFIG_PATH = "/etc/datastore-server/config.d/iceberg_async_cache_refresh.xml"
 
 
 @pytest.mark.parametrize("storage_type", ["s3"])

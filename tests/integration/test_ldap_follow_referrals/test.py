@@ -8,14 +8,14 @@ from helpers.cluster import ClickHouseCluster, get_docker_compose_path, run_and_
 from helpers.test_tools import TSV
 
 LDAP_ADMIN_BIND_DN = "cn=admin,dc=example,dc=org"
-LDAP_ADMIN_PASSWORD = "clickhouse"
+LDAP_ADMIN_PASSWORD = "datastore"
 
 DOCKER_COMPOSE_PATH = get_docker_compose_path()
 
 cluster = ClickHouseCluster(__file__)
 
 # Instance with follow_referrals=true: role mapping should work via referral chasing.
-# ClickHouse connects to openldap2 for bind (users live in dc=referral,dc=org),
+# Datastore connects to openldap2 for bind (users live in dc=referral,dc=org),
 # then role mapping search targets dc=example,dc=org which is NOT served by openldap2,
 # so openldap2 returns a default referral to openldap where the groups actually exist.
 instance_follow = cluster.add_instance(
@@ -50,7 +50,7 @@ def wait_openldap2_ready(timeout=180):
                     "-c",
                     "test -f /tmp/.openldap-initialized"
                     " && /opt/bitnami/openldap/bin/ldapsearch -x -H ldap://localhost:1389"
-                    " -D cn=admin,dc=referral,dc=org -w clickhouse -b dc=referral,dc=org"
+                    " -D cn=admin,dc=referral,dc=org -w datastore -b dc=referral,dc=org"
                     " | grep -c '^dn: cn=janedoe,ou=users,dc=referral,dc=org$'"
                     " | grep 1 >> /dev/null",
                 ],
@@ -71,7 +71,7 @@ def add_ldap_group(group_cn, member_cn):
     """Add a group to the primary LDAP server (openldap).
 
     The member DN uses dc=referral,dc=org because that is the bind_dn
-    that ClickHouse substitutes into the role mapping search filter
+    that Datastore substitutes into the role mapping search filter
     ({bind_dn} = cn=<user>,ou=users,dc=referral,dc=org).
     """
     code, (stdout, stderr) = cluster.ldap_container.exec_run(
@@ -175,7 +175,7 @@ def test_follow_referrals_true(ldap_cluster):
         instance_follow.query(
             "CREATE ROLE role_ref", user="common_user", password="qwerty"
         )
-        add_ldap_group(group_cn="clickhouse-role_ref", member_cn="johndoe")
+        add_ldap_group(group_cn="datastore-role_ref", member_cn="johndoe")
 
         assert instance_follow.query(
             "SELECT currentUser()", user="johndoe", password="qwertz"
@@ -192,9 +192,9 @@ def test_follow_referrals_true(ldap_cluster):
             "DROP ROLE IF EXISTS role_ref", user="common_user", password="qwerty"
         )
         try:
-            delete_ldap_group(group_cn="clickhouse-role_ref")
+            delete_ldap_group(group_cn="datastore-role_ref")
         except AssertionError:
-            logging.warning("Could not delete LDAP group clickhouse-role_ref")
+            logging.warning("Could not delete LDAP group datastore-role_ref")
 
 
 def test_follow_referrals_false(ldap_cluster):
@@ -208,7 +208,7 @@ def test_follow_referrals_false(ldap_cluster):
         instance_no_follow.query(
             "CREATE ROLE role_noref", user="common_user", password="qwerty"
         )
-        add_ldap_group(group_cn="clickhouse-role_noref", member_cn="johndoe")
+        add_ldap_group(group_cn="datastore-role_noref", member_cn="johndoe")
 
         error = instance_no_follow.query_and_get_error(
             "SELECT currentUser()", user="johndoe", password="qwertz"
@@ -222,6 +222,6 @@ def test_follow_referrals_false(ldap_cluster):
             "DROP ROLE IF EXISTS role_noref", user="common_user", password="qwerty"
         )
         try:
-            delete_ldap_group(group_cn="clickhouse-role_noref")
+            delete_ldap_group(group_cn="datastore-role_noref")
         except AssertionError:
-            logging.warning("Could not delete LDAP group clickhouse-role_noref")
+            logging.warning("Could not delete LDAP group datastore-role_noref")

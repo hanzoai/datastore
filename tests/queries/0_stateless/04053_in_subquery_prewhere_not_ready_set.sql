@@ -1,6 +1,6 @@
 -- Regression test for "Not-ready Set" error when IN (subquery) condition
 -- gets moved to PREWHERE by optimizePrewhere after applyFilters already ran.
--- https://github.com/ClickHouse/ClickHouse/issues/100318
+-- https://github.com/ClickHouse/Datastore/issues/100318
 
 -- Pin the optimizer settings that trigger the rewrite this test exercises;
 -- otherwise randomized runs may disable PREWHERE move and skip the fixed path.

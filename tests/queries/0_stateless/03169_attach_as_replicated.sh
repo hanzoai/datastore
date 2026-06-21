@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # Create tables
-${CLICKHOUSE_CLIENT} -n -q "
+${DATASTORE_CLIENT} -n -q "
     CREATE TABLE mt ( A Int64, D Date, S String ) ENGINE MergeTree() PARTITION BY toYYYYMM(D) ORDER BY A;
     INSERT INTO mt SELECT number, today(), '' FROM numbers(1e6);
     INSERT INTO mt SELECT number, today()-60, '' FROM numbers(1e5);
@@ -20,7 +20,7 @@ ${CLICKHOUSE_CLIENT} -n -q "
 "
 
 # Convert tables
-$CLICKHOUSE_CLIENT -n -q "
+$DATASTORE_CLIENT -n -q "
     ATTACH TABLE mt AS REPLICATED; -- { serverError TABLE_ALREADY_EXISTS }
     ATTACH TABLE replacing AS REPLICATED; -- { serverError TABLE_ALREADY_EXISTS }
     ATTACH TABLE replacing_ver AS REPLICATED; -- { serverError TABLE_ALREADY_EXISTS }
@@ -45,39 +45,39 @@ $CLICKHOUSE_CLIENT -n -q "
 # Check tables
 # ARGS_i is used to suppress style check for not using {database} in ZK path
 # ATTACH AS REPLICATED uses only default path, so there is nothing else we can do
-ARGS_1="(\\\\'/clickhouse/tables/{uuid}/{shard}\\\\', \\\\'{replica}\\\\')"
-${CLICKHOUSE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'mt'" \
+ARGS_1="(\\\\'/datastore/tables/{uuid}/{shard}\\\\', \\\\'{replica}\\\\')"
+${DATASTORE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'mt'" \
 | grep -c "ReplicatedMergeTree$ARGS_1 PARTITION BY toYYYYMM(D) ORDER BY A"
-${CLICKHOUSE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing'" \
+${DATASTORE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing'" \
 | grep -c "ReplicatedReplacingMergeTree$ARGS_1 PARTITION BY toYYYYMM(D) ORDER BY A"
-ARGS_2="(\\\\'/clickhouse/tables/{uuid}/{shard}\\\\', \\\\'{replica}\\\\', D)"
-${CLICKHOUSE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing_ver'" \
+ARGS_2="(\\\\'/datastore/tables/{uuid}/{shard}\\\\', \\\\'{replica}\\\\', D)"
+${DATASTORE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing_ver'" \
 | grep -c "ReplicatedReplacingMergeTree$ARGS_2 PARTITION BY toYYYYMM(D) ORDER BY A"
-ARGS_3="(\\\\'/clickhouse/tables/{uuid}/{shard}\\\\', \\\\'{replica}\\\\', Sign, Version)"
-${CLICKHOUSE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'collapsing_ver'" \
+ARGS_3="(\\\\'/datastore/tables/{uuid}/{shard}\\\\', \\\\'{replica}\\\\', Sign, Version)"
+${DATASTORE_CLIENT} --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'collapsing_ver'" \
 | grep -c "ReplicatedVersionedCollapsingMergeTree$ARGS_3 ORDER BY ID"
 echo
 
-$CLICKHOUSE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='mt'" \
+$DATASTORE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='mt'" \
 | grep -c "0"
-$CLICKHOUSE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='replacing'" \
+$DATASTORE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='replacing'" \
 | grep -c "0"
-$CLICKHOUSE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='replacing_ver'" \
+$DATASTORE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='replacing_ver'" \
 | grep -c "0"
-$CLICKHOUSE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='collapsing_ver'" \
+$DATASTORE_CLIENT --echo --query="SELECT is_readonly FROM system.replicas WHERE database=currentDatabase() AND table='collapsing_ver'" \
 | grep -c "0"
 echo
 
 # Convert tables back
 # Get zk paths
-MT_ZK_PATH=$($CLICKHOUSE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='mt'")
-REPLACING_ZK_PATH=$($CLICKHOUSE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='replacing'")
-REPLACING_VER_ZK_PATH=$($CLICKHOUSE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='replacing_ver'")
-COLLAPSING_VER_ZK_PATH=$($CLICKHOUSE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='collapsing_ver'")
+MT_ZK_PATH=$($DATASTORE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='mt'")
+REPLACING_ZK_PATH=$($DATASTORE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='replacing'")
+REPLACING_VER_ZK_PATH=$($DATASTORE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='replacing_ver'")
+COLLAPSING_VER_ZK_PATH=$($DATASTORE_CLIENT --query="SELECT zookeeper_path FROM system.replicas WHERE database=currentDatabase() AND table='collapsing_ver'")
 
 # Restored replica has no table_shared_id node in ZK
 # DROP REPLICA will log warning while deleting this node
-$CLICKHOUSE_CLIENT -n -q "
+$DATASTORE_CLIENT -n -q "
     ATTACH TABLE mt AS NOT REPLICATED; -- { serverError TABLE_ALREADY_EXISTS }
     ATTACH TABLE replacing AS NOT REPLICATED; -- { serverError TABLE_ALREADY_EXISTS }
     ATTACH TABLE replacing_ver AS NOT REPLICATED; -- { serverError TABLE_ALREADY_EXISTS }
@@ -102,11 +102,11 @@ $CLICKHOUSE_CLIENT -n -q "
 "
 
 # Check tables
-${CLICKHOUSE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'mt'" \
+${DATASTORE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'mt'" \
 | grep -c "MergeTree PARTITION BY toYYYYMM(D) ORDER BY A"
-${CLICKHOUSE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing'" \
+${DATASTORE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing'" \
 | grep -c "ReplacingMergeTree PARTITION BY toYYYYMM(D) ORDER BY A"
-${CLICKHOUSE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing_ver'" \
+${DATASTORE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'replacing_ver'" \
 | grep -c "ReplacingMergeTree(D) PARTITION BY toYYYYMM(D) ORDER BY A"
-${CLICKHOUSE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'collapsing_ver'" \
+${DATASTORE_CLIENT} --echo --query="SELECT engine_full FROM system.tables WHERE database=currentDatabase() AND name = 'collapsing_ver'" \
 | grep -c "VersionedCollapsingMergeTree(Sign, Version) ORDER BY ID"

@@ -11,7 +11,7 @@ from pathlib import Path
 class DiffToSymbols:
     def __init__(self, clickhouse_path: str, pr_number: int):
         if Path(clickhouse_path).is_dir():
-            self.clickhouse_path = clickhouse_path + "/clickhouse"
+            self.clickhouse_path = clickhouse_path + "/datastore"
         else:
             self.clickhouse_path = clickhouse_path
         # TODO: add support for non-API mode (from git)
@@ -19,7 +19,7 @@ class DiffToSymbols:
         assert self.pr_number > 0, "Works only for PRs"
         assert Path(
             self.clickhouse_path
-        ).is_file(), f"clickhouse binary not found at {self.clickhouse_path}"
+        ).is_file(), f"datastore binary not found at {self.clickhouse_path}"
 
     @staticmethod
     def fetch(url: str, retries: int = 5, delay: float = 5.0) -> bytes:
@@ -64,7 +64,7 @@ class DiffToSymbols:
 
     def run_query(self, line_numbers: list) -> dict:
         """
-        Execute a ClickHouse query with the provided (filename, line_number) tuples.
+        Execute a Datastore query with the provided (filename, line_number) tuples.
 
         Args:
             line_numbers: List of tuples (filename, line_number)
@@ -73,7 +73,7 @@ class DiffToSymbols:
             Dictionary mapping (filename, line_number) -> (address, linkage_name, symbol)
             Example: {('src/foo.cpp', 42): ('0x12345', '_Z...symbol', 'myFunction()')}
         """
-        # Convert list of tuples to CSV format for ClickHouse stdin
+        # Convert list of tuples to CSV format for Datastore stdin
         out = io.StringIO()
         out.write("filename,line\n")
         for filename, line_no in line_numbers:
@@ -151,7 +151,7 @@ class DiffToSymbols:
 
     def get_file_with_line_numbers(self):
         import time
-        diff_url = f"https://patch-diff.githubusercontent.com/raw/ClickHouse/ClickHouse/pull/{self.pr_number}.diff"
+        diff_url = f"https://patch-diff.githubusercontent.com/raw/Datastore/Datastore/pull/{self.pr_number}.diff"
         t0 = time.monotonic()
         diff_bytes = self.fetch(diff_url)
         print(f"[find_symbols] fetch diff: {time.monotonic()-t0:.2f}s ({len(diff_bytes)} bytes)")
@@ -184,12 +184,12 @@ class DiffToSymbols:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="List changed symbols for a PR by parsing the diff and querying ClickHouse."
+        description="List changed symbols for a PR by parsing the diff and querying Datastore."
     )
     parser.add_argument("pr", help="Pull request number")
     parser.add_argument(
         "clickhouse_path",
-        help='Path to the clickhouse binary (executed as "clickhouse local")',
+        help='Path to the datastore binary (executed as "datastore local")',
     )
     args = parser.parse_args()
     dts = DiffToSymbols(args.clickhouse_path, int(args.pr))

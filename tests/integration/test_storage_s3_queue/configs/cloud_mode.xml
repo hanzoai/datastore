@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
           <cloud_mode>1</cloud_mode>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

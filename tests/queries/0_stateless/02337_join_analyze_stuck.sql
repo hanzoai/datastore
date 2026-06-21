@@ -1,6 +1,6 @@
 -- Tags: long
 
--- https://github.com/ClickHouse/ClickHouse/issues/21557
+-- https://github.com/ClickHouse/Datastore/issues/21557
 
 set ignore_format_null_for_explain = 0;
 

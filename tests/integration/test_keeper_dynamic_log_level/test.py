@@ -32,7 +32,7 @@ def test_adjust_log_level(start_cluster):
                 [
                     "bash",
                     "-c",
-                    "grep '<Trace>' /var/log/clickhouse-server/clickhouse-server.log | wc -l",
+                    "grep '<Trace>' /var/log/datastore-server/datastore-server.log | wc -l",
                 ],
                 privileged=True,
                 user="root",
@@ -47,17 +47,17 @@ def test_adjust_log_level(start_cluster):
             "bash",
             "-c",
             """echo "
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <log>/var/log/datastore-server/datastore-server.log</log>
         <errorlog_level>error</errorlog_level>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>200M</size>
         <count>10</count>
     </logger>
-</clickhouse>
-            " > /etc/clickhouse-server/config.d/logger.xml
+</datastore>
+            " > /etc/datastore-server/config.d/logger.xml
             """,
         ]
     )
@@ -80,7 +80,7 @@ def test_adjust_log_level(start_cluster):
                 [
                     "bash",
                     "-c",
-                    "grep '<Trace>' /var/log/clickhouse-server/clickhouse-server.log | wc -l",
+                    "grep '<Trace>' /var/log/datastore-server/datastore-server.log | wc -l",
                 ],
                 privileged=True,
                 user="root",

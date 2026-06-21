@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/56564
+-- https://github.com/ClickHouse/Datastore/issues/56564
 
 create table t(z String, ts DateTime) Engine=Memory as 
 select '1', '2020-01-01 00:00:00';

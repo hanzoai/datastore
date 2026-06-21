@@ -12,15 +12,15 @@ from helpers.spark_tools import ResilientSparkSession, write_spark_log_config
 # external_dirs mounts <cluster.instances_dir>/<path> (host) → <path> (container).
 # We then create symlinks on the host so that the container path also resolves
 # on the host — this way Iceberg metadata with absolute paths works for both
-# Spark (host) and ClickHouse (container).
-ICEBERG_DIR_NODE1 = "/var/lib/clickhouse/user_files/iceberg_node1"
-ICEBERG_DIR_NODE2 = "/var/lib/clickhouse/user_files/iceberg_node2"
+# Spark (host) and Datastore (container).
+ICEBERG_DIR_NODE1 = "/var/lib/datastore/user_files/iceberg_node1"
+ICEBERG_DIR_NODE2 = "/var/lib/datastore/user_files/iceberg_node2"
 
 
 def create_host_symlink(container_path, host_path):
     """
     Create a symlink on the host from container_path → host_path.
-    After this, both Spark (on host) and ClickHouse (in container)
+    After this, both Spark (on host) and Datastore (in container)
     can use the same absolute path to access the data.
     """
     os.makedirs(os.path.dirname(container_path), exist_ok=True)
@@ -28,7 +28,7 @@ def create_host_symlink(container_path, host_path):
         if os.path.islink(container_path):
             os.remove(container_path)
         else:
-            return  # Real directory exists (e.g., actual ClickHouse installation), don't touch it
+            return  # Real directory exists (e.g., actual Datastore installation), don't touch it
     os.symlink(host_path, container_path)
     logging.info(f"Created symlink: {container_path} → {host_path}")
 
@@ -101,11 +101,11 @@ def started_cluster_iceberg():
         cluster.start()
 
         # external_dirs creates:
-        #   host: <instances_dir>/var/lib/clickhouse/user_files/iceberg_node1
-        #   container: /var/lib/clickhouse/user_files/iceberg_node1
+        #   host: <instances_dir>/var/lib/datastore/user_files/iceberg_node1
+        #   container: /var/lib/datastore/user_files/iceberg_node1
         #
         # Create symlinks on the host so the container path resolves to the
-        # host path. Now both Spark and ClickHouse use the same absolute paths.
+        # host path. Now both Spark and Datastore use the same absolute paths.
         for iceberg_dir in [ICEBERG_DIR_NODE1, ICEBERG_DIR_NODE2]:
             host_path = os.path.join(
                 cluster.instances_dir, iceberg_dir.lstrip("/")
@@ -113,7 +113,7 @@ def started_cluster_iceberg():
             create_host_symlink(iceberg_dir, host_path)
             symlinks.append(iceberg_dir)
 
-        # Both Spark and ClickHouse use the container paths.
+        # Both Spark and Datastore use the container paths.
         # On the host, these resolve via symlinks to the actual data.
         cluster.spark_session = ResilientSparkSession(
             lambda: get_spark(ICEBERG_DIR_NODE1, ICEBERG_DIR_NODE2, cluster.instances_dir)

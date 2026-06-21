@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/104309
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/104309
 --
 -- `FailedInternalQuery` / `FailedInternalInsertQuery` / `FailedInternalSelectQuery` were
 -- only incremented in `logQueryException` (failures during execution) but not in

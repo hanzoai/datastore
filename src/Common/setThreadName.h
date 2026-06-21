@@ -33,7 +33,7 @@ namespace DB
     M(BACKUP_WORKER, "BackupWorker") \
     M(CACHE_DICTIONARY_UPDATE_QUEUE, "UpdQueue") \
     M(CGROUP_MEMORY_OBSERVER, "CgrpMemUsgObsr") \
-    M(CLICKHOUSE_WATCH, "ClickHouseWatch") \
+    M(DATASTORE_WATCH, "ClickHouseWatch") \
     M(CLUSTER_DISCOVERY, "ClusterDiscover") \
     M(COMPLETED_PIPELINE_EXECUTOR, "QueryCompPipeEx") \
     M(CONFIG_RELOADER, "ConfigReloader") \

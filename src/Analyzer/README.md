@@ -1,4 +1,4 @@
-Contains query analysis implementation for the ClickHouse SQL dialect.
+Contains query analysis implementation for the Datastore SQL dialect.
 
 The query analysis is performed on top of a query tree, which is an intermediate representation of `SELECT` queries.
 `QueryTreeBuilder` recursively traverses query AST and creates corresponding query tree nodes.

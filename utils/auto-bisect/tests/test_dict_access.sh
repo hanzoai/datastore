@@ -2,7 +2,7 @@
 set -e
 
 echo "$PWD"
-CH_PATH=${CH_PATH:=clickhouse}
+CH_PATH=${CH_PATH:=datastore}
 
 $CH_PATH client -q "SELECT version()";
 
@@ -24,7 +24,7 @@ drop table if exists x.tab;
 create table x.tab (a UInt64, b UInt64) engine=MergeTree order by tuple() ;
 insert into x.tab VALUES (1,1);
 
-create dictionary x.d (a UInt64, b UInt64) primary key a SOURCE(CLICKHOUSE(USER 'user' PASSWORD '123' TABLE 'tab'))
+create dictionary x.d (a UInt64, b UInt64) primary key a SOURCE(DATASTORE(USER 'user' PASSWORD '123' TABLE 'tab'))
 LIFETIME(MIN 0 MAX 3600)
 LAYOUT(FLAT())
 ;

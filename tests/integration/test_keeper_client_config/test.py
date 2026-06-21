@@ -67,7 +67,7 @@ def test_password_from_xml_config(started_cluster):
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -c {KEEPER_CLIENT_CONFIG_PATH} -q \"ls '/keeper'\"",
+            f"datastore keeper-client -c {KEEPER_CLIENT_CONFIG_PATH} -q \"ls '/keeper'\"",
         ],
         privileged=True,
     )
@@ -75,15 +75,15 @@ def test_password_from_xml_config(started_cluster):
 
 
 def test_password_from_env_var(started_cluster):
-    """Keeper-client reads password from CLICKHOUSE_KEEPER_PASSWORD env var."""
+    """Keeper-client reads password from DATASTORE_KEEPER_PASSWORD env var."""
     data = node1.exec_in_container(
         [
             "bash",
             "-c",
-            "clickhouse keeper-client -h node1 -p 9181 -q \"ls '/keeper'\"",
+            "datastore keeper-client -h node1 -p 9181 -q \"ls '/keeper'\"",
         ],
         privileged=True,
-        environment={"CLICKHOUSE_KEEPER_PASSWORD": KEEPER_PASSWORD},
+        environment={"DATASTORE_KEEPER_PASSWORD": KEEPER_PASSWORD},
     )
     assert "api_version" in data
 
@@ -94,7 +94,7 @@ def test_wrong_password_fails(started_cluster):
         [
             "bash",
             "-c",
-            "clickhouse keeper-client -h node1 -p 9181 --password wrong -q \"ls '/keeper'\"",
+            "datastore keeper-client -h node1 -p 9181 --password wrong -q \"ls '/keeper'\"",
         ],
         privileged=True,
         nothrow=True,
@@ -108,7 +108,7 @@ def test_no_password_fails(started_cluster):
         [
             "bash",
             "-c",
-            "clickhouse keeper-client -h node1 -p 9181 -q \"ls '/keeper'\"",
+            "datastore keeper-client -h node1 -p 9181 -q \"ls '/keeper'\"",
         ],
         privileged=True,
         nothrow=True,
@@ -117,15 +117,15 @@ def test_no_password_fails(started_cluster):
 
 
 def test_cli_password_overrides_env(started_cluster):
-    """CLI --password takes priority over CLICKHOUSE_KEEPER_PASSWORD env var."""
+    """CLI --password takes priority over DATASTORE_KEEPER_PASSWORD env var."""
     data = node1.exec_in_container(
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} -q \"ls '/keeper'\"",
+            f"datastore keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} -q \"ls '/keeper'\"",
         ],
         privileged=True,
-        environment={"CLICKHOUSE_KEEPER_PASSWORD": "wrong_password"},
+        environment={"DATASTORE_KEEPER_PASSWORD": "wrong_password"},
     )
     assert "api_version" in data
 
@@ -136,7 +136,7 @@ def test_identity_from_xml_config(started_cluster):
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -c {KEEPER_CLIENT_CONFIG_WITH_IDENTITY_PATH} -q \"get '/test_identity_node'\"",
+            f"datastore keeper-client -c {KEEPER_CLIENT_CONFIG_WITH_IDENTITY_PATH} -q \"get '/test_identity_node'\"",
         ],
         privileged=True,
     )
@@ -144,15 +144,15 @@ def test_identity_from_xml_config(started_cluster):
 
 
 def test_identity_from_env_var(started_cluster):
-    """Keeper-client reads identity from CLICKHOUSE_KEEPER_IDENTITY env var."""
+    """Keeper-client reads identity from DATASTORE_KEEPER_IDENTITY env var."""
     data = node1.exec_in_container(
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} -q \"get '/test_identity_node'\"",
+            f"datastore keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} -q \"get '/test_identity_node'\"",
         ],
         privileged=True,
-        environment={"CLICKHOUSE_KEEPER_IDENTITY": KEEPER_IDENTITY},
+        environment={"DATASTORE_KEEPER_IDENTITY": KEEPER_IDENTITY},
     )
     assert "protected_data" in data
 
@@ -163,7 +163,7 @@ def test_wrong_identity_fails(started_cluster):
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} --identity wrong:wrong -q \"get '/test_identity_node'\"",
+            f"datastore keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} --identity wrong:wrong -q \"get '/test_identity_node'\"",
         ],
         privileged=True,
         nothrow=True,
@@ -177,7 +177,7 @@ def test_no_identity_fails(started_cluster):
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -c {KEEPER_CLIENT_CONFIG_PATH} -q \"get '/test_identity_node'\"",
+            f"datastore keeper-client -c {KEEPER_CLIENT_CONFIG_PATH} -q \"get '/test_identity_node'\"",
         ],
         privileged=True,
         nothrow=True,
@@ -186,14 +186,14 @@ def test_no_identity_fails(started_cluster):
 
 
 def test_cli_identity_overrides_env(started_cluster):
-    """CLI --identity takes priority over CLICKHOUSE_KEEPER_IDENTITY env var."""
+    """CLI --identity takes priority over DATASTORE_KEEPER_IDENTITY env var."""
     data = node1.exec_in_container(
         [
             "bash",
             "-c",
-            f"clickhouse keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} --identity {KEEPER_IDENTITY} -q \"get '/test_identity_node'\"",
+            f"datastore keeper-client -h node1 -p 9181 --password {KEEPER_PASSWORD} --identity {KEEPER_IDENTITY} -q \"get '/test_identity_node'\"",
         ],
         privileged=True,
-        environment={"CLICKHOUSE_KEEPER_IDENTITY": "wrong:wrong"},
+        environment={"DATASTORE_KEEPER_IDENTITY": "wrong:wrong"},
     )
     assert "protected_data" in data

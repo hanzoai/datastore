@@ -85,7 +85,7 @@ CREATE TABLE tab (
     str String
 ) ENGINE = MergeTree() ORDER BY id;
 
-INSERT INTO tab (id, str) VALUES (1, 'abc def'), (2, 'ClickHouse');
+INSERT INTO tab (id, str) VALUES (1, 'abc def'), (2, 'Datastore');
 
 SELECT tokens(str, 'ngrams', 3) AS tokenized, toTypeName(tokenized), isConstant(tokenized) FROM tab;
 

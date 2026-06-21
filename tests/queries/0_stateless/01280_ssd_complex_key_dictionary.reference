@@ -2,10 +2,10 @@ TEST_SMALL
 VALUE FROM RAM BUFFER
 100
 -100
-clickhouse
+datastore
 100
 -100
-clickhouse
+datastore
 3
 4
 database
@@ -19,7 +19,7 @@ UPDATE DICTIONARY
 118
 VALUE FROM DISK
 -100
-clickhouse
+datastore
 VALUE FROM RAM BUFFER
 8
 

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/87403
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/87403
 -- Dictionary + CASE + distributed table: predicate pushdown should not filter out rows incorrectly.
 
 SET enable_analyzer = 1;
@@ -25,7 +25,7 @@ CREATE DICTIONARY d_dict_dist
     id Int64,
     d String
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(QUERY '
+SOURCE(DATASTORE(QUERY '
     SELECT * FROM (
         SELECT toInt64(1) AS id, ''alpha'' AS d
         UNION ALL

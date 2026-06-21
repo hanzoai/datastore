@@ -136,12 +136,12 @@ is further discussed in the [Algorithm](#table_engine-collapsingmergetree-collap
 
 ### Algorithm {#table_engine-collapsingmergetree-collapsing-algorithm}
 
-When ClickHouse merges data [parts](/concepts/glossary#parts), 
+When Datastore merges data [parts](/concepts/glossary#parts), 
 each group of consecutive rows with the same sorting key (`ORDER BY`) is reduced to no more than two rows,
 the "state" row with `Sign` = `1` and the "cancel" row with `Sign` = `-1`. 
-In other words, in ClickHouse entries collapse.
+In other words, in Datastore entries collapse.
 
-For each resulting data part ClickHouse saves:
+For each resulting data part Datastore saves:
 
 |  |                                                                                                                                     |
 |--|-------------------------------------------------------------------------------------------------------------------------------------|
@@ -152,14 +152,14 @@ For each resulting data part ClickHouse saves:
 
 Additionally, when there are at least two more "state" rows than "cancel" 
 rows, or at least two more "cancel" rows than "state" rows, the merge continues.
-ClickHouse, however, treats this situation as a logical error and records it in the server log. 
+Datastore, however, treats this situation as a logical error and records it in the server log. 
 This error can occur if the same data is inserted more than once. 
 Thus, collapsing should not change the results of calculating statistics.
 Changes are gradually collapsed so that in the end only the last state of almost every object is left.
 
 The `Sign` column is required because the merging algorithm does not guarantee 
 that all the rows with the same sorting key will be in the same resulting data part and even on the same physical server. 
-ClickHouse processes `SELECT` queries with multiple threads, and it cannot predict the order of rows in the result. 
+Datastore processes `SELECT` queries with multiple threads, and it cannot predict the order of rows in the result. 
 
 Aggregation is required if there is a need to get completely "collapsed" data from the `CollapsingMergeTree` table.
 To finalize collapsing, write a query with the `GROUP BY` clause and aggregate functions that account for the sign. 
@@ -220,7 +220,7 @@ INSERT INTO UAct VALUES (4324182021466249494, 5, 146, -1),(4324182021466249494, 
 We use two `INSERT` queries to create two different data parts. 
 
 :::note
-If we insert the data with a single query, ClickHouse creates only one data part and will not perform any merge ever.
+If we insert the data with a single query, Datastore creates only one data part and will not perform any merge ever.
 :::
 
 We can select the data using:
@@ -243,7 +243,7 @@ Let's take a look at the returned data above and see if collapsing occurred...
 With two `INSERT` queries, we created two data parts. 
 The `SELECT` query was performed in two threads, and we got a random order of rows. 
 However, collapsing **did not occur** because there was no merge of the data parts yet 
-and ClickHouse merges data parts in the background at an unknown moment which we cannot predict.
+and Datastore merges data parts in the background at an unknown moment which we cannot predict.
 
 We therefore need an aggregation 
 which we perform with the [`sum`](/sql-reference/aggregate-functions/reference/sum) 

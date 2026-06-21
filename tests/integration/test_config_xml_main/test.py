@@ -37,7 +37,7 @@ def test_xml_main_conf():
         main_configs=all_confd,
         user_configs=all_userd,
         with_zookeeper=False,
-        config_root_name="clickhouse",
+        config_root_name="datastore",
     )
 
     try:

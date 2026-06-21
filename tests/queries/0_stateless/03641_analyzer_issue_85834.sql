@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/85834
+-- https://github.com/ClickHouse/Datastore/issues/85834
 
 DROP TABLE IF EXISTS test_generic_events_all;
 DROP ROW POLICY IF EXISTS rp ON test_generic_events_all;

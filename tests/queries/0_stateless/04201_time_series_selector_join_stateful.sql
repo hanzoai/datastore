@@ -4,7 +4,7 @@
 -- synchronously (unlike for `MaterializedView`), so the deferred inner DROPs are rejected with
 -- "It's not initial query. ON CLUSTER is not allowed for Replicated database.".
 
--- Regression test for the PromQL binary-operator path where ClickHouse query optimization
+-- Regression test for the PromQL binary-operator path where Datastore query optimization
 -- could push `timeSeriesIdToGroup(id)` ahead of the matching `timeSeriesStoreTags(...)` call,
 -- resulting in `BAD_ARGUMENTS` ("Unknown identifier"). Fixed by marking
 -- `timeSeriesIdToGroup` as stateful so the optimizer doesn't move it across pipeline barriers.

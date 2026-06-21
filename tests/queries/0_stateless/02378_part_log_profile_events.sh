@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     DROP TABLE IF EXISTS test;
 
     CREATE TABLE test (key UInt64, val UInt64) engine = MergeTree Order by key PARTITION BY key >= 128;
@@ -14,7 +14,7 @@ ${CLICKHOUSE_CLIENT} --query "
     INSERT INTO test SELECT number AS key, sipHash64(number) AS val FROM numbers(512);
 "
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SYSTEM FLUSH LOGS part_log;
     SELECT
         if(count(DISTINCT query_id) == 1, 'Ok', 'Error: ' || toString(count(DISTINCT query_id))),
@@ -29,9 +29,9 @@ ${CLICKHOUSE_CLIENT} --query "
         AND event_type == 'NewPart';
 "
 
-${CLICKHOUSE_CLIENT} --query "OPTIMIZE TABLE test FINAL;"
+${DATASTORE_CLIENT} --query "OPTIMIZE TABLE test FINAL;"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SYSTEM FLUSH LOGS part_log;
     SELECT
         if(count() > 2, 'Ok', 'Error: ' || toString(count())),
@@ -42,15 +42,15 @@ ${CLICKHOUSE_CLIENT} --query "
         AND event_type == 'MergeParts';
 "
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     ALTER TABLE test UPDATE val = 0 WHERE key % 2 == 0 SETTINGS mutations_sync = 2
 "
 
 # The mutation query may return before the entry is added to the system.part_log table.
 # Retry SYSTEM FLUSH LOGS until all entries are fully flushed.
 for _ in {1..10}; do
-    ${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS part_log"
-    res=$(${CLICKHOUSE_CLIENT} --query "
+    ${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS part_log"
+    res=$(${DATASTORE_CLIENT} --query "
         SELECT count() FROM system.part_log
         WHERE event_date >= yesterday() AND event_time >= now() - 600 AND event_time > now() - INTERVAL 10 MINUTE
             AND database == currentDatabase() AND table == 'test'
@@ -63,7 +63,7 @@ for _ in {1..10}; do
     sleep 2.0
 done
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SELECT
         if(count() == 2, 'Ok', 'Error: ' || toString(count())),
         if(SUM(ProfileEvents['MutatedRows']) == 512, 'Ok', 'Error: ' || toString(SUM(ProfileEvents['MutatedRows']))),
@@ -74,4 +74,4 @@ ${CLICKHOUSE_CLIENT} --query "
         AND event_type == 'MutatePart';
 "
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE test"
+${DATASTORE_CLIENT} --query "DROP TABLE test"

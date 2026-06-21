@@ -46,7 +46,7 @@ SELECT 'OK';
 
 DROP TABLE t_nullable_tuple;
 
--- Simplified reproducer from https://github.com/ClickHouse/ClickHouse/pull/97582#issuecomment-3939227260
+-- Simplified reproducer from https://github.com/ClickHouse/Datastore/pull/97582#issuecomment-3939227260
 DROP TABLE IF EXISTS t0;
 CREATE TABLE t0 (c0 Nullable(Tuple(c1 Nullable(Int32)))) ENGINE = MergeTree ORDER BY tuple();
 INSERT INTO t0 VALUES ((1,));

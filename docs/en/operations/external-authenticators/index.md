@@ -1,5 +1,5 @@
 ---
-description: 'Overview of external authentication methods supported by ClickHouse'
+description: 'Overview of external authentication methods supported by Datastore'
 pagination_next: operations/external-authenticators/kerberos
 sidebar_label: 'External User Authenticators and Directories'
 sidebar_position: 48
@@ -12,7 +12,7 @@ import SelfManaged from '@site/docs/_snippets/_self_managed_only_no_roadmap.md';
 
 <SelfManaged />
 
-ClickHouse supports authenticating and managing users using external services.
+Datastore supports authenticating and managing users using external services.
 
 The following external authenticators and directories are supported:
 

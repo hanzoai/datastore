@@ -1,5 +1,5 @@
 -- Tags: no-replicated-database
--- https://github.com/ClickHouse/ClickHouse/issues/8547
+-- https://github.com/ClickHouse/Datastore/issues/8547
 SET enable_analyzer=1;
 SET distributed_foreground_insert=1;
 
@@ -7,7 +7,7 @@ CREATE TABLE a1_replicated ON CLUSTER test_shard_localhost (
     day Date,
     id UInt32
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/a1_replicated', '1_replica')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/a1_replicated', '1_replica')
 ORDER BY tuple();
 
 CREATE TABLE a1 (
@@ -20,7 +20,7 @@ CREATE TABLE b1_replicated ON CLUSTER test_shard_localhost (
     day Date,
     id UInt32
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/b1_replicated', '1_replica')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/b1_replicated', '1_replica')
 ORDER BY tuple();
 
 CREATE TABLE b1 (

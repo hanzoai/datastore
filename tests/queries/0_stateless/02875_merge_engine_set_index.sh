@@ -7,7 +7,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     CREATE TABLE t1
     (
         a UInt32,
@@ -37,8 +37,8 @@ $CLICKHOUSE_CLIENT -q "
     )
     ENGINE = Merge(currentDatabase(), 't*');"
 
-query_id="${CLICKHOUSE_DATABASE}_merge_engine_set_index_$RANDOM$RANDOM"
-$CLICKHOUSE_CLIENT --query_id="$query_id" -q "
+query_id="${DATASTORE_DATABASE}_merge_engine_set_index_$RANDOM$RANDOM"
+$DATASTORE_CLIENT --query_id="$query_id" -q "
 SELECT
     a,
     b
@@ -57,7 +57,7 @@ ORDER BY
     b DESC
 FORMAT Null;"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 SYSTEM FLUSH LOGS query_log;
 
 SELECT ProfileEvents['SelectedMarks']

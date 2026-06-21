@@ -68,40 +68,40 @@ SELECT test_table.COLUMNS('i'), test_table.COLUMNS('v') FROM test_table;
 
 SELECT 'Database and table qualified matchers';
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE_1:Identifier};
 
-DROP TABLE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier}.test_table;
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.test_table
+DROP TABLE IF EXISTS {DATASTORE_DATABASE_1:Identifier}.test_table;
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.test_table
 (
     id UInt64,
     value String
 ) ENGINE=TinyLog;
 
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.test_table VALUES (0, 'Value');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.test_table VALUES (0, 'Value');
 
 SELECT '--';
 
-DESCRIBE (SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.* FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table);
-SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.* FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table;
+DESCRIBE (SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.* FROM {DATASTORE_DATABASE_1:Identifier}.test_table);
+SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.* FROM {DATASTORE_DATABASE_1:Identifier}.test_table;
 
 SELECT '--';
 
-DESCRIBE (SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS(id) FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table);
-SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS(id) FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table;
+DESCRIBE (SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS(id) FROM {DATASTORE_DATABASE_1:Identifier}.test_table);
+SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS(id) FROM {DATASTORE_DATABASE_1:Identifier}.test_table;
 
 SELECT '--';
 
-DESCRIBE (SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS(id), {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS(value) FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table);
-SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS(id), {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS(value) FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table;
+DESCRIBE (SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS(id), {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS(value) FROM {DATASTORE_DATABASE_1:Identifier}.test_table);
+SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS(id), {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS(value) FROM {DATASTORE_DATABASE_1:Identifier}.test_table;
 
 SELECT '--';
 
-DESCRIBE (SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS('i'), {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS('v') FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table);
-SELECT {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS('i'), {CLICKHOUSE_DATABASE_1:Identifier}.test_table.COLUMNS('v') FROM {CLICKHOUSE_DATABASE_1:Identifier}.test_table;
+DESCRIBE (SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS('i'), {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS('v') FROM {DATASTORE_DATABASE_1:Identifier}.test_table);
+SELECT {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS('i'), {DATASTORE_DATABASE_1:Identifier}.test_table.COLUMNS('v') FROM {DATASTORE_DATABASE_1:Identifier}.test_table;
 
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.test_table;
-DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.test_table;
+DROP DATABASE {DATASTORE_DATABASE_1:Identifier};
 
 SELECT 'APPLY transformer';
 

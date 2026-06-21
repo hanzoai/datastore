@@ -36,7 +36,7 @@
             val Float32
         )
         PRIMARY KEY ip
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'table_ip_trie'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'table_ip_trie'))
         LAYOUT(IP_TRIE())
         LIFETIME(300)
     </create_query>

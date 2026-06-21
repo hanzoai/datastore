@@ -1,6 +1,6 @@
 Hello, "world"!
 <123>
-&clickhouse
+&datastore
 \'foo\'
 Hello, && world
 Hello, &;& world

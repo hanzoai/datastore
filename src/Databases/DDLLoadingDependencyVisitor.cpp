@@ -104,7 +104,7 @@ void DDLLoadingDependencyVisitor::visit(const ASTFunction & function, Data & dat
 
 void DDLLoadingDependencyVisitor::visit(const ASTFunctionWithKeyValueArguments & dict_source, Data & data)
 {
-    if (dict_source.name != "clickhouse")
+    if (dict_source.name != "datastore")
         return;
     if (!dict_source.elements)
         return;

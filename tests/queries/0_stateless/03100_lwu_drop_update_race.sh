@@ -11,7 +11,7 @@ function thread1()
 {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
             DROP TABLE IF EXISTS t_lwu_block_number SYNC;
             SET enable_lightweight_update = 1;
 
@@ -32,7 +32,7 @@ function thread2()
 {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
                 SET enable_lightweight_update = 1;
                 UPDATE t_lwu_block_number SET c2 = 'xx' WHERE id = 1;
                 UPDATE t_lwu_block_number SET c2 = 'aa' WHERE id = 2;

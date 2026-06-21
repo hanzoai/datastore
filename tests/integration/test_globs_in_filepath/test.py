@@ -5,7 +5,7 @@ from helpers.cluster import ClickHouseCluster
 cluster = ClickHouseCluster(__file__)
 node = cluster.add_instance("node")
 path_to_userfiles_from_defaut_config = (
-    "/var/lib/clickhouse/user_files/"  # should be the same as in config file
+    "/var/lib/datastore/user_files/"  # should be the same as in config file
 )
 
 

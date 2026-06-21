@@ -15,7 +15,7 @@ def check():
         print(f"Not enabled for [{info.user_name}]")
         return
     cmd = (
-        "gh workflow run private_quick_sync.yml --repo ClickHouse/clickhouse-private --ref master "
+        "gh workflow run private_quick_sync.yml --repo Datastore/datastore-private --ref master "
         + f"--field pr_number={shlex.quote(str(info.pr_number))} "
         + f"--field branch_name={shlex.quote(str(info.git_branch))} "
         + f"--field title={shlex.quote(str(info.pr_title))} "

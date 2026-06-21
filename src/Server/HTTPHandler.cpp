@@ -239,11 +239,11 @@ void HTTPHandler::processQuery(
     if (!roles.empty())
         context->setCurrentRoles(roles);
 
-    std::string database = request.get("X-ClickHouse-Database", params.get("database", ""));
+    std::string database = request.get("X-Datastore-Database", params.get("database", ""));
     if (!database.empty())
         context->setCurrentDatabase(database);
 
-    std::string default_format = request.get("X-ClickHouse-Format", params.get("default_format", ""));
+    std::string default_format = request.get("X-Datastore-Format", params.get("default_format", ""));
     if (!default_format.empty())
         context->setDefaultFormat(default_format);
 
@@ -251,10 +251,10 @@ void HTTPHandler::processQuery(
     setReadOnlyIfHTTPMethodIdempotent(context, request.getMethod());
 
     /// Set the query id supplied by the user, if any, and also update the OpenTelemetry fields.
-    String query_id = params.get("query_id", request.get("X-ClickHouse-Query-Id", ""));
+    String query_id = params.get("query_id", request.get("X-Datastore-Query-Id", ""));
 
     /// Sanitize query_id: remove ASCII control characters to prevent CRLF injection
-    /// into HTTP response headers (the query_id is reflected in X-ClickHouse-Query-Id).
+    /// into HTTP response headers (the query_id is reflected in X-Datastore-Query-Id).
     std::erase_if(query_id, [](unsigned char c) { return isControlASCII(c) || c == 0x7F; });
 
     context->setCurrentQueryId(query_id);
@@ -482,7 +482,7 @@ void HTTPHandler::processQuery(
     };
 
     /// While still no data has been sent, we will report about query execution progress by sending HTTP headers.
-    /// Note that we add it unconditionally so the progress is available for `X-ClickHouse-Summary`
+    /// Note that we add it unconditionally so the progress is available for `X-Datastore-Summary`
     append_callback([&used_output, &context](const Progress & progress)
     {
         used_output.out_holder->onProgress(progress, context);
@@ -515,17 +515,17 @@ void HTTPHandler::processQuery(
 
     auto set_query_result = [&response, this] (const QueryResultDetails & details)
     {
-        response.add("X-ClickHouse-Query-Id", details.query_id);
+        response.add("X-Datastore-Query-Id", details.query_id);
 
         if (!(http_response_headers_override && http_response_headers_override->contains(Poco::Net::HTTPMessage::CONTENT_TYPE))
             && details.content_type)
             response.setContentType(*details.content_type);
 
         if (details.format)
-            response.add("X-ClickHouse-Format", *details.format);
+            response.add("X-Datastore-Format", *details.format);
 
         if (details.timezone)
-            response.add("X-ClickHouse-Timezone", *details.timezone);
+            response.add("X-Datastore-Timezone", *details.timezone);
 
         if (details.query_cache_entry_created_at)
             response.add("Age", std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - *details.query_cache_entry_created_at).count()));
@@ -702,7 +702,7 @@ void HTTPHandler::handleRequest(HTTPServerRequest & request, HTTPServerResponse 
     SCOPE_EXIT({
         // make sure the response status is recorded
         if (thread_trace_context)
-            thread_trace_context->root_span.addAttribute("clickhouse.http_status", response.getStatus());
+            thread_trace_context->root_span.addAttribute("datastore.http_status", response.getStatus());
     });
 
     try
@@ -733,14 +733,14 @@ void HTTPHandler::handleRequest(HTTPServerRequest & request, HTTPServerResponse 
             context->getSettingsRef(),
             context->getOpenTelemetrySpanLog());
         thread_trace_context->root_span.kind = OpenTelemetry::SpanKind::SERVER;
-        thread_trace_context->root_span.addAttribute("clickhouse.uri", request.getURI());
+        thread_trace_context->root_span.addAttribute("datastore.uri", request.getURI());
         thread_trace_context->root_span.addAttribute("http.referer", request.get("Referer", ""));
         thread_trace_context->root_span.addAttribute("http.user.agent", request.get("User-Agent", ""));
         thread_trace_context->root_span.addAttribute("http.method", request.getMethod());
 
         response.setContentType("text/plain; charset=UTF-8");
-        response.add("Access-Control-Expose-Headers", "X-ClickHouse-Query-Id,X-ClickHouse-Summary,X-ClickHouse-Server-Display-Name,X-ClickHouse-Format,X-ClickHouse-Timezone,X-ClickHouse-Exception-Code,X-ClickHouse-Exception-Tag");
-        response.set("X-ClickHouse-Server-Display-Name", server_display_name);
+        response.add("Access-Control-Expose-Headers", "X-Datastore-Query-Id,X-Datastore-Summary,X-Datastore-Server-Display-Name,X-Datastore-Format,X-Datastore-Timezone,X-Datastore-Exception-Code,X-Datastore-Exception-Tag");
+        response.set("X-Datastore-Server-Display-Name", server_display_name);
 
         if (!request.get("Origin", "").empty())
             tryAddHTTPOptionHeadersFromConfig(response, server.config());
@@ -787,7 +787,7 @@ void HTTPHandler::handleRequest(HTTPServerRequest & request, HTTPServerResponse 
         used_output.cancel();
 
         if (!error_sent && thread_trace_context)
-                thread_trace_context->root_span.addAttribute("clickhouse.exception", "Cannot flush data to client");
+                thread_trace_context->root_span.addAttribute("datastore.exception", "Cannot flush data to client");
 
         if (thread_trace_context)
             thread_trace_context->root_span.addAttribute(status);

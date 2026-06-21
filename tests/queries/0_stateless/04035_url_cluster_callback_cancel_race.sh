@@ -15,9 +15,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # The URL queries a non-existent table, producing errors that cancel the ReadBuffer
 # and trigger the race between concurrent ClusterFunctionReadTaskCallback invocations.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SELECT DISTINCT [1]
-    FROM url('${CLICKHOUSE_URL}&query=SELECT+c1,c0+FROM+no_such_db.no_such_table+FORMAT+RawBLOB', 'RawBLOB', 'c1 LowCardinality(Bool), c0 UInt32')
+    FROM url('${DATASTORE_URL}&query=SELECT+c1,c0+FROM+no_such_db.no_such_table+FORMAT+RawBLOB', 'RawBLOB', 'c1 LowCardinality(Bool), c0 UInt32')
     ORDER BY 1 ASC
     FORMAT Null
     SETTINGS

@@ -9,7 +9,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 KAFKA_BROKER="127.0.0.1:9092"
-KAFKA_BASE=$(echo "${CLICKHOUSE_TEST_UNIQUE_NAME}" | tr '_' '-')
+KAFKA_BASE=$(echo "${DATASTORE_TEST_UNIQUE_NAME}" | tr '_' '-')
 KAFKA_TOPIC_JSON="${KAFKA_BASE}-json"
 KAFKA_TOPIC_CSV="${KAFKA_BASE}-csv"
 KAFKA_TOPIC_TSV="${KAFKA_BASE}-tsv"
@@ -22,9 +22,9 @@ cleanup()
     set +e
 
     for fmt in json csv tsv; do
-        $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_TEST_UNIQUE_NAME}_${fmt}_mv" 2>/dev/null
-        $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_TEST_UNIQUE_NAME}_${fmt}_dst" 2>/dev/null
-        $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_TEST_UNIQUE_NAME}_${fmt}_kafka" 2>/dev/null
+        $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_TEST_UNIQUE_NAME}_${fmt}_mv" 2>/dev/null
+        $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_TEST_UNIQUE_NAME}_${fmt}_dst" 2>/dev/null
+        $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_TEST_UNIQUE_NAME}_${fmt}_kafka" 2>/dev/null
     done
     timeout 10 rpk topic delete $KAFKA_TOPIC_JSON --brokers $KAFKA_BROKER > /dev/null 2>&1
     timeout 10 rpk topic delete $KAFKA_TOPIC_CSV --brokers $KAFKA_BROKER > /dev/null 2>&1
@@ -44,22 +44,22 @@ for i in $(seq 1 3); do
     echo "{\"a\": $i, \"b\": \"json_$i\"}"
 done | timeout 30 rpk topic produce $KAFKA_TOPIC_JSON --brokers $KAFKA_BROKER > /dev/null 2>&1
 
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_kafka (a UInt64, b String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_json_kafka (a UInt64, b String)
     ENGINE = Kafka
     SETTINGS kafka_broker_list = '$KAFKA_BROKER',
              kafka_topic_list = '$KAFKA_TOPIC_JSON',
-             kafka_group_name = '${CLICKHOUSE_TEST_UNIQUE_NAME}_json_group',
+             kafka_group_name = '${DATASTORE_TEST_UNIQUE_NAME}_json_group',
              kafka_format = 'JSONEachRow',
              kafka_max_block_size = 100;
 "
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_dst (a UInt64, b String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_json_dst (a UInt64, b String)
     ENGINE = MergeTree ORDER BY a;
 "
-$CLICKHOUSE_CLIENT -q "
-    CREATE MATERIALIZED VIEW ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_mv TO ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_dst AS
-    SELECT * FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_kafka;
+$DATASTORE_CLIENT -q "
+    CREATE MATERIALIZED VIEW ${DATASTORE_TEST_UNIQUE_NAME}_json_mv TO ${DATASTORE_TEST_UNIQUE_NAME}_json_dst AS
+    SELECT * FROM ${DATASTORE_TEST_UNIQUE_NAME}_json_kafka;
 "
 
 # Test CSV format
@@ -69,22 +69,22 @@ for i in $(seq 1 3); do
     echo "$i,\"csv_$i\""
 done | timeout 30 rpk topic produce $KAFKA_TOPIC_CSV --brokers $KAFKA_BROKER > /dev/null 2>&1
 
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_kafka (a UInt64, b String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_csv_kafka (a UInt64, b String)
     ENGINE = Kafka
     SETTINGS kafka_broker_list = '$KAFKA_BROKER',
              kafka_topic_list = '$KAFKA_TOPIC_CSV',
-             kafka_group_name = '${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_group',
+             kafka_group_name = '${DATASTORE_TEST_UNIQUE_NAME}_csv_group',
              kafka_format = 'CSV',
              kafka_max_block_size = 100;
 "
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_dst (a UInt64, b String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_csv_dst (a UInt64, b String)
     ENGINE = MergeTree ORDER BY a;
 "
-$CLICKHOUSE_CLIENT -q "
-    CREATE MATERIALIZED VIEW ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_mv TO ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_dst AS
-    SELECT * FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_kafka;
+$DATASTORE_CLIENT -q "
+    CREATE MATERIALIZED VIEW ${DATASTORE_TEST_UNIQUE_NAME}_csv_mv TO ${DATASTORE_TEST_UNIQUE_NAME}_csv_dst AS
+    SELECT * FROM ${DATASTORE_TEST_UNIQUE_NAME}_csv_kafka;
 "
 
 # Test TSV format
@@ -94,29 +94,29 @@ for i in $(seq 1 3); do
     printf '%d\ttsv_%d\n' "$i" "$i"
 done | timeout 30 rpk topic produce $KAFKA_TOPIC_TSV --brokers $KAFKA_BROKER > /dev/null 2>&1
 
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_kafka (a UInt64, b String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_tsv_kafka (a UInt64, b String)
     ENGINE = Kafka
     SETTINGS kafka_broker_list = '$KAFKA_BROKER',
              kafka_topic_list = '$KAFKA_TOPIC_TSV',
-             kafka_group_name = '${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_group',
+             kafka_group_name = '${DATASTORE_TEST_UNIQUE_NAME}_tsv_group',
              kafka_format = 'TSV',
              kafka_max_block_size = 100;
 "
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_dst (a UInt64, b String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_TEST_UNIQUE_NAME}_tsv_dst (a UInt64, b String)
     ENGINE = MergeTree ORDER BY a;
 "
-$CLICKHOUSE_CLIENT -q "
-    CREATE MATERIALIZED VIEW ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_mv TO ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_dst AS
-    SELECT * FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_kafka;
+$DATASTORE_CLIENT -q "
+    CREATE MATERIALIZED VIEW ${DATASTORE_TEST_UNIQUE_NAME}_tsv_mv TO ${DATASTORE_TEST_UNIQUE_NAME}_tsv_dst AS
+    SELECT * FROM ${DATASTORE_TEST_UNIQUE_NAME}_tsv_kafka;
 "
 
 # Wait for all messages to be consumed (120s to allow for slow consumer group assignment)
 for i in $(seq 1 120); do
-    json_count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_dst")
-    csv_count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_dst")
-    tsv_count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_dst")
+    json_count=$($DATASTORE_CLIENT -q "SELECT count() FROM ${DATASTORE_TEST_UNIQUE_NAME}_json_dst")
+    csv_count=$($DATASTORE_CLIENT -q "SELECT count() FROM ${DATASTORE_TEST_UNIQUE_NAME}_csv_dst")
+    tsv_count=$($DATASTORE_CLIENT -q "SELECT count() FROM ${DATASTORE_TEST_UNIQUE_NAME}_tsv_dst")
     if [ "$json_count" -ge 3 ] && [ "$csv_count" -ge 3 ] && [ "$tsv_count" -ge 3 ]; then
         break
     fi
@@ -124,10 +124,10 @@ for i in $(seq 1 120); do
 done
 
 echo "--- JSONEachRow ---"
-$CLICKHOUSE_CLIENT -q "SELECT a, b FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_json_dst ORDER BY a"
+$DATASTORE_CLIENT -q "SELECT a, b FROM ${DATASTORE_TEST_UNIQUE_NAME}_json_dst ORDER BY a"
 
 echo "--- CSV ---"
-$CLICKHOUSE_CLIENT -q "SELECT a, b FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_csv_dst ORDER BY a"
+$DATASTORE_CLIENT -q "SELECT a, b FROM ${DATASTORE_TEST_UNIQUE_NAME}_csv_dst ORDER BY a"
 
 echo "--- TSV ---"
-$CLICKHOUSE_CLIENT -q "SELECT a, b FROM ${CLICKHOUSE_TEST_UNIQUE_NAME}_tsv_dst ORDER BY a"
+$DATASTORE_CLIENT -q "SELECT a, b FROM ${DATASTORE_TEST_UNIQUE_NAME}_tsv_dst ORDER BY a"

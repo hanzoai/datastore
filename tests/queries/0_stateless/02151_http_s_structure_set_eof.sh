@@ -4,7 +4,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-tmp_file=$(mktemp "$CURDIR/clickhouse.XXXXXX.csv")
+tmp_file=$(mktemp "$CURDIR/datastore.XXXXXX.csv")
 trap 'rm $tmp_file' EXIT
 
 # This test verifies that the server handles EOF correctly when an HTTP
@@ -24,12 +24,12 @@ trap 'rm $tmp_file' EXIT
 # over loopback the entire 78 MB upload can complete in under 0.15s, and
 # the `Error: completed early` branch fires — leading to a flaky
 # `+Error: completed early` diff against the reference output.
-$CLICKHOUSE_CLIENT -q "SELECT toString(number) FROM numbers(10e6) FORMAT TSV" > "$tmp_file"
+$DATASTORE_CLIENT -q "SELECT toString(number) FROM numbers(10e6) FORMAT TSV" > "$tmp_file"
 
 _timeout() {
     echo Run
     (
-        ${CLICKHOUSE_CURL} --limit-rate 100k -sS -F "s=@$tmp_file;" "$1" -o /dev/null 2>/dev/null
+        ${DATASTORE_CURL} --limit-rate 100k -sS -F "s=@$tmp_file;" "$1" -o /dev/null 2>/dev/null
         echo Error: completed early
     ) &
     local pid=$!
@@ -40,6 +40,6 @@ _timeout() {
 }
 
 # NOTE: Just in case check w/ input_format_parallel_parsing and w/o
-_timeout "${CLICKHOUSE_URL}&s_structure=key+Int&query=SELECT+dummy+IN+s&input_format_parallel_parsing=true"
-_timeout "${CLICKHOUSE_URL}&s_structure=key+Int&query=SELECT+dummy+IN+s&input_format_parallel_parsing=false"
+_timeout "${DATASTORE_URL}&s_structure=key+Int&query=SELECT+dummy+IN+s&input_format_parallel_parsing=true"
+_timeout "${DATASTORE_URL}&s_structure=key+Int&query=SELECT+dummy+IN+s&input_format_parallel_parsing=false"
 

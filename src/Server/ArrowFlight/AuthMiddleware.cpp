@@ -222,17 +222,17 @@ arrow::Status AuthMiddlewareFactory::StartCall(
     try
     {
         std::string session_id;
-        auto session_it = headers.find("x-clickhouse-session-id");
+        auto session_it = headers.find("x-datastore-session-id");
         if (session_it != headers.end())
             session_id = std::string(session_it->second);
 
         std::string session_check;
-        session_it = headers.find("x-clickhouse-session-check");
+        session_it = headers.find("x-datastore-session-check");
         if (session_it != headers.end())
             session_check = std::string(session_it->second);
 
         std::string session_timeout_str;
-        session_it = headers.find("x-clickhouse-session-timeout");
+        session_it = headers.find("x-datastore-session-timeout");
         if (session_it != headers.end())
             session_timeout_str = std::string(session_it->second);
 
@@ -245,7 +245,7 @@ arrow::Status AuthMiddlewareFactory::StartCall(
         }
 
         std::string session_close;
-        session_it = headers.find("x-clickhouse-session-close");
+        session_it = headers.find("x-datastore-session-close");
         if (session_it != headers.end())
             session_close = std::string(session_it->second);
 

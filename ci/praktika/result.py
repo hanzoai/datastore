@@ -778,7 +778,7 @@ class Result(MetaClasses.Serializable):
             # (e.g. by a sanitizer or OOM). Note: gdb returns 0 even when the inferior
             # exits with a non-zero code, so we can't rely on binary_failed here.
             # Extract the first meaningful error line from the log file if available.
-            # Covers sanitizer reports ("SUMMARY:") and ClickHouse logical errors.
+            # Covers sanitizer reports ("SUMMARY:") and Datastore logical errors.
             _ERROR_PREFIXES = ("SUMMARY:", "Logical error:", "Code: ", "Signal description:")
             crash_info = ""
             if result.files:

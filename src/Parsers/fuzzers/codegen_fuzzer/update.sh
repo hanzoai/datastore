@@ -15,16 +15,16 @@ _main() {
         exit 1
     fi
 
-    cat clickhouse-template.g > clickhouse.g
+    cat datastore-template.g > datastore.g
     
     while read line;
     do
         [[ -z "$line" ]] && continue
         echo $line | sed -e '/^#/d' -e 's/"\(.*\)"/" \1 ";/g'
-    done < $dict_filename >> clickhouse.g
+    done < $dict_filename >> datastore.g
 }
 
 _main "$@"
 
-# Sample run: ./update.sh ${CLICKHOUSE_SOURCE_DIR}/tests/fuzz/all.dict
-# then run `python ./gen.py clickhouse.g out.cpp out.proto` to generate new files with tokens. Rebuild fuzzer
+# Sample run: ./update.sh ${DATASTORE_SOURCE_DIR}/tests/fuzz/all.dict
+# then run `python ./gen.py datastore.g out.cpp out.proto` to generate new files with tokens. Rebuild fuzzer

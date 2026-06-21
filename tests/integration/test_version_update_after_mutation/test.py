@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.test_tools import assert_eq_with_retry, exec_query_with_retry
 
 cluster = ClickHouseCluster(__file__)
@@ -10,8 +10,8 @@ cluster = ClickHouseCluster(__file__)
 node1 = cluster.add_instance(
     "node1",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     with_installed_binary=True,
     stay_alive=True,
     main_configs=[
@@ -21,8 +21,8 @@ node1 = cluster.add_instance(
 node2 = cluster.add_instance(
     "node2",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     with_installed_binary=True,
     stay_alive=True,
     main_configs=[
@@ -32,8 +32,8 @@ node2 = cluster.add_instance(
 node3 = cluster.add_instance(
     "node3",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     with_installed_binary=True,
     stay_alive=True,
     main_configs=[
@@ -56,7 +56,7 @@ def test_mutate_and_upgrade(start_cluster):
     for node in [node1, node2]:
         node.query("DROP TABLE IF EXISTS mt")
         node.query(
-            "CREATE TABLE mt (EventDate Date, id UInt64) ENGINE ReplicatedMergeTree('/clickhouse/tables/t', '{}') ORDER BY tuple()".format(
+            "CREATE TABLE mt (EventDate Date, id UInt64) ENGINE ReplicatedMergeTree('/datastore/tables/t', '{}') ORDER BY tuple()".format(
                 node.name
             )
         )
@@ -114,7 +114,7 @@ def test_upgrade_while_mutation(start_cluster):
     node3.query("DROP TABLE IF EXISTS mt1")
 
     node3.query(
-        "CREATE TABLE mt1 (EventDate Date, id UInt64) ENGINE ReplicatedMergeTree('/clickhouse/tables/t1', 'node3') ORDER BY tuple()"
+        "CREATE TABLE mt1 (EventDate Date, id UInt64) ENGINE ReplicatedMergeTree('/datastore/tables/t1', 'node3') ORDER BY tuple()"
     )
 
     node3.query("INSERT INTO mt1 select '2020-02-13', number from numbers(100000)")

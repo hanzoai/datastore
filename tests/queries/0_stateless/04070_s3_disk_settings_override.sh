@@ -33,12 +33,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS t_04070_s3_disk_override"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS t_04070_s3_disk_override"
 
 # Use a String column with random data so that LZ4 cannot compress it down
 # below the 10 000-byte multipart threshold. A small row count keeps the test
 # fast under the flaky check's random settings (debug build).
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 CREATE TABLE t_04070_s3_disk_override (s String)
 ENGINE = MergeTree ORDER BY tuple()
 SETTINGS storage_policy = 's3_04070'
@@ -49,23 +49,23 @@ SETTINGS storage_policy = 's3_04070'
 # endpoint's large max_single_part_upload_size wins; with the fix the disk
 # config value (10 000) takes priority.
 # In case of listen_try we can have 'Address already in use'
-$CLICKHOUSE_CLIENT --query "SYSTEM RELOAD CONFIG" |& grep -v -e 'Address already in use'
+$DATASTORE_CLIENT --query "SYSTEM RELOAD CONFIG" |& grep -v -e 'Address already in use'
 
 # Disable `s3_check_objects_after_upload` because the size verification has
 # been observed to be flaky against the local S3 mock under the flaky check
 # (random settings combined with multipart upload), and this test only needs
 # to verify that the multipart upload path is taken, not upload integrity.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 INSERT INTO t_04070_s3_disk_override SELECT randomString(100) FROM numbers(500)
 SETTINGS s3_check_objects_after_upload = 0
 "
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
 
 # With s3_max_single_part_upload_size = 10000 from disk config, the data should
 # be uploaded via multipart (CreateMultipartUpload + UploadPart + CompleteMultipartUpload).
 # If the global endpoint config (100Mi) had incorrectly taken priority, it would be a single PutObject.
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 SELECT
     ProfileEvents['S3CreateMultipartUpload'] >= 1 AS has_multipart_create,
     ProfileEvents['S3UploadPart'] >= 1 AS has_upload_parts,
@@ -81,4 +81,4 @@ ORDER BY query_start_time DESC
 LIMIT 1
 "
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE t_04070_s3_disk_override"
+$DATASTORE_CLIENT --query "DROP TABLE t_04070_s3_disk_override"

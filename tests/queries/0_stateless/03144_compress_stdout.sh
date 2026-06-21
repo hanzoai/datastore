@@ -6,18 +6,18 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-[ -e "${CLICKHOUSE_TMP}"/test_compression_of_output_file_from_client.gz ] && rm "${CLICKHOUSE_TMP}"/test_compression_of_output_file_from_client.gz
+[ -e "${DATASTORE_TMP}"/test_compression_of_output_file_from_client.gz ] && rm "${DATASTORE_TMP}"/test_compression_of_output_file_from_client.gz
 
-${CLICKHOUSE_CLIENT} --query "SELECT * FROM (SELECT 'Hello, World! From client.')" > ${CLICKHOUSE_TMP}/test_compression_of_output_file_from_client.gz
-gunzip ${CLICKHOUSE_TMP}/test_compression_of_output_file_from_client.gz
-cat ${CLICKHOUSE_TMP}/test_compression_of_output_file_from_client
+${DATASTORE_CLIENT} --query "SELECT * FROM (SELECT 'Hello, World! From client.')" > ${DATASTORE_TMP}/test_compression_of_output_file_from_client.gz
+gunzip ${DATASTORE_TMP}/test_compression_of_output_file_from_client.gz
+cat ${DATASTORE_TMP}/test_compression_of_output_file_from_client
 
-rm -f "${CLICKHOUSE_TMP}/test_compression_of_output_file_from_client"
+rm -f "${DATASTORE_TMP}/test_compression_of_output_file_from_client"
 
-[ -e "${CLICKHOUSE_TMP}"/test_compression_of_output_file_from_local.gz ] && rm "${CLICKHOUSE_TMP}"/test_compression_of_output_file_from_local.gz
+[ -e "${DATASTORE_TMP}"/test_compression_of_output_file_from_local.gz ] && rm "${DATASTORE_TMP}"/test_compression_of_output_file_from_local.gz
 
-${CLICKHOUSE_LOCAL} --query "SELECT * FROM (SELECT 'Hello, World! From local.')" > ${CLICKHOUSE_TMP}/test_compression_of_output_file_from_local.gz
-gunzip ${CLICKHOUSE_TMP}/test_compression_of_output_file_from_local.gz
-cat ${CLICKHOUSE_TMP}/test_compression_of_output_file_from_local
+${DATASTORE_LOCAL} --query "SELECT * FROM (SELECT 'Hello, World! From local.')" > ${DATASTORE_TMP}/test_compression_of_output_file_from_local.gz
+gunzip ${DATASTORE_TMP}/test_compression_of_output_file_from_local.gz
+cat ${DATASTORE_TMP}/test_compression_of_output_file_from_local
 
-rm -f "${CLICKHOUSE_TMP}/test_compression_of_output_file_from_local"
+rm -f "${DATASTORE_TMP}/test_compression_of_output_file_from_local"

@@ -22,7 +22,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'no_access' --query 'DROP DATABASE test'",
+                "/usr/bin/datastore client --user 'no_access' --query 'DROP DATABASE test'",
             ],
             user="root",
         )
@@ -37,7 +37,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'has_access' --query 'DROP DATABASE test'",
+                "/usr/bin/datastore client --user 'has_access' --query 'DROP DATABASE test'",
             ],
             user="root",
         )
@@ -49,7 +49,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'has_access' --query 'CREATE DATABASE test'",
+                "/usr/bin/datastore client --user 'has_access' --query 'CREATE DATABASE test'",
             ],
             user="root",
         )
@@ -61,7 +61,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'no_access' --query 'CREATE DATABASE test2'",
+                "/usr/bin/datastore client --user 'no_access' --query 'CREATE DATABASE test2'",
             ],
             user="root",
         )
@@ -76,7 +76,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'has_access' --query 'CREATE DATABASE test2'",
+                "/usr/bin/datastore client --user 'has_access' --query 'CREATE DATABASE test2'",
             ],
             user="root",
         )
@@ -93,7 +93,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'default' --query 'CREATE DATABASE test2'",
+                "/usr/bin/datastore client --user 'default' --query 'CREATE DATABASE test2'",
             ],
             user="root",
         )
@@ -105,7 +105,7 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "/usr/bin/clickhouse client --user 'default' --query 'DROP DATABASE test2'",
+                "/usr/bin/datastore client --user 'default' --query 'DROP DATABASE test2'",
             ],
             user="root",
         )
@@ -117,20 +117,20 @@ def test_user_zero_database_access(start_cluster):
             [
                 "bash",
                 "-c",
-                "export CLICKHOUSE_USER=env_user_not_with_password && /usr/bin/clickhouse client --query 'SELECT currentUser()'",
+                "export DATASTORE_USER=env_user_not_with_password && /usr/bin/datastore client --query 'SELECT currentUser()'",
             ],
             user="root",
         )
         assert name.strip() == "env_user_not_with_password"
     except Exception as ex:
-        assert False, "set env CLICKHOUSE_USER can not connect server"
+        assert False, "set env DATASTORE_USER can not connect server"
 
     try:
         name = node.exec_in_container(
             [
                 "bash",
                 "-c",
-                "export CLICKHOUSE_USER=env_user_with_password && export CLICKHOUSE_PASSWORD=clickhouse && /usr/bin/clickhouse client --query 'SELECT currentUser()'",
+                "export DATASTORE_USER=env_user_with_password && export DATASTORE_PASSWORD=datastore && /usr/bin/datastore client --query 'SELECT currentUser()'",
             ],
             user="root",
         )
@@ -138,4 +138,4 @@ def test_user_zero_database_access(start_cluster):
     except Exception as ex:
         assert (
             False
-        ), "set env CLICKHOUSE_USER CLICKHOUSE_PASSWORD can not connect server"
+        ), "set env DATASTORE_USER DATASTORE_PASSWORD can not connect server"

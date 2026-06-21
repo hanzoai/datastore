@@ -22,7 +22,7 @@ def start_cluster():
             """
             CREATE DATABASE test;
             CREATE TABLE test_table(date Date, id UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/replicated', 'node1') ORDER BY id PARTITION BY toYYYYMM(date);
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/replicated', 'node1') ORDER BY id PARTITION BY toYYYYMM(date);
             """
         )
 
@@ -36,7 +36,7 @@ def start_cluster():
 
 
 def drop_zk(zk):
-    zk.delete(path="/clickhouse", recursive=True)
+    zk.delete(path="/datastore", recursive=True)
 
 
 def test_startup_without_zookeeper(start_cluster):

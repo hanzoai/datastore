@@ -1,6 +1,6 @@
 -- Verify that CAST to Nullable(FixedString(N)) returns NULL instead of throwing
 -- when the source string is too long to fit in FixedString(N).
--- See https://github.com/ClickHouse/ClickHouse/issues/77464
+-- See https://github.com/ClickHouse/Datastore/issues/77464
 
 -- Test 1: CAST to Nullable(FixedString(N)) with oversized string should return NULL
 SELECT CAST('abc', 'Nullable(FixedString(2))');

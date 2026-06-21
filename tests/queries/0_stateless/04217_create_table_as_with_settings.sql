@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/21389
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/21389
 -- `CREATE TABLE t2 AS t1 SETTINGS ...` (without explicit ENGINE) used to
 -- silently treat SETTINGS as query-level and discard them from the new table.
 

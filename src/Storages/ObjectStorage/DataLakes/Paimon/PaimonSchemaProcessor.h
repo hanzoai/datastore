@@ -14,7 +14,7 @@
 namespace DB
 {
 
-/// Caches parsed schemas and their ClickHouse type mappings.
+/// Caches parsed schemas and their Datastore type mappings.
 /// Similar to IcebergSchemaProcessor in design.
 class PaimonSchemaProcessor
 {
@@ -33,7 +33,7 @@ public:
     /// Check if schema exists.
     bool hasSchema(Int64 schema_id) const;
 
-    /// Get ClickHouse column definitions for a schema.
+    /// Get Datastore column definitions for a schema.
     std::shared_ptr<NamesAndTypesList> getClickHouseSchema(Int64 schema_id);
 
     /// Register the relationship between snapshot and schema.
@@ -52,7 +52,7 @@ public:
     std::unordered_map<String, String> getOptions(Int64 schema_id) const;
 
 private:
-    /// Convert PaimonTableSchema to ClickHouse NamesAndTypesList.
+    /// Convert PaimonTableSchema to Datastore NamesAndTypesList.
     static std::shared_ptr<NamesAndTypesList> convertToClickHouseSchema(const PaimonTableSchemaPtr & schema);
 
     mutable SharedMutex mutex;
@@ -60,7 +60,7 @@ private:
     /// schema_id -> PaimonTableSchema
     std::unordered_map<Int64, PaimonTableSchemaPtr> schemas_by_id TSA_GUARDED_BY(mutex);
 
-    /// schema_id -> ClickHouse NamesAndTypesList (cached conversion result)
+    /// schema_id -> Datastore NamesAndTypesList (cached conversion result)
     std::unordered_map<Int64, std::shared_ptr<NamesAndTypesList>> clickhouse_schemas_by_id TSA_GUARDED_BY(mutex);
 
     /// snapshot_id -> schema_id

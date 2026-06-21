@@ -50,7 +50,7 @@ from helpers.s3_tools import (
 from helpers.spark_tools import ResilientSparkSession, write_spark_log_config
 
 
-SCRIPT_DIR = "/var/lib/clickhouse/user_files" + os.path.join(
+SCRIPT_DIR = "/var/lib/datastore/user_files" + os.path.join(
     os.path.dirname(os.path.realpath(__file__))
 )
 cluster = ClickHouseCluster(__file__, with_spark=True, azurite_default_port=10000)
@@ -70,7 +70,7 @@ def get_spark(log_dir=None):
         )
         .config(
             "spark.sql.catalog.spark_catalog.warehouse",
-            "/var/lib/clickhouse/user_files",
+            "/var/lib/datastore/user_files",
         )
         .config("spark.driver.memory", "8g")
         .config("spark.executor.memory", "8g")
@@ -216,7 +216,7 @@ SET TBLPROPERTIES ('delta.minReaderVersion'='1', 'delta.minWriterVersion'='2', d
             settings={"delta_lake_snapshot_start_version": 0},
         )
     )
-    # Regression for https://github.com/ClickHouse/ClickHouse/issues/100449:
+    # Regression for https://github.com/ClickHouse/Datastore/issues/100449:
     # setting only end_version (without start_version) must also be detected as a
     # CDF request and rejected for stored tables.
     assert (
@@ -226,7 +226,7 @@ SET TBLPROPERTIES ('delta.minReaderVersion'='1', 'delta.minWriterVersion'='2', d
             settings={"delta_lake_snapshot_end_version": 3},
         )
     )
-    # Regression for https://github.com/ClickHouse/ClickHouse/issues/100449:
+    # Regression for https://github.com/ClickHouse/Datastore/issues/100449:
     # using end_version on a table function without start_version must throw BAD_ARGUMENTS.
     # Use plain non-CDF columns here: _change_type and _commit_version only exist in the
     # schema when start_version is set (CDF mode), so selecting them without start_version

@@ -41,7 +41,7 @@ CREATE TABLE replicated_report
     `branch` String,
     `generated_time` DateTime
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/01747_alter_partition_key/t', '1')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/01747_alter_partition_key/t', '1')
 PARTITION BY (product, toYYYYMM(generated_time))
 ORDER BY (product, machine, branch, generated_time);
 

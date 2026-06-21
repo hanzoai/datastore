@@ -1,4 +1,4 @@
-# docker build -t clickhouse/docs-builder .
+# docker build -t datastore/docs-builder .
 FROM node:22-bookworm-slim
 
 RUN apt-get update && \
@@ -17,16 +17,16 @@ RUN apt-get update && \
 ARG CACHE_INVALIDATOR=0
 
 # Create a specific user and group
-RUN groupadd -r clickhouse && \
-    useradd -r -g clickhouse -m -d /home/clickhouse -s /sbin/nologin -c "ClickHouse user" clickhouse
+RUN groupadd -r datastore && \
+    useradd -r -g datastore -m -d /home/datastore -s /sbin/nologin -c "Datastore user" datastore
 
 RUN npm install -g npm@11 mint@latest
-ENV HOME=/opt/clickhouse-docs
+ENV HOME=/opt/datastore-docs
 
 # Create directory with specific ownership
-RUN mkdir -p /opt/clickhouse-docs && \
-    chown clickhouse:clickhouse /opt/clickhouse-docs && \
-    chmod -R a+rw /opt/clickhouse-docs/
+RUN mkdir -p /opt/datastore-docs && \
+    chown datastore:datastore /opt/datastore-docs && \
+    chmod -R a+rw /opt/datastore-docs/
 
 # Set working directory
 WORKDIR /

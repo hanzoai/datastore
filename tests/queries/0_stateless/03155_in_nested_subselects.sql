@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/63833
+-- https://github.com/ClickHouse/Datastore/issues/63833
 SET enable_analyzer = 1;
 SET parallel_replicas_local_plan=1;
 

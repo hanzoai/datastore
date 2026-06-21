@@ -22,7 +22,7 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `event_date` ([Date](/sql-reference/data-types/date)) — Event date.
 - `event_time` ([DateTime](/sql-reference/data-types/datetime)) — Event time.
 - `event_time_microseconds` ([DateTime64(6)](/sql-reference/data-types/datetime64)) — Event time with microseconds resolution.
-- `ProfileEvent_Query` ([UInt64](/sql-reference/data-types/int-uint)) — Number of queries to be interpreted and potentially executed. Does not include queries that failed to parse or were rejected due to AST size limits, quota limits or limits on the number of simultaneously running queries. May include internal queries initiated by ClickHouse itself. Does not count subqueries.
+- `ProfileEvent_Query` ([UInt64](/sql-reference/data-types/int-uint)) — Number of queries to be interpreted and potentially executed. Does not include queries that failed to parse or were rejected due to AST size limits, quota limits or limits on the number of simultaneously running queries. May include internal queries initiated by Datastore itself. Does not count subqueries.
 - `ProfileEvent_SelectQuery` ([UInt64](/sql-reference/data-types/int-uint)) — Same as Query, but only for SELECT queries.
 - `ProfileEvent_InsertQuery` ([UInt64](/sql-reference/data-types/int-uint)) — Same as Query, but only for INSERT queries.
 - `ProfileEvent_InitialQuery` ([UInt64](/sql-reference/data-types/int-uint)) — Same as Query, but only counts initial queries (see is_initial_query).
@@ -144,10 +144,10 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `ProfileEvent_CreatedReadBufferMMapFailed` ([UInt64](/sql-reference/data-types/int-uint)) — Number of times a read buffer with 'mmap' was attempted to be created for reading data (while choosing among other read methods), but the OS did not allow it (due to lack of filesystem support or other reasons) and we fallen back to the ordinary reading method.
 - `ProfileEvent_DiskReadElapsedMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent waiting for read syscall. This include reads from page cache.
 - `ProfileEvent_DiskWriteElapsedMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent waiting for write syscall. This include writes to page cache.
-- `ProfileEvent_NetworkReceiveElapsedMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent waiting for data to receive or receiving data from network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.
-- `ProfileEvent_NetworkSendElapsedMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent waiting for data to send to network or sending data to network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.
-- `ProfileEvent_NetworkReceiveBytes` ([UInt64](/sql-reference/data-types/int-uint)) — Total number of bytes received from network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.
-- `ProfileEvent_NetworkSendBytes` ([UInt64](/sql-reference/data-types/int-uint)) — Total number of bytes send to network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.
+- `ProfileEvent_NetworkReceiveElapsedMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent waiting for data to receive or receiving data from network. Only Datastore-related network interaction is included, not by 3rd party libraries.
+- `ProfileEvent_NetworkSendElapsedMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent waiting for data to send to network or sending data to network. Only Datastore-related network interaction is included, not by 3rd party libraries.
+- `ProfileEvent_NetworkReceiveBytes` ([UInt64](/sql-reference/data-types/int-uint)) — Total number of bytes received from network. Only Datastore-related network interaction is included, not by 3rd party libraries.
+- `ProfileEvent_NetworkSendBytes` ([UInt64](/sql-reference/data-types/int-uint)) — Total number of bytes send to network. Only Datastore-related network interaction is included, not by 3rd party libraries.
 - `ProfileEvent_FilterPartsByVirtualColumnsMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent in filterPartsByVirtualColumns function.
 - `ProfileEvent_GlobalThreadPoolExpansions` ([UInt64](/sql-reference/data-types/int-uint)) — Counts the total number of times new threads have been added to the global thread pool. This metric indicates the frequency of expansions in the global thread pool to accommodate increased processing demands.
 - `ProfileEvent_GlobalThreadPoolShrinks` ([UInt64](/sql-reference/data-types/int-uint)) — Counts the total number of times the global thread pool has shrunk by removing threads. This occurs when the number of idle threads exceeds max_thread_pool_free_size, indicating adjustments in the global thread pool size in response to decreased thread utilization.
@@ -555,7 +555,7 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `ProfileEvent_MemoryAllocatorPurge` ([UInt64](/sql-reference/data-types/int-uint)) — Total number of times memory allocator purge was requested
 - `ProfileEvent_MemoryAllocatorPurgeTimeMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time spent for memory allocator purge
 - `ProfileEvent_SoftPageFaults` ([UInt64](/sql-reference/data-types/int-uint)) — The number of soft page faults in query execution threads. Soft page fault usually means a miss in the memory allocator cache, which requires a new memory mapping from the OS and subsequent allocation of a page of physical memory.
-- `ProfileEvent_HardPageFaults` ([UInt64](/sql-reference/data-types/int-uint)) — The number of hard page faults in query execution threads. High values indicate either that you forgot to turn off swap on your server, or eviction of memory pages of the ClickHouse binary during very high memory pressure, or successful usage of the 'mmap' read method for the tables data.
+- `ProfileEvent_HardPageFaults` ([UInt64](/sql-reference/data-types/int-uint)) — The number of hard page faults in query execution threads. High values indicate either that you forgot to turn off swap on your server, or eviction of memory pages of the Datastore binary during very high memory pressure, or successful usage of the 'mmap' read method for the tables data.
 - `ProfileEvent_OSIOWaitMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time a thread spent waiting for a result of IO operation, from the OS point of view. This is real IO that doesn't include page cache.
 - `ProfileEvent_OSCPUWaitMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — Total time a thread was ready for execution but waiting to be scheduled by OS, from the OS point of view.
 - `ProfileEvent_OSCPUVirtualTimeMicroseconds` ([UInt64](/sql-reference/data-types/int-uint)) — CPU time spent seen by OS. Does not include involuntary waits due to virtualization.
@@ -842,9 +842,9 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `ProfileEvent_KafkaRebalanceRevocations` ([UInt64](/sql-reference/data-types/int-uint)) — Number of partition revocations (the first stage of consumer group rebalance)
 - `ProfileEvent_KafkaRebalanceAssignments` ([UInt64](/sql-reference/data-types/int-uint)) — Number of partition assignments (the final stage of consumer group rebalance)
 - `ProfileEvent_KafkaRebalanceErrors` ([UInt64](/sql-reference/data-types/int-uint)) — Number of failed consumer group rebalances
-- `ProfileEvent_KafkaMessagesPolled` ([UInt64](/sql-reference/data-types/int-uint)) — Number of Kafka messages polled from librdkafka to ClickHouse
-- `ProfileEvent_KafkaMessagesRead` ([UInt64](/sql-reference/data-types/int-uint)) — Number of Kafka messages already processed by ClickHouse
-- `ProfileEvent_KafkaMessagesFailed` ([UInt64](/sql-reference/data-types/int-uint)) — Number of Kafka messages ClickHouse failed to parse
+- `ProfileEvent_KafkaMessagesPolled` ([UInt64](/sql-reference/data-types/int-uint)) — Number of Kafka messages polled from librdkafka to Datastore
+- `ProfileEvent_KafkaMessagesRead` ([UInt64](/sql-reference/data-types/int-uint)) — Number of Kafka messages already processed by Datastore
+- `ProfileEvent_KafkaMessagesFailed` ([UInt64](/sql-reference/data-types/int-uint)) — Number of Kafka messages Datastore failed to parse
 - `ProfileEvent_KafkaRowsRead` ([UInt64](/sql-reference/data-types/int-uint)) — Number of rows parsed from Kafka messages
 - `ProfileEvent_KafkaRowsRejected` ([UInt64](/sql-reference/data-types/int-uint)) — Number of parsed rows which were later rejected (due to rebalances / errors or similar reasons). Those rows will be consumed again after the rebalance.
 - `ProfileEvent_KafkaDirectReads` ([UInt64](/sql-reference/data-types/int-uint)) — Number of direct selects from Kafka tables since server start
@@ -1276,7 +1276,7 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `ProfileEvent_AIRowsSkipped` ([UInt64](/sql-reference/data-types/int-uint)) — Number of rows that received a default value due to quota or error.
 - `CurrentMetric_Query` ([Int64](/sql-reference/data-types/int-uint)) — Number of executing queries
 - `CurrentMetric_ASTFuzzerAccumulatedFragments` ([Int64](/sql-reference/data-types/int-uint)) — Number of AST fragments accumulated by the server-side AST fuzzer for use in future mutations.
-- `CurrentMetric_QueryNonInternal` ([Int64](/sql-reference/data-types/int-uint)) — Number of executing non-internal queries (queries initiated by users, excluding internal queries from ClickHouse)
+- `CurrentMetric_QueryNonInternal` ([Int64](/sql-reference/data-types/int-uint)) — Number of executing non-internal queries (queries initiated by users, excluding internal queries from Datastore)
 - `CurrentMetric_Merge` ([Int64](/sql-reference/data-types/int-uint)) — Number of executing background merges
 - `CurrentMetric_MergeParts` ([Int64](/sql-reference/data-types/int-uint)) — Number of source parts participating in current background merges
 - `CurrentMetric_Move` ([Int64](/sql-reference/data-types/int-uint)) — Number of currently executing moves
@@ -1326,8 +1326,8 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `CurrentMetric_Read` ([Int64](/sql-reference/data-types/int-uint)) — Number of read (read, pread, io_getevents, etc.) syscalls in fly
 - `CurrentMetric_RemoteRead` ([Int64](/sql-reference/data-types/int-uint)) — Number of read with remote reader in fly
 - `CurrentMetric_Write` ([Int64](/sql-reference/data-types/int-uint)) — Number of write (write, pwrite, io_getevents, etc.) syscalls in fly
-- `CurrentMetric_NetworkReceive` ([Int64](/sql-reference/data-types/int-uint)) — Number of threads receiving data from network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.
-- `CurrentMetric_NetworkSend` ([Int64](/sql-reference/data-types/int-uint)) — Number of threads sending data to network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.
+- `CurrentMetric_NetworkReceive` ([Int64](/sql-reference/data-types/int-uint)) — Number of threads receiving data from network. Only Datastore-related network interaction is included, not by 3rd party libraries.
+- `CurrentMetric_NetworkSend` ([Int64](/sql-reference/data-types/int-uint)) — Number of threads sending data to network. Only Datastore-related network interaction is included, not by 3rd party libraries.
 - `CurrentMetric_SendScalars` ([Int64](/sql-reference/data-types/int-uint)) — Number of connections that are sending data for scalars to remote servers.
 - `CurrentMetric_SendExternalTables` ([Int64](/sql-reference/data-types/int-uint)) — Number of connections that are sending data for external tables to remote servers. External tables are used to implement GLOBAL IN and GLOBAL JOIN operators with distributed subqueries.
 - `CurrentMetric_QueryThread` ([Int64](/sql-reference/data-types/int-uint)) — Number of query processing threads
@@ -1686,11 +1686,11 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `CurrentMetric_DistrCacheWriteRequests` ([Int64](/sql-reference/data-types/int-uint)) — Number of executed Write requests to Distributed Cache
 - `CurrentMetric_DistrCacheWriteBuffers` ([Int64](/sql-reference/data-types/int-uint)) — Number of distributed cache write buffers
 - `CurrentMetric_DistrCacheReadBuffers` ([Int64](/sql-reference/data-types/int-uint)) — Number of distributed cache read buffers
-- `CurrentMetric_DistrCacheServerConnections` ([Int64](/sql-reference/data-types/int-uint)) — Number of open connections to ClickHouse server from Distributed Cache
+- `CurrentMetric_DistrCacheServerConnections` ([Int64](/sql-reference/data-types/int-uint)) — Number of open connections to Datastore server from Distributed Cache
 - `CurrentMetric_DistrCacheRegisteredServers` ([Int64](/sql-reference/data-types/int-uint)) — Number of distributed cache registered servers
 - `CurrentMetric_DistrCacheRegisteredServersCurrentAZ` ([Int64](/sql-reference/data-types/int-uint)) — Number of distributed cache registered servers in current az
 - `CurrentMetric_DistrCacheServerS3CachedClients` ([Int64](/sql-reference/data-types/int-uint)) — Number of distributed cache S3 cached clients
-- `CurrentMetric_DistrCacheServerRegistryConnections` ([Int64](/sql-reference/data-types/int-uint)) — Number of active connections to ClickHouse server from Distributed Cache (not marked as cancelled because of limit)
+- `CurrentMetric_DistrCacheServerRegistryConnections` ([Int64](/sql-reference/data-types/int-uint)) — Number of active connections to Datastore server from Distributed Cache (not marked as cancelled because of limit)
 - `CurrentMetric_SchedulerIOReadScheduled` ([Int64](/sql-reference/data-types/int-uint)) — Number of IO reads are being scheduled currently
 - `CurrentMetric_SchedulerIOWriteScheduled` ([Int64](/sql-reference/data-types/int-uint)) — Number of IO writes are being scheduled currently
 - `CurrentMetric_StorageConnectionsStored` ([Int64](/sql-reference/data-types/int-uint)) — Total count of sessions stored in the session pool for storages
@@ -1716,7 +1716,7 @@ Contains history of metrics values from tables `system.metrics` and `system.even
 - `CurrentMetric_ConcurrencyControlPreempted` ([Int64](/sql-reference/data-types/int-uint)) — Total number of preempted threads waiting for CPU slot
 - `CurrentMetric_ConcurrentQueryScheduled` ([Int64](/sql-reference/data-types/int-uint)) — Total number of query slot requests are being scheduled currently
 - `CurrentMetric_ConcurrentQueryAcquired` ([Int64](/sql-reference/data-types/int-uint)) — Total number of acquired query slots
-- `CurrentMetric_DiskS3NoSuchKeyErrors` ([Int64](/sql-reference/data-types/int-uint)) — The number of `NoSuchKey` errors that occur when reading data from S3 cloud storage through ClickHouse disks.
+- `CurrentMetric_DiskS3NoSuchKeyErrors` ([Int64](/sql-reference/data-types/int-uint)) — The number of `NoSuchKey` errors that occur when reading data from S3 cloud storage through Datastore disks.
 - `CurrentMetric_SharedCatalogStateApplicationThreads` ([Int64](/sql-reference/data-types/int-uint)) — Number of threads in the threadpool for state application in Shared Catalog.
 - `CurrentMetric_SharedCatalogStateApplicationThreadsActive` ([Int64](/sql-reference/data-types/int-uint)) — Number of active threads in the threadpool for state application in Shared Catalog.
 - `CurrentMetric_SharedCatalogStateApplicationThreadsScheduled` ([Int64](/sql-reference/data-types/int-uint)) — Number of queued or active jobs in the threadpool for state application in Shared Catalog.
@@ -1762,7 +1762,7 @@ SELECT * FROM system.metric_log LIMIT 1 FORMAT Vertical;
 ```text
 Row 1:
 ──────
-hostname:                                                        clickhouse.eu-central1.internal
+hostname:                                                        datastore.eu-central1.internal
 event_date:                                                      2020-09-05
 event_time:                                                      2020-09-05 16:22:33
 event_time_microseconds:                                         2020-09-05 16:22:33.196807
@@ -1813,4 +1813,4 @@ LIMIT 1;
 - [system.asynchronous_metrics](../../operations/system-tables/asynchronous_metrics.md) — Contains periodically calculated metrics.
 - [system.events](/operations/system-tables/events) — Contains a number of events that occurred.
 - [system.metrics](../../operations/system-tables/metrics.md) — Contains instantly calculated metrics.
-- [Monitoring](../../operations/monitoring.md) — Base concepts of ClickHouse monitoring.
+- [Monitoring](../../operations/monitoring.md) — Base concepts of Datastore monitoring.

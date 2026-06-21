@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 QUERY="SHOW TABLES ILIKE '%te_st%'"
 
-TERM=xterm-256color ${CLICKHOUSE_FORMAT} --hilite <<< "$QUERY"
+TERM=xterm-256color ${DATASTORE_FORMAT} --hilite <<< "$QUERY"
 
-TERM=xterm-256color ${CLICKHOUSE_FORMAT} --highlight <<< "$QUERY"
+TERM=xterm-256color ${DATASTORE_FORMAT} --highlight <<< "$QUERY"
 

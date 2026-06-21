@@ -131,7 +131,7 @@ def clear_clickhouse_data():
         [
             "bash",
             "-c",
-            "rm -fr /var/lib/clickhouse/coordination/logs/* /var/lib/clickhouse/coordination/snapshots/*",
+            "rm -fr /var/lib/datastore/coordination/logs/* /var/lib/datastore/coordination/snapshots/*",
         ]
     )
 
@@ -141,11 +141,11 @@ def convert_zookeeper_data():
         [
             "bash",
             "-c",
-            "tar -cvzf /var/lib/clickhouse/zk-data.tar.gz /zookeeper/version-2",
+            "tar -cvzf /var/lib/datastore/zk-data.tar.gz /zookeeper/version-2",
         ]
     )
 
-    cmd = "/usr/bin/clickhouse keeper-converter --zookeeper-logs-dir /zookeeper/version-2/ --zookeeper-snapshots-dir  /zookeeper/version-2/ --output-dir /var/lib/clickhouse/coordination/snapshots"
+    cmd = "/usr/bin/datastore keeper-converter --zookeeper-logs-dir /zookeeper/version-2/ --zookeeper-snapshots-dir  /zookeeper/version-2/ --output-dir /var/lib/datastore/coordination/snapshots"
     node.exec_in_container(["bash", "-c", cmd])
 
 

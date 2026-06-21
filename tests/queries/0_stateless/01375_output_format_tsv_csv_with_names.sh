@@ -9,19 +9,19 @@ opts=(
 )
 
 echo 'TSVWithNames'
-${CLICKHOUSE_LOCAL} "${opts[@]}" --format TSVWithNames
+${DATASTORE_LOCAL} "${opts[@]}" --format TSVWithNames
 
 echo 'TSVWithNamesAndTypes'
-${CLICKHOUSE_LOCAL} "${opts[@]}" --format TSVWithNamesAndTypes
+${DATASTORE_LOCAL} "${opts[@]}" --format TSVWithNamesAndTypes
 
 echo 'TSVRawWithNames'
-${CLICKHOUSE_LOCAL} "${opts[@]}" --format TSVWithNames
+${DATASTORE_LOCAL} "${opts[@]}" --format TSVWithNames
 
 echo 'TSVRawWithNamesAndTypes'
-${CLICKHOUSE_LOCAL} "${opts[@]}" --format TSVWithNamesAndTypes
+${DATASTORE_LOCAL} "${opts[@]}" --format TSVWithNamesAndTypes
 
 echo 'CSVWithNames'
-${CLICKHOUSE_LOCAL} "${opts[@]}" --format CSVWithNames
+${DATASTORE_LOCAL} "${opts[@]}" --format CSVWithNames
 
 echo 'CSVWithNamesAndTypes'
-${CLICKHOUSE_LOCAL} "${opts[@]}" --format CSVWithNamesAndTypes
+${DATASTORE_LOCAL} "${opts[@]}" --format CSVWithNamesAndTypes

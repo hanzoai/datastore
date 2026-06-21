@@ -18,7 +18,7 @@
   here is replaced by the entrypoint at runtime so the password never
   lands in the image.
 -->
-<clickhouse>
+<datastore>
   <users>
     <insights_writer>
       <profile>default</profile>
@@ -38,4 +38,4 @@
       </grants>
     </insights_writer>
   </users>
-</clickhouse>
+</datastore>

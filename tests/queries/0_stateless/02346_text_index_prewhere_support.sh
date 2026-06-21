@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-MY_CLICKHOUSE_CLIENT="$CLICKHOUSE_CLIENT \
+MY_DATASTORE_CLIENT="$DATASTORE_CLIENT \
     --enable_analyzer 1 \
     --use_skip_indexes_on_data_read 1 \
     --query_plan_remove_unused_columns 1 \
@@ -20,7 +20,7 @@ MY_CLICKHOUSE_CLIENT="$CLICKHOUSE_CLIENT \
     --compile_expressions 0 \
     --fsync_metadata 0"
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS tab;
 
     CREATE TABLE tab
@@ -37,7 +37,7 @@ $MY_CLICKHOUSE_CLIENT --query "
     SETTINGS index_granularity = 8;
 
     INSERT INTO tab VALUES
-    (1, 10, 'clickhouse rocks', 'fastio engine'),
+    (1, 10, 'datastore rocks', 'fastio engine'),
     (2, 20, 'column store database', 'merge tree storage'),
     (3, 30, 'search query analytics', 'distributed fast query'),
     (4, 40, 'column store index', 'index optimize engine'),
@@ -47,7 +47,7 @@ $MY_CLICKHOUSE_CLIENT --query "
     (8, 80, '', ''),
     (9, 90, 'id123 token456', 'v100 gpu t4'),
     (10, 100, 'click-house,fast/io;merge.tree', 'index+optimize-query'),
-    (11, 110, 'clickhouse clickhouse clickhouse', 'fastio fastio'),
+    (11, 110, 'datastore datastore datastore', 'fastio fastio'),
     (12, 120, 'none here', 'login logout user'),
     (13, 130, 'user login event', 'user logout event'),
     (14, 140, 'analytics engine for column store text search', 'distributed warehouse lake'),
@@ -55,31 +55,31 @@ $MY_CLICKHOUSE_CLIENT --query "
     (16, 160, 'column', 'store'),
     (17, 170, 'column', 'tree'),
     (18, 180, 'column store tree merge index', 'optimize index merge'),
-    (19, 190, '搜索 clickhouse 数据库', '合并 tree 存储'),
-    (20, 200, 'a b c clickhouse d e f analytics g h lake warehouse', 'info warn error active online prod'),
+    (19, 190, '搜索 datastore 数据库', '合并 tree 存储'),
+    (20, 200, 'a b c datastore d e f analytics g h lake warehouse', 'info warn error active online prod'),
     (21, 1, 'token1 token2', 'token3'),
     (22, 2, 'token2 token3', 'token1 token4'),
     (23, 3, 'merge tree', 'merge'),
     (24, 4, 'merge', 'tree'),
-    (25, 5, 'fast query engine', 'clickhouse analytics'),
+    (25, 5, 'fast query engine', 'datastore analytics'),
     (26, 6, 'hot warm cold', 'dry wet'),
-    (27, 7, 'mysql postgres oracle', 'ck ch clickhouse'),
+    (27, 7, 'mysql postgres oracle', 'ck ch datastore'),
     (28, 8, 'aa bb cc', 'dd ee ff'),
     (29, 9, 'user active online', 'offline inactive'),
     (30, 10, 'error warn info', 'fatal panic'),
     (31, 11, 'quick brown fox', 'jumped over lazy dog'),
     (32, 12, 'login login login', 'logout'),
     (33, 13, 'index index index', 'optimize optimize'),
-    (34, 14, 'analytics clickhouse index', 'index merge tree'),
+    (34, 14, 'analytics datastore index', 'index merge tree'),
     (35, 15, 'engine storage table', 'column store db'),
     (36, 16, 'event timeline', 'span trace'),
     (37, 17, 'json parser', 'sql processor'),
-    (38, 18, '你好 世界 clickhouse', '文本 处理'),
+    (38, 18, '你好 世界 datastore', '文本 处理'),
     (39, 19, 'lake house delta iceberg', 'warehouse table'),
     (40, 20, 'fast search engine', 'query optimizer'),
     (41, 21, 'token a1 a2', 'b1 b2'),
     (42, 22, 'token x y z', 'x1 y1 z1'),
-    (43, 23, 'clickhouse integration test', 'ci cd pipeline'),
+    (43, 23, 'datastore integration test', 'ci cd pipeline'),
     (44, 24, 'benchmark suite', 'performance test'),
     (45, 25, 'very long sentence with many many tokens included for stress testing the tokenizer behavior', 'another long long sentence'),
     (46, 26, 'key1 key2 key3', 'key4 key5 key6'),
@@ -127,7 +127,7 @@ $MY_CLICKHOUSE_CLIENT --query "
     (88, 68, 'io scheduler test', 'latency throughput'),
     (89, 69, 'memory usage tracking', 'oom killer test'),
     (90, 70, 'cpu profile flamegraph', 'perf event'),
-    (91, 71, 'hello clickhouse', 'world fastio'),
+    (91, 71, 'hello datastore', 'world fastio'),
     (92, 72, 'json document', 'xml yaml'),
     (93, 73, 'tree map list set', 'hash map vector'),
     (94, 74, 'vector db', 'embedding index'),
@@ -148,7 +148,7 @@ $MY_CLICKHOUSE_CLIENT --query "
     (109, 89, 'real world logs', 'debug info warn'),
     (110, 90, 'text indexing benchmark', 'performance stats'),
     (111, 91, 'semantic search', 'embedding vector'),
-    (112, 92, 'clickhouse fast', 'cloud platform'),
+    (112, 92, 'datastore fast', 'cloud platform'),
     (113, 93, 'vector similarity', 'cosine distance'),
     (114, 94, 'event logs traces', 'profiling spans'),
     (115, 95, 'runtime error crash', 'fault safe'),
@@ -172,7 +172,7 @@ function run()
 {
     query="$1"
     echo "$query"
-    $MY_CLICKHOUSE_CLIENT --multiquery --query "
+    $MY_DATASTORE_CLIENT --multiquery --query "
         $query SETTINGS use_skip_indexes = 0;
         $query SETTINGS use_skip_indexes = 1;
         SELECT trim(explain) FROM
@@ -184,10 +184,10 @@ function run()
 }
 
 # Basic: single text-index function on 'text1'
-run "SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse')"
+run "SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore')"
 
 # Basic: hasAnyTokens on 'text1'
-run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['clickhouse', 'database'])"
+run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['datastore', 'database'])"
 
 # Basic: hasAllTokens on 'text1'
 run "SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store'])"
@@ -200,9 +200,9 @@ run "SELECT count() FROM tab PREWHERE hasAnyTokens(text2, ['search', 'index'])"
 run "SELECT count() FROM tab PREWHERE hasAllTokens(text2, ['merge', 'tree'])"
 
 # Text condition + numeric condition (AND)
-run "SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') AND a > 0"
+run "SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') AND a > 0"
 
-run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['clickhouse', 'database']) AND id BETWEEN 10 AND 100"
+run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['datastore', 'database']) AND id BETWEEN 10 AND 100"
 
 run "SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store']) AND (a % 2) = 0"
 
@@ -214,14 +214,14 @@ run "SELECT count() FROM tab PREWHERE (hasAnyTokens(text1, ['log', 'event']) OR 
 run "SELECT count() FROM tab PREWHERE (a > 100 AND hasToken(text1, 'hot')) OR (a <= 100 AND hasAnyTokens(text2, ['cold', 'warm']))"
 
 # Multiple text functions on the same column
-run "SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') AND hasAnyTokens(text1, ['clickhouse', 'database'])"
+run "SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') AND hasAnyTokens(text1, ['datastore', 'database'])"
 
-run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['clickhouse', 'database']) AND NOT hasToken(text1, 'mysql')"
+run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['datastore', 'database']) AND NOT hasToken(text1, 'mysql')"
 
 run "SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store']) OR hasAnyTokens(text1, ['olap', 'analytics'])"
 
 # Cross-column combinations (text1 + text2)
-run "SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') AND hasToken(text2, 'fastio')"
+run "SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') AND hasToken(text2, 'fastio')"
 
 run "SELECT count() FROM tab PREWHERE hasAnyTokens(text1, ['search', 'query']) OR hasAllTokens(text2, ['index', 'optimize'])"
 
@@ -235,19 +235,19 @@ run "SELECT count() FROM tab PREWHERE NOT hasAllTokens(text1, ['internal', 'test
 run "SELECT count() FROM tab PREWHERE NOT (hasAnyTokens(text1, ['drop', 'truncate']) OR hasToken(text2, 'danger')) AND id IN (1, 2, 3, 4)"
 
 # Text functions mixed into complex expressions
-run "SELECT count() FROM tab PREWHERE (a > 10 AND hasToken(text1, 'clickhouse')) OR (a <= 10 AND hasAnyTokens(text2, ['mysql', 'postgres']))"
+run "SELECT count() FROM tab PREWHERE (a > 10 AND hasToken(text1, 'datastore')) OR (a <= 10 AND hasAnyTokens(text2, ['mysql', 'postgres']))"
 
 run "SELECT count() FROM tab PREWHERE (hasAllTokens(text1, ['column', 'store']) AND a BETWEEN 1 AND 100) OR (hasAnyTokens(text2, ['lake', 'warehouse']) AND id > 1000)"
 
 run "SELECT count() FROM tab PREWHERE (NOT hasToken(text1, 'archived') AND a > 0) OR (hasAnyTokens(text2, ['active', 'online']) AND id % 5 = 0)"
 
 #  Text index filter in PREWHERE, numeric filter in WHERE
-run "SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') WHERE a > 0"
+run "SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') WHERE a > 0"
 
 # PREWHERE uses hasAllTokens, WHERE excludes some special cases
 run "SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store']) WHERE a NOT IN (150, 160) AND id != 15"
 
 # Combinations with PREWHERE and WHERE
-run "SELECT count() FROM tab PREWHERE hasToken(text1, 'clickhouse') WHERE hasToken(text2, 'fastio')"
+run "SELECT count() FROM tab PREWHERE hasToken(text1, 'datastore') WHERE hasToken(text2, 'fastio')"
 
 run "SELECT count() FROM tab PREWHERE hasAllTokens(text1, ['column', 'store']) WHERE hasAnyTokens(text1, ['olap', 'analytics'])"

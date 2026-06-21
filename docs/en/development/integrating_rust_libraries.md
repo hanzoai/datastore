@@ -1,5 +1,5 @@
 ---
-description: 'Guide for integrating Rust libraries into ClickHouse'
+description: 'Guide for integrating Rust libraries into Datastore'
 sidebar_label: 'Rust Libraries'
 slug: /development/integrating_rust_libraries
 title: 'Integrating Rust Libraries'

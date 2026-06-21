@@ -32,7 +32,7 @@ def test_optimize(started_cluster_iceberg_with_spark, storage_type):
     )
 
     create_iceberg_table(storage_type, instance, TABLE_NAME, started_cluster_iceberg_with_spark)
-    snapshot_id = get_last_snapshot(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/")
+    snapshot_id = get_last_snapshot(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/")
     snapshot_timestamp = datetime.now(timezone.utc)
 
     time.sleep(0.1)
@@ -76,10 +76,10 @@ def test_optimize(started_cluster_iceberg_with_spark, storage_type):
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
-    df = spark.read.format("iceberg").load(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}").collect()
+    df = spark.read.format("iceberg").load(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}").collect()
     assert len(df) == 90
 
 
@@ -128,7 +128,7 @@ def test_optimize_manifest_per_file_stats(started_cluster_iceberg_with_spark):
     assert int(instance.query(f"SELECT count() FROM {TABLE_NAME}")) == 80
 
     metadata_dir = (
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/metadata"
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/metadata"
     )
     manifest_files = (
         instance.exec_in_container(

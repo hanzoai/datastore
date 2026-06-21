@@ -29,7 +29,7 @@ icebergHDFSCluster(cluster_name, named_collection[, option=value [,..]])
 
 - `cluster_name` — Name of a cluster that is used to build a set of addresses and connection parameters to remote and local servers.
 - Description of all other arguments coincides with description of arguments in equivalent [iceberg](/sql-reference/table-functions/iceberg.md) table function.
-- An optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in ClickHouse Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
+- An optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in Datastore Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
 
 **Returned value**
 
@@ -38,7 +38,7 @@ A table with the specified structure for reading data from cluster in the specif
 **Examples**
 
 ```sql
-SELECT * FROM icebergS3Cluster('cluster_simple', 'http://test.s3.amazonaws.com/clickhouse-bucket/test_table', 'test', 'test')
+SELECT * FROM icebergS3Cluster('cluster_simple', 'http://test.s3.amazonaws.com/datastore-bucket/test_table', 'test', 'test')
 ```
 
 ## Virtual Columns {#virtual-columns}

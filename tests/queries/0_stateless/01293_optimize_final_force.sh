@@ -11,7 +11,7 @@ TIMELIMIT=31
 while [ $SECONDS -lt "$TIMELIMIT" ] && [ $it -lt 100 ];
 do
     it=$((it+1))
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         DROP TABLE IF EXISTS mt;
         CREATE TABLE mt (x UInt8, k UInt8 DEFAULT 0) ENGINE = SummingMergeTree ORDER BY k SETTINGS concurrent_part_removal_threshold=1;
 
@@ -29,10 +29,10 @@ do
         OPTIMIZE TABLE mt FINAL;
     ";
 
-    RES=$($CLICKHOUSE_CLIENT --query "SELECT * FROM mt;")
+    RES=$($DATASTORE_CLIENT --query "SELECT * FROM mt;")
     if [ "$RES" !=  "55	0" ]; then
         echo "FAIL. Got: $RES"
     fi
 
-    $CLICKHOUSE_CLIENT --query "DROP TABLE mt;"
+    $DATASTORE_CLIENT --query "DROP TABLE mt;"
 done

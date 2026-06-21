@@ -11,7 +11,7 @@ function start_minio()
         if ! lsof -i :"11111" > /dev/null 2>&1; then
             rm -rf "${tmp_dir:?}"/minio_data
             echo "Setup minio"
-            # Different ClickHouse versions have setup_minio.sh in different locations
+            # Different Datastore versions have setup_minio.sh in different locations
             if [[ -f "$WORK_TREE/tests/docker_scripts/setup_minio.sh" ]]; then
                 file_path="$WORK_TREE/tests/docker_scripts/setup_minio.sh"
             elif [[ -f "$WORK_TREE/ci/jobs/scripts/functional_tests/setup_minio.sh" ]]; then
@@ -37,18 +37,18 @@ function wait_ch_start()
     INTERVAL=1
     elapsed=0
 
-    # Start waiting for the ClickHouse server
-    echo "Waiting for ClickHouse server to become available..."
+    # Start waiting for the Datastore server
+    echo "Waiting for Datastore server to become available..."
 
     while true; do
         # Try to execute a simple query
         if $1 client --port $2 --query 'SELECT 1' &>/dev/null; then
-            echo "ClickHouse server $2 is available."
+            echo "Datastore server $2 is available."
             return
         else
             # Check if we've reached the timeout
             if [ "$elapsed" -ge "$TIMEOUT" ]; then
-                echo "Timed out after $TIMEOUT seconds waiting for ClickHouse server $2."
+                echo "Timed out after $TIMEOUT seconds waiting for Datastore server $2."
                 exit 1
             fi
 

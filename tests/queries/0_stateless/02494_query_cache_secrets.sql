@@ -12,7 +12,7 @@ SELECT query FROM system.query_cache;
 
 SYSTEM CLEAR QUERY CACHE;
 
--- https://github.com/ClickHouse/ClickHouse/issues/102927
+-- https://github.com/ClickHouse/Datastore/issues/102927
 -- HMAC key should be hidden in system.query_cache
 SELECT hex(HMAC('sha256', 'message', 'this_should_be_secret')) SETTINGS use_query_cache = true;
 

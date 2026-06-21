@@ -1,5 +1,5 @@
 -- Test that empty string is not converted to NULL in Join table with Nullable(String) column
--- https://github.com/ClickHouse/ClickHouse/issues/71414
+-- https://github.com/ClickHouse/Datastore/issues/71414
 
 DROP TABLE IF EXISTS t_join_nullable_string;
 

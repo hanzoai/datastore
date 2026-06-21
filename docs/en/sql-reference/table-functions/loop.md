@@ -1,5 +1,5 @@
 ---
-description: 'The loop table function in ClickHouse is used to return query results
+description: 'The loop table function in Datastore is used to return query results
   in an infinite loop.'
 slug: /sql-reference/table-functions/loop
 title: 'loop'
@@ -29,7 +29,7 @@ Infinite loop to return query results.
 
 ## Examples {#examples}
 
-Selecting data from ClickHouse:
+Selecting data from Datastore:
 
 ```sql
 SELECT * FROM loop(test_database, test_table);

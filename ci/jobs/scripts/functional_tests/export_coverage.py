@@ -31,21 +31,21 @@ class CoverageExporter:
         command_args += " --only-system-tables --stacktrace"
         # we need disk definitions for S3 configurations, but it is OK to always use server config
 
-        command_args += " --config-file=/etc/clickhouse-server/config.xml"
+        command_args += " --config-file=/etc/datastore-server/config.xml"
         # Change log files for local in config.xml as command args do not override
         Shell.check(
-            f"sed -i 's|<log>.*</log>|<log>{self.src.CH_LOCAL_LOG}</log>|' /etc/clickhouse-server/config.xml"
+            f"sed -i 's|<log>.*</log>|<log>{self.src.CH_LOCAL_LOG}</log>|' /etc/datastore-server/config.xml"
         )
         Shell.check(
-            f"sed -i 's|<errorlog>.*</errorlog>|<errorlog>{self.src.CH_LOCAL_ERR_LOG}</errorlog>|' /etc/clickhouse-server/config.xml"
+            f"sed -i 's|<errorlog>.*</errorlog>|<errorlog>{self.src.CH_LOCAL_ERR_LOG}</errorlog>|' /etc/datastore-server/config.xml"
         )
         # FIXME: Hack for s3_with_keeper (note, that we don't need the disk,
         # the problem is that whenever we need disks all disks will be
         # initialized [1])
         #
-        #   [1]: https://github.com/ClickHouse/ClickHouse/issues/77320
+        #   [1]: https://github.com/ClickHouse/Datastore/issues/77320
         #
-        #   [2]: https://github.com/ClickHouse/ClickHouse/issues/77320
+        #   [2]: https://github.com/ClickHouse/Datastore/issues/77320
         #
         command_args_post = f"-- --zookeeper.implementation=testkeeper"
 
@@ -61,7 +61,7 @@ class CoverageExporter:
             f"round(avg(toUInt32(min_depth))) AS avg_min_depth "
             f"FROM system.{table} FINAL"
         )
-        stats_cmd = f'cd {self.src.run_path0} && clickhouse local {command_args} {path_arg} --query "{stats_query}" {command_args_post}'
+        stats_cmd = f'cd {self.src.run_path0} && datastore local {command_args} {path_arg} --query "{stats_query}" {command_args_post}'
         rc_stats, stdout_stats, stderr_stats = Shell.get_res_stdout_stderr(stats_cmd, verbose=True)
         if rc_stats != 0:
             raise RuntimeError(
@@ -87,7 +87,7 @@ class CoverageExporter:
                 f"FROM system.{table} FINAL "
                 "WHERE notEmpty(test_name) AND notEmpty(file)"
             )
-            cmd = f'cd {self.src.run_path0} && clickhouse local {command_args} {path_arg} --query "{query}" {command_args_post}'
+            cmd = f'cd {self.src.run_path0} && datastore local {command_args} {path_arg} --query "{query}" {command_args_post}'
             rc, stdout, stderr = Shell.get_res_stdout_stderr(cmd, verbose=True)
             if stdout:
                 print(f"Export stdout: {stdout}")
@@ -103,7 +103,7 @@ class CoverageExporter:
                 f"INTO OUTFILE '{temp_dir}/system_tables/{table}.tsv' "
                 "FORMAT TSVWithNamesAndTypes"
             )
-            cmd = f'cd {self.src.run_path0} && clickhouse local {command_args} {path_arg} --query "{query}" {command_args_post}'
+            cmd = f'cd {self.src.run_path0} && datastore local {command_args} {path_arg} --query "{query}" {command_args_post}'
             rc, stdout, stderr = Shell.get_res_stdout_stderr(cmd, verbose=True)
             if rc != 0:
                 raise RuntimeError(f"Failed to export coverage table to file: {table}")
@@ -118,7 +118,7 @@ class CoverageExporter:
                 "FROM system.coverage_indirect_calls FINAL WHERE notEmpty(test_name)"
             )
             ic_stats_cmd = (
-                f'cd {self.src.run_path0} && clickhouse local {command_args} {path_arg} '
+                f'cd {self.src.run_path0} && datastore local {command_args} {path_arg} '
                 f'--query "{ic_stats_query}" {command_args_post}'
             )
             rc_s, stdout_s, _ = Shell.get_res_stdout_stderr(ic_stats_cmd, verbose=False)
@@ -137,7 +137,7 @@ class CoverageExporter:
                     "FROM system.coverage_indirect_calls FINAL "
                     "WHERE notEmpty(test_name)"
                 )
-                ic_cmd = f'cd {self.src.run_path0} && clickhouse local {command_args} {path_arg} --query "{ic_query}" {command_args_post}'
+                ic_cmd = f'cd {self.src.run_path0} && datastore local {command_args} {path_arg} --query "{ic_query}" {command_args_post}'
                 rc_ic, _, stderr_ic = Shell.get_res_stdout_stderr(ic_cmd, verbose=True)
                 if rc_ic != 0:
                     raise RuntimeError(

@@ -7,9 +7,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 echo "Starting the test"
 
-test_seed=`$CLICKHOUSE_CLIENT -q "SELECT toUnixTimestamp(now())"`
+test_seed=`$DATASTORE_CLIENT -q "SELECT toUnixTimestamp(now())"`
 
-res=`$CLICKHOUSE_CLIENT -mq "
+res=`$DATASTORE_CLIENT -mq "
 set enable_analyzer=1;
 set allow_experimental_analyzer=1;
 set max_threads='auto';
@@ -50,4 +50,4 @@ else
     echo "Test failed output complete"
 fi
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE st"
+$DATASTORE_CLIENT -q "DROP TABLE st"

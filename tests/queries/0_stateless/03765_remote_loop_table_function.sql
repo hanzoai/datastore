@@ -1,5 +1,5 @@
 -- Tags: no-fasttest
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/77030
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/77030
 -- remote() wrapping loop() used to fail because TableFunctionLoop::getActualTableStructure
 -- returned empty ColumnsDescription, causing EMPTY_LIST_OF_COLUMNS_PASSED or a logical error.
 

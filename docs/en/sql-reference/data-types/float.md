@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for floating-point data types in ClickHouse: Float32,
+description: 'Documentation for floating-point data types in Datastore: Float32,
   Float64, and BFloat16'
 sidebar_label: 'Float32 | Float64 | BFloat16'
 sidebar_position: 4
@@ -40,17 +40,17 @@ SELECT sumKahan(my_float), sumKahan(my_decimal) FROM float_vs_decimal;
 ```
 :::
 
-The equivalent types in ClickHouse and in C are given below:
+The equivalent types in Datastore and in C are given below:
 
 - `Float32` — `float`.
 - `Float64` — `double`.
 
-Float types in ClickHouse have the following aliases:
+Float types in Datastore have the following aliases:
 
 - `Float32` — `FLOAT`, `REAL`, `SINGLE`.
 - `Float64` — `DOUBLE`, `DOUBLE PRECISION`.
 
-When creating tables, numeric parameters for floating point numbers can be set (e.g. `FLOAT(12)`, `FLOAT(15, 22)`, `DOUBLE(12)`, `DOUBLE(4, 18)`), but ClickHouse ignores them.
+When creating tables, numeric parameters for floating point numbers can be set (e.g. `FLOAT(12)`, `FLOAT(15, 22)`, `DOUBLE(12)`, `DOUBLE(4, 18)`), but Datastore ignores them.
 
 ## Using floating-point numbers {#using-floating-point-numbers}
 
@@ -72,7 +72,7 @@ SELECT 1 - 0.9
 
 ## NaN and Inf {#nan-and-inf}
 
-In contrast to standard SQL, ClickHouse supports the following categories of floating-point numbers:
+In contrast to standard SQL, Datastore supports the following categories of floating-point numbers:
 
 - `Inf` – Infinity.
 
@@ -117,7 +117,7 @@ See the rules for `NaN` sorting in the section [ORDER BY clause](../../sql-refer
 `BFloat16` is a 16-bit floating point data type with 8-bit exponent, sign, and 7-bit mantissa. 
 It is useful for machine learning and AI applications.
 
-ClickHouse supports conversions between `Float32` and `BFloat16` which 
+Datastore supports conversions between `Float32` and `BFloat16` which 
 can be done using the [`toFloat32()`](../functions/type-conversion-functions.md/#toFloat32) or [`toBFloat16`](../functions/type-conversion-functions.md/#toBFloat16) functions.
 
 :::note

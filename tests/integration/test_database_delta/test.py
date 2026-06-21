@@ -22,7 +22,7 @@ import uuid
 
 from helpers.test_tools import TSV
 
-UC_LOG = "/var/lib/clickhouse/user_files/unitycatalog/uc.log"
+UC_LOG = "/var/lib/datastore/user_files/unitycatalog/uc.log"
 
 
 def start_unity_catalog(node):
@@ -30,7 +30,7 @@ def start_unity_catalog(node):
         [
             "bash",
             "-c",
-            f"""cp -r /unitycatalog /var/lib/clickhouse/user_files/ && cd /var/lib/clickhouse/user_files/unitycatalog && nohup bin/start-uc-server > uc.log 2>&1 &""",
+            f"""cp -r /unitycatalog /var/lib/datastore/user_files/ && cd /var/lib/datastore/user_files/unitycatalog && nohup bin/start-uc-server > uc.log 2>&1 &""",
         ]
     )
     # Wait for Unity Catalog to accept connections on port 8080 before returning.
@@ -63,7 +63,7 @@ def started_cluster():
             "node1",
             main_configs=[],
             user_configs=[],
-            image="clickhouse/integration-test-with-unity-catalog",
+            image="datastore/integration-test-with-unity-catalog",
             with_installed_binary=False,
             tag=os.environ.get("DOCKER_BASE_WITH_UNITY_CATALOG_TAG", "latest"),
         )
@@ -336,7 +336,7 @@ def test_embedded_database_and_tables(started_cluster, use_delta_kernel):
                     node1, f"SELECT * FROM unity.{table} ORDER BY 1,2,3"
                 )
             )
-            print("Data ClickHouse\n", data_clickhouse)
+            print("Data Datastore\n", data_clickhouse)
             print("Data Spark\n", data_spark)
             assert data_clickhouse == data_spark
 
@@ -363,13 +363,13 @@ def test_check_database_unity(started_cluster):
     queries = [f"CREATE SCHEMA {schema_name}"]
     for table_name, table_schema, data_rows in table_configs:
         queries.append(
-            f"CREATE TABLE {schema_name}.{table_name} ({table_schema}) using Delta location '/var/lib/clickhouse/user_files/tmp/{schema_name}/{table_name}'"
+            f"CREATE TABLE {schema_name}.{table_name} ({table_schema}) using Delta location '/var/lib/datastore/user_files/tmp/{schema_name}/{table_name}'"
         )
         for row in data_rows:
             queries.append(f"INSERT INTO {schema_name}.{table_name} VALUES {row}")
     execute_multiple_spark_queries(node1, queries)
 
-    # Create ClickHouse database pointing to Unity Catalog
+    # Create Datastore database pointing to Unity Catalog
     node1.query(
         f"create database {db_name} engine DataLakeCatalog('http://localhost:8080/api/2.1/unity-catalog') settings warehouse = 'unity', catalog_type='unity', vended_credentials=false",
         settings={"allow_database_unity_catalog": "1"},
@@ -415,7 +415,7 @@ def test_multiple_schemes_tables(started_cluster):
     for i in range(10):
         queries.extend([
             f"CREATE SCHEMA test_schema{test_uuid}{i}",
-            f"CREATE TABLE test_schema{test_uuid}{i}.test_table{test_uuid}{i} (col1 int, col2 double) using Delta location '/var/lib/clickhouse/user_files/tmp/test_schema{test_uuid}{i}/test_table{test_uuid}{i}'",
+            f"CREATE TABLE test_schema{test_uuid}{i}.test_table{test_uuid}{i} (col1 int, col2 double) using Delta location '/var/lib/datastore/user_files/tmp/test_schema{test_uuid}{i}/test_table{test_uuid}{i}'",
             f"INSERT INTO test_schema{test_uuid}{i}.test_table{test_uuid}{i} VALUES ({i}, {i}.0)",
         ])
     execute_multiple_spark_queries(node1, queries)
@@ -460,7 +460,7 @@ def test_complex_table_schema(started_cluster, use_delta_kernel):
     )
     table_name = f"complex_table_{use_delta_kernel}_{uuid.uuid4()}".replace("-", "_")
     schema = "event_date DATE, event_time TIMESTAMP, hits ARRAY<integer>, ids MAP<int, string>, really_complex STRUCT<f1:int,f2:string>"
-    create_query = f"CREATE TABLE {schema_name}.{table_name} ({schema}) using Delta location '/var/lib/clickhouse/user_files/tmp/complex_schema/{table_name}'"
+    create_query = f"CREATE TABLE {schema_name}.{table_name} ({schema}) using Delta location '/var/lib/datastore/user_files/tmp/complex_schema/{table_name}'"
     insert_query = f"insert into {schema_name}.{table_name} SELECT to_date('2024-10-01', 'yyyy-MM-dd'), to_timestamp('2024-10-01 00:12:00'), array(42, 123, 77), map(7, 'v7', 5, 'v5'), named_struct(\\\"f1\\\", 34, \\\"f2\\\", 'hello')"
     execute_multiple_spark_queries(
         node1,
@@ -527,7 +527,7 @@ def test_timestamp_ntz(started_cluster, use_delta_kernel):
         "-", "_"
     )
     schema = "event_date DATE, event_time TIMESTAMP, event_time_ntz TIMESTAMP_NTZ"
-    create_query = f"CREATE TABLE {schema_name}.{table_name} ({schema}) using Delta location '/var/lib/clickhouse/user_files/tmp/{table_name_src}/{table_name}'"
+    create_query = f"CREATE TABLE {schema_name}.{table_name} ({schema}) using Delta location '/var/lib/datastore/user_files/tmp/{table_name_src}/{table_name}'"
     insert_query = f"insert into {schema_name}.{table_name} SELECT to_date('2024-10-01', 'yyyy-MM-dd'), to_timestamp('2024-10-01 00:12:00'), to_timestamp_ntz('2024-10-01 00:12:00')"
     execute_multiple_spark_queries(
         node1,
@@ -595,8 +595,8 @@ def test_no_permission_and_list_tables(started_cluster):
     table_name_1 = f"table_granted"
     table_name_2 = f"table_not_granted"
 
-    create_query_1 = f"CREATE TABLE {schema_name}.{table_name_1} (id INT) using Delta location '/var/lib/clickhouse/user_files/tmp/{schema_name}/{table_name_1}'"
-    create_query_2 = f"CREATE TABLE {schema_name}.{table_name_2} (id INT) using Delta location '/var/lib/clickhouse/user_files/tmp/{schema_name}/{table_name_2}'"
+    create_query_1 = f"CREATE TABLE {schema_name}.{table_name_1} (id INT) using Delta location '/var/lib/datastore/user_files/tmp/{schema_name}/{table_name_1}'"
+    create_query_2 = f"CREATE TABLE {schema_name}.{table_name_2} (id INT) using Delta location '/var/lib/datastore/user_files/tmp/{schema_name}/{table_name_2}'"
 
     execute_multiple_spark_queries(node1, [create_query_2, create_query_1])
 
@@ -640,7 +640,7 @@ def test_view_with_void(started_cluster, use_delta_kernel):
     )
     view_name = f"test_view_{table_name}"
     schema = "event_date DATE, event_time TIMESTAMP"
-    create_query = f"CREATE TABLE {schema_name}.{table_name} ({schema}) using Delta location '/var/lib/clickhouse/user_files/tmp/{table_name_src}/{table_name}'"
+    create_query = f"CREATE TABLE {schema_name}.{table_name} ({schema}) using Delta location '/var/lib/datastore/user_files/tmp/{table_name_src}/{table_name}'"
     execute_spark_query(node1, create_query)
     execute_spark_query(
         node1,
@@ -684,7 +684,7 @@ def test_snapshot_version(started_cluster):
     """
     node1 = started_cluster.instances["node1"]
     table_name = f"test_snapshot_version_{uuid.uuid4()}".replace("-", "_")
-    table_path = f"/var/lib/clickhouse/user_files/tmp/{table_name}"
+    table_path = f"/var/lib/datastore/user_files/tmp/{table_name}"
     db_name = f"db_{table_name}"
 
     def get_table_versions():
@@ -887,11 +887,11 @@ def test_varchar_char_types_via_unity_catalog(started_cluster, use_delta_kernel)
 
     The Unity Catalog REST API returns the column schema via the `type_json` field,
     which contains the logical SQL type name from Databricks (e.g. `varchar(256)`)
-    rather than the physical Delta Lake type (`string`). ClickHouse must map these
+    rather than the physical Delta Lake type (`string`). Datastore must map these
     to `String` instead of throwing an exception.
 
     This test creates a Delta table with VARCHAR and CHAR columns via Spark connected
-    to a real Unity Catalog server, then reads it through ClickHouse's DataLakeCatalog
+    to a real Unity Catalog server, then reads it through Datastore's DataLakeCatalog
     engine, which fetches the schema from the Unity Catalog REST API endpoint — the
     exact path that was broken before the fix.
     """
@@ -904,7 +904,7 @@ def test_varchar_char_types_via_unity_catalog(started_cluster, use_delta_kernel)
     create_query = (
         f"CREATE TABLE {schema_name}.{table_name} "
         f"(id INT, name VARCHAR(256), code CHAR(10)) "
-        f"USING DELTA LOCATION '/var/lib/clickhouse/user_files/tmp/{schema_name}/{table_name}'"
+        f"USING DELTA LOCATION '/var/lib/datastore/user_files/tmp/{schema_name}/{table_name}'"
     )
     insert_query = (
         f"INSERT INTO {schema_name}.{table_name} VALUES (1, 'hello varchar', 'hello char')"

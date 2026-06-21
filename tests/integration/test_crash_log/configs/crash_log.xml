@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <crash_log replace="replace">
         <database>system</database>
         <table>crash_log</table>
@@ -15,4 +15,4 @@
         <buffer_size_rows_flush_threshold>100</buffer_size_rows_flush_threshold>
         <flush_on_crash>true</flush_on_crash>
     </query_log>
-</clickhouse>
+</datastore>

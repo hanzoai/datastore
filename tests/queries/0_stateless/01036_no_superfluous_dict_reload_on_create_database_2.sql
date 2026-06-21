@@ -10,7 +10,7 @@ CREATE DICTIONARY `foo 1234`.dict
   val UInt64 DEFAULT 10
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_data' PASSWORD '' DB 'foo 1234'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dict_data' PASSWORD '' DB 'foo 1234'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(FLAT());
 

@@ -47,7 +47,7 @@ SELECT * FROM system.blob_storage_log WHERE query_id = '7afe0450-504d-4e4b-9a80-
 ```text
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2023-10-31
 event_time:              2023-10-31 16:03:40
 event_time_microseconds: 2023-10-31 16:03:40.481437

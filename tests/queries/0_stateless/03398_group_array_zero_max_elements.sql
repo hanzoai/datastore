@@ -1,4 +1,4 @@
--- Related to https://github.com/ClickHouse/ClickHouse/issues/78088
+-- Related to https://github.com/ClickHouse/Datastore/issues/78088
 
 -- Asserting that groupArray* function calls with zero `max_size` argument of
 -- different types (Int/UInt) will produce BAD_ARGUMENTS error

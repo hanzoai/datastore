@@ -3,8 +3,8 @@
 set script_path [info script]
 set CURDIR [file dirname [file normalize $script_path]]
 
-set CLICKHOUSE_CLIENT_BINARY ""
-set CLICKHOUSE_CLIENT_BINARY [exec bash -c "source $CURDIR/../shell_config.sh && echo \$CLICKHOUSE_CLIENT_BINARY"]
+set DATASTORE_CLIENT_BINARY ""
+set DATASTORE_CLIENT_BINARY [exec bash -c "source $CURDIR/../shell_config.sh && echo \$DATASTORE_CLIENT_BINARY"]
 
 log_user 0
 
@@ -12,9 +12,9 @@ set timeout 60
 
 match_max 100000
 
-if ![info exists env(CLICKHOUSE_PORT_TCP)] {set env(CLICKHOUSE_PORT_TCP) 9000}
+if ![info exists env(DATASTORE_PORT_TCP)] {set env(DATASTORE_PORT_TCP) 9000}
 
-spawn "$CLICKHOUSE_CLIENT_BINARY" --multiline --disable_suggestion --port "$env(CLICKHOUSE_PORT_TCP)"
+spawn "$DATASTORE_CLIENT_BINARY" --multiline --disable_suggestion --port "$env(DATASTORE_PORT_TCP)"
 expect ":) "
 
 # Make a query

@@ -4,7 +4,7 @@
          (e.g., UInt64 index vs UInt16 alias), a CAST ends up in the monotonic
          function chain. This test verifies that the per-granule evaluation
          of such conditions is efficient.
-         See https://github.com/ClickHouse/ClickHouse/issues/55653 -->
+         See https://github.com/ClickHouse/Datastore/issues/55653 -->
 
     <create_query>
         CREATE TABLE index_test_cast

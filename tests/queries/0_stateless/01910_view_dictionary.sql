@@ -34,7 +34,7 @@ CREATE DICTIONARY flat_dictionary
     value_ru String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' PASSWORD '' TABLE 'dictionary_source_view'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' PASSWORD '' TABLE 'dictionary_source_view'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 

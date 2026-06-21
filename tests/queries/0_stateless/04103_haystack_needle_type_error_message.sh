@@ -17,10 +17,10 @@ extract_bad_type() {
 }
 
 # Default order: locate(needle, haystack[, start_pos])
-$CLICKHOUSE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 1; SELECT locate('hi', 42::UInt8)" 2>&1 | extract_bad_type
-$CLICKHOUSE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 1; SELECT locate(100::UInt8, 'hello')" 2>&1 | extract_bad_type
-$CLICKHOUSE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 1; SELECT locate('hi', 33::UInt8, 1)" 2>&1 | extract_bad_type
+$DATASTORE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 1; SELECT locate('hi', 42::UInt8)" 2>&1 | extract_bad_type
+$DATASTORE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 1; SELECT locate(100::UInt8, 'hello')" 2>&1 | extract_bad_type
+$DATASTORE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 1; SELECT locate('hi', 33::UInt8, 1)" 2>&1 | extract_bad_type
 
 # Classic order: locate(haystack, needle[, start_pos])
-$CLICKHOUSE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 0; SELECT locate(42::UInt8, 'hello')" 2>&1 | extract_bad_type
-$CLICKHOUSE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 0; SELECT locate('hi', 42::UInt8)" 2>&1 | extract_bad_type
+$DATASTORE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 0; SELECT locate(42::UInt8, 'hello')" 2>&1 | extract_bad_type
+$DATASTORE_CLIENT --query "SET function_locate_has_mysql_compatible_argument_order = 0; SELECT locate('hi', 42::UInt8)" 2>&1 | extract_bad_type

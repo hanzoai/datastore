@@ -20,7 +20,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -101,13 +101,13 @@ check() {
     fi
 }
 
-check numeric      $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/numeric.arrow', Arrow)"
-check duration     $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/duration.arrow', Arrow)"
-check fixed_string $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/fixed_string.arrow', Arrow)"
-check int128       $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/int128.arrow', Arrow)"
+check numeric      $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/numeric.arrow', Arrow)"
+check duration     $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/duration.arrow', Arrow)"
+check fixed_string $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/fixed_string.arrow', Arrow)"
+check int128       $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/int128.arrow', Arrow)"
 # Date32 fast path: numeric type hint skips range checking, hits the raw buffer read
-check date32       $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/date32.arrow', Arrow, 'x Int32')"
+check date32       $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/date32.arrow', Arrow, 'x Int32')"
 # Dict indexes: integer-valued dictionary isolates the index-buffer read path
-check dict_indexes $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/dict_indexes.arrow', Arrow)"
+check dict_indexes $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/dict_indexes.arrow', Arrow)"
 # IPv4: Arrow Int32 with CH IPv4 type hint routes through readIPv4ColumnWithInt32Data
-check ipv4         $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/ipv4.arrow', Arrow, 'x IPv4')"
+check ipv4         $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/ipv4.arrow', Arrow, 'x IPv4')"

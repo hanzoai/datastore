@@ -34,7 +34,7 @@ Contains information about all filesystem cache settings
 - `cache_hits_threshold` ([UInt64](/sql-reference/data-types/int-uint)) — Deprecated setting
 - `enable_bypass_cache_with_threshold` ([UInt8](/sql-reference/data-types/int-uint)) — Undocumented. Not recommended for use
 - `bypass_cache_threshold` ([UInt64](/sql-reference/data-types/int-uint)) — Undocumented. Not recommended for use
-- `write_cache_per_user_id_directory` ([UInt8](/sql-reference/data-types/int-uint)) — Internal ClickHouse Cloud setting
+- `write_cache_per_user_id_directory` ([UInt8](/sql-reference/data-types/int-uint)) — Internal Datastore Cloud setting
 - `allow_dynamic_cache_resize` ([UInt8](/sql-reference/data-types/int-uint)) — Allow dynamic resize of filesystem cache
 - `max_size_ratio_to_total_space` ([Float64](/sql-reference/data-types/float)) — Ratio of `max_size` to total disk space
 - `skip_cache_on_disk_failure` ([UInt8](/sql-reference/data-types/int-uint)) — If true, bypass filesystem cache operations silently on disk IO errors. If false (default), disk IO errors are propagated as startup failures.

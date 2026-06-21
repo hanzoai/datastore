@@ -42,7 +42,7 @@ def get_last_block_number_for_partition(node, table_uuid, partition):
     SELECT 
         toInt64(replaceRegexpOne(name, 'block-', '')) as block_number
     FROM system.zookeeper
-    WHERE path = '/clickhouse/tables/{table_uuid}/s1/block_numbers/{partition}'
+    WHERE path = '/datastore/tables/{table_uuid}/s1/block_numbers/{partition}'
         AND name LIKE 'block-%'
     ORDER BY block_number DESC
     LIMIT 1

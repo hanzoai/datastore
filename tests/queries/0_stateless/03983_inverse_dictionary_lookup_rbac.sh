@@ -4,12 +4,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-user="user_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-table_name="table_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-dict_name="dict_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-db_name="${CLICKHOUSE_DATABASE}"
+user="user_${DATASTORE_TEST_UNIQUE_NAME}"
+table_name="table_${DATASTORE_TEST_UNIQUE_NAME}"
+dict_name="dict_${DATASTORE_TEST_UNIQUE_NAME}"
+db_name="${DATASTORE_DATABASE}"
 
-${CLICKHOUSE_CLIENT} -nm --query "
+${DATASTORE_CLIENT} -nm --query "
     DROP USER IF EXISTS ${user};
     DROP TABLE IF EXISTS ${table_name} SYNC;
     DROP DICTIONARY IF EXISTS ${dict_name};
@@ -40,12 +40,12 @@ ${CLICKHOUSE_CLIENT} -nm --query "
 "
 
 # Ensure user doesn't have CREATE TEMPORARY TABLE privileges.
-${CLICKHOUSE_CLIENT} --user="${user}" -nm --query "
+${DATASTORE_CLIENT} --user="${user}" -nm --query "
     SELECT count() FROM dictionary('${db_name}.${dict_name}'); -- { serverError ACCESS_DENIED }
 "
 
 # Baseline: optimization disabled should work.
-${CLICKHOUSE_CLIENT} --user="${user}" -nm --query "
+${DATASTORE_CLIENT} --user="${user}" -nm --query "
     SELECT count()
     FROM ${db_name}.${table_name}
     WHERE dictGet('${db_name}.${dict_name}', 'name', value_id) = 'abc'
@@ -53,14 +53,14 @@ ${CLICKHOUSE_CLIENT} --user="${user}" -nm --query "
 "
 
 # Regression check: with optimization enabled this used to fail with ACCESS_DENIED.
-${CLICKHOUSE_CLIENT} --user="${user}" -nm --query "
+${DATASTORE_CLIENT} --user="${user}" -nm --query "
     SELECT count()
     FROM ${db_name}.${table_name}
     WHERE dictGet('${db_name}.${dict_name}', 'name', value_id) = 'abc'
     SETTINGS enable_analyzer = 1, optimize_inverse_dictionary_lookup = 1;
 "
 
-${CLICKHOUSE_CLIENT} -nm --query "
+${DATASTORE_CLIENT} -nm --query "
     DROP USER IF EXISTS ${user};
     DROP TABLE IF EXISTS ${table_name} SYNC;
     DROP DICTIONARY IF EXISTS ${dict_name};

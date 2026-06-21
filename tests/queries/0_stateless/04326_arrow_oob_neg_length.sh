@@ -13,7 +13,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -66,4 +66,4 @@ check_incorrect_data() {
 }
 
 check_incorrect_data neg_length \
-    $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/neg_length.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/neg_length.arrow', Arrow)"

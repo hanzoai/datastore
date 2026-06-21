@@ -9,10 +9,10 @@ echo 'syntax = "proto3";
 
 message Message {
     NotExisted x = 1;
-}' > 02705_schema_$CLICKHOUSE_TEST_UNIQUE_NAME.proto
+}' > 02705_schema_$DATASTORE_TEST_UNIQUE_NAME.proto
 
 
-$CLICKHOUSE_LOCAL -q "select * from file(data.bin, Protobuf) settings format_schema='02705_schema_$CLICKHOUSE_TEST_UNIQUE_NAME:Message'" 2>&1 | grep -c "CANNOT_PARSE_PROTOBUF_SCHEMA"
+$DATASTORE_LOCAL -q "select * from file(data.bin, Protobuf) settings format_schema='02705_schema_$DATASTORE_TEST_UNIQUE_NAME:Message'" 2>&1 | grep -c "CANNOT_PARSE_PROTOBUF_SCHEMA"
 
-rm 02705_schema_$CLICKHOUSE_TEST_UNIQUE_NAME.proto
+rm 02705_schema_$DATASTORE_TEST_UNIQUE_NAME.proto
 

@@ -1,6 +1,6 @@
 -- Custom trim character sets longer than 16 characters must be supported.
 -- Regression: trim* threw TOO_LARGE_STRING_SIZE for sets exceeding the 16-symbol
--- SearchSymbols SIMD limit (https://github.com/ClickHouse/ClickHouse/pull/93543).
+-- SearchSymbols SIMD limit (https://github.com/ClickHouse/Datastore/pull/93543).
 
 SELECT trimLeft('SRID=4326;POINT (1 2)', 'SRID=4326;POINT (');
 SELECT trimRight('hello]]]}}})))', ')}]');

@@ -71,7 +71,7 @@
 // the poco_ios_init macro defined below.
 //
 // Also this macro will adjust exceptions() flags, since by default std::ios
-// will hide exceptions, while in ClickHouse it is better to pass them through.
+// will hide exceptions, while in Datastore it is better to pass them through.
 
 
 #if !defined(POCO_IOS_INIT_HACK)

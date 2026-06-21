@@ -2,7 +2,7 @@
 description: 'The `executable` table function creates a table based on the output
   of a user-defined function (UDF) that you define in a script that outputs rows to
   **stdout**.'
-keywords: ['udf', 'user defined function', 'clickhouse', 'executable', 'table', 'function']
+keywords: ['udf', 'user defined function', 'datastore', 'executable', 'table', 'function']
 sidebar_label: 'executable'
 sidebar_position: 50
 slug: /engines/table-functions/executable
@@ -10,7 +10,7 @@ title: 'executable'
 doc_type: 'reference'
 ---
 
-The `executable` table function creates a table based on the output of a user-defined function (UDF) that you define in a script that outputs rows to **stdout**. The executable script is stored in the `users_scripts` directory and can read data from any source. Make sure your ClickHouse server has all the required packages to run the executable script. For example, if it is a Python script, ensure that the server has the necessary Python packages installed.
+The `executable` table function creates a table based on the output of a user-defined function (UDF) that you define in a script that outputs rows to **stdout**. The executable script is stored in the `users_scripts` directory and can read data from any source. Make sure your Datastore server has all the required packages to run the executable script. For example, if it is a Python script, ensure that the server has the necessary Python packages installed.
 
 You can optionally include one or more input queries that stream their results to **stdin** for the script to read.
 
@@ -91,7 +91,7 @@ The response looks like:
 - `send_chunk_header` - controls whether to send row count before sending a chunk of data to process. Default value is `false`.
 - `pool_size` — Size of pool. If 0 is specified as `pool_size` then there is no pool size restrictions. Default value is `16`.
 - `max_command_execution_time` — Maximum executable script command execution time for processing block of data. Specified in seconds. Default value is 10.
-- `command_termination_timeout` — executable script should contain main read-write loop. After table function is destroyed, pipe is closed, and executable file will have `command_termination_timeout` seconds to shutdown, before ClickHouse will send SIGTERM signal to child process. Specified in seconds. Default value is 10.
+- `command_termination_timeout` — executable script should contain main read-write loop. After table function is destroyed, pipe is closed, and executable file will have `command_termination_timeout` seconds to shutdown, before Datastore will send SIGTERM signal to child process. Specified in seconds. Default value is 10.
 - `command_read_timeout` - timeout for reading data from command stdout in milliseconds. Default value 10000.
 - `command_write_timeout` - timeout for writing data to command stdin in milliseconds. Default value 10000.
 

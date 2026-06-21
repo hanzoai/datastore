@@ -121,7 +121,7 @@ def check_replica_added():
 
     q(
         ch2,
-        f"CREATE TABLE rmt ( A Int64, D Date, S String ) ENGINE ReplicatedMergeTree('/clickhouse/tables/{uuid}/{{shard}}', '{{replica}}') PARTITION BY toYYYYMM(D) ORDER BY A",
+        f"CREATE TABLE rmt ( A Int64, D Date, S String ) ENGINE ReplicatedMergeTree('/datastore/tables/{uuid}/{{shard}}', '{{replica}}') PARTITION BY toYYYYMM(D) ORDER BY A",
     )
 
     ch2.query(database=database_name, sql="SYSTEM SYNC REPLICA rmt", timeout=20)

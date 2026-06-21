@@ -1,10 +1,10 @@
 -- Tags: no-parallel
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
-USE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE_1:Identifier};
+USE {DATASTORE_DATABASE_1:Identifier};
 
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table
 (
    id UInt64,
    value_first String,
@@ -12,18 +12,18 @@ CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_simple_attributes_sou
 )
 ENGINE = TinyLog;
 
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table VALUES(0, 'value_0', 'value_second_0');
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table VALUES(1, 'value_1', 'value_second_1');
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table VALUES(2, 'value_2', 'value_second_2');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table VALUES(0, 'value_0', 'value_second_0');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table VALUES(1, 'value_1', 'value_second_1');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table VALUES(2, 'value_2', 'value_second_2');
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.flat_dictionary_simple_key_simple_attributes
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.flat_dictionary_simple_key_simple_attributes
 (
    id UInt64,
    value_first String DEFAULT 'value_first_default',
    value_second String DEFAULT 'value_second_default'
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'simple_key_simple_attributes_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'simple_key_simple_attributes_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 
@@ -43,10 +43,10 @@ SELECT dictGetOrDefault('flat_dictionary_simple_key_simple_attributes', 'value_f
 SELECT 'dictHas';
 SELECT dictHas('flat_dictionary_simple_key_simple_attributes', number) FROM system.numbers LIMIT 4;
 
-DROP DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.flat_dictionary_simple_key_simple_attributes;
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table;
+DROP DICTIONARY {DATASTORE_DATABASE_1:Identifier}.flat_dictionary_simple_key_simple_attributes;
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.simple_key_simple_attributes_source_table;
 
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table
 (
    id UInt64,
    value_first String,
@@ -54,18 +54,18 @@ CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_complex_attributes_so
 )
 ENGINE = TinyLog;
 
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table VALUES(0, 'value_0', 'value_second_0');
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table VALUES(1, 'value_1', NULL);
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table VALUES(2, 'value_2', 'value_second_2');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table VALUES(0, 'value_0', 'value_second_0');
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table VALUES(1, 'value_1', NULL);
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table VALUES(2, 'value_2', 'value_second_2');
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.flat_dictionary_simple_key_complex_attributes
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.flat_dictionary_simple_key_complex_attributes
 (
    id UInt64,
    value_first String DEFAULT 'value_first_default',
    value_second Nullable(String) DEFAULT 'value_second_default'
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'simple_key_complex_attributes_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'simple_key_complex_attributes_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 
@@ -85,27 +85,27 @@ SELECT dictGetOrDefault('flat_dictionary_simple_key_complex_attributes', 'value_
 SELECT 'dictHas';
 SELECT dictHas('flat_dictionary_simple_key_complex_attributes', number) FROM system.numbers LIMIT 4;
 
-DROP DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.flat_dictionary_simple_key_complex_attributes;
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table;
+DROP DICTIONARY {DATASTORE_DATABASE_1:Identifier}.flat_dictionary_simple_key_complex_attributes;
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.simple_key_complex_attributes_source_table;
 
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_hierarchy_table
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.simple_key_hierarchy_table
 (
     id UInt64,
     parent_id UInt64
 ) ENGINE = TinyLog();
 
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (1, 0);
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (2, 1);
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (3, 1);
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (4, 2);
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (1, 0);
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (2, 1);
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (3, 1);
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.simple_key_hierarchy_table VALUES (4, 2);
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.flat_dictionary_simple_key_hierarchy
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.flat_dictionary_simple_key_hierarchy
 (
    id UInt64,
    parent_id UInt64 HIERARCHICAL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'simple_key_hierarchy_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'simple_key_hierarchy_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 
@@ -116,7 +116,7 @@ SELECT 'dictGetHierarchy';
 SELECT dictGetHierarchy('flat_dictionary_simple_key_hierarchy', toUInt64(1));
 SELECT dictGetHierarchy('flat_dictionary_simple_key_hierarchy', toUInt64(4));
 
-DROP DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.flat_dictionary_simple_key_hierarchy;
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.simple_key_hierarchy_table;
+DROP DICTIONARY {DATASTORE_DATABASE_1:Identifier}.flat_dictionary_simple_key_hierarchy;
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.simple_key_hierarchy_table;
 
-DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE {DATASTORE_DATABASE_1:Identifier};

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <access_control_improvements>
         <throw_on_unmatched_row_policies>false</throw_on_unmatched_row_policies>
         <users_without_row_policies_can_read_rows>false</users_without_row_policies_can_read_rows>
@@ -7,4 +7,4 @@
         <settings_constraints_replace_previous>false</settings_constraints_replace_previous>
         <allow_impersonate_user>false</allow_impersonate_user>
     </access_control_improvements>
-</clickhouse>
+</datastore>

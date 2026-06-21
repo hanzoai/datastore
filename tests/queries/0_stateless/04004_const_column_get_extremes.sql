@@ -1,6 +1,6 @@
 -- Regression test for ColumnConst::getExtremes passing outer start/end
 -- to the inner column, causing an out-of-bounds access in the null map.
--- https://github.com/ClickHouse/ClickHouse/issues/98240
+-- https://github.com/ClickHouse/Datastore/issues/98240
 
 SET allow_experimental_variant_type = 1;
 SET use_variant_as_common_type = 1;

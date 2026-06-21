@@ -805,7 +805,7 @@ Client::doRequestWithRetryNetworkErrors(RequestType & request, RequestFn request
                 // use previously attempt number to calculate delay
                 updateNextTimeToRetryAfterRetryableError(outcome.GetError(), attempt_no - 1);
 
-                // update ClickHouse-specific attempt number in the request
+                // update Datastore-specific attempt number in the request
                 // to help choose the right timeouts on the HTTP client which depends on retry attempt number
                 auto clickhouse_request_attempt = getClickhouseAttemptNumber(request_);
                 setClickhouseAttemptNumber(request_, clickhouse_request_attempt + attempt_no);

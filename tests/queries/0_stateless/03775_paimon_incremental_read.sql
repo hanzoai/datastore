@@ -9,7 +9,7 @@ CREATE TABLE paimon_inc_read
 ENGINE = PaimonS3(s3_conn, filename = 'paimon_all_types')
 SETTINGS
     paimon_incremental_read = 1,
-    paimon_keeper_path = '/clickhouse/tables/{database}/paimon_inc_read',
+    paimon_keeper_path = '/datastore/tables/{database}/paimon_inc_read',
     paimon_replica_name = '{replica}';
 
 -- First run: initial delta (latest snapshot delta)

@@ -9,23 +9,23 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Ignore settings that, for historic reasons, have different values in Cloud
 IGNORED_SETTINGS_FOR_CLOUD="1 = 1"
 IGNORED_MERGETREE_SETTINGS_FOR_CLOUD="1 = 1"
-if [[ $($CLICKHOUSE_CLIENT --query "SELECT value FROM system.build_options WHERE name = 'CLICKHOUSE_CLOUD'") -eq 1 ]];
+if [[ $($DATASTORE_CLIENT --query "SELECT value FROM system.build_options WHERE name = 'DATASTORE_CLOUD'") -eq 1 ]];
 then
   IGNORED_SETTINGS_FOR_CLOUD="name NOT IN ('max_table_size_to_drop', 'max_partition_size_to_drop')"
   IGNORED_MERGETREE_SETTINGS_FOR_CLOUD="name NOT IN ('min_bytes_for_wide_part')"
 fi
 
 IGNORE_SETTINGS_FOR_SANITIZERS="1=1"
-if [[ $($CLICKHOUSE_CLIENT --query "SELECT count() != 0 FROM system.build_options WHERE name = 'CXX_FLAGS' AND position('sanitize' IN value) != 0") -eq 1 ]];
+if [[ $($DATASTORE_CLIENT --query "SELECT count() != 0 FROM system.build_options WHERE name = 'CXX_FLAGS' AND position('sanitize' IN value) != 0") -eq 1 ]];
 then
   IGNORE_SETTINGS_FOR_SANITIZERS="name NOT IN ('query_profiler_cpu_time_period_ns', 'query_profiler_real_time_period_ns')"
 fi
 
 # Note that this is a broad check. A per version check is done in the upgrade test
 # Baselines generated with v26.4.1 (pre-release)
-# clickhouse local --query "select name, default from system.settings order by name format TSV" > 02995_settings_26_4_1.tsv
-# clickhouse local --query "select name, value from system.merge_tree_settings order by name format TSV" > 02995_merge_tree_settings_settings_26_4_1.tsv
-$CLICKHOUSE_LOCAL --query "
+# datastore local --query "select name, default from system.settings order by name format TSV" > 02995_settings_26_4_1.tsv
+# datastore local --query "select name, value from system.merge_tree_settings order by name format TSV" > 02995_merge_tree_settings_settings_26_4_1.tsv
+$DATASTORE_LOCAL --query "
     WITH old_settings AS
     (
         SELECT * FROM file('${CUR_DIR}/02995_settings_26_4_1.tsv', 'TSV', 'name String, default String')

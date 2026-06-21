@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <!-- Enable system log tables so their columns appear in `system.columns`.
-         `clickhouse-local` initializes system logs whenever any `<*_log>` section is
+         `datastore-local` initializes system logs whenever any `<*_log>` section is
          present in the config (see `hasAnySystemLogConfigured` and
          `LocalServer::connect`); `prepare_system_log_tables_on_startup` then creates
          the tables eagerly so their schemas are visible without flushing logs first. -->
@@ -36,4 +36,4 @@
     <delta_lake_metadata_log><database>system</database><table>delta_lake_metadata_log</table></delta_lake_metadata_log>
     <predicate_statistics_log><database>system</database><table>predicate_statistics_log</table></predicate_statistics_log>
     <histogram_metric_log><database>system</database><table>histogram_metric_log</table></histogram_metric_log>
-</clickhouse>
+</datastore>

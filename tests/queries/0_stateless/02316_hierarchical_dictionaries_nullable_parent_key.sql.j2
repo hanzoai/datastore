@@ -13,7 +13,7 @@ CREATE DICTIONARY hierachical_flat_dictionary
     id UInt64,
     parent_id Nullable(UInt64) HIERARCHICAL
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarhical_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarhical_table'))
 LAYOUT(FLAT())
 LIFETIME(0);
 
@@ -38,7 +38,7 @@ CREATE DICTIONARY hierachical_hashed_dictionary
     id UInt64,
     parent_id Nullable(UInt64) HIERARCHICAL
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarhical_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarhical_table'))
 LAYOUT(HASHED())
 LIFETIME(0);
 
@@ -63,7 +63,7 @@ CREATE DICTIONARY hierachical_hashed_array_dictionary
     id UInt64,
     parent_id Nullable(UInt64) HIERARCHICAL
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarhical_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarhical_table'))
 LAYOUT(HASHED_ARRAY({{ dictionary_config }}))
 LIFETIME(0);
 
@@ -90,7 +90,7 @@ CREATE DICTIONARY hierachical_cache_dictionary
     id UInt64,
     parent_id Nullable(UInt64) HIERARCHICAL
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarhical_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarhical_table'))
 LAYOUT(CACHE(SIZE_IN_CELLS 10))
 LIFETIME(0);
 
@@ -110,7 +110,7 @@ CREATE DICTIONARY hierachical_direct_dictionary
     id UInt64,
     parent_id Nullable(UInt64) HIERARCHICAL
 ) PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarhical_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarhical_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Direct dictionary';

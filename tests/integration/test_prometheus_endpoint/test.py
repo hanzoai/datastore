@@ -21,7 +21,7 @@ def start_cluster():
 
 def parse_response_line(line):
     allowed_prefixes = [
-        "ClickHouse",
+        "Datastore",
         "# HELP",
         "# TYPE",
     ]

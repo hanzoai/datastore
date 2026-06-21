@@ -106,13 +106,13 @@ def three_to_five_reconfig(started_cluster):
     node6.stop_clickhouse()
     node6.copy_file_to_container(
         os.path.join(CONFIG_DIR, "enable_keeper6.xml"),
-        "/etc/clickhouse-server/config.d/enable_keeper6.xml",
+        "/etc/datastore-server/config.d/enable_keeper6.xml",
     )
 
     node7.stop_clickhouse()
     node7.copy_file_to_container(
         os.path.join(CONFIG_DIR, "enable_keeper7.xml"),
-        "/etc/clickhouse-server/config.d/enable_keeper7.xml",
+        "/etc/datastore-server/config.d/enable_keeper7.xml",
     )
 
     p = Pool(3)

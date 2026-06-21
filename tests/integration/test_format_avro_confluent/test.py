@@ -326,7 +326,7 @@ def test_output_subject_encoding(started_cluster):
 
     subject_with_special_chars = "my/topic?key#value"
 
-    # Now register a schema under the same subject from ClickHouse
+    # Now register a schema under the same subject from Datastore
     run_query(
         instance,
         "create table avro_output_enc_source(id Int64) engine = Memory()",
@@ -362,14 +362,14 @@ def test_output_subject_encoding(started_cluster):
         ["3"],
     ]
 
-    # Verify ClickHouse registered the schema under the same subject name
+    # Verify Datastore registered the schema under the same subject name
     # as the Python client (not under a mangled/encoded variant)
     subjects_after = json.loads(
         urllib.request.urlopen(local_registry_url + "/subjects").read()
     )
     logging.info(f"Subjects in Schema Registry after registration: {subjects_after}")
     assert subject_with_special_chars in subjects_after, (
-        f"ClickHouse registered under wrong subject: {subjects_after}"
+        f"Datastore registered under wrong subject: {subjects_after}"
     )
 
 
@@ -453,8 +453,8 @@ def test_output_incompatible_schema(started_cluster):
 
     # Pre-register a schema under a subject with a required `value` field,
     # then try to register an incompatible schema (different required field,
-    # no default) from ClickHouse. The Schema Registry returns HTTP 409 under
-    # the default BACKWARD compatibility, and ClickHouse should surface a
+    # no default) from Datastore. The Schema Registry returns HTTP 409 under
+    # the default BACKWARD compatibility, and Datastore should surface a
     # clear INCOMPATIBLE_SCHEMA error that includes the registry's own
     # `message` and the hint about setting compatibility to NONE.
 
@@ -495,7 +495,7 @@ def test_output_incompatible_schema(started_cluster):
     )
     urllib.request.urlopen(req).read()
 
-    # Now try to register an incompatible schema from ClickHouse: the column
+    # Now try to register an incompatible schema from Datastore: the column
     # has a distinctive name that does not exist in the prior schema and has
     # no default value. Under BACKWARD compat this is rejected as
     # READER_FIELD_MISSING_DEFAULT_VALUE, and the registry's response
@@ -517,7 +517,7 @@ def test_output_incompatible_schema(started_cluster):
         params=settings,
     )
 
-    logging.info("ClickHouse error for incompatible schema: %s", error)
+    logging.info("Datastore error for incompatible schema: %s", error)
 
     assert "INCOMPATIBLE_SCHEMA" in error
     assert "HTTP 409 Conflict" in error

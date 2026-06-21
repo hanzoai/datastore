@@ -52,7 +52,7 @@ cluster:           test_cluster
 query:             CREATE DATABASE test_db UUID '4a82697e-c85e-4e5b-a01e-a36f2a758456' ON CLUSTER test_cluster
 settings:          {'max_threads':'16','use_uncompressed_cache':'0'}
 query_create_time: 2023-09-01 16:15:14
-host:              clickhouse-01
+host:              datastore-01
 port:              9000
 status:            Finished
 exception_code:    0
@@ -70,7 +70,7 @@ cluster:           test_cluster
 query:             CREATE DATABASE test_db UUID '4a82697e-c85e-4e5b-a01e-a36f2a758456' ON CLUSTER test_cluster
 settings:          {'max_threads':'16','use_uncompressed_cache':'0'}
 query_create_time: 2023-09-01 16:15:14
-host:              clickhouse-01
+host:              datastore-01
 port:              9000
 status:            Finished
 exception_code:    630

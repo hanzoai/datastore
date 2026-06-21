@@ -14,8 +14,8 @@
 
 int mainEntryClickHouseServer(int argc, char ** argv);
 
-static std::string clickhouse("clickhouse-server");
-static std::vector<char *> args{clickhouse.data()};
+static std::string datastore("datastore-server");
+static std::vector<char *> args{datastore.data()};
 static std::future<int> main_app;
 
 static std::string s_host("0.0.0.0");

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo1</host>
@@ -30,4 +30,4 @@
         <statistics_interval_ms>600</statistics_interval_ms>
     </kafka>
 
-</clickhouse>
+</datastore>

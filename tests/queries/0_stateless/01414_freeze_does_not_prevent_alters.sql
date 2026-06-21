@@ -1,4 +1,4 @@
--- In previous ClickHouse versions, parts were not 100% immutable and FREEZE may prevent subsequent ALTERs.
+-- In previous Datastore versions, parts were not 100% immutable and FREEZE may prevent subsequent ALTERs.
 -- It's not longer the case. Let's prove it.
 
 DROP TABLE IF EXISTS t;

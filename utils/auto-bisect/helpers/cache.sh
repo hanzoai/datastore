@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Simple File Cache Manager
-# Uses clickhouse local for JSON metadata management
+# Uses datastore local for JSON metadata management
 #
 # HOW IT WORKS:
 # - Add: Creates hard link (no data duplication) in ~/.file-cache/storage/
 # - Get: Creates soft link at specified path pointing to cached file
-# - Metadata stored in JSON format, queryable with ClickHouse
+# - Metadata stored in JSON format, queryable with Datastore
 #
 # METADATA STRUCTURE (metadata.json):
 # {"id":"<inode>","name":"<filename>","path":"<original_path>","tag":"<tag>","size":<bytes>,"added":<timestamp>}
@@ -77,7 +77,7 @@ add_file() {
     # Check if metadata file is empty
     if [[ ! -s "$CACHE_METADATA" ]]; then
         # First entry
-        clickhouse local -q "
+        datastore local -q "
             SELECT
                 '$file_id' as id,
                 '$file_name' as name,
@@ -88,7 +88,7 @@ add_file() {
         " --format=JSONEachRow > "$temp_file"
     else
         # Add to existing entries
-        clickhouse local -q "
+        datastore local -q "
             WITH new_entry AS (
                 SELECT
                     '$file_id' as id,
@@ -134,7 +134,7 @@ get_files() {
     fi
 
     # Find matching file
-    local file_info=$(clickhouse local -q "
+    local file_info=$(datastore local -q "
         SELECT id, name
         FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')
         WHERE tag = '$tag'
@@ -172,7 +172,7 @@ list_files() {
         return
     fi
 
-    local count=$(clickhouse local -q "SELECT count() FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')" 2>/dev/null || echo 0)
+    local count=$(datastore local -q "SELECT count() FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')" 2>/dev/null || echo 0)
 
     if [[ "$count" -eq 0 ]]; then
         echo "Cache is empty"
@@ -184,7 +184,7 @@ list_files() {
     printf "%-30s %10s %16s %s\n" "Name" "Size" "Added" "Tag"
     echo "=============================================="
 
-    clickhouse local -q "
+    datastore local -q "
         SELECT
             substring(name, 1, 30) as name,
             formatReadableSize(size) as size_human,
@@ -197,7 +197,7 @@ list_files() {
     done
 
     echo ""
-    local total_size=$(clickhouse local -q "SELECT coalesce(sum(size), 0) FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')" 2>/dev/null || echo 0)
+    local total_size=$(datastore local -q "SELECT coalesce(sum(size), 0) FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')" 2>/dev/null || echo 0)
     echo "Total cache size: $(( total_size / 1048576 ))MB ($count files)"
 }
 
@@ -212,7 +212,7 @@ has_file() {
     fi
 
     # Check by name, ID, or tag
-    local found=$(clickhouse local -q "
+    local found=$(datastore local -q "
         SELECT count()
         FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')
         WHERE id = '$search_term'
@@ -222,7 +222,7 @@ has_file() {
 
     if [[ "$found" -gt 0 ]]; then
         # Show what was found
-        clickhouse local -q "
+        datastore local -q "
             SELECT
                 name,
                 formatReadableSize(size) as size,
@@ -252,7 +252,7 @@ remove_file() {
     fi
 
     # Find file by name or ID
-    local file_info=$(clickhouse local -q "
+    local file_info=$(datastore local -q "
         SELECT id, name
         FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')
         WHERE id = '$search_term' OR name = '$search_term'
@@ -271,7 +271,7 @@ remove_file() {
 
     # Update metadata
     local temp_file=$(mktemp)
-    clickhouse local -q "
+    datastore local -q "
         SELECT * FROM file('$CACHE_METADATA', 'JSONEachRow', '$SCHEMA')
         WHERE id != '$file_id'
     " --format=JSONEachRow > "$temp_file"
@@ -306,14 +306,14 @@ Examples:
     $0 has bigfile.dat              # Check by name
     $0 remove bigfile.dat
 
-Note: Requires clickhouse to be installed
+Note: Requires datastore to be installed
 EOF
 }
 
-# Check if clickhouse is available
-if ! command -v clickhouse &> /dev/null; then
-    echo "Error: clickhouse is required but not found in PATH" >&2
-    echo "Please install ClickHouse: https://clickhouse.com/docs/en/install" >&2
+# Check if datastore is available
+if ! command -v datastore &> /dev/null; then
+    echo "Error: datastore is required but not found in PATH" >&2
+    echo "Please install Datastore: https://datastore.com/docs/en/install" >&2
     exit 1
 fi
 

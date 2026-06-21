@@ -29,8 +29,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS t_parallel_truncate"
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS t_parallel_truncate"
+$DATASTORE_CLIENT -q "
     CREATE TABLE t_parallel_truncate (key UInt64, value String)
     ENGINE = MergeTree
     PARTITION BY key % 10
@@ -40,7 +40,7 @@ $CLICKHOUSE_CLIENT -q "
 function parallel_truncate_thread() {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "TRUNCATE TABLE t_parallel_truncate PARALLEL WITH TRUNCATE TABLE t_parallel_truncate" 2>&1 \
+        $DATASTORE_CLIENT -q "TRUNCATE TABLE t_parallel_truncate PARALLEL WITH TRUNCATE TABLE t_parallel_truncate" 2>&1 \
             | grep -Fa "Exception: " \
             | grep -Fv "TABLE_IS_DROPPED" \
             | grep -Fv "UNKNOWN_TABLE" \
@@ -53,7 +53,7 @@ function parallel_truncate_thread() {
 function txn_truncate_thread() {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT --multiquery -q "
+        $DATASTORE_CLIENT --multiquery -q "
         BEGIN TRANSACTION;
         TRUNCATE TABLE t_parallel_truncate;
         COMMIT;
@@ -70,7 +70,7 @@ function txn_truncate_thread() {
 function txn_truncate_rollback_thread() {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT --multiquery -q "
+        $DATASTORE_CLIENT --multiquery -q "
         BEGIN TRANSACTION;
         TRUNCATE TABLE t_parallel_truncate;
         ROLLBACK;
@@ -87,7 +87,7 @@ function txn_truncate_rollback_thread() {
 function insert_thread() {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "INSERT INTO t_parallel_truncate SELECT number, 'value' FROM numbers(10)" 2>&1 \
+        $DATASTORE_CLIENT -q "INSERT INTO t_parallel_truncate SELECT number, 'value' FROM numbers(10)" 2>&1 \
             | grep -Fa "Exception: " \
             | grep -Fv "TABLE_IS_DROPPED" \
             | grep -Fv "UNKNOWN_TABLE" \
@@ -98,7 +98,7 @@ function insert_thread() {
 function optimize_thread() {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "OPTIMIZE TABLE t_parallel_truncate FINAL" 2>&1 \
+        $DATASTORE_CLIENT -q "OPTIMIZE TABLE t_parallel_truncate FINAL" 2>&1 \
             | grep -Fa "Exception: " \
             | grep -Fv "TABLE_IS_DROPPED" \
             | grep -Fv "UNKNOWN_TABLE" \
@@ -111,7 +111,7 @@ function optimize_thread() {
 }
 
 # Initial data.
-$CLICKHOUSE_CLIENT -q "INSERT INTO t_parallel_truncate SELECT number, 'value' FROM numbers(1000)"
+$DATASTORE_CLIENT -q "INSERT INTO t_parallel_truncate SELECT number, 'value' FROM numbers(1000)"
 
 TIMEOUT=5
 PARALLEL_TRUNCATE_THREADS=4
@@ -135,6 +135,6 @@ insert_thread $TIMEOUT &
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS t_parallel_truncate"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS t_parallel_truncate"
 
 echo "OK"

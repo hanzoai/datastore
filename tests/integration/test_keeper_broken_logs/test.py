@@ -59,9 +59,9 @@ def clean_start():
     p = Pool(3)
     waiters = []
     for node in nodes:
-        node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/log"])
+        node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/log"])
         node.exec_in_container(
-            ["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"]
+            ["rm", "-rf", "/var/lib/datastore/coordination/snapshots"]
         )
         waiters.append(p.apply_async(start_clickhouse, (node,)))
 
@@ -104,7 +104,7 @@ def test_single_node_broken_log(started_cluster):
                 "truncate",
                 "-s",
                 "-50",
-                "/var/lib/clickhouse/coordination/log/changelog_1_100000.bin",
+                "/var/lib/datastore/coordination/log/changelog_1_100000.bin",
             ]
         )
         node1.start_clickhouse()
@@ -125,17 +125,17 @@ def test_single_node_broken_log(started_cluster):
         assert node3_conn.get("/test_broken_log_final_node")[0] == b"somedata1"
 
         node1_logs = (
-            node1.exec_in_container(["ls", "/var/lib/clickhouse/coordination/log"])
+            node1.exec_in_container(["ls", "/var/lib/datastore/coordination/log"])
             .strip()
             .split("\n")
         )
         assert len(node1_logs) == 2 and node1_logs[0] == "changelog_1_100000.bin"
         assert (
-            node2.exec_in_container(["ls", "/var/lib/clickhouse/coordination/log"])
+            node2.exec_in_container(["ls", "/var/lib/datastore/coordination/log"])
             == "changelog_1_100000.bin\n"
         )
         assert (
-            node3.exec_in_container(["ls", "/var/lib/clickhouse/coordination/log"])
+            node3.exec_in_container(["ls", "/var/lib/datastore/coordination/log"])
             == "changelog_1_100000.bin\n"
         )
     finally:

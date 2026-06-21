@@ -8,15 +8,15 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q "
-    CREATE TABLE ${CLICKHOUSE_DATABASE}.t(s String)
+$DATASTORE_CLIENT -q "
+    CREATE TABLE ${DATASTORE_DATABASE}.t(s String)
     ENGINE = MergeTree
     ORDER BY tuple();
 "
 
-$CLICKHOUSE_CLIENT -q "insert into ${CLICKHOUSE_DATABASE}.t select number%10==0 ? toString(number) : '' from numbers_mt(1e7)"
+$DATASTORE_CLIENT -q "insert into ${DATASTORE_DATABASE}.t select number%10==0 ? toString(number) : '' from numbers_mt(1e7)"
 
-$CLICKHOUSE_BENCHMARK -q "select count(distinct s) from ${CLICKHOUSE_DATABASE}.t settings max_memory_usage = '50Mi'" --ignore-error -c 16 -i 1000 2>/dev/null
+$DATASTORE_BENCHMARK -q "select count(distinct s) from ${DATASTORE_DATABASE}.t settings max_memory_usage = '50Mi'" --ignore-error -c 16 -i 1000 2>/dev/null
 
-# if clickhouse-benchmark returns non-zero exit code, if will be propagated and the test will be considered as failed
+# if datastore-benchmark returns non-zero exit code, if will be propagated and the test will be considered as failed
 exit 0

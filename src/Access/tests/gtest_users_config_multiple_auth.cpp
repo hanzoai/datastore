@@ -34,13 +34,13 @@ protected:
 TEST_F(UsersConfigMultipleAuthTest, SinglePlaintextPassword)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <password>plaintext_pass</password>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -55,13 +55,13 @@ TEST_F(UsersConfigMultipleAuthTest, SinglePlaintextPassword)
 TEST_F(UsersConfigMultipleAuthTest, FlatNoPassword)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <no_password/>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -76,7 +76,7 @@ TEST_F(UsersConfigMultipleAuthTest, FlatNoPassword)
 TEST_F(UsersConfigMultipleAuthTest, MultiplePlaintextPasswords)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -86,7 +86,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultiplePlaintextPasswords)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -103,7 +103,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultiplePlaintextPasswords)
 TEST_F(UsersConfigMultipleAuthTest, MultipleSHA256Passwords)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -112,7 +112,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleSHA256Passwords)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -129,7 +129,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleSHA256Passwords)
 TEST_F(UsersConfigMultipleAuthTest, MultipleDoubleSHA1Passwords)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -138,7 +138,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleDoubleSHA1Passwords)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -155,7 +155,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleDoubleSHA1Passwords)
 TEST_F(UsersConfigMultipleAuthTest, MultipleLDAPServers)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -164,7 +164,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleLDAPServers)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -181,7 +181,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleLDAPServers)
 TEST_F(UsersConfigMultipleAuthTest, MultipleKerberosRealms)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -190,7 +190,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleKerberosRealms)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -207,13 +207,13 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleKerberosRealms)
 TEST_F(UsersConfigMultipleAuthTest, KerberosWithoutRealm)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <kerberos/>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -229,7 +229,7 @@ TEST_F(UsersConfigMultipleAuthTest, KerberosWithoutRealm)
 TEST_F(UsersConfigMultipleAuthTest, SingleHTTPAuthentication)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <http_authentication>
@@ -238,7 +238,7 @@ TEST_F(UsersConfigMultipleAuthTest, SingleHTTPAuthentication)
                     </http_authentication>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -253,7 +253,7 @@ TEST_F(UsersConfigMultipleAuthTest, SingleHTTPAuthentication)
 TEST_F(UsersConfigMultipleAuthTest, MultipleHTTPAuthenticationMethods)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -262,7 +262,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleHTTPAuthenticationMethods)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -279,7 +279,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleHTTPAuthenticationMethods)
 TEST_F(UsersConfigMultipleAuthTest, SingleHTTPAuthenticationWithWrapper)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -292,7 +292,7 @@ TEST_F(UsersConfigMultipleAuthTest, SingleHTTPAuthenticationWithWrapper)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -309,7 +309,7 @@ TEST_F(UsersConfigMultipleAuthTest, SingleHTTPAuthenticationWithWrapper)
 TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMissingSchemeError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <http_authentication>
@@ -317,7 +317,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMissingSchemeError)
                     </http_authentication>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -327,7 +327,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMissingSchemeError)
 TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMissingServerError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <http_authentication>
@@ -335,7 +335,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMissingServerError)
                     </http_authentication>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -345,13 +345,13 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMissingServerError)
 TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationEmptyError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <http_authentication/>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -361,7 +361,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationEmptyError)
 TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationNestedMethodsWithoutServerSchemeError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <http_authentication>
@@ -372,7 +372,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationNestedMethodsWithoutServer
                     </http_authentication>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -382,7 +382,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationNestedMethodsWithoutServer
 TEST_F(UsersConfigMultipleAuthTest, MultipleHTTPAuthenticationMissingSchemeError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -400,7 +400,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleHTTPAuthenticationMissingSchemeError
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -410,7 +410,7 @@ TEST_F(UsersConfigMultipleAuthTest, MultipleHTTPAuthenticationMissingSchemeError
 TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMixedSyntax)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <http_authentication>
@@ -423,7 +423,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMixedSyntax)
                     </http_authentication>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -441,7 +441,7 @@ TEST_F(UsersConfigMultipleAuthTest, HTTPAuthenticationMixedSyntax)
 TEST_F(UsersConfigMultipleAuthTest, MixedAuthenticationMethods)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -452,7 +452,7 @@ TEST_F(UsersConfigMultipleAuthTest, MixedAuthenticationMethods)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -496,7 +496,7 @@ TEST_F(UsersConfigMultipleAuthTest, MixedAuthenticationMethods)
 TEST_F(UsersConfigMultipleAuthTest, NestedNoPasswordInAuthMethods)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -506,7 +506,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedNoPasswordInAuthMethods)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -521,7 +521,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedNoPasswordInAuthMethods)
 TEST_F(UsersConfigMultipleAuthTest, NestedNoPasswordInMultipleAuthMethodsIsDisallowed)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -534,7 +534,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedNoPasswordInMultipleAuthMethodsIsDisal
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -544,13 +544,13 @@ TEST_F(UsersConfigMultipleAuthTest, NestedNoPasswordInMultipleAuthMethodsIsDisal
 TEST_F(UsersConfigMultipleAuthTest, EmptyAuthMethodsIsDisallowed)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods/>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -560,7 +560,7 @@ TEST_F(UsersConfigMultipleAuthTest, EmptyAuthMethodsIsDisallowed)
 TEST_F(UsersConfigMultipleAuthTest, OTPInsideAuthMethodIsDisallowed)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -573,7 +573,7 @@ TEST_F(UsersConfigMultipleAuthTest, OTPInsideAuthMethodIsDisallowed)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -583,7 +583,7 @@ TEST_F(UsersConfigMultipleAuthTest, OTPInsideAuthMethodIsDisallowed)
 TEST_F(UsersConfigMultipleAuthTest, NestedSinglePlaintextPassword)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -593,7 +593,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedSinglePlaintextPassword)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -608,7 +608,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedSinglePlaintextPassword)
 TEST_F(UsersConfigMultipleAuthTest, NestedMultiplePlaintextPasswords)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -624,7 +624,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedMultiplePlaintextPasswords)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -640,7 +640,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedMultiplePlaintextPasswords)
 TEST_F(UsersConfigMultipleAuthTest, NestedMixedAuthenticationTypes)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -656,7 +656,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedMixedAuthenticationTypes)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -694,7 +694,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedMixedAuthenticationTypes)
 TEST_F(UsersConfigMultipleAuthTest, NestedLDAPAuthentication)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -706,7 +706,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedLDAPAuthentication)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -722,7 +722,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedLDAPAuthentication)
 TEST_F(UsersConfigMultipleAuthTest, NestedAndFlatFormatsCannotBeMixed)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <password>some_password</password>
@@ -733,7 +733,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedAndFlatFormatsCannotBeMixed)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -743,7 +743,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedAndFlatFormatsCannotBeMixed)
 TEST_F(UsersConfigMultipleAuthTest, NestedMultipleTypesPerMethodIsError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -754,7 +754,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedMultipleTypesPerMethodIsError)
                     </auth_methods>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -764,7 +764,7 @@ TEST_F(UsersConfigMultipleAuthTest, NestedMultipleTypesPerMethodIsError)
 TEST_F(UsersConfigMultipleAuthTest, OTPWithNonPasswordAuthIsError)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -777,7 +777,7 @@ TEST_F(UsersConfigMultipleAuthTest, OTPWithNonPasswordAuthIsError)
                     </time_based_one_time_password>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);
@@ -787,7 +787,7 @@ TEST_F(UsersConfigMultipleAuthTest, OTPWithNonPasswordAuthIsError)
 TEST_F(UsersConfigMultipleAuthTest, OTPWithMixedAuthIncludingPassword)
 {
     const std::string xml_config = R"(
-        <clickhouse>
+        <datastore>
             <users>
                 <test_user>
                     <auth_methods>
@@ -803,7 +803,7 @@ TEST_F(UsersConfigMultipleAuthTest, OTPWithMixedAuthIncludingPassword)
                     </time_based_one_time_password>
                 </test_user>
             </users>
-        </clickhouse>
+        </datastore>
     )";
 
     auto config = createConfigFromXML(xml_config);

@@ -1,50 +1,50 @@
 -- { echoOn }
-select substringIndex('www.clickhouse.com', '.', -4);
-select substringIndex('www.clickhouse.com', '.', -3);
-select substringIndex('www.clickhouse.com', '.', -2);
-select substringIndex('www.clickhouse.com', '.', -1);
-select substringIndex('www.clickhouse.com', '.', 0);
-select substringIndex('www.clickhouse.com', '.', 1);
-select substringIndex('www.clickhouse.com', '.', 2);
-select substringIndex('www.clickhouse.com', '.', 3);
-select substringIndex('www.clickhouse.com', '.', 4);
+select substringIndex('www.datastore.com', '.', -4);
+select substringIndex('www.datastore.com', '.', -3);
+select substringIndex('www.datastore.com', '.', -2);
+select substringIndex('www.datastore.com', '.', -1);
+select substringIndex('www.datastore.com', '.', 0);
+select substringIndex('www.datastore.com', '.', 1);
+select substringIndex('www.datastore.com', '.', 2);
+select substringIndex('www.datastore.com', '.', 3);
+select substringIndex('www.datastore.com', '.', 4);
 
-select substringIndex(materialize('www.clickhouse.com'), '.', -4);
-select substringIndex(materialize('www.clickhouse.com'), '.', -3);
-select substringIndex(materialize('www.clickhouse.com'), '.', -2);
-select substringIndex(materialize('www.clickhouse.com'), '.', -1);
-select substringIndex(materialize('www.clickhouse.com'), '.', 0);
-select substringIndex(materialize('www.clickhouse.com'), '.', 1);
-select substringIndex(materialize('www.clickhouse.com'), '.', 2);
-select substringIndex(materialize('www.clickhouse.com'), '.', 3);
-select substringIndex(materialize('www.clickhouse.com'), '.', 4);
+select substringIndex(materialize('www.datastore.com'), '.', -4);
+select substringIndex(materialize('www.datastore.com'), '.', -3);
+select substringIndex(materialize('www.datastore.com'), '.', -2);
+select substringIndex(materialize('www.datastore.com'), '.', -1);
+select substringIndex(materialize('www.datastore.com'), '.', 0);
+select substringIndex(materialize('www.datastore.com'), '.', 1);
+select substringIndex(materialize('www.datastore.com'), '.', 2);
+select substringIndex(materialize('www.datastore.com'), '.', 3);
+select substringIndex(materialize('www.datastore.com'), '.', 4);
 
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(-4));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(-3));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(-2));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(-1));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(0));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(1));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(2));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(3));
-select substringIndex(materialize('www.clickhouse.com'), '.', materialize(4));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(-4));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(-3));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(-2));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(-1));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(0));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(1));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(2));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(3));
+select substringIndex(materialize('www.datastore.com'), '.', materialize(4));
 
-select substringIndex('www.clickhouse.com', '.', materialize(-4));
-select substringIndex('www.clickhouse.com', '.', materialize(-3));
-select substringIndex('www.clickhouse.com', '.', materialize(-2));
-select substringIndex('www.clickhouse.com', '.', materialize(-1));
-select substringIndex('www.clickhouse.com', '.', materialize(0));
-select substringIndex('www.clickhouse.com', '.', materialize(1));
-select substringIndex('www.clickhouse.com', '.', materialize(2));
-select substringIndex('www.clickhouse.com', '.', materialize(3));
-select substringIndex('www.clickhouse.com', '.', materialize(4));
+select substringIndex('www.datastore.com', '.', materialize(-4));
+select substringIndex('www.datastore.com', '.', materialize(-3));
+select substringIndex('www.datastore.com', '.', materialize(-2));
+select substringIndex('www.datastore.com', '.', materialize(-1));
+select substringIndex('www.datastore.com', '.', materialize(0));
+select substringIndex('www.datastore.com', '.', materialize(1));
+select substringIndex('www.datastore.com', '.', materialize(2));
+select substringIndex('www.datastore.com', '.', materialize(3));
+select substringIndex('www.datastore.com', '.', materialize(4));
 
-select SUBSTRING_INDEX('www.clickhouse.com', '.', 2);
+select SUBSTRING_INDEX('www.datastore.com', '.', 2);
 
-select substringIndex('www.clickhouse.com', '..', 2); -- { serverError BAD_ARGUMENTS }
-select substringIndex('www.clickhouse.com', '', 2); -- { serverError BAD_ARGUMENTS }
-select substringIndex('www.clickhouse.com', materialize('.'), 2); -- { serverError ILLEGAL_COLUMN }
-select substringIndex('www.clickhouse.com', '.', cast(2 as Int128)); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
+select substringIndex('www.datastore.com', '..', 2); -- { serverError BAD_ARGUMENTS }
+select substringIndex('www.datastore.com', '', 2); -- { serverError BAD_ARGUMENTS }
+select substringIndex('www.datastore.com', materialize('.'), 2); -- { serverError ILLEGAL_COLUMN }
+select substringIndex('www.datastore.com', '.', cast(2 as Int128)); -- { serverError ILLEGAL_TYPE_OF_ARGUMENT }
 
 select substringIndexUTF8('富强，民主，文明', '，', -4);
 select substringIndexUTF8('富强，民主，文明', '，', -3);

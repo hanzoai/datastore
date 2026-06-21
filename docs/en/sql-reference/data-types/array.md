@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Array data type in ClickHouse'
+description: 'Documentation for the Array data type in Datastore'
 sidebar_label: 'Array(T)'
 sidebar_position: 32
 slug: /sql-reference/data-types/array
@@ -47,9 +47,9 @@ SELECT [1, 2] AS x, toTypeName(x)
 
 ## Working with Data Types {#working-with-data-types}
 
-When creating an array on the fly, ClickHouse automatically defines the argument type as the narrowest data type that can store all the listed arguments. If there are any [Nullable](/sql-reference/data-types/nullable) or literal [NULL](/operations/settings/formats#input_format_null_as_default) values, the type of an array element also becomes [Nullable](../../sql-reference/data-types/nullable.md).
+When creating an array on the fly, Datastore automatically defines the argument type as the narrowest data type that can store all the listed arguments. If there are any [Nullable](/sql-reference/data-types/nullable) or literal [NULL](/operations/settings/formats#input_format_null_as_default) values, the type of an array element also becomes [Nullable](../../sql-reference/data-types/nullable.md).
 
-If ClickHouse couldn't determine the data type, it generates an exception. For instance, this happens when trying to create an array with strings and numbers simultaneously (`SELECT array(1, 'a')`).
+If Datastore couldn't determine the data type, it generates an exception. For instance, this happens when trying to create an array with strings and numbers simultaneously (`SELECT array(1, 'a')`).
 
 Examples of automatic data type detection:
 
@@ -63,7 +63,7 @@ SELECT array(1, 2, NULL) AS x, toTypeName(x)
 └────────────┴───────────────────────────────┘
 ```
 
-If you try to create an array of incompatible data types, ClickHouse throws an exception:
+If you try to create an array of incompatible data types, Datastore throws an exception:
 
 ```sql
 SELECT array(1, 'a')

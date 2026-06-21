@@ -42,7 +42,7 @@ CREATE TABLE t4 (x UInt64) ENGINE = Memory;
 INSERT INTO t4 VALUES (1);
 SELECT * FROM t1 NATURAL JOIN t4 ORDER BY id;
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100220
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100220
 -- NATURAL JOIN with no common columns must not reconstruct as invalid NATURAL CROSS JOIN in the AST
 SELECT count() FROM (
     SELECT * FROM (EXPLAIN QUERY TREE dump_ast = 1 SELECT * FROM t1 NATURAL JOIN t4 ORDER BY id)

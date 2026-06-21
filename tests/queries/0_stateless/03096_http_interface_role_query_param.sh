@@ -21,7 +21,7 @@ CHANGED_SETTING_VALUE="42"
 SHOW_CURRENT_ROLES_QUERY="SELECT role_name FROM system.current_roles ORDER BY role_name ASC"
 SHOW_CHANGED_SETTINGS_QUERY="SELECT name, value FROM system.settings WHERE changed = 1 AND name = '$CHANGED_SETTING_NAME' ORDER BY name ASC"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 DROP USER IF EXISTS $TEST_USER;
 DROP ROLE IF EXISTS $TEST_ROLE1;
 DROP ROLE IF EXISTS $TEST_ROLE2;
@@ -42,59 +42,59 @@ CREATE ROLE $TEST_ROLE_NOT_GRANTED;
 "
 
 echo "### Shows the default role when there are no role parameters"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Shows a single role from the query parameters"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Shows multiple roles from the query parameters"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&role=$TEST_ROLE2" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&role=$TEST_ROLE2" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Sets the default role alongside with another granted one"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE_ENABLED_BY_DEFAULT&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE_ENABLED_BY_DEFAULT&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Sets a role with special characters in the name"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE_SPECIAL_CHARS_URLENCODED" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE_SPECIAL_CHARS_URLENCODED" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Sets a role with special characters in the name with another granted role"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE_SPECIAL_CHARS_URLENCODED&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE_SPECIAL_CHARS_URLENCODED&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Sets a role once when it's present in the query parameters multiple times"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
 
 echo "### Sets a role when there are other parameters in the query (before the role parameter)"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE1" --data-binary "$SHOW_CHANGED_SETTINGS_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE1" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE1" --data-binary "$SHOW_CHANGED_SETTINGS_QUERY"
 
 echo "### Sets a role when there are other parameters in the query (after the role parameter)"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE" --data-binary "$SHOW_CHANGED_SETTINGS_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE" --data-binary "$SHOW_CHANGED_SETTINGS_QUERY"
 
 echo "### Sets multiple roles when there are other parameters in the query"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE2" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
-$CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE2" --data-binary "$SHOW_CHANGED_SETTINGS_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE2" --data-binary "$SHOW_CURRENT_ROLES_QUERY"
+$DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&$CHANGED_SETTING_NAME=$CHANGED_SETTING_VALUE&role=$TEST_ROLE2" --data-binary "$SHOW_CHANGED_SETTINGS_QUERY"
 
 echo "### Cannot set a role that does not exist (single parameter)"
-OUT=$($CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=aaaaaaaaaaa" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
+OUT=$($DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=aaaaaaaaaaa" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
 echo -ne $OUT | grep -o "Code: 511"     || echo "expected code 511, got: $OUT"
 echo -ne $OUT | grep -o "UNKNOWN_ROLE"  || echo "expected UNKNOWN_ROLE error, got: $OUT"
 
 echo "### Cannot set a role that does not exist (multiple parameters)"
-OUT=$($CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&role=aaaaaaaaaaa" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
+OUT=$($DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&role=aaaaaaaaaaa" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
 echo -ne $OUT | grep -o "Code: 511"     || echo "expected code 511, got: $OUT"
 echo -ne $OUT | grep -o "UNKNOWN_ROLE"  || echo "expected UNKNOWN_ROLE error, got: $OUT"
 
 echo "### Cannot set a role that is not granted to the user (single parameter)"
-OUT=$($CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE_NOT_GRANTED" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
+OUT=$($DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE_NOT_GRANTED" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
 echo -ne $OUT | grep -o "Code: 512"            || echo "expected code 512, got: $OUT"
 echo -ne $OUT | grep -o "SET_NON_GRANTED_ROLE" || echo "expected SET_NON_GRANTED_ROLE error, got: $OUT"
 
 echo "### Cannot set a role that is not granted to the user (multiple parameters)"
-OUT=$($CLICKHOUSE_CURL -u $TEST_USER_AUTH -sS "$CLICKHOUSE_URL&role=$TEST_ROLE1&role=$TEST_ROLE_NOT_GRANTED" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
+OUT=$($DATASTORE_CURL -u $TEST_USER_AUTH -sS "$DATASTORE_URL&role=$TEST_ROLE1&role=$TEST_ROLE_NOT_GRANTED" --data-binary "$SHOW_CURRENT_ROLES_QUERY")
 echo -ne $OUT | grep -o "Code: 512"            || echo "expected code 512, got: $OUT"
 echo -ne $OUT | grep -o "SET_NON_GRANTED_ROLE" || echo "expected SET_NON_GRANTED_ROLE error, got: $OUT"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 DROP USER $TEST_USER;
 DROP ROLE $TEST_ROLE1;
 DROP ROLE $TEST_ROLE2;

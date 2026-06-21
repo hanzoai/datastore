@@ -102,21 +102,21 @@ def test_cleanup_temporary_disk_at_server_start(node, config, disk):
         [
             "bash",
             "-c",
-            f"clickhouse disks -C /etc/clickhouse-server/config.d/{config} --disk {disk} -q 'write --path-to foo' <<<foo",
+            f"datastore disks -C /etc/datastore-server/config.d/{config} --disk {disk} -q 'write --path-to foo' <<<foo",
         ]
     )
     node.exec_in_container(
         [
             "bash",
             "-c",
-            f"clickhouse disks -C /etc/clickhouse-server/config.d/{config} --disk {disk} -q 'write --path-to tmpfoo' <<<foo",
+            f"datastore disks -C /etc/datastore-server/config.d/{config} --disk {disk} -q 'write --path-to tmpfoo' <<<foo",
         ]
     )
     assert node.exec_in_container(
         [
             "bash",
             "-c",
-            f"clickhouse disks -C /etc/clickhouse-server/config.d/{config} --disk {disk} -q 'ls'",
+            f"datastore disks -C /etc/datastore-server/config.d/{config} --disk {disk} -q 'ls'",
         ]
     ).strip().split("\n") == ["foo", "tmpfoo"]
 
@@ -127,6 +127,6 @@ def test_cleanup_temporary_disk_at_server_start(node, config, disk):
         [
             "bash",
             "-c",
-            f"clickhouse disks -C /etc/clickhouse-server/config.d/{config} --disk {disk} -q 'ls'",
+            f"datastore disks -C /etc/datastore-server/config.d/{config} --disk {disk} -q 'ls'",
         ]
     ).strip().split("\n") == ["foo"]

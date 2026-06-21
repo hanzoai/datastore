@@ -1,6 +1,6 @@
 -- Tags: no-fasttest
 
--- Regression test for the dictionary path of https://github.com/ClickHouse/ClickHouse/issues/105773.
+-- Regression test for the dictionary path of https://github.com/ClickHouse/Datastore/issues/105773.
 -- An empty collection name (or one containing NUL bytes) used to abort the server inside the C driver
 -- when the dictionary source was loaded; now it must fail with BAD_ARGUMENTS.
 

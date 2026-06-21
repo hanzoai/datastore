@@ -21,7 +21,7 @@ insert into data_02572 settings materialized_views_ignore_errors=1 values (2);
 select * from data_02572 order by key;
 -- check system.query_views_log
 system flush logs query_views_log;
--- lower(status) to pass through clickhouse-test "exception" check
+-- lower(status) to pass through datastore-test "exception" check
 select lower(status::String), errorCodeToName(exception_code)
 from system.query_views_log where event_date >= yesterday() AND event_time >= now() - 600 AND
     view_name = concatWithSeparator('.', currentDatabase(), 'push_to_proxy_mv_02572') and

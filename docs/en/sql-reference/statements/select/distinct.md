@@ -54,7 +54,7 @@ SELECT DISTINCT ON (a,b) * FROM t1;
 
 ## DISTINCT and ORDER BY {#distinct-and-order-by}
 
-ClickHouse supports using the `DISTINCT` and `ORDER BY` clauses for different columns in one query. The `DISTINCT` clause is executed before the `ORDER BY` clause.
+Datastore supports using the `DISTINCT` and `ORDER BY` clauses for different columns in one query. The `DISTINCT` clause is executed before the `ORDER BY` clause.
 
 Consider the table:
 

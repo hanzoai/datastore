@@ -11,7 +11,7 @@ TEMP = "/tmp"
 LLVM_SOURCE_DIR = f"{TEMP}/llvm-project"
 NINJA_SOURCE_DIR = f"{TEMP}/ninja-src"
 NINJA_BUILD_DIR = f"{TEMP}/ninja-build"
-NINJA_LOG_SHARE_DIR = "share/clickhouse-build"
+NINJA_LOG_SHARE_DIR = "share/datastore-build"
 STAGE1_BUILD_DIR = f"{TEMP}/toolchain-stage1"
 STAGE1_INSTALL_DIR = f"{TEMP}/toolchain-stage1-install"
 STAGE2_BUILD_DIR = f"{TEMP}/toolchain-stage2"
@@ -22,7 +22,7 @@ PROFDATA_PATH = f"{TEMP}/clang.profdata"
 BOLT_PROFILES_DIR = f"{TEMP}/bolt-profiles"
 BOLT_FDATA_PATH = f"{TEMP}/bolt.fdata"
 
-REPO_PATH = "/ClickHouse"
+REPO_PATH = "/Datastore"
 
 OUTPUT_DIR = f"{Utils.cwd()}/ci/tmp"
 
@@ -36,7 +36,7 @@ STAGE2_LLVM_PROJECTS = "clang;clang-tools-extra;lld;bolt;polly"
 
 # Cross-target triples for compiler-rt builtins. Builtins are freestanding C code
 # (no sysroot needed), built via LLVM_BUILTIN_TARGETS so the toolchain is
-# self-contained for all ClickHouse cross-compilation targets.
+# self-contained for all Datastore cross-compilation targets.
 # Must match the architectures supported in contrib/compiler-rt-cmake/CMakeLists.txt.
 CROSS_BUILTIN_TARGETS = [
     ("x86_64-unknown-linux-gnu", "Linux"),
@@ -108,7 +108,7 @@ def main():
     arch = get_arch()
     toolchain_file = get_toolchain_file()
     print(f"Building toolchain for {arch}")
-    print(f"Using ClickHouse toolchain file: {toolchain_file}")
+    print(f"Using Datastore toolchain file: {toolchain_file}")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -236,7 +236,7 @@ def main():
             res = results[-1].is_ok()
 
         # Install compiler-rt headers (xray, sanitizer, etc.) into the clang resource
-        # directory so that ClickHouse can find <xray/xray_interface.h> when compiled
+        # directory so that Datastore can find <xray/xray_interface.h> when compiled
         # with this toolchain.
         if res:
             resource_dirs = glob.glob(
@@ -260,7 +260,7 @@ def main():
                     f" {STAGE1_INSTALL_DIR}/lib/clang/*/include"
                 )
 
-    # Stage 2: Profile collection - build ClickHouse with instrumented clang
+    # Stage 2: Profile collection - build Datastore with instrumented clang
     if res and JobStages.PROFILE_COLLECTION in stages:
         clean_dirs(CH_PROFILE_BUILD_DIR)
 
@@ -304,12 +304,12 @@ def main():
             # Build may fail at link step but profraw files from compilation
             # steps are still useful for PGO
             build_result = Result.from_commands_run(
-                name="Profile collection build (ClickHouse)",
-                command=f"{CUSTOM_NINJA} -C {CH_PROFILE_BUILD_DIR} clickhouse",
+                name="Profile collection build (Datastore)",
+                command=f"{CUSTOM_NINJA} -C {CH_PROFILE_BUILD_DIR} datastore",
             )
             if not build_result.is_ok():
                 print(
-                    "ClickHouse build finished with errors"
+                    "Datastore build finished with errors"
                     " (link failures with instrumented compiler are expected)."
                     " Profraw files from compilation steps should still be available."
                 )
@@ -338,7 +338,7 @@ def main():
 
         # Save .ninja_log for packaging (contains build timing data for scheduling)
         ninja_log_src = f"{CH_PROFILE_BUILD_DIR}/.ninja_log"
-        ninja_log_saved = f"{TEMP}/clickhouse-ninja-log"
+        ninja_log_saved = f"{TEMP}/datastore-ninja-log"
         if os.path.exists(ninja_log_src):
             shutil.copy2(ninja_log_src, ninja_log_saved)
             print(f"Saved .ninja_log ({os.path.getsize(ninja_log_saved)} bytes)")
@@ -516,7 +516,7 @@ def main():
                 print(f"Failed to create clang++ symlink: {e}")
                 bolt_ok = False
 
-        # Step 3: Configure ClickHouse build with BOLT-instrumented clang
+        # Step 3: Configure Datastore build with BOLT-instrumented clang
         if bolt_ok:
             cmake_cmd = (
                 f"cmake"
@@ -551,7 +551,7 @@ def main():
                     f"bash -c 'timeout --signal=INT --kill-after=120"
                     f" {BOLT_PROFILE_TIMEOUT}"
                     f" {CUSTOM_NINJA} -j{BOLT_PROFILE_PARALLELISM} -k0"
-                    f" -C {CH_BOLT_BUILD_DIR} clickhouse"
+                    f" -C {CH_BOLT_BUILD_DIR} datastore"
                     f" ; exit 0'"
                 ),
             )
@@ -642,7 +642,7 @@ def main():
             print(f"Installed custom Ninja to {ninja_dest}")
 
         # Copy .ninja_log for pre-seeding CI builds
-        ninja_log_saved = f"{TEMP}/clickhouse-ninja-log"
+        ninja_log_saved = f"{TEMP}/datastore-ninja-log"
         if os.path.exists(ninja_log_saved):
             ninja_log_dir = f"{STAGE2_INSTALL_DIR}/{NINJA_LOG_SHARE_DIR}"
             os.makedirs(ninja_log_dir, exist_ok=True)

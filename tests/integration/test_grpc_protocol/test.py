@@ -743,7 +743,7 @@ def test_opentelemetry_context_propagation():
     node.query("SYSTEM FLUSH LOGS")
     assert (
         node.query(
-            f"SELECT attribute['db.statement'], attribute['clickhouse.tracestate'] FROM system.opentelemetry_span_log "
+            f"SELECT attribute['db.statement'], attribute['datastore.tracestate'] FROM system.opentelemetry_span_log "
             f"WHERE trace_id='{trace_id}' AND operation_name='query'"
         )
         == "SELECT 1\tsome custom state\n"

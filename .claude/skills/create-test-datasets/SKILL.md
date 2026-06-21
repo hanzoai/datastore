@@ -3,7 +3,7 @@ name: create-test-datasets
 description: Create test datasets (hits, visits, tpcds, tpch) from standard scripts. Ensures the server is running first.
 argument-hint: [hits] [visits] [tpcds] [tpch]
 disable-model-invocation: false
-allowed-tools: Bash(clickhouse-client:*), Bash(clickhouse:*), Bash(pgrep:*), Bash(ls:*), Bash(cat:*), Bash(bash:*), Read, Glob, Grep, AskUserQuestion
+allowed-tools: Bash(datastore-client:*), Bash(datastore:*), Bash(pgrep:*), Bash(ls:*), Bash(cat:*), Bash(bash:*), Read, Glob, Grep, AskUserQuestion
 ---
 
 # Create Test Datasets Skill
@@ -29,7 +29,7 @@ Parse the argument string into a set of requested datasets. Valid values are `hi
 ### 2. Verify the server is running
 
 ```bash
-clickhouse-client -q "SELECT 1" 2>&1
+datastore-client -q "SELECT 1" 2>&1
 ```
 
 If the server is not reachable, report an error and stop. Do **not** attempt to start the server — ask the user to start it first.
@@ -39,7 +39,7 @@ If the server is not reachable, report an error and stop. Do **not** attempt to 
 Before making any changes, check whether any target tables already exist. Query `system.tables` once:
 
 ```bash
-clickhouse-client -q "SELECT database || '.' || name FROM system.tables WHERE
+datastore-client -q "SELECT database || '.' || name FROM system.tables WHERE
     (database = 'test' AND name IN ('hits', 'visits'))
     OR (database = 'tpcds')
     OR (database = 'tpch')"
@@ -60,17 +60,17 @@ Only execute this step if `hits` or `visits` (or both) are in the requested set.
 The file `tests/docker_scripts/create.sql` contains two `CREATE TABLE` statements: one for `datasets.hits_v1` and one for `datasets.visits_v1`. For each requested dataset, extract only the corresponding statement, replace the table name to create it directly as `test.hits` or `test.visits`, and execute it. This avoids creating unnecessary intermediate tables.
 
 ```bash
-clickhouse-client -q "CREATE DATABASE IF NOT EXISTS test"
+datastore-client -q "CREATE DATABASE IF NOT EXISTS test"
 ```
 
 If `hits` is requested — extract the `datasets.hits_v1` statement, replace the name, and execute:
 ```bash
-clickhouse-client --multiquery <<< "$(sed -n '/^CREATE TABLE datasets\.hits_v1/,/);/p' tests/docker_scripts/create.sql | sed 's/datasets\.hits_v1/test.hits/')"
+datastore-client --multiquery <<< "$(sed -n '/^CREATE TABLE datasets\.hits_v1/,/);/p' tests/docker_scripts/create.sql | sed 's/datasets\.hits_v1/test.hits/')"
 ```
 
 If `visits` is requested — extract the `datasets.visits_v1` statement, replace the name, and execute:
 ```bash
-clickhouse-client --multiquery <<< "$(sed -n '/^CREATE TABLE datasets\.visits_v1/,/);/p' tests/docker_scripts/create.sql | sed 's/datasets\.visits_v1/test.visits/')"
+datastore-client --multiquery <<< "$(sed -n '/^CREATE TABLE datasets\.visits_v1/,/);/p' tests/docker_scripts/create.sql | sed 's/datasets\.visits_v1/test.visits/')"
 ```
 
 ### 5. Set up TPC-DS

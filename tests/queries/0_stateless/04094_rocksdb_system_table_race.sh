@@ -25,9 +25,9 @@ function create_drop_thread()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.rocksdb_race"
-        $CLICKHOUSE_CLIENT -q "CREATE TABLE ${CLICKHOUSE_DATABASE}.rocksdb_race (key String, value UInt32) Engine=EmbeddedRocksDB PRIMARY KEY(key)"
-        $CLICKHOUSE_CLIENT -q "INSERT INTO ${CLICKHOUSE_DATABASE}.rocksdb_race SELECT toString(number), number FROM numbers(100)"
+        $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.rocksdb_race"
+        $DATASTORE_CLIENT -q "CREATE TABLE ${DATASTORE_DATABASE}.rocksdb_race (key String, value UInt32) Engine=EmbeddedRocksDB PRIMARY KEY(key)"
+        $DATASTORE_CLIENT -q "INSERT INTO ${DATASTORE_DATABASE}.rocksdb_race SELECT toString(number), number FROM numbers(100)"
     done
 }
 
@@ -35,7 +35,7 @@ function read_stat_thread()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "SELECT * FROM system.rocksdb FORMAT Null"
+        $DATASTORE_CLIENT -q "SELECT * FROM system.rocksdb FORMAT Null"
     done
 }
 
@@ -43,7 +43,7 @@ function select_thread()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "SELECT * FROM ${CLICKHOUSE_DATABASE}.rocksdb_race FORMAT Null" || true
+        $DATASTORE_CLIENT -q "SELECT * FROM ${DATASTORE_DATABASE}.rocksdb_race FORMAT Null" || true
     done
 }
 
@@ -51,14 +51,14 @@ function optimize_thread()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "OPTIMIZE TABLE ${CLICKHOUSE_DATABASE}.rocksdb_race" || true
+        $DATASTORE_CLIENT -q "OPTIMIZE TABLE ${DATASTORE_DATABASE}.rocksdb_race" || true
     done
 }
 
 TIMEOUT=10
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.rocksdb_race"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE ${CLICKHOUSE_DATABASE}.rocksdb_race (key String, value UInt32) Engine=EmbeddedRocksDB PRIMARY KEY(key)"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.rocksdb_race"
+$DATASTORE_CLIENT -q "CREATE TABLE ${DATASTORE_DATABASE}.rocksdb_race (key String, value UInt32) Engine=EmbeddedRocksDB PRIMARY KEY(key)"
 
 create_drop_thread 2>/dev/null & p1=$!
 read_stat_thread 2>/dev/null & p2=$!
@@ -77,5 +77,5 @@ for p in "$p1" "$p2" "$p3" "$p4"; do
 done
 ((status == 0)) || exit "$status"
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.rocksdb_race"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.rocksdb_race"
 echo "OK"

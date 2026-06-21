@@ -161,9 +161,9 @@ int Keeper::run()
     if (config().hasOption("help"))
     {
         Poco::Util::HelpFormatter help_formatter(Keeper::options());
-        std::string app_name = (commandName() == "clickhouse-keeper") ? "clickhouse-keeper" : "clickhouse keeper";
+        std::string app_name = (commandName() == "datastore-keeper") ? "datastore-keeper" : "datastore keeper";
         auto header_str = fmt::format("{0} [OPTION] [-- [ARG]...]\n"
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
+#if ENABLE_DATASTORE_KEEPER_CLIENT
                                       "{0} client [OPTION]\n"
 #endif
                                       "positional arguments can be used to rewrite config.xml properties, for example, --http_port=8010",
@@ -701,7 +701,7 @@ try
         if (wait_time != 0)
         {
             cgroups_memory_usage_observer.emplace(std::chrono::seconds(wait_time));
-            /// Not calling cgroups_memory_usage_observer->setLimits() here (as for the normal ClickHouse server) because Keeper controls
+            /// Not calling cgroups_memory_usage_observer->setLimits() here (as for the normal Datastore server) because Keeper controls
             /// its memory usage by other means (via setting 'max_memory_usage_soft_limit').
             cgroups_memory_usage_observer->setOnMemoryAmountAvailableChangedFn([&]() { main_config_reloader->reload(); });
             cgroups_memory_usage_observer->startThread();
@@ -730,7 +730,7 @@ catch (...)
 void Keeper::logRevision() const
 {
     LOG_INFO(getLogger("Application"),
-        "Starting ClickHouse Keeper {} (revision: {}, git hash: {}, build id: {}), PID {}",
+        "Starting Datastore Keeper {} (revision: {}, git hash: {}, build id: {}), PID {}",
         VERSION_STRING,
         ClickHouseRevision::getVersionRevision(),
         GIT_HASH,

@@ -2,7 +2,7 @@
 
 -- An empty collection name or a name containing NUL bytes used to abort the server inside the C driver
 -- (assertion failure in `_mongoc_cursor_collection`: `collection_len > 0`).
--- See https://github.com/ClickHouse/ClickHouse/issues/105773.
+-- See https://github.com/ClickHouse/Datastore/issues/105773.
 
 -- Table function: 6-argument form `mongodb('host:port', database, collection, user, password, structure)`.
 SELECT * FROM mongodb('test', 'db', '', 'user', 'pass', 'x Int32'); -- { serverError BAD_ARGUMENTS }

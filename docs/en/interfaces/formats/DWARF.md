@@ -64,7 +64,7 @@ The `DWARF` format can be used to find compilation units that have the most func
 SELECT
     unit_name,
     count() AS c
-FROM file('programs/clickhouse', DWARF)
+FROM file('programs/datastore', DWARF)
 WHERE tag = 'subprogram' AND NOT has(attr_name, 'declaration')
 GROUP BY unit_name
 ORDER BY c DESC

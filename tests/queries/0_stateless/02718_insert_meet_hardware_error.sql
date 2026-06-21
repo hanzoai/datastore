@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS t_hardware_error NO DELAY;
 
 CREATE TABLE t_hardware_error (
 	KeyID UInt32
-) Engine = ReplicatedMergeTree('/clickhouse/tables/{shard}/{database}/t_async_insert_dedup', '{replica}')
+) Engine = ReplicatedMergeTree('/datastore/tables/{shard}/{database}/t_async_insert_dedup', '{replica}')
 ORDER BY (KeyID);
 
 insert into t_hardware_error values (1), (2), (3), (4), (5); 

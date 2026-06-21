@@ -12,16 +12,16 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # does not appears as errors (level=Error), only as info message (level=Information).
 
 cluster=test_shard_localhost
-if [[ $($CLICKHOUSE_CLIENT -q "select count()>0 from system.clusters where cluster = 'test_cluster_database_replicated'") = 1 ]]; then
+if [[ $($DATASTORE_CLIENT -q "select count()>0 from system.clusters where cluster = 'test_cluster_database_replicated'") = 1 ]]; then
     cluster=test_cluster_database_replicated
 fi
 
-$CLICKHOUSE_CLIENT -m --distributed_ddl_output_mode=none -q "
+$DATASTORE_CLIENT -m --distributed_ddl_output_mode=none -q "
     drop table if exists rmt1;
     drop table if exists rmt2;
 
-    create table rmt1 (key Int) engine=ReplicatedMergeTree('/clickhouse/{database}', '1') order by key settings always_fetch_merged_part=1;
-    create table rmt2 (key Int) engine=ReplicatedMergeTree('/clickhouse/{database}', '2') order by key settings always_fetch_merged_part=0;
+    create table rmt1 (key Int) engine=ReplicatedMergeTree('/datastore/{database}', '1') order by key settings always_fetch_merged_part=1;
+    create table rmt2 (key Int) engine=ReplicatedMergeTree('/datastore/{database}', '2') order by key settings always_fetch_merged_part=0;
 
     insert into rmt1 values (1);
     insert into rmt1 values (2);
@@ -31,12 +31,12 @@ $CLICKHOUSE_CLIENT -m --distributed_ddl_output_mode=none -q "
     -- trigger it explicitly to 'avoid race' (though proper way will be to wait
     -- for current pull in the StorageReplicatedMergeTree::getActionLock())
     system sync replica rmt2;
-    -- NOTE: CLICKHOUSE_DATABASE is required
-    system stop pulling replication log on cluster $cluster $CLICKHOUSE_DATABASE.rmt2;
+    -- NOTE: DATASTORE_DATABASE is required
+    system stop pulling replication log on cluster $cluster $DATASTORE_DATABASE.rmt2;
     optimize table rmt1 final settings alter_sync=0, optimize_throw_if_noop=1;
 " || exit 1
 
-table_uuid=$($CLICKHOUSE_CLIENT -q "select uuid from system.tables where database = currentDatabase() and table = 'rmt1'")
+table_uuid=$($DATASTORE_CLIENT -q "select uuid from system.tables where database = currentDatabase() and table = 'rmt1'")
 if [[ -z $table_uuid ]]; then
     echo "Table does not have UUID" >&2
     exit 1
@@ -47,7 +47,7 @@ part_name='%'
 
 # wait while there be at least one 'No active replica has part all_0_1_1 or covering part' in logs
 for _ in {0..50}; do
-    no_active_repilica_messages=$($CLICKHOUSE_CLIENT -m -q "
+    no_active_repilica_messages=$($DATASTORE_CLIENT -m -q "
         system flush logs text_log;
 
         select count()
@@ -67,7 +67,7 @@ for _ in {0..50}; do
     sleep 1
 done
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     system start pulling replication log rmt2;
     system flush logs text_log;
 

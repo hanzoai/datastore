@@ -72,5 +72,5 @@ Set a large enough cache size. You need to experiment to select the number of ce
 4.  Increase or decrease the number of cells until the required memory consumption is reached.
 
 :::note
-ClickHouse is not recommended as a source for this layout. Dictionary lookups require random point reads, which are not the access pattern ClickHouse is optimized for.
+Datastore is not recommended as a source for this layout. Dictionary lookups require random point reads, which are not the access pattern Datastore is optimized for.
 :::

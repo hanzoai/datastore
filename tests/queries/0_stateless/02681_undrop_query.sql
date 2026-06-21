@@ -45,7 +45,7 @@ drop table 02681_undrop_no_uuid_on_cluster on cluster test_shard_localhost sync 
 
 select 'test ReplicatedMergeTree undrop';
 drop table if exists 02681_undrop_replicatedmergetree sync;
-create table 02681_undrop_replicatedmergetree (id Int32) Engine=ReplicatedMergeTree('/clickhouse/tables/{database}/02681_undrop_replicatedmergetree', 'test_undrop') order by id;
+create table 02681_undrop_replicatedmergetree (id Int32) Engine=ReplicatedMergeTree('/datastore/tables/{database}/02681_undrop_replicatedmergetree', 'test_undrop') order by id;
 insert into 02681_undrop_replicatedmergetree values (1),(2),(3);
 drop table 02681_undrop_replicatedmergetree;
 select table from system.dropped_tables where table = '02681_undrop_replicatedmergetree' limit 1;

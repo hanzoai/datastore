@@ -17,20 +17,20 @@ max_threads=5
 
 prepare_table() {
   table_name="t_hash_table_sizes_stats_$RANDOM$RANDOM"
-  $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS $table_name;"
+  $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS $table_name;"
   if [ -z "$1" ]; then
-    $CLICKHOUSE_CLIENT -q "CREATE TABLE $table_name(number UInt64) Engine=MergeTree() ORDER BY tuple() SETTINGS index_granularity = 8192, index_granularity_bytes = '10Mi';"
+    $DATASTORE_CLIENT -q "CREATE TABLE $table_name(number UInt64) Engine=MergeTree() ORDER BY tuple() SETTINGS index_granularity = 8192, index_granularity_bytes = '10Mi';"
   else
-    $CLICKHOUSE_CLIENT -q "CREATE TABLE $table_name(number UInt64) Engine=MergeTree() ORDER BY $1 SETTINGS index_granularity = 8192, index_granularity_bytes = '10Mi';"
+    $DATASTORE_CLIENT -q "CREATE TABLE $table_name(number UInt64) Engine=MergeTree() ORDER BY $1 SETTINGS index_granularity = 8192, index_granularity_bytes = '10Mi';"
   fi
-  $CLICKHOUSE_CLIENT -q "SYSTEM STOP MERGES $table_name;"
+  $DATASTORE_CLIENT -q "SYSTEM STOP MERGES $table_name;"
   for ((i = 1; i <= max_threads; i++)); do
     cnt=$((table_size / max_threads))
     from=$(((i - 1) * cnt))
-    $CLICKHOUSE_CLIENT -q "INSERT INTO $table_name SELECT * FROM numbers($from, $cnt);"
+    $DATASTORE_CLIENT -q "INSERT INTO $table_name SELECT * FROM numbers($from, $cnt);"
   done
-  $CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS ${table_name}_d;"
-  $CLICKHOUSE_CLIENT -q "CREATE TABLE ${table_name}_d AS $table_name ENGINE = Distributed(test_cluster_two_shards, currentDatabase(), $table_name);"
+  $DATASTORE_CLIENT -q "DROP TABLE IF EXISTS ${table_name}_d;"
+  $DATASTORE_CLIENT -q "CREATE TABLE ${table_name}_d AS $table_name ENGINE = Distributed(test_cluster_two_shards, currentDatabase(), $table_name);"
   table_name="${table_name}_d"
 }
 
@@ -39,8 +39,8 @@ prepare_table_with_sorting_key() {
 }
 
 run_query() {
-  query_id="${CLICKHOUSE_DATABASE}_hash_table_sizes_stats_$RANDOM$RANDOM"
-  $CLICKHOUSE_CLIENT --query_id="$query_id" -q "
+  query_id="${DATASTORE_DATABASE}_hash_table_sizes_stats_$RANDOM$RANDOM"
+  $DATASTORE_CLIENT --query_id="$query_id" -q "
     SET max_block_size = $((table_size / 10));
     SET merge_tree_min_rows_for_concurrent_read = 1;
     SET max_untracked_memory = 0;
@@ -54,7 +54,7 @@ run_query() {
 
 check_preallocated_elements() {
   # rows may be distributed in any way including "everything goes to the one particular thread"
-  $CLICKHOUSE_CLIENT --param_query_id="$1" -q "
+  $DATASTORE_CLIENT --param_query_id="$1" -q "
     SELECT COUNT(*)
       FROM system.query_log
      WHERE event_date >= yesterday() AND event_time >= now() - 600 AND (query_id = {query_id:String} OR initial_query_id = {query_id:String})
@@ -64,7 +64,7 @@ check_preallocated_elements() {
 
 check_convertion_to_two_level() {
   # rows may be distributed in any way including "everything goes to the one particular thread"
-  $CLICKHOUSE_CLIENT --param_query_id="$1" -q "
+  $DATASTORE_CLIENT --param_query_id="$1" -q "
     SELECT SUM(ProfileEvents['AggregationHashTablesInitializedAsTwoLevel']) BETWEEN 1 AND $max_threads
       FROM system.query_log
      WHERE event_date >= yesterday() AND event_time >= now() - 600 AND (query_id = {query_id:String} OR initial_query_id = {query_id:String})
@@ -79,7 +79,7 @@ print_border() {
 expected_results=()
 
 check_expectations() {
-  $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+  $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
 
   for i in "${!expected_results[@]}"; do
     read -a args <<< "${expected_results[$i]}"

@@ -13,7 +13,7 @@ opts=(
     --max_threads=4
 )
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   CREATE TABLE t
   (
     a UInt32
@@ -39,18 +39,18 @@ query="
 	ORDER BY a
 "
 
-$CLICKHOUSE_CLIENT "${opts[@]}" -q "EXPLAIN json=1 $query"
+$DATASTORE_CLIENT "${opts[@]}" -q "EXPLAIN json=1 $query"
 
 printf "\n\n"
 
-$CLICKHOUSE_CLIENT "${opts[@]}" -q "SELECT replaceRegexpAll(explain, '(\w+)\(.*\)', '\\1') FROM (EXPLAIN PIPELINE compact=0,graph=1 $query)"
+$DATASTORE_CLIENT "${opts[@]}" -q "SELECT replaceRegexpAll(explain, '(\w+)\(.*\)', '\\1') FROM (EXPLAIN PIPELINE compact=0,graph=1 $query)"
 
 printf "\n\n"
 
 query_id="03269_explain_unique_ids_$RANDOM$RANDOM"
-$CLICKHOUSE_CLIENT "${opts[@]}" --log_processors_profiles=1 --query_id="$query_id" --format Null -q "$query"
+$DATASTORE_CLIENT "${opts[@]}" --log_processors_profiles=1 --query_id="$query_id" --format Null -q "$query"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   SYSTEM FLUSH LOGS processors_profile_log;
 
   SELECT DISTINCT (replaceRegexpAll(processor_uniq_id, '(\w+)\(.*\)', '\\1'), step_uniq_id)

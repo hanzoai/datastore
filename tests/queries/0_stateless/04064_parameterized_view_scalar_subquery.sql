@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/66307
+-- https://github.com/ClickHouse/Datastore/issues/66307
 -- Using parameterized view to obtain a scalar result
 
 CREATE VIEW paramview AS

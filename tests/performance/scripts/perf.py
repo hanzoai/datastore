@@ -89,12 +89,12 @@ parser.add_argument(
 parser.add_argument(
     "--user",
     default="default",
-    help="Username for ClickHouse authentication.",
+    help="Username for Datastore authentication.",
 )
 parser.add_argument(
     "--password",
     default="",
-    help="Password for ClickHouse authentication.",
+    help="Password for Datastore authentication.",
 )
 parser.add_argument(
     "--secure",
@@ -353,7 +353,7 @@ if args.print_queries:
     exit(0)
 
 # If we're only asked to print the settings, do that and exit. These are settings
-# for clickhouse-benchmark, so we print them as command line arguments, e.g.
+# for datastore-benchmark, so we print them as command line arguments, e.g.
 # '--max_memory_usage=10000000'.
 if args.print_settings:
     # Settings from JSON file: <settings file="path/to/settings.json"/>

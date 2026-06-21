@@ -3,9 +3,9 @@ if (NOT TARGET ch_contrib::nuraft)
     return ()
 endif ()
 
-set (CLICKHOUSE_KEEPER_DATA_DUMPER_SOURCES KeeperDataDumper.cpp)
+set (DATASTORE_KEEPER_DATA_DUMPER_SOURCES KeeperDataDumper.cpp)
 
-set (CLICKHOUSE_KEEPER_DATA_DUMPER_LINK
+set (DATASTORE_KEEPER_DATA_DUMPER_LINK
     PRIVATE
         clickhouse_functions
         dbms

@@ -1,16 +1,16 @@
-# docker build -t clickhouse/stateless-test .
+# docker build -t datastore/stateless-test .
 ARG FROM_TAG=latest
 ARG REDPANDA_VERSION=v25.1.3
 FROM docker.redpanda.com/redpandadata/redpanda:${REDPANDA_VERSION} AS redpanda
 
-FROM clickhouse/test-base:$FROM_TAG
+FROM datastore/test-base:$FROM_TAG
 
-ARG odbc_driver_url="https://github.com/ClickHouse/clickhouse-odbc/releases/download/v1.1.6.20200320/clickhouse-odbc-1.1.6-Linux.tar.gz"
+ARG odbc_driver_url="https://github.com/ClickHouse/datastore-odbc/releases/download/v1.1.6.20200320/datastore-odbc-1.1.6-Linux.tar.gz"
 
-RUN mkdir /etc/clickhouse-server /etc/clickhouse-keeper /etc/clickhouse-client /usr/share/clickhouse/ && chmod 777 /etc/clickhouse-* /usr/share/clickhouse \
-    && mkdir -p /var/lib/clickhouse /var/log/clickhouse-server && chmod 777 /var/log/clickhouse-server /var/lib/clickhouse
+RUN mkdir /etc/datastore-server /etc/datastore-keeper /etc/datastore-client /usr/share/datastore/ && chmod 777 /etc/datastore-* /usr/share/datastore \
+    && mkdir -p /var/lib/datastore /var/log/datastore-server && chmod 777 /var/log/datastore-server /var/lib/datastore
 
-RUN addgroup --gid 1000 clickhouse && adduser --uid 1000 --gid 1000 --disabled-password clickhouse
+RUN addgroup --gid 1000 datastore && adduser --uid 1000 --gid 1000 --disabled-password datastore
 RUN addgroup --gid 1001 clickhouse2 && adduser --uid 1001 --gid 1001 --disabled-password clickhouse2
 
 # moreutils - provides ts fo FT
@@ -69,15 +69,15 @@ RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v${PR
 COPY requirements.txt /
 RUN python3.13 -m pip install --no-cache-dir -r /requirements.txt
 
-RUN mkdir -p /tmp/clickhouse-odbc-tmp \
-  && cd /tmp/clickhouse-odbc-tmp \
-  && curl -L ${odbc_driver_url} | tar --strip-components=1 -xz clickhouse-odbc-1.1.6-Linux \
+RUN mkdir -p /tmp/datastore-odbc-tmp \
+  && cd /tmp/datastore-odbc-tmp \
+  && curl -L ${odbc_driver_url} | tar --strip-components=1 -xz datastore-odbc-1.1.6-Linux \
   && mkdir /usr/local/lib64 -p \
-  && cp /tmp/clickhouse-odbc-tmp/lib64/*.so /usr/local/lib64/ \
-  && odbcinst -i -d -f /tmp/clickhouse-odbc-tmp/share/doc/clickhouse-odbc/config/odbcinst.ini.sample \
-  && odbcinst -i -s -l -f /tmp/clickhouse-odbc-tmp/share/doc/clickhouse-odbc/config/odbc.ini.sample \
+  && cp /tmp/datastore-odbc-tmp/lib64/*.so /usr/local/lib64/ \
+  && odbcinst -i -d -f /tmp/datastore-odbc-tmp/share/doc/datastore-odbc/config/odbcinst.ini.sample \
+  && odbcinst -i -s -l -f /tmp/datastore-odbc-tmp/share/doc/datastore-odbc/config/odbc.ini.sample \
   && sed -i 's"=libclickhouseodbc"=/usr/local/lib64/libclickhouseodbc"' /etc/odbcinst.ini \
-  && rm -rf /tmp/clickhouse-odbc-tmp
+  && rm -rf /tmp/datastore-odbc-tmp
 
 ENV NUM_TRIES=1
 
@@ -93,8 +93,8 @@ RUN arch=${TARGETARCH:-amd64} \
     && curl -L "https://dl.min.io/client/mc/release/linux-${arch}/archive/mc.RELEASE.${MINIO_CLIENT_VERSION}" -o /mc \
     && chmod +x /mc /minio
 
-ENV MINIO_ROOT_USER="clickhouse"
-ENV MINIO_ROOT_PASSWORD="clickhouse"
+ENV MINIO_ROOT_USER="datastore"
+ENV MINIO_ROOT_PASSWORD="datastore"
 
 # for minio to work without root
 RUN chmod 777 /home
@@ -114,15 +114,15 @@ ENV PATH="/opt/redpanda/bin:${PATH}"
 
 ENV PYTHONPATH=".:./ci"
 
-#USER clickhouse
+#USER datastore
 
 # A directory for cache
-RUN mkdir /dev/shm/clickhouse
+RUN mkdir /dev/shm/datastore
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+COPY --from=datastore/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad \
+COPY --from=datastore/cctools:859fb360308eb8ac47ad \
   /opt/openssl-fips/openssl.cnf \
   /opt/openssl-fips/fipsmodule.cnf \
   /opt/openssl-fips/fips.so \

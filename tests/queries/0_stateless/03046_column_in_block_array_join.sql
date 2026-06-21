@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/37729
+-- https://github.com/ClickHouse/Datastore/issues/37729
 SET enable_analyzer=1;
 
 DROP TABLE IF EXISTS nested_test;

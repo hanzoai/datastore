@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_auto_cluster>
             <discovery>
-                <path>/clickhouse/discovery/test_auto_cluster</path>
+                <path>/datastore/discovery/test_auto_cluster</path>
             </discovery>
         </test_auto_cluster>
     </remote_servers>
-</clickhouse>
+</datastore>

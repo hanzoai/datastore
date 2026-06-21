@@ -99,12 +99,12 @@ def change_config_to_key(name):
             [
                 "bash",
                 "-c",
-                """cat > /etc/clickhouse-server/config.d/ssl_conf.xml << EOF
-<clickhouse>
+                """cat > /etc/datastore-server/config.d/ssl_conf.xml << EOF
+<datastore>
     <openSSL>
         <client>
-            <certificateFile>/etc/clickhouse-server/config.d/{cur_name}_client.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/{cur_name}_client.key</privateKeyFile>
+            <certificateFile>/etc/datastore-server/config.d/{cur_name}_client.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/{cur_name}_client.key</privateKeyFile>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
             <disableProtocols>sslv2,sslv3</disableProtocols>
@@ -115,7 +115,7 @@ def change_config_to_key(name):
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>
 EOF""".format(
                     cur_name=name
                 ),

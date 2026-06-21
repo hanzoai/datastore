@@ -1,4 +1,4 @@
--- Fixes bug: https://github.com/ClickHouse/ClickHouse/issues/91834
+-- Fixes bug: https://github.com/ClickHouse/Datastore/issues/91834
 
 -- { echoOn }
 

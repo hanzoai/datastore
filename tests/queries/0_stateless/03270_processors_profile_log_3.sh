@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   CREATE TABLE t
   (
       a UInt32,
@@ -21,7 +21,7 @@ $CLICKHOUSE_CLIENT -q "
 
 query_id="03270_processors_profile_log_3_$RANDOM"
 
-$CLICKHOUSE_CLIENT --query_id="$query_id" -q "
+$DATASTORE_CLIENT --query_id="$query_id" -q "
   SET log_processors_profiles = 1;
 
   WITH
@@ -41,7 +41,7 @@ $CLICKHOUSE_CLIENT --query_id="$query_id" -q "
   FORMAT Null;
 "
 
-$CLICKHOUSE_CLIENT --query_id="$query_id" -q "
+$DATASTORE_CLIENT --query_id="$query_id" -q "
   SYSTEM FLUSH LOGS processors_profile_log;
 
   SELECT sum(elapsed_us) > 0
@@ -51,7 +51,7 @@ $CLICKHOUSE_CLIENT --query_id="$query_id" -q "
 
 #####################################################################
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
   CREATE TABLE t1
   (
     st FixedString(54)
@@ -67,7 +67,7 @@ $CLICKHOUSE_CLIENT -q "
 
 query_id="03270_processors_profile_log_3_$RANDOM"
 
-$CLICKHOUSE_CLIENT --query_id="$query_id" -q "
+$DATASTORE_CLIENT --query_id="$query_id" -q "
   SET log_processors_profiles = 1;
   SET max_threads=2; -- no merging when max_threads=1
 
@@ -86,7 +86,7 @@ $CLICKHOUSE_CLIENT --query_id="$query_id" -q "
   FORMAT Null;
 "
 
-$CLICKHOUSE_CLIENT --query_id="$query_id" -q "
+$DATASTORE_CLIENT --query_id="$query_id" -q "
   SYSTEM FLUSH LOGS processors_profile_log;
 
   SELECT sum(elapsed_us) > 0

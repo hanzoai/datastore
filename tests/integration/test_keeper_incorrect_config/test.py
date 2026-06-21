@@ -22,12 +22,12 @@ def started_cluster():
 
 
 DUPLICATE_ID_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -48,16 +48,16 @@ DUPLICATE_ID_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 DUPLICATE_ENDPOINT_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -78,16 +78,16 @@ DUPLICATE_ENDPOINT_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 LOCALHOST_WITH_REMOTE = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -109,16 +109,16 @@ LOCALHOST_WITH_REMOTE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 MULTIPLE_LOCAL_WITH_REMOTE = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -145,16 +145,16 @@ MULTIPLE_LOCAL_WITH_REMOTE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 NORMAL_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -170,16 +170,16 @@ NORMAL_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 JUST_WRONG_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -201,16 +201,16 @@ JUST_WRONG_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 INVALID_ROTATE_INTERVAL_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -227,7 +227,7 @@ INVALID_ROTATE_INTERVAL_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 
@@ -236,7 +236,7 @@ def test_invalid_configs(started_cluster):
 
     def assert_config_fails(config):
         node1.replace_config(
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml", config
+            "/etc/datastore-server/config.d/enable_keeper1.xml", config
         )
         with pytest.raises(Exception):
             node1.start_clickhouse(start_wait_sec=10)
@@ -249,7 +249,7 @@ def test_invalid_configs(started_cluster):
     assert_config_fails(INVALID_ROTATE_INTERVAL_CONFIG)
 
     node1.replace_config(
-        "/etc/clickhouse-server/config.d/enable_keeper1.xml", NORMAL_CONFIG
+        "/etc/datastore-server/config.d/enable_keeper1.xml", NORMAL_CONFIG
     )
     node1.start_clickhouse()
 

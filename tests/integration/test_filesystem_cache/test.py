@@ -318,10 +318,10 @@ def test_custom_cached_disk(non_shared_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
-            <filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/filesystem_caches_path.xml
+        <datastore>
+            <filesystem_caches_path>/var/lib/datastore/filesystem_caches/</filesystem_caches_path>
+        </datastore>
+        " > /etc/datastore-server/config.d/filesystem_caches_path.xml
         """,
         ]
     )
@@ -336,7 +336,7 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     assert (
-        "/var/lib/clickhouse/filesystem_caches/kek"
+        "/var/lib/datastore/filesystem_caches/kek"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached'"
         ).strip()
@@ -347,10 +347,10 @@ def test_custom_cached_disk(non_shared_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
-            <custom_cached_disks_base_directory>/var/lib/clickhouse/custom_caches/</custom_cached_disks_base_directory>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/custom_filesystem_caches_path.xml
+        <datastore>
+            <custom_cached_disks_base_directory>/var/lib/datastore/custom_caches/</custom_cached_disks_base_directory>
+        </datastore>
+        " > /etc/datastore-server/config.d/custom_filesystem_caches_path.xml
         """,
         ]
     )
@@ -358,7 +358,7 @@ def test_custom_cached_disk(non_shared_cluster):
         [
             "bash",
             "-c",
-            "rm /etc/clickhouse-server/config.d/remove_filesystem_caches_path.xml",
+            "rm /etc/datastore-server/config.d/remove_filesystem_caches_path.xml",
         ]
     )
     node.restart_clickhouse()
@@ -372,14 +372,14 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     assert (
-        "/var/lib/clickhouse/custom_caches/kek2"
+        "/var/lib/datastore/custom_caches/kek2"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached2'"
         ).strip()
     )
 
     node.exec_in_container(
-        ["bash", "-c", "rm /etc/clickhouse-server/config.d/filesystem_caches_path.xml"]
+        ["bash", "-c", "rm /etc/datastore-server/config.d/filesystem_caches_path.xml"]
     )
     node.restart_clickhouse()
 
@@ -392,7 +392,7 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     assert (
-        "/var/lib/clickhouse/custom_caches/kek3"
+        "/var/lib/datastore/custom_caches/kek3"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached3'"
         ).strip()
@@ -410,12 +410,12 @@ def test_custom_cached_disk(non_shared_cluster):
         f"""
     CREATE TABLE test4 (a Int32)
     ENGINE = MergeTree() ORDER BY tuple()
-    SETTINGS disk = disk(type = cache, name = 'custom_cached4', path = '/var/lib/clickhouse/custom_caches/kek4', max_size = 10, disk = 'hdd_blob');
+    SETTINGS disk = disk(type = cache, name = 'custom_cached4', path = '/var/lib/datastore/custom_caches/kek4', max_size = 10, disk = 'hdd_blob');
     """
     )
 
     assert (
-        "/var/lib/clickhouse/custom_caches/kek4"
+        "/var/lib/datastore/custom_caches/kek4"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached4'"
         ).strip()
@@ -660,7 +660,7 @@ INSERT INTO test SELECT randomString(200);
 
 
 cache_dynamic_resize_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
@@ -692,7 +692,7 @@ cache_dynamic_resize_config = """
             <database>system</database>
             <table>filesystem_cache_log</table>
     </filesystem_cache_log>
-</clickhouse>
+</datastore>
 """
 
 
@@ -756,7 +756,7 @@ SELECT * FROM test;
     default_config = cache_dynamic_resize_config.format(100000, 100, 100000, 100)
     new_config = cache_dynamic_resize_config.format(100000, 10, 100000, 100)
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", new_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -768,7 +768,7 @@ SELECT * FROM test;
 
     new_config = cache_dynamic_resize_config.format(100000, 5, 100000, 100)
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", new_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -805,7 +805,7 @@ SELECT * FROM test;
     )
 
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", default_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", default_config
     )
     node.query("SYSTEM RELOAD CONFIG")
 
@@ -917,7 +917,7 @@ SELECT * FROM test;
     default_config = cache_dynamic_resize_config.format(100000, 100, 100000, 100)
     new_config = cache_dynamic_resize_config.format(100000, 100, 100000, 10)
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", new_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -930,7 +930,7 @@ SELECT * FROM test;
     )
     # Return config back to initial state.
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", default_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", default_config
     )
 
 
@@ -945,7 +945,7 @@ def test_max_size_ratio(cluster):
         SETTINGS disk = 'cache_with_max_size_ratio'
         """
     )
-    assert node.contains_in_log("Using max_size as ratio 0.7 to total disk space on path /var/log/clickhouse/fs-cache/max_size_ratio")
+    assert node.contains_in_log("Using max_size as ratio 0.7 to total disk space on path /var/log/datastore/fs-cache/max_size_ratio")
 
 
 def test_finished_download_time(cluster):
@@ -1018,7 +1018,7 @@ def test_concurrent_eviction(cluster, cache_policy):
         try:
             node.exec_in_container(
                 [
-                    "/usr/bin/clickhouse",
+                    "/usr/bin/datastore",
                     "benchmark",
                     "--iterations",
                     "200",
@@ -1043,7 +1043,7 @@ def test_concurrent_eviction(cluster, cache_policy):
 
 
 cache_dynamic_resize_slru_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
@@ -1063,7 +1063,7 @@ cache_dynamic_resize_slru_config = """
             </cache_dynamic_resize_slru>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
 
 
@@ -1145,7 +1145,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Shrink max_size from 100 to 10 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=10, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1158,7 +1158,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Grow max_size back to 100 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1175,7 +1175,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Shrink max_elements from 10 to 2 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=2),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1187,7 +1187,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Grow max_elements back to 10 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1211,7 +1211,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
     finally:
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1229,7 +1229,7 @@ def test_dynamic_resize_slru_failpoint_eviction(cluster):
 
     # Restore to known-good initial state
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+        "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
         slru_config(max_size=100, max_elements=10),
     )
     node.query("SYSTEM RELOAD CONFIG")
@@ -1291,7 +1291,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
         # Attempt to shrink -- eviction will fail, so limits should stay
         # at old values (or somewhere between old and desired)
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=10, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1329,7 +1329,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # Now do a real resize (without failpoint) to verify cache is not corrupted
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=10, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1362,7 +1362,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
             "SYSTEM DISABLE FAILPOINT file_cache_dynamic_resize_fail_to_evict"
         )
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")

@@ -5,7 +5,7 @@
 </settings>
 
 <!-- Create four empty tables. We will test select from Merge table involving one real table and four empty tables. 
-     In previous ClickHouse versions, with max_threads = 5, only one stream will be requested from each table,
+     In previous Datastore versions, with max_threads = 5, only one stream will be requested from each table,
       and the query will be processed with just one thread.
   -->
 <create_query>CREATE TABLE merge_table_streams_1 AS hits_100m_single</create_query>

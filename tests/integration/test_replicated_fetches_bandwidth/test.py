@@ -39,7 +39,7 @@ def test_limited_fetch_single_table(start_cluster):
     try:
         for i, node in enumerate([node1, node2]):
             node.query(
-                f"CREATE TABLE limited_fetch_table(key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/limited_fetch_table', '{i}') ORDER BY tuple() PARTITION BY key SETTINGS max_replicated_fetches_network_bandwidth=10485760"
+                f"CREATE TABLE limited_fetch_table(key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/tables/limited_fetch_table', '{i}') ORDER BY tuple() PARTITION BY key SETTINGS max_replicated_fetches_network_bandwidth=10485760"
             )
 
         node2.query("SYSTEM STOP FETCHES limited_fetch_table")
@@ -83,7 +83,7 @@ def test_limited_send_single_table(start_cluster):
     try:
         for i, node in enumerate([node1, node2]):
             node.query(
-                f"CREATE TABLE limited_send_table(key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/limited_fetch_table', '{i}') ORDER BY tuple() PARTITION BY key SETTINGS max_replicated_sends_network_bandwidth=5242880"
+                f"CREATE TABLE limited_send_table(key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/tables/limited_fetch_table', '{i}') ORDER BY tuple() PARTITION BY key SETTINGS max_replicated_sends_network_bandwidth=5242880"
             )
 
         node2.query("SYSTEM STOP FETCHES limited_send_table")
@@ -128,7 +128,7 @@ def test_limited_fetches_for_server(start_cluster):
         for i, node in enumerate([node1, node3]):
             for j in range(5):
                 node.query(
-                    f"CREATE TABLE limited_fetches{j}(key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/limited_fetches{j}', '{i}') ORDER BY tuple() PARTITION BY key"
+                    f"CREATE TABLE limited_fetches{j}(key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/tables/limited_fetches{j}', '{i}') ORDER BY tuple() PARTITION BY key"
                 )
 
         for j in range(5):
@@ -176,7 +176,7 @@ def test_limited_sends_for_server(start_cluster):
         for i, node in enumerate([node1, node3]):
             for j in range(5):
                 node.query(
-                    f"CREATE TABLE limited_sends{j}(key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/limited_sends{j}', '{i}') ORDER BY tuple() PARTITION BY key"
+                    f"CREATE TABLE limited_sends{j}(key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/tables/limited_sends{j}', '{i}') ORDER BY tuple() PARTITION BY key"
                 )
 
         for j in range(5):
@@ -223,7 +223,7 @@ def test_should_execute_fetch(start_cluster):
     try:
         for i, node in enumerate([node1, node2]):
             node.query(
-                f"CREATE TABLE should_execute_table(key UInt64, data String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/should_execute_table', '{i}') ORDER BY tuple() PARTITION BY key SETTINGS max_replicated_fetches_network_bandwidth=3505253"
+                f"CREATE TABLE should_execute_table(key UInt64, data String) ENGINE = ReplicatedMergeTree('/datastore/tables/should_execute_table', '{i}') ORDER BY tuple() PARTITION BY key SETTINGS max_replicated_fetches_network_bandwidth=3505253"
             )
 
         node2.query("SYSTEM STOP FETCHES should_execute_table")

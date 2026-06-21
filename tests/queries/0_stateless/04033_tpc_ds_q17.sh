@@ -4,7 +4,7 @@
 # no-random-settings: random session_timezone, query_plan_join_swap_table, etc. change query results.
 # no-replicated-database: the `tpcds` database is not created in DatabaseReplicated mode.
 # no-flaky-check: TPC-DS queries are too expensive for thread fuzzer.
-# Known issue: `stddev_samp` returns nan instead of NULL on single value (https://github.com/ClickHouse/ClickHouse/issues/94683).
+# Known issue: `stddev_samp` returns nan instead of NULL on single value (https://github.com/ClickHouse/Datastore/issues/94683).
 # Once the issue is fixed, update the .reference file.
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -14,4 +14,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./04033_tpc_ds.lib
 . "$CURDIR"/04033_tpc_ds.lib
 
-{ echo "USE tpcds;"; cat "$CURDIR/../../benchmarks/tpc-ds/queries/query_17.sql"; } | $CLICKHOUSE_CLIENT "${SETTINGS[@]}"
+{ echo "USE tpcds;"; cat "$CURDIR/../../benchmarks/tpc-ds/queries/query_17.sql"; } | $DATASTORE_CLIENT "${SETTINGS[@]}"

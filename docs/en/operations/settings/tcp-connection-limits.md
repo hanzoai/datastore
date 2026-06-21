@@ -8,7 +8,7 @@ doc_type: 'reference'
 
 ## Overview {#overview}
 
-You may have a ClickHouse TCP connection (i.e., one through the [command-line client](https://clickhouse.com/docs/interfaces/client))
+You may have a Datastore TCP connection (i.e., one through the [command-line client](https://datastore.com/docs/interfaces/client))
 disconnect automatically after some number of queries or duration.
 After disconnecting, no automatic reconnection occurs (unless triggered through something else,
 such as sending another query in the command-line client).

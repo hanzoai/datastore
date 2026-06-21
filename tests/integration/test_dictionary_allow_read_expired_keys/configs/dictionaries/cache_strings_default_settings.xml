@@ -1,15 +1,15 @@
-<clickhouse>
+<datastore>
 <dictionary>
     <name>default_string</name>
     <source>
-        <clickhouse>
+        <datastore>
             <host>dictionary_node</host>
             <port>9000</port>
             <user>default</user>
             <password></password>
             <db>test</db>
             <table>strings</table>
-        </clickhouse>
+        </datastore>
     </source>
     <lifetime>
         <max>2</max>
@@ -32,4 +32,4 @@
         </attribute>
     </structure>
 </dictionary>
-</clickhouse>
+</datastore>

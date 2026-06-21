@@ -642,12 +642,12 @@ bool LDAPSimpleAuthClient::authenticate(const RoleSearchParamsList * role_search
 
 void LDAPClient::handleError(const int, String)
 {
-    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "ClickHouse was built without LDAP support");
+    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Datastore was built without LDAP support");
 }
 
 bool LDAPClient::openConnection()
 {
-    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "ClickHouse was built without LDAP support");
+    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Datastore was built without LDAP support");
 }
 
 void LDAPClient::closeConnection() noexcept
@@ -656,12 +656,12 @@ void LDAPClient::closeConnection() noexcept
 
 LDAPClient::SearchResults LDAPClient::search(const SearchParams &)
 {
-    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "ClickHouse was built without LDAP support");
+    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Datastore was built without LDAP support");
 }
 
 bool LDAPSimpleAuthClient::authenticate(const RoleSearchParamsList *, SearchResultsList *)
 {
-    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "ClickHouse was built without LDAP support");
+    throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Datastore was built without LDAP support");
 }
 
 #endif // USE_LDAP

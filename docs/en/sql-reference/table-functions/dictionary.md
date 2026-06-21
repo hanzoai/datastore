@@ -1,5 +1,5 @@
 ---
-description: 'Displays the dictionary data as a ClickHouse table. Works the same way
+description: 'Displays the dictionary data as a Datastore table. Works the same way
   as the Dictionary engine.'
 sidebar_label: 'dictionary'
 sidebar_position: 47
@@ -8,7 +8,7 @@ title: 'dictionary'
 doc_type: 'reference'
 ---
 
-Displays the [dictionary](../statements/create/dictionary/overview.md) data as a ClickHouse table. Works the same way as [Dictionary](../../engines/table-engines/special/dictionary.md) engine.
+Displays the [dictionary](../statements/create/dictionary/overview.md) data as a Datastore table. Works the same way as [Dictionary](../../engines/table-engines/special/dictionary.md) engine.
 
 ## Syntax {#syntax}
 
@@ -22,7 +22,7 @@ dictionary('dict')
 
 ## Returned value {#returned_value}
 
-A ClickHouse table.
+A Datastore table.
 
 ## Examples {#examples}
 
@@ -39,7 +39,7 @@ Create a dictionary:
 
 ```sql title="Query"
 CREATE DICTIONARY new_dictionary(id UInt64, value UInt64 DEFAULT 0) PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dictionary_source_table')) LAYOUT(DIRECT());
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dictionary_source_table')) LAYOUT(DIRECT());
 ```
 
 ```sql title="Query"

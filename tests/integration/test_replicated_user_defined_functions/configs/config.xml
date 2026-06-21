@@ -1,5 +1,5 @@
-<clickhouse>
-    <user_defined_zookeeper_path>/clickhouse/udf</user_defined_zookeeper_path>
+<datastore>
+    <user_defined_zookeeper_path>/datastore/udf</user_defined_zookeeper_path>
     <remote_servers>
         <default>
             <shard>
@@ -14,4 +14,4 @@
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>

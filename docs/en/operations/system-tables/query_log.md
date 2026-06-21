@@ -21,7 +21,7 @@ You can disable queries logging by setting [log_queries = 0](/operations/setting
 
 The flushing period of data is set in `flush_interval_milliseconds` parameter of the [query_log](../../operations/server-configuration-parameters/settings.md#query_log) server settings section. To force flushing, use the [SYSTEM FLUSH LOGS](/sql-reference/statements/system#flush-logs) query.
 
-ClickHouse does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
+Datastore does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
 
 The `system.query_log` table registers two kinds of queries:
 
@@ -86,22 +86,22 @@ You can use the [log_formatted_queries](/operations/settings/settings#log_format
 - `authenticated_user` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Name of the user who was authenticated in the session.
 - `interface` ([UInt8](/sql-reference/data-types/int-uint)) — Interface that the query was initiated from. Possible values: 1 — TCP, 2 — HTTP.
 - `is_secure` ([UInt8](/sql-reference/data-types/int-uint)) — The flag whether a query was executed over a secure interface
-- `os_user` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Operating system username who runs clickhouse-client.
-- `client_hostname` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Hostname of the client machine where the clickhouse-client or another TCP client is run.
-- `client_name` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — The clickhouse-client or another TCP client name.
-- `client_revision` ([UInt32](/sql-reference/data-types/int-uint)) — Revision of the clickhouse-client or another TCP client.
-- `client_version_major` ([UInt32](/sql-reference/data-types/int-uint)) — Major version of the clickhouse-client or another TCP client.
-- `client_version_minor` ([UInt32](/sql-reference/data-types/int-uint)) — Minor version of the clickhouse-client or another TCP client.
-- `client_version_patch` ([UInt32](/sql-reference/data-types/int-uint)) — Patch component of the clickhouse-client or another TCP client version.
-- `script_query_number` ([UInt32](/sql-reference/data-types/int-uint)) — The query number in a script with multiple queries for clickhouse-client.
-- `script_line_number` ([UInt32](/sql-reference/data-types/int-uint)) — The line number of the query start in a script with multiple queries for clickhouse-client.
+- `os_user` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Operating system username who runs datastore-client.
+- `client_hostname` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Hostname of the client machine where the datastore-client or another TCP client is run.
+- `client_name` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — The datastore-client or another TCP client name.
+- `client_revision` ([UInt32](/sql-reference/data-types/int-uint)) — Revision of the datastore-client or another TCP client.
+- `client_version_major` ([UInt32](/sql-reference/data-types/int-uint)) — Major version of the datastore-client or another TCP client.
+- `client_version_minor` ([UInt32](/sql-reference/data-types/int-uint)) — Minor version of the datastore-client or another TCP client.
+- `client_version_patch` ([UInt32](/sql-reference/data-types/int-uint)) — Patch component of the datastore-client or another TCP client version.
+- `script_query_number` ([UInt32](/sql-reference/data-types/int-uint)) — The query number in a script with multiple queries for datastore-client.
+- `script_line_number` ([UInt32](/sql-reference/data-types/int-uint)) — The line number of the query start in a script with multiple queries for datastore-client.
 - `http_method` ([UInt8](/sql-reference/data-types/int-uint)) — HTTP method that initiated the query. Possible values: 0 — The query was launched from the TCP interface, 1 — GET method was used, 2 — POST method was used.
 - `http_user_agent` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — HTTP header UserAgent passed in the HTTP query.
 - `http_referer` ([String](/sql-reference/data-types/string)) — HTTP header Referer passed in the HTTP query (contains an absolute or partial address of the page making the query).
 - `forwarded_for` ([String](/sql-reference/data-types/string)) — HTTP header X-Forwarded-For passed in the HTTP query.
 - `quota_key` ([String](/sql-reference/data-types/string)) — The quota key specified in the quotas setting (see keyed).
 - `distributed_depth` ([UInt64](/sql-reference/data-types/int-uint)) — How many times a query was forwarded between servers.
-- `revision` ([UInt32](/sql-reference/data-types/int-uint)) — ClickHouse revision.
+- `revision` ([UInt32](/sql-reference/data-types/int-uint)) — Datastore revision.
 - `log_comment` ([String](/sql-reference/data-types/string)) — Log comment. It can be set to arbitrary string no longer than max_query_size. An empty string if it is not defined.
 - `thread_ids` ([Array(UInt64)](/sql-reference/data-types/array)) — Thread ids that are participating in query execution. These threads may not have run simultaneously.
 - `peak_threads_usage` ([UInt64](/sql-reference/data-types/int-uint)) — Maximum count of simultaneous threads executing the query.
@@ -145,7 +145,7 @@ SELECT * FROM system.query_log WHERE type = 'QueryFinish' ORDER BY query_start_t
 ```text
 Row 1:
 ──────
-hostname:                              clickhouse.eu-central1.internal
+hostname:                              datastore.eu-central1.internal
 type:                                  QueryFinish
 event_date:                            2021-11-03
 event_time:                            2021-11-03 16:13:54
@@ -186,8 +186,8 @@ initial_query_start_time:              2021-11-03 16:13:54
 initial_query_start_time_microseconds: 2021-11-03 16:13:54.952325
 interface:                             1
 os_user:                               sevirov
-client_hostname:                       clickhouse.eu-central1.internal
-client_name:                           ClickHouse
+client_hostname:                       datastore.eu-central1.internal
+client_name:                           Datastore
 client_revision:                       54449
 client_version_major:                  21
 client_version_minor:                  10
@@ -220,7 +220,7 @@ query_cache_usage:                     None
 
 **Cloud example**
 
-In ClickHouse Cloud, `system.query_log` is local to each node; to see all entries you must query via [`clusterAllReplicas`](/sql-reference/table-functions/cluster).
+In Datastore Cloud, `system.query_log` is local to each node; to see all entries you must query via [`clusterAllReplicas`](/sql-reference/table-functions/cluster).
 
 For example, to aggregate query_log rows from every replica in the “default” cluster you can write:
 

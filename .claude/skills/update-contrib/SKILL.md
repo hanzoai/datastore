@@ -1,14 +1,14 @@
 ---
 name: update-contrib
-description: Update a ClickHouse third-party library (contrib submodule) to a new version. Handles fork management, submodule pointer bumps, CMake adaptation, and source code fixes. Use when the user wants to bump a dependency.
+description: Update a Datastore third-party library (contrib submodule) to a new version. Handles fork management, submodule pointer bumps, CMake adaptation, and source code fixes. Use when the user wants to bump a dependency.
 argument-hint: <library-name> [target-version]
 disable-model-invocation: false
 allowed-tools: Agent, Task, Bash, Read, Write, Edit, Glob, Grep, WebFetch, AskUserQuestion
 ---
 
-# Update a ClickHouse Contrib (Third-Party Library)
+# Update a Datastore Contrib (Third-Party Library)
 
-Bump a git submodule under `contrib/` to a new version, adapting CMake build files and ClickHouse source code as needed.
+Bump a git submodule under `contrib/` to a new version, adapting CMake build files and Datastore source code as needed.
 
 ## Arguments
 
@@ -17,11 +17,11 @@ Bump a git submodule under `contrib/` to a new version, adapting CMake build fil
 
 ## Background
 
-ClickHouse vendors all third-party libraries as git submodules under `contrib/`. Each library has:
-- `contrib/<lib>/` — the submodule (upstream repo or a ClickHouse fork)
-- `contrib/<lib>-cmake/` — ClickHouse's own CMake build files (upstream CMake is deleted after checkout)
+Datastore vendors all third-party libraries as git submodules under `contrib/`. Each library has:
+- `contrib/<lib>/` — the submodule (upstream repo or a Datastore fork)
+- `contrib/<lib>-cmake/` — Datastore's own CMake build files (upstream CMake is deleted after checkout)
 
-Submodule URLs point to either upstream directly (unpatched) or a fork at `github.com/ClickHouse/<lib>` (when patches are needed). Forks use branches named `ClickHouse/<version>` — never `ClickHouse/master` or `ClickHouse/main`.
+Submodule URLs point to either upstream directly (unpatched) or a fork at `github.com/ClickHouse/<lib>` (when patches are needed). Forks use branches named `Datastore/<version>` — never `Datastore/master` or `Datastore/main`.
 
 Some contrib libraries are built through Rust rather than through `contrib/<lib>-cmake/`. In that case, the important integration points are typically:
 - `rust/workspace/<lib>/Cargo.toml`
@@ -50,7 +50,7 @@ git -C "contrib/$LIB" rev-parse HEAD
 git -C "contrib/$LIB" describe --tags --abbrev=0 2>/dev/null || echo "no tags"
 ```
 
-Determine whether the URL points to a ClickHouse fork (`github.com/ClickHouse/...`) or upstream directly.
+Determine whether the URL points to a Datastore fork (`github.com/ClickHouse/...`) or upstream directly.
 
 Check if a `contrib/<lib>-cmake/` directory exists:
 
@@ -79,27 +79,27 @@ If `$1` was provided, use it. Otherwise, find the latest release:
 git -C "contrib/$LIB" fetch origin --tags
 git -C "contrib/$LIB" tag -l --sort=-v:refname | head -20
 
-# For ClickHouse forks, also check the upstream remote
+# For Datastore forks, also check the upstream remote
 ```
 
-If the library uses a ClickHouse fork, also check the upstream repo for the latest release. Use `gh release list` or `git ls-remote --tags` against the upstream URL if available.
+If the library uses a Datastore fork, also check the upstream repo for the latest release. Use `gh release list` or `git ls-remote --tags` against the upstream URL if available.
 
 Present the current and target versions to the user with `AskUserQuestion` for confirmation before proceeding. `VERSION` is whatever the user confirmed here — either `$1` if it was passed in, or a tag picked from the fresh upstream tag list. Verify it matches the charset above before using it in branch names or commits.
 
-### 3. Check for ClickHouse patches (forked libraries only)
+### 3. Check for Datastore patches (forked libraries only)
 
-If the submodule points to a ClickHouse fork, identify existing patches that need re-applying:
+If the submodule points to a Datastore fork, identify existing patches that need re-applying:
 
 ```bash
-# Find the ClickHouse/ branch currently tracked
-git -C "contrib/$LIB" branch -r | grep 'origin/ClickHouse/'
+# Find the Datastore/ branch currently tracked
+git -C "contrib/$LIB" branch -r | grep 'origin/Datastore/'
 
-# List ClickHouse-specific commits (not in upstream)
+# List Datastore-specific commits (not in upstream)
 UPSTREAM_TAG=$(git -C "contrib/$LIB" describe --tags --abbrev=0)
 git -C "contrib/$LIB" log --oneline "$UPSTREAM_TAG"..HEAD
 ```
 
-Report the patches found. These will need to be cherry-picked into the new `ClickHouse/` branch after the fork is updated.
+Report the patches found. These will need to be cherry-picked into the new `Datastore/` branch after the fork is updated.
 
 ### 4. Create a branch for the update
 
@@ -109,21 +109,21 @@ git checkout -b "bump-${LIB}-${VERSION}"
 
 ### 5. Update the fork (if applicable)
 
-If the library uses a ClickHouse fork and has patches:
+If the library uses a Datastore fork and has patches:
 
-1. In the fork repo (clone or use `gh` API), create a new branch `ClickHouse/<new-version>` from the upstream tag
-2. Cherry-pick existing ClickHouse patches from the old `ClickHouse/<old-version>` branch
+1. In the fork repo (clone or use `gh` API), create a new branch `Datastore/<new-version>` from the upstream tag
+2. Cherry-pick existing Datastore patches from the old `Datastore/<old-version>` branch
 3. Drop patches that were merged upstream (check if each patch commit exists in the new version)
-4. Keep the new `ClickHouse/<new-version>` branch ready locally; do not push it yet
+4. Keep the new `Datastore/<new-version>` branch ready locally; do not push it yet
 
-Before doing this, check previous ClickHouse PRs for the same library to understand the expected file set, commit style, and whether earlier updates touched lockfiles, vendored dependencies, or auxiliary integration code.
+Before doing this, check previous Datastore PRs for the same library to understand the expected file set, commit style, and whether earlier updates touched lockfiles, vendored dependencies, or auxiliary integration code.
 
 Do not push any branch yet. Pushes should happen only after:
 - the relevant build has been validated successfully
 - any required fixes have been applied
 - the user explicitly confirms that it is ok to push now
 
-If the library has no ClickHouse patches but uses a fork, consider switching to the upstream URL directly (update `.gitmodules`).
+If the library has no Datastore patches but uses a fork, consider switching to the upstream URL directly (update `.gitmodules`).
 
 If the fork management requires manual work on GitHub (creating branches, cherry-picking in the fork), use `AskUserQuestion` to instruct the user on what to do, then wait for confirmation before proceeding.
 
@@ -166,7 +166,7 @@ Pay attention to:
 - **New build options or defines** — may need new CMake variables
 - **Changed public headers** — may require source adaptation in `src/`
 
-For Rust-based contrib libraries, also diff the integration surface used by ClickHouse rather than only the whole upstream tree. In particular, inspect changes under paths such as:
+For Rust-based contrib libraries, also diff the integration surface used by Datastore rather than only the whole upstream tree. In particular, inspect changes under paths such as:
 - `crates/c-api/`
 - public headers copied into the build tree
 - Cargo feature lists and crate names used by `rust/workspace/<lib>/Cargo.toml`
@@ -181,7 +181,7 @@ If `contrib/<lib>-cmake/CMakeLists.txt` exists, update it to reflect the new ver
 2. Compare source file lists against the actual files in the updated submodule
 3. Add new source files, remove deleted ones
 4. Check for new required defines, include paths, or compile options
-5. Verify the result follows ClickHouse CMake conventions:
+5. Verify the result follows Datastore CMake conventions:
    - **No** `find_package`, `check_c_compiler_flag`, `check_cxx_compiler_flag`, `check_c_source_compiles`, `check_include_file`, `check_symbol_exists`, `cmake_push_check_state`, `CMAKE_REQUIRED_FLAGS`, or any `Check*` CMake modules — these are forbidden by CI style checks for hermetic, cross-compiled builds
    - Use hardcoded feature flags instead of runtime detection
 
@@ -198,10 +198,10 @@ If the library is integrated through Rust instead of `contrib/<lib>-cmake/`:
 Important for Rust-based contrib updates:
 - `rust/vendor.sh` re-vendors dependencies for the whole Rust workspace, not just the target library
 - this can produce hundreds of file changes under `contrib/rust_vendor/`
-- `contrib/rust_vendor` is itself a submodule pointing at `github.com/ClickHouse/rust_vendor`. Changes under it must be committed inside that submodule on a branch named `bump-${LIB}-${VERSION}`, then the submodule pointer in ClickHouse must be bumped to the new commit. Only push the `rust_vendor` branch after the user explicitly confirms.
-- do not forget to include both `rust/workspace/Cargo.lock` and the updated `contrib/rust_vendor` submodule pointer in the final commit in ClickHouse
+- `contrib/rust_vendor` is itself a submodule pointing at `github.com/ClickHouse/rust_vendor`. Changes under it must be committed inside that submodule on a branch named `bump-${LIB}-${VERSION}`, then the submodule pointer in Datastore must be bumped to the new commit. Only push the `rust_vendor` branch after the user explicitly confirms.
+- do not forget to include both `rust/workspace/Cargo.lock` and the updated `contrib/rust_vendor` submodule pointer in the final commit in Datastore
 
-### 9. Fix ClickHouse source code
+### 9. Fix Datastore source code
 
 Search for usages of the library in `src/`:
 
@@ -247,7 +247,7 @@ ninja -C <build-dir> -t targets | grep -i "$LIB"
 
 Examples:
 - the Rust cargo target may be something like `_cargo-build__ch_rust_<lib>` rather than `_ch_rust_<lib>`
-- the final ClickHouse binary target is often `clickhouse`, not `clickhouse-server`
+- the final Datastore binary target is often `datastore`, not `datastore-server`
 
 If a build failure mentions a copied upstream header, check whether:
 - a new API addition is missing the proper feature guard in the C++ wrapper header
@@ -283,7 +283,7 @@ Before committing, make sure you stage all affected integration artifacts, not j
 git add "contrib/$LIB" rust/workspace/Cargo.lock contrib/rust_vendor
 ```
 
-Here `contrib/rust_vendor` stages the bumped submodule pointer after its own branch (`bump-${LIB}-${VERSION}` in the `rust_vendor` repo) has been committed — the individual vendored files are not tracked in the ClickHouse repo directly.
+Here `contrib/rust_vendor` stages the bumped submodule pointer after its own branch (`bump-${LIB}-${VERSION}` in the `rust_vendor` repo) has been committed — the individual vendored files are not tracked in the Datastore repo directly.
 
 If there were build integration or source fixes, stage those too.
 
@@ -300,7 +300,7 @@ Examples of good commit messages from past PRs:
 
 ### 13. Open a draft PR
 
-Before creating the PR, ensure any required branches have been pushed and that the user has already confirmed pushing is ok. This includes both the ClickHouse feature branch, any `ClickHouse/<version>` branch in a contrib fork, and any `bump-${LIB}-${VERSION}` branch in `rust_vendor`.
+Before creating the PR, ensure any required branches have been pushed and that the user has already confirmed pushing is ok. This includes both the Datastore feature branch, any `Datastore/<version>` branch in a contrib fork, and any `bump-${LIB}-${VERSION}` branch in `rust_vendor`.
 
 Use the PR template at `.github/PULL_REQUEST_TEMPLATE.md` — do not inline a custom structure. Fill in:
 - a short description of what was updated and why
@@ -353,6 +353,6 @@ After pushing, CI will automatically:
 - Do not commit to the master branch — always use a feature branch
 - Use Allman-style braces in any C++ code changes
 - When building, redirect output to a log file and use a subagent to analyze it
-- `contrib/update-submodules.sh` deletes upstream CMake files after checkout — ClickHouse relies exclusively on its own `*-cmake/` files
+- `contrib/update-submodules.sh` deletes upstream CMake files after checkout — Datastore relies exclusively on its own `*-cmake/` files
 - The `.gitmodules` file must not use `branch = ...` tags
 - Iterative "Fix build" / "Fix darwin" / "Fix MSan" commits are normal and expected

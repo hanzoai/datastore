@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/78352
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/78352
 --
 -- `CASE expr WHEN ... THEN ... ELSE ... END` over an `Array(String)`-returning
 -- function (`splitByString`) used to be lowered to `transform`, which does not

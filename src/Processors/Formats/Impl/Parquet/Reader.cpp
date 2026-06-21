@@ -133,7 +133,7 @@ static void decompress(const char * data, size_t compressed_size, size_t uncompr
             return;
         }
 #else
-            throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Cannot decompress Snappy: ClickHouse was compiled without Snappy support");
+            throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Cannot decompress Snappy: Datastore was compiled without Snappy support");
 #endif
         case parq::CompressionCodec::GZIP:
             method = CompressionMethod::Gzip;
@@ -413,7 +413,7 @@ void Reader::prefilterAndInitRowGroups(const std::optional<std::unordered_set<UI
 
             /// Whether the innermost array element type is nullable.
             /// E.g. Nullable(String) or Array(Nullable(String)).
-            /// Does not apply to nullable arrays, e.g. Nullable(Array(String)), because clickhouse
+            /// Does not apply to nullable arrays, e.g. Nullable(Array(String)), because datastore
             /// doesn't support them; we convert null arrays to empty arrays, no null map.
             bool is_nullable = !primitive_columns[column_idx].levels.back().is_array;
             /// If column is declared as nullable, but statistics say there are no nulls, don't
@@ -1457,7 +1457,7 @@ void Reader::decodePrimitiveColumn(ColumnChunk & column, const PrimitiveColumnIn
     if (subchunk.null_map && !column_info.output_nullable && !options.format.null_as_default)
     {
         const auto & null_map = assert_cast<const ColumnUInt8 &>(*subchunk.null_map).getData();
-        /// null_map uses standard ClickHouse convention: 1 = NULL, 0 = NOT NULL.
+        /// null_map uses standard Datastore convention: 1 = NULL, 0 = NOT NULL.
         /// Check if any values are null — those can't be inserted into a non-Nullable column.
         if (memchr(null_map.data(), 1, null_map.size()) != nullptr)
             throw Exception(ErrorCodes::CANNOT_INSERT_NULL_IN_ORDINARY_COLUMN, "Cannot convert NULL value to non-Nullable type for column {}", column_info.name);
@@ -1877,7 +1877,7 @@ bool Reader::skipRowsInPage(size_t target_row_idx, PageState & page, ColumnChunk
 /// Context: at this stage we're looking at one primitive parquet column.
 /// (Things like tuples and maps are assembled out of such columns separately.)
 ///
-/// ClickHouse type looks like e.g. Array(Array(Nullable(String)),
+/// Datastore type looks like e.g. Array(Array(Nullable(String)),
 /// i.e. 0+ Array-s, then maybe Nullable, then primitive column.
 /// Represented as a primitive IColumn + null mask + array offsets for each Array level.
 ///
@@ -1886,7 +1886,7 @@ bool Reader::skipRowsInPage(size_t target_row_idx, PageState & page, ColumnChunk
 /// Represented as definition and repetition levels + encoded non-null primitive values.
 ///
 /// We have to convert levels to array offsets and null map, while ignoring nullables in
-/// places clickhouse doesn't support (nullable arrays and nullable nullables).
+/// places datastore doesn't support (nullable arrays and nullable nullables).
 ///
 /// Concepts:
 ///  * "Value" is an element in logical rep/def levels arrays (the two arrays are parallel).
@@ -1961,7 +1961,7 @@ static void processRepDefLevelsForArray(
             /// In particular:
             ///  * `def[i] == array_def - 1` means this array is empty,
             ///  * `parent_array_def <= def[i] < array_def - 1` means this array is null,
-            ///    which we convert to empty array because clickhouse doesn't support nullable arrays.
+            ///    which we convert to empty array because datastore doesn't support nullable arrays.
             ///    TODO [parquet]: Should we throw an error in this case if !options.format.null_as_default?
             continue;
 

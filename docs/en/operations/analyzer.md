@@ -1,5 +1,5 @@
 ---
-description: 'Page detailing the ClickHouse query analyzer'
+description: 'Page detailing the Datastore query analyzer'
 keywords: ['analyzer']
 sidebar_label: 'Analyzer'
 slug: /operations/analyzer
@@ -7,12 +7,12 @@ title: 'Analyzer'
 doc_type: 'reference'
 ---
 
-In ClickHouse version `24.3`, the new query analyzer was enabled by default.
+In Datastore version `24.3`, the new query analyzer was enabled by default.
 You can read more details about how it works [here](/guides/developer/understanding-query-execution-with-the-analyzer#analyzer).
 
 ## Known incompatibilities {#known-incompatibilities}
 
-Despite fixing a large number of bugs and introducing new optimizations, it also introduces some breaking changes in ClickHouse behaviour. Please read the following changes to determine how to rewrite your queries for the analyzer.
+Despite fixing a large number of bugs and introducing new optimizations, it also introduces some breaking changes in Datastore behaviour. Please read the following changes to determine how to rewrite your queries for the analyzer.
 
 ### Invalid queries are no longer optimized {#invalid-queries-are-no-longer-optimized}
 
@@ -187,15 +187,15 @@ The analyzer significantly changes the communication protocol between servers in
 ### Mutations are interpreted by previous analyzer {#mutations-are-interpreted-by-previous-analyzer}
 
 Mutations are still using the old analyzer.
-This means some new ClickHouse SQL features can't be used in mutations. For example, the `QUALIFY` clause.
-The status can be checked [here](https://github.com/ClickHouse/ClickHouse/issues/61563).
+This means some new Datastore SQL features can't be used in mutations. For example, the `QUALIFY` clause.
+The status can be checked [here](https://github.com/ClickHouse/Datastore/issues/61563).
 
 ### Unsupported features {#unsupported-features}
 
 The list of features that the analyzer currently doesn't support is given below:
 
 - Annoy index.
-- Hypothesis index. Work in progress [here](https://github.com/ClickHouse/ClickHouse/pull/48381).
+- Hypothesis index. Work in progress [here](https://github.com/ClickHouse/Datastore/pull/48381).
 - Window view is not supported. There are no plans to support it in the future.
 
 ## Cloud Migration {#cloud-migration}
@@ -317,4 +317,4 @@ Error: `Function with name countdistinct does not exist (UNKNOWN_FUNCTION)`. Exc
 
 Cause: Function names are case-sensitive or strictly mapped in the analyzer. `countdistinct` (all lowercase) is no longer resolved automatically. 
 
-Solution: Use the standard `countDistinct` (camelCase) or the ClickHouse specific uniq.
+Solution: Use the standard `countDistinct` (camelCase) or the Datastore specific uniq.

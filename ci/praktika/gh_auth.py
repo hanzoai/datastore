@@ -106,11 +106,11 @@ class GHAuth:
 #     from ci.praktika.secret import Secret
 #
 #     pem = Secret.Config(
-#         name="woolenwolf_gh_app.clickhouse-app-key",
+#         name="woolenwolf_gh_app.datastore-app-key",
 #         type=Secret.Type.AWS_SSM_SECRET,
 #     ).get_value()
 #     app_id = Secret.Config(
-#         name="woolenwolf_gh_app.clickhouse-app-id",
+#         name="woolenwolf_gh_app.datastore-app-id",
 #         type=Secret.Type.AWS_SSM_SECRET,
 #     ).get_value()
 #     print(app_id, pem)

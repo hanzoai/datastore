@@ -1,4 +1,4 @@
--- https://stackoverflow.com/questions/53416531/clickhouse-moving-average
+-- https://stackoverflow.com/questions/53416531/datastore-moving-average
 
 DROP TABLE IF EXISTS bm;
 

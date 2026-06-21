@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <macros>
         <shard>shard4</shard>
         <replica>replica4</replica>
     </macros>
-</clickhouse>
+</datastore>

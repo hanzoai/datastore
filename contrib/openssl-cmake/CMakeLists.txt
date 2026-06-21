@@ -1431,4 +1431,4 @@ target_link_libraries(ssl crypto)
 add_library(OpenSSL::Crypto ALIAS crypto)
 add_library(OpenSSL::SSL ALIAS ssl)
 
-install(FILES openssl.conf fipsmodule.conf DESTINATION "${CLICKHOUSE_ETC_DIR}/clickhouse-server" COMPONENT clickhouse)
+install(FILES openssl.conf fipsmodule.conf DESTINATION "${DATASTORE_ETC_DIR}/datastore-server" COMPONENT datastore)

@@ -20,17 +20,17 @@ trace_settings=(
 )
 
 # Flush path: every allocation exceeds max_untracked_memory and goes through MemoryTracker::allocImpl directly.
-query_id_flush="${CLICKHOUSE_DATABASE}_min_max_allocation_size_flush"
-${CLICKHOUSE_CLIENT} "${trace_settings[@]}" --query_id="$query_id_flush" --max_untracked_memory=0
+query_id_flush="${DATASTORE_DATABASE}_min_max_allocation_size_flush"
+${DATASTORE_CLIENT} "${trace_settings[@]}" --query_id="$query_id_flush" --max_untracked_memory=0
 
 # Non-flush path: small allocations stay below max_untracked_memory and sample via the cached ThreadStatus::sample_* values,
 # which must be refreshed after ProcessList::insert applies query-level memory_profiler_sample_* settings.
-query_id_cached="${CLICKHOUSE_DATABASE}_min_max_allocation_size_cached"
-${CLICKHOUSE_CLIENT} "${trace_settings[@]}" --query_id="$query_id_cached" --max_untracked_memory=4Mi
+query_id_cached="${DATASTORE_DATABASE}_min_max_allocation_size_cached"
+${DATASTORE_CLIENT} "${trace_settings[@]}" --query_id="$query_id_cached" --max_untracked_memory=4Mi
 
-${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS trace_log"
+${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS trace_log"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 SELECT
   countIf(query_id = '$query_id_flush') > 0 AS flush_has_samples,
   countIf(query_id = '$query_id_cached') > 0 AS cached_has_samples,

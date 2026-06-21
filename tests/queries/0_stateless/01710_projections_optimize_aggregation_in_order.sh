@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP TABLE IF EXISTS in_order_agg_01710;
 
     CREATE TABLE in_order_agg_01710
@@ -34,7 +34,7 @@ function run_query()
     local query=$1 && shift
 
     local query_id
-    query_id="$CLICKHOUSE_TEST_UNIQUE_NAME-$(random_str 6)"
+    query_id="$DATASTORE_TEST_UNIQUE_NAME-$(random_str 6)"
 
     echo "$query"
     local opts=(
@@ -45,12 +45,12 @@ function run_query()
         --parallel_replicas_support_projection 1
         --query_id "$query_id"
     )
-    $CLICKHOUSE_CLIENT "${opts[@]}" "$@" -q "$query"
+    $DATASTORE_CLIENT "${opts[@]}" "$@" -q "$query"
 
-    $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS processors_profile_log"
+    $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS processors_profile_log"
 
     echo "Used processors:"
-    $CLICKHOUSE_CLIENT --param_query_id "$query_id" -q "SELECT DISTINCT name FROM system.processors_profile_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = {query_id:String} AND name LIKE 'Aggregating%'"
+    $DATASTORE_CLIENT --param_query_id "$query_id" -q "SELECT DISTINCT name FROM system.processors_profile_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = {query_id:String} AND name LIKE 'Aggregating%'"
 }
 
 run_query "SELECT k1, k2, k3, sum(value) v FROM in_order_agg_01710 GROUP BY k1, k2, k3 ORDER BY k1, k2, k3 SETTINGS optimize_aggregation_in_order=0"

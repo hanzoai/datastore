@@ -1,6 +1,6 @@
 -- Tags: no-fasttest
 -- Test for missing range check after adjust_time_zone in parseDateTimeBestEffortImpl
--- https://github.com/ClickHouse/ClickHouse/issues/102601
+-- https://github.com/ClickHouse/Datastore/issues/102601
 
 SET session_timezone = 'UTC';
 SET date_time_input_format = 'best_effort';

@@ -13,7 +13,7 @@ function four_letter_thread()
     declare -a FOUR_LETTER_COMMANDS=("conf" "cons" "crst" "envi" "ruok" "srst" "srvr" "stat" "wchc" "wchs" "dirs" "mntr" "isro")
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         command=${FOUR_LETTER_COMMANDS[$RANDOM % ${#FOUR_LETTER_COMMANDS[@]} ]}
-        $CLICKHOUSE_KEEPER_CLIENT -q "$command" 1>/dev/null
+        $DATASTORE_KEEPER_CLIENT -q "$command" 1>/dev/null
     done
 
 }
@@ -23,9 +23,9 @@ function create_drop_thread()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         num=$(($RANDOM % 10 + 1))
-        $CLICKHOUSE_CLIENT --query "CREATE TABLE test_table$num (key UInt64, value1 UInt8, value2 UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/test_table$num', '0') ORDER BY key"
+        $DATASTORE_CLIENT --query "CREATE TABLE test_table$num (key UInt64, value1 UInt8, value2 UInt8) ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/test_table$num', '0') ORDER BY key"
         sleep 0.$RANDOM
-        $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test_table$num"
+        $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test_table$num"
     done
 }
 
@@ -45,11 +45,11 @@ create_drop_thread 2> /dev/null &
 wait
 
 for num in $(seq 1 10); do
-    $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test_table$num" 2>/dev/null
+    $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test_table$num" 2>/dev/null
     while  [ $? -ne 0 ]; do
-        $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test_table$num" 2>/dev/null
+        $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test_table$num" 2>/dev/null
     done
 done
 
 # still alive
-$CLICKHOUSE_CLIENT --query "SELECT 1"
+$DATASTORE_CLIENT --query "SELECT 1"

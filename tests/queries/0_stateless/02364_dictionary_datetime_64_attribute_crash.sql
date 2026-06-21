@@ -7,7 +7,7 @@ CREATE DICTIONARY datDictionary
     `eventTimestamp` DateTime64(9)
 )
 PRIMARY KEY blockNum
-SOURCE(CLICKHOUSE(TABLE 'dat'))
+SOURCE(DATASTORE(TABLE 'dat'))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(FLAT());
 

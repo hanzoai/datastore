@@ -165,7 +165,7 @@ def test_parallel_replicas_custom_key_replicatedmergetree(
     n1 = nodes[0]
     n1.query(f"DROP TABLE IF EXISTS test_table_for_rmt ON CLUSTER {cluster} SYNC")
     n1.query(
-        f"CREATE TABLE test_table_for_rmt ON CLUSTER {cluster} (key UInt32, value String) Engine=ReplicatedMergeTree('/clickhouse/tables', '{{replica}}') ORDER BY (key, sipHash64(value))"
+        f"CREATE TABLE test_table_for_rmt ON CLUSTER {cluster} (key UInt32, value String) Engine=ReplicatedMergeTree('/datastore/tables', '{{replica}}') ORDER BY (key, sipHash64(value))"
     )
 
     insert_data("test_table_for_rmt", row_num, all_nodes=False)

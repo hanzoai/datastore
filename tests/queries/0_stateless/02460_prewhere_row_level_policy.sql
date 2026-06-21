@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/40956#issuecomment-1262096612
+-- https://github.com/ClickHouse/Datastore/issues/40956#issuecomment-1262096612
 DROP TABLE IF EXISTS row_level_policy_prewhere;
 DROP ROW POLICY IF EXISTS row_level_policy_prewhere_policy0 ON row_level_policy_prewhere;
 

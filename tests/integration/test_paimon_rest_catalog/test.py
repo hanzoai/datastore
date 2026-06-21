@@ -49,7 +49,7 @@ def test_paimon_rest_catalog(started_cluster):
 
     # clean warehouse data path
     run_and_check(
-        [f'docker exec {bearer_container_id} bash -c "rm -rf /var/lib/clickhouse/user_files/warehouse/*"'],
+        [f'docker exec {bearer_container_id} bash -c "rm -rf /var/lib/datastore/user_files/warehouse/*"'],
         shell=True,
     )
 
@@ -122,7 +122,7 @@ def test_paimon_rest_catalog(started_cluster):
     )
 
     # insert data via the paimon container
-    insert_cmd = 'java -jar /opt/paimon/paimon-server.jar "insert" "file:///var/lib/clickhouse/user_files/warehouse/" "test" "test_table"'
+    insert_cmd = 'java -jar /opt/paimon/paimon-server.jar "insert" "file:///var/lib/datastore/user_files/warehouse/" "test" "test_table"'
     run_and_check(
         [f"docker exec {bearer_container_id} bash -c '{insert_cmd}'"],
         shell=True,

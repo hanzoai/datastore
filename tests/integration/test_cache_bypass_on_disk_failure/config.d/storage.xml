@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3_disk>
@@ -12,14 +12,14 @@
             <cache_disk_skip>
                 <type>cache</type>
                 <disk>s3_disk</disk>
-                <path>/var/lib/clickhouse/cache_skip/</path>
+                <path>/var/lib/datastore/cache_skip/</path>
                 <max_size>10Gi</max_size>
                 <skip_cache_on_disk_failure>1</skip_cache_on_disk_failure>
             </cache_disk_skip>
             <cache_disk_noskip>
                 <type>cache</type>
                 <disk>s3_disk</disk>
-                <path>/var/lib/clickhouse/cache_noskip/</path>
+                <path>/var/lib/datastore/cache_noskip/</path>
                 <max_size>10Gi</max_size>
                 <skip_cache_on_disk_failure>0</skip_cache_on_disk_failure>
             </cache_disk_noskip>
@@ -41,4 +41,4 @@
             </s3_cache_noskip>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

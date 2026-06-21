@@ -24,15 +24,15 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./transactions.lib
 . "$CUR_DIR"/transactions.lib
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS t_after_commit;
     CREATE TABLE t_after_commit (n Int64)
         ENGINE = MergeTree ORDER BY n
         SETTINGS old_parts_lifetime = 3600;
 "
-$CLICKHOUSE_CLIENT -q "SYSTEM STOP MERGES t_after_commit"
-$CLICKHOUSE_CLIENT -q "INSERT INTO t_after_commit VALUES (1)"
-$CLICKHOUSE_CLIENT -q "INSERT INTO t_after_commit VALUES (2)"
+$DATASTORE_CLIENT -q "SYSTEM STOP MERGES t_after_commit"
+$DATASTORE_CLIENT -q "INSERT INTO t_after_commit VALUES (1)"
+$DATASTORE_CLIENT -q "INSERT INTO t_after_commit VALUES (2)"
 
 # Defense-in-depth: always disable both failpoints on exit so that an early test
 # failure (e.g. a `SYSTEM WAIT FAILPOINT ... PAUSE` timeout) cannot leave the
@@ -40,12 +40,12 @@ $CLICKHOUSE_CLIENT -q "INSERT INTO t_after_commit VALUES (2)"
 # `SYSTEM DISABLE FAILPOINT` on an already-disabled failpoint is a no-op, so this
 # is safe even when the normal cleanup at the end of the script already ran.
 trap '
-    $CLICKHOUSE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_after_commit_pause" 2>/dev/null || true
-    $CLICKHOUSE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_force_unknown_state_after_commit" 2>/dev/null || true
+    $DATASTORE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_after_commit_pause" 2>/dev/null || true
+    $DATASTORE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_force_unknown_state_after_commit" 2>/dev/null || true
 ' EXIT
 
-$CLICKHOUSE_CLIENT -q "SYSTEM ENABLE FAILPOINT transaction_force_unknown_state_after_commit"
-$CLICKHOUSE_CLIENT -q "SYSTEM ENABLE FAILPOINT transaction_after_commit_pause"
+$DATASTORE_CLIENT -q "SYSTEM ENABLE FAILPOINT transaction_force_unknown_state_after_commit"
+$DATASTORE_CLIENT -q "SYSTEM ENABLE FAILPOINT transaction_after_commit_pause"
 
 # Run COMMIT in the background. With the fix, the foreground COMMIT will block
 # on `waitStateChange` until the background `afterCommit` releases the pause.
@@ -57,10 +57,10 @@ tx_async 1 "COMMIT"
 # Deterministically wait until the background thread is paused inside `afterCommit`.
 # `SYSTEM WAIT FAILPOINT ... PAUSE` returns immediately once a thread is paused at the
 # failpoint, so the subsequent checks see a stable state regardless of host load.
-$CLICKHOUSE_CLIENT -q "SYSTEM WAIT FAILPOINT transaction_after_commit_pause PAUSE"
+$DATASTORE_CLIENT -q "SYSTEM WAIT FAILPOINT transaction_after_commit_pause PAUSE"
 
 # Check 1: the foreground COMMIT must still be running (paused inside afterCommit).
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT 'commit_still_running',
         count() > 0
     FROM system.processes
@@ -70,7 +70,7 @@ $CLICKHOUSE_CLIENT -q "
 "
 
 # Check 2: per-part metadata is already persisted, even though COMMIT has not returned.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT 'removal_csn_visible_during_pause', count()
     FROM system.parts
     WHERE database = currentDatabase()
@@ -79,13 +79,13 @@ $CLICKHOUSE_CLIENT -q "
 "
 
 # Release the pause; the foreground COMMIT can now finish.
-$CLICKHOUSE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_after_commit_pause"
+$DATASTORE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_after_commit_pause"
 tx_wait 1
 
-$CLICKHOUSE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_force_unknown_state_after_commit"
+$DATASTORE_CLIENT -q "SYSTEM DISABLE FAILPOINT transaction_force_unknown_state_after_commit"
 
 # Final state: still two parts with removal_csn > 1.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT 'removal_csn_visible_after_commit', count()
     FROM system.parts
     WHERE database = currentDatabase()
@@ -93,4 +93,4 @@ $CLICKHOUSE_CLIENT -q "
         AND removal_csn > 1
 "
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE t_after_commit"
+$DATASTORE_CLIENT -q "DROP TABLE t_after_commit"

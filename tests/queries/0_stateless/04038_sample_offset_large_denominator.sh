@@ -12,8 +12,8 @@ function check_roundtrip()
 {
     local query="$1"
     local first second
-    first=$($CLICKHOUSE_FORMAT --oneline --query "$query" 2>&1) || { echo "FAIL: clickhouse-format failed for: $query"; echo "Got: $first"; return; }
-    second=$($CLICKHOUSE_FORMAT --oneline --query "$first" 2>&1) || { echo "FAIL: clickhouse-format failed on round-trip for: $query"; echo "Got: $second"; return; }
+    first=$($DATASTORE_FORMAT --oneline --query "$query" 2>&1) || { echo "FAIL: datastore-format failed for: $query"; echo "Got: $first"; return; }
+    second=$($DATASTORE_FORMAT --oneline --query "$first" 2>&1) || { echo "FAIL: datastore-format failed on round-trip for: $query"; echo "Got: $second"; return; }
 
     if [ "$first" = "$second" ]; then
         echo "OK"
@@ -30,7 +30,7 @@ function check_not_contains()
     local query="$1"
     local forbidden="$2"
     local result
-    result=$($CLICKHOUSE_FORMAT --oneline --query "$query" 2>&1) || { echo "FAIL: clickhouse-format failed for: $query"; echo "Got: $result"; return; }
+    result=$($DATASTORE_FORMAT --oneline --query "$query" 2>&1) || { echo "FAIL: datastore-format failed for: $query"; echo "Got: $result"; return; }
 
     if echo "$result" | grep -qF "$forbidden"; then
         echo "FAIL: output contains '$forbidden' for: $query"
@@ -46,7 +46,7 @@ function check_contains()
     local query="$1"
     local expected="$2"
     local result
-    result=$($CLICKHOUSE_FORMAT --oneline --query "$query" 2>&1) || { echo "FAIL: clickhouse-format failed for: $query"; echo "Got: $result"; return; }
+    result=$($DATASTORE_FORMAT --oneline --query "$query" 2>&1) || { echo "FAIL: datastore-format failed for: $query"; echo "Got: $result"; return; }
 
     if echo "$result" | grep -qF "$expected"; then
         echo "OK"

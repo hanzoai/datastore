@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --multiline -q """
+$DATASTORE_CLIENT --multiline -q """
   SET enable_analyzer=1;
   SET optimize_trivial_insert_select = 0;
 
@@ -25,7 +25,7 @@ $CLICKHOUSE_CLIENT --multiline -q """
 """
 
 # Check that there is no exception
-$CLICKHOUSE_CLIENT -q """
+$DATASTORE_CLIENT -q """
   SET enable_analyzer=1;
   SET optimize_trivial_insert_select = 0;
   EXPLAIN PIPELINE INSERT INTO t0 SELECT * FROM file(database() || '.test.bin', RowBinary)

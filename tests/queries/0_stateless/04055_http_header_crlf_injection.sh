@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 extract_query_id() {
-    grep '< X-ClickHouse-Query-Id:' | sed 's/\r$//' | sed 's/^< X-ClickHouse-Query-Id: //'
+    grep '< X-Datastore-Query-Id:' | sed 's/\r$//' | sed 's/^< X-Datastore-Query-Id: //'
 }
 
 count_injected_headers() {
@@ -16,10 +16,10 @@ count_injected_headers() {
 }
 
 echo "--- CRLF in query_id via URL parameter ---"
-RESPONSE=$(${CLICKHOUSE_CURL} -sS --globoff -v "${CLICKHOUSE_URL}&query=SELECT+1&query_id=inject%0d%0aLocation:%20evil.com" 2>&1)
+RESPONSE=$(${DATASTORE_CURL} -sS --globoff -v "${DATASTORE_URL}&query=SELECT+1&query_id=inject%0d%0aLocation:%20evil.com" 2>&1)
 echo "$RESPONSE" | extract_query_id
 echo "$RESPONSE" | count_injected_headers Location
 
 echo "--- Normal query_id ---"
-${CLICKHOUSE_CURL} -sS --globoff -v "${CLICKHOUSE_URL}&query=SELECT+1&query_id=normal_test_id_04055" 2>&1 \
+${DATASTORE_CURL} -sS --globoff -v "${DATASTORE_URL}&query=SELECT+1&query_id=normal_test_id_04055" 2>&1 \
     | extract_query_id

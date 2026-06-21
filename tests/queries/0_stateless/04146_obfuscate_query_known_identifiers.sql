@@ -1,6 +1,6 @@
 -- Function names, aggregate function names, table function names, formats, data types,
 -- and codecs must be preserved by `obfuscateQuery` / `obfuscateQueryWithSeed`,
--- mirroring the behaviour of `clickhouse-format --obfuscate`.
+-- mirroring the behaviour of `datastore-format --obfuscate`.
 
 SELECT obfuscateQueryWithSeed('SELECT count(*), sum(x), avg(y) FROM t', 1) LIKE '%count%' AS keep_count,
        obfuscateQueryWithSeed('SELECT count(*), sum(x), avg(y) FROM t', 1) LIKE '%sum%'   AS keep_sum,

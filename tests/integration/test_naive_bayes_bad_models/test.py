@@ -81,12 +81,12 @@ def load_model(xml_name: str, bin_name: str):
 
     node.copy_file_to_container(
         os.path.join(CFG_DIR, xml_name),
-        "/etc/clickhouse-server/config.d/naive_bayes.xml",
+        "/etc/datastore-server/config.d/naive_bayes.xml",
     )
 
     node.copy_file_to_container(
         tf.name,
-        f"/etc/clickhouse-server/config.d/{bin_name}",
+        f"/etc/datastore-server/config.d/{bin_name}",
     )
 
     node.restart_clickhouse()

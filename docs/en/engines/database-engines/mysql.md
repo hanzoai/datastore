@@ -1,6 +1,6 @@
 ---
 description: 'Allows connecting to databases on a remote MySQL server and perform
-  `INSERT` and `SELECT` queries to exchange data between ClickHouse and MySQL.'
+  `INSERT` and `SELECT` queries to exchange data between Datastore and MySQL.'
 sidebar_label: 'MySQL'
 sidebar_position: 50
 slug: /engines/database-engines/mysql
@@ -14,7 +14,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 <CloudNotSupportedBadge />
 
-Allows to connect to databases on a remote MySQL server and perform `INSERT` and `SELECT` queries to exchange data between ClickHouse and MySQL.
+Allows to connect to databases on a remote MySQL server and perform `INSERT` and `SELECT` queries to exchange data between Datastore and MySQL.
 
 The `MySQL` database engine translate queries to the MySQL server so you can perform operations such as `SHOW TABLES` or `SHOW CREATE TABLE`.
 
@@ -40,7 +40,7 @@ ENGINE = MySQL('host:port', ['database' | database], 'user', 'password')
 
 ## Data types support {#data_types-support}
 
-| MySQL                            | ClickHouse                                                   |
+| MySQL                            | Datastore                                                   |
 |----------------------------------|--------------------------------------------------------------|
 | UNSIGNED TINYINT                 | [UInt8](../../sql-reference/data-types/int-uint.md)          |
 | TINYINT                          | [Int8](../../sql-reference/data-types/int-uint.md)           |
@@ -104,7 +104,7 @@ mysql> select * from mysql_table;
 1 row in set (0,00 sec)
 ```
 
-Database in ClickHouse, exchanging data with the MySQL server:
+Database in Datastore, exchanging data with the MySQL server:
 
 ```sql
 CREATE DATABASE mysql_db ENGINE = MySQL('localhost:3306', 'test', 'my_user', 'user_password') SETTINGS read_write_timeout=10000, connect_timeout=100;

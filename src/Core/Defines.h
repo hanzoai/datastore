@@ -59,7 +59,7 @@ static constexpr auto DEFAULT_TCP_KEEP_ALIVE_TIMEOUT = 290;
 static constexpr auto DEFAULT_HTTP_KEEP_ALIVE_TIMEOUT = 30;
 static constexpr auto DEFAULT_HTTP_KEEP_ALIVE_MAX_REQUEST = 1000;
 
-static constexpr auto DBMS_DEFAULT_PATH = "/var/lib/clickhouse/";
+static constexpr auto DBMS_DEFAULT_PATH = "/var/lib/datastore/";
 
 /// Actually, there may be multiple acquisitions of different locks for a given table within one query.
 /// Check with IStorage class for the list of possible locks
@@ -142,7 +142,7 @@ static constexpr auto DEFAULT_PAGE_CACHE_MAX_SIZE = 0_MiB;
 /// They change %rbp during unwinding and it confuses libunwind if signal comes during sanitizer unwinding
 ///  and query profiler decide to unwind stack with libunwind at this moment.
 ///
-/// Symptoms: you'll get silent Segmentation Fault - without sanitizer message and without usual ClickHouse diagnostics.
+/// Symptoms: you'll get silent Segmentation Fault - without sanitizer message and without usual Datastore diagnostics.
 ///
 /// Look at compiler-rt/lib/sanitizer_common/sanitizer_stacktrace.h
 #if !defined(SANITIZER)

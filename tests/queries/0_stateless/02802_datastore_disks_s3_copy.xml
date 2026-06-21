@@ -1,0 +1,28 @@
+<datastore>
+    <storage_configuration>
+       <disks>
+           <s3_plain_native_copy>
+               <type>s3_plain</type>
+               <endpoint>http://localhost:11111/test/datastore-disks/</endpoint>
+               <access_key_id>datastore</access_key_id>
+               <secret_access_key>datastore</secret_access_key>
+               <s3_allow_native_copy>true</s3_allow_native_copy>
+           </s3_plain_native_copy>
+           <s3_plain_another>
+               <type>s3_plain</type>
+               <endpoint>http://localhost:11111/test/datastore-disks/</endpoint>
+               <access_key_id>datastore</access_key_id>
+               <secret_access_key>datastore</secret_access_key>
+               <s3_allow_native_copy>true</s3_allow_native_copy>
+           </s3_plain_another>
+
+           <s3_plain_no_native_copy>
+               <type>s3_plain</type>
+               <endpoint>http://localhost:11111/test/datastore-disks/</endpoint>
+               <access_key_id>datastore</access_key_id>
+               <secret_access_key>datastore</secret_access_key>
+               <s3_allow_native_copy>false</s3_allow_native_copy>
+           </s3_plain_no_native_copy>
+       </disks>
+   </storage_configuration>
+</datastore>

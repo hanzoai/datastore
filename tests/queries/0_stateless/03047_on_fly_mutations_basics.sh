@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./mergetree_mutations.lib
 . "$CURDIR"/mergetree_mutations.lib
 
-${CLICKHOUSE_CLIENT} -n --query "
+${DATASTORE_CLIENT} -n --query "
 DROP TABLE IF EXISTS t_lightweight_mut_1;
 
 SET apply_mutations_on_fly = 1;
@@ -65,7 +65,7 @@ SYSTEM START merges t_lightweight_mut_1;
 
 wait_for_mutation "t_lightweight_mut_1" "mutation_5.txt"
 
-$CLICKHOUSE_CLIENT -n --query "
+$DATASTORE_CLIENT -n --query "
 SET apply_mutations_on_fly = 1;
 
 SELECT count() FROM system.mutations

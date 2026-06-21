@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- Regression test for nullptr dereference in Parquet reader when use_filter_in_decoder
 -- path encounters pages with reset prefetch handles (filtered out by offset index).
--- https://github.com/ClickHouse/ClickHouse/issues/99676
+-- https://github.com/ClickHouse/Datastore/issues/99676
 
 set engine_file_truncate_on_insert = 1;
 

@@ -126,13 +126,13 @@ def _create_rep(interval):
 
     _query_retry(r1, f"""
         CREATE TABLE {table} (id UInt32, v Float64)
-        ENGINE=ReplicatedMergeTree('/clickhouse/tests/{TEST_DB}/{table}', 'r1')
+        ENGINE=ReplicatedMergeTree('/datastore/tests/{TEST_DB}/{table}', 'r1')
         ORDER BY id
         SETTINGS refresh_statistics_interval = {interval}
     """)
     _query_retry(r2, f"""
         CREATE TABLE {table} (id UInt32, v Float64)
-        ENGINE=ReplicatedMergeTree('/clickhouse/tests/{TEST_DB}/{table}', 'r2')
+        ENGINE=ReplicatedMergeTree('/datastore/tests/{TEST_DB}/{table}', 'r2')
         ORDER BY id
         SETTINGS refresh_statistics_interval = {interval}
     """)

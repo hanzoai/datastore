@@ -1,7 +1,7 @@
 -- Tags: no-fasttest
 -- Tag no-fasttest: depends on cld2
 
--- https://github.com/ClickHouse/ClickHouse/issues/103765
+-- https://github.com/ClickHouse/Datastore/issues/103765
 
 SET allow_experimental_nlp_functions = 1;
 

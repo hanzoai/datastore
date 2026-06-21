@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the IPv4 data type in ClickHouse'
+description: 'Documentation for the IPv4 data type in Datastore'
 sidebar_label: 'IPv4'
 sidebar_position: 28
 slug: /sql-reference/data-types/ipv4
@@ -35,16 +35,16 @@ CREATE TABLE hits (url String, from IPv4) ENGINE = MergeTree() ORDER BY from;
 `IPv4` domain supports custom input format as IPv4-strings:
 
 ```sql
-INSERT INTO hits (url, from) VALUES ('https://wikipedia.org', '116.253.40.133')('https://clickhouse.com', '183.247.232.58')('https://clickhouse.com/docs/en/', '116.106.34.242');
+INSERT INTO hits (url, from) VALUES ('https://wikipedia.org', '116.253.40.133')('https://datastore.com', '183.247.232.58')('https://datastore.com/docs/en/', '116.106.34.242');
 
 SELECT * FROM hits;
 ```
 
 ```text
 ┌─url────────────────────────────────┬───────────from─┐
-│ https://clickhouse.com/docs/en/ │ 116.106.34.242 │
+│ https://datastore.com/docs/en/ │ 116.106.34.242 │
 │ https://wikipedia.org              │ 116.253.40.133 │
-│ https://clickhouse.com          │ 183.247.232.58 │
+│ https://datastore.com          │ 183.247.232.58 │
 └────────────────────────────────────┴────────────────┘
 ```
 

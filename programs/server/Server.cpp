@@ -497,7 +497,7 @@ int mainEntryClickHouseServer(int argc, char ** argv)
     /// Can be overridden by environment variable (cannot use server config at this moment).
     if (argc > 0)
     {
-        const char * env_watchdog = getenv("CLICKHOUSE_WATCHDOG_ENABLE"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_watchdog = getenv("DATASTORE_WATCHDOG_ENABLE"); // NOLINT(concurrency-mt-unsafe)
         if (env_watchdog)
         {
             if (0 == strcmp(env_watchdog, "1"))
@@ -712,7 +712,7 @@ int Server::run()
     if (config().hasOption("help"))
     {
         Poco::Util::HelpFormatter help_formatter(Server::options());
-        std::string app_name = (commandName() == "clickhouse-server") ? "clickhouse-server" : "clickhouse server";
+        std::string app_name = (commandName() == "datastore-server") ? "datastore-server" : "datastore server";
         auto header_str = fmt::format("{} [OPTION] [-- [ARG]...]\n"
                                       "positional arguments can be used to rewrite config.xml properties, for example, --http_port=8010",
                                       app_name);
@@ -1245,7 +1245,7 @@ try
                     if (0 != mlock(addr, len))
                         LOG_WARNING(log, "Failed mlock: {}", errnoToString());
                     else
-                        LOG_TRACE(log, "The memory map of clickhouse executable has been mlock'ed, total {}", ReadableSize(len));
+                        LOG_TRACE(log, "The memory map of datastore executable has been mlock'ed, total {}", ReadableSize(len));
                 }
                 catch (...)
                 {
@@ -1257,15 +1257,15 @@ try
                 LOG_INFO(
                     log,
                     "It looks like the process has no CAP_IPC_LOCK capability, binary mlock will be disabled."
-                    " It could happen due to incorrect ClickHouse package installation."
+                    " It could happen due to incorrect Datastore package installation."
                     " You could resolve the problem manually with 'sudo setcap cap_ipc_lock=+ep {}'."
                     " Note that it will not work on 'nosuid' mounted filesystems.",
-                    executable_path.empty() ? "/usr/bin/clickhouse" : executable_path);
+                    executable_path.empty() ? "/usr/bin/datastore" : executable_path);
             }
         }
         else
         {
-            LOG_INFO(log, "Skip mlock for the clickhouse executable, because the total memory in the system ({}) is less than the minimum configured threshold (`mlock_executable_min_total_memory_amount_bytes` = {})",
+            LOG_INFO(log, "Skip mlock for the datastore executable, because the total memory in the system ({}) is less than the minimum configured threshold (`mlock_executable_min_total_memory_amount_bytes` = {})",
                 ReadableSize(physical_server_memory), ReadableSize(min_physical_server_memory_to_mlock));
         }
     }
@@ -1338,7 +1338,7 @@ try
     if (auto total_numa_memory = getNumaNodesTotalMemory(); total_numa_memory.has_value())
     {
         LOG_INFO(
-            log, "ClickHouse is bound to a subset of NUMA nodes. Total memory of all available nodes: {}", ReadableSize(*total_numa_memory));
+            log, "Datastore is bound to a subset of NUMA nodes. Total memory of all available nodes: {}", ReadableSize(*total_numa_memory));
     }
 
 #if USE_AWS_S3
@@ -2406,7 +2406,7 @@ try
 
             /// Reload the number of threads for global pools.
             /// Note: If you specified it in the top level config (not it config of default profile)
-            /// then ClickHouse will use it exactly.
+            /// then Datastore will use it exactly.
             /// This is done for backward compatibility.
             if (global_context->areBackgroundExecutorsInitialized())
             {
@@ -2618,8 +2618,8 @@ try
     if (config().has("keeper_server.server_id"))
     {
 #if USE_NURAFT
-        //// If we don't have configured connection probably someone trying to use clickhouse-server instead
-        //// of clickhouse-keeper, so start synchronously.
+        //// If we don't have configured connection probably someone trying to use datastore-server instead
+        //// of datastore-keeper, so start synchronously.
         bool can_initialize_keeper_async = false;
 
         if (has_zookeeper) /// We have configured connection to some zookeeper cluster
@@ -2732,7 +2732,7 @@ try
             });
         }
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "ClickHouse server built without NuRaft library. Cannot use internal coordination.");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Datastore server built without NuRaft library. Cannot use internal coordination.");
 #endif
 
     }
@@ -2762,7 +2762,7 @@ try
     /// 2. We then start this server a few lines below. While handling the first request, it will access (read) certs.
     /// 3. A little further down, we reload certificates before starting the rest of the servers.
     /// 4. `CertificateReloader` will set its custom `cert_cb` to the default context if it is not initialized yet (see `CertificateReloader::init()`).
-    /// 5. Items (2) and (4) are not synchronized, so there might be a data race for example (see https://github.com/ClickHouse/ClickHouse/issues/85412).
+    /// 5. Items (2) and (4) are not synchronized, so there might be a data race for example (see https://github.com/ClickHouse/Datastore/issues/85412).
     CertificateReloader::instance().tryLoad(config());
     CertificateReloader::instance().tryLoadClient(config());
 #endif
@@ -3011,7 +3011,7 @@ try
     {
         LOG_INFO(log, "It looks like this system does not have procfs mounted at /proc location."
             " 'taskstats' performance statistics will be disabled."
-            " It could happen due to incorrect ClickHouse package installation.");
+            " It could happen due to incorrect Datastore package installation.");
     }
     else
     {
@@ -3021,7 +3021,7 @@ try
     if (!hasLinuxCapability(CAP_SYS_NICE))
     {
         LOG_INFO(log, "It looks like the process has no CAP_SYS_NICE capability, the setting 'os_thread_priority' will have no effect."
-            " It could happen due to incorrect ClickHouse package installation."
+            " It could happen due to incorrect Datastore package installation."
             " You could resolve the problem manually with 'sudo setcap cap_sys_nice=+ep {}'."
             " Note that it will not work on 'nosuid' mounted filesystems.",
             executable_path);
@@ -3176,7 +3176,7 @@ try
 
 #if defined(OS_LINUX)
         /// Tell the service manager that service startup is finished.
-        /// NOTE: the parent clickhouse-watchdog process must do systemdNotify("MAINPID={}\n", child_pid); before
+        /// NOTE: the parent datastore-watchdog process must do systemdNotify("MAINPID={}\n", child_pid); before
         /// the child process notifies 'READY=1'.
         systemdNotify("READY=1\n");
 #endif
@@ -3649,7 +3649,7 @@ void Server::createServers(
                             connection_filter));
 #else
                 UNUSED(port);
-                throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH protocol is disabled because ClickHouse has been built without libssh or is running on a non-Linux platform");
+                throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH protocol is disabled because Datastore has been built without libssh or is running on a non-Linux platform");
 #endif
                 });
         }

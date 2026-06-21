@@ -21,10 +21,10 @@ JEPSEN_GROUP_NAME = "jepsen_group"
 KEEPER_DESIRED_INSTANCE_COUNT = 3
 SERVER_DESIRED_INSTANCE_COUNT = 4
 
-KEEPER_IMAGE_NAME = "clickhouse/keeper-jepsen-test"
+KEEPER_IMAGE_NAME = "datastore/keeper-jepsen-test"
 KEEPER_CHECK_NAME = JobNames.JEPSEN_KEEPER
 
-SERVER_IMAGE_NAME = "clickhouse/server-jepsen-test"
+SERVER_IMAGE_NAME = "datastore/server-jepsen-test"
 SERVER_CHECK_NAME = JobNames.JEPSEN_SERVER
 
 SUCCESSFUL_TESTS_ANCHOR = "# Successful tests"
@@ -54,7 +54,7 @@ def _parse_jepsen_output(path: Path):
                 current_type = Result.Status.FAIL
 
             if (
-                line.startswith("store/clickhouse") or line.startswith("clickhouse")
+                line.startswith("store/datastore") or line.startswith("datastore")
             ) and current_type:
                 test_results.append(Result(line.strip(), current_type))
 
@@ -142,7 +142,7 @@ def get_run_command(
     return (
         f"docker run --network=host -v '{ssh_sock_dir}:{ssh_sock_dir}' -e SSH_AUTH_SOCK={ssh_auth_sock} "
         f"-e PR_TO_TEST={pr_info.pr_number} -e SHA_TO_TEST={pr_info.sha} -v '{nodes_path}:/nodes.txt' -v {result_path}:/test_output "
-        f"-e 'CLICKHOUSE_PACKAGE={build_url}' -v '{repo_path}:/ch' -e 'CLICKHOUSE_REPO_PATH=/ch' -e NODES_USERNAME=ubuntu {extra_args} {docker_image}"
+        f"-e 'DATASTORE_PACKAGE={build_url}' -v '{repo_path}:/ch' -e 'DATASTORE_REPO_PATH=/ch' -e NODES_USERNAME=ubuntu {extra_args} {docker_image}"
     )
 
 
@@ -199,7 +199,7 @@ def main():
     urls = read_build_urls(temp_path, "amd_binary")
     build_url = None
     for url in urls:
-        if url.endswith("clickhouse"):
+        if url.endswith("datastore"):
             build_url = url
     assert build_url, "No build url found in the report"
 

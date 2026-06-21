@@ -91,7 +91,7 @@ LIMIT 5
     └─────────────┴──────────────────────────────────────────────────────────────────────────┴──────┴─────┴─────────┴───────┘
 
    ┌─name────────────────────┬─value──────┬─changed─┬─min──┬─max──┬─type────┬─is_obsolete─┬─tier───────┐
-1. │ dialect                 │ clickhouse │       0 │ ᴺᵁᴸᴸ │ ᴺᵁᴸᴸ │ Dialect │           0 │ Production │
+1. │ dialect                 │ datastore │       0 │ ᴺᵁᴸᴸ │ ᴺᵁᴸᴸ │ Dialect │           0 │ Production │
 2. │ min_compress_block_size │ 65536      │       0 │ ᴺᵁᴸᴸ │ ᴺᵁᴸᴸ │ UInt64  │           0 │ Production │
 3. │ max_compress_block_size │ 1048576    │       0 │ ᴺᵁᴸᴸ │ ᴺᵁᴸᴸ │ UInt64  │           0 │ Production │
 4. │ max_block_size          │ 65409      │       0 │ ᴺᵁᴸᴸ │ ᴺᵁᴸᴸ │ UInt64  │           0 │ Production │
@@ -120,7 +120,7 @@ PRIMARY KEY (crypto_name, trade_date);
 INSERT INTO crypto_prices
    SELECT *
    FROM s3(
-    'https://learn-clickhouse.s3.us-east-2.amazonaws.com/crypto_prices.csv',
+    'https://learn-datastore.s3.us-east-2.amazonaws.com/crypto_prices.csv',
     'CSVWithNames'
 );
 

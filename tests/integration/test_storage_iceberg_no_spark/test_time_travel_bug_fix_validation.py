@@ -21,11 +21,11 @@ def test_time_travel_bug_fix_validation(started_cluster_iceberg_no_spark):
     default_download_directory(
         started_cluster_iceberg_no_spark,
         "local",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
-    first_snapshot = get_last_snapshot(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/")
+    first_snapshot = get_last_snapshot(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/")
 
     instance.query(f"INSERT INTO {TABLE_NAME} VALUES ('123', 1);", settings={"write_full_path_in_iceberg_metadata": True})
 

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/70449
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/70449
 -- LOGICAL_ERROR "Column identifier is already registered" when reading multiple
 -- subcolumns from the same Nested column in a CREATE VIEW / MATERIALIZED VIEW.
 
@@ -24,7 +24,7 @@ SELECT
     operation_name AS name,
     start_time_us AS timestamp,
     finish_time_us - start_time_us AS duration,
-    cast(tuple('clickhouse'), 'Tuple(serviceName text)') AS localEndpoint,
+    cast(tuple('datastore'), 'Tuple(serviceName text)') AS localEndpoint,
     cast(tuple(
         attribute.values[indexOf(attribute.names, 'db.statement')]),
         'Tuple("db.statement" text)') AS tags
@@ -42,7 +42,7 @@ FROM test_otel_nested;
 
 DROP TABLE test_otel_nested;
 
--- Simplified case from https://github.com/ClickHouse/ClickHouse/pull/97442#issuecomment-2893227498
+-- Simplified case from https://github.com/ClickHouse/Datastore/pull/97442#issuecomment-2893227498
 -- Map column with ALIAS subcolumns referenced in a VIEW
 CREATE TABLE test_otel_map
 (

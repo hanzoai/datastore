@@ -4,7 +4,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-stderr="$(mktemp "$CURDIR/clickhouse.stderr.XXXXXX.log")"
+stderr="$(mktemp "$CURDIR/datastore.stderr.XXXXXX.log")"
 trap 'rm -f "$stderr"' EXIT
 
 function process_log_safe()
@@ -22,10 +22,10 @@ function execute_query()
     echo "$hosts"
     # NOTE: we cannot use process substition here for simplicity because they are async, i.e.:
     #
-    #   clickhouse-client 2> >(wc -l)
+    #   datastore-client 2> >(wc -l)
     #
     # May dump output of "wc -l" after some other programs.
-    $CLICKHOUSE_CLIENT "${opts[@]}" --query "select * from remote('$hosts', system.one) settings use_hedged_requests=0" 2>"$stderr"
+    $DATASTORE_CLIENT "${opts[@]}" --query "select * from remote('$hosts', system.one) settings use_hedged_requests=0" 2>"$stderr"
     process_log_safe "$stderr"
 }
 execute_query 255.255.255.255

@@ -142,7 +142,7 @@ def started_cluster():
             "dummy_old",
             with_minio=True,
             with_installed_binary=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="25.3.3.42",
             stay_alive=True,
             main_configs=[
@@ -3068,7 +3068,7 @@ def test_object_tags(started_cluster):
     instance.query(f"insert into function s3('http://{started_cluster.minio_host}:{started_cluster.minio_port}/{bucket}/{table_name_without_tags}.tsv', auto, 'x UInt64') select 1 SETTINGS s3_truncate_on_insert=1")
 
     tags = Tags(for_object=True)
-    tags["Database"] = "ClickHouse"
+    tags["Database"] = "Datastore"
     tags["Team"] = "Core"
     tags["Ping"] = "Pong"
 
@@ -3093,12 +3093,12 @@ def test_object_tags(started_cluster):
         assert len(events) == 1
         return (events['DiskS3GetObjectTagging'][0], events['S3GetObjectTagging'][0])
 
-    expected_with_tags = f"{{'Database':'ClickHouse','Ping':'Pong','Team':'Core'}}\t{table_name_with_tags}.tsv\troot/{table_name_with_tags}.tsv\t1\n"
+    expected_with_tags = f"{{'Database':'Datastore','Ping':'Pong','Team':'Core'}}\t{table_name_with_tags}.tsv\troot/{table_name_with_tags}.tsv\t1\n"
     expected_without_tags = f"{table_name_with_tags}.tsv\troot/{table_name_with_tags}.tsv\t1\n"
 
-    # ClickHouse has separate code path for handling globs
+    # Datastore has separate code path for handling globs
     for file in [f'{table_name_with_tags}.tsv', f'{table_name_with_tags}.*']:
-        # ClickHouse has separate code path for handling s3_ignore_file_doesnt_exist=1
+        # Datastore has separate code path for handling s3_ignore_file_doesnt_exist=1
         for s3_ignore_file_doesnt_exist in [0, 1]:
             query_id = uuid.uuid4().hex
             assert read_s3_tags(file, query_id=query_id, settings={"s3_ignore_file_doesnt_exist": s3_ignore_file_doesnt_exist}) == expected_with_tags

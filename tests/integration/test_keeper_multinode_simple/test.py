@@ -261,7 +261,7 @@ def test_simple_replicated_table(started_cluster):
     for i, node in enumerate([node1, node2, node3]):
         node.query(f"DROP TABLE IF EXISTS {test_name} SYNC")
         node.query(
-            f"CREATE TABLE {test_name} (value UInt64) ENGINE = ReplicatedMergeTree('/clickhouse/{test_name}', '{i + 1}') ORDER BY tuple()"
+            f"CREATE TABLE {test_name} (value UInt64) ENGINE = ReplicatedMergeTree('/datastore/{test_name}', '{i + 1}') ORDER BY tuple()"
         )
 
     node2.query(f"INSERT INTO {test_name} SELECT number FROM numbers(10)")

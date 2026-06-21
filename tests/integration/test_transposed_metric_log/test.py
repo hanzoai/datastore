@@ -29,7 +29,7 @@ node4 = cluster.add_instance(
     stay_alive=True,
 )
 
-LOG_PATH = "/etc/clickhouse-server/config.d/metric_log_config.xml"
+LOG_PATH = "/etc/datastore-server/config.d/metric_log_config.xml"
 
 @pytest.fixture(scope="module")
 def start_cluster():

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100781
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100781
 -- The `optimize_read_in_order` optimization incorrectly propagated the sorted
 -- property through grace hash join, which scatters rows into buckets by hash
 -- and destroys the input order.

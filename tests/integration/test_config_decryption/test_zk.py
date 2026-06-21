@@ -4,9 +4,9 @@ import os
 from helpers.cluster import ClickHouseCluster
 
 def create_params_in_zk(zk):
-    zk.ensure_path("/clickhouse")
+    zk.ensure_path("/datastore")
 
-    key128 = "/clickhouse/key128"
+    key128 = "/datastore/key128"
     zk.create(key128, b"00112233445566778899aabbccddeeff")
     logging.debug(f"Create ZK key: {key128}, value: {zk.get(key128)}")
 

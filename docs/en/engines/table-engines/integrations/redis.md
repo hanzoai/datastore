@@ -1,5 +1,5 @@
 ---
-description: 'This engine allows integrating ClickHouse with Redis.'
+description: 'This engine allows integrating Datastore with Redis.'
 sidebar_label: 'Redis'
 sidebar_position: 175
 slug: /engines/table-engines/integrations/redis
@@ -7,7 +7,7 @@ title: 'Redis table engine'
 doc_type: 'guide'
 ---
 
-This engine allows integrating ClickHouse with [Redis](https://redis.io/). For Redis takes kv model, we strongly recommend you only query it in a point way, such as `where k=xx` or `where k in (xx, xx)`.
+This engine allows integrating Datastore with [Redis](https://redis.io/). For Redis takes kv model, we strongly recommend you only query it in a point way, such as `where k=xx` or `where k in (xx, xx)`.
 
 ## Creating a table {#creating-a-table}
 
@@ -42,7 +42,7 @@ Queries with `key equals` or `in filtering` will be optimized to multi keys look
 
 ## Usage example {#usage-example}
 
-Create a table in ClickHouse using `Redis` engine with plain arguments:
+Create a table in Datastore using `Redis` engine with plain arguments:
 
 ```sql title="Query"
 CREATE TABLE redis_table

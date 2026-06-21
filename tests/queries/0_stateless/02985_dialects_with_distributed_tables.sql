@@ -27,7 +27,7 @@ from distributed_test_table
 select {id}
 take 1..3;
 
-SET dialect = 'clickhouse';
+SET dialect = 'datastore';
 
 DROP TABLE distributed_test_table;
 DROP TABLE shared_test_table;

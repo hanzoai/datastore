@@ -5,9 +5,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} -q 'DROP TABLE IF EXISTS t_part_log_has_merge_type_table'
+${DATASTORE_CLIENT} -q 'DROP TABLE IF EXISTS t_part_log_has_merge_type_table'
 
-${CLICKHOUSE_CLIENT} -q '
+${DATASTORE_CLIENT} -q '
     CREATE TABLE t_part_log_has_merge_type_table
     (
         event_time DateTime,
@@ -20,12 +20,12 @@ ${CLICKHOUSE_CLIENT} -q '
     SETTINGS old_parts_lifetime = 1, min_bytes_for_wide_part = 0, materialize_ttl_recalculate_only = true, max_number_of_merges_with_ttl_in_pool = 100
 '
 
-${CLICKHOUSE_CLIENT} -q "INSERT INTO t_part_log_has_merge_type_table VALUES (now(), 1, 'username1');"
-${CLICKHOUSE_CLIENT} -q "INSERT INTO t_part_log_has_merge_type_table VALUES (now() - INTERVAL 4 MONTH, 2, 'username2');"
+${DATASTORE_CLIENT} -q "INSERT INTO t_part_log_has_merge_type_table VALUES (now(), 1, 'username1');"
+${DATASTORE_CLIENT} -q "INSERT INTO t_part_log_has_merge_type_table VALUES (now() - INTERVAL 4 MONTH, 2, 'username2');"
 
 function get_parts_count() {
     table_name=$1
-    ${CLICKHOUSE_CLIENT} -q '
+    ${DATASTORE_CLIENT} -q '
         SELECT
             count(*)
         FROM
@@ -35,7 +35,7 @@ function get_parts_count() {
         AND
             active = 1
         AND
-            database = '"'${CLICKHOUSE_DATABASE}'"'
+            database = '"'${DATASTORE_DATABASE}'"'
     '
 }
 
@@ -57,9 +57,9 @@ function wait_table_parts_are_merged_into_one_part() {
 
 wait_table_parts_are_merged_into_one_part t_part_log_has_merge_type_table
 
-${CLICKHOUSE_CLIENT} -q 'SYSTEM FLUSH LOGS part_log'
+${DATASTORE_CLIENT} -q 'SYSTEM FLUSH LOGS part_log'
 
-${CLICKHOUSE_CLIENT} -q '
+${DATASTORE_CLIENT} -q '
   SELECT
       event_type,
       merge_reason
@@ -72,6 +72,6 @@ ${CLICKHOUSE_CLIENT} -q '
       AND
           table = '"'t_part_log_has_merge_type_table'"'
       AND
-          database = '"'${CLICKHOUSE_DATABASE}'"'
+          database = '"'${DATASTORE_DATABASE}'"'
   ORDER BY event_type, merge_reason
 '

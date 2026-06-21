@@ -1,4 +1,4 @@
--- Companion to https://github.com/ClickHouse/ClickHouse/issues/105021.
+-- Companion to https://github.com/ClickHouse/Datastore/issues/105021.
 --
 -- Expected behavior (not yet implemented):
 --   After `RENAME TABLE a TO c` of an `MV` source table within a single

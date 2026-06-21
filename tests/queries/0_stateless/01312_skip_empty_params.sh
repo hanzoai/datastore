@@ -6,6 +6,6 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL&query=select%201&log_queries=1"
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL&&query=select%201&log_queries=1"
-$CLICKHOUSE_CURL -sS "$CLICKHOUSE_URL&query=select%201&&&log_queries=1"
+$DATASTORE_CURL -sS "$DATASTORE_URL&query=select%201&log_queries=1"
+$DATASTORE_CURL -sS "$DATASTORE_URL&&query=select%201&log_queries=1"
+$DATASTORE_CURL -sS "$DATASTORE_URL&query=select%201&&&log_queries=1"

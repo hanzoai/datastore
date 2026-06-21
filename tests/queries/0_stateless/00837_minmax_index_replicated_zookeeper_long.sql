@@ -17,7 +17,7 @@ CREATE TABLE minmax_idx1
       idx_all (i32, i32 + f64, d, s, e, dt) TYPE minmax GRANULARITY 1,
     INDEX
       idx_2 (u64 + toYear(dt), substring(s, 2, 4)) TYPE minmax GRANULARITY 3
-) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_00837/minmax', 'r1')
+) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_00837/minmax', 'r1')
 ORDER BY u64
 SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi';
 
@@ -34,7 +34,7 @@ CREATE TABLE minmax_idx2
       idx_all (i32, i32 + f64, d, s, e, dt) TYPE minmax GRANULARITY 1,
     INDEX
       idx_2 (u64 + toYear(dt), substring(s, 2, 4)) TYPE minmax GRANULARITY 3
-) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_00837/minmax', 'r2')
+) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_00837/minmax', 'r2')
 ORDER BY u64
 SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi';
 

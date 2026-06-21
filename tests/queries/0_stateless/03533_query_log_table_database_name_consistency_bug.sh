@@ -6,14 +6,14 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # We need the predefined log_comment to identify log entities during the test run only.
-uuid=$(${CLICKHOUSE_CLIENT} --query "SELECT reinterpretAsUUID(currentDatabase())")
+uuid=$(${DATASTORE_CLIENT} --query "SELECT reinterpretAsUUID(currentDatabase())")
 log_comment="03533_table_names_consistency_in_query_log_table_bug_$uuid"
 
 # The test checks that the system.query_log contains consistency table and database names
 # for queries involving tables and databases with and without dashes in their names.
 
 # Clean up any previous runs
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 -- Clean up before running the test
 DROP TABLE IF EXISTS \`03533-query-log-table-database-name-consistency-bug\`.\`test-with-a-dash\`;
 DROP TABLE IF EXISTS test_without_dash;
@@ -23,7 +23,7 @@ DROP DATABASE IF EXISTS \`03533-query-log-table-database-name-consistency-bug\`;
 "
 
 # Data preparation for the test.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 SET log_queries=1;
 
 -- Create the database and tables with and without dashes in their names
@@ -100,7 +100,7 @@ SETTINGS log_comment='$log_comment';
 "
 
 # Flush the logs and check the system.query_log for consistency in table and database names.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 SYSTEM FLUSH LOGS query_log;
 
 WITH

@@ -5,7 +5,7 @@ if [[ ! -v MALLOC_CONF ]]; then
     jemalloc_profiles=/tmp/jemalloc_profiles
     mkdir -p "$jemalloc_profiles"
 
-    export MALLOC_CONF=prof_active:true,prof_prefix:$jemalloc_profiles/clickhouse.jemalloc
+    export MALLOC_CONF=prof_active:true,prof_prefix:$jemalloc_profiles/datastore.jemalloc
     JEMALLOC_PROFILER=1
 fi
 
@@ -38,7 +38,7 @@ function dump_stacktraces_on_shutdown()
 
     if kill -0 "$PID"; then
         echo "Attaching gdb to obtain thread stacktraces"
-        gdb -batch -ex 'thread apply all bt' -p "$PID" > /var/log/clickhouse-server/stdout.log
+        gdb -batch -ex 'thread apply all bt' -p "$PID" > /var/log/datastore-server/stdout.log
     fi
 }
 dump_stacktraces_on_shutdown &
@@ -53,13 +53,13 @@ echo "Server exited with $server_exit_code"
 wait
 
 if [[ $JEMALLOC_PROFILER -eq 1 ]]; then
-    jemalloc_reports=/var/lib/clickhouse/jemalloc
+    jemalloc_reports=/var/lib/datastore/jemalloc
     mkdir -p "$jemalloc_reports"
 
     echo "=== jemalloc reports:"
     ls -dlt "$jemalloc_profiles"/* | head
 
-    bin="$(which clickhouse)"
+    bin="$(which datastore)"
     last_profile="$(ls -dt "$jemalloc_profiles"/* | head -1)"
     echo "Using $last_profile"
 
@@ -69,7 +69,7 @@ if [[ $JEMALLOC_PROFILER -eq 1 ]]; then
     fi
 fi
 
-chmod -R a+rX /var/log/clickhouse-server 2>/dev/null || true
+chmod -R a+rX /var/log/datastore-server 2>/dev/null || true
 
 # Preserve exit code of the server
 exit $server_exit_code

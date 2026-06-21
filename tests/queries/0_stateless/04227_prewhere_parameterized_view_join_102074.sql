@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/102074
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/102074
 -- `PREWHERE` column not included in read plan when used inside parameterized view with `JOIN`.
 
 DROP TABLE IF EXISTS prewhere_bug_events;

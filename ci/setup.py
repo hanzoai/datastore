@@ -7,7 +7,7 @@ setup(
     url="https://github.com/ClickHouse/praktika",
     license="Apache 2.0",
     author="Max Kainov",
-    author_email="max.kainov@clickhouse.com",
+    author_email="max.kainov@datastore.com",
     description="CI Infrastructure Toolbox",
     entry_points={
         "console_scripts": [

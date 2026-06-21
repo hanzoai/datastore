@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS dst_04218_fail SYNC;
 DROP TABLE IF EXISTS dst_04218_ok SYNC;
 
 CREATE TABLE src_04218 (x UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/04218_restore_retries/src', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/04218_restore_retries/src', 'r1')
 ORDER BY x;
 
 INSERT INTO src_04218 VALUES (1), (2);
@@ -16,7 +16,7 @@ INSERT INTO src_04218 VALUES (1), (2);
 BACKUP TABLE src_04218 TO Memory('04218_restore_retries') FORMAT Null;
 
 CREATE TABLE dst_04218_fail (x UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/04218_restore_retries/dst_fail', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/04218_restore_retries/dst_fail', 'r1')
 ORDER BY x;
 
 SYSTEM ENABLE FAILPOINT replicated_merge_tree_restore_attach_retry;
@@ -27,7 +27,7 @@ SETTINGS allow_different_table_def = 1, backup_restore_keeper_max_retries = 0; -
 DROP TABLE dst_04218_fail SYNC;
 
 CREATE TABLE dst_04218_ok (x UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/04218_restore_retries/dst_ok', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/04218_restore_retries/dst_ok', 'r1')
 ORDER BY x;
 
 SYSTEM ENABLE FAILPOINT replicated_merge_tree_restore_attach_retry;

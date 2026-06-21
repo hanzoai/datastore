@@ -8,7 +8,7 @@ set -ex
 # Avoid overlaps with previous runs
 dmesg --clear
 
-ln -s /repo/tests/clickhouse-test /usr/bin/clickhouse-test
+ln -s /repo/tests/datastore-test /usr/bin/datastore-test
 
 # shellcheck source=../stateless/stress_tests.lib
 source /repo/tests/docker_scripts/stress_tests.lib
@@ -44,7 +44,7 @@ export USE_ENCRYPTED_STORAGE=$((RANDOM % 2))
 
 export ZOOKEEPER_FAULT_INJECTION=1
 # Initial run without S3 to create system.*_log on local file system to make it
-# available for dump via clickhouse-local
+# available for dump via datastore-local
 configure
 
 # run before start_minio to have valid aws creds
@@ -64,18 +64,18 @@ start_server || { echo "Failed to start server"; exit 1; }
 
 cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py logs_export_start || echo "ERROR: Failed to start log exports"
 
-clickhouse-client --query "CREATE DATABASE datasets"
-clickhouse-client < /repo/tests/docker_scripts/create.sql
+datastore-client --query "CREATE DATABASE datasets"
+datastore-client < /repo/tests/docker_scripts/create.sql
 bash /repo/tests/docker_scripts/create_tpcds.sh
 bash /repo/tests/docker_scripts/create_tpch.sh
-clickhouse-client --query "SHOW TABLES FROM datasets"
-clickhouse-client --query "SHOW TABLES FROM tpcds"
-clickhouse-client --query "SHOW TABLES FROM tpch"
+datastore-client --query "SHOW TABLES FROM datasets"
+datastore-client --query "SHOW TABLES FROM tpcds"
+datastore-client --query "SHOW TABLES FROM tpch"
 
-clickhouse-client --query "CREATE DATABASE IF NOT EXISTS test"
+datastore-client --query "CREATE DATABASE IF NOT EXISTS test"
 
 stop_server
-mv /var/log/clickhouse-server/clickhouse-server.log /var/log/clickhouse-server/clickhouse-server.initial.log
+mv /var/log/datastore-server/datastore-server.log /var/log/datastore-server/datastore-server.initial.log
 
 # Randomize cache policies.
 cache_policy=""
@@ -88,17 +88,17 @@ fi
 echo "Using cache policy: $cache_policy"
 
 if [ "$cache_policy" = "SLRU" ]; then
-    sed -i.tmp "s|<cache_policy>LRU</cache_policy>|<cache_policy>SLRU</cache_policy>|" /etc/clickhouse-server/config.d/storage_conf*.xml
+    sed -i.tmp "s|<cache_policy>LRU</cache_policy>|<cache_policy>SLRU</cache_policy>|" /etc/datastore-server/config.d/storage_conf*.xml
 fi
 
 start_server || { echo "Failed to start server"; exit 1; }
 
-clickhouse-client --query "SYSTEM STOP THREAD FUZZER"
+datastore-client --query "SYSTEM STOP THREAD FUZZER"
 
-clickhouse-client --query "SHOW TABLES FROM datasets"
-clickhouse-client --query "SHOW TABLES FROM tpcds"
-clickhouse-client --query "SHOW TABLES FROM tpch"
-clickhouse-client --query "SHOW TABLES FROM test"
+datastore-client --query "SHOW TABLES FROM datasets"
+datastore-client --query "SHOW TABLES FROM tpcds"
+datastore-client --query "SHOW TABLES FROM tpch"
+datastore-client --query "SHOW TABLES FROM test"
 
 if [[ "$USE_S3_STORAGE_FOR_MERGE_TREE" == "1" ]]; then
     TEMP_POLICY="s3_cache"
@@ -121,7 +121,7 @@ else
 fi
 
 
-clickhouse-client --query "CREATE TABLE test.hits_s3 (WatchID UInt64,  JavaEnable UInt8,  Title String,  GoodEvent Int16,
+datastore-client --query "CREATE TABLE test.hits_s3 (WatchID UInt64,  JavaEnable UInt8,  Title String,  GoodEvent Int16,
     EventTime DateTime,  EventDate Date,  CounterID UInt32,  ClientIP UInt32,  ClientIP6 FixedString(16),  RegionID UInt32,
     UserID UInt64,  CounterClass Int8,  OS UInt8,  UserAgent UInt8,  URL String,  Referer String,  URLDomain String,  RefererDomain String,
     Refresh UInt8,  IsRobot UInt8,  RefererCategories Array(UInt16),  URLCategories Array(UInt16), URLRegions Array(UInt32),
@@ -147,7 +147,7 @@ clickhouse-client --query "CREATE TABLE test.hits_s3 (WatchID UInt64,  JavaEnabl
     ParsedParams Nested(Key1 String,  Key2 String, Key3 String, Key4 String, Key5 String,  ValueDouble Float64),
     IslandID FixedString(16),  RequestNum UInt32,  RequestTry UInt8) ENGINE = MergeTree() PARTITION BY toYYYYMM(EventDate)
     ORDER BY (CounterID, EventDate, intHash32(UserID)) SAMPLE BY intHash32(UserID) SETTINGS index_granularity = 8192, storage_policy='$TEMP_POLICY'"
-clickhouse-client --query "CREATE TABLE test.hits (WatchID UInt64,  JavaEnable UInt8,  Title String,  GoodEvent Int16,
+datastore-client --query "CREATE TABLE test.hits (WatchID UInt64,  JavaEnable UInt8,  Title String,  GoodEvent Int16,
     EventTime DateTime,  EventDate Date,  CounterID UInt32,  ClientIP UInt32,  ClientIP6 FixedString(16),  RegionID UInt32,
     UserID UInt64,  CounterClass Int8,  OS UInt8,  UserAgent UInt8,  URL String,  Referer String,  URLDomain String,
     RefererDomain String,  Refresh UInt8,  IsRobot UInt8,  RefererCategories Array(UInt16),  URLCategories Array(UInt16),
@@ -173,7 +173,7 @@ clickhouse-client --query "CREATE TABLE test.hits (WatchID UInt64,  JavaEnable U
     ParsedParams Nested(Key1 String,  Key2 String, Key3 String, Key4 String, Key5 String,  ValueDouble Float64),
     IslandID FixedString(16),  RequestNum UInt32,  RequestTry UInt8) ENGINE = MergeTree() PARTITION BY toYYYYMM(EventDate)
     ORDER BY (CounterID, EventDate, intHash32(UserID)) SAMPLE BY intHash32(UserID) SETTINGS index_granularity = 8192, storage_policy='$TEMP_POLICY'"
-clickhouse-client --query "CREATE TABLE test.visits (CounterID UInt32,  StartDate Date,  Sign Int8,  IsNew UInt8,
+datastore-client --query "CREATE TABLE test.visits (CounterID UInt32,  StartDate Date,  Sign Int8,  IsNew UInt8,
     VisitID UInt64,  UserID UInt64,  StartTime DateTime,  Duration UInt32,  UTCStartTime DateTime,  PageViews Int32,
     Hits Int32,  IsBounce UInt8,  Referer String,  StartURL String,  RefererDomain String,  StartURLDomain String,
     EndURL String,  LinkURL String,  IsDownload UInt8,  TraficSourceID Int8,  SearchEngineID UInt16,  SearchPhrase String,
@@ -210,17 +210,17 @@ clickhouse-client --query "CREATE TABLE test.visits (CounterID UInt32,  StartDat
 
 # Might fail in sanitizer runs, not very important
 set +e
-clickhouse-client --max_execution_time 600 --max_memory_usage 30G --max_memory_usage_for_user 30G --query "INSERT INTO test.hits_s3 SELECT * FROM datasets.hits_v1 SETTINGS enable_filesystem_cache_on_write_operations=0, max_insert_threads=16"
-clickhouse-client --max_execution_time 600 --max_memory_usage 30G --max_memory_usage_for_user 30G --query "INSERT INTO test.hits SELECT * FROM datasets.hits_v1 SETTINGS enable_filesystem_cache_on_write_operations=0, max_insert_threads=16"
-clickhouse-client --max_execution_time 600 --max_memory_usage 30G --max_memory_usage_for_user 30G --query "INSERT INTO test.visits SELECT * FROM datasets.visits_v1 SETTINGS enable_filesystem_cache_on_write_operations=0, max_insert_threads=16"
+datastore-client --max_execution_time 600 --max_memory_usage 30G --max_memory_usage_for_user 30G --query "INSERT INTO test.hits_s3 SELECT * FROM datasets.hits_v1 SETTINGS enable_filesystem_cache_on_write_operations=0, max_insert_threads=16"
+datastore-client --max_execution_time 600 --max_memory_usage 30G --max_memory_usage_for_user 30G --query "INSERT INTO test.hits SELECT * FROM datasets.hits_v1 SETTINGS enable_filesystem_cache_on_write_operations=0, max_insert_threads=16"
+datastore-client --max_execution_time 600 --max_memory_usage 30G --max_memory_usage_for_user 30G --query "INSERT INTO test.visits SELECT * FROM datasets.visits_v1 SETTINGS enable_filesystem_cache_on_write_operations=0, max_insert_threads=16"
 
-clickhouse-client --query "DROP TABLE datasets.visits_v1 SYNC"
-clickhouse-client --query "DROP TABLE datasets.hits_v1 SYNC"
+datastore-client --query "DROP TABLE datasets.visits_v1 SYNC"
+datastore-client --query "DROP TABLE datasets.hits_v1 SYNC"
 # Drop `tpch` before the storage policy switch below. Its tables live on the `default` disk which becomes unavailable under
 # `azure_cache`/`s3_cache`, preventing the server from starting. `tpcds` is not dropped because web disk survives policy changes.
-clickhouse-client --query "DROP DATABASE IF EXISTS tpch SYNC"
+datastore-client --query "DROP DATABASE IF EXISTS tpch SYNC"
 
-clickhouse-client --query "SHOW TABLES FROM test"
+datastore-client --query "SHOW TABLES FROM test"
 set -e
 
 
@@ -230,7 +230,7 @@ stop_server
 export RANDOMIZE_OBJECT_KEY_TYPE=1
 export ZOOKEEPER_FAULT_INJECTION=1
 export THREAD_POOL_FAULT_INJECTION=1
-export CLICKHOUSE_FAILPOINTS_INJECTION=1
+export DATASTORE_FAILPOINTS_INJECTION=1
 configure
 configure_limits
 
@@ -238,15 +238,15 @@ if [[ "$USE_S3_STORAGE_FOR_MERGE_TREE" == "1" || "$USE_AZURE_STORAGE_FOR_MERGE_T
     # But we still need default disk because some tables loaded only into it
     if [[ $USE_S3_STORAGE_FOR_MERGE_TREE == "1" ]]; then
         if [[ $USE_ENCRYPTED_STORAGE == "1" ]]; then
-            file=/etc/clickhouse-server/config.d/s3_encrypted_storage_policy_for_merge_tree_by_default.xml
+            file=/etc/datastore-server/config.d/s3_encrypted_storage_policy_for_merge_tree_by_default.xml
         else
-            file=/etc/clickhouse-server/config.d/s3_storage_policy_by_default.xml
+            file=/etc/datastore-server/config.d/s3_storage_policy_by_default.xml
         fi
     elif [[ "$USE_AZURE_STORAGE_FOR_MERGE_TREE" == "1" ]]; then
         if [[ $USE_ENCRYPTED_STORAGE == "1" ]]; then
-            file=/etc/clickhouse-server/config.d/azure_encrypted_storage_policy_by_default.xml
+            file=/etc/datastore-server/config.d/azure_encrypted_storage_policy_by_default.xml
         else
-            file=/etc/clickhouse-server/config.d/azure_storage_policy_by_default.xml
+            file=/etc/datastore-server/config.d/azure_storage_policy_by_default.xml
         fi
     else
         echo "ERROR: Failed to find azure storage policy by default file"
@@ -255,43 +255,43 @@ if [[ "$USE_S3_STORAGE_FOR_MERGE_TREE" == "1" || "$USE_AZURE_STORAGE_FOR_MERGE_T
 
     sed -i.tmp "s|<main><disk>cached_azure</disk></main>|<main><disk>cached_azure</disk></main><default><disk>default</disk></default>|" "$file"
 
-    sudo chown clickhouse "$file"
-    sudo chgrp clickhouse "$file"
+    sudo chown datastore "$file"
+    sudo chgrp datastore "$file"
 fi
 
 
 # Disable experimental transactions support.
 # TODO: Enable back after the issue with `assertHasValidVersionMetadata` will be fixed:
-# https://play.clickhouse.com/play?user=play&run=1#U0VMRUNUIGNoZWNrX3N0YXJ0X3RpbWUsIGNoZWNrX25hbWUsIHRlc3RfbmFtZSwgcmVwb3J0X3VybApGUk9NIGNoZWNrcwpXSEVSRSAxCiAgICBBTkQgY2hlY2tfc3RhcnRfdGltZSA+PSBub3coKSAtIElOVEVSVkFMIDEwIERBWQogICAgQU5EIChoZWFkX3JlZiA9ICdtYXN0ZXInIEFORCBzdGFydHNXaXRoKGhlYWRfcmVwbywgJ0NsaWNrSG91c2UvJykpCiAgICBBTkQgdGVzdF9zdGF0dXMgIT0gJ1NLSVBQRUQnCiAgICBBTkQgKHRlc3Rfc3RhdHVzIExJS0UgJ0YlJyBPUiB0ZXN0X3N0YXR1cyBMSUtFICdFJScpCiAgICBBTkQgY2hlY2tfc3RhdHVzICE9ICdzdWNjZXNzJwogICAgQU5EIGNoZWNrX25hbWUgTk9UIExJS0UgJ2xpYkZ1enplciUnCiAgICBBTkQgY2hlY2tfbmFtZSAhPSAnQ2xpY2tIb3VzZSBLZWVwZXIgSmVwc2VuJwogICAgQU5EIHRlc3RfbmFtZSBMSUtFICclYXNzZXJ0SGFzVmFsaWRWZXJzaW9uTWV0YWRhdGElJwpPUkRFUiBCWSBjaGVja19zdGFydF90aW1lIERFU0M=
-rm -f /etc/clickhouse-server/config.d/transactions.xml
+# https://play.datastore.com/play?user=play&run=1#U0VMRUNUIGNoZWNrX3N0YXJ0X3RpbWUsIGNoZWNrX25hbWUsIHRlc3RfbmFtZSwgcmVwb3J0X3VybApGUk9NIGNoZWNrcwpXSEVSRSAxCiAgICBBTkQgY2hlY2tfc3RhcnRfdGltZSA+PSBub3coKSAtIElOVEVSVkFMIDEwIERBWQogICAgQU5EIChoZWFkX3JlZiA9ICdtYXN0ZXInIEFORCBzdGFydHNXaXRoKGhlYWRfcmVwbywgJ0NsaWNrSG91c2UvJykpCiAgICBBTkQgdGVzdF9zdGF0dXMgIT0gJ1NLSVBQRUQnCiAgICBBTkQgKHRlc3Rfc3RhdHVzIExJS0UgJ0YlJyBPUiB0ZXN0X3N0YXR1cyBMSUtFICdFJScpCiAgICBBTkQgY2hlY2tfc3RhdHVzICE9ICdzdWNjZXNzJwogICAgQU5EIGNoZWNrX25hbWUgTk9UIExJS0UgJ2xpYkZ1enplciUnCiAgICBBTkQgY2hlY2tfbmFtZSAhPSAnQ2xpY2tIb3VzZSBLZWVwZXIgSmVwc2VuJwogICAgQU5EIHRlc3RfbmFtZSBMSUtFICclYXNzZXJ0SGFzVmFsaWRWZXJzaW9uTWV0YWRhdGElJwpPUkRFUiBCWSBjaGVja19zdGFydF90aW1lIERFU0M=
+rm -f /etc/datastore-server/config.d/transactions.xml
 
-sed -i.tmp "s|<level>trace</level>|<level>test</level>|" /etc/clickhouse-server/config.d/logger_trace.xml
+sed -i.tmp "s|<level>trace</level>|<level>test</level>|" /etc/datastore-server/config.d/logger_trace.xml
 
 if [ "$cache_policy" = "SLRU" ]; then
-    sed -i.tmp "s|<cache_policy>LRU</cache_policy>|<cache_policy>SLRU</cache_policy>|" /etc/clickhouse-server/config.d/storage_conf*.xml
+    sed -i.tmp "s|<cache_policy>LRU</cache_policy>|<cache_policy>SLRU</cache_policy>|" /etc/datastore-server/config.d/storage_conf*.xml
 fi
 
 # Randomize async_load_databases
 if [ $((RANDOM % 2)) -eq 0 ]; then
-    sudo echo "<clickhouse><async_load_databases>false</async_load_databases></clickhouse>" \
-        > /etc/clickhouse-server/config.d/enable_async_load_databases.xml
+    sudo echo "<datastore><async_load_databases>false</async_load_databases></datastore>" \
+        > /etc/datastore-server/config.d/enable_async_load_databases.xml
 fi
 
 # Randomize concurrent_threads_scheduler (default is max_min_fair)
 if [ $((RANDOM % 2)) -eq 1 ]; then
-    sudo echo "<clickhouse><concurrent_threads_scheduler>fair_round_robin</concurrent_threads_scheduler></clickhouse>" \
-        > /etc/clickhouse-server/config.d/enable_max_min_fair_scheduler.xml
+    sudo echo "<datastore><concurrent_threads_scheduler>fair_round_robin</concurrent_threads_scheduler></datastore>" \
+        > /etc/datastore-server/config.d/enable_max_min_fair_scheduler.xml
 fi
 
 start_server || { echo "Failed to start server"; exit 1; }
 
-cd /repo/tests/ || exit 1  # clickhouse-test can find queries dir from there
+cd /repo/tests/ || exit 1  # datastore-test can find queries dir from there
 python3 /repo/ci/jobs/scripts/stress/stress.py --hung-check --drop-databases --output-folder /test_output --skip-func-tests "$SKIP_TESTS_OPTION" --global-time-limit "${STRESS_GLOBAL_TIME_LIMIT:-1200}" --encrypted-storage "$USE_ENCRYPTED_STORAGE" \
     && echo -e "Test script exit code$OK" >> /test_output/test_results.tsv \
     || echo -e "Test script failed$FAIL script exit code: $?" >> /test_output/test_results.tsv
 
 stop_server
-mv /var/log/clickhouse-server/clickhouse-server.log /var/log/clickhouse-server/clickhouse-server.stress.log
+mv /var/log/datastore-server/datastore-server.log /var/log/datastore-server/datastore-server.stress.log
 
 # NOTE Disable thread fuzzer before server start with data after stress test.
 # In debug build it can take a lot of time.
@@ -299,8 +299,8 @@ unset "${!THREAD_@}"
 # Also disable cannot_allocate_thread_fault_injection_probability, since this
 # will not allow to load tables asynchronously. Anyway the stress tests was
 # running with fault injection.
-rm /etc/clickhouse-server/config.d/cannot_allocate_thread_injection.xml
-rm -f /etc/clickhouse-server/config.d/fail_points_active.xml
+rm /etc/datastore-server/config.d/cannot_allocate_thread_injection.xml
+rm -f /etc/datastore-server/config.d/fail_points_active.xml
 
 # Use a larger timeout for the post-stress restart: under sanitizers with
 # async_load_databases=false the server may need minutes to load all tables.
@@ -310,16 +310,16 @@ check_server_start
 
 stop_server
 
-[ -f /var/log/clickhouse-server/clickhouse-server.log ] || echo -e "Server log does not exist\tFAIL"
-[ -f /var/log/clickhouse-server/stderr.log ] || echo -e "Stderr log does not exist\tFAIL"
+[ -f /var/log/datastore-server/datastore-server.log ] || echo -e "Server log does not exist\tFAIL"
+[ -f /var/log/datastore-server/stderr.log ] || echo -e "Stderr log does not exist\tFAIL"
 
-mv /var/log/clickhouse-server/clickhouse-server.log /var/log/clickhouse-server/clickhouse-server.final.log
+mv /var/log/datastore-server/datastore-server.log /var/log/datastore-server/datastore-server.final.log
 
 # Grep logs for sanitizer asserts, crashes and other critical errors
 check_logs_for_critical_errors
 
-tar -chf /test_output/coordination.tar /var/lib/clickhouse/coordination ||:
+tar -chf /test_output/coordination.tar /var/lib/datastore/coordination ||:
 
 collect_query_and_trace_logs
 
-mv /var/log/clickhouse-server/stderr.log /test_output/
+mv /var/log/datastore-server/stderr.log /test_output/

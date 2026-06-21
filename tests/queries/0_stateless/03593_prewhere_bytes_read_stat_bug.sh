@@ -5,11 +5,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 create table t (x Int8, s String) engine MergeTree order by x;
 insert into t select number, randomString(1000) from numbers(10);"
 
-json=`$CLICKHOUSE_CLIENT -q "select sum(cityHash64(s)) from t prewhere x < 100 format Json"`
+json=`$DATASTORE_CLIENT -q "select sum(cityHash64(s)) from t prewhere x < 100 format Json"`
 bytes_read=`echo "$json" | grep -Po '(?<="bytes_read": )\d+'`
 if [ "$bytes_read" -gt 5000 ]
 then

@@ -34,7 +34,7 @@ SELECT * FROM system.asynchronous_metric_log LIMIT 3 \G
 ```text
 Row 1:
 ──────
-hostname:   clickhouse.eu-central1.internal
+hostname:   datastore.eu-central1.internal
 event_date: 2023-11-14
 event_time: 2023-11-14 14:39:07
 metric:     AsynchronousHeavyMetricsCalculationTimeSpent
@@ -42,7 +42,7 @@ value:      0.001
 
 Row 2:
 ──────
-hostname:   clickhouse.eu-central1.internal
+hostname:   datastore.eu-central1.internal
 event_date: 2023-11-14
 event_time: 2023-11-14 14:39:08
 metric:     AsynchronousHeavyMetricsCalculationTimeSpent
@@ -50,7 +50,7 @@ value:      0
 
 Row 3:
 ──────
-hostname:   clickhouse.eu-central1.internal
+hostname:   datastore.eu-central1.internal
 event_date: 2023-11-14
 event_time: 2023-11-14 14:39:09
 metric:     AsynchronousHeavyMetricsCalculationTimeSpent

@@ -1,6 +1,6 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 uuids = []
 
@@ -37,8 +37,8 @@ def cluster():
             with_nginx=True,
             stay_alive=True,
             with_installed_binary=True,
-            image="clickhouse/clickhouse-server",
-            tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+            image="datastore/datastore-server",
+            tag=DATASTORE_CI_MIN_TESTED_VERSION,
         )
         cluster.add_instance(
             "node5",
@@ -74,7 +74,7 @@ def cluster():
                 [
                     "bash",
                     "-c",
-                    "/usr/bin/clickhouse static-files-disk-uploader --test-mode --url http://nginx:80/test1 --metadata-path {}".format(
+                    "/usr/bin/datastore static-files-disk-uploader --test-mode --url http://nginx:80/test1 --metadata-path {}".format(
                         metadata_path
                     ),
                 ],
@@ -250,7 +250,7 @@ def test_cache(cluster, node_name):
 
 def test_unavailable_server(cluster):
     """
-    Regression test for the case when clickhouse-server simply ignore when
+    Regression test for the case when datastore-server simply ignore when
     server is unavailable on start and later will simply return 0 rows for
     SELECT from table on web disk.
     """
@@ -274,7 +274,7 @@ def test_unavailable_server(cluster):
             [
                 "bash",
                 "-c",
-                "sed -i 's#http://nginx:80/test1/#http://nginx:8080/test1/#' /etc/clickhouse-server/config.d/storage_conf_web.xml",
+                "sed -i 's#http://nginx:80/test1/#http://nginx:8080/test1/#' /etc/datastore-server/config.d/storage_conf_web.xml",
             ]
         )
         with pytest.raises(Exception):
@@ -291,7 +291,7 @@ def test_unavailable_server(cluster):
             [
                 "bash",
                 "-c",
-                "sed -i 's#http://nginx:8080/test1/#http://nginx:80/test1/#' /etc/clickhouse-server/config.d/storage_conf_web.xml",
+                "sed -i 's#http://nginx:8080/test1/#http://nginx:80/test1/#' /etc/datastore-server/config.d/storage_conf_web.xml",
             ]
         )
         node2.start_clickhouse()

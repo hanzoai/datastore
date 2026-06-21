@@ -44,7 +44,7 @@ Comments can be added for columns and for the table.
 
 ### With Schema of Existing Table {#with-a-schema-similar-to-other-table}
 
-ClickHouse supports the ability to copy the schema and data of an existing table. 
+Datastore supports the ability to copy the schema and data of an existing table. 
 
 For replicating the schema of an existing table:
 
@@ -121,7 +121,7 @@ The column type of a default value column can be omitted in which case it is inf
 
 If both a data type and a default value expression are specified, an implicit type casting function inserted which converts the expression to the specified type. Example: `Hits UInt32 DEFAULT 0` is internally represented as `Hits UInt32 DEFAULT toUInt32(0)`.
 
-A default value expression `expr` may reference arbitrary table columns and constants. ClickHouse checks that changes of the table structure do not introduce loops in the expression calculation. For INSERT, it checks that expressions are resolvable – that all columns they can be calculated from have been passed.
+A default value expression `expr` may reference arbitrary table columns and constants. Datastore checks that changes of the table structure do not introduce loops in the expression calculation. For INSERT, it checks that expressions are resolvable – that all columns they can be calculated from have been passed.
 
 ### DEFAULT {#default}
 
@@ -328,9 +328,9 @@ ENGINE=MergeTree
 ORDER BY (name_len, name);
 ```
 
-Here, `ASSUME CONSTRAINT` is used to assert that the `length(name)` function always equals the value of the `name_len` column. This means that whenever `length(name)` is called in a query, ClickHouse can replace it with `name_len`, which should be faster because it avoids calling the `length()` function.
+Here, `ASSUME CONSTRAINT` is used to assert that the `length(name)` function always equals the value of the `name_len` column. This means that whenever `length(name)` is called in a query, Datastore can replace it with `name_len`, which should be faster because it avoids calling the `length()` function.
 
-Then, when executing the query `SELECT name FROM users_a WHERE length(name) < 5;`, ClickHouse can optimize it to `SELECT name FROM users_a WHERE name_len < 5`; because of the `ASSUME CONSTRAINT`. This can make the query run faster because it avoids calculating the length of `name` for each row.
+Then, when executing the query `SELECT name FROM users_a WHERE length(name) < 5;`, Datastore can optimize it to `SELECT name FROM users_a WHERE name_len < 5`; because of the `ASSUME CONSTRAINT`. This can make the query run faster because it avoids calculating the length of `name` for each row.
 
 `ASSUME CONSTRAINT` **does not enforce the constraint**, it merely informs the optimizer that the constraint holds true. If the constraint is not actually true, the results of the queries may be incorrect. Therefore, you should only use `ASSUME CONSTRAINT` if you are sure that the constraint is true.
 
@@ -340,7 +340,7 @@ Defines storage time for values. Can be specified only for MergeTree-family tabl
 
 ## Column Compression Codecs {#column_compression_codec}
 
-By default, ClickHouse applies `lz4` compression in the self-managed version, and `zstd` in ClickHouse Cloud. 
+By default, Datastore applies `lz4` compression in the self-managed version, and `zstd` in Datastore Cloud. 
 
 For `MergeTree`-engine family you can change the default compression method in the [compression](/operations/server-configuration-parameters/settings#compression) section of a server configuration.
 
@@ -371,7 +371,7 @@ ALTER TABLE codec_example MODIFY COLUMN float_value CODEC(Default);
 Codecs can be combined in a pipeline, for example, `CODEC(Delta, Default)`.
 
 :::tip
-You can't decompress ClickHouse database files with external utilities like `lz4`. Instead, use the special [clickhouse-compressor](https://github.com/ClickHouse/ClickHouse/tree/master/programs/compressor) utility.
+You can't decompress Datastore database files with external utilities like `lz4`. Instead, use the special [datastore-compressor](https://github.com/ClickHouse/Datastore/tree/master/programs/compressor) utility.
 :::
 
 Compression is supported for the following table engines:
@@ -381,7 +381,7 @@ Compression is supported for the following table engines:
 - [Set](../../../engines/table-engines/special/set.md). Only supported the default compression.
 - [Join](../../../engines/table-engines/special/join.md). Only supported the default compression.
 
-ClickHouse supports general purpose codecs and specialized codecs.
+Datastore supports general purpose codecs and specialized codecs.
 
 ### General Purpose Codecs {#general-purpose-codecs}
 
@@ -514,7 +514,7 @@ ENGINE = MergeTree ORDER BY x;
 Please note that temporary tables are not replicated. As a result, there is no guarantee that data inserted into a temporary table will be available in other replicas. The primary use case where temporary tables can be useful is for querying or joining small external datasets during a single session.
 :::
 
-ClickHouse supports temporary tables which have the following characteristics:
+Datastore supports temporary tables which have the following characteristics:
 
 - Temporary tables disappear when the session ends, including if the connection is lost.
 - A temporary table uses the Memory table engine when engine is not specified and it may use any table engine except Replicated and `KeeperMap` engines.
@@ -544,7 +544,7 @@ The `REPLACE` statement allows you to update a table [atomically](/concepts/glos
 
 :::note
 This statement is supported for the [`Atomic`](../../../engines/database-engines/atomic.md) and [`Replicated`](../../../engines/database-engines/replicated.md) database engines, 
-which are the default database engines for ClickHouse and ClickHouse Cloud respectively.
+which are the default database engines for Datastore and Datastore Cloud respectively.
 :::
 
 Ordinarily, if you need to delete some data from a table, 
@@ -651,7 +651,7 @@ SELECT * FROM base.t1;
 </TabItem>
 <TabItem value="cloud_replace_example" label="Cloud">
 
-Consider the following table on ClickHouse Cloud: 
+Consider the following table on Datastore Cloud: 
 
 ```sql
 CREATE DATABASE base;
@@ -747,5 +747,5 @@ SELECT name, comment FROM system.tables WHERE name = 't1';
 
 ## Related content {#related-content}
 
-- Blog: [Optimizing ClickHouse with Schemas and Codecs](https://clickhouse.com/blog/optimize-clickhouse-codecs-compression-schema)
-- Blog: [Working with time series data in ClickHouse](https://clickhouse.com/blog/working-with-time-series-data-and-functions-ClickHouse)
+- Blog: [Optimizing Datastore with Schemas and Codecs](https://datastore.com/blog/optimize-datastore-codecs-compression-schema)
+- Blog: [Working with time series data in Datastore](https://datastore.com/blog/working-with-time-series-data-and-functions-Datastore)

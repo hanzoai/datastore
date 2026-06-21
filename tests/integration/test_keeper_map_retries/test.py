@@ -21,11 +21,11 @@ node = cluster.add_instance(
 def start_clean_clickhouse():
     # remove fault injection if present
     if "fault_injection.xml" in node.exec_in_container(
-        ["bash", "-c", "ls /etc/clickhouse-server/config.d"]
+        ["bash", "-c", "ls /etc/datastore-server/config.d"]
     ):
         print("Removing fault injection")
         node.exec_in_container(
-            ["bash", "-c", "rm /etc/clickhouse-server/config.d/fault_injection.xml"]
+            ["bash", "-c", "rm /etc/datastore-server/config.d/fault_injection.xml"]
         )
         node.restart_clickhouse()
 
@@ -54,7 +54,7 @@ def test_queries(started_cluster):
     node.stop_clickhouse()
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, "fault_injection.xml"),
-        "/etc/clickhouse-server/config.d/fault_injection.xml",
+        "/etc/datastore-server/config.d/fault_injection.xml",
     )
     node.start_clickhouse()
 

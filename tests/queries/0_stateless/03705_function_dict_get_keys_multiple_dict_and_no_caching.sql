@@ -42,7 +42,7 @@ CREATE DICTIONARY dict_products
     brand String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'src_products'))
+SOURCE(DATASTORE(TABLE 'src_products'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(HASHED());
 
@@ -54,7 +54,7 @@ CREATE DICTIONARY dict_geo
     code UInt32
 )
 PRIMARY KEY country, city
-SOURCE(CLICKHOUSE(TABLE 'src_geo'))
+SOURCE(DATASTORE(TABLE 'src_geo'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(COMPLEX_KEY_HASHED());
 

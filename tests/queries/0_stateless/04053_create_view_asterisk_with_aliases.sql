@@ -1,7 +1,7 @@
 -- Regression test: CREATE VIEW/MATERIALIZED VIEW with column aliases and
 -- SELECT * caused "Can't set alias of * of Asterisk" exception (LOGICAL_ERROR).
 -- Now gives a proper BAD_ARGUMENTS error.
--- https://github.com/ClickHouse/ClickHouse/issues/100325
+-- https://github.com/ClickHouse/Datastore/issues/100325
 
 -- Also covers CREATE VIEW with EXCEPT/INTERSECT (issue #100324).
 

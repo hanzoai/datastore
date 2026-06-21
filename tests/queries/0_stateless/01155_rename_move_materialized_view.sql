@@ -22,7 +22,7 @@ INSERT INTO dist(s) VALUES ('before moving tables');
 SYSTEM FLUSH DISTRIBUTED  dist;
 
 CREATE DICTIONARY dict (s String, x String DEFAULT 'qwerty') PRIMARY KEY s
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dist' DB 'test_01155_ordinary'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'dist' DB 'test_01155_ordinary'))
 LIFETIME(MIN 0 MAX 2) LAYOUT(COMPLEX_KEY_CACHE(SIZE_IN_CELLS 123));
 
 -- FIXME Cannot convert column `1` because it is non constant in source stream but must be constant in result

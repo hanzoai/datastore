@@ -87,7 +87,7 @@ def cluster():
 
 def replace_in_server_config(node, old, new):
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/named_collections.xml",
+        "/etc/datastore-server/config.d/named_collections.xml",
         old,
         new,
     )
@@ -95,7 +95,7 @@ def replace_in_server_config(node, old, new):
 
 def replace_in_users_config(node, old, new):
     node.replace_in_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         old,
         new,
     )
@@ -118,7 +118,7 @@ def test_default_access(cluster):
         node, "named_collection_control>1", "named_collection_control>0"
     )
     assert "named_collection_control>0" in node.exec_in_container(
-        ["bash", "-c", f"cat /etc/clickhouse-server/users.d/users.xml"]
+        ["bash", "-c", f"cat /etc/datastore-server/users.d/users.xml"]
     )
     node.restart_clickhouse()
     assert 0 == int(node.query("select count() from system.named_collections"))
@@ -127,7 +127,7 @@ def test_default_access(cluster):
         node, "named_collection_control>0", "named_collection_control>1"
     )
     assert "named_collection_control>1" in node.exec_in_container(
-        ["bash", "-c", f"cat /etc/clickhouse-server/users.d/users.xml"]
+        ["bash", "-c", f"cat /etc/datastore-server/users.d/users.xml"]
     )
     node.restart_clickhouse()
     assert (
@@ -149,7 +149,7 @@ def test_default_access(cluster):
         node, "display_secrets_in_show_and_select>1", "display_secrets_in_show_and_select>0"
     )
     assert "display_secrets_in_show_and_select>0" in node.exec_in_container(
-        ["bash", "-c", f"cat /etc/clickhouse-server/config.d/named_collections.xml"]
+        ["bash", "-c", f"cat /etc/datastore-server/config.d/named_collections.xml"]
     )
     node.restart_clickhouse()
     assert (
@@ -163,14 +163,14 @@ def test_default_access(cluster):
         node, "display_secrets_in_show_and_select>0", "display_secrets_in_show_and_select>1"
     )
     assert "display_secrets_in_show_and_select>1" in node.exec_in_container(
-        ["bash", "-c", f"cat /etc/clickhouse-server/config.d/named_collections.xml"]
+        ["bash", "-c", f"cat /etc/datastore-server/config.d/named_collections.xml"]
     )
 
     replace_in_users_config(
         node, "show_named_collections_secrets>1", "show_named_collections_secrets>0"
     )
     assert "show_named_collections_secrets>0" in node.exec_in_container(
-        ["bash", "-c", f"cat /etc/clickhouse-server/users.d/users.xml"]
+        ["bash", "-c", f"cat /etc/datastore-server/users.d/users.xml"]
     )
     node.restart_clickhouse()
     assert (
@@ -183,7 +183,7 @@ def test_default_access(cluster):
         node, "show_named_collections_secrets>0", "show_named_collections_secrets>1"
     )
     assert "show_named_collections_secrets>1" in node.exec_in_container(
-        ["bash", "-c", f"cat /etc/clickhouse-server/users.d/users.xml"]
+        ["bash", "-c", f"cat /etc/datastore-server/users.d/users.xml"]
     )
     node.restart_clickhouse()
     assert (

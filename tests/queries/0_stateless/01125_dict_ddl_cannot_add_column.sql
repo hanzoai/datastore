@@ -16,7 +16,7 @@ CREATE DICTIONARY somedict
   end Date
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'date_table' DB currentDatabase()))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'date_table' DB currentDatabase()))
 LAYOUT(RANGE_HASHED())
 RANGE (MIN start MAX end)
 LIFETIME(MIN 300 MAX 360);

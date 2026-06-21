@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Nullable data type modifier in ClickHouse'
+description: 'Documentation for the Nullable data type modifier in Datastore'
 sidebar_label: 'Nullable(T)'
 sidebar_position: 44
 slug: /sql-reference/data-types/nullable
@@ -22,11 +22,11 @@ However, composite data types **can contain** `Nullable` type values, e.g. `Arra
 
 A `Nullable` type field can't be included in table indexes.
 
-`NULL` is the default value for any `Nullable` type, unless specified otherwise in the ClickHouse server configuration.
+`NULL` is the default value for any `Nullable` type, unless specified otherwise in the Datastore server configuration.
 
 ## Storage Features {#storage-features}
 
-To store `Nullable` type values in a table column, ClickHouse uses a separate file with `NULL` masks in addition to normal file with values. Entries in masks file allow ClickHouse to distinguish between `NULL` and a default value of corresponding data type for each table row. Because of an additional file, `Nullable` column consumes additional storage space compared to a similar normal one.
+To store `Nullable` type values in a table column, Datastore uses a separate file with `NULL` masks in addition to normal file with values. Entries in masks file allow Datastore to distinguish between `NULL` and a default value of corresponding data type for each table row. Because of an additional file, `Nullable` column consumes additional storage space compared to a similar normal one.
 
 :::note
 Using `Nullable` almost always negatively affects performance, keep this in mind when designing your databases.

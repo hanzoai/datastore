@@ -145,7 +145,7 @@ CREATE TABLE tab(k UInt64, s String, INDEX af(s) TYPE text(tokenizer = ngrams(2)
     ORDER BY k
     SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi';
 
-INSERT INTO tab VALUES (101, 'Alick 好'), (102, 'clickhouse你好'), (103, 'Click 你'), (104, 'Dlick 你a好'), (105, 'Elick 好好你你'), (106, 'Alick 好a好a你a你');
+INSERT INTO tab VALUES (101, 'Alick 好'), (102, 'datastore你好'), (103, 'Click 你'), (104, 'Dlick 你a好'), (105, 'Elick 好好你你'), (106, 'Alick 好a好a你a你');
 
 -- check text index was created
 SELECT name, type FROM system.data_skipping_indices WHERE table == 'tab' AND database = currentDatabase() LIMIT 1;
@@ -173,7 +173,7 @@ CREATE TABLE tab(k UInt64, s String, INDEX af(s) TYPE text(tokenizer = sparseGra
     ORDER BY k
     SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi';
 
-INSERT INTO tab VALUES (101, 'Alick 好'), (102, 'clickhouse你好'), (103, 'Click 你'), (104, 'Dlick 你a好'), (105, 'Elick 好好你你'), (106, 'Alick 好a好a你a你');
+INSERT INTO tab VALUES (101, 'Alick 好'), (102, 'datastore你好'), (103, 'Click 你'), (104, 'Dlick 你a好'), (105, 'Elick 好好你你'), (106, 'Alick 好a好a你a你');
 
 -- check text index was created
 SELECT name, type FROM system.data_skipping_indices WHERE table == 'tab' AND database = currentDatabase() LIMIT 1;
@@ -201,7 +201,7 @@ CREATE TABLE tab(k UInt64, s String, INDEX af(s) TYPE text(tokenizer = sparseGra
     ORDER BY k
     SETTINGS index_granularity = 2, index_granularity_bytes = '10Mi';
 
-INSERT INTO tab VALUES (101, 'Alick 好'), (102, 'clickhouse你好'), (103, 'Click 你'), (104, 'Dlick 你a好'), (105, 'Elick 好好你你'), (106, 'Alick 好a好a你a你');
+INSERT INTO tab VALUES (101, 'Alick 好'), (102, 'datastore你好'), (103, 'Click 你'), (104, 'Dlick 你a好'), (105, 'Elick 好好你你'), (106, 'Alick 好a好a你a你');
 
 -- check text index was created
 SELECT name, type FROM system.data_skipping_indices WHERE table == 'tab' AND database = currentDatabase() LIMIT 1;

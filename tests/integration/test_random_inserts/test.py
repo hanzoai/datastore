@@ -45,7 +45,7 @@ def test_random_inserts(started_cluster):
     node1.query(
         """
         CREATE TABLE simple ON CLUSTER test_cluster (date Date, i UInt32, s String)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/simple', '{replica}') PARTITION BY toYYYYMM(date) ORDER BY i"""
+        ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/simple', '{replica}') PARTITION BY toYYYYMM(date) ORDER BY i"""
     )
 
     with PartitionManager() as pm_random_drops:
@@ -148,7 +148,7 @@ def test_insert_multithreaded(started_cluster):
 
     for node in nodes:
         node.query(
-            "CREATE TABLE repl_test(d Date, x UInt32) ENGINE ReplicatedMergeTree('/clickhouse/tables/test/repl_test', '{replica}') ORDER BY x PARTITION BY toYYYYMM(d)"
+            "CREATE TABLE repl_test(d Date, x UInt32) ENGINE ReplicatedMergeTree('/datastore/tables/test/repl_test', '{replica}') ORDER BY x PARTITION BY toYYYYMM(d)"
         )
 
     runner = Runner()

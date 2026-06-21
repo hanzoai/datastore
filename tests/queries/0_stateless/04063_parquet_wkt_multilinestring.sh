@@ -84,16 +84,16 @@ GEO_SETTINGS="--input_format_parquet_use_native_reader_v3=1 --input_format_parqu
 
 # Test 1: typed MultiLineString column must return geometry data, not throw.
 echo "=== MultiLineString typed ==="
-$CLICKHOUSE_LOCAL $GEO_SETTINGS -q \
+$DATASTORE_LOCAL $GEO_SETTINGS -q \
     "SELECT id, geom FROM file('$TMP_DIR/mls_typed.parquet', Parquet) ORDER BY id"
 
 # Test 2: Mixed (Geometry) column — variantType() must be 'MultiLineString', not 'Polygon'.
 echo "=== MultiLineString in Mixed column: variantType ==="
-$CLICKHOUSE_LOCAL $GEO_SETTINGS -q \
+$DATASTORE_LOCAL $GEO_SETTINGS -q \
     "SELECT id, variantType(geom) FROM file('$TMP_DIR/mls_mixed.parquet', Parquet) ORDER BY id"
 
 # Test 3: malformed WKT (empty type string) must produce BAD_ARGUMENTS, not crash/UB.
 echo "=== malformed WKT (empty type) ==="
-$CLICKHOUSE_LOCAL $GEO_SETTINGS -q \
+$DATASTORE_LOCAL $GEO_SETTINGS -q \
     "SELECT geom FROM file('$TMP_DIR/wkt_empty_type.parquet', Parquet)" 2>&1 \
     | grep -c "BAD_ARGUMENTS"

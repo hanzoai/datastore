@@ -4,14 +4,14 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-user="user03278_${CLICKHOUSE_DATABASE}_$RANDOM"
-role1="role03278_1_${CLICKHOUSE_DATABASE}_$RANDOM"
-role2="role03278_2_${CLICKHOUSE_DATABASE}_$RANDOM"
+user="user03278_${DATASTORE_DATABASE}_$RANDOM"
+role1="role03278_1_${DATASTORE_DATABASE}_$RANDOM"
+role2="role03278_2_${DATASTORE_DATABASE}_$RANDOM"
 
 
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS $user;";
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS $user;";
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE USER $user;
 CREATE ROLE $role1, $role2;
 
@@ -25,5 +25,5 @@ GRANT SHOW TABLES ON default.* TO $role2;
 GRANT $role1 TO $user;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user --query "REVOKE ALL ON *.* FROM $role2"
-${CLICKHOUSE_CLIENT} --query "SHOW GRANTS FOR $role2"
+${DATASTORE_CLIENT} --user $user --query "REVOKE ALL ON *.* FROM $role2"
+${DATASTORE_CLIENT} --query "SHOW GRANTS FOR $role2"

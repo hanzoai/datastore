@@ -6,6 +6,6 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT --oneline"
+format="$DATASTORE_FORMAT --oneline"
 
 echo "grant select on *.* to A with replace option" | $format

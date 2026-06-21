@@ -56,7 +56,7 @@ def test_disable_insertion_and_mutation_with_temp_table(started_cluster):
 def test_disable_insertion_and_mutation(started_cluster):
     writing_node.query("DROP TABLE IF EXISTS my_table ON CLUSTER default SYNC")
     writing_node.query(
-        """CREATE TABLE my_table on cluster default (key UInt64, value String) ENGINE=ReplicatedMergeTree('/clickhouse/tables/{shard}/default.my_table', '{replica}') ORDER BY key partition by (key % 5) """
+        """CREATE TABLE my_table on cluster default (key UInt64, value String) ENGINE=ReplicatedMergeTree('/datastore/tables/{shard}/default.my_table', '{replica}') ORDER BY key partition by (key % 5) """
     )
 
     assert "QUERY_IS_PROHIBITED" in reading_node.query_and_get_error(

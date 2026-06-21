@@ -9,10 +9,10 @@ set -eu
 # server does not send the message body at HTTP HEAD request
 # client closes connection just to save time
 
-URL="${CLICKHOUSE_PORT_HTTP_PROTO}://${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT_HTTP}/does_not_exist"
+URL="${DATASTORE_PORT_HTTP_PROTO}://${DATASTORE_HOST}:${DATASTORE_PORT_HTTP}/does_not_exist"
 
 echo HEAD does not have a message
-${CLICKHOUSE_CURL} -H 'Connection: close' -X HEAD "${URL}" -D - | grep -v 'Date:'
+${DATASTORE_CURL} -H 'Connection: close' -X HEAD "${URL}" -D - | grep -v 'Date:'
 
 echo GET has a message
-${CLICKHOUSE_CURL} -H 'Connection: close' -X GET "${URL}" -D - | grep 'There is no handle /does_not_exist'
+${DATASTORE_CURL} -H 'Connection: close' -X GET "${URL}" -D - | grep 'There is no handle /does_not_exist'

@@ -8,7 +8,7 @@ namespace DB
 
 class Context;
 
-/** Implements a table engine for Iceberg tables. It gives information about the various snapshots of Iceberg tables created in ClickHouse.
+/** Implements a table engine for Iceberg tables. It gives information about the various snapshots of Iceberg tables created in Datastore.
  *
  * db_name String
  * table_name String

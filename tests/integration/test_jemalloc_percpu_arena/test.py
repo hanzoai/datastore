@@ -12,12 +12,12 @@ CPU_ID = 4
 
 
 def run_command_in_container(cmd, *args):
-    # /clickhouse is mounted by integration tests runner
-    alternative_binary = os.getenv("CLICKHOUSE_BINARY", "/clickhouse")
+    # /datastore is mounted by integration tests runner
+    alternative_binary = os.getenv("DATASTORE_BINARY", "/datastore")
     if alternative_binary:
         args += (
             "--volume",
-            f"{alternative_binary}:/usr/bin/clickhouse",
+            f"{alternative_binary}:/usr/bin/datastore",
         )
 
     return subprocess.check_output(
@@ -43,7 +43,7 @@ def run_with_cpu_limit(cmd, *args):
         # replace /sys/devices/system/cpu/online to full _SC_NPROCESSORS_ONLN
         # like LXD/LXC from [1] does.
         #
-        #   [1]: https://github.com/ClickHouse/ClickHouse/issues/32806
+        #   [1]: https://github.com/ClickHouse/Datastore/issues/32806
         args += (
             "--volume",
             f"{online_cpu.name}:/sys/devices/system/cpu/online:ro",
@@ -54,7 +54,7 @@ def run_with_cpu_limit(cmd, *args):
 
 def skip_if_jemalloc_disabled():
     output = run_command_in_container(
-        """clickhouse local -q "
+        """datastore local -q "
         SELECT value FROM system.build_options WHERE name = 'USE_JEMALLOC'"
     """
     ).strip()
@@ -62,7 +62,7 @@ def skip_if_jemalloc_disabled():
         pytest.skip(f"Compiled without jemalloc (USE_JEMALLOC={output})")
 
 
-# Ensure that clickhouse works even when number of online CPUs
+# Ensure that datastore works even when number of online CPUs
 # (_SC_NPROCESSORS_ONLN) is smaller then available (_SC_NPROCESSORS_CONF).
 #
 # Refs: https://github.com/jemalloc/jemalloc/pull/2181
@@ -83,7 +83,7 @@ def test_jemalloc_percpu_arena():
 
     # implicitly disable percpu arena
     result = run_with_cpu_limit(
-        'clickhouse local -q "select 1"',
+        'datastore local -q "select 1"',
         # NOTE: explicitly disable, since it is enabled by default in debug build
         # (and even though debug builds are not in CI let's state this).
         "--env",
@@ -99,7 +99,7 @@ def test_jemalloc_percpu_arena():
     with pytest.raises(subprocess.CalledProcessError):
         # should fail because of abort_conf:true but:
         run_with_cpu_limit(
-            'clickhouse local -q "select 1"',
+            'datastore local -q "select 1"',
             "--cpuset-cpus", f"{CPU_ID}",
             "--env", "MALLOC_CONF=abort_conf:true",
         )
@@ -107,7 +107,7 @@ def test_jemalloc_percpu_arena():
     # should not fail even with abort_conf:true, due to explicit narenas
     # NOTE: abort:false to make it compatible with debug build
     run_with_cpu_limit(
-        'clickhouse local -q "select 1"',
+        'datastore local -q "select 1"',
         "--env", f"MALLOC_CONF=abort_conf:true,abort:false,narenas:{all_cpus}",
     )
 

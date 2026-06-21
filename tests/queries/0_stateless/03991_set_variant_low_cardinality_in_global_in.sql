@@ -3,7 +3,7 @@
 -- because convertToFullIfNeeded recursively stripped LowCardinality from ColumnVariant's
 -- internal variant columns without updating the corresponding DataTypeVariant, creating
 -- column/type position mismatches in KeyCondition::tryPrepareSetColumnsForIndex.
--- https://github.com/ClickHouse/ClickHouse/issues/97854
+-- https://github.com/ClickHouse/Datastore/issues/97854
 SET enable_analyzer=1;
 DROP TABLE IF EXISTS t_variant_lc;
 CREATE TABLE t_variant_lc (`id` Decimal(76, 70), `value` Int128) ENGINE = MergeTree ORDER BY (id, value);

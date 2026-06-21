@@ -42,7 +42,7 @@ static ConfigurationPtr getConfigurationFromXMLString(const char * xml_data)
     return {new Poco::Util::XMLConfiguration{&input_source}};
 }
 
-const char * config_xml = "<clickhouse></clickhouse>";
+const char * config_xml = "<datastore></datastore>";
 
 ContextMutablePtr context;
 

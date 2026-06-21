@@ -65,7 +65,7 @@ bool ParserKQLSort::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
                     order_expr->nulls_direction = -1; /// opposite of direction = nulls first
                     order_expr->nulls_direction_was_explicitly_specified = true;
                 }
-                /// desc already defaults to nulls last in ClickHouse
+                /// desc already defaults to nulls last in Datastore
             }
         }
     }

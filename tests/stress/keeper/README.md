@@ -1,6 +1,6 @@
 # Keeper Stress Tests
 
-Scenario-driven stress-testing framework for ClickHouse Keeper. Runs keeper-bench
+Scenario-driven stress-testing framework for Datastore Keeper. Runs keeper-bench
 workloads against a 3-node cluster (default Keeper, RocksDB Keeper, Apache ZooKeeper,
 or RaftKeeper backends), optionally with fault injection.
 
@@ -100,10 +100,10 @@ output:
 
 ## Running locally
 
-**Prerequisites:** Build ClickHouse (`keeper-bench` uses the binary). Run from the **repo root**.
+**Prerequisites:** Build Datastore (`keeper-bench` uses the binary). Run from the **repo root**.
 
 ```bash
-PYTHONPATH=".:tests/stress:ci" CLICKHOUSE_BINARY=$(pwd)/build/programs/clickhouse \
+PYTHONPATH=".:tests/stress:ci" DATASTORE_BINARY=$(pwd)/build/programs/datastore \
   pytest tests/stress/keeper/tests/test_scenarios.py \
   -k '<scenario> and <backend>' --matrix-backends=<backend> -x -s
 ```
@@ -111,7 +111,7 @@ PYTHONPATH=".:tests/stress:ci" CLICKHOUSE_BINARY=$(pwd)/build/programs/clickhous
 **Example — single no-fault scenario, default backend, 15 min:**
 
 ```bash
-export CLICKHOUSE_BINARY=$(pwd)/build/programs/clickhouse
+export DATASTORE_BINARY=$(pwd)/build/programs/datastore
 export PYTHONPATH=.:tests/stress:ci
 
 pytest -p no:cacheprovider --durations=0 -vv -s \
@@ -133,7 +133,7 @@ pytest -p no:cacheprovider --durations=0 -vv -s \
 
 | Option / Env | Meaning |
 |---|---|
-| `CLICKHOUSE_BINARY` | Path to `clickhouse` binary used by keeper-bench. |
+| `DATASTORE_BINARY` | Path to `datastore` binary used by keeper-bench. |
 | `PYTHONPATH=.:tests/stress:ci` | Required so `keeper.*` and `ci.*` imports resolve. |
 | `-k 'prod-mix-no-fault and default'` | Filter by scenario name and/or backend. |
 | `--matrix-backends=default,rocks` | Backends to test (comma-separated). |

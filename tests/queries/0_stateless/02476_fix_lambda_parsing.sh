@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT"
+format="$DATASTORE_FORMAT"
 
 echo "SELECT f(x, (y) -> z)" | $format
 echo "SELECT f(x, y -> z)" | $format

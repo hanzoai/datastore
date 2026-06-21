@@ -4,11 +4,11 @@ DROP TABLE IF EXISTS t_prewarm_cache_rmt_1;
 DROP TABLE IF EXISTS t_prewarm_cache_rmt_2;
 
 CREATE TABLE t_prewarm_cache_rmt_1 (a UInt64, b UInt64, c UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/03254_prewarm_mark_cache_smt/t_prewarm_cache', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/03254_prewarm_mark_cache_smt/t_prewarm_cache', '1')
 ORDER BY a SETTINGS prewarm_mark_cache = 1;
 
 CREATE TABLE t_prewarm_cache_rmt_2 (a UInt64, b UInt64, c UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/03254_prewarm_mark_cache_smt/t_prewarm_cache', '2')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/03254_prewarm_mark_cache_smt/t_prewarm_cache', '2')
 ORDER BY a SETTINGS prewarm_mark_cache = 1;
 
 SYSTEM CLEAR MARK CACHE;

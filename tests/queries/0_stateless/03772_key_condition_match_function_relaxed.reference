@@ -1,12 +1,12 @@
 -- { echo }
 SELECT count(*)
 FROM 03772_table_match
-WHERE NOT match(url, '^https?://clickhouse[.]com/');
+WHERE NOT match(url, '^https?://datastore[.]com/');
 1
 EXPLAIN indexes = 1
 SELECT count(*)
 FROM 03772_table_match
-WHERE NOT match(url, '^https?://clickhouse[.]com/');
+WHERE NOT match(url, '^https?://datastore[.]com/');
 Expression ((Project names + Projection))
   Aggregating
     Expression (Before GROUP BY)
@@ -67,12 +67,12 @@ Expression ((Project names + Projection))
           Ranges: 0
 SELECT count(*)
 FROM 03772_table_match
-WHERE match(url, '^https?://clickhouse[.]com/') = false;
+WHERE match(url, '^https?://datastore[.]com/') = false;
 1
 EXPLAIN indexes = 1
 SELECT count(*)
 FROM 03772_table_match
-WHERE match(url, '^https?://clickhouse[.]com/') = false;
+WHERE match(url, '^https?://datastore[.]com/') = false;
 Expression ((Project names + Projection))
   Aggregating
     Expression (Before GROUP BY)

@@ -16,7 +16,7 @@ class Client:
         self,
         host,
         port=9000,
-        command="/usr/bin/clickhouse-client",
+        command="/usr/bin/datastore-client",
         secure=False,
         config=None,
     ):
@@ -24,7 +24,7 @@ class Client:
         self.port = port
         self.command = [command]
 
-        if os.path.basename(command) == "clickhouse":
+        if os.path.basename(command) == "datastore":
             self.command.append("client")
 
         if secure:
@@ -227,7 +227,7 @@ class CommandRequest:
             self.timer.start()
 
     def remove_trash_from_stderr(self, stderr):
-        # FIXME https://github.com/ClickHouse/ClickHouse/issues/48181
+        # FIXME https://github.com/ClickHouse/Datastore/issues/48181
         if not stderr:
             return stderr
         lines = stderr.split("\n")

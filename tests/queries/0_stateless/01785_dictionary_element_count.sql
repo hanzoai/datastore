@@ -20,7 +20,7 @@ CREATE DICTIONARY 01785_db.simple_key_flat_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'simple_key_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'simple_key_source_table'))
 LAYOUT(FLAT())
 LIFETIME(MIN 0 MAX 1000);
 
@@ -35,7 +35,7 @@ CREATE DICTIONARY 01785_db.simple_key_hashed_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'simple_key_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'simple_key_source_table'))
 LAYOUT(HASHED())
 LIFETIME(MIN 0 MAX 1000);
 
@@ -50,7 +50,7 @@ CREATE DICTIONARY 01785_db.simple_key_cache_dictionary
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'simple_key_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'simple_key_source_table'))
 LAYOUT(CACHE(SIZE_IN_CELLS 100000))
 LIFETIME(MIN 0 MAX 1000);
 
@@ -79,7 +79,7 @@ CREATE DICTIONARY 01785_db.complex_key_hashed_dictionary
     value String
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'complex_key_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() DB '01785_db' TABLE 'complex_key_source_table'))
 LAYOUT(COMPLEX_KEY_HASHED())
 LIFETIME(MIN 0 MAX 1000);
 

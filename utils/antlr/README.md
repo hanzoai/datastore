@@ -1,6 +1,6 @@
 ## This parser is unsupported
 
-We keep it in this repository for your curiosity. But this is not the parser of ClickHouse.
+We keep it in this repository for your curiosity. But this is not the parser of Datastore.
 
 ## How to generate source code files from grammar
 

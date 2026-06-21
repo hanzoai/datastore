@@ -20,7 +20,7 @@ from helpers.network import PartitionManager
 from helpers.test_tools import TSV
 
 if is_arm():
-    # skip due to no arm support for clickhouse/kerberos-kdc docker image
+    # skip due to no arm support for datastore/kerberos-kdc docker image
     pytestmark = pytest.mark.skip
 
 cluster = ClickHouseCluster(__file__)
@@ -76,7 +76,7 @@ def kafka_cluster():
     try:
         cluster.start()
         if instance.is_debug_build():
-            # https://github.com/ClickHouse/ClickHouse/issues/27651
+            # https://github.com/ClickHouse/Datastore/issues/27651
             pytest.skip(
                 "librdkafka calls system function for kinit which does not pass harmful check in debug build"
             )
@@ -265,8 +265,8 @@ def test_kafka_config_from_sql_named_collection(kafka_cluster):
             kafka.security_protocol = 'SASL_PLAINTEXT',
             kafka.sasl_mechanism = 'GSSAPI',
             kafka.sasl_kerberos_service_name = 'kafka',
-            kafka.sasl_kerberos_keytab = '/tmp/keytab/clickhouse.keytab',
-            kafka.sasl_kerberos_principal = 'anotherkafkauser/instance@TEST.CLICKHOUSE.TECH',
+            kafka.sasl_kerberos_keytab = '/tmp/keytab/datastore.keytab',
+            kafka.sasl_kerberos_principal = 'anotherkafkauser/instance@TEST.DATASTORE.TECH',
             kafka.debug = 'security',
             kafka.api_version_request = 'false',
 

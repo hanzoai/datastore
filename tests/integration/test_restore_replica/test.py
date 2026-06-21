@@ -14,7 +14,7 @@ def fill_nodes(nodes):
         node.query(
             """
             CREATE TABLE test(n UInt32)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test/', '{replica}')
             ORDER BY n PARTITION BY n % 10;
         """.format(
                 replica=node.name
@@ -100,8 +100,8 @@ def test_restore_replica_sequential(start_cluster):
     fill_table()
 
     print("Deleting root ZK path metadata")
-    zk_rmr_with_retries(zk, "/clickhouse/tables/test")
-    assert zk.exists("/clickhouse/tables/test") is None
+    zk_rmr_with_retries(zk, "/datastore/tables/test")
+    assert zk.exists("/datastore/tables/test") is None
 
     node_1.query("SYSTEM RESTART REPLICA test")
     node_1.query_and_get_error(
@@ -111,7 +111,7 @@ def test_restore_replica_sequential(start_cluster):
     print("Restoring replica1")
 
     node_1.query("SYSTEM RESTORE REPLICA test")
-    assert zk.exists("/clickhouse/tables/test")
+    assert zk.exists("/datastore/tables/test")
     check_data(499500, 1000)
 
     node_1.query("INSERT INTO test SELECT number + 1000 FROM numbers(1000)")
@@ -136,8 +136,8 @@ def test_restore_replica_parallel(start_cluster):
     fill_table()
 
     print("Deleting root ZK path metadata")
-    zk_rmr_with_retries(zk, "/clickhouse/tables/test")
-    assert zk.exists("/clickhouse/tables/test") is None
+    zk_rmr_with_retries(zk, "/datastore/tables/test")
+    assert zk.exists("/datastore/tables/test") is None
 
     node_1.query("SYSTEM RESTART REPLICA test")
     node_1.query_and_get_error(
@@ -151,7 +151,7 @@ def test_restore_replica_parallel(start_cluster):
 
     node_1.query("SYSTEM RESTORE REPLICA test ON CLUSTER test_cluster")
 
-    assert zk.exists("/clickhouse/tables/test")
+    assert zk.exists("/datastore/tables/test")
     check_data(499500, 1000)
 
     node_1.query("INSERT INTO test SELECT number + 1000 FROM numbers(1000)")
@@ -165,13 +165,13 @@ def test_restore_replica_alive_replicas(start_cluster):
     fill_table()
 
     print("Deleting replica2 path, trying to restore replica1")
-    zk_rmr_with_retries(zk, "/clickhouse/tables/test/replicas/replica2")
-    assert zk.exists("/clickhouse/tables/test/replicas/replica2") is None
+    zk_rmr_with_retries(zk, "/datastore/tables/test/replicas/replica2")
+    assert zk.exists("/datastore/tables/test/replicas/replica2") is None
     node_1.query_and_get_error("SYSTEM RESTORE REPLICA test")
 
     print("Deleting replica1 path, trying to restore replica1")
-    zk_rmr_with_retries(zk, "/clickhouse/tables/test/replicas/replica1")
-    assert zk.exists("/clickhouse/tables/test/replicas/replica1") is None
+    zk_rmr_with_retries(zk, "/datastore/tables/test/replicas/replica1")
+    assert zk.exists("/datastore/tables/test/replicas/replica1") is None
 
     node_1.query("SYSTEM RESTART REPLICA test")
     node_1.query("SYSTEM RESTORE REPLICA test")

@@ -66,22 +66,22 @@ from .retry_decorator import retry
 from .test_tools import assert_eq_with_retry, exec_query_with_retry
 
 HELPERS_DIR = p.dirname(__file__)
-CLICKHOUSE_ROOT_DIR = p.join(p.dirname(__file__), "../../..")
-LOCAL_DOCKER_COMPOSE_DIR = p.join(CLICKHOUSE_ROOT_DIR, "tests/integration/compose/")
+DATASTORE_ROOT_DIR = p.join(p.dirname(__file__), "../../..")
+LOCAL_DOCKER_COMPOSE_DIR = p.join(DATASTORE_ROOT_DIR, "tests/integration/compose/")
 DEFAULT_ENV_NAME = ".env"
 
 
 def find_default_config_path():
-    path = os.environ.get("CLICKHOUSE_TESTS_BASE_CONFIG_DIR", None)
+    path = os.environ.get("DATASTORE_TESTS_BASE_CONFIG_DIR", None)
     if path is not None:
         return path
-    path = p.join(CLICKHOUSE_ROOT_DIR, "programs/server")
+    path = p.join(DATASTORE_ROOT_DIR, "programs/server")
     if p.exists(p.join(path, "config.xml")):
         return path
-    path = "/etc/clickhouse-server/"
+    path = "/etc/datastore-server/"
     if p.exists(p.join(path, "config.xml")):
         return path
-    raise RuntimeError("Cannot find config.xml. Please set CLICKHOUSE_TESTS_BASE_CONFIG_DIR")
+    raise RuntimeError("Cannot find config.xml. Please set DATASTORE_TESTS_BASE_CONFIG_DIR")
 
 DEFAULT_BASE_CONFIG_DIR = find_default_config_path()
 
@@ -109,23 +109,23 @@ DOCKER_BASE_TAG = os.environ.get("DOCKER_BASE_TAG", "latest")
 
 SANITIZER_SIGN = "=================="
 
-CLICKHOUSE_START_COMMAND = (
-    "clickhouse server --config-file=/etc/clickhouse-server/{main_config_file}"
+DATASTORE_START_COMMAND = (
+    "datastore server --config-file=/etc/datastore-server/{main_config_file}"
 )
 
-CLICKHOUSE_LOG_FILE = "/var/log/clickhouse-server/clickhouse-server.log"
+DATASTORE_LOG_FILE = "/var/log/datastore-server/datastore-server.log"
 
-CLICKHOUSE_ERROR_LOG_FILE = "/var/log/clickhouse-server/clickhouse-server.err.log"
+DATASTORE_ERROR_LOG_FILE = "/var/log/datastore-server/datastore-server.err.log"
 
 # Minimum version we use in integration tests to check compatibility with old releases
 # Keep in mind that we only support upgrading between releases that are at most 1 year different.
 # This means that this minimum need to be, at least, 1 year older than the current release
-CLICKHOUSE_CI_MIN_TESTED_VERSION = "23.3"
+DATASTORE_CI_MIN_TESTED_VERSION = "23.3"
 
 # `Nullable(Tuple)` experimental feature is introduced in 26.1. This has lead to changes in the output return type
 # of many aggregate functions from `Tuple(...)` to `Nullable(Tuple(...))`. This version can be used as baseline to do
 # compatibility checks for features that are affected by this experimental feature.
-CLICKHOUSE_CI_PRE_NULLABLE_TUPLE_VERSION = "25.12"
+DATASTORE_CI_PRE_NULLABLE_TUPLE_VERSION = "25.12"
 
 ZOOKEEPER_CONTAINERS = ("zoo1", "zoo2", "zoo3")
 
@@ -498,8 +498,8 @@ def find_binary(name):
     if is_executable(bin_path):
         return bin_path
 
-    # Default binary path if CLICKHOUSE_ROOT_DIR contains build
-    bin_path = os.path.join(CLICKHOUSE_ROOT_DIR, f"build/programs/{name}")
+    # Default binary path if DATASTORE_ROOT_DIR contains build
+    bin_path = os.path.join(DATASTORE_ROOT_DIR, f"build/programs/{name}")
     if is_executable(bin_path):
         return bin_path
 
@@ -507,12 +507,12 @@ def find_binary(name):
 
 
 class ClickHouseCluster:
-    """ClickHouse cluster with several instances and (possibly) ZooKeeper.
+    """Datastore cluster with several instances and (possibly) ZooKeeper.
 
     Add instances with several calls to add_instance(), then start them with the start() call.
 
     Directories for instances are created in the directory of base_path. After cluster is started,
-    these directories will contain logs, database files, docker-compose config, ClickHouse configs etc.
+    these directories will contain logs, database files, docker-compose config, Datastore configs etc.
     """
 
     def __init__(
@@ -544,13 +544,13 @@ class ClickHouseCluster:
         self.base_config_dir = base_config_dir or DEFAULT_BASE_CONFIG_DIR
         self.server_bin_path = p.realpath(
             server_bin_path
-            or os.environ.get("CLICKHOUSE_TESTS_SERVER_BIN_PATH", None)
-            or find_binary("clickhouse")
+            or os.environ.get("DATASTORE_TESTS_SERVER_BIN_PATH", None)
+            or find_binary("datastore")
         )
         self.client_bin_path = p.realpath(
             client_bin_path
-            or os.environ.get("CLICKHOUSE_TESTS_CLIENT_BIN_PATH", None)
-            or find_binary("clickhouse-client")
+            or os.environ.get("DATASTORE_TESTS_CLIENT_BIN_PATH", None)
+            or find_binary("datastore-client")
         )
         self.zookeeper_config_path = (
             p.join(self.base_dir, zookeeper_config_path)
@@ -589,12 +589,12 @@ class ClickHouseCluster:
         self.env_variables = {}
         # Problems with glibc 2.36+ [1]
         #
-        #    [1]: https://github.com/ClickHouse/ClickHouse/issues/43426#issuecomment-1368512678
+        #    [1]: https://github.com/ClickHouse/Datastore/issues/43426#issuecomment-1368512678
         self.env_variables["ASAN_OPTIONS"] = "use_sigaltstack=0"
         # In integration tests we spawn multiple servers, so let's aim to not more then 5GiB
         self.env_variables["TSAN_OPTIONS"] = f"use_sigaltstack=0 memory_limit_mb=5120"
-        self.env_variables["CLICKHOUSE_WATCHDOG_ENABLE"] = "0"
-        self.env_variables["CLICKHOUSE_NATS_TLS_SECURE"] = "0"
+        self.env_variables["DATASTORE_WATCHDOG_ENABLE"] = "0"
+        self.env_variables["DATASTORE_NATS_TLS_SECURE"] = "0"
 
         if enable_thread_fuzzer:
             for key, value in DEFAULT_THREAD_FUZZER_SETTINGS.items():
@@ -605,7 +605,7 @@ class ClickHouseCluster:
         self.up_called = False
 
         custom_dockerd_host = custom_dockerd_host or os.environ.get(
-            "CLICKHOUSE_TESTS_DOCKERD_HOST"
+            "DATASTORE_TESTS_DOCKERD_HOST"
         )
         self.docker_api_version = os.environ.get("DOCKER_API_VERSION")
 
@@ -1194,7 +1194,7 @@ class ClickHouseCluster:
 
         # We used to remove unused images, but it is too aggressive and causes issues in
         # CI because of races between pulling and pruning.
-        # https://github.com/ClickHouse/ClickHouse/issues/80470#issuecomment-3631989064
+        # https://github.com/ClickHouse/Datastore/issues/80470#issuecomment-3631989064
         # try:
         #     logging.debug("Trying to prune unused images...")
 
@@ -1227,7 +1227,7 @@ class ClickHouseCluster:
 
     def get_client_cmd(self):
         cmd = self.client_bin_path
-        if p.basename(cmd) == "clickhouse":
+        if p.basename(cmd) == "datastore":
             cmd += " client"
         return cmd
 
@@ -1329,20 +1329,20 @@ class ClickHouseCluster:
         binary_path = self.server_bin_path
         binary_dir = os.path.dirname(self.server_bin_path)
 
-        # always prefer clickhouse-keeper standalone binary
+        # always prefer datastore-keeper standalone binary
         if os.path.exists(
-            os.path.join(binary_dir, "clickhouse-keeper")
-        ) and not os.path.islink(os.path.join(binary_dir, "clickhouse-keeper")):
-            binary_path = os.path.join(binary_dir, "clickhouse-keeper")
-            keeper_cmd_prefix = "clickhouse-keeper"
+            os.path.join(binary_dir, "datastore-keeper")
+        ) and not os.path.islink(os.path.join(binary_dir, "datastore-keeper")):
+            binary_path = os.path.join(binary_dir, "datastore-keeper")
+            keeper_cmd_prefix = "datastore-keeper"
         else:
             if binary_path.endswith("-server"):
                 binary_path = binary_path[: -len("-server")]
-            keeper_cmd_prefix = "clickhouse keeper"
+            keeper_cmd_prefix = "datastore keeper"
 
         env_variables["keeper_binary"] = binary_path
         env_variables["keeper_cmd_prefix"] = keeper_cmd_prefix
-        env_variables["image"] = "clickhouse/integration-test:" + DOCKER_BASE_TAG
+        env_variables["image"] = "datastore/integration-test:" + DOCKER_BASE_TAG
         env_variables["user"] = str(os.getuid())
         env_variables["keeper_fs"] = "bind"
         for i in range(1, 4):
@@ -2022,8 +2022,8 @@ class ClickHouseCluster:
         with_postgres_cluster=False,
         with_postgresql_java_client=False,
         with_mysql_dotnet_client=False,
-        clickhouse_log_file=CLICKHOUSE_LOG_FILE,
-        clickhouse_error_log_file=CLICKHOUSE_ERROR_LOG_FILE,
+        clickhouse_log_file=DATASTORE_LOG_FILE,
+        clickhouse_error_log_file=DATASTORE_ERROR_LOG_FILE,
         with_arrowflight=False,
         with_mongo=False,
         with_nginx=False,
@@ -2054,9 +2054,9 @@ class ClickHouseCluster:
         hostname=None,
         env_variables=None,
         instance_env_variables=False,
-        image="clickhouse/integration-test",
+        image="datastore/integration-test",
         tag=None,
-        # keep the docker container running when clickhouse server is stopped
+        # keep the docker container running when datastore server is stopped
         stay_alive=False,
         ipv4_address=None,
         ipv6_address=None,
@@ -2076,18 +2076,18 @@ class ClickHouseCluster:
         users_config_name="users.xml",
         metrika_xml=None,
         copy_common_configs=True,
-        config_root_name="clickhouse",
+        config_root_name="datastore",
         extra_configs=[],
         extra_args="",
         randomize_settings=True,
         use_docker_init_flag=False,
-        clickhouse_start_cmd=CLICKHOUSE_START_COMMAND,
+        clickhouse_start_cmd=DATASTORE_START_COMMAND,
         extra_parameters=None,
     ) -> "ClickHouseInstance":
         """Add an instance to the cluster.
 
-        name - the name of the instance directory and the value of the 'instance' macro in ClickHouse.
-        base_config_dir - a directory with config.xml and users.xml files which will be copied to /etc/clickhouse-server/ directory
+        name - the name of the instance directory and the value of the 'instance' macro in Datastore.
+        base_config_dir - a directory with config.xml and users.xml files which will be copied to /etc/datastore-server/ directory
         main_configs - a list of config files that will be added to config.d/ directory
         user_configs - a list of config files that will be added to users.d/ directory
         with_zookeeper - if True, add ZooKeeper configuration to configs and ZooKeeper instances to the cluster.
@@ -2113,7 +2113,7 @@ class ClickHouseCluster:
             with_remote_database_disk = False
 
         if not self.with_dolor and with_remote_database_disk is None:
-            with_remote_database_disk = int(os.getenv("CLICKHOUSE_USE_DATABASE_DISK", "0"))
+            with_remote_database_disk = int(os.getenv("DATASTORE_USE_DATABASE_DISK", "0"))
 
         if with_remote_database_disk:
             logging.debug(f"Instance {name}, with_remote_database_disk enabled")
@@ -2574,7 +2574,7 @@ class ClickHouseCluster:
         return self.docker_client.api.logs(container_id).decode()
 
     def query_zookeeper(self, query, node=ZOOKEEPER_CONTAINERS[0], nothrow=False):
-        cmd = f'clickhouse keeper-client -p {self.zookeeper_port} -q "{query}"'
+        cmd = f'datastore keeper-client -p {self.zookeeper_port} -q "{query}"'
         container_id = self.get_container_id(node)
         return self.exec_in_container(container_id, cmd, nothrow=nothrow, use_cli=False)
 
@@ -3051,7 +3051,7 @@ class ClickHouseCluster:
     def reset_rabbitmq(self, timeout=120):
         try:
             resp = requests.get(f"http://{self.rabbitmq_ip}:{self.rabbitmq_management_port}/api/overview",
-                                auth=("root", "clickhouse"))
+                                auth=("root", "datastore"))
             logging.debug(f"RabbitMQ statistics:\n{json.dumps(resp.json(), indent=2)}")
         except:
             pass
@@ -3222,7 +3222,7 @@ class ClickHouseCluster:
             secret_key=minio_secret_key,
             secure=secure,
             http_client=urllib3.PoolManager(cert_reqs="CERT_NONE"),
-        )  # disable SSL check as we test ClickHouse and not Python library
+        )  # disable SSL check as we test Datastore and not Python library
         start = time.time()
         while time.time() - start < timeout:
             try:
@@ -3427,7 +3427,7 @@ class ClickHouseCluster:
                         "bash",
                         "-c",
                         "test -f /tmp/.openldap-initialized"
-                        f"&& /opt/bitnami/openldap/bin/ldapsearch -x -H ldap://{self.ldap_host}:{self.ldap_port} -D cn=admin,dc=example,dc=org -w clickhouse -b dc=example,dc=org"
+                        f"&& /opt/bitnami/openldap/bin/ldapsearch -x -H ldap://{self.ldap_host}:{self.ldap_port} -D cn=admin,dc=example,dc=org -w datastore -b dc=example,dc=org"
                         f'| grep -c -E "member: cn=j(ohn|ane)doe"'
                         f"| grep 2 >> /dev/null",
                     ],
@@ -4054,17 +4054,17 @@ class ClickHouseCluster:
             clickhouse_start_cmd = self.base_cmd + ["up", "-d", "--no-recreate"]
             logging.debug(
                 (
-                    "Trying to create ClickHouse instance by command %s",
+                    "Trying to create Datastore instance by command %s",
                     " ".join(map(str, clickhouse_start_cmd)),
                 )
             )
             self.up_called = True
 
             run_and_check(clickhouse_start_cmd)
-            logging.debug("ClickHouse instance created")
+            logging.debug("Datastore instance created")
 
             if self.with_dolor:
-                # Copy binaries and start ClickHouse for dolor instances
+                # Copy binaries and start Datastore for dolor instances
                 for instance in self.instances.values():
                     i = 0
                     for val in self.server_binaries:
@@ -4073,7 +4073,7 @@ class ClickHouseCluster:
                                 "docker",
                                 "cp",
                                 val,
-                                f"{instance.docker_id}:/usr/bin/clickhouse{i}",
+                                f"{instance.docker_id}:/usr/bin/datastore{i}",
                             ],
                             check=True,
                         )
@@ -4083,14 +4083,14 @@ class ClickHouseCluster:
                                 [
                                     "ln",
                                     "-sf",
-                                    f"/usr/bin/clickhouse{i}",
-                                    "/usr/bin/clickhouse",
+                                    f"/usr/bin/datastore{i}",
+                                    "/usr/bin/datastore",
                                 ],
                                 user="root",
                             )
                         i += 1
                     self.exec_in_container(
-                        instance.docker_id, ["chmod", "+777", "/usr/bin/clickhouse"]
+                        instance.docker_id, ["chmod", "+777", "/usr/bin/datastore"]
                     )
                     instance.exec_in_container(
                         ["bash", "-c", instance.clickhouse_start_command],
@@ -4118,10 +4118,10 @@ class ClickHouseCluster:
                 instance.ipv6_address = self.get_instance_global_ipv6(instance.name)
 
                 logging.debug(
-                    f"Waiting for ClickHouse start in {instance.name}, ip: {instance.ip_address}..."
+                    f"Waiting for Datastore start in {instance.name}, ip: {instance.ip_address}..."
                 )
                 instance.wait_for_start(start_timeout, connection_timeout=connection_timeout)
-                logging.debug(f"ClickHouse {instance.name} started")
+                logging.debug(f"Datastore {instance.name} started")
 
                 instance.client = Client(
                     instance.ip_address, command=self.client_bin_path
@@ -4294,10 +4294,10 @@ class ClickHouseCluster:
 
         Probe strategy: open a fresh TCP connection from the test process
         directly to `<instance>:9000` on every iteration, send one byte
-        that the ClickHouse native protocol treats as an unexpected
+        that the Datastore native protocol treats as an unexpected
         first packet (varint `0x05`, `Protocol::Client::TablesStatusRequest`
         — anything other than `Hello`/`G`/`P`), and wait for the
-        server's response with a tight read timeout. A live ClickHouse
+        server's response with a tight read timeout. A live Datastore
         server immediately raises `UNEXPECTED_PACKET_FROM_CLIENT` from
         `TCPHandler::receiveHello` and sends a `Server::Exception`
         packet back, which we observe within milliseconds. A paused
@@ -4305,8 +4305,8 @@ class ClickHouseCluster:
         the `TCPHandler` accept/read/write loop in user space, so the
         read times out and the probe declares the pause effective.
 
-        Why not reuse a sibling ClickHouse node and `remote()`? Each
-        ClickHouse server keeps a per-target connection pool keyed by
+        Why not reuse a sibling Datastore node and `remote()`? Each
+        Datastore server keeps a per-target connection pool keyed by
         host/port/user/etc. (see `src/Client/ConnectionPool.h`). A cached
         native-protocol connection to a paused node has a live kernel
         socket, so `Connection::forceConnected` short-circuits to a
@@ -4321,7 +4321,7 @@ class ClickHouseCluster:
         observably effective within 30.0s` reports on slow sanitizer
         shards even after `wait_timeout` was raised to 90s.
 
-        For non-ClickHouse containers (Kafka, MongoDB, etc.) we cannot
+        For non-Datastore containers (Kafka, MongoDB, etc.) we cannot
         speak the native protocol on port 9000, so we skip the wait. The
         current Kafka callers do not assert on the timing of the freeze
         — they wait for log lines that the paused side emits well after
@@ -4351,7 +4351,7 @@ class ClickHouseCluster:
                 # any pooling/caching the test process or kernel might do.
                 sock = socket.create_connection((addr, port), timeout=0.5)
                 sock.settimeout(0.5)
-                # ClickHouse native server reads the client `Hello`
+                # Datastore native server reads the client `Hello`
                 # packet first; the first byte on the wire is a varint
                 # packet type. `Hello` is `0x00`, so sending `\x00`
                 # would put the server into reading the rest of the
@@ -4421,13 +4421,13 @@ class ClickHouseCluster:
         with cluster.pause_container(name):
             useful_stuff()
 
-        When `instance_name` refers to a ClickHouse instance, this helper
+        When `instance_name` refers to a Datastore instance, this helper
         blocks until the pause is observably effective for fresh
-        TCP-plus-ClickHouse-handshake connections, removing a chronic
+        TCP-plus-Datastore-handshake connections, removing a chronic
         race where Docker's cgroup freezer takes effect asynchronously
         with respect to in-flight traffic. The probe runs from the test
         process and uses raw sockets — it does not require a sibling
-        ClickHouse instance and bypasses any internal connection pooling
+        Datastore instance and bypasses any internal connection pooling
         a sibling might have. Set `wait_for_paused=False` to opt out and
         keep the older non-blocking behavior.
 
@@ -4586,12 +4586,12 @@ services:
         image: {image}:{tag}
         hostname: {hostname}
         volumes:
-            - {instance_config_dir}:/etc/clickhouse-server/
-            - {db_dir}:/var/lib/clickhouse/
-            - {logs_dir}:/var/log/clickhouse-server/
+            - {instance_config_dir}:/etc/datastore-server/
+            - {db_dir}:/var/lib/datastore/
+            - {logs_dir}:/var/log/datastore-server/
             - /etc/passwd:/etc/passwd:ro
             - {HELPERS_DIR}/../integration-tests-entrypoint.sh:/integration-tests-entrypoint.sh
-            - {CLICKHOUSE_ROOT_DIR}:/debug:rw
+            - {DATASTORE_ROOT_DIR}:/debug:rw
             {dev_mount}
             {metrika_xml}
             {binary_volume}
@@ -4693,7 +4693,7 @@ class ClickHouseInstance:
         with_postgres_cluster,
         with_postgresql_java_client,
         with_mysql_dotnet_client,
-        clickhouse_start_command=CLICKHOUSE_START_COMMAND,
+        clickhouse_start_command=DATASTORE_START_COMMAND,
         clickhouse_start_extra_args="",
         main_config_name="config.xml",
         users_config_name="users.xml",
@@ -4702,7 +4702,7 @@ class ClickHouseInstance:
         hostname=None,
         env_variables=None,
         instance_env_variables=False,
-        image="clickhouse/integration-test",
+        image="datastore/integration-test",
         tag="latest",
         stay_alive=False,
         ipv4_address=None,
@@ -4713,7 +4713,7 @@ class ClickHouseInstance:
         mem_limit=None,
         cpu_limit=None,
         pids_limit=None,
-        config_root_name="clickhouse",
+        config_root_name="datastore",
         extra_configs=[],
         randomize_settings=True,
         use_docker_init_flag=False,
@@ -4830,11 +4830,11 @@ class ClickHouseInstance:
         self.clickhouse_start_command_in_daemon = "{} --daemon -- {}".format(
             clickhouse_start_command_with_conf, clickhouse_start_extra_args
         )
-        # NOTE: as a child command we have only clickhouse, so it is OK to assume so
-        # and there is no other way to kill clickhouse properly (easily), since
+        # NOTE: as a child command we have only datastore, so it is OK to assume so
+        # and there is no other way to kill datastore properly (easily), since
         # clickhosue is spawned with --daemon, and it is not a child neither in
         # the same session.
-        self.clickhouse_stay_alive_command = "bash -c \"trap 'pkill tail; pkill clickhouse' INT TERM; {}; coproc tail -f /dev/null; wait $$!\"".format(
+        self.clickhouse_stay_alive_command = "bash -c \"trap 'pkill tail; pkill datastore' INT TERM; {}; coproc tail -f /dev/null; wait $$!\"".format(
             self.clickhouse_start_command_in_daemon
         )
 
@@ -4864,7 +4864,7 @@ class ClickHouseInstance:
 
         # Use a common path for data lakes on the filesystem
         self.lakehouses_path = (
-            "- /var/lib/clickhouse/user_files/lakehouses:/var/lib/clickhouse/user_files/lakehouses"
+            "- /var/lib/datastore/user_files/lakehouses:/var/lib/datastore/user_files/lakehouses"
             if self.cluster.with_dolor
             else ""
         )
@@ -4909,7 +4909,7 @@ class ClickHouseInstance:
     def is_built_with_memory_sanitizer(self):
         return self.is_built_with_sanitizer("memory")
 
-    # Connects to the instance via clickhouse-client, sends a query (1st argument) and returns the answer
+    # Connects to the instance via datastore-client, sends a query (1st argument) and returns the answer
     def query(
         self,
         sql,
@@ -5000,7 +5000,7 @@ class ClickHouseInstance:
         logging.debug(f"Executing query {sql} on {self.name}")
         return self.client.get_query_request(sql, *args, **kwargs)
 
-    # Connects to the instance via clickhouse-client, sends a query (1st argument), expects an error and return its code
+    # Connects to the instance via datastore-client, sends a query (1st argument), expects an error and return its code
     def query_and_get_error(
         self,
         sql,
@@ -5111,7 +5111,7 @@ class ClickHouseInstance:
         )
 
         if error:
-            raise Exception("ClickHouse HTTP server returned " + error)
+            raise Exception("Datastore HTTP server returned " + error)
 
         return output
 
@@ -5142,7 +5142,7 @@ class ClickHouseInstance:
 
         if not error:
             raise Exception(
-                "ClickHouse HTTP server is expected to fail, but succeeded: " + output
+                "Datastore HTTP server is expected to fail, but succeeded: " + output
             )
 
         return error
@@ -5229,24 +5229,24 @@ class ClickHouseInstance:
     def stop_clickhouse(self, stop_wait_sec=30, kill=False):
         if not self.stay_alive:
             raise Exception(
-                "clickhouse can be stopped only with stay_alive=True instance"
+                "datastore can be stopped only with stay_alive=True instance"
             )
         try:
             ps_clickhouse = self.exec_in_container(
-                ["bash", "-c", "ps --no-header -C clickhouse"], nothrow=True, user="root"
+                ["bash", "-c", "ps --no-header -C datastore"], nothrow=True, user="root"
             )
             if not ps_clickhouse:
-                logging.warning("ClickHouse process already stopped")
+                logging.warning("Datastore process already stopped")
                 return False
 
             self.exec_in_container(
-                ["bash", "-c", "pkill {} clickhouse".format("-9" if kill else "-15")],
+                ["bash", "-c", "pkill {} datastore".format("-9" if kill else "-15")],
                 user="root",
             )
 
             start_time = time.time()
             while time.time() <= start_time + stop_wait_sec:
-                pid = self.get_process_pid("clickhouse")
+                pid = self.get_process_pid("datastore")
                 if pid is None:
                     return True
                 else:
@@ -5256,16 +5256,16 @@ class ClickHouseInstance:
             while self.get_process_pid("llvm-symbolizer") is not None:
                 time.sleep(1)
 
-            pid = self.get_process_pid("clickhouse")
+            pid = self.get_process_pid("datastore")
             if pid is not None:
                 logging.warning(
-                    f"Force kill clickhouse in stop_clickhouse. ps:{pid}"
+                    f"Force kill datastore in stop_clickhouse. ps:{pid}"
                 )
                 self.exec_in_container(
                     [
                         "bash",
                         "-c",
-                        f"gdb -batch -ex 'thread apply all bt' -p {pid} > /var/log/clickhouse-server/stdout.log",
+                        f"gdb -batch -ex 'thread apply all bt' -p {pid} > /var/log/datastore-server/stdout.log",
                     ],
                     user="root",
                 )
@@ -5275,17 +5275,17 @@ class ClickHouseInstance:
                     ["bash", "-c", "ps aux"], nothrow=True, user="root"
                 )
                 logging.warning(
-                    f"We want force stop clickhouse, but no clickhouse-server is running\n{ps_all}"
+                    f"We want force stop datastore, but no datastore-server is running\n{ps_all}"
                 )
         except Exception as e:
-            logging.warning(f"Stop ClickHouse raised an error {e}")
+            logging.warning(f"Stop Datastore raised an error {e}")
 
     def start_clickhouse(
         self, start_wait_sec=60, retry_start=True, expected_to_fail=False
     ):
         if not self.stay_alive:
             raise Exception(
-                "ClickHouse can be started again only with stay_alive=True instance"
+                "Datastore can be started again only with stay_alive=True instance"
             )
         start_time = time.time()
         time_to_sleep = 0.5
@@ -5294,9 +5294,9 @@ class ClickHouseInstance:
         while start_time + start_wait_sec >= time.time():
             # sometimes after SIGKILL (hard reset) server may refuse to start for some time
             # for different reasons.
-            pid = self.get_process_pid("clickhouse")
+            pid = self.get_process_pid("datastore")
             if pid is None:
-                logging.debug("No clickhouse process running. Start new one.")
+                logging.debug("No datastore process running. Start new one.")
                 exec_id = self.exec_in_container(
                     ["bash", "-c", self.clickhouse_start_command],
                     user=str(os.getuid()),
@@ -5312,7 +5312,7 @@ class ClickHouseInstance:
             else:
                 logging.debug("Clickhouse process running.")
                 if expected_to_fail:
-                    raise Exception("ClickHouse was expected not to be running.")
+                    raise Exception("Datastore was expected not to be running.")
                 try:
                     self.wait_start(start_wait_sec + start_time - time.time())
                     return exec_id
@@ -5327,10 +5327,10 @@ class ClickHouseInstance:
                         raise
                     time.sleep(time_to_sleep)
 
-        raise Exception("Cannot start ClickHouse, see additional info in logs")
+        raise Exception("Cannot start Datastore, see additional info in logs")
 
     def stop_clickhouse_client(self, signal="INT"):
-        client_pid = self.get_process_pid("clickhouse client")
+        client_pid = self.get_process_pid("datastore client")
         self.exec_in_container(
             ["bash", "-c", f"kill -{signal} {client_pid}"],
             user="root",
@@ -5341,28 +5341,28 @@ class ClickHouseInstance:
         last_err = None
         while True:
             try:
-                pid = self.get_process_pid("clickhouse")
+                pid = self.get_process_pid("datastore")
                 if pid is None:
-                    raise Exception("ClickHouse server is not running. Check logs.")
+                    raise Exception("Datastore server is not running. Check logs.")
                 exec_query_with_retry(self, "select 20", retry_count=10, silent=True)
                 return
             except QueryRuntimeException as err:
                 last_err = err
-                pid = self.get_process_pid("clickhouse")
+                pid = self.get_process_pid("datastore")
                 if pid is not None:
                     logging.warning(f"ERROR {err}")
                 else:
-                    raise Exception("ClickHouse server is not running. Check logs.")
+                    raise Exception("Datastore server is not running. Check logs.")
             if time.time() > start_time + start_wait_sec:
                 break
         logging.error(
             f"No time left to start. But process is still running. Will dump threads."
         )
         ps_clickhouse = self.exec_in_container(
-            ["bash", "-c", "ps -C clickhouse"], nothrow=True, user="root"
+            ["bash", "-c", "ps -C datastore"], nothrow=True, user="root"
         )
         logging.info(f"PS RESULT:\n{ps_clickhouse}")
-        pid = self.get_process_pid("clickhouse")
+        pid = self.get_process_pid("datastore")
         if pid is not None:
             self.exec_in_container(
                 ["bash", "-c", f"gdb -batch -ex 'thread apply all bt' -p {pid}"],
@@ -5374,7 +5374,7 @@ class ClickHouseInstance:
     def wait_start_failed(self, start_wait_sec):
         start_time = time.time()
         while time.time() <= start_time + start_wait_sec:
-            pid = self.get_process_pid("clickhouse")
+            pid = self.get_process_pid("datastore")
             if pid is None:
                 return
             time.sleep(1)
@@ -5382,17 +5382,17 @@ class ClickHouseInstance:
             f"No time left to shutdown. Process is still running. Will dump threads."
         )
         ps_clickhouse = self.exec_in_container(
-            ["bash", "-c", "ps -C clickhouse"], nothrow=True, user="root"
+            ["bash", "-c", "ps -C datastore"], nothrow=True, user="root"
         )
         logging.info(f"PS RESULT:\n{ps_clickhouse}")
-        pid = self.get_process_pid("clickhouse")
+        pid = self.get_process_pid("datastore")
         if pid is not None:
             self.exec_in_container(
                 ["bash", "-c", f"gdb -batch -ex 'thread apply all bt' -p {pid}"],
                 user="root",
             )
         raise Exception(
-            "ClickHouse server is still running, but was expected to shutdown. Check logs."
+            "Datastore server is still running, but was expected to shutdown. Check logs."
         )
 
     def restart_clickhouse(self, stop_start_wait_sec=60, kill=False):
@@ -5412,13 +5412,13 @@ class ClickHouseInstance:
 
     def rotate_logs(self):
         self.exec_in_container(
-            ["bash", "-c", f"kill -HUP {self.get_process_pid('clickhouse server')}"],
+            ["bash", "-c", f"kill -HUP {self.get_process_pid('datastore server')}"],
             user="root",
         )
 
     def give_user_files_permissions(self):
         self.exec_in_container(
-            ["bash", "-c", f"chown -R {str(os.getuid())}:{str(os.getgid())} /var/lib/clickhouse/user_files"],
+            ["bash", "-c", f"chown -R {str(os.getuid())}:{str(os.getgid())} /var/lib/datastore/user_files"],
             user="root",
         )
 
@@ -5426,7 +5426,7 @@ class ClickHouseInstance:
         self,
         substring,
         from_host=False,
-        filename="clickhouse-server.log",
+        filename="datastore-server.log",
         exclusion_substring="",
     ):
         if from_host:
@@ -5443,13 +5443,13 @@ class ClickHouseInstance:
                 [
                     "bash",
                     "-c",
-                    f'[ -f /var/log/clickhouse-server/{filename} ] && zgrep -aH "{substring}" /var/log/clickhouse-server/{filename} | ( [ -z "{exclusion_substring}" ] && cat || grep -v "${exclusion_substring}" ) || true',
+                    f'[ -f /var/log/datastore-server/{filename} ] && zgrep -aH "{substring}" /var/log/datastore-server/{filename} | ( [ -z "{exclusion_substring}" ] && cat || grep -v "${exclusion_substring}" ) || true',
                 ]
             )
         return len(result) > 0
 
     def grep_in_log(
-        self, substring, from_host=False, filename="clickhouse-server.log", after=None, only_latest=False
+        self, substring, from_host=False, filename="datastore-server.log", after=None, only_latest=False
     ):
         logging.debug(f"grep in log called %s", substring)
         if after is not None:
@@ -5470,7 +5470,7 @@ class ClickHouseInstance:
                 [
                     "bash",
                     "-c",
-                    f'[ -f /var/log/clickhouse-server/{filename} ] && zgrep {after_opt} -a "{substring}" /var/log/clickhouse-server/{filename}{"" if only_latest else "*"} || true',
+                    f'[ -f /var/log/datastore-server/{filename} ] && zgrep {after_opt} -a "{substring}" /var/log/datastore-server/{filename}{"" if only_latest else "*"} || true',
                 ]
             )
         logging.debug("grep result %s", result)
@@ -5478,7 +5478,7 @@ class ClickHouseInstance:
 
     def count_log_lines(
         self,
-        filename="/var/log/clickhouse-server/clickhouse-server.log",
+        filename="/var/log/datastore-server/datastore-server.log",
     ):
         result = self.exec_in_container(
             [
@@ -5500,7 +5500,7 @@ class ClickHouseInstance:
             [
                 "bash",
                 "-c",
-                'grep -a "{}" /var/log/clickhouse-server/clickhouse-server.log | wc -l'.format(
+                'grep -a "{}" /var/log/datastore-server/datastore-server.log | wc -l'.format(
                     substring
                 ),
             ]
@@ -5510,7 +5510,7 @@ class ClickHouseInstance:
     def wait_for_log_line(
         self,
         regexp,
-        filename="/var/log/clickhouse-server/clickhouse-server.log",
+        filename="/var/log/datastore-server/datastore-server.log",
         timeout=30,
         repetitions=1,
         look_behind_lines=10000,
@@ -5608,22 +5608,22 @@ class ClickHouseInstance:
         if not self.stay_alive:
             raise Exception("Cannot restart not stay alive container")
         self.exec_in_container(
-            ["bash", "-c", "pkill -{} clickhouse".format(signal)], user="root"
+            ["bash", "-c", "pkill -{} datastore".format(signal)], user="root"
         )
         retries = int(stop_start_wait_sec / 0.5)
         local_counter = 0
         # wait stop
         while local_counter < retries:
-            if not self.get_process_pid("clickhouse server"):
+            if not self.get_process_pid("datastore server"):
                 break
             time.sleep(0.5)
             local_counter += 1
 
         # force kill if server hangs
-        if self.get_process_pid("clickhouse server"):
+        if self.get_process_pid("datastore server"):
             # server can die before kill, so don't throw exception, it's expected
             self.exec_in_container(
-                ["bash", "-c", "pkill -{} clickhouse".format(9)],
+                ["bash", "-c", "pkill -{} datastore".format(9)],
                 nothrow=True,
                 user="root",
             )
@@ -5636,7 +5636,7 @@ class ClickHouseInstance:
                 [
                     "bash",
                     "-c",
-                    "rm -rf /var/lib/clickhouse/metadata && rm -rf /var/lib/clickhouse/data",
+                    "rm -rf /var/lib/datastore/metadata && rm -rf /var/lib/datastore/data",
                 ],
                 user="root",
             )
@@ -5645,14 +5645,14 @@ class ClickHouseInstance:
             [
                 "bash",
                 "-c",
-                "echo 'restart_with_original_version: From version' && /usr/bin/clickhouse server --version && echo 'To version' && /usr/share/clickhouse_original server --version",
+                "echo 'restart_with_original_version: From version' && /usr/bin/datastore server --version && echo 'To version' && /usr/share/clickhouse_original server --version",
             ]
         )
         self.exec_in_container(
             [
                 "bash",
                 "-c",
-                "cp /usr/share/clickhouse_original /usr/bin/clickhouse && chmod 777 /usr/bin/clickhouse",
+                "cp /usr/share/clickhouse_original /usr/bin/datastore && chmod 777 /usr/bin/datastore",
             ],
             user="root",
         )
@@ -5679,22 +5679,22 @@ class ClickHouseInstance:
         if not self.stay_alive:
             raise Exception("Cannot restart not stay alive container")
         self.exec_in_container(
-            ["bash", "-c", "pkill -{} clickhouse".format(signal)], user="root"
+            ["bash", "-c", "pkill -{} datastore".format(signal)], user="root"
         )
         retries = int(stop_start_wait_sec / 0.5)
         local_counter = 0
         # wait stop
         while local_counter < retries:
-            if not self.get_process_pid("clickhouse server"):
+            if not self.get_process_pid("datastore server"):
                 break
             time.sleep(0.5)
             local_counter += 1
 
         # force kill if server hangs
-        if self.get_process_pid("clickhouse server"):
+        if self.get_process_pid("datastore server"):
             # server can die before kill, so don't throw exception, it's expected
             self.exec_in_container(
-                ["bash", "-c", "pkill -{} clickhouse".format(9)],
+                ["bash", "-c", "pkill -{} datastore".format(9)],
                 nothrow=True,
                 user="root",
             )
@@ -5702,14 +5702,14 @@ class ClickHouseInstance:
         if callback_onstop:
             callback_onstop(self)
         self.exec_in_container(
-            ["bash", "-c", "cp /usr/bin/clickhouse /usr/share/clickhouse_original"],
+            ["bash", "-c", "cp /usr/bin/datastore /usr/share/clickhouse_original"],
             user="root",
         )
         self.exec_in_container(
             [
                 "bash",
                 "-c",
-                "cp /usr/share/clickhouse_fresh /usr/bin/clickhouse && chmod 777 /usr/bin/clickhouse",
+                "cp /usr/share/clickhouse_fresh /usr/bin/datastore && chmod 777 /usr/bin/datastore",
             ],
             user="root",
         )
@@ -5727,14 +5727,14 @@ class ClickHouseInstance:
                 [
                     "bash",
                     "-c",
-                    "if [ ! -f /var/lib/clickhouse/metadata/system.sql ]; then echo 'ATTACH DATABASE system ENGINE=Ordinary' > /var/lib/clickhouse/metadata/system.sql; fi",
+                    "if [ ! -f /var/lib/datastore/metadata/system.sql ]; then echo 'ATTACH DATABASE system ENGINE=Ordinary' > /var/lib/datastore/metadata/system.sql; fi",
                 ]
             )
             self.exec_in_container(
                 [
                     "bash",
                     "-c",
-                    "if [ ! -f /var/lib/clickhouse/metadata/default.sql ]; then echo 'ATTACH DATABASE default ENGINE=Ordinary' > /var/lib/clickhouse/metadata/default.sql; fi",
+                    "if [ ! -f /var/lib/datastore/metadata/default.sql ]; then echo 'ATTACH DATABASE default ENGINE=Ordinary' > /var/lib/datastore/metadata/default.sql; fi",
                 ]
             )
         self.exec_in_container(
@@ -5759,7 +5759,7 @@ class ClickHouseInstance:
         self.get_docker_handle().start()
 
     def wait_for_start(self, start_timeout=180.0, connection_timeout=None):
-        # Wait until TCP port is ready. Usually it means that ClickHouse is ready to accept queries.
+        # Wait until TCP port is ready. Usually it means that Datastore is ready to accept queries.
         ports = [9000]
         try:
             ports_env = os.environ.get("CH_WAIT_START_PORTS", "").strip()
@@ -6014,7 +6014,7 @@ class ClickHouseInstance:
         def write_embedded_config(name, dest_dir, fix_log_level=False):
             with open(p.join(HELPERS_DIR, name), "r") as f:
                 data = f.read()
-                data = data.replace("clickhouse", self.config_root_name)
+                data = data.replace("datastore", self.config_root_name)
                 if fix_log_level:
                     data = data.replace("<level>test</level>", "<level>trace</level>")
                 with open(p.join(dest_dir, name), "w") as r:
@@ -6037,9 +6037,9 @@ class ClickHouseInstance:
                     "0_common_min_cpu_busy_time.xml", self.config_d_dir
                 )
 
-        use_old_analyzer = os.environ.get("CLICKHOUSE_USE_OLD_ANALYZER") is not None
+        use_old_analyzer = os.environ.get("DATASTORE_USE_OLD_ANALYZER") is not None
         use_distributed_plan = (
-            os.environ.get("CLICKHOUSE_USE_DISTRIBUTED_PLAN") is not None
+            os.environ.get("DATASTORE_USE_DISTRIBUTED_PLAN") is not None
         )
 
         # If specific version was used there can be no
@@ -6070,7 +6070,7 @@ class ClickHouseInstance:
 
         if (
             self.randomize_settings
-            and self.image == "clickhouse/integration-test"
+            and self.image == "datastore/integration-test"
             and self.tag == DOCKER_BASE_TAG
             and self.base_config_dir == DEFAULT_BASE_CONFIG_DIR
         ):
@@ -6259,7 +6259,7 @@ class ClickHouseInstance:
         if self.cluster.with_dolor:
             binary_volume = ""
         elif not self.with_installed_binary:
-            binary_volume = "- " + self.server_bin_path + ":/usr/bin/clickhouse:ro"
+            binary_volume = "- " + self.server_bin_path + ":/usr/bin/datastore:ro"
         else:
             binary_volume = "- " + self.server_bin_path + ":/usr/share/clickhouse_fresh:ro"
 
@@ -6343,7 +6343,7 @@ class ClickHouseInstance:
                     net_alias1=net_alias1,
                     init_flag="true" if self.docker_init_flag else "false",
                     HELPERS_DIR=HELPERS_DIR,
-                    CLICKHOUSE_ROOT_DIR=CLICKHOUSE_ROOT_DIR,
+                    DATASTORE_ROOT_DIR=DATASTORE_ROOT_DIR,
                     privileged="true" if is_priv else "false",
                     dev_mount=(
                         "- /dev:/dev" if is_priv else ""
@@ -6360,7 +6360,7 @@ class ClickHouseInstance:
             time.sleep(1)
 
     def get_backuped_s3_objects(self, disk, backup_name):
-        path = f"/var/lib/clickhouse/disks/{disk}/shadow/{backup_name}/store"
+        path = f"/var/lib/datastore/disks/{disk}/shadow/{backup_name}/store"
         self.wait_for_path_exists(path, 10)
         return self.get_s3_objects(path)
 
@@ -6422,7 +6422,7 @@ class ClickHouseInstance:
                 "bash",
                 "-c",
                 "echo '{}' > {}".format(
-                    content, "/var/lib/clickhouse/format_schemas/" + file_name
+                    content, "/var/lib/datastore/format_schemas/" + file_name
                 ),
             ]
         )

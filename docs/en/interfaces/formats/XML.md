@@ -53,7 +53,7 @@ Example:
                         <field>2166</field>
                 </row>
                 <row>
-                        <SearchPhrase>clickhouse</SearchPhrase>
+                        <SearchPhrase>datastore</SearchPhrase>
                         <field>1655</field>
                 </row>
                 <row>

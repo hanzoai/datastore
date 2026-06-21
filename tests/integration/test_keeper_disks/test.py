@@ -57,8 +57,8 @@ def stop_clickhouse(cluster, node, cleanup_disks):
     if not cleanup_disks:
         return
 
-    node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/logs"])
-    node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination/snapshots"])
+    node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/logs"])
+    node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination/snapshots"])
 
     s3_objects = list_s3_objects(cluster, prefix="")
     if len(s3_objects) == 0:
@@ -81,10 +81,10 @@ def setup_storage(cluster, node, storage_config, cleanup_disks):
     stop_clickhouse(cluster, node, cleanup_disks)
     node.copy_file_to_container(
         os.path.join(CURRENT_TEST_DIR, "configs/enable_keeper.xml"),
-        "/etc/clickhouse-server/config.d/enable_keeper.xml",
+        "/etc/datastore-server/config.d/enable_keeper.xml",
     )
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/enable_keeper.xml",
+        "/etc/datastore-server/config.d/enable_keeper.xml",
         "<!-- DISK DEFINITION PLACEHOLDER -->",
         storage_config,
     )
@@ -125,11 +125,11 @@ def get_local_files(path, node):
 
 
 def get_local_logs(node):
-    return get_local_files("/var/lib/clickhouse/coordination/logs", node)
+    return get_local_files("/var/lib/datastore/coordination/logs", node)
 
 
 def get_local_snapshots(node):
-    return get_local_files("/var/lib/clickhouse/coordination/snapshots", node)
+    return get_local_files("/var/lib/datastore/coordination/snapshots", node)
 
 
 def test_logs_with_disks(started_cluster):

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/72459
+-- https://github.com/ClickHouse/Datastore/issues/72459
 
 CREATE TABLE t1 (c1 UInt64, c2 UInt64) ORDER BY c1;
 CREATE TABLE t2 (c1 UInt64) ORDER BY c1;

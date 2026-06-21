@@ -7,7 +7,7 @@ title: 'PostgreSQL'
 doc_type: 'guide'
 ---
 
-Allows to connect to databases on a remote [PostgreSQL](https://www.postgresql.org) server. Supports read and write operations (`SELECT` and `INSERT` queries) to exchange data between ClickHouse and PostgreSQL.
+Allows to connect to databases on a remote [PostgreSQL](https://www.postgresql.org) server. Supports read and write operations (`SELECT` and `INSERT` queries) to exchange data between Datastore and PostgreSQL.
 
 Gives the real-time access to table list and table structure from remote PostgreSQL with the help of `SHOW TABLES` and `DESCRIBE TABLE` queries.
 
@@ -31,7 +31,7 @@ ENGINE = PostgreSQL('host:port', 'database', 'user', 'password'[, `schema`, `use
 
 ## Data types support {#data_types-support}
 
-| PostgreSQL       | ClickHouse                                                   |
+| PostgreSQL       | Datastore                                                   |
 |------------------|--------------------------------------------------------------|
 | DATE             | [Date](../../sql-reference/data-types/date.md)               |
 | TIMESTAMP        | [DateTime](../../sql-reference/data-types/datetime.md)       |
@@ -49,7 +49,7 @@ ENGINE = PostgreSQL('host:port', 'database', 'user', 'password'[, `schema`, `use
 
 ## Examples of use {#examples-of-use}
 
-Database in ClickHouse, exchanging data with the PostgreSQL server:
+Database in Datastore, exchanging data with the PostgreSQL server:
 
 ```sql
 CREATE DATABASE test_database
@@ -110,7 +110,7 @@ Consider the table structure was modified in PostgreSQL:
 postgre> ALTER TABLE test_table ADD COLUMN data Text
 ```
 
-As the `use_table_cache` parameter was set to `1` when the database was created, the table structure in ClickHouse was cached and therefore not modified:
+As the `use_table_cache` parameter was set to `1` when the database was created, the table structure in Datastore was cached and therefore not modified:
 
 ```sql
 DESCRIBE TABLE test_database.test_table;
@@ -139,5 +139,5 @@ DESCRIBE TABLE test_database.test_table;
 
 ## Related content {#related-content}
 
-- Blog: [ClickHouse and PostgreSQL - a match made in data heaven - part 1](https://clickhouse.com/blog/migrating-data-between-clickhouse-postgres)
-- Blog: [ClickHouse and PostgreSQL - a Match Made in Data Heaven - part 2](https://clickhouse.com/blog/migrating-data-between-clickhouse-postgres-part-2)
+- Blog: [Datastore and PostgreSQL - a match made in data heaven - part 1](https://datastore.com/blog/migrating-data-between-datastore-postgres)
+- Blog: [Datastore and PostgreSQL - a Match Made in Data Heaven - part 2](https://datastore.com/blog/migrating-data-between-datastore-postgres-part-2)

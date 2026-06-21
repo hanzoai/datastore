@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Tags: no-fasttest, no-parallel-replicas
-# Reproduces https://github.com/ClickHouse/ClickHouse/issues/96829
+# Reproduces https://github.com/ClickHouse/Datastore/issues/96829
 #
 # `no-parallel-replicas` is strictly necessary here: when
 # `parallel_replicas_for_cluster_engines = 1` (default) and
@@ -21,12 +21,12 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-ICEBERG_PATH="${CLICKHOUSE_USER_FILES}/lakehouses/${CLICKHOUSE_DATABASE}_orc_prewhere"
+ICEBERG_PATH="${DATASTORE_USER_FILES}/lakehouses/${DATASTORE_DATABASE}_orc_prewhere"
 
 # Cleanup
 rm -rf "${ICEBERG_PATH}"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_experimental_insert_into_iceberg = 1;
 
     -- Create Iceberg table with ORC format and insert data
@@ -46,7 +46,7 @@ ${CLICKHOUSE_CLIENT} --query "
 # because the old analyzer evaluates PREWHERE through a different code path that
 # doesn't go through FormatFilterInfo (our per-file format check). Force enable_analyzer=1
 # to ensure PREWHERE is handled by the new pipeline even in old-analyzer CI configs.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SELECT count()
     FROM icebergLocal('${ICEBERG_PATH}', 'Parquet', 'c0 Int64, c1 String')
     PREWHERE c0 > 50
@@ -54,10 +54,10 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 # Also test pure ORC read through Parquet config
-ICEBERG_PATH_ORC="${CLICKHOUSE_USER_FILES}/lakehouses/${CLICKHOUSE_DATABASE}_orc_only_prewhere"
+ICEBERG_PATH_ORC="${DATASTORE_USER_FILES}/lakehouses/${DATASTORE_DATABASE}_orc_only_prewhere"
 rm -rf "${ICEBERG_PATH_ORC}"
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SET allow_experimental_insert_into_iceberg = 1;
 
     CREATE TABLE t_ice_orc_only (c0 Int64, c1 String)
@@ -65,7 +65,7 @@ ${CLICKHOUSE_CLIENT} --query "
     INSERT INTO t_ice_orc_only SELECT number, toString(number) FROM numbers(100);
 "
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     SELECT count()
     FROM icebergLocal('${ICEBERG_PATH_ORC}', 'Parquet', 'c0 Int64, c1 String')
     PREWHERE c0 > 50
@@ -73,5 +73,5 @@ ${CLICKHOUSE_CLIENT} --query "
 "
 
 # Cleanup
-${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS t_ice_orc_pw; DROP TABLE IF EXISTS t_ice_orc_only"
+${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS t_ice_orc_pw; DROP TABLE IF EXISTS t_ice_orc_only"
 rm -rf "${ICEBERG_PATH}" "${ICEBERG_PATH_ORC}"

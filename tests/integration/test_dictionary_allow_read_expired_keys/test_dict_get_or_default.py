@@ -40,8 +40,8 @@ def started_cluster():
 
 def test_simple_dict_get_or_default(started_cluster):
     assert None != dictionary_node.get_process_pid(
-        "clickhouse"
-    ), "ClickHouse must be alive"
+        "datastore"
+    ), "Datastore must be alive"
 
     def test_helper():
         assert (
@@ -96,7 +96,7 @@ def test_simple_dict_get_or_default(started_cluster):
     test_helper()
 
     with PartitionManager() as pm, ClickHouseKiller(dictionary_node):
-        assert None == dictionary_node.get_process_pid("clickhouse")
+        assert None == dictionary_node.get_process_pid("datastore")
 
         # Remove connection between main_node and dictionary for sure
         pm.partition_instances(main_node, dictionary_node)

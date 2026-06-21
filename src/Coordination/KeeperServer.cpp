@@ -348,7 +348,7 @@ void KeeperServer::KeeperRaftServer::commit_in_bg()
     DB::setThreadName(ThreadName::KEEPER_COMMIT);
 
     /// Set up query profiler for the commit thread if configured.
-    /// We create a new Context, as if this were a clickhouse query, and set setting
+    /// We create a new Context, as if this were a datastore query, and set setting
     /// query_profiler_real_time_period_ns so that the profiler samples this thread and results
     /// appear in system.trace_log with query_id = 'KeeperCommit' for easy filtering.
     std::optional<ThreadGroupSwitcher> thread_group_switcher;
@@ -616,7 +616,7 @@ void KeeperServer::launchRaftServer(const Poco::Util::AbstractConfiguration & co
 #if USE_SSL
         setSSLParams(asio_opts);
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL support for NuRaft is disabled because ClickHouse was built without SSL support.");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL support for NuRaft is disabled because Datastore was built without SSL support.");
 #endif
     }
     if (is_recovering)
@@ -1234,7 +1234,7 @@ KeeperServer::ConfigUpdateState KeeperServer::applyConfigUpdate(
         // (leadership change is not synchronized with committing in NuRaft).
         // However, waiting till some commands get _committed_ instead of _agreed_ is a hard task
         // regarding current library design, and this brings lots of levels of complexity
-        // (see https://github.com/ClickHouse/ClickHouse/pull/53481 history). So, a compromise here
+        // (see https://github.com/ClickHouse/Datastore/pull/53481 history). So, a compromise here
         // is a timeout before issuing a leadership change with an ability to change if user knows they
         // have a particularly slow network.
         if (remove->id == raft_instance->get_leader())

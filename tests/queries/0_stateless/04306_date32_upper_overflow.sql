@@ -17,7 +17,7 @@ SELECT toMonday(toDateTime64('2299-12-31 00:00:00', 0));
 SELECT toStartOfMonth(toDate32('2149-06-06'));
 SELECT toStartOfYear(toDate32('2149-06-06'));
 
--- Wrong-result counterpart of https://github.com/ClickHouse/ClickHouse/issues/106419 in the
+-- Wrong-result counterpart of https://github.com/ClickHouse/Datastore/issues/106419 in the
 -- upper range: without the clamp, `toStartOfYear` of a post-2149 `Date32` wraps to a small
 -- `Date`, the part's value range becomes inverted, and a `WHERE` filter using the monotonic
 -- function analysis prunes parts that contain matching rows. `countIf` (per-row evaluation)

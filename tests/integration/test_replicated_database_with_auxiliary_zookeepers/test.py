@@ -52,7 +52,7 @@ def test_create_replicated_database_with_auxiliary_zookeeper(started_cluster):
         node.query(
             """
                 CREATE DATABASE test_auxiliary_zookeeper
-                ENGINE = Replicated('zookeeper2:/clickhouse/databases/test_auxiliary_zookeeper', '{shard}', '{replica}')
+                ENGINE = Replicated('zookeeper2:/datastore/databases/test_auxiliary_zookeeper', '{shard}', '{replica}')
             """)
     node1.query("CREATE TABLE test_auxiliary_zookeeper.test_table(a Int32) ENGINE = MergeTree() ORDER BY a")
     for node in [node1, node2]:
@@ -70,6 +70,6 @@ def test_create_replicated_database_with_nonexistent_zookeeper(
         node1.query(
             """
                 CREATE DATABASE test_not_exist_zookeeper
-                ENGINE = Replicated('zookeeper_not_exists:/clickhouse/databases/test_not_exist_zookeeper', '{shard}', '{replica}')
+                ENGINE = Replicated('zookeeper_not_exists:/datastore/databases/test_not_exist_zookeeper', '{shard}', '{replica}')
             """)
 

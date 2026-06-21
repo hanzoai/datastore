@@ -8,7 +8,7 @@ OPTIONS:
     -c CXX          use specified c++ compiler
     -C              use cmake
     -k              keep generated worktree
-    -I              integrate into ClickHouse build tree in current directory
+    -I              integrate into Datastore build tree in current directory
     -i INC          add #include <INC>
     -l LIB          link against LIB (only for -I or -C)
     -b STEPS_NUM    make program to benchmark specified code snippet and run tests with STEPS_NUM each
@@ -107,7 +107,7 @@ find_clickhouse_root () {
             echo "error: $DIR has no CMakeLists.txt"
             return 1
         fi
-        if grep "project(ClickHouse" "$DIR/CMakeLists.txt" >/dev/null 2>&1; then
+        if grep "project(Datastore" "$DIR/CMakeLists.txt" >/dev/null 2>&1; then
             echo $DIR
             return 0
         fi
@@ -118,12 +118,12 @@ find_clickhouse_root () {
 }
 
 find_clickhouse_build () {
-    local CLICKHOUSE_ROOT="`find_clickhouse_root`"
-    if [ -e "$CLICKHOUSE_ROOT/$BUILD_DIR/CMakeCache.txt" ]; then
-        echo "$CLICKHOUSE_ROOT/$BUILD_DIR"
+    local DATASTORE_ROOT="`find_clickhouse_root`"
+    if [ -e "$DATASTORE_ROOT/$BUILD_DIR/CMakeCache.txt" ]; then
+        echo "$DATASTORE_ROOT/$BUILD_DIR"
         return 0
     fi
-    echo "error: $CLICKHOUSE_ROOT/$BUILD_DIR/CMakeCache.txt doesn't exist"
+    echo "error: $DATASTORE_ROOT/$BUILD_DIR/CMakeCache.txt doesn't exist"
     return 1
 }
 
@@ -139,13 +139,13 @@ if [ -n "$USE_CLICKHOUSE" ]; then
         exit 1
     fi
 
-    CLICKHOUSE_ROOT="`find_clickhouse_root`"
+    DATASTORE_ROOT="`find_clickhouse_root`"
     BUILD_ROOT="`find_clickhouse_build`"
-    CLICKHOUSE_PATH="${WORKDIR/$CLICKHOUSE_ROOT}"
-    EXECUTABLE_DIR="${BUILD_ROOT}${CLICKHOUSE_PATH}"
+    DATASTORE_PATH="${WORKDIR/$DATASTORE_ROOT}"
+    EXECUTABLE_DIR="${BUILD_ROOT}${DATASTORE_PATH}"
 
-    if [ -z "$CLICKHOUSE_ROOT" ] || [ -z "$BUILD_ROOT" ] || [ -z "$CLICKHOUSE_PATH" ]; then
-        echo "error: unable to locate ClickHouse" >&2
+    if [ -z "$DATASTORE_ROOT" ] || [ -z "$BUILD_ROOT" ] || [ -z "$DATASTORE_PATH" ]; then
+        echo "error: unable to locate Datastore" >&2
         exit 1
     fi
 
@@ -155,7 +155,7 @@ if [ -n "$USE_CLICKHOUSE" ]; then
         mv $CALL_DIR/CMakeLists.txt.backup.$$ $CALL_DIR/CMakeLists.txt
         if [ $KEEP_WORKTREE -eq 0 ]; then
             rm -rf $WORKDIR
-            rm -rf ${BUILD_ROOT}${CLICKHOUSE_PATH}
+            rm -rf ${BUILD_ROOT}${DATASTORE_PATH}
         fi
     }
 else

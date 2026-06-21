@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <distributed_ddl_use_initial_user_and_roles>1</distributed_ddl_use_initial_user_and_roles>
     <remote_servers>
         <default>
@@ -17,7 +17,7 @@
     </remote_servers>
     <user_directories replace="replace">
         <replicated>
-            <zookeeper_path>/clickhouse/access</zookeeper_path>
+            <zookeeper_path>/datastore/access</zookeeper_path>
         </replicated>
     </user_directories>
-</clickhouse>
+</datastore>

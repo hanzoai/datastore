@@ -46,7 +46,7 @@ def test_fix_metadata_version_on_attach_part_after_restore(start_cluster):
         node.query(
             """
             CREATE TABLE test_ttl(n UInt32, d DateTime)
-            ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_ttl/', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/tables/test_ttl/', '{replica}')
             TTL d + INTERVAL 5 SECOND DELETE
             ORDER BY n PARTITION BY n % 10
             SETTINGS merge_with_ttl_timeout = 0, number_of_free_entries_in_pool_to_execute_mutation = 0;
@@ -65,7 +65,7 @@ def test_fix_metadata_version_on_attach_part_after_restore(start_cluster):
     node_1.query("INSERT INTO test_ttl VALUES (1, now())")
 
     # Delete root zk metadata path for the table
-    zk_rmr_with_retries(zk, "/clickhouse/tables/test_ttl")
+    zk_rmr_with_retries(zk, "/datastore/tables/test_ttl")
 
     # Restore replicas
     node_1.query("SYSTEM RESTART REPLICA test_ttl")

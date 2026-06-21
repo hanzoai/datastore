@@ -13,7 +13,7 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 S3_DATA = [
-    "data/clickhouse/part1.csv",
+    "data/datastore/part1.csv",
 ]
 
 
@@ -37,7 +37,7 @@ def started_cluster():
         # Until 24.10, query level settings were specified in the .sql file
         cluster.add_instance(
             "old_node",
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.9.2.42",
             with_zookeeper=True,
             with_installed_binary=True,
@@ -69,7 +69,7 @@ def test_query_settings_in_create_recover_lost_replica(started_cluster):
     )
     old_node.query("DROP TABLE IF EXISTS replicated_lost_replica.b")
     old_node.query(
-        f"""CREATE TABLE replicated_lost_replica.b Engine = S3('http://minio1:9001/root/data/clickhouse/part1.csv', 'minio', '{minio_secret_key}') SETTINGS s3_create_new_file_on_insert = 1;"""
+        f"""CREATE TABLE replicated_lost_replica.b Engine = S3('http://minio1:9001/root/data/datastore/part1.csv', 'minio', '{minio_secret_key}') SETTINGS s3_create_new_file_on_insert = 1;"""
     )
 
     new_node = started_cluster.instances["new_node"]

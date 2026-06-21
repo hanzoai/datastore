@@ -29,7 +29,7 @@ deltaLakeLocal(path, [,format])
 The arguments for this table function are the same as for the `s3`, `azureBlobStorage`, `HDFS` and `file` table functions respectively.
 The `format` argument stands for the format of data files in the Delta lake table.
 
-An optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in ClickHouse Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
+An optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in Datastore Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
 
 ## Returned value {#returned_value}
 
@@ -39,14 +39,14 @@ Returns a table with the specified structure for reading or writing data from/to
 
 ### Reading data {#reading-data}
 
-Consider a table in S3 storage at `https://clickhouse-public-datasets.s3.amazonaws.com/delta_lake/hits/`.
-To read data from the table in ClickHouse, run:
+Consider a table in S3 storage at `https://datastore-public-datasets.s3.amazonaws.com/delta_lake/hits/`.
+To read data from the table in Datastore, run:
 
 ```sql title="Query"
 SELECT
     URL,
     UserAgent
-FROM deltaLake('https://clickhouse-public-datasets.s3.amazonaws.com/delta_lake/hits/')
+FROM deltaLake('https://datastore-public-datasets.s3.amazonaws.com/delta_lake/hits/')
 WHERE URL IS NOT NULL
 LIMIT 2
 ```

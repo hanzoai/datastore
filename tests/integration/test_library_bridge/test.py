@@ -27,7 +27,7 @@ def create_dict_simple(ch_instance):
     ch_instance.query(
         """
         CREATE DICTIONARY lib_dict_c (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
-        PRIMARY KEY key SOURCE(library(PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so'))
+        PRIMARY KEY key SOURCE(library(PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib.so'))
         LAYOUT(CACHE(
         SIZE_IN_CELLS 10000000
         BLOCK_SIZE 4096
@@ -47,7 +47,7 @@ def check_no_zombie_processes(instance):
             [
                 "bash",
                 "-c",
-                'ps ax -ostat,command | awk \'{if (($1 == "Z" || $1 == "z") && match($2,".*clickhouse-libr.*")) {print} else {next}}\' | wc -l',
+                'ps ax -ostat,command | awk \'{if (($1 == "Z" || $1 == "z") && match($2,".*datastore-libr.*")) {print} else {next}}\' | wc -l',
             ],
             user="root",
         )
@@ -66,7 +66,7 @@ def ch_cluster():
     try:
         cluster.start()
         instance.query("CREATE DATABASE test")
-        container_lib_path = "/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.cpp"
+        container_lib_path = "/etc/datastore-server/config.d/dictionaries_lib/dict_lib.cpp"
 
         instance.copy_file_to_container(
             os.path.join(
@@ -81,7 +81,7 @@ def ch_cluster():
             [
                 "bash",
                 "-c",
-                "/usr/bin/g++ -shared -o /etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so -fPIC /etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.cpp",
+                "/usr/bin/g++ -shared -o /etc/datastore-server/config.d/dictionaries_lib/dict_lib.so -fPIC /etc/datastore-server/config.d/dictionaries_lib/dict_lib.cpp",
             ],
             user="root",
         )
@@ -90,7 +90,7 @@ def ch_cluster():
             [
                 "bash",
                 "-c",
-                "/usr/bin/g++ -shared -o /dict_lib_copy.so -fPIC /etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.cpp",
+                "/usr/bin/g++ -shared -o /dict_lib_copy.so -fPIC /etc/datastore-server/config.d/dictionaries_lib/dict_lib.cpp",
             ],
             user="root",
         )
@@ -98,7 +98,7 @@ def ch_cluster():
             [
                 "bash",
                 "-c",
-                "ln -s /dict_lib_copy.so /etc/clickhouse-server/config.d/dictionaries_lib/dict_lib_symlink.so",
+                "ln -s /dict_lib_copy.so /etc/datastore-server/config.d/dictionaries_lib/dict_lib_symlink.so",
             ]
         )
 
@@ -123,7 +123,7 @@ def test_load_all(ch_cluster):
         CREATE DICTIONARY lib_dict (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
         PRIMARY KEY key
         SOURCE(library(
-            PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so'
+            PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib.so'
             SETTINGS (test_type test_simple)))
         LAYOUT(HASHED())
         LIFETIME (MIN 0 MAX 10)
@@ -167,7 +167,7 @@ def test_load_ids(ch_cluster):
     instance.query(
         """
         CREATE DICTIONARY lib_dict_c (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
-        PRIMARY KEY key SOURCE(library(PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so'))
+        PRIMARY KEY key SOURCE(library(PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib.so'))
         LAYOUT(CACHE(
         SIZE_IN_CELLS 10000000
         BLOCK_SIZE 4096
@@ -200,7 +200,7 @@ def test_load_keys(ch_cluster):
         """
         CREATE DICTIONARY lib_dict_ckc (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
         PRIMARY KEY key
-        SOURCE(library(PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so'))
+        SOURCE(library(PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib.so'))
         LAYOUT(COMPLEX_KEY_CACHE( SIZE_IN_CELLS 10000000))
         LIFETIME(2);
     """
@@ -229,7 +229,7 @@ def test_load_all_many_rows(ch_cluster):
             CREATE DICTIONARY lib_dict (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
             PRIMARY KEY key
             SOURCE(library(
-                PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so'
+                PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib.so'
                 SETTINGS (num_rows {} test_type test_many_rows)))
             LAYOUT(HASHED())
             LIFETIME (MIN 0 MAX 10)
@@ -276,7 +276,7 @@ def test_recover_after_bridge_crash(ch_cluster):
     assert result.strip() == "101"
 
     instance.exec_in_container(
-        ["bash", "-c", "kill -9 `pidof clickhouse-library-bridge`"], user="root"
+        ["bash", "-c", "kill -9 `pidof datastore-library-bridge`"], user="root"
     )
     instance.query("SYSTEM RELOAD DICTIONARY lib_dict_c")
 
@@ -286,7 +286,7 @@ def test_recover_after_bridge_crash(ch_cluster):
     assert result.strip() == "101"
 
     instance.exec_in_container(
-        ["bash", "-c", "kill -9 `pidof clickhouse-library-bridge`"], user="root"
+        ["bash", "-c", "kill -9 `pidof datastore-library-bridge`"], user="root"
     )
 
     check_no_zombie_processes(instance)
@@ -308,7 +308,7 @@ def test_server_restart_bridge_might_be_still_alive(ch_cluster):
     assert result.strip() == "101"
 
     instance.exec_in_container(
-        ["bash", "-c", "kill -9 `pidof clickhouse-library-bridge`"], user="root"
+        ["bash", "-c", "kill -9 `pidof datastore-library-bridge`"], user="root"
     )
     instance.restart_clickhouse()
 
@@ -328,7 +328,7 @@ def test_path_validation(ch_cluster):
     instance.query(
         """
         CREATE DICTIONARY lib_dict_c (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
-        PRIMARY KEY key SOURCE(library(PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib_symlink.so'))
+        PRIMARY KEY key SOURCE(library(PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib_symlink.so'))
         LAYOUT(CACHE(
         SIZE_IN_CELLS 10000000
         BLOCK_SIZE 4096
@@ -346,7 +346,7 @@ def test_path_validation(ch_cluster):
     instance.query(
         """
         CREATE DICTIONARY lib_dict_c (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
-        PRIMARY KEY key SOURCE(library(PATH '/etc/clickhouse-server/config.d/dictionaries_lib/../../../../dict_lib_copy.so'))
+        PRIMARY KEY key SOURCE(library(PATH '/etc/datastore-server/config.d/dictionaries_lib/../../../../dict_lib_copy.so'))
         LAYOUT(CACHE(
         SIZE_IN_CELLS 10000000
         BLOCK_SIZE 4096
@@ -360,7 +360,7 @@ def test_path_validation(ch_cluster):
         """select dictGet(lib_dict_c, 'value1', toUInt64(1));"""
     )
     assert (
-        "DB::Exception: File path /etc/clickhouse-server/config.d/dictionaries_lib/../../../../dict_lib_copy.so is not inside /etc/clickhouse-server/config.d/dictionaries_lib"
+        "DB::Exception: File path /etc/datastore-server/config.d/dictionaries_lib/../../../../dict_lib_copy.so is not inside /etc/datastore-server/config.d/dictionaries_lib"
         in result
     )
 
@@ -375,7 +375,7 @@ def test_ssrf(ch_cluster):
     instance.query(
         """
         CREATE DICTIONARY lib_dict_c (key UInt64, value1 UInt64, value2 UInt64, value3 UInt64)
-        PRIMARY KEY key SOURCE(library(PATH '/etc/clickhouse-server/config.d/dictionaries_lib/dict_lib.so'))
+        PRIMARY KEY key SOURCE(library(PATH '/etc/datastore-server/config.d/dictionaries_lib/dict_lib.so'))
         LAYOUT(CACHE(
         SIZE_IN_CELLS 10000000
         BLOCK_SIZE 4096

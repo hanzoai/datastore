@@ -16,11 +16,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 #pq.write_table(tab, "time32_test.parquet")
 #pq.write_table(tab64, "time64_test.parquet")
 
-#${CLICKHOUSE_CLIENT} --query "drop table dt_test"
-${CLICKHOUSE_CLIENT} --query "create table dt_test (timestamp DateTime('UTC')) engine=Memory()"
+#${DATASTORE_CLIENT} --query "drop table dt_test"
+${DATASTORE_CLIENT} --query "create table dt_test (timestamp DateTime('UTC')) engine=Memory()"
 
-cat ${CURDIR}/data_parquet/time32_test.parquet | ${CLICKHOUSE_CLIENT} --query "insert into dt_test FORMAT Parquet"
+cat ${CURDIR}/data_parquet/time32_test.parquet | ${DATASTORE_CLIENT} --query "insert into dt_test FORMAT Parquet"
 
-cat ${CURDIR}/data_parquet/time64_test.parquet | ${CLICKHOUSE_CLIENT} --query "insert into dt_test FORMAT Parquet"
+cat ${CURDIR}/data_parquet/time64_test.parquet | ${DATASTORE_CLIENT} --query "insert into dt_test FORMAT Parquet"
 
-${CLICKHOUSE_CLIENT} --query "select * from dt_test"
+${DATASTORE_CLIENT} --query "select * from dt_test"

@@ -12,8 +12,8 @@ from version_helper import (
     get_version_from_tag,
 )
 
-CLICKHOUSE_TAGS_URL = "https://api.github.com/repos/ClickHouse/ClickHouse/releases"
-PACKAGE_REGEXP = r"\Aclickhouse-common-static_.+[.]deb"
+DATASTORE_TAGS_URL = "https://api.github.com/repos/Datastore/Datastore/releases"
+PACKAGE_REGEXP = r"\Adatastore-common-static_.+[.]deb"
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def get_previous_release(
     found = False
     while not found:
         response = get_gh_api(
-            CLICKHOUSE_TAGS_URL, params={"page": page, "per_page": 100}, timeout=10
+            DATASTORE_TAGS_URL, params={"page": page, "per_page": 100}, timeout=10
         )
         if not response.ok:
             logger.error(
@@ -89,7 +89,7 @@ def get_previous_release(
 
 
 def get_release_by_tag(tag: str) -> ReleaseInfo:
-    response = get_gh_api(f"{CLICKHOUSE_TAGS_URL}/tags/{tag}", timeout=10)
+    response = get_gh_api(f"{DATASTORE_TAGS_URL}/tags/{tag}", timeout=10)
     release = response.json()
     assets = {
         a["name"]: a["browser_download_url"]

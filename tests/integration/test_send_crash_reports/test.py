@@ -55,7 +55,7 @@ def test_send_segfault(started_node):
     )
     time.sleep(1)
     started_node.exec_in_container(
-        ["bash", "-c", "pkill -SEGV clickhouse"], user="root"
+        ["bash", "-c", "pkill -SEGV datastore"], user="root"
     )
 
     result = None

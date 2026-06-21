@@ -22,7 +22,7 @@ def start_cluster():
 
 def test_part_should_reset_mutation(start_cluster):
     node.query(
-        "CREATE TABLE test (i Int64, s String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/test', 'node') ORDER BY i;"
+        "CREATE TABLE test (i Int64, s String) ENGINE = ReplicatedMergeTree('/datastore/tables/test', 'node') ORDER BY i;"
     )
     node.query("INSERT INTO test SELECT 1, 'a'")
     node.query("optimize table test final")
@@ -48,10 +48,10 @@ def test_part_should_reset_mutation(start_cluster):
     assert TSV(node.query("SELECT _part, * FROM test")) == expected
 
     node.query(
-        "CREATE TABLE restore (i Int64, s String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/restore', 'node') ORDER BY i;"
+        "CREATE TABLE restore (i Int64, s String) ENGINE = ReplicatedMergeTree('/datastore/tables/restore', 'node') ORDER BY i;"
     )
     node.query(
-        "ALTER TABLE restore FETCH PARTITION tuple() FROM '/clickhouse/tables/test/'"
+        "ALTER TABLE restore FETCH PARTITION tuple() FROM '/datastore/tables/test/'"
     )
     node.query("ALTER TABLE restore ATTACH PART 'all_0_0_2_4'")
     node.query("INSERT INTO restore select 2, 'a'")

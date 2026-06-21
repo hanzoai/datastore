@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/29838
+-- https://github.com/ClickHouse/Datastore/issues/29838
 SET enable_analyzer=1;
 SET distributed_foreground_insert=1;
 
@@ -8,7 +8,7 @@ CREATE TABLE first_table_lr
     id String,
     id2 String
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_03080/alter', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_03080/alter', 'r1')
 ORDER BY id;
 
 

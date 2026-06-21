@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100740
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100740
 -- JIT-compiled MIN/MAX on Decimal columns used unsigned comparison, producing wrong results
 -- after the JIT threshold (min_count_to_compile_aggregate_expression) was reached.
 

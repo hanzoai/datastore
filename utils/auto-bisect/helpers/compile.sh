@@ -40,8 +40,8 @@ cd $BUILD_DIR
 # ask the user to fix the source code and retry.
 run_with_retry "ninja"
 
-strip --strip-unneeded $BUILD_DIR/programs/clickhouse
-$SCRIPT_DIR/cache.sh add $BUILD_DIR/programs/clickhouse $COMMIT_SHA;
+strip --strip-unneeded $BUILD_DIR/programs/datastore
+$SCRIPT_DIR/cache.sh add $BUILD_DIR/programs/datastore $COMMIT_SHA;
 $SCRIPT_DIR/cache.sh get $CH_PATH $COMMIT_SHA;
 
 chmod +x $CH_PATH

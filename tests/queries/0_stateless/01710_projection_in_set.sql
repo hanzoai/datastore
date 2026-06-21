@@ -11,7 +11,7 @@ select j, k from x where i in (select number from numbers(4));
 
 drop table x;
 
--- Projection analysis should not break other IN constructs. See https://github.com/ClickHouse/ClickHouse/issues/35336
+-- Projection analysis should not break other IN constructs. See https://github.com/ClickHouse/Datastore/issues/35336
 create table if not exists flows (SrcAS UInt32, Bytes UInt64) engine MergeTree() order by tuple();
 
 insert into table flows values (15169, 83948), (12322, 98989), (60068, 99990), (15169, 89898), (15169, 83948), (15169, 89898), (15169, 83948), (15169, 89898), (15169, 83948), (15169, 89898), (15169, 83948), (15169, 89898);

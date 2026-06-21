@@ -35,7 +35,7 @@ If you need to guarantee that your data is deleted from storage in a predictable
 
 ## Deleting large amounts of data {#deleting-large-amounts-of-data}
 
-Large deletes can negatively affect ClickHouse performance. If you are attempting to delete all rows from a table, consider using the [`TRUNCATE TABLE`](/sql-reference/statements/truncate) command.
+Large deletes can negatively affect Datastore performance. If you are attempting to delete all rows from a table, consider using the [`TRUNCATE TABLE`](/sql-reference/statements/truncate) command.
 
 If you anticipate frequent deletes, consider using a [custom partitioning key](/engines/table-engines/mergetree-family/custom-partitioning-key). You can then use the [`ALTER TABLE ... DROP PARTITION`](/sql-reference/statements/alter/partition#drop-partitionpart) command to quickly drop all rows associated with that partition.
 
@@ -64,11 +64,11 @@ The following can also negatively impact lightweight `DELETE` performance:
 GRANT ALTER DELETE ON db.table to username;
 ```
 
-## How lightweight DELETEs work internally in ClickHouse {#how-lightweight-deletes-work-internally-in-clickhouse}
+## How lightweight DELETEs work internally in Datastore {#how-lightweight-deletes-work-internally-in-datastore}
 
 1. **A "mask" is applied to affected rows**
 
-   When a `DELETE FROM table ...` query is executed, ClickHouse saves a mask where each row is marked as either "existing" or as "deleted". Those "deleted" rows are omitted for subsequent queries. However, rows are actually only removed later by subsequent merges. Writing this mask is much more lightweight than what is done by an `ALTER TABLE ... DELETE` query.
+   When a `DELETE FROM table ...` query is executed, Datastore saves a mask where each row is marked as either "existing" or as "deleted". Those "deleted" rows are omitted for subsequent queries. However, rows are actually only removed later by subsequent merges. Writing this mask is much more lightweight than what is done by an `ALTER TABLE ... DELETE` query.
 
    The mask is implemented as a hidden `_row_exists` system column that stores `True` for all visible rows and `False` for deleted ones. This column is only present in a part if some rows in the part were deleted. This column does not exist when a part has all values equal to `True`.
 
@@ -78,7 +78,7 @@ GRANT ALTER DELETE ON db.table to username;
    ```sql
    SELECT ... FROM table PREWHERE _row_exists WHERE condition
    ```
-   At execution time, the column `_row_exists` is read to determine which rows should not be returned. If there are many deleted rows, ClickHouse can determine which granules can be fully skipped when reading the rest of the columns.
+   At execution time, the column `_row_exists` is read to determine which rows should not be returned. If there are many deleted rows, Datastore can determine which granules can be fully skipped when reading the rest of the columns.
 
 3. **`DELETE` queries are transformed to `ALTER TABLE ... UPDATE` queries**
 
@@ -94,4 +94,4 @@ GRANT ALTER DELETE ON db.table to username;
 
 ## Related content {#related-content}
 
-- Blog: [Handling Updates and Deletes in ClickHouse](https://clickhouse.com/blog/handling-updates-and-deletes-in-clickhouse)
+- Blog: [Handling Updates and Deletes in Datastore](https://datastore.com/blog/handling-updates-and-deletes-in-datastore)

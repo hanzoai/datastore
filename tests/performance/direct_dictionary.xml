@@ -32,7 +32,7 @@
             value_string_nullable Nullable(String)
         )
         PRIMARY KEY id
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'simple_key_direct_dictionary_source_table'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'simple_key_direct_dictionary_source_table'))
         LAYOUT(DIRECT())
     </create_query>
 
@@ -47,7 +47,7 @@
             value_string_nullable Nullable(String)
         )
         PRIMARY KEY id, id_key
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'complex_key_direct_dictionary_source_table'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'complex_key_direct_dictionary_source_table'))
         LAYOUT(COMPLEX_KEY_DIRECT())
     </create_query>
 

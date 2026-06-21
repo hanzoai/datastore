@@ -26,11 +26,11 @@ def started_cluster():
 
 
 old_disk_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
-                <path>/var/lib/clickhouse/disk0/</path>
+                <path>/var/lib/datastore/disk0/</path>
             </disk0>
         </disks>
         <policies>
@@ -53,18 +53,18 @@ old_disk_config = """
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 new_disk_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
-                <path>/var/lib/clickhouse/disk0/</path>
+                <path>/var/lib/datastore/disk0/</path>
             </disk0>
             <disk1>
-                <path>/var/lib/clickhouse/disk1/</path>
+                <path>/var/lib/datastore/disk1/</path>
             </disk1>
         </disks>
         <policies>
@@ -90,14 +90,14 @@ new_disk_config = """
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 
 def set_config(node, config):
-    node.replace_config("/etc/clickhouse-server/config.d/config.xml", config)
+    node.replace_config("/etc/datastore-server/config.d/config.xml", config)
     node.query("SYSTEM RELOAD CONFIG")
-    # to give ClickHouse time to refresh disks
+    # to give Datastore time to refresh disks
     time.sleep(1)
 
 

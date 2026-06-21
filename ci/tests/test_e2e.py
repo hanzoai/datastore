@@ -37,7 +37,7 @@ def test_fuzzer():
             p.write_text("test\n")
         (WORKSPACE_PATH / "status.tsv").write_text("1\t0\t0\n")
         (WORKSPACE_PATH / "core.test").write_bytes(b"test\n")
-        (ci_tmp / "clickhouse").write_text("""
+        (ci_tmp / "datastore").write_text("""
     #!/bin/bash
 
     kill -SIGTERM 1

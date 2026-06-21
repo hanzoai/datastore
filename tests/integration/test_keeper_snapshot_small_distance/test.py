@@ -92,7 +92,7 @@ def clear_clickhouse_data(node):
         [
             "bash",
             "-c",
-            "rm -fr /var/lib/clickhouse/coordination/logs/* /var/lib/clickhouse/coordination/snapshots/*",
+            "rm -fr /var/lib/datastore/coordination/logs/* /var/lib/datastore/coordination/snapshots/*",
         ]
     )
 
@@ -102,15 +102,15 @@ def convert_zookeeper_data(node):
         [
             "bash",
             "-c",
-            "tar -cvzf /var/lib/clickhouse/zk-data.tar.gz /zookeeper/version-2",
+            "tar -cvzf /var/lib/datastore/zk-data.tar.gz /zookeeper/version-2",
         ]
     )
-    cmd = "/usr/bin/clickhouse keeper-converter --zookeeper-logs-dir /zookeeper/version-2/ --zookeeper-snapshots-dir  /zookeeper/version-2/ --output-dir /var/lib/clickhouse/coordination/snapshots"
+    cmd = "/usr/bin/datastore keeper-converter --zookeeper-logs-dir /zookeeper/version-2/ --zookeeper-snapshots-dir  /zookeeper/version-2/ --output-dir /var/lib/datastore/coordination/snapshots"
     node.exec_in_container(["bash", "-c", cmd])
     return os.path.join(
-        "/var/lib/clickhouse/coordination/snapshots",
+        "/var/lib/datastore/coordination/snapshots",
         node.exec_in_container(
-            ["bash", "-c", "ls /var/lib/clickhouse/coordination/snapshots"]
+            ["bash", "-c", "ls /var/lib/datastore/coordination/snapshots"]
         ).strip(),
     )
 
@@ -186,7 +186,7 @@ def test_snapshot_and_load(started_cluster, request):
         for node in [node2, node3]:
             print("Copy snapshot from", node1.name, "to", node.name)
             cluster.copy_file_from_container_to_container(
-                node1, resulted_path, node, "/var/lib/clickhouse/coordination/snapshots"
+                node1, resulted_path, node, "/var/lib/datastore/coordination/snapshots"
             )
 
         print("Starting clickhouses")

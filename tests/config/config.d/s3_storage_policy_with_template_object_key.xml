@@ -1,11 +1,11 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
                 <type>s3</type>
                 <endpoint>http://localhost:11111/test/</endpoint>
-                <access_key_id>clickhouse</access_key_id>
-                <secret_access_key>clickhouse</secret_access_key>
+                <access_key_id>datastore</access_key_id>
+                <secret_access_key>datastore</secret_access_key>
                 <key_compatibility_prefix>test</key_compatibility_prefix>
                 <key_template>[a-z]{3}-first-random-part/new-style-prefix/[a-z]{3}/[a-z]{29}</key_template>
             </s3>
@@ -35,4 +35,4 @@
             </s3_encrypted>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

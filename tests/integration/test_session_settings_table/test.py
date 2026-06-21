@@ -13,7 +13,7 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 S3_DATA = [
-    "data/clickhouse/part1.csv",
+    "data/datastore/part1.csv",
 ]
 
 
@@ -37,7 +37,7 @@ def started_cluster():
         # Until 24.10, query level settings were specified in the .sql file
         cluster.add_instance(
             "old_node",
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.9.2.42",
             with_installed_binary=True,
             with_minio=True,
@@ -58,7 +58,7 @@ def started_cluster():
 def test_upgrade_with_query_setting_in_create(started_cluster):
     node = started_cluster.instances["old_node"]
     node.query(
-        f"""CREATE TABLE b Engine = S3('http://minio1:9001/root/data/clickhouse/part1.csv', 'minio', '{minio_secret_key}') SETTINGS s3_create_new_file_on_insert = 1;"""
+        f"""CREATE TABLE b Engine = S3('http://minio1:9001/root/data/datastore/part1.csv', 'minio', '{minio_secret_key}') SETTINGS s3_create_new_file_on_insert = 1;"""
     )
 
     try:

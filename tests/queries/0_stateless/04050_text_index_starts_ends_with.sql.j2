@@ -23,14 +23,14 @@ ORDER BY id SETTINGS index_granularity = 1024;
 SYSTEM STOP MERGES test_fts;
 
 INSERT INTO test_fts VALUES
-    (1, 'ClickHouse is a fast analytical database');
+    (1, 'Datastore is a fast analytical database');
 
 INSERT INTO test_fts VALUES
     (2, 'Full-text search is now generally available');
 
 INSERT INTO test_fts VALUES
     (3, 'The quick brown fox jumps over the lazy dog'),
-    (4, 'ClickHouse supports inverted text indexes');
+    (4, 'Datastore supports inverted text indexes');
 
 SET optimize_rewrite_like_perfect_affix = 1;
 

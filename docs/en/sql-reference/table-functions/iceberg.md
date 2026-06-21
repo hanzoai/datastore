@@ -31,7 +31,7 @@ icebergLocal(named_collection[, option=value [,..]])
 Description of the arguments coincides with description of arguments in table functions `s3`, `azureBlobStorage`, `HDFS` and `file` correspondingly.
 `format` stands for the format of data files in the Iceberg table.
 
-For `icebergS3`, an optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in ClickHouse Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
+For `icebergS3`, an optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in Datastore Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
 
 ### Returned value {#returned-value}
 
@@ -40,11 +40,11 @@ A table with the specified structure for reading data in the specified Iceberg t
 ### Example {#example}
 
 ```sql
-SELECT * FROM icebergS3('http://test.s3.amazonaws.com/clickhouse-bucket/test_table', 'test', 'test')
+SELECT * FROM icebergS3('http://test.s3.amazonaws.com/datastore-bucket/test_table', 'test', 'test')
 ```
 
 :::important
-ClickHouse currently supports reading v1 and v2 of the Iceberg format via the `icebergS3`, `icebergAzure`, `icebergHDFS` and `icebergLocal` table functions and `IcebergS3`, `icebergAzure`, `IcebergHDFS` and `IcebergLocal` table engines.
+Datastore currently supports reading v1 and v2 of the Iceberg format via the `icebergS3`, `icebergAzure`, `icebergHDFS` and `icebergLocal` table functions and `IcebergS3`, `icebergAzure`, `IcebergHDFS` and `IcebergLocal` table engines.
 :::
 
 ## Defining a named collection {#defining-a-named-collection}
@@ -52,17 +52,17 @@ ClickHouse currently supports reading v1 and v2 of the Iceberg format via the `i
 Here is an example of configuring a named collection for storing the URL and credentials:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <iceberg_conf>
-            <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
+            <url>http://test.s3.amazonaws.com/datastore-bucket/</url>
             <access_key_id>test<access_key_id>
             <secret_access_key>test</secret_access_key>
             <format>auto</format>
             <structure>auto</structure>
         </iceberg_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql
@@ -75,7 +75,7 @@ DESCRIBE icebergS3(iceberg_conf, filename = 'test_table')
 Iceberg tables can also be used with various data catalogs, such as the [REST Catalog](https://iceberg.apache.org/rest-catalog-spec/), [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) and [Unity Catalog](https://www.unitycatalog.io/).
 
 :::important
-When using a catalog, most users will want to use the `DataLakeCatalog` database engine, which connects ClickHouse to your catalog to discover your tables. You can use this database engine instead of manually creating individual tables with `IcebergS3` table engine.
+When using a catalog, most users will want to use the `DataLakeCatalog` database engine, which connects Datastore to your catalog to discover your tables. You can use this database engine instead of manually creating individual tables with `IcebergS3` table engine.
 :::
 
 To use them, create a table with the `IcebergS3` engine and provide the necessary settings.
@@ -112,11 +112,11 @@ Currently, it is not possible to change nested structures or the types of elemen
 
 ## Partition Pruning {#partition-pruning}
 
-ClickHouse supports partition pruning during SELECT queries for Iceberg tables, which helps optimize query performance by skipping irrelevant data files. To enable partition pruning, set `use_iceberg_partition_pruning = 1`. For more information about iceberg partition pruning address https://iceberg.apache.org/spec/#partitioning
+Datastore supports partition pruning during SELECT queries for Iceberg tables, which helps optimize query performance by skipping irrelevant data files. To enable partition pruning, set `use_iceberg_partition_pruning = 1`. For more information about iceberg partition pruning address https://iceberg.apache.org/spec/#partitioning
 
 ## Time Travel {#time-travel}
 
-ClickHouse supports time travel for Iceberg tables, allowing you to query historical data with a specific timestamp or snapshot ID.
+Datastore supports time travel for Iceberg tables, allowing you to query historical data with a specific timestamp or snapshot ID.
 
 ## Processing of tables with deleted rows {#deleted-rows}
 
@@ -277,7 +277,7 @@ In Clickhouse the behavior is consistent with Spark. You can mentally replace Sp
 
 ## Metadata File Resolution {#metadata-file-resolution}
 
-When using the `iceberg` table function in ClickHouse, the system needs to locate the correct metadata.json file that describes the Iceberg table structure. Here's how this resolution process works:
+When using the `iceberg` table function in Datastore, the system needs to locate the correct metadata.json file that describes the Iceberg table structure. Here's how this resolution process works:
 
 ### Candidate Search (in Priority Order) {#candidate-search}
 
@@ -311,7 +311,7 @@ SELECT * FROM iceberg('s3://bucket/path/to/iceberg_table',
     SETTINGS iceberg_metadata_table_uuid = 'a90eed4c-f74b-4e5b-b630-096fb9d09021');
 ```
 
-**Note**: While Iceberg Catalogs typically handle metadata resolution, the `iceberg` table function in ClickHouse directly interprets files stored in S3 as Iceberg tables, which is why understanding these resolution rules is important.
+**Note**: While Iceberg Catalogs typically handle metadata resolution, the `iceberg` table function in Datastore directly interprets files stored in S3 as Iceberg tables, which is why understanding these resolution rules is important.
 
 ## Metadata cache {#metadata-cache}
 
@@ -331,7 +331,7 @@ Table function `iceberg` is an alias to `icebergS3` now.
 
 ## Writes into iceberg table {#writes-into-iceberg-table}
 
-Starting from version 25.7, ClickHouse supports modifications of user’s Iceberg tables.
+Starting from version 25.7, Datastore supports modifications of user’s Iceberg tables.
 
 Currently, this is an experimental feature, so you first need to enable it:
 
@@ -360,7 +360,7 @@ If you want to compress the metadata.json file, specify the codec name in the `i
 
 ### INSERT {#writes-inserts}
 
-After creating a new table, you can insert data using the usual ClickHouse syntax.
+After creating a new table, you can insert data using the usual Datastore syntax.
 
 ### Example {#example-iceberg-writes-insert}
 
@@ -384,7 +384,7 @@ y: 993
 
 ### DELETE {#iceberg-writes-delete}
 
-Deleting extra rows in the merge-on-read format is also supported in ClickHouse.
+Deleting extra rows in the merge-on-read format is also supported in Datastore.
 This query will create a new snapshot with position delete files.
 
 ### Example {#example-iceberg-writes-delete}
@@ -404,7 +404,7 @@ y: 993
 
 ### Schema evolution {#iceberg-writes-schema-evolution}
 
-ClickHouse allows you to add, drop, modify, or rename columns with simple types (non-tuple, non-array, non-map).
+Datastore allows you to add, drop, modify, or rename columns with simple types (non-tuple, non-array, non-map).
 
 ### Example {#example-iceberg-writes-evolution}
 
@@ -488,7 +488,7 @@ value: 993
 
 ### Compaction {#iceberg-writes-compaction}
 
-ClickHouse supports compaction iceberg table. Currently, it can merge position delete files into data files while updating metadata. Previous snapshot IDs and timestamps remain unchanged, so the time-travel feature can still be used with the same values.
+Datastore supports compaction iceberg table. Currently, it can merge position delete files into data files while updating metadata. Previous snapshot IDs and timestamps remain unchanged, so the time-travel feature can still be used with the same values.
 
 How to use it:
 
@@ -615,7 +615,7 @@ Each snapshot reference (`refs` in the Iceberg metadata) can override these with
 
 **Required privileges:**
 
-The `ALTER TABLE EXECUTE` privilege is required, which is a child of `ALTER TABLE` in the ClickHouse access control hierarchy. You can grant it specifically or via the parent:
+The `ALTER TABLE EXECUTE` privilege is required, which is a child of `ALTER TABLE` in the Datastore access control hierarchy. You can grant it specifically or via the parent:
 
 ```sql
 -- Grant only EXECUTE permission
@@ -630,7 +630,7 @@ GRANT ALTER TABLE ON my_iceberg_table TO my_user;
 - The current snapshot is always preserved, even if it is older than the specified timestamp
 - Requires the `allow_insert_into_iceberg` setting to be enabled
 - Requires the `allow_experimental_expire_snapshots` setting to be enabled
-- The catalog's own authorization (REST catalog auth, AWS Glue IAM, etc.) is enforced independently when ClickHouse updates the metadata
+- The catalog's own authorization (REST catalog auth, AWS Glue IAM, etc.) is enforced independently when Datastore updates the metadata
 :::
 
 ### Remove Orphan Files {#iceberg-remove-orphan-files}

@@ -23,7 +23,7 @@ def get_cluster(with_minio):
     return cluster
 
 
-# ClickHouse checks extra (AKA orpahned) parts on different disks, in order to not allow to miss data parts at undefined disks.
+# Datastore checks extra (AKA orpahned) parts on different disks, in order to not allow to miss data parts at undefined disks.
 # The test verifies how the search of orphaned parts works if there is no connection to MinIO.
 # The following is expected
 # * search_orphaned_parts_disks is `none` - does not search s3, the query is successful

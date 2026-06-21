@@ -4,10 +4,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATABASE_ATOMIC="${CLICKHOUSE_DATABASE}_atomic"
-DATABASE_LAZY="${CLICKHOUSE_DATABASE}_lazy"
+DATABASE_ATOMIC="${DATASTORE_DATABASE}_atomic"
+DATABASE_LAZY="${DATASTORE_DATABASE}_lazy"
 
-$CLICKHOUSE_CLIENT "
+$DATASTORE_CLIENT "
 
 SELECT 'database atomic tests';
 DROP DATABASE IF EXISTS ${DATABASE_ATOMIC};

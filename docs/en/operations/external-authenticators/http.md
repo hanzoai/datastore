@@ -9,7 +9,7 @@ import SelfManaged from '@site/docs/_snippets/_self_managed_only_no_roadmap.md';
 
 <SelfManaged />
 
-HTTP server can be used to authenticate ClickHouse users. HTTP authentication can only be used as an external authenticator for existing users, which are defined in `users.xml` or in local access control paths. Currently, [Basic](https://datatracker.ietf.org/doc/html/rfc7617) authentication scheme using GET method is supported.
+HTTP server can be used to authenticate Datastore users. HTTP authentication can only be used as an external authenticator for existing users, which are defined in `users.xml` or in local access control paths. Currently, [Basic](https://datatracker.ietf.org/doc/html/rfc7617) authentication scheme using GET method is supported.
 
 ## HTTP authentication server definition {#http-auth-server-definition}
 
@@ -17,7 +17,7 @@ To define HTTP authentication server you must add `http_authentication_servers` 
 
 **Example**
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <http_authentication_servers>
         <basic_auth_server>
@@ -35,7 +35,7 @@ To define HTTP authentication server you must add `http_authentication_servers` 
 
         </basic_auth_server>
     </http_authentication_servers>
-</clickhouse>
+</datastore>
 
 ```
 
@@ -68,7 +68,7 @@ Parameters:
 
 Example (goes into `users.xml`):
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <my_user>
         <!- ... -->
@@ -77,16 +77,16 @@ Example (goes into `users.xml`):
             <scheme>basic</scheme>
         </http_authentication>
     </test_user_2>
-</clickhouse>
+</datastore>
 ```
 
 :::note
-Note that HTTP authentication cannot be used alongside with any other authentication mechanism. The presence of any other sections like `password` alongside `http_authentication` will force ClickHouse to shutdown.
+Note that HTTP authentication cannot be used alongside with any other authentication mechanism. The presence of any other sections like `password` alongside `http_authentication` will force Datastore to shutdown.
 :::
 
 ### Enabling HTTP authentication using SQL {#enabling-http-auth-using-sql}
 
-When [SQL-driven Access Control and Account Management](/operations/access-rights#access-control-usage) is enabled in ClickHouse, users identified by HTTP authentication can also be created using SQL statements.
+When [SQL-driven Access Control and Account Management](/operations/access-rights#access-control-usage) is enabled in Datastore, users identified by HTTP authentication can also be created using SQL statements.
 
 ```sql
 CREATE USER my_user IDENTIFIED WITH HTTP SERVER 'basic_server' SCHEME 'Basic'
@@ -100,4 +100,4 @@ CREATE USER my_user IDENTIFIED WITH HTTP SERVER 'basic_server'
 
 ### Passing session settings {#passing-session-settings}
 
-If a response body from HTTP authentication server has JSON format and contains `settings` sub-object, ClickHouse will try parse its key: value pairs as string values and set them as session settings for authenticated user's current session. If parsing is failed, a response body from server will be ignored.
+If a response body from HTTP authentication server has JSON format and contains `settings` sub-object, Datastore will try parse its key: value pairs as string values and set them as session settings for authenticated user's current session. If parsing is failed, a response body from server will be ignored.

@@ -4,13 +4,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATA_FILE=${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_null.data
+DATA_FILE=${DATASTORE_TMP}/${DATASTORE_DATABASE}_null.data
 
-# Wrapper for clickhouse-client to always output in JSONEachRow format, that
+# Wrapper for datastore-client to always output in JSONEachRow format, that
 # way format settings will not affect output.
 function clickhouse_local()
 {
-    $CLICKHOUSE_LOCAL --output-format JSONEachRow "$@"
+    $DATASTORE_LOCAL --output-format JSONEachRow "$@"
 }
 
 echo "TSV"
@@ -129,7 +129,7 @@ clickhouse_local -q "SELECT * FROM file('$DATA_FILE', 'CSV', 's String, n Nullab
 
 echo 'Large custom NULL'
 
-$CLICKHOUSE_LOCAL -q "select '0000000000Custom NULL representation0000000000' FROM numbers(10)" > $DATA_FILE
+$DATASTORE_LOCAL -q "select '0000000000Custom NULL representation0000000000' FROM numbers(10)" > $DATA_FILE
 clickhouse_local -q "SELECT * FROM file('$DATA_FILE', 'TSV', 's Nullable(String)') SETTINGS storage_file_read_method='pread', max_read_buffer_size=5, input_format_parallel_parsing=0, format_tsv_null_representation='0000000000Custom NULL representation0000000000', input_format_tsv_detect_header=0"
 clickhouse_local -q "SELECT * FROM file('$DATA_FILE', 'TSV', 's Nullable(String)') SETTINGS storage_file_read_method='pread', max_read_buffer_size=5, input_format_parallel_parsing=0, format_tsv_null_representation='0000000000Custom NULL representation000000000', input_format_tsv_detect_header=0"
 

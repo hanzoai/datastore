@@ -13,7 +13,7 @@ doc_type: 'reference'
 > The userspace page cache is a new caching mechanism that allows for caching of 
 data in in-process memory rather than relying on the OS page cache.
 
-ClickHouse already offers the [Filesystem cache](/docs/operations/storing-data) 
+Datastore already offers the [Filesystem cache](/docs/operations/storing-data) 
 as a way of caching on top of remote object storage such as Amazon S3, Google 
 Cloud Storage (GCS) or Azure Blob Storage. The userspace page cache is designed 
 to speed up access to remote data when the normal OS caching isn't doing a good 
@@ -72,4 +72,4 @@ SET use_page_cache_for_disks_without_file_cache=1;
 
 ## Related content {#related-content}
 - [Filesystem cache](/docs/operations/storing-data)
-- [ClickHouse v25.3 Release Webinar](https://www.youtube.com/live/iCKEzp0_Z2Q?feature=shared&t=1320)
+- [Datastore v25.3 Release Webinar](https://www.youtube.com/live/iCKEzp0_Z2Q?feature=shared&t=1320)

@@ -1,29 +1,29 @@
 services:
     zoo1:
-        image: ${image:-clickhouse/integration-test}
+        image: ${image:-datastore/integration-test}
         stop_grace_period: 5s
         restart: always
         user: ${user:-}
         volumes:
             - type: bind
               source: ${keeper_binary:-}
-              target: /usr/bin/clickhouse
+              target: /usr/bin/datastore
             - type: bind
               source: ${keeper_binary:-}
-              target: /usr/bin/clickhouse-keeper
+              target: /usr/bin/datastore-keeper
             - type: bind
               source: ${keeper_config_dir1:-}
-              target: /etc/clickhouse-keeper
+              target: /etc/datastore-keeper
             - type: bind
               source: ${keeper_logs_dir1:-}
-              target: /var/log/clickhouse-keeper
+              target: /var/log/datastore-keeper
             - type: ${keeper_fs:-tmpfs}
               source: ${keeper_db_dir1:-}
-              target: /var/lib/clickhouse-keeper
+              target: /var/lib/datastore-keeper
             - type: ${keeper_fs:-tmpfs}
               source: ${keeper_db_dir1:-}
-              target: /var/lib/clickhouse
-        entrypoint: "${keeper_cmd_prefix:-clickhouse keeper} --config=/etc/clickhouse-keeper/keeper_config1.xml --log-file=/var/log/clickhouse-keeper/clickhouse-keeper.log --errorlog-file=/var/log/clickhouse-keeper/clickhouse-keeper.err.log"
+              target: /var/lib/datastore
+        entrypoint: "${keeper_cmd_prefix:-datastore keeper} --config=/etc/datastore-keeper/keeper_config1.xml --log-file=/var/log/datastore-keeper/datastore-keeper.log --errorlog-file=/var/log/datastore-keeper/datastore-keeper.err.log"
         cap_add:
             - SYS_PTRACE
             - NET_ADMIN
@@ -39,30 +39,30 @@ services:
             - rotate
         cpus: 3
     zoo2:
-        image: ${image:-clickhouse/integration-test}
+        image: ${image:-datastore/integration-test}
         stop_grace_period: 5s
         restart: always
         user: ${user:-}
         volumes:
             - type: bind
               source: ${keeper_binary:-}
-              target: /usr/bin/clickhouse
+              target: /usr/bin/datastore
             - type: bind
               source: ${keeper_binary:-}
-              target: /usr/bin/clickhouse-keeper
+              target: /usr/bin/datastore-keeper
             - type: bind
               source: ${keeper_config_dir2:-}
-              target: /etc/clickhouse-keeper
+              target: /etc/datastore-keeper
             - type: bind
               source: ${keeper_logs_dir2:-}
-              target: /var/log/clickhouse-keeper
+              target: /var/log/datastore-keeper
             - type: ${keeper_fs:-tmpfs}
               source: ${keeper_db_dir2:-}
-              target: /var/lib/clickhouse-keeper
+              target: /var/lib/datastore-keeper
             - type: ${keeper_fs:-tmpfs}
               source: ${keeper_db_dir1:-}
-              target: /var/lib/clickhouse
-        entrypoint: "${keeper_cmd_prefix:-clickhouse keeper} --config=/etc/clickhouse-keeper/keeper_config2.xml --log-file=/var/log/clickhouse-keeper/clickhouse-keeper.log --errorlog-file=/var/log/clickhouse-keeper/clickhouse-keeper.err.log"
+              target: /var/lib/datastore
+        entrypoint: "${keeper_cmd_prefix:-datastore keeper} --config=/etc/datastore-keeper/keeper_config2.xml --log-file=/var/log/datastore-keeper/datastore-keeper.log --errorlog-file=/var/log/datastore-keeper/datastore-keeper.err.log"
         cap_add:
             - SYS_PTRACE
             - NET_ADMIN
@@ -78,30 +78,30 @@ services:
             - rotate
         cpus: 3
     zoo3:
-        image: ${image:-clickhouse/integration-test}
+        image: ${image:-datastore/integration-test}
         stop_grace_period: 5s
         restart: always
         user: ${user:-}
         volumes:
             - type: bind
               source: ${keeper_binary:-}
-              target: /usr/bin/clickhouse
+              target: /usr/bin/datastore
             - type: bind
               source: ${keeper_binary:-}
-              target: /usr/bin/clickhouse-keeper
+              target: /usr/bin/datastore-keeper
             - type: bind
               source: ${keeper_config_dir3:-}
-              target: /etc/clickhouse-keeper
+              target: /etc/datastore-keeper
             - type: bind
               source: ${keeper_logs_dir3:-}
-              target: /var/log/clickhouse-keeper
+              target: /var/log/datastore-keeper
             - type: ${keeper_fs:-tmpfs}
               source: ${keeper_db_dir3:-}
-              target: /var/lib/clickhouse-keeper
+              target: /var/lib/datastore-keeper
             - type: ${keeper_fs:-tmpfs}
               source: ${keeper_db_dir1:-}
-              target: /var/lib/clickhouse
-        entrypoint: "${keeper_cmd_prefix:-clickhouse keeper} --config=/etc/clickhouse-keeper/keeper_config3.xml --log-file=/var/log/clickhouse-keeper/clickhouse-keeper.log --errorlog-file=/var/log/clickhouse-keeper/clickhouse-keeper.err.log"
+              target: /var/lib/datastore
+        entrypoint: "${keeper_cmd_prefix:-datastore keeper} --config=/etc/datastore-keeper/keeper_config3.xml --log-file=/var/log/datastore-keeper/datastore-keeper.log --errorlog-file=/var/log/datastore-keeper/datastore-keeper.err.log"
         cap_add:
             - SYS_PTRACE
             - NET_ADMIN

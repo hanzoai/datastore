@@ -3,7 +3,7 @@
 -- Verify BIP173 (original bech32) support via string encoding variant.
 -- When 'bech32' or 'bech32m' is passed as the 3rd argument, no witness
 -- version byte is prepended, enabling Cosmos SDK and other non-SegWit use cases.
--- See https://github.com/ClickHouse/ClickHouse/issues/98737
+-- See https://github.com/ClickHouse/Datastore/issues/98737
 
 -- Test 1: Raw bech32 and bech32m produce DIFFERENT addresses (different checksums)
 SELECT bech32Encode('inj', unhex('DEADBEEF'), 'bech32') != bech32Encode('inj', unhex('DEADBEEF'), 'bech32m');

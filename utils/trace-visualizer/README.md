@@ -1,13 +1,13 @@
 Trace visualizer is a tool for representation of a tracing data as a Gantt diagram.
 
 # Quick start
-For now this tool is not integrated into ClickHouse and requires manual actions. Open `trace-visualizer/index.html` in your browser. It will show an example of data. To visualize your data click `Load` button and select your trace data JSON file.
+For now this tool is not integrated into Datastore and requires manual actions. Open `trace-visualizer/index.html` in your browser. It will show an example of data. To visualize your data click `Load` button and select your trace data JSON file.
 
-Single page version is available at https://trace-visualizer.clickhouse.com.
+Single page version is available at https://trace-visualizer.datastore.com.
 
 
 # Visualizing query trace
-First of all [opentelemetry_span_log](https://clickhouse.com/docs/operations/opentelemetry/) system table must be enabled to save query traces. Then run a query you want to trace with a setting:
+First of all [opentelemetry_span_log](https://datastore.com/docs/operations/opentelemetry/) system table must be enabled to save query traces. Then run a query you want to trace with a setting:
 ```sql
 SET opentelemetry_start_trace_probability=1, opentelemetry_trace_processors=1;
 ```
@@ -26,7 +26,7 @@ The script should create a `query_trace_your-query-id.json` file that can be imp
 
 To find out `trace_id` of a query, run the following command:
 ```sql
-SELECT DISTINCT trace_id FROM system.opentelemetry_span_log WHERE attribute['clickhouse.query_id'] = 'your-query-id' ORDER BY start_time_us DESC;
+SELECT DISTINCT trace_id FROM system.opentelemetry_span_log WHERE attribute['datastore.query_id'] = 'your-query-id' ORDER BY start_time_us DESC;
 ```
 
 ## Collect traces in local/development environment
@@ -35,7 +35,7 @@ To obtain JSON data suitable for visualizing run:
 ```sql
 WITH 'your-query-id' AS my_query_id
 SELECT
-    ('thread #' || leftPad(attribute['clickhouse.thread_id'], 7, '0')) AS group,
+    ('thread #' || leftPad(attribute['datastore.thread_id'], 7, '0')) AS group,
     replaceRegexpOne(operation_name, '(.*)_.*', '\\1') AS operation_name,
     start_time_us,
     finish_time_us,
@@ -46,7 +46,7 @@ WHERE 1
     AND trace_id IN (
         SELECT trace_id
         FROM system.opentelemetry_span_log
-        WHERE (attribute['clickhouse.query_id']) IN (SELECT query_id FROM system.query_log WHERE initial_query_id = my_query_id)
+        WHERE (attribute['datastore.query_id']) IN (SELECT query_id FROM system.query_log WHERE initial_query_id = my_query_id)
     )
     AND operation_name !='query'
     AND operation_name NOT LIKE '%Pipeline%'
@@ -61,13 +61,13 @@ FORMAT JSON
 SETTINGS output_format_json_named_tuples_as_objects = 1, skip_unavailable_shards = 1
 ```
 
-## Collect traces in ClickHouse Cloud/distributed queries
+## Collect traces in Datastore Cloud/distributed queries
 
 To obtain JSON data suitable for visualizing run:
 ```sql
 WITH 'your-query-id' AS my_query_id
 SELECT
-    (substring(hostName(), length(hostName()), 1) || leftPad(greatest(attribute['clickhouse.thread_id'], attribute['thread_number']), 7, '0')) AS group,
+    (substring(hostName(), length(hostName()), 1) || leftPad(greatest(attribute['datastore.thread_id'], attribute['thread_number']), 7, '0')) AS group,
     operation_name,
     start_time_us,
     finish_time_us,
@@ -78,7 +78,7 @@ WHERE 1
   AND trace_id IN (
     SELECT trace_id
     FROM clusterAllReplicas('default', 'system', 'opentelemetry_span_log')
-    WHERE (attribute['clickhouse.query_id']) IN (SELECT query_id FROM system.query_log WHERE initial_query_id = my_query_id)
+    WHERE (attribute['datastore.query_id']) IN (SELECT query_id FROM system.query_log WHERE initial_query_id = my_query_id)
   )
   AND operation_name !='query'
   AND operation_name NOT LIKE '%Pipeline%'

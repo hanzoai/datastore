@@ -34,7 +34,7 @@ DEFAULT_TIMEOUT = 1200
 DEFAULT_READY_TIMEOUT = 1200
 
 # Grafana base and dashboard UIDs (must match tests/stress/keeper/tools/build_grafana_dashboards.py).
-GRAFANA_BASE = "https://grafana.clickhouse-prd.com"
+GRAFANA_BASE = "https://grafana.datastore-prd.com"
 GRAFANA_DASH_UID = {
     "run_details": "keeper-stress-run-details",
     "comparison": "keeper-stress-run-comparison",
@@ -253,9 +253,9 @@ def build_pytest_env(ch_path, timeout_val):
     ready = _ready_timeout()
     env = os.environ.copy()
     env["KEEPER_READY_TIMEOUT"] = env["KEEPER_START_TIMEOUT_SEC"] = str(ready)
-    for k in ("CLICKHOUSE_BINARY", "CLICKHOUSE_TESTS_CLIENT_BIN_PATH", "CLICKHOUSE_TESTS_SERVER_BIN_PATH"):
+    for k in ("DATASTORE_BINARY", "DATASTORE_TESTS_CLIENT_BIN_PATH", "DATASTORE_TESTS_SERVER_BIN_PATH"):
         env[k] = ch_path
-    env.setdefault("CLICKHOUSE_TESTS_BASE_CONFIG_DIR", f"{REPO_DIR}/programs/server")
+    env.setdefault("DATASTORE_TESTS_BASE_CONFIG_DIR", f"{REPO_DIR}/programs/server")
     env["PATH"] = f"{str(Path(ch_path).resolve().parent)}:{env.get('PATH', '')}"
     env["KEEPER_METRICS_FILE"] = f"{TEMP_DIR}/keeper_metrics.jsonl"
     env["PYTHONPATH"] = f"{REPO_DIR}:{REPO_DIR}/tests/stress:{REPO_DIR}/ci"
@@ -460,7 +460,7 @@ def collect_failure_artifacts(pytest_ok):
     inst = inst_dirs[0]
     for i in range(1, 6):
         k = inst / f"keeper{i}"
-        for rel in ["docker-compose.yml", "logs/clickhouse-server.log", "logs/clickhouse-server.err.log"]:
+        for rel in ["docker-compose.yml", "logs/datastore-server.log", "logs/datastore-server.err.log"]:
             if (k / rel).exists():
                 files.append(str(k / rel))
         cfg = k / "configs" / "config.d" / f"keeper_config_keeper{i}.xml"
@@ -489,18 +489,18 @@ def main():
         _abort(job_name, results, stop_watch)
         return
 
-    ch_path = f"{Utils.cwd()}/ci/tmp/clickhouse"
+    ch_path = f"{Utils.cwd()}/ci/tmp/datastore"
     if not Path(ch_path).is_file():
         _abort(
             job_name, results, stop_watch, status=Result.Status.ERROR,
-            info=f"ClickHouse binary not found at {ch_path}. The pipeline must provide the binary (e.g. build or artifact step).",
+            info=f"Datastore binary not found at {ch_path}. The pipeline must provide the binary (e.g. build or artifact step).",
         )
         return
     if not Shell.check(f"chmod +x {ch_path}", verbose=True):
-        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="chmod +x on ClickHouse binary failed.")
+        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="chmod +x on Datastore binary failed.")
         return
     if not Shell.check(f"{ch_path} --version", verbose=True):
-        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="ClickHouse binary --version failed.")
+        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="Datastore binary --version failed.")
         return
 
     # Build RaftKeeper Docker image if the raftkeeper backend is enabled.

@@ -14,7 +14,7 @@ CREATE DICTIONARY hierarchy_flat_dictionary_index
     parent_id UInt64 BIDIRECTIONAL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarchy_source_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarchy_source_table'))
 LAYOUT(FLAT())
 LIFETIME(0); -- {serverError BAD_ARGUMENTS }
 
@@ -25,7 +25,7 @@ CREATE DICTIONARY hierarchy_flat_dictionary_index
     parent_id UInt64 HIERARCHICAL BIDIRECTIONAL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarchy_source_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarchy_source_table'))
 LAYOUT(FLAT())
 LIFETIME(0);
 
@@ -41,7 +41,7 @@ CREATE DICTIONARY hierarchy_hashed_dictionary_index
     parent_id UInt64 HIERARCHICAL BIDIRECTIONAL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarchy_source_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarchy_source_table'))
 LAYOUT(FLAT())
 LIFETIME(0);
 
@@ -56,7 +56,7 @@ CREATE DICTIONARY hierarchy_hashed_array_dictionary_index
     parent_id UInt64 HIERARCHICAL
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_hierarchy_source_table'))
+SOURCE(DATASTORE(TABLE 'test_hierarchy_source_table'))
 LAYOUT(HASHED_ARRAY())
 LIFETIME(0);
 

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/105294
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/105294
 -- maxMap / minMap and maxMappedArrays / minMappedArrays must agree on NaN
 -- handling: NaN is treated as last (matches `max`/`min` after PR #100448).
 

@@ -115,7 +115,7 @@ def test_role_from_different_storages():
 
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/roles.xml"),
-        "/etc/clickhouse-server/users.d/roles.xml",
+        "/etc/datastore-server/users.d/roles.xml",
     )
 
     node.restart_clickhouse()

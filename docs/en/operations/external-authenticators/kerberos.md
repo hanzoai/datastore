@@ -1,5 +1,5 @@
 ---
-description: 'Existing and properly configured ClickHouse users can be authenticated
+description: 'Existing and properly configured Datastore users can be authenticated
   via Kerberos authentication protocol.'
 slug: /operations/external-authenticators/kerberos
 title: 'Kerberos'
@@ -12,13 +12,13 @@ import SelfManaged from '@site/docs/_snippets/_self_managed_only_no_roadmap.md';
 
 <SelfManaged />
 
-Existing and properly configured ClickHouse users can be authenticated via Kerberos authentication protocol.
+Existing and properly configured Datastore users can be authenticated via Kerberos authentication protocol.
 
 Currently, Kerberos can only be used as an external authenticator for existing users, which are defined in `users.xml` or in local access control paths. Those users may only use HTTP requests and must be able to authenticate using GSS-SPNEGO mechanism.
 
-For this approach, Kerberos must be configured in the system and must be enabled in ClickHouse config.
+For this approach, Kerberos must be configured in the system and must be enabled in Datastore config.
 
-## Enabling Kerberos in ClickHouse {#enabling-kerberos-in-clickhouse}
+## Enabling Kerberos in Datastore {#enabling-kerberos-in-datastore}
 
 To enable Kerberos, one should include `kerberos` section in `config.xml`. This section may contain additional parameters.
 
@@ -36,40 +36,40 @@ To enable Kerberos, one should include `kerberos` section in `config.xml`. This 
 Example (goes into `config.xml`):
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <kerberos />
-</clickhouse>
+</datastore>
 ```
 
 With principal specification:
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <kerberos>
-        <principal>HTTP/clickhouse.example.com@EXAMPLE.COM</principal>
+        <principal>HTTP/datastore.example.com@EXAMPLE.COM</principal>
     </kerberos>
-</clickhouse>
+</datastore>
 ```
 
 With filtering by realm:
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <kerberos>
         <realm>EXAMPLE.COM</realm>
     </kerberos>
-</clickhouse>
+</datastore>
 ```
 
 :::note
-You can define only one `kerberos` section. The presence of multiple `kerberos` sections will force ClickHouse to disable Kerberos authentication.
+You can define only one `kerberos` section. The presence of multiple `kerberos` sections will force Datastore to disable Kerberos authentication.
 :::
 
 :::note
-`principal` and `realm` sections cannot be specified at the same time. The presence of both `principal` and `realm` sections will force ClickHouse to disable Kerberos authentication.
+`principal` and `realm` sections cannot be specified at the same time. The presence of both `principal` and `realm` sections will force Datastore to disable Kerberos authentication.
 :::
 
 ## Kerberos as an external authenticator for existing users {#kerberos-as-an-external-authenticator-for-existing-users}
@@ -94,7 +94,7 @@ Parameters:
 Example (goes into `users.xml`):
 
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <users>
         <!- ... -->
@@ -105,11 +105,11 @@ Example (goes into `users.xml`):
             </kerberos>
         </my_user>
     </users>
-</clickhouse>
+</datastore>
 ```
 
 :::note
-Note that Kerberos authentication cannot be used alongside with any other authentication mechanism. The presence of any other sections like `password` alongside `kerberos` will force ClickHouse to shutdown.
+Note that Kerberos authentication cannot be used alongside with any other authentication mechanism. The presence of any other sections like `password` alongside `kerberos` will force Datastore to shutdown.
 :::
 
 :::info Reminder
@@ -118,7 +118,7 @@ Note, that now, once user `my_user` uses `kerberos`, Kerberos must be enabled in
 
 ### Enabling Kerberos using SQL {#enabling-kerberos-using-sql}
 
-When [SQL-driven Access Control and Account Management](/operations/access-rights#access-control-usage) is enabled in ClickHouse, users identified by Kerberos can also be created using SQL statements.
+When [SQL-driven Access Control and Account Management](/operations/access-rights#access-control-usage) is enabled in Datastore, users identified by Kerberos can also be created using SQL statements.
 
 ```sql
 CREATE USER my_user IDENTIFIED WITH kerberos REALM 'EXAMPLE.COM'

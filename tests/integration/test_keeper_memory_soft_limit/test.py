@@ -9,7 +9,7 @@ from helpers.cluster import ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__, keeper_config_dir="configs/")
 
-# clickhouse itself will use external zookeeper
+# datastore itself will use external zookeeper
 node = cluster.add_instance(
     "node",
     stay_alive=True,

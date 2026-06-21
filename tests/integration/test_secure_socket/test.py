@@ -10,13 +10,13 @@ cluster = ClickHouseCluster(__file__)
 
 NODES = {"node" + str(i): None for i in (1, 2)}
 
-config = """<clickhouse>
+config = """<datastore>
     <profiles>
         <default>
             <sleep_in_send_data_ms>{sleep_in_send_data_ms}</sleep_in_send_data_ms>
         </default>
     </profiles>
-</clickhouse>"""
+</datastore>"""
 
 
 @pytest.fixture(scope="module")
@@ -55,7 +55,7 @@ def started_cluster():
 
 def test(started_cluster):
     NODES["node2"].replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         config.format(sleep_in_send_data_ms=1000000),
     )
 

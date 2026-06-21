@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT --oneline"
+format="$DATASTORE_FORMAT --oneline"
 
 echo "SELECT 1 IN 1" | $format
 echo "SELECT 1 IN (1)" | $format

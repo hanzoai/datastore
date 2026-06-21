@@ -1,5 +1,5 @@
 -- Regression test for heap-use-after-free in GraphiteRollupSortedAlgorithm.
--- Ticket: https://github.com/ClickHouse/ClickHouse/issues/98523
+-- Ticket: https://github.com/ClickHouse/Datastore/issues/98523
 -- When the Time column uses a non-DateTime type (e.g. Int128), an exception
 -- during mergeBlock leaves an aggregate state created. On destruction,
 -- GraphiteRollupMergedData accessed freed memory from already-destroyed params.

@@ -394,7 +394,7 @@ def test_timestamps(started_cluster):
     df = pa.Table.from_pylist(data)
     table.append(df)
 
-    # Extract the table path from S3 location for ClickHouse Iceberg ENGINE configuration
+    # Extract the table path from S3 location for Datastore Iceberg ENGINE configuration
     # 
     # The table metadata contains the full S3 URI which needs to be processed:
     # table.metadata.location:  s3://warehouse-rest/<test_namespace>/<test_table_uuid>

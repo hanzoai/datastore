@@ -8,7 +8,7 @@
 DROP TABLE IF EXISTS test_part_moves_keeper_component;
 
 CREATE TABLE test_part_moves_keeper_component (id UInt64)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_part_moves_keeper_component', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_part_moves_keeper_component', 'r1')
 ORDER BY id;
 
 INSERT INTO test_part_moves_keeper_component VALUES (1);

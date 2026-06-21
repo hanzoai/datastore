@@ -63,7 +63,7 @@ protected:
 REGISTER_FUNCTION(AddressToLine)
 {
     FunctionDocumentation::Description description = R"(
-Converts a virtual memory address inside the ClickHouse server process to a filename and line number in ClickHouse's source code.
+Converts a virtual memory address inside the Datastore server process to a filename and line number in Datastore's source code.
 
 :::note
 This function is slow and may impose security considerations.
@@ -71,7 +71,7 @@ This function is slow and may impose security considerations.
 
 To enable this introspection function:
 
-- Install the `clickhouse-common-static-dbg` package.
+- Install the `datastore-common-static-dbg` package.
 - Set setting [`allow_introspection_functions`](../../operations/settings/settings.md#allow_introspection_functions) to `1`.
     )";
     FunctionDocumentation::Syntax syntax = "addressToLine(address_of_binary_instruction)";
@@ -127,11 +127,11 @@ LIMIT 1
 Row 1:
 ──────
 trace_source_code_lines: /lib/x86_64-linux-gnu/libpthread-2.27.so
-/usr/lib/debug/usr/bin/clickhouse
+/usr/lib/debug/usr/bin/datastore
 /build/obj-x86_64-linux-gnu/../src/Common/ThreadPool.cpp:199
 /build/obj-x86_64-linux-gnu/../src/Common/ThreadPool.h:155
 /usr/include/c++/9/bits/atomic_base.h:551
-/usr/lib/debug/usr/bin/clickhouse
+/usr/lib/debug/usr/bin/datastore
 /lib/x86_64-linux-gnu/libpthread-2.27.so
 /build/glibc-OTsEL5/glibc-2.27/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:97
         )"

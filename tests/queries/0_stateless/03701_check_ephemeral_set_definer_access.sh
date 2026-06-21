@@ -5,10 +5,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-user="user03701_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user="user03701_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 -- Cleanup
 DROP USER IF EXISTS $user;
 CREATE USER $user IN memory;
@@ -18,7 +18,7 @@ REVOKE SET DEFINER ON * FROM $user;
 CREATE TABLE $db.source (x Int64) ENGINE = MergeTree() ORDER BY x;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user <<EOF
+${DATASTORE_CLIENT} --user $user <<EOF
 CREATE MATERIALIZED VIEW $db.test_view
 (
     x Int64
@@ -28,6 +28,6 @@ DEFINER = CURRENT_USER SQL SECURITY DEFINER
 AS SELECT x FROM $db.source;
 EOF
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP USER IF EXISTS $user;
 EOF

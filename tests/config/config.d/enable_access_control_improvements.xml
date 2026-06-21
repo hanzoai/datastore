@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <access_control_improvements>
         <throw_on_unmatched_row_policies>true</throw_on_unmatched_row_policies>
         <users_without_row_policies_can_read_rows>true</users_without_row_policies_can_read_rows>
@@ -9,4 +9,4 @@
         <table_engines_require_grant>true</table_engines_require_grant>
         <allow_impersonate_user>true</allow_impersonate_user>
     </access_control_improvements>
-</clickhouse>
+</datastore>

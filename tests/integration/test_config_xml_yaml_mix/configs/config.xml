@@ -1,8 +1,8 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
     </logger>
@@ -27,9 +27,9 @@
     </grpc>
     <openSSL>
         <server>
-            <certificateFile>/etc/clickhouse-server/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/server.key</privateKeyFile>
-            <dhParamsFile>/etc/clickhouse-server/dhparam.pem</dhParamsFile>
+            <certificateFile>/etc/datastore-server/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/server.key</privateKeyFile>
+            <dhParamsFile>/etc/datastore-server/dhparam.pem</dhParamsFile>
             <verificationMode>none</verificationMode>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
@@ -72,7 +72,7 @@
             <path>users.yaml</path>
         </users_xml>
         <local_directory>
-            <path>/var/lib/clickhouse/access/</path>
+            <path>/var/lib/datastore/access/</path>
         </local_directory>
     </user_directories>
     <default_profile>default</default_profile>
@@ -159,7 +159,7 @@
 
     <dictionaries_config>*_dictionary.xml</dictionaries_config>
     <distributed_ddl>
-        <path>/clickhouse/task_queue/ddl</path>
+        <path>/datastore/task_queue/ddl</path>
     </distributed_ddl>
     <graphite_rollup_example>
         <pattern>
@@ -190,7 +190,7 @@
             </retention>
         </default>
     </graphite_rollup_example>
-    <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
+    <format_schema_path>/var/lib/datastore/format_schemas/</format_schema_path>
     <query_masking_rules>
         <rule>
             <name>hide encrypt/decrypt arguments</name>
@@ -205,4 +205,4 @@
     </send_crash_reports>
 
     <mark_cache_size>123451234</mark_cache_size>
-</clickhouse>
+</datastore>

@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the UUID data type in ClickHouse'
+description: 'Documentation for the UUID data type in Datastore'
 sidebar_label: 'UUID'
 sidebar_position: 24
 slug: /sql-reference/data-types/uuid
@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 A Universally Unique Identifier (UUID) is a 16-byte value used to identify records. For detailed information about UUIDs, see [Wikipedia](https://en.wikipedia.org/wiki/Universally_unique_identifier).
 
-While different UUID variants exist, e.g. UUIDv4 and UUIDv7 (see [here](https://datatracker.ietf.org/doc/html/draft-ietf-uuidrev-rfc4122bis)), ClickHouse does not validate that inserted UUIDs conform to a particular variant.
+While different UUID variants exist, e.g. UUIDv4 and UUIDv7 (see [here](https://datatracker.ietf.org/doc/html/draft-ietf-uuidrev-rfc4122bis)), Datastore does not validate that inserted UUIDs conform to a particular variant.
 UUIDs are internally treated as a sequence of 16 random bytes with [8-4-4-4-12 representation](https://en.wikipedia.org/wiki/Universally_unique_identifier#Textual_representation) at SQL level.
 
 Example UUID value:
@@ -99,7 +99,7 @@ ORDER BY (UUIDv7ToDateTime(uuid), uuid)
 
 ## Generating UUIDs {#generating-uuids}
 
-ClickHouse provides the [generateUUIDv4](../../sql-reference/functions/uuid-functions.md) function to generate random UUID version 4 values.
+Datastore provides the [generateUUIDv4](../../sql-reference/functions/uuid-functions.md) function to generate random UUID version 4 values.
 
 ## Usage Example {#usage-example}
 

@@ -7,8 +7,8 @@ title: 'External disks for storing data'
 doc_type: 'guide'
 ---
 
-Data processed in ClickHouse is usually stored in the local file system of the 
-machine on which ClickHouse server is running. That requires large-capacity disks,
+Data processed in Datastore is usually stored in the local file system of the 
+machine on which Datastore server is running. That requires large-capacity disks,
 which can be expensive. To avoid storing data locally, various storage options are supported:
 1. [Amazon S3](https://aws.amazon.com/s3/) object storage.
 2. [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs).
@@ -17,10 +17,10 @@ which can be expensive. To avoid storing data locally, various storage options a
 <br/>
 
 :::note 
-ClickHouse also has support for external table engines, which are different from 
+Datastore also has support for external table engines, which are different from 
 the external storage option described on this page, as they allow reading data 
 stored in some general file format (like Parquet). On this page we are describing 
-storage configuration for the ClickHouse `MergeTree` family or `Log` family tables.
+storage configuration for the Datastore `MergeTree` family or `Log` family tables.
 
 1. to work with data stored on `Amazon S3` disks, use the [S3](/engines/table-engines/integrations/s3.md) table engine.
 2. to work with data stored in Azure Blob Storage, use the [AzureBlobStorage](/engines/table-engines/integrations/azureBlobStorage.md) table engine.
@@ -38,7 +38,7 @@ Disk configuration requires:
 1. A `type` section, equal to one of `s3`, `azure_blob_storage`, `hdfs` (unsupported), `local_blob_storage`, `web`.
 2. Configuration of a specific external storage type.
 
-Starting from 24.1 clickhouse version, it is possible to use a new configuration option.
+Starting from 24.1 datastore version, it is possible to use a new configuration option.
 It requires specifying:
 
 1. A `type` equal to `object_storage`
@@ -54,7 +54,7 @@ For example:
 ```xml
 <s3>
     <type>s3</type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3>
 ```
@@ -66,7 +66,7 @@ is equal to the following configuration (from version `24.1`):
     <type>object_storage</type>
     <object_storage_type>s3</object_storage_type>
     <metadata_type>local</metadata_type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3>
 ```
@@ -76,7 +76,7 @@ The following configuration:
 ```xml
 <s3_plain>
     <type>s3_plain</type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3_plain>
 ```
@@ -88,7 +88,7 @@ is equal to:
     <type>object_storage</type>
     <object_storage_type>s3</object_storage_type>
     <metadata_type>plain</metadata_type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3_plain>
 ```
@@ -96,12 +96,12 @@ is equal to:
 An example of full storage configuration will look like:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
                 <type>s3</type>
-                <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+                <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
                 <use_environment_credentials>1</use_environment_credentials>
             </s3>
         </disks>
@@ -115,20 +115,20 @@ An example of full storage configuration will look like:
             </s3>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 Starting with version 24.1, it can also look like:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
                 <type>object_storage</type>
                 <object_storage_type>s3</object_storage_type>
                 <metadata_type>local</metadata_type>
-                <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+                <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
                 <use_environment_credentials>1</use_environment_credentials>
             </s3>
         </disks>
@@ -142,18 +142,18 @@ Starting with version 24.1, it can also look like:
             </s3>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 To make a specific kind of storage a default option for all `MergeTree` tables,
 add the following section to the configuration file:
 
 ```xml
-<clickhouse>
+<datastore>
     <merge_tree>
         <storage_policy>s3</storage_policy>
     </merge_tree>
-</clickhouse>
+</datastore>
 ```
 
 If you want to configure a specific storage policy for a specific table, 
@@ -185,7 +185,7 @@ The MergeTree setting `refresh_parts_interval` enables periodic refresh of the l
 
 - **Automatic part refreshing requires that the filesystem metadata be shared** (or that the table use table-owned, readonly metadata so that refresh is applicable). Setting `table_disk = true` together with a table-local disk (e.g. `SETTINGS disk = disk(type=object_storage, ...), table_disk = true`) is one way to get the correct semantics: the table owns the metadata life cycle and the storage is treated as readonly, so `refresh_parts_interval` runs and externally added parts can be discovered.
 
-- **With a globally defined disk** (e.g. `disk = 's3'` in `storage_configuration`) and default local metadata, each replica has its own metadata state. Even though blobs may be in S3, the storage is not considered shared for the purpose of `refresh_parts_interval`, and new parts created outside ClickHouse or on another replica will not be detected.
+- **With a globally defined disk** (e.g. `disk = 's3'` in `storage_configuration`) and default local metadata, each replica has its own metadata state. Even though blobs may be in S3, the storage is not considered shared for the purpose of `refresh_parts_interval`, and new parts created outside Datastore or on another replica will not be detected.
 
 For automatic part refreshing, ensure the metadata is shared or use a table-level disk with `table_disk = true` as above. Relying only on `refresh_parts_interval` with replica-local metadata will not refresh parts as expected.
 
@@ -227,7 +227,7 @@ ORDER BY (postcode1, postcode2, addr1, addr2)
   -- highlight-start
   SETTINGS disk = disk(
     type=web,
-    endpoint='https://raw.githubusercontent.com/ClickHouse/web-tables-demo/main/web/'
+    endpoint='https://raw.githubusercontent.com/Datastore/web-tables-demo/main/web/'
   );
   -- highlight-end
 ```
@@ -258,10 +258,10 @@ ORDER BY (postcode1, postcode2, addr1, addr2)
   SETTINGS disk = disk(
     type=cache,
     max_size='1Gi',
-    path='/var/lib/clickhouse/custom_disk_cache/',
+    path='/var/lib/datastore/custom_disk_cache/',
     disk=disk(
       type=web,
-      endpoint='https://raw.githubusercontent.com/ClickHouse/web-tables-demo/main/web/'
+      endpoint='https://raw.githubusercontent.com/Datastore/web-tables-demo/main/web/'
       )
   );
 -- highlight-end
@@ -304,10 +304,10 @@ ORDER BY (postcode1, postcode2, addr1, addr2)
   SETTINGS disk = disk(
     type=cache,
     max_size='1Gi',
-    path='/var/lib/clickhouse/custom_disk_cache/',
+    path='/var/lib/datastore/custom_disk_cache/',
     disk=disk(
       type=web,
-      endpoint='https://raw.githubusercontent.com/ClickHouse/web-tables-demo/main/web/'
+      endpoint='https://raw.githubusercontent.com/Datastore/web-tables-demo/main/web/'
       )
   );
   -- highlight-end
@@ -320,7 +320,7 @@ where `web` is from the server configuration file:
     <disks>
         <web>
             <type>web</type>
-            <endpoint>'https://raw.githubusercontent.com/ClickHouse/web-tables-demo/main/web/'</endpoint>
+            <endpoint>'https://raw.githubusercontent.com/Datastore/web-tables-demo/main/web/'</endpoint>
         </web>
     </disks>
 </storage_configuration>
@@ -351,7 +351,7 @@ where `web` is from the server configuration file:
 | `retry_attempts`                                | Number of retry attempts for failed requests.                                                                                                                                                                                                 | `10`                                     |
 | `single_read_retries`                           | Number of retry attempts for connection drops during read.                                                                                                                                                                                    | `4`                                      |
 | `min_bytes_for_seek`                            | Minimum number of bytes to use seek operation instead of sequential read.                                                                                                                                                                     | `1 MB`                                   |
-| `metadata_path`                                 | Local filesystem path to store S3 metadata files.                                                                                                                                                                                             | `/var/lib/clickhouse/disks/<disk_name>/` |
+| `metadata_path`                                 | Local filesystem path to store S3 metadata files.                                                                                                                                                                                             | `/var/lib/datastore/disks/<disk_name>/` |
 | `skip_access_check`                             | If `true`, skips disk access checks during startup.                                                                                                                                                                                           | `false`                                  |
 | `header`                                        | Adds specified HTTP header to requests. Can be specified multiple times.                                                                                                                                                                      | -                                        |
 | `server_side_encryption_customer_key_base64`    | Required headers for accessing S3 objects with SSE-C encryption.                                                                                                                                                                              | -                                        |
@@ -377,7 +377,7 @@ In `22.10` a new disk type `s3_plain` was introduced, which provides a write-onc
 Configuration parameters for it are the same as for the `s3` disk type.
 Unlike the `s3` disk type, it stores data as is. In other words, 
 instead of having randomly generated blob names, it uses normal file names 
-(the same way as ClickHouse stores files on local disk) and does not store any 
+(the same way as Datastore stores files on local disk) and does not store any 
 metadata locally. For example, it is derived from data on `s3`.
 
 This disk type allows keeping a static version of the table, as it does not 
@@ -392,7 +392,7 @@ Configuration:
 ```xml
 <s3_plain>
     <type>s3_plain</type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3_plain>
 ```
@@ -407,7 +407,7 @@ Configuration:
     <type>object_storage</type>
     <object_storage_type>azure</object_storage_type>
     <metadata_type>plain</metadata_type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3_plain>
 ```
@@ -432,7 +432,7 @@ Configuration:
 ```xml
 <s3_plain_rewritable>
     <type>s3_plain_rewritable</type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3_plain_rewritable>
 ```
@@ -444,7 +444,7 @@ is equal to
     <type>object_storage</type>
     <object_storage_type>s3</object_storage_type>
     <metadata_type>plain_rewritable</metadata_type>
-    <endpoint>https://s3.eu-west-1.amazonaws.com/clickhouse-eu-west-1.clickhouse.com/data/</endpoint>
+    <endpoint>https://s3.eu-west-1.amazonaws.com/datastore-eu-west-1.datastore.com/data/</endpoint>
     <use_environment_credentials>1</use_environment_credentials>
 </s3_plain_rewritable>
 ```
@@ -469,8 +469,8 @@ Configuration markup:
             <container_name>container</container_name>
             <account_name>account</account_name>
             <account_key>pass123</account_key>
-            <metadata_path>/var/lib/clickhouse/disks/blob_storage_disk/</metadata_path>
-            <cache_path>/var/lib/clickhouse/disks/blob_storage_disk/cache/</cache_path>
+            <metadata_path>/var/lib/datastore/disks/blob_storage_disk/</metadata_path>
+            <cache_path>/var/lib/datastore/disks/blob_storage_disk/cache/</cache_path>
             <skip_access_check>false</skip_access_check>
         </blob_storage_disk>
     </disks>
@@ -509,33 +509,33 @@ Authentication parameters (the disk will try all available methods **and** Manag
 
 | Parameter                        | Description                                                                        | Default Value                            |
 |----------------------------------|------------------------------------------------------------------------------------|------------------------------------------|
-| `metadata_path`                  | Local filesystem path to store metadata files for Blob Storage.                    | `/var/lib/clickhouse/disks/<disk_name>/` |
+| `metadata_path`                  | Local filesystem path to store metadata files for Blob Storage.                    | `/var/lib/datastore/disks/<disk_name>/` |
 | `skip_access_check`              | If `true`, skips disk access checks during startup.                                | `false`                                  |
 | `read_resource`                  | Resource name for [scheduling](/operations/workload-scheduling.md) read requests.  | Empty string (disabled)                  |
 | `write_resource`                 | Resource name for [scheduling](/operations/workload-scheduling.md) write requests. | Empty string (disabled)                  |
 | `metadata_keep_free_space_bytes` | Amount of free metadata disk space to reserve.                                     | -                                        |
 
-Examples of working configurations can be found in integration tests directory (see e.g. [test_merge_tree_azure_blob_storage](https://github.com/ClickHouse/ClickHouse/blob/master/tests/integration/test_merge_tree_azure_blob_storage/configs/config.d/storage_conf.xml) or [test_azure_blob_storage_zero_copy_replication](https://github.com/ClickHouse/ClickHouse/blob/master/tests/integration/test_azure_blob_storage_zero_copy_replication/configs/config.d/storage_conf.xml)).
+Examples of working configurations can be found in integration tests directory (see e.g. [test_merge_tree_azure_blob_storage](https://github.com/ClickHouse/Datastore/blob/master/tests/integration/test_merge_tree_azure_blob_storage/configs/config.d/storage_conf.xml) or [test_azure_blob_storage_zero_copy_replication](https://github.com/ClickHouse/Datastore/blob/master/tests/integration/test_azure_blob_storage_zero_copy_replication/configs/config.d/storage_conf.xml)).
 
 :::note Zero-copy replication is not ready for production
-Zero-copy replication is disabled by default in ClickHouse version 22.8 and higher.  This feature is not recommended for production use.
+Zero-copy replication is disabled by default in Datastore version 22.8 and higher.  This feature is not recommended for production use.
 :::
 
 ## Using HDFS storage (Unsupported) {#using-hdfs-storage-unsupported}
 
 In this sample configuration:
 - the disk is of type `hdfs` (unsupported)
-- the data is hosted at `hdfs://hdfs1:9000/clickhouse/`
+- the data is hosted at `hdfs://hdfs1:9000/datastore/`
 
 By the way, HDFS is unsupported and therefore there might be issues when using it. Feel free to make a pull request with the fix if any issue arises.
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdfs>
                 <type>hdfs</type>
-                <endpoint>hdfs://hdfs1:9000/clickhouse/</endpoint>
+                <endpoint>hdfs://hdfs1:9000/datastore/</endpoint>
                 <skip_access_check>true</skip_access_check>
             </hdfs>
             <hdd>
@@ -556,7 +556,7 @@ By the way, HDFS is unsupported and therefore there might be issues when using i
             </hdfs>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 Keep in mind that HDFS may not work in corner cases.
@@ -582,7 +582,7 @@ Example of disk configuration:
 </disks>
 ```
 
-For example, when ClickHouse writes data from some table to a file `store/all_1_1_0/data.bin` to `disk1`, then in fact this file will be written to the physical disk along the path `/path1/store/all_1_1_0/data.bin`.
+For example, when Datastore writes data from some table to a file `store/all_1_1_0/data.bin` to `disk1`, then in fact this file will be written to the physical disk along the path `/path1/store/all_1_1_0/data.bin`.
 
 When writing the same file to `disk2`, it will actually be written to the physical disk at the path `/path1/path2/store/all_1_1_0/data.bin` in encrypted mode.
 
@@ -605,7 +605,7 @@ When writing the same file to `disk2`, it will actually be written to the physic
 Example of disk configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3>
@@ -622,7 +622,7 @@ Example of disk configuration:
             </disk_s3_encrypted>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 ### Using local cache {#using-local-cache}
@@ -635,7 +635,7 @@ Cache uses `LRU` cache policy.
 Example of configuration for versions later or equal to 22.8:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -665,7 +665,7 @@ Example of configuration for versions later or equal to 22.8:
 Example of configuration for versions earlier than 22.8:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -723,7 +723,7 @@ These settings should be defined in the disk configuration section.
 | `filesystem_cache_skip_download_if_exceeds_per_query_cache_write_limit` | Boolean | `true`          | Controls behavior when `max_query_cache_size` is reached: <br/>- `true`: Stops downloading new data <br/>- `false`: Evicts old data to make space for new data |
 
 :::warning
-Cache configuration settings and cache query settings correspond to the latest ClickHouse version, 
+Cache configuration settings and cache query settings correspond to the latest Datastore version, 
 for earlier versions something might not be supported.
 :::
 
@@ -788,11 +788,11 @@ exception, i.e. the following types of queries are not allowed: [`CREATE TABLE`]
 [`ALTER TABLE`](/sql-reference/statements/alter/index.md), [`RENAME TABLE`](/sql-reference/statements/rename#rename-table),
 [`DETACH TABLE`](/sql-reference/statements/detach.md) and [`TRUNCATE TABLE`](/sql-reference/statements/truncate.md).
 Web storage can be used for read-only purposes. An example use is for hosting 
-sample data, or for migrating data. There is a tool `clickhouse-static-files-uploader`, 
+sample data, or for migrating data. There is a tool `datastore-static-files-uploader`, 
 which prepares a data directory for a given table (`SELECT data_paths FROM system.tables WHERE name = 'table_name'`). 
 For each table you need, you get a directory of files. These files can be uploaded 
 to, for example, a web server with static files. After this preparation, 
-you can load this table into any ClickHouse server via `DiskWeb`.
+you can load this table into any Datastore server via `DiskWeb`.
 
 In this sample configuration:
 - the disk is of type `web`
@@ -800,7 +800,7 @@ In this sample configuration:
 - a cache on local storage is used
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <web>
@@ -831,7 +831,7 @@ In this sample configuration:
             </cached_web>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 :::tip
@@ -840,7 +840,7 @@ not expected to be used routinely, see [dynamic configuration](#dynamic-configur
 editing the configuration file.
 
 A [demo dataset](https://github.com/ClickHouse/web-tables-demo) is hosted in GitHub.  To prepare your own tables for web 
-storage see the tool [clickhouse-static-files-uploader](/operations/utilities/static-files-disk-uploader)
+storage see the tool [datastore-static-files-uploader](/operations/utilities/static-files-disk-uploader)
 :::
 
 In this `ATTACH TABLE` query the `UUID` provided matches the directory name of the data, and the endpoint is the URL for the raw GitHub content.
@@ -869,7 +869,7 @@ ORDER BY (postcode1, postcode2, addr1, addr2)
   -- highlight-start
   SETTINGS disk = disk(
       type=web,
-      endpoint='https://raw.githubusercontent.com/ClickHouse/web-tables-demo/main/web/'
+      endpoint='https://raw.githubusercontent.com/Datastore/web-tables-demo/main/web/'
       );
   -- highlight-end
 ```
@@ -877,12 +877,12 @@ ORDER BY (postcode1, postcode2, addr1, addr2)
 A ready test case. You need to add this configuration to config:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <web>
                 <type>web</type>
-                <endpoint>https://clickhouse-datasets.s3.yandex.net/disk-with-static-files-tests/test-hits/</endpoint>
+                <endpoint>https://datastore-datasets.s3.yandex.net/disk-with-static-files-tests/test-hits/</endpoint>
             </web>
         </disks>
         <policies>
@@ -895,7 +895,7 @@ A ready test case. You need to add this configuration to config:
             </web>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 And then execute this query:
@@ -1063,7 +1063,7 @@ SETTINGS storage_policy='web';
 If a query fails with an exception `DB:Exception Unreachable URL`, then you can try to adjust the settings: [http_connection_timeout](/operations/settings/settings.md/#http_connection_timeout), [http_receive_timeout](/operations/settings/settings.md/#http_receive_timeout), [keep_alive_timeout](/operations/server-configuration-parameters/settings#keep_alive_timeout).
 
 To get files for upload run:
-`clickhouse static-files-disk-uploader --metadata-path <path> --output-dir <dir>` (`--metadata-path` can be found in query `SELECT data_paths FROM system.tables WHERE name = 'table_name'`).
+`datastore static-files-disk-uploader --metadata-path <path> --output-dir <dir>` (`--metadata-path` can be found in query `SELECT data_paths FROM system.tables WHERE name = 'table_name'`).
 
 When loading files by `endpoint`, they must be loaded into `<endpoint>/store/` path, but config must contain only `endpoint`.
 
@@ -1076,5 +1076,5 @@ Use [http_max_single_read_retries](/operations/storing-data#web-storage) setting
 Zero-copy replication is possible, but not recommended, with  `S3` and `HDFS` (unsupported) disks. Zero-copy replication means that if the data is stored remotely on several machines and needs to be synchronized, then only the metadata is replicated (paths to the data parts), but not the data itself.
 
 :::note Zero-copy replication is not ready for production
-Zero-copy replication is disabled by default in ClickHouse version 22.8 and higher.  This feature is not recommended for production use.
+Zero-copy replication is disabled by default in Datastore version 22.8 and higher.  This feature is not recommended for production use.
 :::

@@ -1,15 +1,15 @@
 ---
-description: 'Guide to testing ClickHouse and running the test suite'
+description: 'Guide to testing Datastore and running the test suite'
 sidebar_label: 'Testing'
 sidebar_position: 40
 slug: /development/tests
-title: 'Testing ClickHouse'
+title: 'Testing Datastore'
 doc_type: 'guide'
 ---
 
 ## Test types {#test-types}
 
-There are following tests in ClickHouse:
+There are following tests in Datastore:
 - [Functional tests](#functional-tests) - a set of queries and scripts which include the following intersecting subsets
   - [Fast test](#running-fast-tests) - the minimal subset
   - [Stateless tests](#running-stateless-tests) which do not require populating databases with data
@@ -25,18 +25,18 @@ and some others, see the sections below.
 ## Functional tests {#functional-tests}
 
 Functional tests are the most simple and convenient to use.
-Most of ClickHouse features can be tested with functional tests and they are mandatory to use for every change in ClickHouse code that can be tested that way.
+Most of Datastore features can be tested with functional tests and they are mandatory to use for every change in Datastore code that can be tested that way.
 
-Each functional test sends one or multiple queries to the running ClickHouse server and compares the result with reference.
+Each functional test sends one or multiple queries to the running Datastore server and compares the result with reference.
 
 Tests are located in `./tests/queries` directory.
 
 Each test can be one of two types: `.sql` and `.sh`.
-- An `.sql` test is the simple SQL script that is piped to `clickhouse-client`.
+- An `.sql` test is the simple SQL script that is piped to `datastore-client`.
 - An `.sh` test is a script that is run by itself.
 
 SQL tests are generally preferable to `.sh` tests.
-You should use `.sh` tests only when you have to test some feature that cannot be exercised from pure SQL, such as piping some input data into `clickhouse-client` or testing `clickhouse-local`.
+You should use `.sh` tests only when you have to test some feature that cannot be exercised from pure SQL, such as piping some input data into `datastore-client` or testing `datastore-local`.
 
 :::note
 A common mistake when testing data types `DateTime` and `DateTime64` is assuming that the server uses a specific time zone (e.g. "UTC"). This is not the case, time zones in CI test runs
@@ -45,17 +45,17 @@ are deliberately randomized. The easiest workaround is to specify the time zone 
 
 ### Running a test locally {#running-a-test-locally}
 
-Start the ClickHouse server locally, listening on the default port (9000).
+Start the Datastore server locally, listening on the default port (9000).
 To run, for example, the test `01428_hash_set_nan_key`, change to the repository folder and run the following command:
 
 ```sh
-PATH=<path to clickhouse-client>:$PATH tests/clickhouse-test 01428_hash_set_nan_key
+PATH=<path to datastore-client>:$PATH tests/datastore-test 01428_hash_set_nan_key
 ```
 
 Test results (`stderr` and `stdout`) are written to files `01428_hash_set_nan_key.[stderr|stdout]` which are located next the test itself (for `queries/0_stateless/foo.sql`, the output will be in `queries/0_stateless/foo.stdout`).
 
-See `tests/clickhouse-test --help` for all options of `clickhouse-test`.
-You can run all tests or run subset of tests by providing a filter for test names: `./clickhouse-test substring`.
+See `tests/datastore-test --help` for all options of `datastore-test`.
+You can run all tests or run subset of tests by providing a filter for test names: `./datastore-test substring`.
 There are also options to run tests in parallel or in random order.
 
 ### Running fast tests {#running-fast-tests}
@@ -72,8 +72,8 @@ sudo usermod -aG docker "$USER"
 2. Get the source code.
 
 ```sh
-git clone --single-branch https://github.com/ClickHouse/ClickHouse
-cd ClickHouse
+git clone --single-branch https://github.com/ClickHouse/Datastore
+cd Datastore
 ```
 
 3. Build code and run "fast tests".
@@ -110,14 +110,14 @@ sudo systemctl restart docker
 2. Get the source code.
 
 ```sh
-git clone --single-branch https://github.com/ClickHouse/ClickHouse
-cd ClickHouse
+git clone --single-branch https://github.com/ClickHouse/Datastore
+cd Datastore
 ```
 
 3. Build the code.
 ```sh
 python -m ci.praktika run build_debug
-cp ci/tmp/build/programs/clickhouse ci/tmp
+cp ci/tmp/build/programs/datastore ci/tmp
 ```
 
 4. Run stateless tests which can be run in parallel.
@@ -130,12 +130,12 @@ You should get
 Failed: 0, Passed: 8497, Skipped: 103
 ```
 
-Note. `python -m ci.praktika run` invocations run a specific continuous integration job, you can read more about ClickHouse CI [here](continuous-integration.md#running-stateless-tests).
+Note. `python -m ci.praktika run` invocations run a specific continuous integration job, you can read more about Datastore CI [here](continuous-integration.md#running-stateless-tests).
 
 ### Adding a new test {#adding-a-new-test}
 
 To add new test, first create a `.sql` or `.sh` file in `queries/0_stateless` directory.
-Then generate the corresponding `.reference` file using `clickhouse-client < 12345_test.sql > 12345_test.reference` or `./12345_test.sh > ./12345_test.reference`.
+Then generate the corresponding `.reference` file using `datastore-client < 12345_test.sql > 12345_test.reference` or `./12345_test.sh > ./12345_test.reference`.
 
 Tests should only create, drop, select from, etc. tables in database `test` which is automatically created beforehand.
 It is okay to use temporary tables.
@@ -192,7 +192,7 @@ List of available tags:
 | `shard` | Server is required to listen to `127.0.0.*` ||
 | `distributed` | Same as `shard`. Prefer `shard` ||
 | `global` | Same as `shard`. Prefer `shard` ||
-| `zookeeper` | Test requires Zookeeper or ClickHouse Keeper to run | Test uses `ReplicatedMergeTree` |
+| `zookeeper` | Test requires Zookeeper or Datastore Keeper to run | Test uses `ReplicatedMergeTree` |
 | `replica` | Same as `zookeeper`. Prefer `zookeeper` ||
 | `no-fasttest`|  Test is not run under [Fast test](#test-types) | Test uses `MySQL` table engine which is disabled in Fast test|
 | `fasttest-only`|  Test is only run under [Fast test](#test-types) ||
@@ -207,7 +207,7 @@ List of available tags:
 
 The following options are also supported: `no-stress`, `no-polymorphic-parts`, `no-random-settings`, `no-random-merge-tree-settings`, `no-backward-compatibility-check`, `no-cpu-x86_64`, `no-cpu-aarch64`, `no-cpu-ppc64le`, `no-s3-storage`.
 
-In addition to above settings, you can use `USE_*` flags from `system.build_options` to define usage of particular ClickHouse features.
+In addition to above settings, you can use `USE_*` flags from `system.build_options` to define usage of particular Datastore features.
 For example, if your test uses a MySQL table, you should add a tag `use-mysql`.
 
 ### Specifying limits for random settings {#specifying-limits-for-random-settings}
@@ -268,7 +268,7 @@ Remember to add the words `shard` or `distributed` to the test name, so that it 
 
 Sometimes in a shell test you may need to create a file on the fly to work with.
 Keep in mind that some CI checks run tests in parallel, so if you are creating or removing a temporary file in your script without a unique name this can cause some of the CI checks, such as Flaky, to fail.
-To get around this you should use environment variable `$CLICKHOUSE_TEST_UNIQUE_NAME` to give temporary files a name unique to the test that is running.
+To get around this you should use environment variable `$DATASTORE_TEST_UNIQUE_NAME` to give temporary files a name unique to the test that is running.
 That way you can be sure that the file you are creating during setup or removing during cleanup is the file only in use by that test and not some other test which is running in parallel.
 
 ## Known bugs {#known-bugs}
@@ -278,18 +278,18 @@ These tests will be moved to `tests/queries/0_stateless` when bugs are fixed.
 
 ## Integration tests {#integration-tests}
 
-Integration tests allow testing ClickHouse in clustered configuration and ClickHouse interaction with other servers like MySQL, Postgres, MongoDB.
+Integration tests allow testing Datastore in clustered configuration and Datastore interaction with other servers like MySQL, Postgres, MongoDB.
 They are useful to emulate network splits, packet drops, etc.
 These tests are run under Docker and create multiple containers with various software.
 
 See `tests/integration/README.md` on how to run these tests.
 
-Note that integration of ClickHouse with third-party drivers is not tested.
+Note that integration of Datastore with third-party drivers is not tested.
 Also, we currently do not have integration tests with our JDBC and ODBC drivers.
 
 ## Unit tests {#unit-tests}
 
-Unit tests are useful when you want to test not the ClickHouse as a whole, but a single isolated library or class.
+Unit tests are useful when you want to test not the Datastore as a whole, but a single isolated library or class.
 You can enable or disable build of tests with `ENABLE_TESTS` CMake option.
 Unit tests (and other test programs) are located in `tests` subdirectories across the code.
 To run unit tests, type `ninja test`.
@@ -305,14 +305,14 @@ $ ./src/unit_tests_dbms --gtest_filter=LocalAddress*
 
 ## Performance tests {#performance-tests}
 
-Performance tests allow to measure and compare performance of some isolated part of ClickHouse on synthetic queries.
+Performance tests allow to measure and compare performance of some isolated part of Datastore on synthetic queries.
 Performance tests are located at `tests/performance/`.
 Each test is represented by an `.xml` file with a description of the test case.
 Tests are run with `docker/test/performance-comparison` tool . See the readme file for invocation.
 
 Each test run one or multiple queries (possibly with combinations of parameters) in a loop.
 
-If you want to improve performance of ClickHouse in some scenario, and if improvements can be observed on simple queries, it is highly recommended to write a performance test.
+If you want to improve performance of Datastore in some scenario, and if improvements can be observed on simple queries, it is highly recommended to write a performance test.
 Also, it is recommended to write performance tests when you add or modify SQL functions which are relatively isolated and not too obscure.
 It always makes sense to use `perf top` or other `perf` tools during your tests.
 
@@ -328,48 +328,48 @@ There are tests for machine learned models in `tests/external_models`.
 These tests are not updated and must be transferred to integration tests.
 
 There is a separate test for quorum inserts.
-This test runs a ClickHouse cluster on separate servers and emulates various failure cases: network split, packet drop (between ClickHouse nodes, between ClickHouse and ZooKeeper, between ClickHouse server and client, etc.), `kill -9`, `kill -STOP` and `kill -CONT`, like [Jepsen](https://aphyr.com/tags/Jepsen). Then the test checks that all acknowledged inserts were written and all rejected inserts were not.
+This test runs a Datastore cluster on separate servers and emulates various failure cases: network split, packet drop (between Datastore nodes, between Datastore and ZooKeeper, between Datastore server and client, etc.), `kill -9`, `kill -STOP` and `kill -CONT`, like [Jepsen](https://aphyr.com/tags/Jepsen). Then the test checks that all acknowledged inserts were written and all rejected inserts were not.
 
 ## Manual Testing {#manual-testing}
 
 When you develop a new feature, it is reasonable to also test it manually.
 You can do it with the following steps:
 
-Build ClickHouse. Run ClickHouse from the terminal: change directory to `programs/clickhouse-server` and run it with `./clickhouse-server`. It will use configuration (`config.xml`, `users.xml` and files within `config.d` and `users.d` directories) from the current directory by default. To connect to ClickHouse server, run `programs/clickhouse-client/clickhouse-client`.
+Build Datastore. Run Datastore from the terminal: change directory to `programs/datastore-server` and run it with `./datastore-server`. It will use configuration (`config.xml`, `users.xml` and files within `config.d` and `users.d` directories) from the current directory by default. To connect to Datastore server, run `programs/datastore-client/datastore-client`.
 
-Note that all clickhouse tools (server, client, etc) are just symlinks to a single binary named `clickhouse`.
-You can find this binary at `programs/clickhouse`.
-All tools can also be invoked as `clickhouse tool` instead of `clickhouse-tool`.
+Note that all datastore tools (server, client, etc) are just symlinks to a single binary named `datastore`.
+You can find this binary at `programs/datastore`.
+All tools can also be invoked as `datastore tool` instead of `datastore-tool`.
 
-Alternatively you can install ClickHouse package: either stable release from ClickHouse repository or you can build package for yourself with `./release` in ClickHouse sources root.
-Then start the server with `sudo clickhouse start` (or stop to stop the server).
-Look for logs at `/etc/clickhouse-server/clickhouse-server.log`.
+Alternatively you can install Datastore package: either stable release from Datastore repository or you can build package for yourself with `./release` in Datastore sources root.
+Then start the server with `sudo datastore start` (or stop to stop the server).
+Look for logs at `/etc/datastore-server/datastore-server.log`.
 
-When ClickHouse is already installed on your system, you can build a new `clickhouse` binary and replace the existing binary:
+When Datastore is already installed on your system, you can build a new `datastore` binary and replace the existing binary:
 
 ```bash
-$ sudo clickhouse stop
-$ sudo cp ./clickhouse /usr/bin/
-$ sudo clickhouse start
+$ sudo datastore stop
+$ sudo cp ./datastore /usr/bin/
+$ sudo datastore start
 ```
 
-Also you can stop system clickhouse-server and run your own with the same configuration but with logging to terminal:
+Also you can stop system datastore-server and run your own with the same configuration but with logging to terminal:
 
 ```bash
-$ sudo clickhouse stop
-$ sudo -u clickhouse /usr/bin/clickhouse server --config-file /etc/clickhouse-server/config.xml
+$ sudo datastore stop
+$ sudo -u datastore /usr/bin/datastore server --config-file /etc/datastore-server/config.xml
 ```
 
 Example with gdb:
 
 ```bash
-$ sudo -u clickhouse gdb --args /usr/bin/clickhouse server --config-file /etc/clickhouse-server/config.xml
+$ sudo -u datastore gdb --args /usr/bin/datastore server --config-file /etc/datastore-server/config.xml
 ```
 
-If the system clickhouse-server is already running and you do not want to stop it, you can change port numbers in your `config.xml` (or override them in a file in `config.d` directory), provide appropriate data path, and run it.
+If the system datastore-server is already running and you do not want to stop it, you can change port numbers in your `config.xml` (or override them in a file in `config.d` directory), provide appropriate data path, and run it.
 
-`clickhouse` binary has almost no dependencies and works across wide range of Linux distributions.
-To quick and dirty test your changes on a server, you can simply `scp` your fresh built `clickhouse` binary to your server and then run it as in examples above.
+`datastore` binary has almost no dependencies and works across wide range of Linux distributions.
+To quick and dirty test your changes on a server, you can simply `scp` your fresh built `datastore` binary to your server and then run it as in examples above.
 
 ## Build tests {#build-tests}
 
@@ -397,27 +397,27 @@ We also test that there are no too large stack frames.
 
 ## Testing for protocol compatibility {#testing-for-protocol-compatibility}
 
-When we extend ClickHouse network protocol, we test manually that old clickhouse-client works with new clickhouse-server and new clickhouse-client works with old clickhouse-server (simply by running binaries from corresponding packages).
+When we extend Datastore network protocol, we test manually that old datastore-client works with new datastore-server and new datastore-client works with old datastore-server (simply by running binaries from corresponding packages).
 
 We also test some cases automatically with integrational tests:
-- if data written by old version of ClickHouse can be successfully read by the new version;
-- do distributed queries work in a cluster with different ClickHouse versions.
+- if data written by old version of Datastore can be successfully read by the new version;
+- do distributed queries work in a cluster with different Datastore versions.
 
 ## Help from the Compiler {#help-from-the-compiler}
 
-Main ClickHouse code (that is located in `src` directory) is built with `-Wall -Wextra -Werror` and with some additional enabled warnings.
+Main Datastore code (that is located in `src` directory) is built with `-Wall -Wextra -Werror` and with some additional enabled warnings.
 Although these options are not enabled for third-party libraries.
 
 Clang has even more useful warnings - you can look for them with `-Weverything` and pick something to default build.
 
-We always use clang to build ClickHouse, both for development and production.
+We always use clang to build Datastore, both for development and production.
 You can build on your own machine with debug mode (to save battery of your laptop), but please note that compiler is able to generate more warnings with `-O3` due to better control flow and inter-procedure analysis.
 When building with clang in debug mode, debug version of `libc++` is used that allows to catch more errors at runtime.
 
 ## Sanitizers {#sanitizers}
 
 :::note
-If the process (ClickHouse server or client) crashes at startup when running it locally, you might need to disable address space layout randomization: `sudo sysctl kernel.randomize_va_space=0`
+If the process (Datastore server or client) crashes at startup when running it locally, you might need to disable address space layout randomization: `sudo sysctl kernel.randomize_va_space=0`
 :::
 
 ### Address sanitizer {#address-sanitizer}
@@ -445,7 +445,7 @@ Currently there is one known false positive in `re2` library, see [this article]
 
 ## Fuzzing {#fuzzing}
 
-ClickHouse fuzzing is implemented both using [libFuzzer](https://llvm.org/docs/LibFuzzer.html) and random SQL queries.
+Datastore fuzzing is implemented both using [libFuzzer](https://llvm.org/docs/LibFuzzer.html) and random SQL queries.
 All the fuzz testing should be performed with sanitizers (Address and Undefined).
 
 LibFuzzer is used for isolated fuzz testing of library code.
@@ -457,7 +457,7 @@ We encourage you to write fuzz tests for every functionality that handles user i
 Fuzzers are not built by default.
 To build fuzzers both `-DENABLE_FUZZING=1` and `-DENABLE_TESTS=1` options should be set.
 We recommend to disable Jemalloc while building fuzzers.
-Configuration used to integrate ClickHouse fuzzing to
+Configuration used to integrate Datastore fuzzing to
 Google OSS-Fuzz can be found at `docker/fuzz`.
 
 We also use simple fuzz test to generate random SQL queries and to check that the server does not die executing them.
@@ -467,7 +467,7 @@ This test should be run continuously (overnight and longer).
 We also use sophisticated AST-based query fuzzer that is able to find huge amount of corner cases.
 It does random permutations and substitutions in queries AST.
 It remembers AST nodes from previous tests to use them for fuzzing of subsequent tests while processing them in random order.
-You can learn more about this fuzzer in [this blog article](https://clickhouse.com/blog/fuzzing-click-house).
+You can learn more about this fuzzer in [this blog article](https://datastore.com/blog/fuzzing-click-house).
 
 ## Stress test {#stress-test}
 
@@ -490,7 +490,7 @@ It helps to find even more special cases.
 
 ## Security audit {#security-audit}
 
-Our Security Team did some basic overview of ClickHouse capabilities from the security standpoint.
+Our Security Team did some basic overview of Datastore capabilities from the security standpoint.
 
 ## Static analyzers {#static-analyzers}
 
@@ -532,7 +532,7 @@ It is required to protect from faulty hardware (bit rot on storage media, bit fl
 Note that bit flips are common and likely to occur even for ECC RAM and in presence of TCP checksums (if you manage to run thousands of servers processing petabytes of data each day).
 [See the video (russian)](https://www.youtube.com/watch?v=ooBAQIe0KlQ).
 
-ClickHouse provides diagnostics that will help ops engineers to find faulty hardware.
+Datastore provides diagnostics that will help ops engineers to find faulty hardware.
 
 \* and it is not slow.
 
@@ -559,7 +559,7 @@ It is automated as well.
 
 ## Test coverage {#test-coverage}
 
-We also track test coverage but only for functional tests and only for clickhouse-server.
+We also track test coverage but only for functional tests and only for datastore-server.
 It is performed on daily basis.
 
 ## Tests for tests {#tests-for-tests}
@@ -575,4 +575,4 @@ We run tests with [GitHub Actions](https://github.com/features/actions).
 Build jobs and tests are run in Sandbox on per commit basis.
 Resulting packages and test results are published in GitHub and can be downloaded by direct links.
 Artifacts are stored for several months.
-When you send a pull request on GitHub, we tag it as "can be tested" and our CI system will build ClickHouse packages (release, debug, with address sanitizer, etc) for you.
+When you send a pull request on GitHub, we tag it as "can be tested" and our CI system will build Datastore packages (release, debug, with address sanitizer, etc) for you.

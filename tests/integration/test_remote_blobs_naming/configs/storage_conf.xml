@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<clickhouse>
+<datastore>
     <logger>
         <level>test</level>
     </logger>
@@ -50,4 +50,4 @@
     <merge_tree>
         <storage_policy>s3</storage_policy>
     </merge_tree>
-</clickhouse>
+</datastore>

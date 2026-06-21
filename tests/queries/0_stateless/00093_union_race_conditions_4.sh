@@ -9,4 +9,4 @@ set -o errexit
 set -o pipefail
 
 TIMELIMIT=$((SECONDS + 100))
-while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 10 | sed 's/.*/SELECT 1 % ((number + 500) % 1000) FROM numbers_mt(1000);/' | $CLICKHOUSE_CLIENT -n --max_block_size=1 >/dev/null 2>&1 && echo 'Fail!' && break; done; echo 'OK'
+while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 10 | sed 's/.*/SELECT 1 % ((number + 500) % 1000) FROM numbers_mt(1000);/' | $DATASTORE_CLIENT -n --max_block_size=1 >/dev/null 2>&1 && echo 'Fail!' && break; done; echo 'OK'

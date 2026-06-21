@@ -8,8 +8,8 @@ performing test: bad_query_no_into_outfile
 performing test: bad_query_file_exists
 1
 performing test: compression
-Hello, World! From clickhouse.
-Hello, World! From clickhouse.
+Hello, World! From datastore.
+Hello, World! From datastore.
 performing test: bad_query_misplaced_compression
 1
 performing test: bad_query_misplaced_format

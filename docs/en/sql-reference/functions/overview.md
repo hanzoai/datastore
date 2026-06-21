@@ -17,7 +17,7 @@ There is a third type of function that the ['arrayJoin' function](../functions/a
 
 ## Strong Typing {#strong-typing}
 
-In contrast to standard SQL, ClickHouse has strong typing. In other words, it does not make implicit conversions between types. Each function works for a specific set of types. This means that sometimes you need to use type conversion functions.
+In contrast to standard SQL, Datastore has strong typing. In other words, it does not make implicit conversions between types. Each function works for a specific set of types. This means that sometimes you need to use type conversion functions.
 
 ## Common Subexpression Elimination {#common-subexpression-elimination}
 
@@ -41,7 +41,7 @@ Functions can be implemented in different ways for constant and non-constant arg
 Functions have the following behaviors:
 
 - If at least one of the arguments of the function is `NULL`, the function result is also `NULL`.
-- Special behavior that is specified individually in the description of each function. In the ClickHouse source code, these functions have `UseDefaultImplementationForNulls=false`.
+- Special behavior that is specified individually in the description of each function. In the Datastore source code, these functions have `UseDefaultImplementationForNulls=false`.
 
 ## Constancy {#constancy}
 
@@ -94,4 +94,4 @@ Variadic inner functions also do not auto-unpack tuple inputs. For example, `arr
 
 ## User Defined Functions (UDFs) {#user-defined-functions-udfs}
 
-ClickHouse supports user-defined functions. See [UDFs](../functions/udf.md).
+Datastore supports user-defined functions. See [UDFs](../functions/udf.md).

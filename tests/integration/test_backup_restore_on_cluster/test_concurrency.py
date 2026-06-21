@@ -166,7 +166,7 @@ def test_concurrent_backups_on_different_nodes():
 )
 def test_create_or_drop_tables_during_backup(db_engine, table_engine):
     if db_engine == "Replicated":
-        db_engine = "Replicated('/clickhouse/path/','{shard}','{replica}')"
+        db_engine = "Replicated('/datastore/path/','{shard}','{replica}')"
 
     if table_engine.endswith("MergeTree"):
         table_engine += " ORDER BY tuple()"

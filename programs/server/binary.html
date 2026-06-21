@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDkgOCI+PHN0eWxlPi5ve2ZpbGw6I2ZjMH0ucntmaWxsOnJlZH08L3N0eWxlPjxwYXRoIGQ9Ik0wLDcgaDEgdjEgaC0xIHoiIGNsYXNzPSJyIi8+PHBhdGggZD0iTTAsMCBoMSB2NyBoLTEgeiIgY2xhc3M9Im8iLz48cGF0aCBkPSJNMiwwIGgxIHY4IGgtMSB6IiBjbGFzcz0ibyIvPjxwYXRoIGQ9Ik00LDAgaDEgdjggaC0xIHoiIGNsYXNzPSJvIi8+PHBhdGggZD0iTTYsMCBoMSB2OCBoLTEgeiIgY2xhc3M9Im8iLz48cGF0aCBkPSJNOCwzLjI1IGgxIHYxLjUgaC0xIHoiIGNsYXNzPSJvIi8+PC9zdmc+">
-    <title>ClickHouse Binary Viewer</title>
+    <title>Datastore Binary Viewer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <style type="text/css">
         html, body, #space {
@@ -57,7 +57,7 @@
         let password = '';
         let add_http_cors_header = true;
 
-        /// If it is hosted on server, assume that it is the address of ClickHouse.
+        /// If it is hosted on server, assume that it is the address of Datastore.
         if (location.protocol != 'file:') {
             host = location.origin;
             add_http_cors_header = false;
@@ -159,7 +159,7 @@
             err.style.display = 'none';
         }
 
-        L.GridLayer.ClickHouse = L.GridLayer.extend({
+        L.GridLayer.Datastore = L.GridLayer.extend({
             createTile: function(coords, done) {
                 let tile = L.DomUtil.create('canvas', 'leaflet-tile');
                 tile.width = 1024;
@@ -170,18 +170,18 @@
             }
         });
 
-        let layer = new L.GridLayer.ClickHouse({
+        let layer = new L.GridLayer.Datastore({
             tileSize: 1024,
             minZoom: 0,
             maxZoom: 10,
             minNativeZoom: 0,
             maxNativeZoom: 5,
-            attribution: '© ClickHouse, Inc.'
+            attribution: '© Datastore, Inc.'
         });
 
         layer.addTo(map);
 
-        map.attributionControl.setPrefix('<a href="https://github.com/ClickHouse/ClickHouse/">About</a>');
+        map.attributionControl.setPrefix('<a href="https://github.com/ClickHouse/Datastore/">About</a>');
 
         function latLngToPixel(latlng) {
             return { x: ((latlng.lng / 1024) * 32768)|0, y: ((-latlng.lat / 1024) * 32768)|0 };

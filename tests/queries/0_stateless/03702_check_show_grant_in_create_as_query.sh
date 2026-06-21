@@ -5,10 +5,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-user="user03702_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user="user03702_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP USER IF EXISTS $user;
 CREATE USER $user;
 CREATE TABLE $db.test_table (x int) ORDER BY x;
@@ -17,11 +17,11 @@ GRANT TABLE ENGINE ON * TO $user;
 DROP TABLE IF EXISTS test_copy;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user --query "CREATE TABLE $db.test_copy AS $db.test_table; -- { serverError ACCESS_DENIED }";
+${DATASTORE_CLIENT} --user $user --query "CREATE TABLE $db.test_copy AS $db.test_table; -- { serverError ACCESS_DENIED }";
 
-${CLICKHOUSE_CLIENT} --query "GRANT SHOW COLUMNS ON $db.test_table TO $user"
-${CLICKHOUSE_CLIENT} --user $user --query "CREATE TABLE $db.test_copy AS $db.test_table"
+${DATASTORE_CLIENT} --query "GRANT SHOW COLUMNS ON $db.test_table TO $user"
+${DATASTORE_CLIENT} --user $user --query "CREATE TABLE $db.test_copy AS $db.test_table"
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP USER IF EXISTS $user;
 EOF

@@ -1,6 +1,6 @@
-set (CLICKHOUSE_FORMAT_SOURCES Format.cpp)
+set (DATASTORE_FORMAT_SOURCES Format.cpp)
 
-set (CLICKHOUSE_FORMAT_LINK
+set (DATASTORE_FORMAT_LINK
     PRIVATE
         boost::program_options
         clickhouse_common_io

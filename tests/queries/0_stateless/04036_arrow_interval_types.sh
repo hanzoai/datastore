@@ -7,7 +7,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # Test that all interval kinds can be exported to Arrow/ArrowStream and values are preserved
-tmp_dir="${CUR_DIR}/tmp/04036_arrow_interval_types/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+tmp_dir="${CUR_DIR}/tmp/04036_arrow_interval_types/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "${tmp_dir}"
 cleanup()
 {
@@ -18,7 +18,7 @@ trap cleanup EXIT
 for fmt in Arrow ArrowStream; do
     echo "=== $fmt ==="
     out_file="${tmp_dir}/arrow_${fmt}.bin"
-    ${CLICKHOUSE_LOCAL} -q "
+    ${DATASTORE_LOCAL} -q "
         SELECT
             3::IntervalNanosecond  AS ns,
             4::IntervalMicrosecond AS us,
@@ -35,7 +35,7 @@ for fmt in Arrow ArrowStream; do
     " > "${out_file}"
 
     echo "-- inferred types --"
-    ${CLICKHOUSE_LOCAL} -q "
+    ${DATASTORE_LOCAL} -q "
         SELECT
             toTypeName(ns) AS ns,
             toTypeName(us) AS us,
@@ -52,5 +52,5 @@ for fmt in Arrow ArrowStream; do
     "
 
     echo "-- values --"
-    ${CLICKHOUSE_LOCAL} -q "SELECT * FROM file('${out_file}', '$fmt')"
+    ${DATASTORE_LOCAL} -q "SELECT * FROM file('${out_file}', '$fmt')"
 done

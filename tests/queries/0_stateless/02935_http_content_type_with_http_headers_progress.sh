@@ -9,7 +9,7 @@ THREADS=$(nproc)
 for format in TSV TabSeparatedWithNamesAndTypes CSV CSVWithNames Null Native RowBinary JSONStrings JSON JSONEachRow Values Vertical
 do
   echo $format
-  url="${CLICKHOUSE_URL}&http_headers_progress_interval_ms=1&send_progress_in_http_headers=true&query=select+sleepEachRow(0.01)from+numbers(10)+FORMAT+${format}"
+  url="${DATASTORE_URL}&http_headers_progress_interval_ms=1&send_progress_in_http_headers=true&query=select+sleepEachRow(0.01)from+numbers(10)+FORMAT+${format}"
   (
     for _ in $(seq ${THREADS}); do
       curl -Ss -v -o /dev/null ${url} 2>&1 | grep -P -o " Content-Type:.*$" &

@@ -189,7 +189,7 @@ def start_keeper(node, config_name):
     node.stop_clickhouse()
     node.copy_file_to_container(
         os.path.join(CONFIG_DIR, config_name),
-        "/etc/clickhouse-server/config.d/" + config_name,
+        "/etc/datastore-server/config.d/" + config_name,
     )
     node.start_clickhouse()
 
@@ -241,7 +241,7 @@ def test_leader_election_after_rolling_membership_change(started_cluster):
             node_obj.stop_clickhouse()
             node_obj.copy_file_to_container(
                 os.path.join(CONFIG_DIR, cfg_name),
-                "/etc/clickhouse-server/config.d/" + cfg_name,
+                "/etc/datastore-server/config.d/" + cfg_name,
             )
             node_obj.start_clickhouse()
 
@@ -255,7 +255,7 @@ def test_leader_election_after_rolling_membership_change(started_cluster):
 
     # Step 1: Add node4 to the cluster.
     # node4 creates peer objects for all three existing members.
-    # node4's config omits use_cluster=false so ClickHouse can connect to the
+    # node4's config omits use_cluster=false so Datastore can connect to the
     # existing Keeper cluster (node1/2/3) during startup, enabling async Keeper
     # initialisation and allowing start_clickhouse() to return before node4
     # reaches quorum.  The rcfg command then adds node4, the leader starts
@@ -383,7 +383,7 @@ def test_leader_election_after_rolling_membership_change(started_cluster):
     keeper_utils.wait_until_connected(cluster, node6, timeout=60.0)
 
     # Step 6: Yield leadership so that node4, node5, or node6 wins the next
-    # election.  ClickHouse rcfg does not allow removing the current leader
+    # election.  Datastore rcfg does not allow removing the current leader
     # directly, so we first force it to step down via the `ydld` 4lw command.
     # That command triggers become_leader() on the winning replacement node,
     # which is exactly what triggers the bug: without the fix the stale

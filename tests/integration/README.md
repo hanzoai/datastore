@@ -1,6 +1,6 @@
-# ClickHouse Integration Tests
+# Datastore Integration Tests
 
-This directory contains integration tests for ClickHouse, involving multiple instances, custom configurations, ZooKeeper, and more. These tests help ensure robust distributed behavior and compatibility with external systems.
+This directory contains integration tests for Datastore, involving multiple instances, custom configurations, ZooKeeper, and more. These tests help ensure robust distributed behavior and compatibility with external systems.
 
 ## Running Integration Tests Locally as CI Job
 
@@ -9,10 +9,10 @@ You can reproduce CI integration test jobs locally using the same orchestration 
 ### Prerequisites
 - Python 3 (standard library only)
 - Docker
-- ClickHouse server binary available to the job. The runner searches in this order and uses the first found:
-  - `./ci/tmp/clickhouse`
-  - `./build/programs/clickhouse`
-  - `./clickhouse`
+- Datastore server binary available to the job. The runner searches in this order and uses the first found:
+  - `./ci/tmp/datastore`
+  - `./build/programs/datastore`
+  - `./datastore`
 
 ### Run a CI Job Locally
 ```bash
@@ -40,8 +40,8 @@ python -m ci.praktika run "Integration tests (amd_binary, 4/5)" \
 ### Additional Customization Options
 - `--count N` to repeat each test N times (`--count` is passed to pytest with `--repeat-scope=function`).
 - `--debug` to open the Python debug console on exception (`--pdb` is passed to pytest).
-- `--path PATH` custom ClickHouse server binary location (if not in default locations).
-- `--path_1 PATH` custom path to the ClickHouse server config directory (if not in `./programs/server/config/`).
+- `--path PATH` custom Datastore server binary location (if not in default locations).
+- `--path_1 PATH` custom path to the Datastore server config directory (if not in `./programs/server/config/`).
 - `--workers N` to override automatic calculation of the recommended maximum number of parallel pytest workers. The value is passed to pytest-xdist as `-n N`. Use a lower number on resource-constrained machines or increase it to utilize more CPU cores.
 - `--param KEY=VALUE[,KEY=VALUE...]` to inject custom environment variables for pytest. Pass comma-separated KEY=VALUE pairs (e.g., `--param PYTEST_ADDOPTS=-vv,CUSTOM_FLAG=1`).
 ## Running Natively
@@ -83,19 +83,19 @@ pytest <tests_or_paths> \
 - `--count <count>`: Repeat a test multiple times; use with `--repeat-scope=function`. See [pytest-repeat](https://pypi.org/project/pytest-repeat/).
 
 Tests locate the server binary in the repository root and configs in `./programs/server/`. You can override paths with these environment variables:
-- `CLICKHOUSE_TESTS_SERVER_BIN_PATH`
-- `CLICKHOUSE_TESTS_ODBC_BRIDGE_BIN_PATH` (path to `clickhouse-odbc-bridge` binary)
-- `CLICKHOUSE_TESTS_CLIENT_BIN_PATH`
-- `CLICKHOUSE_TESTS_BASE_CONFIG_DIR` (path to `config.xml` and `users.xml`)
+- `DATASTORE_TESTS_SERVER_BIN_PATH`
+- `DATASTORE_TESTS_ODBC_BRIDGE_BIN_PATH` (path to `datastore-odbc-bridge` binary)
+- `DATASTORE_TESTS_CLIENT_BIN_PATH`
+- `DATASTORE_TESTS_BASE_CONFIG_DIR` (path to `config.xml` and `users.xml`)
 
-If using a separate build (`ENABLE_CLICKHOUSE_ALL=OFF`), build all required components (e.g., `ENABLE_CLICKHOUSE_KEEPER=ON`). Using `ENABLE_CLICKHOUSE_ALL=ON` is easier.
+If using a separate build (`ENABLE_DATASTORE_ALL=OFF`), build all required components (e.g., `ENABLE_DATASTORE_KEEPER=ON`). Using `ENABLE_DATASTORE_ALL=ON` is easier.
 
 ## Adding New Tests
 
 To add a new test named `foo`, create a directory `test_foo` with an empty `__init__.py` and a `test.py` file containing your tests. All functions starting with `test` are test cases.
 
 The `helpers` directory provides utilities for:
-- Launching a ClickHouse cluster (with/without ZooKeeper) in Docker containers.
+- Launching a Datastore cluster (with/without ZooKeeper) in Docker containers.
 - Sending queries to instances.
 - Simulating network failures (e.g., severing links between instances).
 
@@ -114,7 +114,7 @@ pytest --pdb <tests and options>
 
 ## Debug Mode
 
-Use debug mode to attach a low-level debugger to the ClickHouse server inside integration test containers.
+Use debug mode to attach a low-level debugger to the Datastore server inside integration test containers.
 
 1. Place a statically linked debugger binary (recommended: [nnd](https://github.com/al13n321/nnd), x86_64 only) at the repository root:
    ```bash
@@ -125,19 +125,19 @@ Use debug mode to attach a low-level debugger to the ClickHouse server inside in
 4. When the test hits `breakpoint()`, you'll see a Python pdb prompt:
 5. In a second terminal, source helper commands and use the provided helpers:
    ```bash
-   source /path/to/ClickHouse/tests/integration/runner-env.sh
+   source /path/to/Datastore/tests/integration/runner-env.sh
    # USAGE:
-   # runner-client - Run clickhouse client inside an integration test
+   # runner-client - Run datastore client inside an integration test
    # runner-bash   - Open shell on a node inside an integration test
-   # runner-nnd    - Attach nnd debugger to a clickhouse server on a node inside an integration test
+   # runner-nnd    - Attach nnd debugger to a datastore server on a node inside an integration test
    ```
 6. Use a container ID or name to connect to a node (the helper lists running containers and prompts you):
     ```bash
    runner-client
     CONTAINER ID   IMAGE                                      COMMAND                  CREATED          STATUS          PORTS                                                            NAMES
-    867c67cc9957   clickhouse/integration-test:latest         "..."                    2s ago           Up 1s                                                                      rootteststoragedelta-node1-1
+    867c67cc9957   datastore/integration-test:latest         "..."                    2s ago           Up 1s                                                                      rootteststoragedelta-node1-1
     ...
-    Enter ClickHouse Node CONTAINER ID or NAME (default: 867c67cc9957):
+    Enter Datastore Node CONTAINER ID or NAME (default: 867c67cc9957):
     ```
    After selecting a node, you can query it:
    ```sql
@@ -191,7 +191,7 @@ export PROMETHEUS_REMOTE_WRITE_HANDLERS=/stub
 export PROMETHEUS_REMOTE_READ_HANDLERS=/stub
 export PROMETHEUS_READER_PORT=8080
 export PROMETHEUS_RECEIVER_PORT=8080
-docker compose $(find ${HOME}/ClickHouse/tests/integration -name '*compose*yml' -exec echo --file {} ' ' \; ) pull
+docker compose $(find ${HOME}/Datastore/tests/integration -name '*compose*yml' -exec echo --file {} ' ' \; ) pull
 ```
 
 ### IPv6 Problem
@@ -205,8 +205,8 @@ sudo vim /etc/docker/daemon.json
 }
 ```
 
-### "Permission denied" errors in ClickHouse repository after running integration tests
-Sometimes after running integration tests natively docker seems to change the permissions of the ClickHouse code repository and running normal `clickhouse-test` tests fails due to these permission errors. To fix it, chown back to your user and group:
+### "Permission denied" errors in Datastore repository after running integration tests
+Sometimes after running integration tests natively docker seems to change the permissions of the Datastore code repository and running normal `datastore-test` tests fails due to these permission errors. To fix it, chown back to your user and group:
 ```bash
-sudo chown -R <user>:<group> ClickHouse/
+sudo chown -R <user>:<group> Datastore/
 ```

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103817
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103817
 -- UndefinedBehaviorSanitizer in FieldVisitorConvertToNumber.h:85:22
 --
 -- The bug: for wide integer types (UInt64, Int64, Int128, UInt128, Int256, UInt256),

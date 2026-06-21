@@ -1,21 +1,21 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 node1 = cluster.add_instance(
     "node1",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
 node2 = cluster.add_instance(
     "node2",
     with_zookeeper=True,
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_installed_binary=True,
 )
@@ -48,7 +48,7 @@ def test_replicated_merge_tree_defaults_compatibility(started_cluster):
             b String DEFAULT If(a = 0, 'true', 'false'),
             c String DEFAULT Cast(a, 'String')
         )
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/table', '{replica}')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/test/table', '{replica}')
         ORDER BY a
     """
 
@@ -62,12 +62,12 @@ def test_replicated_merge_tree_defaults_compatibility(started_cluster):
     node1.query("DETACH TABLE test.table")
     node2.query("SYSTEM DROP REPLICA 'node1' FROM TABLE test.table")
     node1.exec_in_container(
-        ["bash", "-c", "rm /var/lib/clickhouse/metadata/test/table.sql"]
+        ["bash", "-c", "rm /var/lib/datastore/metadata/test/table.sql"]
     )
-    node1.exec_in_container(["bash", "-c", "rm -r /var/lib/clickhouse/data/test/table"])
+    node1.exec_in_container(["bash", "-c", "rm -r /var/lib/datastore/data/test/table"])
 
     zk = cluster.get_kazoo_client("zoo1")
-    exists_replica_1 = zk.exists("/clickhouse/tables/test/table/replicas/node1")
+    exists_replica_1 = zk.exists("/datastore/tables/test/table/replicas/node1")
     assert exists_replica_1 == None
 
     node1.restart_with_latest_version()

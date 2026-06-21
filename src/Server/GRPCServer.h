@@ -44,7 +44,7 @@ public:
     size_t currentThreads() const override { return currentConnections(); }
 
 private:
-    using GRPCService = clickhouse::grpc::ClickHouse::AsyncService;
+    using GRPCService = datastore::grpc::Datastore::AsyncService;
     class Runner;
 
     IServer & iserver;

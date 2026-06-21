@@ -1,12 +1,12 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 node = cluster.add_instance(
     "node",
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     stay_alive=True,
     with_zookeeper=True,
     with_installed_binary=True,
@@ -113,7 +113,7 @@ def create_some_tables(db):
         [
             "bash",
             "-c",
-            f"sed --follow-symlinks -i 's|/test/{db}/rmt2|/test/{{database}}/{{table}}|' /var/lib/clickhouse/metadata/{db}/rmt2.sql",
+            f"sed --follow-symlinks -i 's|/test/{db}/rmt2|/test/{{database}}/{{table}}|' /var/lib/datastore/metadata/{db}/rmt2.sql",
         ]
     )
     node.query(
@@ -129,12 +129,12 @@ def create_some_tables(db):
     )
     node.query(
         "CREATE DICTIONARY {}.d1 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB '{}')) "
+        "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB '{}')) "
         "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT())".format(db, db)
     )
     node.query(
         "CREATE DICTIONARY {}.d2 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt2' PASSWORD '' DB '{}')) "
+        "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt2' PASSWORD '' DB '{}')) "
         "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT())".format(db, db)
     )
     node.query(
@@ -204,7 +204,7 @@ def check_convert_all_dbs_to_atomic():
     node.query("DETACH TABLE ordinary.detached PERMANENTLY")
 
     node.exec_in_container(
-        ["bash", "-c", f"touch /var/lib/clickhouse/flags/convert_ordinary_to_atomic"]
+        ["bash", "-c", f"touch /var/lib/datastore/flags/convert_ordinary_to_atomic"]
     )
     node.stop_clickhouse()
     cannot_start = False
@@ -215,7 +215,7 @@ def check_convert_all_dbs_to_atomic():
     assert cannot_start
 
     node.exec_in_container(
-        ["bash", "-c", f"rm /var/lib/clickhouse/flags/convert_ordinary_to_atomic"]
+        ["bash", "-c", f"rm /var/lib/datastore/flags/convert_ordinary_to_atomic"]
     )
     node.start_clickhouse()
 
@@ -225,7 +225,7 @@ def check_convert_all_dbs_to_atomic():
     node.query("ATTACH TABLE ordinary.detached")
 
     node.exec_in_container(
-        ["bash", "-c", f"touch /var/lib/clickhouse/flags/convert_ordinary_to_atomic"]
+        ["bash", "-c", f"touch /var/lib/datastore/flags/convert_ordinary_to_atomic"]
     )
     node.restart_clickhouse()
 

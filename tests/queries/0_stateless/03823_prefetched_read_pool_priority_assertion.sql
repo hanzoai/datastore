@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/78287
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/78287
 
 DROP TABLE IF EXISTS t0;
 

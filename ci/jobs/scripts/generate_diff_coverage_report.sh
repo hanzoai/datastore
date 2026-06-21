@@ -23,7 +23,7 @@ IFS=',' read -ra COMMITS <<< "${PREV_30_COMMITS}"
 
 FOUND=0
 for TEST_COMMIT in "${COMMITS[@]}"; do
-COVERAGE_URL="https://clickhouse-builds.s3.amazonaws.com/REFs/master/${TEST_COMMIT}/llvm_coverage/llvm_coverage.info"
+COVERAGE_URL="https://datastore-builds.s3.amazonaws.com/REFs/master/${TEST_COMMIT}/llvm_coverage/llvm_coverage.info"
 echo "Checking coverage file for commit ${TEST_COMMIT}..."
 if wget --spider "${COVERAGE_URL}" 2>&1 | grep -q '200 OK'; then
 echo "Found coverage file at ${COVERAGE_URL}"
@@ -45,10 +45,10 @@ export REPO_NAME
 
 gh api \
   -H "Accept: application/vnd.github.v3.diff" \
-  repos/ClickHouse/ClickHouse/compare/${BASE_COMMIT}...${CURRENT_COMMIT} \
+  repos/Datastore/Datastore/compare/${BASE_COMMIT}...${CURRENT_COMMIT} \
   > changes.diff
 changed_files=$(gh api \
-  repos/ClickHouse/ClickHouse/compare/${BASE_COMMIT}...${CURRENT_COMMIT} \
+  repos/Datastore/Datastore/compare/${BASE_COMMIT}...${CURRENT_COMMIT} \
   --jq '.files[].filename'
 )
 echo "Changed files:"
@@ -101,7 +101,7 @@ echo "Workspace path: $WORKSPACE_PATH"
 
 HEADER_TITLE="differential coverage report"
 if [ -n "${PR_NUMBER}" ]; then
-    PR_URL="https://github.com/ClickHouse/ClickHouse/pull/${PR_NUMBER}"
+    PR_URL="https://github.com/ClickHouse/Datastore/pull/${PR_NUMBER}"
     HEADER_TITLE="<a href=\"${PR_URL}\">${PR_URL}</a>"
 fi
 
@@ -115,7 +115,7 @@ genhtml \
   --no-function-coverage \
   --css-file $WORKSPACE_PATH/ci/jobs/scripts/css.css \
   --prefix $WORKSPACE_PATH \
-  --substitute "s|/home/ubuntu/actions-runner/_work/ClickHouse/ClickHouse|$WORKSPACE_PATH|g" \
+  --substitute "s|/home/ubuntu/actions-runner/_work/Datastore/Datastore|$WORKSPACE_PATH|g" \
   --ignore-errors inconsistent \
   --ignore-errors corrupt \
   --ignore-errors path \

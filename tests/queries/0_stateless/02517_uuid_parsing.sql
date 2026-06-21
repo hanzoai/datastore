@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/44668
+-- https://github.com/ClickHouse/Datastore/issues/44668
 
 CREATE TABLE temp
 (

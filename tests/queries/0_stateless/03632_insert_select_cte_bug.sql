@@ -5,7 +5,7 @@ SET enable_global_with_statement=1;
 DROP TABLE IF EXISTS test_insert SYNC;
 
 CREATE TABLE test_insert (c1 String, c2 UInt8)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_03632/tables/test_insert', '{replica}')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_03632/tables/test_insert', '{replica}')
 ORDER BY ();
 
 INSERT INTO test_insert

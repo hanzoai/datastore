@@ -44,14 +44,14 @@ def test_file_path_escaping(started_cluster):
         [
             "bash",
             "-c",
-            "test -f /var/lib/clickhouse/data/test/T%2Ea_b%2Cl%2De%21/1_1_1_0/%7EId.bin",
+            "test -f /var/lib/datastore/data/test/T%2Ea_b%2Cl%2De%21/1_1_1_0/%7EId.bin",
         ]
     )
     node.exec_in_container(
         [
             "bash",
             "-c",
-            "test -f /var/lib/clickhouse/shadow/1/data/test/T%2Ea_b%2Cl%2De%21/1_1_1_0/%7EId.bin",
+            "test -f /var/lib/datastore/shadow/1/data/test/T%2Ea_b%2Cl%2De%21/1_1_1_0/%7EId.bin",
         ]
     )
 
@@ -70,25 +70,25 @@ def test_file_path_escaping(started_cluster):
         [
             "bash",
             "-c",
-            "test -f /var/lib/clickhouse/store/123/12345678-1000-4000-8000-000000000001/1_1_1_0/%7EId.bin",
+            "test -f /var/lib/datastore/store/123/12345678-1000-4000-8000-000000000001/1_1_1_0/%7EId.bin",
         ]
     )
     # Check symlink
     node.exec_in_container(
-        ["bash", "-c", "test -L /var/lib/clickhouse/data/test%202/T%2Ea_b%2Cl%2De%21"]
+        ["bash", "-c", "test -L /var/lib/datastore/data/test%202/T%2Ea_b%2Cl%2De%21"]
     )
     node.exec_in_container(
         [
             "bash",
             "-c",
-            "test -f /var/lib/clickhouse/data/test%202/T%2Ea_b%2Cl%2De%21/1_1_1_0/%7EId.bin",
+            "test -f /var/lib/datastore/data/test%202/T%2Ea_b%2Cl%2De%21/1_1_1_0/%7EId.bin",
         ]
     )
     node.exec_in_container(
         [
             "bash",
             "-c",
-            "test -f /var/lib/clickhouse/shadow/2/store/123/12345678-1000-4000-8000-000000000001/1_1_1_0/%7EId.bin",
+            "test -f /var/lib/datastore/shadow/2/store/123/12345678-1000-4000-8000-000000000001/1_1_1_0/%7EId.bin",
         ]
     )
 
@@ -135,7 +135,7 @@ def test_data_directory_symlinks(started_cluster):
         """
     )
 
-    clickhouse_dir = Path("/var/lib/clickhouse/")
+    clickhouse_dir = Path("/var/lib/datastore/")
 
     database_dir = clickhouse_dir / "data" / "test_symlinks"
     default_symlink = database_dir / "default"

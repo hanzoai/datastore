@@ -12,13 +12,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 set -e
 
 failpoint_name="rmt_lightweight_update_sleep_after_block_allocation"
-storage_policy=`$CLICKHOUSE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
+storage_policy=`$DATASTORE_CLIENT -q "SELECT value FROM system.merge_tree_settings WHERE name = 'storage_policy'"`
 
 if [[ "$storage_policy" == "s3_with_keeper" ]]; then
     failpoint_name="smt_lightweight_update_sleep_after_block_allocation"
 fi
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_block_number SYNC;
     SET enable_lightweight_update = 1;
 
@@ -33,14 +33,14 @@ $CLICKHOUSE_CLIENT --query "
     SYSTEM ENABLE FAILPOINT $failpoint_name;
 "
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET enable_lightweight_update = 1;
     UPDATE t_lwu_block_number SET c1 = c1 * 10 WHERE c2 = 'aa'
 " &
 
-wait_for_block_allocated "/zookeeper/$CLICKHOUSE_DATABASE/t_lwu_block_number/block_numbers/all" "block-0000000001"
+wait_for_block_allocated "/zookeeper/$DATASTORE_DATABASE/t_lwu_block_number/block_numbers/all" "block-0000000001"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET enable_lightweight_update = 1;
     UPDATE t_lwu_block_number SET c2 = 'xx' WHERE id = 1;
     UPDATE t_lwu_block_number SET c2 = 'aa' WHERE id = 2;
@@ -48,7 +48,7 @@ $CLICKHOUSE_CLIENT --query "
 
 wait
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT * FROM t_lwu_block_number ORDER BY id;
     DROP TABLE t_lwu_block_number SYNC;
 "

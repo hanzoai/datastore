@@ -53,8 +53,8 @@ Limit any single normalized query pattern to at most 50 executions per hour (reg
 CREATE QUOTA qD FOR INTERVAL 1 hour MAX queries_per_normalized_hash = 50 TO default;
 ```
 
-Further examples, using the xml configuration (not supported in ClickHouse Cloud), can be found in the [Quotas guide](/operations/quotas).
+Further examples, using the xml configuration (not supported in Datastore Cloud), can be found in the [Quotas guide](/operations/quotas).
 
 ## Related Content {#related-content}
 
-- Blog: [Building single page applications with ClickHouse](https://clickhouse.com/blog/building-single-page-applications-with-clickhouse-and-http)
+- Blog: [Building single page applications with Datastore](https://datastore.com/blog/building-single-page-applications-with-datastore-and-http)

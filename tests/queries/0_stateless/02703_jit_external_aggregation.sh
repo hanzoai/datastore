@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # This query should return empty result
-$CLICKHOUSE_CLIENT --compile_aggregate_expressions 1 --min_count_to_compile_aggregate_expression=0 --query "
+$DATASTORE_CLIENT --compile_aggregate_expressions 1 --min_count_to_compile_aggregate_expression=0 --query "
 SELECT
     COUNT() AS c,
     group_key,

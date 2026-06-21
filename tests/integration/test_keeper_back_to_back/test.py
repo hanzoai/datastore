@@ -454,7 +454,7 @@ def get_children(zk, path):
     return [
         elem
         for elem in list(sorted(zk.get_children(path)))
-        if elem not in ("clickhouse", "zookeeper")
+        if elem not in ("datastore", "zookeeper")
     ]
 
 
@@ -594,14 +594,14 @@ def test_random_requests(started_cluster, request):
             for elem in list(
                 sorted(genuine_zk.get_children(f"/test_random_requests_{retry}"))
             )
-            if elem not in ("clickhouse", "zookeeper")
+            if elem not in ("datastore", "zookeeper")
         ]
         root_children_fake = [
             elem
             for elem in list(
                 sorted(fake_zk.get_children(f"/test_random_requests_{retry}"))
             )
-            if elem not in ("clickhouse", "zookeeper")
+            if elem not in ("datastore", "zookeeper")
         ]
         assert root_children_fake == root_children_genuine
     finally:

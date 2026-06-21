@@ -128,7 +128,7 @@ template <typename T>
 static void readAndInsertInteger(ReadBuffer & in, IColumn & column, const DataTypePtr & data_type, BSONType bson_type)
 {
     /// We allow to read any integer into any integer column.
-    /// For example we can read BSON Int32 into ClickHouse UInt8.
+    /// For example we can read BSON Int32 into Datastore UInt8.
 
     if (bson_type == BSONType::INT32)
     {

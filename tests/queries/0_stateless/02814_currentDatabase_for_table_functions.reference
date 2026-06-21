@@ -1,4 +1,4 @@
--- Based on https://github.com/ClickHouse/ClickHouse/issues/52436
+-- Based on https://github.com/ClickHouse/Datastore/issues/52436
 -- Test that inserts performed via Buffer table engine land into destination table.
 -- { echoOn }
 

@@ -342,7 +342,7 @@ std::vector<AccessEntityPtr> InterpreterShowCreateAccessEntityQuery::getEntities
     }
     else if (show_query.type == AccessEntityType::MASKING_POLICY)
     {
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Masking Policies are available only in ClickHouse Cloud");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Masking Policies are available only in Datastore Cloud");
     }
     else
     {

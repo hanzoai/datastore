@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Dynamic data type in ClickHouse, which can store
+description: 'Documentation for the Dynamic data type in Datastore, which can store
   values of different types in a single column'
 sidebar_label: 'Dynamic'
 sidebar_position: 62
@@ -262,7 +262,7 @@ SELECT d, dynamicType(d), d::Dynamic(max_types=0) as d2, dynamicType(d2), isDyna
 
 ## Reading Dynamic type from the data {#reading-dynamic-type-from-the-data}
 
-All text formats (TSV, CSV, CustomSeparated, Values, JSONEachRow, etc) supports reading `Dynamic` type. During data parsing ClickHouse tries to infer the type of each value and use it during insertion to `Dynamic` column. 
+All text formats (TSV, CSV, CustomSeparated, Values, JSONEachRow, etc) supports reading `Dynamic` type. During data parsing Datastore tries to infer the type of each value and use it during insertion to `Dynamic` column. 
 
 Example:
 
@@ -649,7 +649,7 @@ As we can see, after inserting 3 different data types `Int64`, `Array(Int64)` an
 ### During merges of data parts in MergeTree table engines {#during-merges-of-data-parts-in-mergetree-table-engines}
 
 During merge of several data parts in MergeTree table the `Dynamic` column in the resulting data part can reach the limit of different data types that can be stored in separate subcolumns inside and won't be able to store all types as subcolumns from source parts.
-In this case ClickHouse chooses what types will remain as separate subcolumns after merge and what types will be inserted into shared data structure. In most cases ClickHouse tries to keep the most frequent types and store the rarest types in shared data structure, but it depends on the implementation.
+In this case Datastore chooses what types will remain as separate subcolumns after merge and what types will be inserted into shared data structure. In most cases Datastore tries to keep the most frequent types and store the rarest types in shared data structure, but it depends on the implementation.
 
 Let's see an example of such merge. First, let's create a table with `Dynamic` column, set the limit of different data types to `3` and insert values with `5` different types:
 
@@ -696,7 +696,7 @@ SELECT count(), dynamicType(d), isDynamicElementInSharedData(d), _part FROM test
 └─────────┴─────────────────────┴─────────────────────────────────┴───────────┘
 ```
 
-As we can see, ClickHouse kept the most frequent types `UInt64` and `Array(UInt64)` as subcolumns and inserted all other types into shared data.
+As we can see, Datastore kept the most frequent types `UInt64` and `Array(UInt64)` as subcolumns and inserted all other types into shared data.
 
 ## JSONExtract functions with Dynamic {#jsonextract-functions-with-dynamic}
 

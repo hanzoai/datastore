@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Profiles of settings. -->
     <profiles>
         <!-- Default settings. -->
@@ -126,4 +126,4 @@
             </interval>
         </default>
     </quotas>
-</clickhouse>
+</datastore>

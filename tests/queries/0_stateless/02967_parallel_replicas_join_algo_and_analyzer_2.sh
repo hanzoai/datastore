@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
 drop table if exists num_1;
 drop table if exists num_2;
 
@@ -23,13 +23,13 @@ PARALLEL_REPLICAS_SETTINGS="allow_experimental_parallel_reading_from_replicas = 
 echo
 echo "simple (local) join with analyzer and parallel replicas"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
@@ -44,13 +44,13 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "simple (local) join with analyzer and parallel replicas and full sorting merge join"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
 SETTINGS enable_analyzer=1, join_algorithm='full_sorting_merge', $PARALLEL_REPLICAS_SETTINGS"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2) r on l.key = r.key
 order by l.key limit 10 offset 700000
@@ -65,7 +65,7 @@ sed -re 's/Coordinator\([^.)]*\.\s*/Coordinator(/g'
 echo
 echo "nested join with analyzer"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=1) r
@@ -77,14 +77,14 @@ SETTINGS enable_analyzer=1"
 echo
 echo "nested join with analyzer and parallel replicas, both local"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=1) r
 on l.key = r.key order by l.key limit 10 offset 10000
 SETTINGS enable_analyzer=1, $PARALLEL_REPLICAS_SETTINGS"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 select * from (select key, value from num_1) l
 inner join (select key, value from num_2 inner join
   (select number * 7 as key from numbers(1e5)) as nn on num_2.key = nn.key settings parallel_replicas_prefer_local_join=1) r

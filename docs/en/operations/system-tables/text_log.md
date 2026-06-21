@@ -27,7 +27,7 @@ Contains logging entries. The logging level which goes to this table can be limi
 - `query_id` ([String](/sql-reference/data-types/string)) — ID of the query.
 - `logger_name` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Name of the logger (e.g., DDLWorker).
 - `message` ([String](/sql-reference/data-types/string)) — The message itself.
-- `revision` ([UInt32](/sql-reference/data-types/int-uint)) — ClickHouse revision.
+- `revision` ([UInt32](/sql-reference/data-types/int-uint)) — Datastore revision.
 - `source_file` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Source file from which the logging was done.
 - `source_line` ([UInt64](/sql-reference/data-types/int-uint)) — Source line from which the logging was done.
 - `message_format_string` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — A format string that was used to format the message.
@@ -52,19 +52,19 @@ SELECT * FROM system.text_log LIMIT 1 \G
 ```text
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2020-09-10
 event_time:              2020-09-10 11:23:07
 event_time_microseconds: 2020-09-10 11:23:07.871397
 microseconds:            871397
-thread_name:             clickhouse-serv
+thread_name:             datastore-serv
 thread_id:               564917
 level:                   Information
 query_id:
 logger_name:             DNSCacheUpdater
 message:                 Update period 15 seconds
 revision:                54440
-source_file:             /ClickHouse/src/Interpreters/DNSCacheUpdater.cpp; void DB::DNSCacheUpdater::start()
+source_file:             /Datastore/src/Interpreters/DNSCacheUpdater.cpp; void DB::DNSCacheUpdater::start()
 source_line:             45
 message_format_string:   Update period {} seconds
 value1:                  15

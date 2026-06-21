@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/cassandra
 title: 'Cassandra dictionary source'
 sidebar_position: 11
 sidebar_label: 'Cassandra'
-description: 'Configure Cassandra as a dictionary source in ClickHouse.'
+description: 'Configure Cassandra as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 

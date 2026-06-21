@@ -5,10 +5,10 @@
 # FIXME: convert to .sql
 
 # There will be warnings in logs for unavailable replicas that we have in parallel_replicas cluster.
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=error
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=error
 
 # Proper IN is supported only with analyzer
-CLICKHOUSE_CLIENT_OPT+="--allow_experimental_analyzer=1"
+DATASTORE_CLIENT_OPT+="--allow_experimental_analyzer=1"
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -17,7 +17,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Generate many parts (partitions) to ensure that all replicas will be chosen for distributed index analysis
 # even failed replica (that is included into parallel_replicas), and ensure that the SELECT wont fail (parts should be analyzed locally).
 
-$CLICKHOUSE_CLIENT -nm -q "
+$DATASTORE_CLIENT -nm -q "
   drop table if exists test_1m;
   -- -min_bytes_for_wide_part -- wide parts are different (they respect index_granularity completely, unlike compact parts) -- FIXME
   -- -merge_selector_base = 1000 -- disable merges
@@ -41,11 +41,11 @@ function explain_indexes()
     --enable_add_distinct_to_in_subqueries=0  # CI may inject True; adds DISTINCT to IN subqueries, changing the logged query string in query_log
   )
 
-  local without_pr="$($CLICKHOUSE_CLIENT "${explain_opts[@]}" --enable_parallel_replicas=0 -q "$@" | {
+  local without_pr="$($DATASTORE_CLIENT "${explain_opts[@]}" --enable_parallel_replicas=0 -q "$@" | {
     jq '.. | objects | select(has("Indexes")) | .Indexes[]? | select(.Type == "PrimaryKey") | .Distributed |= sort_by(.Address)'
   })"
-  $CLICKHOUSE_CLIENT -q "SYSTEM ENABLE FAILPOINT parallel_replicas_wait_for_unused_replicas"
-  local with_pr="$($CLICKHOUSE_CLIENT "${explain_opts[@]}" --enable_parallel_replicas=1 --automatic_parallel_replicas_mode=0 -q "$@" | {
+  $DATASTORE_CLIENT -q "SYSTEM ENABLE FAILPOINT parallel_replicas_wait_for_unused_replicas"
+  local with_pr="$($DATASTORE_CLIENT "${explain_opts[@]}" --enable_parallel_replicas=1 --automatic_parallel_replicas_mode=0 -q "$@" | {
     jq '.. | objects | select(has("Indexes")) | .Indexes[]? | select(.Type == "PrimaryKey") | .Distributed |= sort_by(.Address)'
   })"
   if [ "$with_pr" != "$without_pr" ]; then
@@ -68,8 +68,8 @@ explain_indexes "explain indexes=1, json=1 select * from (select * from test_1m)
 echo "GLOBAL IN (10-element set)"
 explain_indexes "explain indexes=1, json=1 select * from (select * from test_1m) where key global in (select * from numbers(1000, 10))"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 system flush logs query_log;
--- SKIP: current_database = $CLICKHOUSE_DATABASE
+-- SKIP: current_database = $DATASTORE_DATABASE
 select toUInt64OrZero(Settings['allow_experimental_parallel_reading_from_replicas']), normalizeQuery(replace(query, currentDatabase(), 'default')) from system.query_log where event_date >= yesterday() AND event_time >= now() - 600 and log_comment like '%' || currentDatabase() || '%' and type = 'QueryStart' and not(has(databases, 'system')) and query_kind in ('Select', 'Explain') order by event_time_microseconds;
 "

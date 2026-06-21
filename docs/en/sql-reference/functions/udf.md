@@ -14,9 +14,9 @@ import ExperimentalBadge from '@theme/badges/ExperimentalBadge';
 
 # UDFs User Defined Functions
 
-ClickHouse supports several types of user defined functions (UDFs):
+Datastore supports several types of user defined functions (UDFs):
 
-- [Executable UDFs](#executable-user-defined-functions) start an external program or script (Python, Bash, etc.) and stream blocks of data to it over STDIN / STDOUT. Use them to integrate existing code or tooling without recompiling ClickHouse. They have higher per‑call overhead compared to in‑process options and are best for heavier logic or where a different runtime is required.
+- [Executable UDFs](#executable-user-defined-functions) start an external program or script (Python, Bash, etc.) and stream blocks of data to it over STDIN / STDOUT. Use them to integrate existing code or tooling without recompiling Datastore. They have higher per‑call overhead compared to in‑process options and are best for heavier logic or where a different runtime is required.
 - [SQL UDFs](#sql-user-defined-functions) are defined with `CREATE FUNCTION` purely in SQL. They are inlined/expanded into the query plan (no process boundary), making them lightweight and ideal for reusing expression logic or simplifying complex calculated columns.
 - [Experimental WebAssembly UDFs](#webassembly-user-defined-functions) run code compiled to WebAssembly inside a sandbox within the server process. They offer lower per‑call overhead than external executables with better isolation than native extensions, making them suitable for custom algorithms written in languages that can target WASM (e.g. C/C++/Rust).
 
@@ -25,11 +25,11 @@ ClickHouse supports several types of user defined functions (UDFs):
 <PrivatePreviewBadge/>
 
 :::note
-This feature is supported in private preview in ClickHouse Cloud.
-Please contact ClickHouse Support at https://clickhouse.cloud/support to access.
+This feature is supported in private preview in Datastore Cloud.
+Please contact Datastore Support at https://datastore.cloud/support to access.
 :::
 
-ClickHouse can call any external executable program or script to process data.
+Datastore can call any external executable program or script to process data.
 
 The configuration of executable user defined functions can be located in one or more xml-files.
 The path to the configuration is specified in the [`user_defined_executable_functions_config`](../../operations/server-configuration-parameters/settings.md#user_defined_executable_functions_config) parameter.
@@ -55,7 +55,7 @@ A function configuration contains the following settings:
 | `lifetime`                    | The reload interval of a function in seconds. If it is set to `0` then the function is not reloaded                                                                                                                                                                                                                                                                                           | Optional  | `0`                   |
 | `deterministic`               | If the function is deterministic (returns the same result for the same input)                                                                                                                                                                                                                                                                                                                 | Optional  | `false`               |
 | `stderr_reaction`             | How to handle the command's stderr output. Values: `none` (ignore), `log` (log all stderr immediately), `log_first` (log first 4 KiB after exit), `log_last` (log last 4 KiB after exit), `throw` (throw exception immediately on any stderr output). When using `log_first` or `log_last` with a non-zero exit code, the stderr content is included in the exception message              | Optional  | `log_last`            |
-| `check_exit_code`             | If true, ClickHouse will check the exit code of the command. A non-zero exit code causes an exception                                                                                                                                                                                                                                                                                         | Optional  | `true`                |
+| `check_exit_code`             | If true, Datastore will check the exit code of the command. A non-zero exit code causes an exception                                                                                                                                                                                                                                                                                         | Optional  | `true`                |
 
 The command must read arguments from `STDIN` and must output the result to `STDOUT`. The command must process arguments iteratively. That is after processing a chunk of arguments it must wait for the next chunk.
 
@@ -69,9 +69,9 @@ Create `test_function_sum` manually specifying `execute_direct` to `0` using eit
 
 <Tabs>
   <TabItem value="XML" label="XML" default>
-File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with default path settings).
+File `test_function.xml` (`/etc/datastore-server/test_function.xml` with default path settings).
 
-```xml title="/etc/clickhouse-server/test_function.xml"
+```xml title="/etc/datastore-server/test_function.xml"
 <functions>
     <function>
         <type>executable</type>
@@ -86,7 +86,7 @@ File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with defaul
             <name>rhs</name>
         </argument>
         <format>TabSeparated</format>
-        <command>cd /; clickhouse-local --input-format TabSeparated --output-format TabSeparated --structure 'x UInt64, y UInt64' --query "SELECT x + y FROM table"</command>
+        <command>cd /; datastore-local --input-format TabSeparated --output-format TabSeparated --structure 'x UInt64, y UInt64' --query "SELECT x + y FROM table"</command>
         <execute_direct>0</execute_direct>
         <deterministic>true</deterministic>
     </function>
@@ -95,9 +95,9 @@ File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with defaul
   </TabItem>
   <TabItem value="YAML" label="YAML">
 
-File `test_function.yaml` (`/etc/clickhouse-server/test_function.yaml` with default path settings).
+File `test_function.yaml` (`/etc/datastore-server/test_function.yaml` with default path settings).
 
-```yml title="/etc/clickhouse-server/test_function.yaml"
+```yml title="/etc/datastore-server/test_function.yaml"
 functions:
   type: executable
   name: test_function_sum
@@ -108,7 +108,7 @@ functions:
     - type: UInt64
       name: rhs
   format: TabSeparated
-  command: 'cd /; clickhouse-local --input-format TabSeparated --output-format TabSeparated --structure ''x UInt64, y UInt64'' --query "SELECT x + y FROM table"'
+  command: 'cd /; datastore-local --input-format TabSeparated --output-format TabSeparated --structure ''x UInt64, y UInt64'' --query "SELECT x + y FROM table"'
   execute_direct: 0
   deterministic: true
 ```
@@ -135,8 +135,8 @@ Create `test_function` using either XML OR YAML configuration.
 
 <Tabs>
   <TabItem value="XML" label="XML" default>
-File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with default path settings).
-```xml title="/etc/clickhouse-server/test_function.xml"
+File `test_function.xml` (`/etc/datastore-server/test_function.xml` with default path settings).
+```xml title="/etc/datastore-server/test_function.xml"
 <functions>
     <function>
         <type>executable</type>
@@ -153,8 +153,8 @@ File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with defaul
 ```
   </TabItem>
   <TabItem value="YAML" label="YAML">
-File `test_function.yaml` (`/etc/clickhouse-server/test_function.yaml` with default path settings).
-```yml title="/etc/clickhouse-server/test_function.yaml"
+File `test_function.yaml` (`/etc/datastore-server/test_function.yaml` with default path settings).
+```yml title="/etc/datastore-server/test_function.yaml"
 functions:
   type: executable
   name: test_function_python
@@ -170,7 +170,7 @@ functions:
 
 <br/>
 
-Create a script file `test_function.py` inside `user_scripts` folder (`/var/lib/clickhouse/user_scripts/test_function.py` with default path settings).
+Create a script file `test_function.py` inside `user_scripts` folder (`/var/lib/datastore/user_scripts/test_function.py` with default path settings).
 
 ```python
 #!/usr/bin/python3
@@ -199,8 +199,8 @@ Create `test_function_sum_json` with named arguments and format [JSONEachRow](/i
 
 <Tabs>
   <TabItem value="XML" label="XML" default>
-File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with default path settings).
-```xml title="/etc/clickhouse-server/test_function.xml"
+File `test_function.xml` (`/etc/datastore-server/test_function.xml` with default path settings).
+```xml title="/etc/datastore-server/test_function.xml"
 <functions>
     <function>
         <type>executable</type>
@@ -222,8 +222,8 @@ File `test_function.xml` (`/etc/clickhouse-server/test_function.xml` with defaul
 ```
   </TabItem>
   <TabItem value="YAML" label="YAML">
-File `test_function.yaml` (`/etc/clickhouse-server/test_function.yaml` with default path settings).
-```yml title="/etc/clickhouse-server/test_function.yaml"
+File `test_function.yaml` (`/etc/datastore-server/test_function.yaml` with default path settings).
+```yml title="/etc/datastore-server/test_function.yaml"
 functions:
   type: executable
   name: test_function_sum_json
@@ -242,7 +242,7 @@ functions:
 
 <br/>
 
-Create script file `test_function_sum_json.py` inside the `user_scripts` folder (`/var/lib/clickhouse/user_scripts/test_function_sum_json.py` with default path settings).
+Create script file `test_function_sum_json.py` inside the `user_scripts` folder (`/var/lib/datastore/user_scripts/test_function_sum_json.py` with default path settings).
 
 ```python
 #!/usr/bin/python3
@@ -277,8 +277,8 @@ It also requires the `execute_direct` option to ensure no shell argument expansi
 
 <Tabs>
   <TabItem value="XML" label="XML" default>
-File `test_function_parameter_python.xml` (`/etc/clickhouse-server/test_function_parameter_python.xml` with default path settings).
-```xml title="/etc/clickhouse-server/test_function_parameter_python.xml"
+File `test_function_parameter_python.xml` (`/etc/datastore-server/test_function_parameter_python.xml` with default path settings).
+```xml title="/etc/datastore-server/test_function_parameter_python.xml"
 <functions>
     <function>
         <type>executable</type>
@@ -295,8 +295,8 @@ File `test_function_parameter_python.xml` (`/etc/clickhouse-server/test_function
 ```
   </TabItem>
   <TabItem value="YAML" label="YAML">
-File `test_function_parameter_python.yaml` (`/etc/clickhouse-server/test_function_parameter_python.yaml` with default path settings).
-```yml title="/etc/clickhouse-server/test_function_parameter_python.yaml"
+File `test_function_parameter_python.yaml` (`/etc/datastore-server/test_function_parameter_python.yaml` with default path settings).
+```yml title="/etc/datastore-server/test_function_parameter_python.yaml"
 functions:
   type: executable
   execute_direct: true
@@ -312,7 +312,7 @@ functions:
 
 <br/>
 
-Create script file `test_function_parameter_python.py` inside the `user_scripts` folder (`/var/lib/clickhouse/user_scripts/test_function_parameter_python.py` with default path settings).
+Create script file `test_function_parameter_python.py` inside the `user_scripts` folder (`/var/lib/datastore/user_scripts/test_function_parameter_python.py` with default path settings).
 
 ```python
 #!/usr/bin/python3
@@ -341,8 +341,8 @@ In this example, we create a shell script that multiplies each value by 2.
 
 <Tabs>
   <TabItem value="XML" label="XML" default>
-File `test_function_shell.xml` (`/etc/clickhouse-server/test_function_shell.xml` with default path settings).
-```xml title="/etc/clickhouse-server/test_function_shell.xml"
+File `test_function_shell.xml` (`/etc/datastore-server/test_function_shell.xml` with default path settings).
+```xml title="/etc/datastore-server/test_function_shell.xml"
 <functions>
     <function>
         <type>executable</type>
@@ -359,8 +359,8 @@ File `test_function_shell.xml` (`/etc/clickhouse-server/test_function_shell.xml`
 ```
   </TabItem>
   <TabItem value="YAML" label="YAML">
-File `test_function_shell.yaml` (`/etc/clickhouse-server/test_function_shell.yaml` with default path settings).
-```yml title="/etc/clickhouse-server/test_function_shell.yaml"
+File `test_function_shell.yaml` (`/etc/datastore-server/test_function_shell.yaml` with default path settings).
+```yml title="/etc/datastore-server/test_function_shell.yaml"
 functions:
   type: executable
   name: test_shell
@@ -376,9 +376,9 @@ functions:
 
 <br/>
 
-Create a script file `test_shell.sh` inside the `user_scripts` folder (`/var/lib/clickhouse/user_scripts/test_shell.sh` with default path settings).
+Create a script file `test_shell.sh` inside the `user_scripts` folder (`/var/lib/datastore/user_scripts/test_shell.sh` with default path settings).
 
-```bash title="/var/lib/clickhouse/user_scripts/test_shell.sh"
+```bash title="/var/lib/datastore/user_scripts/test_shell.sh"
 #!/bin/bash
 
 while read read_data;
@@ -415,7 +415,7 @@ For distributed processing, when an exception occurs on one of the servers, the 
 
 In almost all programming languages, one of the arguments might not be evaluated for certain operators.
 This is usually the operators `&&`, `||`, and `?:`.
-In ClickHouse, arguments of functions (operators) are always evaluated.
+In Datastore, arguments of functions (operators) are always evaluated.
 This is because entire parts of columns are evaluated at once, instead of calculating each row separately.
 
 ## Performing Functions for Distributed Query Processing {#performing-functions-for-distributed-query-processing}
@@ -443,16 +443,16 @@ Custom functions from lambda expressions can be created using the [CREATE FUNCTI
 <CloudNotSupportedBadge/>
 <ExperimentalBadge/>
 
-WebAssembly User Defined Functions (WASM UDFs) allow you to run custom code compiled to WebAssembly inside the ClickHouse server process.
+WebAssembly User Defined Functions (WASM UDFs) allow you to run custom code compiled to WebAssembly inside the Datastore server process.
 
 ### Quick Start
 
-Enable experimental WebAssembly support in your ClickHouse configuration:
+Enable experimental WebAssembly support in your Datastore configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_webassembly_udf>true</allow_experimental_webassembly_udf>
-</clickhouse>
+</datastore>
 ```
 
 Insert your compiled WASM module into the system table:
@@ -484,4 +484,4 @@ SELECT my_function(10, 20);
 Refer to the documentation on [WebAssembly User Defined Functions](wasm_udf.md) for more details.
 
 ## Related Content {#related-content}
-- [User-defined functions in ClickHouse Cloud](https://clickhouse.com/blog/user-defined-functions-clickhouse-udfs)
+- [User-defined functions in Datastore Cloud](https://datastore.com/blog/user-defined-functions-datastore-udfs)

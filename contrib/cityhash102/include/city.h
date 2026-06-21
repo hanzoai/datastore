@@ -50,9 +50,9 @@
 /** This is a version of CityHash that predates v1.0.3 algorithm change.
   * Why we need exactly this version?
   * Although hash values of CityHash are not recommended for storing persistently anywhere,
-  * it has already been used this way in ClickHouse:
+  * it has already been used this way in Datastore:
   * - for calculation of checksums of compressed chunks and for data parts;
-  * - this version of CityHash is exposed in cityHash64 function in ClickHouse SQL language;
+  * - this version of CityHash is exposed in cityHash64 function in Datastore SQL language;
   * - and already used by many users for data ordering, sampling and sharding.
   */
 namespace CityHash_v1_0_2

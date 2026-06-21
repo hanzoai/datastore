@@ -41,7 +41,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -485,7 +485,7 @@ void RestorerFromBackup::createDatabase(const String & database_name) const
         /// Add the clause `IF NOT EXISTS` if that is specified in the restore settings.
         create_database_query->if_not_exists = (restore_settings.create_database == RestoreTableCreationMode::kCreateIfNotExists);
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         bool shared_catalog  = SharedDatabaseCatalog::initialized();
         auto & create = create_database_query->as<ASTCreateQuery &>();
         auto engine_name = create.storage != nullptr && create.storage->engine != nullptr ? create.storage->engine->name : "";
@@ -503,7 +503,7 @@ void RestorerFromBackup::createDatabase(const String & database_name) const
         {
             // Change engine to Replicated
             auto engine = makeASTFunction("Replicated",
-                    make_intrusive<ASTLiteral>("/clickhouse/databases/{uuid}"),
+                    make_intrusive<ASTLiteral>("/datastore/databases/{uuid}"),
                     make_intrusive<ASTLiteral>("{shard}"),
                     make_intrusive<ASTLiteral>("{replica}")
                 );
@@ -522,7 +522,7 @@ void RestorerFromBackup::createDatabase(const String & database_name) const
         /// TODO: Get rid of using `query_context` in class RestorerFromBackup.
         create_query_context->setProgressCallback(nullptr);
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         if (shared_catalog && SharedDatabaseCatalog::instance().shouldRestoreDatabase(create_database_query))
         {
             SharedDatabaseCatalog::instance().createDatabaseRestoredFromBackup(

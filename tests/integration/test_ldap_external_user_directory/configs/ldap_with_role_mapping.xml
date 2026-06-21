@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <ldap_servers>
         <openldap>
             <host>openldap</host>
@@ -15,8 +15,8 @@
                 <scope>subtree</scope>
                 <search_filter>(&amp;(objectClass=groupOfNames)(member={bind_dn}))</search_filter>
                 <attribute>cn</attribute>
-                <prefix>clickhouse-</prefix>
+                <prefix>datastore-</prefix>
             </role_mapping>
         </ldap>
     </user_directories>
-</clickhouse>
+</datastore>

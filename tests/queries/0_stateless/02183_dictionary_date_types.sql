@@ -22,7 +22,7 @@ CREATE DICTIONARY 02183_flat_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(FLAT());
 
@@ -41,7 +41,7 @@ CREATE DICTIONARY 02183_hashed_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(HASHED());
 
@@ -60,7 +60,7 @@ CREATE DICTIONARY 02183_hashed_array_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(HASHED_ARRAY());
 
@@ -79,7 +79,7 @@ CREATE DICTIONARY 02183_cache_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(CACHE(SIZE_IN_CELLS 10));
 
@@ -99,7 +99,7 @@ CREATE DICTIONARY 02183_direct_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_source_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Direct dictionary';
@@ -131,7 +131,7 @@ CREATE DICTIONARY 02183_ip_trie_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(TABLE '02183_ip_trie_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_ip_trie_dictionary_source_table'))
 LAYOUT(IP_TRIE(access_to_key_from_attributes 1))
 LIFETIME(0);
 
@@ -163,7 +163,7 @@ CREATE DICTIONARY 02183_polygon_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE '02183_polygon_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_polygon_dictionary_source_table'))
 LAYOUT(POLYGON(store_polygon_key_column 1))
 LIFETIME(0);
 
@@ -199,7 +199,7 @@ CREATE DICTIONARY 02183_range_dictionary
     value_date_time_64 DateTime64
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE '02183_range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_range_dictionary_source_table'))
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start MAX end)
 LIFETIME(0);

@@ -1,10 +1,10 @@
-# docker build -t clickhouse/cctools .
+# docker build -t datastore/cctools .
 
-# This is a hack to significantly reduce the build time of the clickhouse/binary-builder
+# This is a hack to significantly reduce the build time of the datastore/binary-builder
 # It's based on the assumption that we don't care of the cctools version so much
-# It even does not depend on the clickhouse/fasttest in the `docker/images.json`
+# It even does not depend on the datastore/fasttest in the `docker/images.json`
 ARG FROM_TAG=latest
-FROM clickhouse/fasttest:$FROM_TAG AS builder
+FROM datastore/fasttest:$FROM_TAG AS builder
 
 ENV CC=clang-${LLVM_VERSION}
 ENV CXX=clang++-${LLVM_VERSION}

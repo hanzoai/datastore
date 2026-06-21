@@ -91,7 +91,7 @@ namespace
         return buf;
     }
 
-    /// Splits a SQL query at '?' placeholder positions using the ClickHouse Lexer.
+    /// Splits a SQL query at '?' placeholder positions using the Datastore Lexer.
     /// Returns a vector of query parts: for "SELECT ? + ?" it returns ["SELECT ", " + ", ""].
     /// The number of parameters equals parts.size() - 1.
     std::vector<String> splitQueryAtPlaceholders(const String & query)
@@ -131,9 +131,9 @@ namespace
         return result;
     }
 
-    /// Converts binary data to a ClickHouse SQL expression using unhex().
+    /// Converts binary data to a Datastore SQL expression using unhex().
     /// This ensures the column name in the result schema is valid UTF-8
-    /// (e.g. "unhex('AABB')"), because ClickHouse uses the expression text as the column name
+    /// (e.g. "unhex('AABB')"), because Datastore uses the expression text as the column name
     /// and Arrow requires field names to be valid UTF-8.
     String binaryToSQLExpression(const String & value)
     {
@@ -149,7 +149,7 @@ namespace
         return result;
     }
 
-    /// Converts an Arrow scalar value to a ClickHouse SQL literal string.
+    /// Converts an Arrow scalar value to a Datastore SQL literal string.
     String arrowScalarToSQLLiteral(const std::shared_ptr<arrow::Scalar> & scalar)
     {
         if (!scalar || !scalar->is_valid)
@@ -201,7 +201,7 @@ namespace
                 return binaryToSQLExpression(buffer_value(std::static_pointer_cast<arrow::FixedSizeBinaryScalar>(scalar)->value));
 
             /// Date/time types: ToString() produces human-readable strings like "2021-01-01"
-            /// that must be quoted — otherwise ClickHouse parses "2021-01-01" as 2021 - 1 - 1 = 2019.
+            /// that must be quoted — otherwise Datastore parses "2021-01-01" as 2021 - 1 - 1 = 2019.
             case arrow::Type::DATE32:
             case arrow::Type::DATE64:
             case arrow::Type::TIMESTAMP:
@@ -329,7 +329,7 @@ namespace
         return arrow::Status::OK();
     }
 
-    /// Creates a converter to convert ClickHouse blocks to the Arrow format.
+    /// Creates a converter to convert Datastore blocks to the Arrow format.
     std::shared_ptr<CHColumnToArrowColumn> createCHToArrowConverter(const Block & header, ContextPtr query_context)
     {
         CHColumnToArrowColumn::Settings arrow_settings;
@@ -1569,7 +1569,7 @@ arrow::Status ArrowFlightServer::DoAction(
                 }
 
                 /// Build parameter schema: one field per '?' placeholder.
-                /// Type is null because ClickHouse accepts any type and parses the value as a SQL literal.
+                /// Type is null because Datastore accepts any type and parses the value as a SQL literal.
                 arrow::FieldVector param_fields;
                 size_t num_params = ps_info.numParams();
                 param_fields.reserve(num_params);

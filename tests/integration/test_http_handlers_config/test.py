@@ -340,7 +340,7 @@ def test_absolute_path_static_handler():
             [
                 "bash",
                 "-c",
-                'echo "<html><body>Absolute Path File</body></html>" > /var/lib/clickhouse/user_files/absolute_path_file.html',
+                'echo "<html><body>Absolute Path File</body></html>" > /var/lib/datastore/user_files/absolute_path_file.html',
             ],
             privileged=True,
             user="root",
@@ -408,7 +408,7 @@ def test_relative_path_static_handler():
             [
                 "bash",
                 "-c",
-                'echo "<html><body>Relative Path File</body></html>" > /var/lib/clickhouse/user_files/relative_path_file.html',
+                'echo "<html><body>Relative Path File</body></html>" > /var/lib/datastore/user_files/relative_path_file.html',
             ],
             privileged=True,
             user="root",

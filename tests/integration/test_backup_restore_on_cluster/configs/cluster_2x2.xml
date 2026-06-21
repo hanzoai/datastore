@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <cluster_2x2>
             <shard>
@@ -23,4 +23,4 @@
             </shard>
         </cluster_2x2>
     </remote_servers>
-</clickhouse>
+</datastore>

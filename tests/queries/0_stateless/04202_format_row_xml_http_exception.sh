@@ -11,5 +11,5 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Run with http_write_exception_in_output_format=1 — this is the trigger that, before the fix,
 # made `getFormatSettings(context)` return `xml.valid_output_on_exception=true` for HTTP queries.
-${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&http_write_exception_in_output_format=1" \
+${DATASTORE_CURL} -sS "${DATASTORE_URL}&http_write_exception_in_output_format=1" \
     --data-binary "SELECT formatRow('XML', number) FROM numbers(3)" | wc -l

@@ -1,14 +1,14 @@
 ---
 name: create-worktree
-description: Create a ClickHouse git worktree with submodules hardlinked from the main repo. Use when the user wants to create a new worktree for ClickHouse development.
+description: Create a Datastore git worktree with submodules hardlinked from the main repo. Use when the user wants to create a new worktree for Datastore development.
 argument-hint: <branch-name>
 disable-model-invocation: false
 allowed-tools: Bash(git:*), Bash(cp:*), Bash(ln:*), Bash(ls:*), Bash(rm:*), Bash(mkdir:*), Bash(find:*), Bash(pwd:*), AskUserQuestion
 ---
 
-# Create ClickHouse Worktree Skill
+# Create Datastore Worktree Skill
 
-Create a new git worktree for ClickHouse development with submodules hardlinked from the main repo (independent copies, no network, no extra disk for git objects).
+Create a new git worktree for Datastore development with submodules hardlinked from the main repo (independent copies, no network, no extra disk for git objects).
 
 ## Arguments
 
@@ -25,7 +25,7 @@ Create a new git worktree for ClickHouse development with submodules hardlinked 
 
 - Ensure `$0` (branch name) is provided. If not, use `AskUserQuestion` to ask the user for a branch name.
 - Compute `SAFE_BRANCH` by replacing all `/` characters in the branch name with `-`. For example, branch `release/25.12` → `SAFE_BRANCH=release-25.12`. This avoids creating nested directories from slashes in branch names.
-- Use `AskUserQuestion` to ask the user for the **worktree destination path**. Suggest `<MAIN_REPO>/../<MAIN_REPO_NAME>-<SAFE_BRANCH>` as the default — this places the worktree as a sibling of the main repo directory, named after both the repo and the branch (e.g. `../ClickHouse-my-feature` or `../ClickHouse-release-25.12`). The user may enter a different path if preferred.
+- Use `AskUserQuestion` to ask the user for the **worktree destination path**. Suggest `<MAIN_REPO>/../<MAIN_REPO_NAME>-<SAFE_BRANCH>` as the default — this places the worktree as a sibling of the main repo directory, named after both the repo and the branch (e.g. `../Datastore-my-feature` or `../Datastore-release-25.12`). The user may enter a different path if preferred.
 
 Let `WORKTREE_PATH` be the chosen path (resolved to an absolute path).
 

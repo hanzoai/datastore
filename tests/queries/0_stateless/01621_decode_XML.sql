@@ -1,6 +1,6 @@
 SELECT decodeXMLComponent('Hello, &quot;world&quot;!');
 SELECT decodeXMLComponent('&lt;123&gt;');
-SELECT decodeXMLComponent('&amp;clickhouse');
+SELECT decodeXMLComponent('&amp;datastore');
 SELECT decodeXMLComponent('&apos;foo&apos;');
 SELECT decodeXMLComponent('Hello, &&amp; world');
 SELECT decodeXMLComponent('Hello, &;&amp; world');

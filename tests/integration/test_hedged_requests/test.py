@@ -58,7 +58,7 @@ def started_cluster():
         cluster.shutdown()
 
 
-config = """<clickhouse>
+config = """<datastore>
     <profiles>
         <default>
             <sleep_in_send_tables_status_ms>{sleep_in_send_tables_status_ms}</sleep_in_send_tables_status_ms>
@@ -66,7 +66,7 @@ config = """<clickhouse>
             <sleep_after_receiving_query_ms>{sleep_after_receiving_query_ms}</sleep_after_receiving_query_ms>
         </default>
     </profiles>
-</clickhouse>"""
+</datastore>"""
 
 
 def check_query(expected_replica, receive_timeout=300):
@@ -157,7 +157,7 @@ def update_configs(
     node_3_sleep_after_receiving_query=0,
 ):
     NODES["node_1"].replace_config(
-        "/etc/clickhouse-server/users.d/users1.xml",
+        "/etc/datastore-server/users.d/users1.xml",
         config.format(
             sleep_in_send_tables_status_ms=node_1_sleep_in_send_tables_status,
             sleep_in_send_data_ms=node_1_sleep_in_send_data,
@@ -166,7 +166,7 @@ def update_configs(
     )
 
     NODES["node_2"].replace_config(
-        "/etc/clickhouse-server/users.d/users1.xml",
+        "/etc/datastore-server/users.d/users1.xml",
         config.format(
             sleep_in_send_tables_status_ms=node_2_sleep_in_send_tables_status,
             sleep_in_send_data_ms=node_2_sleep_in_send_data,
@@ -175,7 +175,7 @@ def update_configs(
     )
 
     NODES["node_3"].replace_config(
-        "/etc/clickhouse-server/users.d/users1.xml",
+        "/etc/datastore-server/users.d/users1.xml",
         config.format(
             sleep_in_send_tables_status_ms=node_3_sleep_in_send_tables_status,
             sleep_in_send_data_ms=node_3_sleep_in_send_data,

@@ -32,7 +32,7 @@ from helpers.iceberg_utils import (
 )
 
 
-SCRIPT_DIR = "/var/lib/clickhouse/user_files" + os.path.join(
+SCRIPT_DIR = "/var/lib/datastore/user_files" + os.path.join(
     os.path.dirname(os.path.realpath(__file__))
 )
 cluster = ClickHouseCluster(__file__, with_spark=True)
@@ -48,7 +48,7 @@ def get_spark(log_dir=None):
         )
         .config(
             "spark.sql.catalog.spark_catalog.warehouse",
-            "/var/lib/clickhouse/user_files",
+            "/var/lib/datastore/user_files",
         )
         .config("spark.driver.memory", "8g")
         .config("spark.executor.memory", "8g")
@@ -74,7 +74,7 @@ def generate_cluster_def(common_path, port, azure_container):
     with open(path, "w") as f:
         f.write(
             f"""
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_local_common>
@@ -83,14 +83,14 @@ def generate_cluster_def(common_path, port, azure_container):
             </disk_local_common>
             <disk_s3_0_common>
                 <type>s3</type>
-                <endpoint>http://minio1:9001/root/var/lib/clickhouse/user_files/</endpoint>
+                <endpoint>http://minio1:9001/root/var/lib/datastore/user_files/</endpoint>
                 <access_key_id>minio</access_key_id>
                 <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>
                 <no_sign_request>0</no_sign_request>
             </disk_s3_0_common>
             <disk_s3_1_common>
                 <type>s3</type>
-                <endpoint>http://minio1:9001/root/var/lib/clickhouse/user_files/</endpoint>
+                <endpoint>http://minio1:9001/root/var/lib/datastore/user_files/</endpoint>
                 <access_key_id>minio</access_key_id>
                 <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>
                 <no_sign_request>0</no_sign_request>
@@ -107,7 +107,7 @@ def generate_cluster_def(common_path, port, azure_container):
         </disks>
     </storage_configuration>
     <allowed_disks_for_table_engines>disk_s3_1_common,disk_s3_0_common,disk_local_common,disk_azure_common</allowed_disks_for_table_engines>
-</clickhouse>
+</datastore>
 """
         )
     return path
@@ -345,7 +345,7 @@ def test_single_log_file(started_cluster, use_delta_kernel, storage_type):
     delta_path = (
         table_path
         if storage_type == "local"
-        else f"/var/lib/clickhouse/user_files/{TABLE_NAME}"
+        else f"/var/lib/datastore/user_files/{TABLE_NAME}"
     )
     write_delta_from_file(spark, parquet_data_path, delta_path)
 
@@ -367,7 +367,7 @@ def test_single_log_file(started_cluster, use_delta_kernel, storage_type):
         (
             f"'{TABLE_NAME}'"
             if storage_type != "azure"
-            else f"'var/lib/clickhouse/user_files/{TABLE_NAME}'"
+            else f"'var/lib/datastore/user_files/{TABLE_NAME}'"
         ),
         "_common",
     )
@@ -387,7 +387,7 @@ def test_single_log_file(started_cluster, use_delta_kernel, storage_type):
     storage_path = (
         f"{TABLE_NAME}"
         if storage_type != "azure"
-        else f"var/lib/clickhouse/user_files/{TABLE_NAME}"
+        else f"var/lib/datastore/user_files/{TABLE_NAME}"
     )
     assert instance.query(
         f"SELECT * FROM deltaLake('{storage_path}', SETTINGS disk = '{disk_name}')"

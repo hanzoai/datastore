@@ -9,4 +9,4 @@ set -o errexit
 set -o pipefail
 
 TIMELIMIT=$((SECONDS + 100))
-while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 100 | sed 's/.*/SELECT * FROM system.numbers_mt LIMIT 111;/' | $CLICKHOUSE_CLIENT -n --max_block_size=$(($RANDOM % 123 + 1)) | wc -l | grep -vE '^11100$' && echo 'Fail!' && break; done; echo 'OK'
+while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 100 | sed 's/.*/SELECT * FROM system.numbers_mt LIMIT 111;/' | $DATASTORE_CLIENT -n --max_block_size=$(($RANDOM % 123 + 1)) | wc -l | grep -vE '^11100$' && echo 'Fail!' && break; done; echo 'OK'

@@ -1,4 +1,4 @@
--- Issue: https://github.com/ClickHouse/ClickHouse/issues/89433
+-- Issue: https://github.com/ClickHouse/Datastore/issues/89433
 
 DROP TABLE IF EXISTS tbl;
 DROP TABLE IF EXISTS join_engine;

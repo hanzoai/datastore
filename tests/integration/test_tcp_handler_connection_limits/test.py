@@ -20,9 +20,9 @@ def stabilize_container(started_cluster):
     time.sleep(1)
 
 def execute_queries_persistent_connection(queries):
-    """Execute multiple queries through a single persistent clickhouse-client connection"""
+    """Execute multiple queries through a single persistent datastore-client connection"""
     proc = subprocess.Popen(
-        ["docker", "exec", "-i", node.docker_id, "clickhouse", "client"],
+        ["docker", "exec", "-i", node.docker_id, "datastore", "client"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -37,7 +37,7 @@ def execute_queries_persistent_connection(queries):
 def get_connection_done_count():
     try:
         log_result = node.exec_in_container(
-            ["grep", "-c", "Done processing connection", "/var/log/clickhouse-server/clickhouse-server.log"]
+            ["grep", "-c", "Done processing connection", "/var/log/datastore-server/datastore-server.log"]
         )
         return int(log_result.strip())
     except Exception:

@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 CREATE TABLE mt_with_pk (
   d Date DEFAULT '2000-01-01',
   x DateTime,
@@ -16,18 +16,18 @@ CREATE TABLE mt_with_pk (
 ) ENGINE = MergeTree()
 PARTITION BY toYYYYMM(d) ORDER BY (x, z) SETTINGS index_granularity_bytes=10000, write_final_mark=1;"
 
-$CLICKHOUSE_CLIENT --query="INSERT INTO mt_with_pk (d, x, y, z, n.Age, n.Name) VALUES (toDate('2018-10-01'), toDateTime('2018-10-01 12:57:57'), [1, 1, 1], 11, [77], ['Joe']), (toDate('2018-10-01'), toDateTime('2018-10-01 16:57:57'), [2, 2, 2], 12, [88], ['Mark']), (toDate('2018-10-01'), toDateTime('2018-10-01 19:57:57'), [3, 3, 3], 13, [99], ['Robert']);"
+$DATASTORE_CLIENT --query="INSERT INTO mt_with_pk (d, x, y, z, n.Age, n.Name) VALUES (toDate('2018-10-01'), toDateTime('2018-10-01 12:57:57'), [1, 1, 1], 11, [77], ['Joe']), (toDate('2018-10-01'), toDateTime('2018-10-01 16:57:57'), [2, 2, 2], 12, [88], ['Mark']), (toDate('2018-10-01'), toDateTime('2018-10-01 19:57:57'), [3, 3, 3], 13, [99], ['Robert']);"
 
-$CLICKHOUSE_CLIENT --query="SELECT sum(marks) FROM system.parts WHERE table = 'mt_with_pk' AND database = '$CLICKHOUSE_DATABASE' AND active=1;"
+$DATASTORE_CLIENT --query="SELECT sum(marks) FROM system.parts WHERE table = 'mt_with_pk' AND database = '$DATASTORE_DATABASE' AND active=1;"
 
-$CLICKHOUSE_CLIENT --query="SELECT COUNT(*) FROM mt_with_pk WHERE x > toDateTime('2018-10-01 23:57:57') FORMAT JSON;" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT COUNT(*) FROM mt_with_pk WHERE x > toDateTime('2018-10-01 23:57:57') FORMAT JSON;" | grep "rows_read"
 
-$CLICKHOUSE_CLIENT --query="INSERT INTO mt_with_pk (d, x, y, z, n.Age, n.Name) VALUES (toDate('2018-10-01'), toDateTime('2018-10-01 07:57:57'), [4, 4, 4], 14, [111, 222], ['Lui', 'Dave']), (toDate('2018-10-01'), toDateTime('2018-10-01 08:57:57'), [5, 5, 5], 15, [333, 444], ['John', 'Mike']), (toDate('2018-10-01'), toDateTime('2018-10-01 09:57:57'), [6, 6, 6], 16, [555, 666, 777], ['Alex', 'Jim', 'Tom']);"
+$DATASTORE_CLIENT --query="INSERT INTO mt_with_pk (d, x, y, z, n.Age, n.Name) VALUES (toDate('2018-10-01'), toDateTime('2018-10-01 07:57:57'), [4, 4, 4], 14, [111, 222], ['Lui', 'Dave']), (toDate('2018-10-01'), toDateTime('2018-10-01 08:57:57'), [5, 5, 5], 15, [333, 444], ['John', 'Mike']), (toDate('2018-10-01'), toDateTime('2018-10-01 09:57:57'), [6, 6, 6], 16, [555, 666, 777], ['Alex', 'Jim', 'Tom']);"
 
-$CLICKHOUSE_CLIENT --query="OPTIMIZE TABLE mt_with_pk FINAL"
+$DATASTORE_CLIENT --query="OPTIMIZE TABLE mt_with_pk FINAL"
 
-$CLICKHOUSE_CLIENT --query="SELECT sum(marks) FROM system.parts WHERE table = 'mt_with_pk' AND database = '$CLICKHOUSE_DATABASE' AND active=1;"
+$DATASTORE_CLIENT --query="SELECT sum(marks) FROM system.parts WHERE table = 'mt_with_pk' AND database = '$DATASTORE_DATABASE' AND active=1;"
 
-$CLICKHOUSE_CLIENT --query="SELECT COUNT(*) FROM mt_with_pk WHERE x > toDateTime('2018-10-01 23:57:57') FORMAT JSON;" | grep "rows_read"
+$DATASTORE_CLIENT --query="SELECT COUNT(*) FROM mt_with_pk WHERE x > toDateTime('2018-10-01 23:57:57') FORMAT JSON;" | grep "rows_read"
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE mt_with_pk"
+$DATASTORE_CLIENT -q "DROP TABLE mt_with_pk"

@@ -93,17 +93,17 @@ def test_node_move(started_cluster):
         node4.stop_clickhouse()
         node4.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_node4_4.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper4.xml",
+            "/etc/datastore-server/config.d/enable_keeper4.xml",
         )
         p = Pool(3)
         waiter = p.apply_async(start, (started_cluster, node4))
         node1.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_node4_1.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
         node2.copy_file_to_container(
             os.path.join(CONFIG_DIR, "enable_keeper_node4_2.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper2.xml",
+            "/etc/datastore-server/config.d/enable_keeper2.xml",
         )
 
         node1.query("SYSTEM RELOAD CONFIG")

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <listen_host>0.0.0.0</listen_host>
 
     <!-- Default protocols -->
@@ -9,8 +9,8 @@
 
     <openSSL>
         <server>
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
         </server>
     </openSSL>
 
@@ -28,4 +28,4 @@
             <description>http protocol</description>
         </http>
     </protocols>
-</clickhouse>
+</datastore>

@@ -12,7 +12,7 @@ instance = cluster.add_instance(
     stay_alive=True,
 )
 
-feature_tier_path = "/etc/clickhouse-server/config.d/allow_feature_tier.xml"
+feature_tier_path = "/etc/datastore-server/config.d/allow_feature_tier.xml"
 
 
 @pytest.fixture(scope="module")
@@ -289,7 +289,7 @@ def test_it_is_possible_to_enable_experimental_settings_in_default_profile(
 
     # Change default user config
     instance.replace_in_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         "allow_experimental_time_series_table>.",
         "allow_experimental_time_series_table>1",
     )
@@ -311,7 +311,7 @@ def test_it_is_possible_to_enable_experimental_settings_in_default_profile(
 
     instance.replace_in_config(feature_tier_path, "2", "0")
     instance.replace_in_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         "allow_experimental_time_series_table>.",
         "allow_experimental_time_series_table>0",
     )

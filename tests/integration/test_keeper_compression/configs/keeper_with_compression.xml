@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <zookeeper>
         <use_compression>true</use_compression>
         <node index="1">
@@ -6,4 +6,4 @@
             <port>9181</port>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>

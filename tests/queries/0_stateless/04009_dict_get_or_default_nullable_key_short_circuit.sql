@@ -28,7 +28,7 @@ CREATE DICTIONARY regexp_dict
     comment String default 'nothing'
 )
 PRIMARY KEY(regexp)
-SOURCE(CLICKHOUSE(TABLE 'regexp_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'regexp_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(regexp_tree);
 

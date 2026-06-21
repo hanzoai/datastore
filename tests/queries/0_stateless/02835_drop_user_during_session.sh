@@ -16,19 +16,19 @@ readonly SESSION_LOG_MATCHING_FIELDS="auth_id, auth_type, client_version_major, 
 function tcp_session()
 {
     local user=$1
-    ${CLICKHOUSE_CLIENT} -q "SELECT COUNT(*) FROM system.numbers" --user="${user}"
+    ${DATASTORE_CLIENT} -q "SELECT COUNT(*) FROM system.numbers" --user="${user}"
 }
 
 function http_session()
 {
     local user=$1
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&user=${user}&password=pass" -d "SELECT COUNT(*) FROM system.numbers"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}&user=${user}&password=pass" -d "SELECT COUNT(*) FROM system.numbers"
 }
 
 function http_with_session_id_session()
 {
     local user=$1
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&user=${user}&password=pass" -d "SELECT COUNT(*) FROM system.numbers"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}&user=${user}&password=pass" -d "SELECT COUNT(*) FROM system.numbers"
 }
 
 # Busy-waits until user $1, specified amount of queries ($2) will run simultaneously.
@@ -39,7 +39,7 @@ function wait_for_queries_start()
     # 10 seconds waiting
     counter=0 retries=100
     while [[ $counter -lt $retries ]]; do
-        result=$($CLICKHOUSE_CLIENT --query "SELECT COUNT(*) FROM system.processes WHERE user = '${user}'")
+        result=$($DATASTORE_CLIENT --query "SELECT COUNT(*) FROM system.processes WHERE user = '${user}'")
         if [[ $result == "${queries_count}" ]]; then
             break;
         fi
@@ -48,12 +48,12 @@ function wait_for_queries_start()
     done
 }
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
-${CLICKHOUSE_CLIENT} -q "DELETE FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' SETTINGS lightweight_deletes_sync = 0"
+${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
+${DATASTORE_CLIENT} -q "DELETE FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' SETTINGS lightweight_deletes_sync = 0"
 
 # DROP USE CASE
-${CLICKHOUSE_CLIENT} -q "CREATE USER IF NOT EXISTS ${TEST_USER}"
-${CLICKHOUSE_CLIENT} -q "GRANT SELECT ON system.numbers TO ${TEST_USER}"
+${DATASTORE_CLIENT} -q "CREATE USER IF NOT EXISTS ${TEST_USER}"
+${DATASTORE_CLIENT} -q "GRANT SELECT ON system.numbers TO ${TEST_USER}"
 
 export -f tcp_session;
 export -f http_session;
@@ -64,51 +64,51 @@ timeout 10s bash -c "http_session ${TEST_USER}" >/dev/null 2>&1 &
 timeout 10s bash -c "http_with_session_id_session ${TEST_USER}" >/dev/null 2>&1 &
 
 wait_for_queries_start $TEST_USER 3
-${CLICKHOUSE_CLIENT} -q "DROP USER ${TEST_USER}"
-${CLICKHOUSE_CLIENT} -q "KILL QUERY WHERE user = '${TEST_USER}' SYNC" >/dev/null &
+${DATASTORE_CLIENT} -q "DROP USER ${TEST_USER}"
+${DATASTORE_CLIENT} -q "KILL QUERY WHERE user = '${TEST_USER}' SYNC" >/dev/null &
 
 wait
 
 # DROP ROLE CASE
-${CLICKHOUSE_CLIENT} -q "CREATE ROLE IF NOT EXISTS ${TEST_ROLE}"
-${CLICKHOUSE_CLIENT} -q "CREATE USER ${TEST_USER} DEFAULT ROLE ${TEST_ROLE}"
-${CLICKHOUSE_CLIENT} -q "GRANT SELECT ON system.numbers TO ${TEST_USER}"
+${DATASTORE_CLIENT} -q "CREATE ROLE IF NOT EXISTS ${TEST_ROLE}"
+${DATASTORE_CLIENT} -q "CREATE USER ${TEST_USER} DEFAULT ROLE ${TEST_ROLE}"
+${DATASTORE_CLIENT} -q "GRANT SELECT ON system.numbers TO ${TEST_USER}"
 
 timeout 10s bash -c "tcp_session ${TEST_USER}" >/dev/null 2>&1 &
 timeout 10s bash -c "http_session ${TEST_USER}" >/dev/null 2>&1 &
 timeout 10s bash -c "http_with_session_id_session ${TEST_USER}" >/dev/null 2>&1 &
 
 wait_for_queries_start $TEST_USER 3
-${CLICKHOUSE_CLIENT} -q "DROP ROLE ${TEST_ROLE}"
-${CLICKHOUSE_CLIENT} -q "DROP USER ${TEST_USER}"
+${DATASTORE_CLIENT} -q "DROP ROLE ${TEST_ROLE}"
+${DATASTORE_CLIENT} -q "DROP USER ${TEST_USER}"
 
-${CLICKHOUSE_CLIENT} -q "KILL QUERY WHERE user = '${TEST_USER}' SYNC" >/dev/null &
+${DATASTORE_CLIENT} -q "KILL QUERY WHERE user = '${TEST_USER}' SYNC" >/dev/null &
 
 wait
 
 # DROP PROFILE CASE
-${CLICKHOUSE_CLIENT} -q "CREATE SETTINGS PROFILE IF NOT EXISTS '${TEST_PROFILE}'"
-${CLICKHOUSE_CLIENT} -q "CREATE USER ${TEST_USER} SETTINGS PROFILE '${TEST_PROFILE}'"
-${CLICKHOUSE_CLIENT} -q "GRANT SELECT ON system.numbers TO ${TEST_USER}"
+${DATASTORE_CLIENT} -q "CREATE SETTINGS PROFILE IF NOT EXISTS '${TEST_PROFILE}'"
+${DATASTORE_CLIENT} -q "CREATE USER ${TEST_USER} SETTINGS PROFILE '${TEST_PROFILE}'"
+${DATASTORE_CLIENT} -q "GRANT SELECT ON system.numbers TO ${TEST_USER}"
 
 timeout 10s bash -c "tcp_session ${TEST_USER}" >/dev/null 2>&1 &
 timeout 10s bash -c "http_session ${TEST_USER}" >/dev/null 2>&1 &
 timeout 10s bash -c "http_with_session_id_session ${TEST_USER}" >/dev/null 2>&1 &
 
 wait_for_queries_start $TEST_USER 3
-${CLICKHOUSE_CLIENT} -q "DROP SETTINGS PROFILE '${TEST_PROFILE}'"
-${CLICKHOUSE_CLIENT} -q "DROP USER ${TEST_USER}"
+${DATASTORE_CLIENT} -q "DROP SETTINGS PROFILE '${TEST_PROFILE}'"
+${DATASTORE_CLIENT} -q "DROP USER ${TEST_USER}"
 
-${CLICKHOUSE_CLIENT} -q "KILL QUERY WHERE user = '${TEST_USER}' SYNC" >/dev/null &
+${DATASTORE_CLIENT} -q "KILL QUERY WHERE user = '${TEST_USER}' SYNC" >/dev/null &
 
 wait
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
+${DATASTORE_CLIENT} -q "SYSTEM FLUSH LOGS session_log"
 
 echo "port_0_sessions:"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND client_port = 0"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND client_port = 0"
 echo "address_0_sessions:"
-${CLICKHOUSE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND client_address = toIPv6('::')"
+${DATASTORE_CLIENT} -q "SELECT count(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND client_address = toIPv6('::')"
 echo "Corresponding LoginSuccess/Logout"
 
 # The client can exit sooner than the server records its disconnection and closes the session.
@@ -118,7 +118,7 @@ echo "Corresponding LoginSuccess/Logout"
 # We cannot expect that after the control is returned to the shell, the server records the logout event.
 while true
 do
-    [[ 9 -eq $(${CLICKHOUSE_CLIENT} -q "
+    [[ 9 -eq $(${DATASTORE_CLIENT} -q "
         SELECT COUNT(*) FROM (
             SELECT ${SESSION_LOG_MATCHING_FIELDS} FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND type = 'LoginSuccess'
             INTERSECT
@@ -128,4 +128,4 @@ do
 done
 
 echo "LoginFailure"
-${CLICKHOUSE_CLIENT} -q "SELECT COUNT(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND type = 'LoginFailure'"
+${DATASTORE_CLIENT} -q "SELECT COUNT(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user = '${TEST_USER}' AND type = 'LoginFailure'"

@@ -4,7 +4,7 @@
 extern void clickhouse_log(const char * message);
 
 uint32_t test_func(uint32_t a) {
-    clickhouse_log("Hello, ClickHouse!");
+    clickhouse_log("Hello, Datastore!");
     return 1;
 }
 

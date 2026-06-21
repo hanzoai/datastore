@@ -8,20 +8,20 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
+    $DATASTORE_CLIENT -q "SYSTEM INSTRUMENT REMOVE ALL;"
 }
 
 trap cleanup EXIT
 
-$CLICKHOUSE_CLIENT -q """
+$DATASTORE_CLIENT -q """
     SYSTEM INSTRUMENT REMOVE ALL;
     SYSTEM INSTRUMENT ADD 'QueryMetricLog::startQuery' PROFILE;
 """
 
-query_id="${CLICKHOUSE_DATABASE}_profile"
-$CLICKHOUSE_CLIENT --query-id="$query_id" -q "SELECT 1 FORMAT Null;"
+query_id="${DATASTORE_DATABASE}_profile"
+$DATASTORE_CLIENT --query-id="$query_id" -q "SELECT 1 FORMAT Null;"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT '-- Check ENTRY_AND_EXIT is present in system.instrumentation';
     SELECT entry_type FROM system.instrumentation;
 
@@ -33,11 +33,11 @@ $CLICKHOUSE_CLIENT -q "
     SELECT entry_type, duration_nanoseconds > 0 FROM system.trace_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id = '$query_id' AND trace_type = 'Instrumentation' AND handler = 'profile' AND entry_type = 'Exit' AND function_name LIKE '%QueryMetricLog::startQuery%' AND arrayExists(x -> x LIKE '%dispatchHandler%', symbols);
 "
 
-query_id="${CLICKHOUSE_DATABASE}_profile_recursive"
-$CLICKHOUSE_CLIENT -q "SYSTEM INSTRUMENT ADD 'DB::recursiveRemoveLowCardinality(std::__1::shared_ptr<DB::IDataType const> const&)' PROFILE;"
-$CLICKHOUSE_CLIENT --query-id="$query_id" -q "SELECT arrayFold(acc, x -> acc + x, [1, 2, 3], 0::Int64) FORMAT Null;"
+query_id="${DATASTORE_DATABASE}_profile_recursive"
+$DATASTORE_CLIENT -q "SYSTEM INSTRUMENT ADD 'DB::recursiveRemoveLowCardinality(std::__1::shared_ptr<DB::IDataType const> const&)' PROFILE;"
+$DATASTORE_CLIENT --query-id="$query_id" -q "SELECT arrayFold(acc, x -> acc + x, [1, 2, 3], 0::Int64) FORMAT Null;"
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SYSTEM INSTRUMENT REMOVE ALL;
     SYSTEM FLUSH LOGS system.trace_log;
 

@@ -9,10 +9,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./transactions.lib
 . "$CURDIR"/transactions.lib
 
-$CLICKHOUSE_CLIENT -q "drop table if exists mt"
-$CLICKHOUSE_CLIENT -q "create table mt (n int) engine=MergeTree order by tuple()"
+$DATASTORE_CLIENT -q "drop table if exists mt"
+$DATASTORE_CLIENT -q "create table mt (n int) engine=MergeTree order by tuple()"
 
-$CLICKHOUSE_CLIENT -q "insert into mt values (1)"
+$DATASTORE_CLIENT -q "insert into mt values (1)"
 
 tx 1 "begin transaction"
 tx 2                                            "begin transaction"
@@ -58,7 +58,7 @@ tx 7 "begin transaction"
 tx 7 "select 7, n from mt order by n"
 tx 8                                            "begin transaction"
 tx_async 8                                      "alter table mt update n = 0 where 1" >/dev/null
-$CLICKHOUSE_CLIENT -q "kill mutation where database=currentDatabase() and mutation_id='mutation_15.txt' format Null" 2>&1| grep -Fv "probably it finished"
+$DATASTORE_CLIENT -q "kill mutation where database=currentDatabase() and mutation_id='mutation_15.txt' format Null" 2>&1| grep -Fv "probably it finished"
 tx_sync 8                                            "rollback"
 tx 7 "optimize table mt final"
 tx 7 "select 8, n from mt order by n"
@@ -82,18 +82,18 @@ tx_wait 12
 
 tx 13                                           "begin transaction"
 tid_to_kill=$(tx 13 "select transactionID()" | grep -Po "\(.*")
-$CLICKHOUSE_CLIENT -q "select count(), any(is_readonly), any(state) from system.transactions where tid=$tid_to_kill"
+$DATASTORE_CLIENT -q "select count(), any(is_readonly), any(state) from system.transactions where tid=$tid_to_kill"
 tx_async 13                                      "alter table mt update n = 0 where 1" >/dev/null
-$CLICKHOUSE_CLIENT -q "kill transaction where tid=$tid_to_kill format Null"
+$DATASTORE_CLIENT -q "kill transaction where tid=$tid_to_kill format Null"
 tx_sync 13                                            "rollback"
 
 tx 14 "begin transaction"
 tx 14 "select 10, n from mt order by n"
 
-$CLICKHOUSE_CLIENT --database_atomic_wait_for_drop_and_detach_synchronously=0 -q "drop table mt"
+$DATASTORE_CLIENT --database_atomic_wait_for_drop_and_detach_synchronously=0 -q "drop table mt"
 
-$CLICKHOUSE_CLIENT -q "create table mt (n int) engine=MergeTree order by tuple()"
-$CLICKHOUSE_CLIENT --implicit_transaction=1 -q "insert into mt values (1)"
+$DATASTORE_CLIENT -q "create table mt (n int) engine=MergeTree order by tuple()"
+$DATASTORE_CLIENT --implicit_transaction=1 -q "insert into mt values (1)"
 
 tx 15 "begin transaction"
 tx 16                                           "begin transaction"
@@ -101,6 +101,6 @@ tx 16                                           "insert into mt values (2)"
 tx 15 "alter table mt update n = 10*n where 1"
 tx 15 "commit"
 tx 16                                           "commit"
-$CLICKHOUSE_CLIENT --implicit_transaction=1 -q "select 11, n from mt order by n"
+$DATASTORE_CLIENT --implicit_transaction=1 -q "select 11, n from mt order by n"
 
-$CLICKHOUSE_CLIENT -q "drop table mt"
+$DATASTORE_CLIENT -q "drop table mt"

@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT"
+format="$DATASTORE_FORMAT"
 
 echo "set param_a = 1" | $format
 echo "set max_threads = 1, param_a = 1" | $format

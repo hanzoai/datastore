@@ -6,7 +6,7 @@ from praktika.result import Result
 from praktika.utils import Shell
 
 DOCKERFILE_PATH = "ci/docker/binary-builder/Dockerfile"
-S3_BUCKET = "clickhouse-builds.s3.amazonaws.com"
+S3_BUCKET = "datastore-builds.s3.amazonaws.com"
 
 
 def update_dockerfile(sha):
@@ -46,7 +46,7 @@ def create_pr(sha):
 ### Changelog category (leave one):
 - Build/Testing/Packaging Improvement
 
-### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/ClickHouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):
+### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/Datastore/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):
 - Use PGO+BOLT optimized clang toolchain for CI builds
 """
 

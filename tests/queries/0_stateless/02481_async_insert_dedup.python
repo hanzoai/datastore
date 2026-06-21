@@ -21,7 +21,7 @@ client.query("DROP TABLE IF EXISTS t_async_insert_dedup_no_part SYNC")
 create_query = f"""
 CREATE TABLE t_async_insert_dedup_no_part (
 KeyID     UInt32
-) Engine = {table_engine}('/clickhouse/tables/{{shard}}/{{database}}/t_async_insert_dedup', '{{replica}}')
+) Engine = {table_engine}('/datastore/tables/{{shard}}/{{database}}/t_async_insert_dedup', '{{replica}}')
 ORDER BY (KeyID)
 """
 
@@ -119,7 +119,7 @@ create_query = f"""
 CREATE TABLE t_async_insert_dedup (
 EventDate DateTime,
 KeyID     UInt32
-) Engine = {table_engine}('/clickhouse/tables/{{shard}}/{{database}}/t_async_insert_dedup', '{{replica}}')
+) Engine = {table_engine}('/datastore/tables/{{shard}}/{{database}}/t_async_insert_dedup', '{{replica}}')
 PARTITION BY toYYYYMM(EventDate)
 ORDER BY (KeyID, EventDate) SETTINGS use_async_block_ids_cache = 1
 """

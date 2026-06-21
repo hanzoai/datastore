@@ -7,11 +7,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-CONTAINER="cont-$(echo "${CLICKHOUSE_TEST_UNIQUE_NAME}" | tr _ -)"
+CONTAINER="cont-$(echo "${DATASTORE_TEST_UNIQUE_NAME}" | tr _ -)"
 
 DISK_NAME="$CONTAINER"
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP TABLE IF EXISTS test_azure_readonly;
 
     CREATE TABLE test_azure_readonly (key Int, arr Array(UInt32)) ENGINE=MergeTree() ORDER BY tuple()
@@ -22,7 +22,7 @@ $CLICKHOUSE_CLIENT -m -q "
                 metadata_type = local,
                 object_storage_type = azure_blob_storage,
                 name = '${DISK_NAME}',
-                path='/var/lib/clickhouse/disks/${CONTAINER}/tables',
+                path='/var/lib/datastore/disks/${CONTAINER}/tables',
                 container_name = '${CONTAINER}',
                 endpoint = 'http://localhost:10000/devstoreaccount1/${CONTAINER}/tables',
                 account_name = 'devstoreaccount1',

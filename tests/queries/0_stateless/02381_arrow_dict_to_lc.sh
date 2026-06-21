@@ -25,7 +25,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # cat data.arrow | gzip | base64
 
-cat <<EOF | base64 --decode | gunzip | $CLICKHOUSE_LOCAL --query='SELECT * FROM table FORMAT TSVWithNamesAndTypes' --input-format=ArrowStream
+cat <<EOF | base64 --decode | gunzip | $DATASTORE_LOCAL --query='SELECT * FROM table FORMAT TSVWithNamesAndTypes' --input-format=ArrowStream
 H4sIAAAAAAAAA5VTsU7DQAz1pZc2giBaFFAGkBgYMjIyMOQD+gHdCqWpiBQlqErhZzowMvIB/Ft4
 d+drrqGFYsny+fzO9rN1TdM0L4JoSEqOKKQ++RTgBBGSJEwEjLL6DOwn7B37IWIA9tX7a75TcgKd
 VVUxLVdF8TgrMvgpsGuD9yL4Y2jivDmFFk/TvKzbVwFFUAk1PQpqZaJzkVB153xONS4Gvk8DsBni

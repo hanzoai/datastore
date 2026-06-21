@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 <remote_servers>
     <cluster>
         <shard>
@@ -17,4 +17,4 @@
 
 <default_replica_path>/lol/kek/'/{uuid}</default_replica_path>
 
-</clickhouse>
+</datastore>

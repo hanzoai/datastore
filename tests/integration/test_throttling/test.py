@@ -86,14 +86,14 @@ def revert_config():
         [
             "bash",
             "-c",
-            f"echo '<clickhouse></clickhouse>' > /etc/clickhouse-server/config.d/dynamic_overrides.xml",
+            f"echo '<datastore></datastore>' > /etc/datastore-server/config.d/dynamic_overrides.xml",
         ]
     )
     node.exec_in_container(
         [
             "bash",
             "-c",
-            f"echo '<clickhouse></clickhouse>' > /etc/clickhouse-server/users.d/users_overrides.xml",
+            f"echo '<datastore></datastore>' > /etc/datastore-server/users.d/users_overrides.xml",
         ]
     )
     node.restart_clickhouse()
@@ -118,20 +118,20 @@ def node_update_config(mode, setting, value=None, restart=True):
     if mode is None:
         return
     if mode == "server":
-        config_path = "/etc/clickhouse-server/config.d/dynamic_overrides.xml"
+        config_path = "/etc/datastore-server/config.d/dynamic_overrides.xml"
         config_content = f"""
-        <clickhouse><{setting}>{value}</{setting}></clickhouse>
+        <datastore><{setting}>{value}</{setting}></datastore>
         """
     else:
-        config_path = "/etc/clickhouse-server/users.d/users_overrides.xml"
+        config_path = "/etc/datastore-server/users.d/users_overrides.xml"
         config_content = f"""
-        <clickhouse>
+        <datastore>
             <profiles>
                 <default>
                     <{setting}>{value}</{setting}>
                 </default>
             </profiles>
-        </clickhouse>
+        </datastore>
         """
     node.exec_in_container(
         [

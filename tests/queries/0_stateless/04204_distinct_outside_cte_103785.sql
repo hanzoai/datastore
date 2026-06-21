@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103785
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103785
 -- DISTINCT inside a CTE branch was being silently weakened when an outer
 -- query projected only a subset of the CTE's columns. The new analyzer's
 -- `RemoveUnusedProjectionColumnsPass` correctly skipped DISTINCT

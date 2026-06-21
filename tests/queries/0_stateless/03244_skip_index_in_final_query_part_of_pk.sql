@@ -39,7 +39,7 @@ WHERE explain ILIKE '%PrimaryKeyExpand%';
 
 DROP TABLE tab;
 
--- Test from fuzzer : https://github.com/ClickHouse/ClickHouse/issues/89387
+-- Test from fuzzer : https://github.com/ClickHouse/Datastore/issues/89387
 DROP TABLE IF EXISTS t0;
 
 CREATE TABLE t0

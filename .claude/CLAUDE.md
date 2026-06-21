@@ -2,7 +2,7 @@ When working with a branch, do not use rebase or amend - add new commits instead
 
 Do not commit to the master branch. Create a new branch for every task.
 
-When writing text such as documentation, comments, or commit messages, wrap literal names from ClickHouse SQL language, classes and functions, or literal excerpts from log messages inside inline code blocks, such as: `MergeTree`.
+When writing text such as documentation, comments, or commit messages, wrap literal names from Datastore SQL language, classes and functions, or literal excerpts from log messages inside inline code blocks, such as: `MergeTree`.
 
 When adding headers to documentation files under `docs/`, every header must include an explicit anchor in the form `{#kebab-case-anchor}` at the end of the header line, e.g. `## My Section {#my-section}`. This is mandatory for all heading levels. New documentation files must also include a frontmatter block at the top (before the first heading) with `description`, `sidebar_label`, `sidebar_position`, `slug`, `title`, and `doc_type` fields, modelled on existing files such as `docs/en/development/continuous-integration.md`.
 
@@ -10,17 +10,17 @@ When writing text such as documentation, comments, or commit messages, write nam
 
 When mentioning logical errors, say "exception" instead of "crash", because they don't crash the server in the release build.
 
-Links to ClickHouse CI should be analyzed using the tool at `.claude/tools/fetch_ci_report.js`, which directly fetches the underlying JSON data without requiring a browser. It accepts GitHub PR URLs (fetches all CI reports) or direct S3/CI HTML URLs.
+Links to Datastore CI should be analyzed using the tool at `.claude/tools/fetch_ci_report.js`, which directly fetches the underlying JSON data without requiring a browser. It accepts GitHub PR URLs (fetches all CI reports) or direct S3/CI HTML URLs.
 
 ```bash
 # Fetch all CI reports for a PR
-node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/12345"
+node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/Datastore/pull/12345"
 
 # Show only failed tests with CIDB links
-node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/12345" --failed --cidb
+node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/Datastore/pull/12345" --failed --cidb
 
 # Fetch only a specific report from a PR (by index)
-node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/12345" --report 2
+node .claude/tools/fetch_ci_report.js "https://github.com/ClickHouse/Datastore/pull/12345" --report 2
 
 # Filter by test name, show artifact links
 node .claude/tools/fetch_ci_report.js "<url>" --test peak_memory --links
@@ -49,36 +49,36 @@ To analyze CI performance comparison results (slower/faster queries, unstable qu
 
 ```bash
 # Show performance changes for a PR (default: changed + unstable queries only)
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345"
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345"
 
 # Filter by architecture
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345" --arch amd
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345" --arch amd
 
 # Show only per-shard summary (no individual queries)
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345" --summary
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345" --summary
 
 # Filter by test name
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345" --test group_by
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345" --test group_by
 
 # Show all queries (not just changes)
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345" --all --sort times
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345" --all --sort times
 
 # JSON output for structured analysis
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345" --json
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345" --json
 
 # TSV output for piping
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/12345" --tsv
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/12345" --tsv
 
 # Also accepts CI HTML URLs
-python3 .claude/tools/fetch_perf_report.py "https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=12345&sha=abc123"
+python3 .claude/tools/fetch_perf_report.py "https://s3.amazonaws.com/datastore-test-reports/json.html?PR=12345&sha=abc123"
 ```
 
 Key options: `--arch <amd|arm|all>` to filter architecture, `--metric <name>` to change metric (default `client_time`), `--shard <n>` for a specific shard, `--test <name>` / `--query <text>` for substring filtering, `--sort <diff|times|threshold|test>` for ordering, `--summary` for shard-level overview only, `--json` / `--tsv` for machine-readable output.
 
-To compile and run C++ code snippets against the ClickHouse codebase without modifying any source files, use the tool at `.claude/tools/cppexpr.sh`. This is a wrapper around `utils/c++expr` that auto-detects build directories and handles working directory setup. When asked about the size, layout, or alignment of ClickHouse data structures, or asked to compare performance of code snippets, use this tool to get a definitive answer instead of guessing.
+To compile and run C++ code snippets against the Datastore codebase without modifying any source files, use the tool at `.claude/tools/cppexpr.sh`. This is a wrapper around `utils/c++expr` that auto-detects build directories and handles working directory setup. When asked about the size, layout, or alignment of Datastore data structures, or asked to compare performance of code snippets, use this tool to get a definitive answer instead of guessing.
 
 ```bash
-# Query the size of a ClickHouse data structure
+# Query the size of a Datastore data structure
 .claude/tools/cppexpr.sh -i Core/Block.h 'OUT(sizeof(DB::Block))'
 
 # Query multiple expressions at once
@@ -90,11 +90,11 @@ To compile and run C++ code snippets against the ClickHouse codebase without mod
 # Benchmark a code snippet (100000 iterations, 5 tests)
 .claude/tools/cppexpr.sh -i Common/Stopwatch.h -b 100000 'Stopwatch sw;'
 
-# Standalone mode (no ClickHouse headers, just standard C++)
+# Standalone mode (no Datastore headers, just standard C++)
 .claude/tools/cppexpr.sh --plain 'OUT(sizeof(std::string))'
 ```
 
-Key options: `-i HEADER` to include headers, `-g 'CODE'` for global-scope code, `-b STEPS` for benchmarking, `-l LIB` to link extra libraries, `--plain` for standalone compilation without ClickHouse. The `OUT(expr)` macro prints `expr -> value`.
+Key options: `-i HEADER` to include headers, `-g 'CODE'` for global-scope code, `-b STEPS` for benchmarking, `-l LIB` to link extra libraries, `--plain` for standalone compilation without Datastore. The `OUT(expr)` macro prints `expr -> value`.
 
 When asked to analyze assembly, inspect generated code, find register spills, check branch density, compare codegen between builds, or investigate optimization opportunities in compiled functions, use the tool at `.claude/tools/analyze-assembly.py`. It disassembles functions from a compiled binary, builds a CFG, computes metrics (spill/branch/call density), and reports findings. Use it instead of manually running `llvm-objdump` or `llvm-nm`.
 
@@ -132,7 +132,7 @@ python3 .claude/tools/analyze-assembly.py <binary> "<function_name>" -v
 
 Key options: `--search` for regex matching, `--fuzzy` for substring matching, `--select N` to pick from ambiguous results, `--all` to analyze all matches, `--context N` to show surrounding symbols, `--max-instructions N` to control output size, `--mca --mcpu=<model>` for llvm-mca throughput analysis, `--perf-map <file>` for runtime-weighted scoring, `--before`/`--after` for diff mode. Hex addresses (e.g. `0x0dc7c780`) are resolved to the enclosing symbol automatically — useful when symbol names are too long for regex matching. The tool caches symbol tables by build-id for fast repeated queries.
 
-You can build multiple versions of ClickHouse inside `build_*` directories, such as `build`, `build_debug`, `build_asan`, etc.
+You can build multiple versions of Datastore inside `build_*` directories, such as `build`, `build_debug`, `build_asan`, etc.
 
 You can run integration tests as in `tests/integration/README.md` using: `python -m ci.praktika run "integration" --test <selectors>` invoked from the repository root.
 
@@ -152,7 +152,7 @@ When checking the CI status, pay attention to the comment from robot with the li
 
 Do not use `-j` argument with ninja; do not use `nproc` - let it decide automatically.
 
-When building ClickHouse (running ninja), always redirect output to the build log file in the build directory. Always use a subagent to analyze the log and return only a concise summary.
+When building Datastore (running ninja), always redirect output to the build log file in the build directory. Always use a subagent to analyze the log and return only a concise summary.
 
 When running tests, always redirect output to a log file in the build directory (e.g. `<build_directory>/test_<test_name>.log`). Use unique file names per test so multiple tests can run in parallel. Always use a subagent to analyze each log and return only a concise summary.
 

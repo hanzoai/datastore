@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <another>
             <password/>
@@ -40,4 +40,4 @@
             </grants>
         </admin_role>
     </roles>
-</clickhouse>
+</datastore>

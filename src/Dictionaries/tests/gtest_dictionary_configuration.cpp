@@ -38,7 +38,7 @@ TEST(ConvertDictionaryAST, SimpleDictConfiguration)
                    "    third_column UInt8 DEFAULT 2"
                    " )"
                    " PRIMARY KEY key_column"
-                   " SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' PASSWORD '' DB 'test' TABLE 'table_for_dict'))"
+                   " SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' PASSWORD '' DB 'test' TABLE 'table_for_dict'))"
                    " LAYOUT(FLAT())"
                    " LIFETIME(MIN 1 MAX 10)"
                    " RANGE(MIN second_column MAX third_column)"
@@ -65,12 +65,12 @@ TEST(ConvertDictionaryAST, SimpleDictConfiguration)
 
 
     /// source
-    EXPECT_EQ(config->getString("dictionary.source.clickhouse.host"), "localhost");
-    EXPECT_EQ(config->getInt("dictionary.source.clickhouse.port"), 9000);
-    EXPECT_EQ(config->getString("dictionary.source.clickhouse.user"), "default");
-    EXPECT_EQ(config->getString("dictionary.source.clickhouse.password"), "");
-    EXPECT_EQ(config->getString("dictionary.source.clickhouse.db"), "test");
-    EXPECT_EQ(config->getString("dictionary.source.clickhouse.table"), "table_for_dict");
+    EXPECT_EQ(config->getString("dictionary.source.datastore.host"), "localhost");
+    EXPECT_EQ(config->getInt("dictionary.source.datastore.port"), 9000);
+    EXPECT_EQ(config->getString("dictionary.source.datastore.user"), "default");
+    EXPECT_EQ(config->getString("dictionary.source.datastore.password"), "");
+    EXPECT_EQ(config->getString("dictionary.source.datastore.db"), "test");
+    EXPECT_EQ(config->getString("dictionary.source.datastore.table"), "table_for_dict");
 
     /// attributes and key
     Poco::Util::AbstractConfiguration::Keys keys;
@@ -113,7 +113,7 @@ TEST(ConvertDictionaryAST, TrickyAttributes)
                    " PRIMARY KEY key_column"
                    " LAYOUT(hashed())"
                    " LIFETIME(MIN 1 MAX 10)"
-                   " SOURCE(CLICKHOUSE(HOST 'localhost'))";
+                   " SOURCE(DATASTORE(HOST 'localhost'))";
 
     ParserCreateDictionaryQuery parser;
     ASTPtr ast = parseQuery(parser, input.data(), input.data() + input.size(), "", 0, 0, 0);

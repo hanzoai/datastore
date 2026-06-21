@@ -22,7 +22,7 @@ ORDER BY id;
 DROP TABLE tags;
 
 
--- https://github.com/ClickHouse/ClickHouse/issues/15294
+-- https://github.com/ClickHouse/Datastore/issues/15294
 
 drop table if exists TestTable;
 
@@ -38,7 +38,7 @@ GROUP BY column;
 
 drop table TestTable;
 
--- https://github.com/ClickHouse/ClickHouse/issues/11407
+-- https://github.com/ClickHouse/Datastore/issues/11407
 
 drop table if exists aaa;
 drop table if exists bbb;

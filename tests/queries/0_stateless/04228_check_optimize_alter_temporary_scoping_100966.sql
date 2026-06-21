@@ -1,4 +1,4 @@
--- Test for https://github.com/ClickHouse/ClickHouse/pull/100966 follow-up.
+-- Test for https://github.com/ClickHouse/Datastore/pull/100966 follow-up.
 -- Verify CHECK, OPTIMIZE, and ALTER TABLE use the same scoping precedence
 -- as SHOW CREATE TABLE / DESCRIBE TABLE: an unqualified name resolves to the
 -- TEMPORARY table when one exists, preferring it over a same-named permanent.

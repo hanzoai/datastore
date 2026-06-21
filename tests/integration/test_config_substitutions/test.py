@@ -35,7 +35,7 @@ node6 = cluster.add_instance(
     "node6",
     user_configs=["configs/config_include_from_env.xml"],
     env_variables={
-        "INCLUDE_FROM_ENV": "/etc/clickhouse-server/config.d/include_from_source.xml"
+        "INCLUDE_FROM_ENV": "/etc/datastore-server/config.d/include_from_source.xml"
     },
     main_configs=["configs/include_from_source.xml"],
 )
@@ -135,9 +135,9 @@ def test_config(start_cluster):
 
 def test_config_from_env_overrides(start_cluster):
     with node7.with_replace_config(
-        "/etc/clickhouse-server/users.d/000-users_with_env_subst.xml",
+        "/etc/datastore-server/users.d/000-users_with_env_subst.xml",
         """
-<clickhouse>
+<datastore>
   <profiles>
     <default>
         <max_query_size from_env="MAX_QUERY_SIZE" />
@@ -154,19 +154,19 @@ def test_config_from_env_overrides(start_cluster):
       <include incl="users_1" />
       <include incl="users_2" />
   </users>
-</clickhouse>
+</datastore>
 """,
     ):
         with pytest.raises(
             QueryRuntimeException,
-            match="Failed to preprocess config '/etc/clickhouse-server/users.xml': Exception: Element <max_threads> has value and does not have 'replace' attribute, can't process from_env substitution",
+            match="Failed to preprocess config '/etc/datastore-server/users.xml': Exception: Element <max_threads> has value and does not have 'replace' attribute, can't process from_env substitution",
         ):
             node7.query("SYSTEM RELOAD CONFIG")
 
     with node7.with_replace_config(
-        "/etc/clickhouse-server/users.d/000-users_with_env_subst.xml",
+        "/etc/datastore-server/users.d/000-users_with_env_subst.xml",
         """
-<clickhouse>
+<datastore>
   <profiles>
     <default>
         <max_query_size from_env="MAX_QUERY_SIZE" />
@@ -183,7 +183,7 @@ def test_config_from_env_overrides(start_cluster):
       <include incl="users_1" />
       <include incl="users_2" />
   </users>
-</clickhouse>
+</datastore>
 """,
     ):
         node7.query("SYSTEM RELOAD CONFIG")
@@ -198,11 +198,11 @@ def test_config_merge_from_env_overrides(start_cluster):
         == "1000\n"
     )
     with node7.with_replace_config(
-        "/etc/clickhouse-server/config.d/010-server_with_env_subst.xml",
+        "/etc/datastore-server/config.d/010-server_with_env_subst.xml",
         """
-<clickhouse>
+<datastore>
     <max_thread_pool_size from_env="CH_THREADS" replace="1">9000</max_thread_pool_size>
-</clickhouse>
+</datastore>
 """,
     ):
         node7.query("SYSTEM RELOAD CONFIG")
@@ -297,7 +297,7 @@ def test_allow_databases(start_cluster):
 
 
 def test_config_multiple_zk_substitutions(start_cluster):
-    # NOTE: background_pool_size cannot be decreased, so let's restart ClickHouse to make the test idempotent (i.e. runned multiple times)
+    # NOTE: background_pool_size cannot be decreased, so let's restart Datastore to make the test idempotent (i.e. runned multiple times)
     node3.restart_clickhouse()
     node3.query("SYSTEM RELOAD CONFIG")
     assert (
@@ -334,9 +334,9 @@ def test_config_multiple_zk_substitutions(start_cluster):
         )
 
         with node3.with_replace_config(
-            "/etc/clickhouse-server/config.d/config_zk_include_test.xml",
+            "/etc/datastore-server/config.d/config_zk_include_test.xml",
             """
-    <clickhouse>
+    <datastore>
       <include from_zk="/background_pool_size" merge="true"/>
       <background_pool_size>44</background_pool_size>
       <merge_tree>
@@ -346,7 +346,7 @@ def test_config_multiple_zk_substitutions(start_cluster):
       </merge_tree>
 
       <include from_zk="/min_bytes_for_wide_part" merge="true"/>
-     </clickhouse>
+     </datastore>
     """,
         ):
             node3.query("SYSTEM RELOAD CONFIG")

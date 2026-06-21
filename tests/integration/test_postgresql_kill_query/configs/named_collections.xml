@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <postgres1>
             <user>postgres</user>
@@ -8,4 +8,4 @@
             <database>postgres</database>
         </postgres1>
     </named_collections>
-</clickhouse>
+</datastore>

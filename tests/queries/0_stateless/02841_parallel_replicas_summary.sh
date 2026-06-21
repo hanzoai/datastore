@@ -5,8 +5,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 function involved_parallel_replicas () {
-    # Not using current_database = '$CLICKHOUSE_DATABASE' as nested parallel queries aren't run with it
-    $CLICKHOUSE_CLIENT --query "
+    # Not using current_database = '$DATASTORE_DATABASE' as nested parallel queries aren't run with it
+    $DATASTORE_CLIENT --query "
         SELECT
             initial_query_id,
             countIf(initial_query_id != query_id) != 0  as parallel_replicas_were_used
@@ -18,14 +18,14 @@ function involved_parallel_replicas () {
     FORMAT TSV"
 }
 
-$CLICKHOUSE_CLIENT --query "CREATE TABLE replicas_summary (n Int64) ENGINE = MergeTree() ORDER BY n AS Select * from numbers(100_000)"
+$DATASTORE_CLIENT --query "CREATE TABLE replicas_summary (n Int64) ENGINE = MergeTree() ORDER BY n AS Select * from numbers(100_000)"
 
 # Note that we are not verifying the exact read rows and bytes (apart from not being 0) for 2 reasons:
 # - Different block sizes lead to different read rows
 # - Depending on how fast the replicas are they might need data that ends up being discarded because the coordinator
 # already has enough (but it has been read in parallel, so it's reported).
 
-query_id_base="02841_summary_$CLICKHOUSE_DATABASE"
+query_id_base="02841_summary_$DATASTORE_DATABASE"
 
 # TODO: rethink the test, for now temporary disable parallel_replicas_local_plan
 echo "
@@ -42,7 +42,7 @@ echo "
         parallel_replicas_only_with_analyzer=0,
         parallel_replicas_local_plan=0
     "\
-    | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&http_wait_end_of_query=1&query_id=${query_id_base}_interactive_0" --data-binary @- -vvv 2>&1 \
+    | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&http_wait_end_of_query=1&query_id=${query_id_base}_interactive_0" --data-binary @- -vvv 2>&1 \
     | grep "Summary" | grep -v 'Access-Control-Expose-Headers' | grep -cv '"read_rows":"0"'
 
 echo "
@@ -59,14 +59,14 @@ echo "
         parallel_replicas_only_with_analyzer=0,
         parallel_replicas_local_plan=0
     "\
-    | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&http_wait_end_of_query=1&query_id=${query_id_base}_interactive_high" --data-binary @- -vvv 2>&1 \
+    | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&http_wait_end_of_query=1&query_id=${query_id_base}_interactive_high" --data-binary @- -vvv 2>&1 \
     | grep "Summary" | grep -v 'Access-Control-Expose-Headers' | grep -cv '"read_rows":"0"'
 
 # Wait for query_log entries from parallel replicas queries.
 # There is a race between HTTP response being sent and the query_log entry being written.
 for _ in $(seq 1 60); do
-    $CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
-    count=$($CLICKHOUSE_CLIENT --query "SELECT count(DISTINCT initial_query_id) FROM system.query_log WHERE event_date >= yesterday() AND initial_query_id LIKE '${query_id_base}%'")
+    $DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log"
+    count=$($DATASTORE_CLIENT --query "SELECT count(DISTINCT initial_query_id) FROM system.query_log WHERE event_date >= yesterday() AND initial_query_id LIKE '${query_id_base}%'")
     [ "$count" -ge 2 ] && break
     sleep 0.5
 done

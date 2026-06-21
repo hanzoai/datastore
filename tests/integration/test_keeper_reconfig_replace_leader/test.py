@@ -27,7 +27,7 @@ def started_cluster():
         node4.stop_clickhouse()
         node4.copy_file_to_container(
             join(CONFIG_DIR, "keeper4.xml"),
-            "/etc/clickhouse-server/config.d/keeper.xml",
+            "/etc/datastore-server/config.d/keeper.xml",
         )
 
         yield cluster

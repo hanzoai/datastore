@@ -35,7 +35,7 @@ paimonLocal(path_to_table, [,format] [,compression_method])
 Description of the arguments coincides with description of arguments in table functions `s3`, `azureBlobStorage`, `HDFS` and `file` correspondingly.
 `format` stands for the format of data files in the Paimon table.
 
-For `paimonS3`, an optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in ClickHouse Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
+For `paimonS3`, an optional `extra_credentials` parameter can be used to pass a `role_arn` for role-based access in Datastore Cloud. See [Secure S3](/cloud/data-sources/secure-s3) for configuration steps.
 
 ### Returned value {#returned-value}
 
@@ -46,17 +46,17 @@ A table with the specified structure for reading data in the specified Paimon ta
 Here is an example of configuring a named collection for storing the URL and credentials:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <paimon_conf>
-            <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
+            <url>http://test.s3.amazonaws.com/datastore-bucket/</url>
             <access_key_id>test</access_key_id>
             <secret_access_key>test</secret_access_key>
             <format>auto</format>
             <structure>auto</structure>
         </paimon_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

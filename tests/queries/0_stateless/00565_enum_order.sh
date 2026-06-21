@@ -6,11 +6,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e -o pipefail
 
-$CLICKHOUSE_CLIENT <<"EOF"
+$DATASTORE_CLIENT <<"EOF"
 DROP TABLE IF EXISTS `test_log`
 EOF
 
-$CLICKHOUSE_CLIENT --allow_deprecated_syntax_for_merge_tree=1 <<"EOF"
+$DATASTORE_CLIENT --allow_deprecated_syntax_for_merge_tree=1 <<"EOF"
 CREATE TABLE `test_log` (
     date Date,
     datetime DateTime,
@@ -43,17 +43,17 @@ QUERY='INSERT INTO "test_log"("date", "datetime", "path", "gtid", "query_serial"
     "new_fields"."is_null", "record_source_type", "record_source_timestamp", "deleted") FORMAT TabSeparated'
 QUERY="$(tr -d '\n' <<<"$QUERY")"
 echo "$QUERY"
-URL=$(python3 -c 'import urllib.parse; print("'"${CLICKHOUSE_URL}"'&query=" + urllib.parse.quote('"'''$QUERY'''"'))')
+URL=$(python3 -c 'import urllib.parse; print("'"${DATASTORE_URL}"'&query=" + urllib.parse.quote('"'''$QUERY'''"'))')
 
 set +e
 for _ in 1 2 3; do
     echo run by native protocol
-    echo -ne "$DATA" | $CLICKHOUSE_CLIENT --query "$QUERY"
+    echo -ne "$DATA" | $DATASTORE_CLIENT --query "$QUERY"
 
     echo run by http protocol
-    echo -ne "$DATA" | $CLICKHOUSE_CURL -sS -X POST --data-binary @- "$URL"
+    echo -ne "$DATA" | $DATASTORE_CURL -sS -X POST --data-binary @- "$URL"
 done
 
 echo 'Count:'
-$CLICKHOUSE_CLIENT --query 'select count() from test_log'
-$CLICKHOUSE_CLIENT --query 'DROP TABLE test_log'
+$DATASTORE_CLIENT --query 'select count() from test_log'
+$DATASTORE_CLIENT --query 'DROP TABLE test_log'

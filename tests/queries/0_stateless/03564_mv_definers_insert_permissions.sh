@@ -5,11 +5,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-user1="user03564_1_${CLICKHOUSE_DATABASE}_$RANDOM"
-user2="user03564_2_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user1="user03564_1_${DATASTORE_DATABASE}_$RANDOM"
+user2="user03564_2_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 DROP USER IF EXISTS $user1, $user2;
 CREATE USER $user1, $user2;
 
@@ -45,9 +45,9 @@ GRANT SELECT ON $db.destination TO $user2;
 GRANT INSERT ON $db.destination TO $user2;
 EOF
 
-(( $(${CLICKHOUSE_CLIENT} --user $user2 --query "INSERT INTO $db.mv VALUES (10)" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-${CLICKHOUSE_CLIENT} --query "GRANT INSERT ON $db.destination TO $user1";
-${CLICKHOUSE_CLIENT} --user $user2 --query "INSERT INTO $db.mv VALUES (10)";
+(( $(${DATASTORE_CLIENT} --user $user2 --query "INSERT INTO $db.mv VALUES (10)" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+${DATASTORE_CLIENT} --query "GRANT INSERT ON $db.destination TO $user1";
+${DATASTORE_CLIENT} --user $user2 --query "INSERT INTO $db.mv VALUES (10)";
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE $db.mv";
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS $user1, $user2";
+${DATASTORE_CLIENT} --query "DROP TABLE $db.mv";
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS $user1, $user2";

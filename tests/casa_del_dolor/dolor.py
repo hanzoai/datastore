@@ -179,11 +179,11 @@ parser.add_argument(
     help="Probability to kill the server instead of shutting it down",
 )
 parser.add_argument(
-    "--restart-clickhouse-prob",
+    "--restart-datastore-prob",
     type=int,
     default=50,
     choices=range(0, 101),
-    help="Probability to restart ClickHouse instead of integration servers",
+    help="Probability to restart Datastore instead of integration servers",
 )
 parser.add_argument(
     "--time-between-shutdowns",
@@ -385,7 +385,7 @@ if len(args.server_binaries) > 1 and random.randint(1, 100) <= 90:
         result = subprocess.run(
             [binary_path, "--version"], capture_output=True, text=True
         )
-        # Output like: "ClickHouse client version 24.3.1.2 (official build)."
+        # Output like: "Datastore client version 24.3.1.2 (official build)."
         match = re.search(r"version (\d+\.\d+\.\d+\.?\d*)", result.stdout)
         if match:
             return tuple(int(x) for x in match.group(1).split("."))
@@ -681,7 +681,7 @@ while all_running and (not reached_limit):
                 client.process.returncode
             )
         for server in servers:
-            pid = server.get_process_pid("clickhouse")
+            pid = server.get_process_pid("datastore")
             if pid is None:
                 logger.info(f"The server {server.name} is not running")
                 all_running = good_exit = False
@@ -713,7 +713,7 @@ while all_running and (not reached_limit):
     )
     kill_server = random.randint(1, 100) <= args.kill_server_prob
     # Pick one of the servers to restart
-    # Restart ClickHouse
+    # Restart Datastore
     if random.randint(1, 100) <= args.restart_clickhouse_prob:
         next_pick = random.choice(servers)
         logger.info(
@@ -723,7 +723,7 @@ while all_running and (not reached_limit):
         try:
             next_pick.stop_clickhouse(stop_wait_sec=10, kill=kill_server)
         except Exception as ex:
-            logger.error(f"Failed to stop ClickHouse: {ex}")
+            logger.error(f"Failed to stop Datastore: {ex}")
             logger.info(f"The server {next_pick.name} is not running")
             all_running = good_exit = False
         time.sleep(1)
@@ -746,8 +746,8 @@ while all_running and (not reached_limit):
                 [
                     "ln",
                     "-sf",
-                    f"/usr/bin/clickhouse{sorted_binaries.index(next_server)}",
-                    "/usr/bin/clickhouse",
+                    f"/usr/bin/datastore{sorted_binaries.index(next_server)}",
+                    "/usr/bin/datastore",
                 ],
                 user="root",
             )
@@ -757,7 +757,7 @@ while all_running and (not reached_limit):
             try:
                 next_pick.start_clickhouse(start_wait_sec=10, retry_start=False)
             except Exception as ex:
-                logger.error(f"Failed to start ClickHouse: {ex}")
+                logger.error(f"Failed to start Datastore: {ex}")
                 logger.info(f"The server {next_pick.name} is not running")
                 all_running = good_exit = False
             if all_running and args.with_leak_detection and next_pick.name == "node0":

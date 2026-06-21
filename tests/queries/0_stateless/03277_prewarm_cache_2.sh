@@ -5,12 +5,12 @@
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
 
     DROP TABLE IF EXISTS t_prewarm_cache_rmt_1;
 
     CREATE TABLE t_prewarm_cache_rmt_1 (a UInt64, b UInt64, c UInt64)
-    ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/03277_prewarms_caches/t_prewarm_cache', '1')
+    ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/03277_prewarms_caches/t_prewarm_cache', '1')
     ORDER BY a
     SETTINGS
         index_granularity = 100,
@@ -50,7 +50,7 @@ $CLICKHOUSE_CLIENT --query "
 "
 
 for _ in {1..100}; do
-    res=$($CLICKHOUSE_CLIENT -q "
+    res=$($DATASTORE_CLIENT -q "
         SELECT value FROM system.metrics WHERE metric = 'PrimaryIndexCacheFiles';
     ")
     if [[ $res -eq 0 ]]; then
@@ -59,7 +59,7 @@ for _ in {1..100}; do
     sleep 0.3
 done
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT metric, value FROM system.metrics WHERE metric IN ('PrimaryIndexCacheFiles', 'MarkCacheFiles') ORDER BY metric;
 
     SYSTEM FLUSH LOGS query_log;

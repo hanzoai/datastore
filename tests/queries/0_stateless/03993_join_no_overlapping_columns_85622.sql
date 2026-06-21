@@ -1,5 +1,5 @@
--- https://github.com/ClickHouse/ClickHouse/issues/85622
--- https://github.com/ClickHouse/ClickHouse/issues/86528
+-- https://github.com/ClickHouse/Datastore/issues/85622
+-- https://github.com/ClickHouse/Datastore/issues/86528
 
 CREATE TABLE test_85622 (key UInt64, a UInt8, b String, c Float64) ENGINE = MergeTree ORDER BY key;
 INSERT INTO test_85622 SELECT number, number, toString(number), number FROM numbers(4);

@@ -199,7 +199,7 @@ void testServerSideEncryption(
 
 TEST(IOTestAwsS3Client, AppendExtraSSECHeadersRead)
 {
-    /// See https://github.com/ClickHouse/ClickHouse/pull/19748
+    /// See https://github.com/ClickHouse/Datastore/pull/19748
     testServerSideEncryption(
         doReadRequest,
         /* disable_checksum= */ false,
@@ -208,7 +208,7 @@ TEST(IOTestAwsS3Client, AppendExtraSSECHeadersRead)
         "authorization: ... SignedHeaders="
         "amz-sdk-invocation-id;"
         "amz-sdk-request;"
-        "clickhouse-request;"
+        "datastore-request;"
         "content-type;"
         "host;"
         "x-amz-api-version;"
@@ -224,7 +224,7 @@ TEST(IOTestAwsS3Client, AppendExtraSSECHeadersRead)
 
 TEST(IOTestAwsS3Client, AppendExtraSSECHeadersWrite)
 {
-    /// See https://github.com/ClickHouse/ClickHouse/pull/19748
+    /// See https://github.com/ClickHouse/Datastore/pull/19748
     testServerSideEncryption(
         doWriteRequest,
         /* disable_checksum= */ false,
@@ -249,7 +249,7 @@ TEST(IOTestAwsS3Client, AppendExtraSSECHeadersWrite)
 
 TEST(IOTestAwsS3Client, AppendExtraSSECHeadersWriteDisableChecksum)
 {
-    /// See https://github.com/ClickHouse/ClickHouse/pull/19748
+    /// See https://github.com/ClickHouse/Datastore/pull/19748
     testServerSideEncryption(
         doWriteRequest,
         /* disable_checksum= */ true,
@@ -286,7 +286,7 @@ TEST(IOTestAwsS3Client, AppendExtraSSEKMSHeadersRead)
         "authorization: ... SignedHeaders="
         "amz-sdk-invocation-id;"
         "amz-sdk-request;"
-        "clickhouse-request;"
+        "datastore-request;"
         "content-type;"
         "host;"
         "x-amz-api-version;"
@@ -327,7 +327,7 @@ TEST(IOTestAwsS3Client, AppendExtraSSEKMSHeadersWrite)
 
 TEST(IOTestAwsS3Client, ChecksumHeaderIsPresentForS3Express)
 {
-    /// See https://github.com/ClickHouse/ClickHouse/pull/19748
+    /// See https://github.com/ClickHouse/Datastore/pull/19748
     testServerSideEncryption(
         doWriteRequest,
         /* disable_checksum= */ true,

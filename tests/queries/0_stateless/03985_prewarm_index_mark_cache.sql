@@ -4,11 +4,11 @@ DROP TABLE IF EXISTS t_prewarm_idx_cache_1;
 DROP TABLE IF EXISTS t_prewarm_idx_cache_2;
 
 CREATE TABLE t_prewarm_idx_cache_1 (a UInt64, b UInt64, c String, INDEX idx_b b TYPE minmax GRANULARITY 1)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/03985_prewarm_index_mark_cache/t', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/03985_prewarm_index_mark_cache/t', '1')
 ORDER BY a SETTINGS prewarm_mark_cache = 1;
 
 CREATE TABLE t_prewarm_idx_cache_2 (a UInt64, b UInt64, c String, INDEX idx_b b TYPE minmax GRANULARITY 1)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/03985_prewarm_index_mark_cache/t', '2')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/03985_prewarm_index_mark_cache/t', '2')
 ORDER BY a SETTINGS prewarm_mark_cache = 1;
 
 SYSTEM DROP MARK CACHE;

@@ -12,7 +12,7 @@ function perform()
         --session_timezone UTC
         --input_format_values_interpret_expressions 0
     )
-    TZ=UTC $CLICKHOUSE_CLIENT "${settings[@]}" --query "$query" 2>/dev/null
+    TZ=UTC $DATASTORE_CLIENT "${settings[@]}" --query "$query" 2>/dev/null
     if [ "$?" -ne 0 ]; then
         echo "query failed"
     fi

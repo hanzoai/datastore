@@ -18,7 +18,7 @@ ORDER BY tuple()
 SETTINGS index_granularity = 128;
 
 INSERT INTO tab SELECT number, 'alick' FROM numbers(1024);
-INSERT INTO tab SELECT number, 'clickhouse' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'datastore' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'clickbench' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'blick' FROM numbers(1024);
 
@@ -41,7 +41,7 @@ ENGINE = MergeTree()
 ORDER BY tuple();
 
 INSERT INTO tab SELECT number, 'alick' FROM numbers(1024);
-INSERT INTO tab SELECT number, 'clickhouse' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'datastore' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'clickbench' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'blick' FROM numbers(1024);
 

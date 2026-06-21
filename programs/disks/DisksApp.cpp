@@ -331,7 +331,7 @@ void DisksApp::registerCommands()
     command_descriptions.emplace("current_disk_with_path", makeCommandGetCurrentDiskAndPath());
     command_descriptions.emplace("touch", makeCommandTouch());
     command_descriptions.emplace("help", makeCommandHelp(*this));
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     command_descriptions.emplace("packed-io", makeCommandPackedIO());
 #endif
     for (const auto & [command_name, command_ptr] : command_descriptions)
@@ -363,7 +363,7 @@ void DisksApp::processOptions()
 
 void DisksApp::printEntryHelpMessage() const
 {
-    std::cout << "\x1b[1;33m ClickHouse disk management tool \x1b[0m \n";
+    std::cout << "\x1b[1;33m Datastore disk management tool \x1b[0m \n";
     std::cout << options_description << '\n';
 }
 
@@ -465,7 +465,7 @@ void DisksApp::init(const std::vector<String> & common_arguments)
 
 String DisksApp::getDefaultConfigFileName()
 {
-    return "/etc/clickhouse-server/config.xml";
+    return "/etc/datastore-server/config.xml";
 }
 
 int DisksApp::main(const std::vector<String> & /*args*/)
@@ -505,7 +505,7 @@ int DisksApp::main(const std::vector<String> & /*args*/)
         auto log_level = config().getString("log-level", "trace");
         Poco::Logger::root().setLevel(Poco::Logger::parseLevel(log_level));
 
-        auto log_path = config().getString("logger.clickhouse-disks", "/var/log/clickhouse-server/clickhouse-disks.log");
+        auto log_path = config().getString("logger.datastore-disks", "/var/log/datastore-server/datastore-disks.log");
 
         log_file = new Poco::FileChannel;
         log_file->setProperty(Poco::FileChannel::PROP_PATH, fs::weakly_canonical(log_path));

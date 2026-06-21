@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT -n"
+format="$DATASTORE_FORMAT -n"
 
 $format <<EOF
 SELECT a, b AS x FROM table AS t

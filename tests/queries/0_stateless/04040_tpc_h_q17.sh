@@ -12,4 +12,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./04040_tpc_h.lib
 . "$CURDIR"/04040_tpc_h.lib
 
-{ echo "USE tpch;"; cat "$CURDIR/../../benchmarks/tpc-h/queries/query_17.sql"; } | $CLICKHOUSE_CLIENT "${SETTINGS[@]}"
+{ echo "USE tpch;"; cat "$CURDIR/../../benchmarks/tpc-h/queries/query_17.sql"; } | $DATASTORE_CLIENT "${SETTINGS[@]}"

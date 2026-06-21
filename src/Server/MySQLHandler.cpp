@@ -480,7 +480,7 @@ void MySQLHandler::comQuery(ReadBuffer & payload, bool binary_protocol)
 {
     String query = String(payload.position(), payload.buffer().end());
 
-    // This is a workaround in order to support adding ClickHouse to MySQL using federated server.
+    // This is a workaround in order to support adding Datastore to MySQL using federated server.
     // As Clickhouse doesn't support these statements, we just send OK packet in response.
     if (isFederatedServerSetupSetCommand(query))
     {
@@ -663,7 +663,7 @@ void MySQLHandler::erasePreparedStatement(UInt32 statement_id)
 void MySQLHandler::authPluginSSL()
 {
     throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-                    "ClickHouse was built without SSL support. Try specifying password using double SHA1 in users.xml.");
+                    "Datastore was built without SSL support. Try specifying password using double SHA1 in users.xml.");
 }
 
 void MySQLHandler::finishHandshakeSSL(

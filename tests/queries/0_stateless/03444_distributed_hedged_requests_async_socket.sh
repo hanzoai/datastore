@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     drop table if exists 03444_local;
     drop table if exists 03444_distr;
 
@@ -16,7 +16,7 @@ for use_hedged_requests in {0..1}; do
     for async_socket_for_remote in {0..1}; do
         echo "-- use_hedged_requests = $use_hedged_requests, async_socket_for_remote = $async_socket_for_remote"
 
-        $CLICKHOUSE_CLIENT -m -q "
+        $DATASTORE_CLIENT -m -q "
             select 'remote() 1 shard: ' || count()
             from remote('127.0.0.1|127.0.0.2|127.0.0.3', currentDatabase(), 03444_local)
             settings prefer_localhost_replica = 0,
@@ -42,7 +42,7 @@ for use_hedged_requests in {0..1}; do
     done
 done
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     drop table 03444_local;
     drop table 03444_distr;
 "

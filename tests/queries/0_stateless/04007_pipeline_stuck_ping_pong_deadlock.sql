@@ -6,7 +6,7 @@
 -- the right side (Second) couldn't consume enough data to send the ping because the downstream
 -- was blocked waiting for left-side data — a circular dependency.
 --
--- https://github.com/ClickHouse/ClickHouse/issues/57728
+-- https://github.com/ClickHouse/Datastore/issues/57728
 
 DROP TABLE IF EXISTS t1;
 DROP TABLE IF EXISTS t2;

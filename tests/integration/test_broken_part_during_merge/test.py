@@ -25,7 +25,7 @@ def test_merge_and_part_corruption(started_cluster):
     node1.query(
         """
         CREATE TABLE replicated_mt(date Date, id UInt32, value Int32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/replicated_mt', '{replica}') ORDER BY id
+        ENGINE = ReplicatedMergeTree('/datastore/tables/replicated_mt', '{replica}') ORDER BY id
         SETTINGS cleanup_delay_period=1, cleanup_delay_period_random_add=1, cleanup_thread_preferred_points_per_iteration=0;
             """.format(
             replica=node1.name
@@ -48,7 +48,7 @@ def test_merge_and_part_corruption(started_cluster):
     )
 
     # Need to corrupt "border part" (left or right). If we will corrupt something in the middle
-    # clickhouse will not consider merge as broken, because we have parts with the same min and max
+    # datastore will not consider merge as broken, because we have parts with the same min and max
     # block numbers.
     corrupt_part_data_on_disk(node1, "replicated_mt", "all_3_3_0")
 

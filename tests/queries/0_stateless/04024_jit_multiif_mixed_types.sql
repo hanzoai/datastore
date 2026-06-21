@@ -4,7 +4,7 @@
 -- Previously, nativeCast had copy-paste bugs where type checks on lines 203/205
 -- checked the same variable twice instead of checking both from and to types.
 -- Also exercises the PassBuilder fix that passes proper TargetMachine to LLVM.
--- https://github.com/ClickHouse/ClickHouse/issues/98580
+-- https://github.com/ClickHouse/Datastore/issues/98580
 
 SET compile_expressions = 1;
 SET min_count_to_compile_expression = 0;

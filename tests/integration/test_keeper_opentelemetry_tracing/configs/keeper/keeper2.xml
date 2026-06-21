@@ -1,10 +1,10 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>2</server_id>
-        <storage_path>/var/lib/clickhouse/coordination</storage_path>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <storage_path>/var/lib/datastore/coordination</storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -47,6 +47,6 @@
         <table>opentelemetry_span_log</table>
     </opentelemetry_span_log>
 
-    <path>/var/lib/clickhouse/coordination</path>
+    <path>/var/lib/datastore/coordination</path>
     <listen_host>0.0.0.0</listen_host>
-</clickhouse>
+</datastore>

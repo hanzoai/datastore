@@ -1,0 +1,2 @@
+[[ -v $_DATASTORE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/datastore-bootstrap"
+_complete_clickhouse_generic datastore-client

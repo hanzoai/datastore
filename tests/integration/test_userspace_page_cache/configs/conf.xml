@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -20,4 +20,4 @@
     </storage_configuration>
 
     <page_cache_max_size>10000000000</page_cache_max_size>
-</clickhouse>
+</datastore>

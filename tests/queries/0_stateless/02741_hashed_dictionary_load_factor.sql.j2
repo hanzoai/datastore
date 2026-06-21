@@ -16,7 +16,7 @@ CREATE DICTIONARY test_dictionary_{{layout}}
     key UInt64,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table))
+SOURCE(DATASTORE(TABLE test_table))
 LAYOUT({{layout}}())
 LIFETIME(0);
 
@@ -25,7 +25,7 @@ CREATE DICTIONARY test_dictionary_{{layout}}_load_factor
     key UInt64,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table))
+SOURCE(DATASTORE(TABLE test_table))
 LAYOUT({{layout}}(MAX_LOAD_FACTOR 0.98))
 LIFETIME(0);
 

@@ -95,31 +95,31 @@ def reset_cluster_for_next_iteration():
     """
     # Check if node 6 has a Keeper config (it only has one after the test runs)
     result = nodes[CLUSTER_SIZE].exec_in_container(
-        ["bash", "-c", f"test -f /etc/clickhouse-server/config.d/enable_keeper{CLUSTER_SIZE+1}.xml && echo yes || echo no"],
+        ["bash", "-c", f"test -f /etc/datastore-server/config.d/enable_keeper{CLUSTER_SIZE+1}.xml && echo yes || echo no"],
         nothrow=True,
     )
     if result.strip() != "yes":
         return  # Cluster is in initial state, no reset needed
 
-    # Force kill all ClickHouse processes (use kill=True for faster shutdown with TSAN)
+    # Force kill all Datastore processes (use kill=True for faster shutdown with TSAN)
     for node in nodes:
         node.stop_clickhouse(kill=True)
 
     # Clear coordination data on all nodes to reset Raft state
     for node in nodes:
-        node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination"])
+        node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination"])
 
     # Remove Keeper configs from nodes 6-8
     for i in range(CLUSTER_SIZE, len(nodes)):
         nodes[i].exec_in_container(
-            ["rm", "-f", f"/etc/clickhouse-server/config.d/enable_keeper{i+1}.xml"],
+            ["rm", "-f", f"/etc/datastore-server/config.d/enable_keeper{i+1}.xml"],
             nothrow=True,
         )
 
     # Restore node 1's original Keeper config
     nodes[0].copy_file_to_container(
         os.path.join(CONFIG_DIR, "enable_keeper1.xml"),
-        "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+        "/etc/datastore-server/config.d/enable_keeper1.xml",
     )
 
     # Start nodes 1-5 without waiting (they need to start together to form quorum)
@@ -129,14 +129,14 @@ def reset_cluster_for_next_iteration():
             detach=True,
         )
 
-    # Wait for ClickHouse processes to actually be running before checking Keeper
+    # Wait for Datastore processes to actually be running before checking Keeper
     for node in nodes[:CLUSTER_SIZE]:
         for _ in range(120):  # 120 seconds timeout
-            if node.get_process_pid("clickhouse") is not None:
+            if node.get_process_pid("datastore") is not None:
                 break
             time.sleep(1)
         else:
-            raise Exception(f"ClickHouse process did not start on {node.name}")
+            raise Exception(f"Datastore process did not start on {node.name}")
 
     # Wait for the Keeper cluster to form and become ready (with retry for connection refused)
     wait_nodes_with_retries(cluster, nodes[:CLUSTER_SIZE])
@@ -210,7 +210,7 @@ def test_cluster_recovery(started_cluster):
 
         nodes[0].copy_file_to_container(
             os.path.join(CONFIG_DIR, "recovered_keeper1.xml"),
-            "/etc/clickhouse-server/config.d/enable_keeper1.xml",
+            "/etc/datastore-server/config.d/enable_keeper1.xml",
         )
 
         nodes[0].query("SYSTEM RELOAD CONFIG")
@@ -231,7 +231,7 @@ def test_cluster_recovery(started_cluster):
                 CONFIG_DIR,
                 f"enable_keeper{CLUSTER_SIZE+1}.xml",
             ),
-            f"/etc/clickhouse-server/config.d/enable_keeper{CLUSTER_SIZE+1}.xml",
+            f"/etc/datastore-server/config.d/enable_keeper{CLUSTER_SIZE+1}.xml",
         )
 
         nodes[CLUSTER_SIZE].start_clickhouse()
@@ -247,7 +247,7 @@ def test_cluster_recovery(started_cluster):
             node = nodes[i]
             node.copy_file_to_container(
                 os.path.join(CONFIG_DIR, f"enable_keeper{i+1}.xml"),
-                f"/etc/clickhouse-server/config.d/enable_keeper{i+1}.xml",
+                f"/etc/datastore-server/config.d/enable_keeper{i+1}.xml",
             )
             node.start_clickhouse()
             keeper_utils.wait_until_connected(cluster, node)

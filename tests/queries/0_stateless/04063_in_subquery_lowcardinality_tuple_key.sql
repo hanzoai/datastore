@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100929
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100929
 -- IN (SELECT ...) with Tuple(LowCardinality(...)) ORDER BY key must not crash.
 -- The fix in `tryPrepareSetColumnsForIndex` (PR #100760) strips `LowCardinality`
 -- from the key column type before `castColumnAccurateOrNull`. This test ensures

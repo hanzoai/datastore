@@ -1,5 +1,5 @@
 ---
-description: 'ClickHouse allows sending a server the data that is needed for processing
+description: 'Datastore allows sending a server the data that is needed for processing
   a query, together with a `SELECT` query. This data is put in a temporary table and
   can be used in the query (for example, in `IN` operators).'
 sidebar_label: 'External data for query processing'
@@ -9,7 +9,7 @@ title: 'External data for query processing'
 doc_type: 'reference'
 ---
 
-ClickHouse allows sending a server the data that is needed for processing a query, together with a `SELECT` query. This data is put in a temporary table (see the section "Temporary tables") and can be used in the query (for example, in `IN` operators).
+Datastore allows sending a server the data that is needed for processing a query, together with a `SELECT` query. This data is put in a temporary table (see the section "Temporary tables") and can be used in the query (for example, in `IN` operators).
 
 For example, if you have a text file with important user identifiers, you can upload it to the server along with a query that uses filtration by this list.
 
@@ -40,9 +40,9 @@ The files specified in 'file' will be parsed by the format specified in 'format'
 Examples:
 
 ```bash
-$ echo -ne "1\n2\n3\n" | clickhouse-client --query="SELECT count() FROM test.visits WHERE TraficSourceID IN _data" --external --file=- --types=Int8
+$ echo -ne "1\n2\n3\n" | datastore-client --query="SELECT count() FROM test.visits WHERE TraficSourceID IN _data" --external --file=- --types=Int8
 849897
-$ cat /etc/passwd | sed 's/:/\t/g' | clickhouse-client --query="SELECT shell, count() AS c FROM passwd GROUP BY shell ORDER BY c DESC" --external --file=- --name=passwd --structure='login String, unused String, uid UInt16, gid UInt16, comment String, home String, shell String'
+$ cat /etc/passwd | sed 's/:/\t/g' | datastore-client --query="SELECT shell, count() AS c FROM passwd GROUP BY shell ORDER BY c DESC" --external --file=- --name=passwd --structure='login String, unused String, uid UInt16, gid UInt16, comment String, home String, shell String'
 /bin/sh 20
 /bin/false      5
 /bin/bash       4

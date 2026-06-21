@@ -7,7 +7,7 @@
 #  Additionaly, to avoid redundant reads we specify the "right border" for each
 #  read. Such possiblity supported by S3 API. For example you can send request
 #  to S3 to read data from 563 byte to 92753 byte and we use this feature in
-#  ClickHouse.
+#  Datastore.
 #
 #  2) We use granules (range of data between marks) as a minimal task for each
 #  thread. For example, when we need to read data from 0 to 1092 mark and we

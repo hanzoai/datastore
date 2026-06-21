@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # This is a smoke test, it proves that the Trivial merge selector exists and does something.
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 DROP TABLE IF EXISTS test;
 CREATE TABLE test (x UInt64) ENGINE = MergeTree ORDER BY x SETTINGS merge_selector_algorithm = 'Trivial';
 INSERT INTO test VALUES (1);
@@ -43,10 +43,10 @@ OPTIMIZE TABLE test;
 
 while true
 do
-    ${CLICKHOUSE_CLIENT} --query "SELECT name FROM system.parts WHERE active AND table = 'test' AND database = currentDatabase() AND name = 'all_1_10_1'" | grep . && break
+    ${DATASTORE_CLIENT} --query "SELECT name FROM system.parts WHERE active AND table = 'test' AND database = currentDatabase() AND name = 'all_1_10_1'" | grep . && break
     sleep 0.1
 done
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 DROP TABLE test;
 "

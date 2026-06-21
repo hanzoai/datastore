@@ -426,7 +426,7 @@ target_include_directories(protoc PRIVATE
 add_executable(protobuf::protoc ALIAS protoc)
 
 if (ENABLE_FUZZING)
-    # `protoc` will be built with sanitizer and it could fail during ClickHouse build
+    # `protoc` will be built with sanitizer and it could fail during Datastore build
     # It easily reproduces in oss-fuzz building pipeline
     # To avoid this we can try to build `protoc` without any sanitizer with option `-fno-sanitize=all`, but
     # it this case we will face with linker errors, because libcxx still will be built with sanitizer

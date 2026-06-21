@@ -243,7 +243,7 @@ def complex_table(catalog_manager):
 
 @pytest.fixture(scope="module")
 def shared_db(node, catalog_manager, sales_table, customers_table):
-    """Single ClickHouse database backing sales/customers tests."""
+    """Single Datastore database backing sales/customers tests."""
     db = catalog_manager.make_database_name()
     catalog_manager.create_catalog(node, db)
     yield db
@@ -339,7 +339,7 @@ def test_show_create_table_columns(node, shared_db, sales_table, catalog_manager
     )
 
     # All Arrow fields are nullable by default, so they become optional in Iceberg
-    # and map to Nullable(...) types in ClickHouse.
+    # and map to Nullable(...) types in Datastore.
     expected_columns = {
         "id": "Nullable(Int64)",
         "customer_id": "Nullable(Int64)",
@@ -757,7 +757,7 @@ def test_show_data_lake_catalogs_setting(
 
 @only_glue
 def test_glue_env_credentials(node, catalog_manager, sales_table):
-    """ClickHouse picks up AWS credentials from container env vars."""
+    """Datastore picks up AWS credentials from container env vars."""
 
     env_out = node.exec_in_container([
         "bash", "-c", "env | grep AWS",
@@ -816,7 +816,7 @@ def test_nonexistent_table(node, shared_db):
 
 
 def test_user_without_show_privilege(node, catalog_manager, sales_table):
-    """ClickHouse user without SHOW DATABASES privilege is correctly denied."""
+    """Datastore user without SHOW DATABASES privilege is correctly denied."""
     db = catalog_manager.make_database_name()
     catalog_manager.create_catalog(node, db)
     try:
@@ -1164,7 +1164,7 @@ def test_list_tables_pagination(node, catalog_manager):
     """`SHOW TABLES` and `system.tables` list every table when the catalog
     paginates the response.
 
-    Regression test for https://github.com/ClickHouse/ClickHouse/pull/104531.
+    Regression test for https://github.com/ClickHouse/Datastore/pull/104531.
     Iceberg REST catalogs (`iceberg-rest`, `onelake`, `biglake`) paginate
     list-tables / list-namespaces responses using a `next-page-token`
     continuation (Fabric / OneLake pages at ~50 entries per namespace).

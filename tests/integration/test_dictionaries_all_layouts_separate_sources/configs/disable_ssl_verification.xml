@@ -1,4 +1,4 @@
- <clickhouse>
+ <datastore>
     <openSSL>
         <client>
             <cacheSessions>true</cacheSessions>
@@ -8,5 +8,5 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>
 

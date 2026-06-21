@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/104589
+-- https://github.com/ClickHouse/Datastore/issues/104589
 -- Follow-up to PR #102546: scalar pointwise ops that bypass `initializeFromVectorAndValue`
 -- (`pointwiseEqual` / `pointwiseNotEqual` via inline conversion;
 --  `pointwiseMultiply` / `pointwiseDivide` non-trivial path via `pointwiseRawBinaryOperate`)

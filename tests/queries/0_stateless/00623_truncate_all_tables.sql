@@ -24,7 +24,7 @@ SELECT * FROM truncate_test_stripe_log;
 SELECT * FROM truncate_test_merge_tree;
 
 SELECT '======After Truncate And Empty======';
-TRUNCATE ALL TABLES FROM IF EXISTS {CLICKHOUSE_DATABASE:Identifier};
+TRUNCATE ALL TABLES FROM IF EXISTS {DATASTORE_DATABASE:Identifier};
 SELECT * FROM system.numbers WHERE number NOT IN truncate_test_set LIMIT 1;
 SELECT * FROM truncate_test_log;
 SELECT * FROM truncate_test_memory;

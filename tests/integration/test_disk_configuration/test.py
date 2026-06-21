@@ -295,7 +295,7 @@ def test_merge_tree_custom_disk_setting(start_cluster):
 
         node1.query("SYSTEM RELOAD CONFIG")
         assert not node1.contains_in_log(
-            "disappeared from configuration, this change will be applied after restart of ClickHouse"
+            "disappeared from configuration, this change will be applied after restart of Datastore"
         )
         assert int(node1.query(f"SELECT count() FROM {TABLE_NAME}")) == 300
 
@@ -305,7 +305,7 @@ def test_merge_tree_custom_disk_setting(start_cluster):
         node1.query(
             f"""
             CREATE TABLE {TABLE_NAME}_4 ON CLUSTER 'cluster' (a Int32)
-            ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')
+            ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')
             ORDER BY tuple()
             SETTINGS
                 disk = disk(
@@ -378,7 +378,7 @@ def test_merge_tree_nested_custom_disk_setting(start_cluster):
         SETTINGS disk = disk(
                 type=cache,
                 max_size='1Gi',
-                path='/var/lib/clickhouse/custom_disk_cache/',
+                path='/var/lib/datastore/custom_disk_cache/',
                 disk=disk(
                     type=s3,
                     endpoint='http://minio1:9001/root/data/',
@@ -673,8 +673,8 @@ def test_dynamic_disk_security_settings(start_cluster):
                 type = object_storage,
                 object_storage_type = s3,
                 endpoint = 'from_env HOME',
-                access_key_id = clickhouse,
-                secret_access_key = clickhouse)
+                access_key_id = datastore,
+                secret_access_key = datastore)
             """,
             user="restricted_user",
         )
@@ -688,8 +688,8 @@ def test_dynamic_disk_security_settings(start_cluster):
                 type = object_storage,
                 object_storage_type = s3,
                 include = 'some_include',
-                access_key_id = clickhouse,
-                secret_access_key = clickhouse)
+                access_key_id = datastore,
+                secret_access_key = datastore)
             """,
             user="restricted_user",
         )
@@ -703,8 +703,8 @@ def test_dynamic_disk_security_settings(start_cluster):
                 type = object_storage,
                 object_storage_type = s3,
                 endpoint = 'from_zk /some/zk/path',
-                access_key_id = clickhouse,
-                secret_access_key = clickhouse)
+                access_key_id = datastore,
+                secret_access_key = datastore)
             """,
             user="restricted_user",
         )
@@ -722,8 +722,8 @@ def test_dynamic_disk_security_settings(start_cluster):
                 type = object_storage,
                 object_storage_type = s3,
                 endpoint = 'from_env HOME',
-                access_key_id = clickhouse,
-                secret_access_key = clickhouse)
+                access_key_id = datastore,
+                secret_access_key = datastore)
             """,
             user="restricted_user",
         )
@@ -740,8 +740,8 @@ def test_dynamic_disk_security_settings(start_cluster):
                 type = object_storage,
                 object_storage_type = s3,
                 endpoint = 'from_env HOME',
-                access_key_id = clickhouse,
-                secret_access_key = clickhouse)
+                access_key_id = datastore,
+                secret_access_key = datastore)
             """,
             user="restricted_user",
         )

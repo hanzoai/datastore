@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS insert_dedup_token2 SYNC;
 select 'create replica 1 and check deduplication';
 CREATE TABLE insert_dedup_token1 (
     id Int32, val UInt32
-) ENGINE=ReplicatedMergeTree('/clickhouse/tables/{database}/insert_dedup_token', 'r1') ORDER BY id;
+) ENGINE=ReplicatedMergeTree('/datastore/tables/{database}/insert_dedup_token', 'r1') ORDER BY id;
 
 select 'two inserts with exact data, one inserted, one deduplicated by data digest';
 INSERT INTO insert_dedup_token1 VALUES(1, 1001);
@@ -34,7 +34,7 @@ SELECT * FROM insert_dedup_token1 ORDER BY id;
 select 'create replica 2 and check deduplication';
 CREATE TABLE insert_dedup_token2 (
     id Int32, val UInt32
-) ENGINE=ReplicatedMergeTree('/clickhouse/tables/{database}/insert_dedup_token', 'r2') ORDER BY id;
+) ENGINE=ReplicatedMergeTree('/datastore/tables/{database}/insert_dedup_token', 'r2') ORDER BY id;
 SYSTEM SYNC REPLICA insert_dedup_token2;
 
 select 'inserted value deduplicated by data digest, the same result as before';

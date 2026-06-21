@@ -1,6 +1,6 @@
 ---
 name: keeper-stress-analysis
-description: Analyze ClickHouse Keeper stress-test results from play.clickhouse.com / keeper_stress_tests data warehouse. Use whenever the user asks about Keeper performance, validates Keeper PRs against stress dashboards, investigates regressions or improvements in Keeper nightlies, asks about specific date windows / SHAs / PR-sets in Keeper stress tests, wants per-PR or window-vs-window comparisons, asks "did this PR break Keeper", asks "what changed in Keeper between dates", or wants a summary report of Keeper stress runs. Triggers on terms like "keeper stress", "keeper PR", "keeper p99", "keeper memory", "keeper rps", "keeper nightly", "keeper-stress-tests", "keeper validation", "keeper regression", or any question referencing the keeper-stress Grafana dashboard. ALWAYS prefer this skill over re-deriving the workflow from scratch — it captures hard-learned lessons about cgroup-vs-Keeper memory, bench-harness confounds, noise floors, and per-PR attribution limits.
+description: Analyze Datastore Keeper stress-test results from play.datastore.com / keeper_stress_tests data warehouse. Use whenever the user asks about Keeper performance, validates Keeper PRs against stress dashboards, investigates regressions or improvements in Keeper nightlies, asks about specific date windows / SHAs / PR-sets in Keeper stress tests, wants per-PR or window-vs-window comparisons, asks "did this PR break Keeper", asks "what changed in Keeper between dates", or wants a summary report of Keeper stress runs. Triggers on terms like "keeper stress", "keeper PR", "keeper p99", "keeper memory", "keeper rps", "keeper nightly", "keeper-stress-tests", "keeper validation", "keeper regression", or any question referencing the keeper-stress Grafana dashboard. ALWAYS prefer this skill over re-deriving the workflow from scratch — it captures hard-learned lessons about cgroup-vs-Keeper memory, bench-harness confounds, noise floors, and per-PR attribution limits.
 argument-hint: [<date-window>|<pr-list>|<question>]
 disable-model-invocation: false
 allowed-tools: Bash(curl:*), Bash(python3:*), Bash(awk:*), Bash(mkdir:*), Bash(ls:*), Bash(wc:*), Bash(grep:*), Bash(sort:*), Bash(cat:*), Bash(gh:*), Bash(realpath:*), Bash(cp:*), Bash(chmod:*), Bash(sed:*), Read, Write, Edit, Glob, Grep
@@ -8,7 +8,7 @@ allowed-tools: Bash(curl:*), Bash(python3:*), Bash(awk:*), Bash(mkdir:*), Bash(l
 
 # Keeper Stress-Test Analysis Skill
 
-Analyse ClickHouse Keeper stress-test results from `keeper_stress_tests.keeper_metrics_ts` on `play.clickhouse.com` (the same data warehouse the Grafana `keeper-stress-run-details` dashboard reads from). The skill captures a tested end-to-end workflow plus hard-earned methodology lessons — use it instead of re-deriving the analysis each time.
+Analyse Datastore Keeper stress-test results from `keeper_stress_tests.keeper_metrics_ts` on `play.datastore.com` (the same data warehouse the Grafana `keeper-stress-run-details` dashboard reads from). The skill captures a tested end-to-end workflow plus hard-earned methodology lessons — use it instead of re-deriving the analysis each time.
 
 ## When to use
 
@@ -66,7 +66,7 @@ For a closed date-range analysis like "what changed between 2026-04-01 and 2026-
 
 The `rebuild.sh` script:
 1. Copies `queries/*.sql` and `scripts/*.py` into the work dir.
-2. Runs each query against `https://play.clickhouse.com/?user=play` via `curl --data-urlencode`.
+2. Runs each query against `https://play.datastore.com/?user=play` via `curl --data-urlencode`.
 3. Substitutes `{{TS_FILTER}}` placeholder if present in the SQL.
 4. Builds `merged_metrics.tsv` (one row per scenario × backend × commit; ~95+ columns covering bench, prom, mntr, container metrics).
 5. If `<work_dir>/../pr_meta.tsv` exists, builds the per-PR pipeline too.
@@ -106,7 +106,7 @@ For PR-set work, the user needs to provide a `pr_meta.tsv` mapping PR number →
   printf 'pr\ttitle\tmergedAt\tmergeCommit\tbase\theadRefName\n'
   for pr in <numbers>
   do
-    out=$(gh pr view "$pr" --repo ClickHouse/ClickHouse \
+    out=$(gh pr view "$pr" --repo Datastore/Datastore \
           --json title,mergedAt,mergeCommit,baseRefName,headRefName \
           -q '[.title,.mergedAt,.mergeCommit.oid,.baseRefName,.headRefName] | @tsv' 2>/dev/null)
     printf '%s\t%s\n' "$pr" "$out"
@@ -252,7 +252,7 @@ Spot-check three known data points (these are all baked into `examples/sample_ou
 User: "Did PR #99651 cause any Keeper regression?"
 
 Process:
-1. Fetch PR meta: `gh pr view 99651 --repo ClickHouse/ClickHouse --json title,mergedAt,mergeCommit`
+1. Fetch PR meta: `gh pr view 99651 --repo Datastore/Datastore --json title,mergedAt,mergeCommit`
 2. Run `rebuild.sh tmp/keeper_stress_skill 2026-03-25`
 3. Filter merged_metrics for the pre-merge nightly (`fdf46ee1`) vs post-merge nightly (`e02b59d7`) on `prod-mix-no-fault[default]` and `write-multi-no-fault[default]`
 4. Apply Phase 5 memory check: pull both `container_memory_bytes` and `KeeperApproximateDataSize`. The `prod-mix peak_mem 2.92→2.72 GB (-6.9%)` shows up on cgroup but `KeeperApproximateDataSize` is flat → conclude this is bench-side noise OR snapshot-timing artifact, not real Keeper improvement.

@@ -69,7 +69,7 @@ def test_initiator_user_in_ddl(started_cluster):
 
     for node in all_nodes:
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/config.xml",
+            "/etc/datastore-server/config.d/config.xml",
             "<distributed_ddl_use_initial_user_and_roles>1</distributed_ddl_use_initial_user_and_roles>",
             "<distributed_ddl_use_initial_user_and_roles>0</distributed_ddl_use_initial_user_and_roles>",
         )
@@ -79,7 +79,7 @@ def test_initiator_user_in_ddl(started_cluster):
 
     for node in all_nodes:
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/config.xml",
+            "/etc/datastore-server/config.d/config.xml",
             "<distributed_ddl_use_initial_user_and_roles>0</distributed_ddl_use_initial_user_and_roles>",
             "<distributed_ddl_use_initial_user_and_roles>1</distributed_ddl_use_initial_user_and_roles>",
         )

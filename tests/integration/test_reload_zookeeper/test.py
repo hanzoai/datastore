@@ -32,7 +32,7 @@ def test_reload_zookeeper(start_cluster):
     node.query(
         f"""
         CREATE TABLE test_table(date Date, id UInt32)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/shard1/{random_string(7)}/test_table', '1')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/shard1/{random_string(7)}/test_table', '1')
         PARTITION BY toYYYYMM(date)
         ORDER BY id
         """
@@ -43,7 +43,7 @@ def test_reload_zookeeper(start_cluster):
 
     ## remove zoo2, zoo3 from configs
     new_config = """
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo1</host>
@@ -51,7 +51,7 @@ def test_reload_zookeeper(start_cluster):
         </node>
         <session_timeout_ms>2000</session_timeout_ms>
     </zookeeper>
-</clickhouse>
+</datastore>
 """
     replace_zookeeper_config(node, new_config)
     ## config reloads, but can still work
@@ -80,7 +80,7 @@ def test_reload_zookeeper(start_cluster):
 
     ## set config to zoo2, server will be normal
     new_config = """
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo2</host>
@@ -88,7 +88,7 @@ def test_reload_zookeeper(start_cluster):
         </node>
         <session_timeout_ms>2000</session_timeout_ms>
     </zookeeper>
-</clickhouse>
+</datastore>
 """
     replace_zookeeper_config(node, new_config)
 

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/94789
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/94789
 -- Row policy + projection: query failed with `NOT_FOUND_COLUMN_IN_BLOCK`
 -- when the filter column was not in the SELECT list (and `force_optimize_projection = 1`).
 

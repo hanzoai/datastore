@@ -386,7 +386,7 @@ def generate_new_create_table_query(
     if settings is None:
         settings = {}
     if keeper_path is None:
-        keeper_path = f"/clickhouse/{{database}}/{table_name}"
+        keeper_path = f"/datastore/{{database}}/{table_name}"
     if replica_name is None:
         replica_name = "r1"
     settings["kafka_keeper_path"] = keeper_path

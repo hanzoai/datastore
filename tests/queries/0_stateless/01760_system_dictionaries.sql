@@ -13,7 +13,7 @@ CREATE DICTIONARY 01760_db.example_simple_key_dictionary (
     value UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'example_simple_key_source' DATABASE '01760_db'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'example_simple_key_source' DATABASE '01760_db'))
 LAYOUT(DIRECT());
 
 SELECT 'simple key';
@@ -41,7 +41,7 @@ CREATE DICTIONARY 01760_db.example_complex_key_dictionary (
     value UInt64
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'example_complex_key_source' DATABASE '01760_db'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'example_complex_key_source' DATABASE '01760_db'))
 LAYOUT(COMPLEX_KEY_DIRECT());
 
 SELECT 'complex key';

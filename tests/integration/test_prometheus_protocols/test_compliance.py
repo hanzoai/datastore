@@ -2,7 +2,7 @@
 PromQL compliance test based on https://github.com/prometheus/compliance/blob/main/promql/promql-test-queries.yml
 
 Generates synthetic demo-service data in OpenMetrics format, ingests it into
-both a reference Prometheus server and ClickHouse, then runs every query from
+both a reference Prometheus server and Datastore, then runs every query from
 the upstream compliance suite and reports a score.
 """
 
@@ -518,7 +518,7 @@ def start_cluster():
 def test_promql_compliance():
     """
     Run every query from the Prometheus PromQL compliance test suite against
-    both Prometheus (reference) and ClickHouse (test), and report a score.
+    both Prometheus (reference) and Datastore (test), and report a score.
     """
     test_cases = _expand_all_test_cases()
     result = ComplianceResult()
@@ -549,14 +549,14 @@ def test_promql_compliance():
             if test_failed:
                 result.record_pass()
             else:
-                result.record_fail(query, "expected failure but ClickHouse succeeded")
+                result.record_fail(query, "expected failure but Datastore succeeded")
             continue
 
         if test_failed:
             if "not implemented" in (test_err or "").lower() or "501" in (test_err or ""):
                 result.record_unsupported(query, test_err)
             else:
-                result.record_fail(query, f"ClickHouse error: {test_err}")
+                result.record_fail(query, f"Datastore error: {test_err}")
             continue
 
         match, diff = compare_results(ref_data, test_data)
@@ -587,8 +587,8 @@ def test_promql_compliance():
                                r"Prometheus query node type \S+ is not implemented|"
                                r"\S+ is not implemented)", reason)
                 key = m.group(1) if m else "other unsupported"
-            elif "expected failure but ClickHouse succeeded" in reason:
-                key = "should_fail mismatch (ClickHouse should reject but accepts)"
+            elif "expected failure but Datastore succeeded" in reason:
+                key = "should_fail mismatch (Datastore should reject but accepts)"
             elif "reference unexpectedly" in reason:
                 key = "reference mismatch (Prometheus behaves differently than expected)"
             elif "Number of values (0)" in reason:

@@ -1,6 +1,6 @@
 -- Tags: no-fasttest
 -- Parquet Bool to FixedString conversion should use string representation ("true"/"false"),
--- not raw bytes. https://github.com/ClickHouse/ClickHouse/issues/78909
+-- not raw bytes. https://github.com/ClickHouse/Datastore/issues/78909
 
 SET engine_file_truncate_on_insert = 1;
 

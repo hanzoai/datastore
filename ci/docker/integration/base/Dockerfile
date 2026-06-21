@@ -1,7 +1,7 @@
 # rebuild in #33610
-# docker build -t clickhouse/integration-test .
+# docker build -t datastore/integration-test .
 ARG FROM_TAG=latest
-FROM clickhouse/test-base:$FROM_TAG
+FROM datastore/test-base:$FROM_TAG
 
 SHELL ["/bin/bash", "-c"]
 
@@ -52,7 +52,7 @@ RUN arch=${TARGETARCH:-amd64} \
   && ln -s /usr/lib64/libmyodbc8a.so "$ODBC_DIR" \
   && ln -s /usr/lib64/libmyodbc8a.so "$ODBC_DIR"/libmyodbc.so
 
-# Unfortunately this is required for a single test for conversion data from zookeeper to clickhouse-keeper.
+# Unfortunately this is required for a single test for conversion data from zookeeper to datastore-keeper.
 # ZooKeeper is not started by default, but consumes some space in containers.
 # 777 perms used to allow anybody to start/stop ZooKeeper
 ENV ZOOKEEPER_VERSION='3.6.3'
@@ -71,10 +71,10 @@ maxClientCnxns=80' > /opt/zookeeper/conf/zoo.cfg && \
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
+COPY --from=datastore/cctools:859fb360308eb8ac47ad /opt/gdb /opt/gdb
 ENV PATH="/opt/gdb/bin:${PATH}"
 
-COPY --from=clickhouse/cctools:859fb360308eb8ac47ad \
+COPY --from=datastore/cctools:859fb360308eb8ac47ad \
   /opt/openssl-fips/openssl.cnf \
   /opt/openssl-fips/fipsmodule.cnf \
   /opt/openssl-fips/fips.so \

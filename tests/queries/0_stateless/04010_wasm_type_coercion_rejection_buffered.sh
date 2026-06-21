@@ -8,16 +8,16 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --allow_experimental_analyzer=1 << EOF
+${DATASTORE_CLIENT} --allow_experimental_analyzer=1 << EOF
 DROP FUNCTION IF EXISTS wasm_rb_i32;
 DROP FUNCTION IF EXISTS wasm_rb_f32;
 DROP FUNCTION IF EXISTS wasm_rb_f64;
 DELETE FROM system.webassembly_modules WHERE name = 'identity_int_rb_reject';
 EOF
 
-cat ${CUR_DIR}/wasm/identity_int.wasm | ${CLICKHOUSE_CLIENT} --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'identity_int_rb_reject', code FROM input('code String') FORMAT RawBlob"
+cat ${CUR_DIR}/wasm/identity_int.wasm | ${DATASTORE_CLIENT} --query "INSERT INTO system.webassembly_modules (name, code) SELECT 'identity_int_rb_reject', code FROM input('code String') FORMAT RawBlob"
 
-${CLICKHOUSE_CLIENT} --allow_experimental_analyzer=1 << EOF
+${DATASTORE_CLIENT} --allow_experimental_analyzer=1 << EOF
 CREATE FUNCTION wasm_rb_i32
     LANGUAGE WASM ABI BUFFERED_V1
     FROM 'identity_int_rb_reject' :: 'identity_rowbinary_i32'

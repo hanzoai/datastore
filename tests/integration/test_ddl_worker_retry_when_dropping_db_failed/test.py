@@ -49,7 +49,7 @@ def test_drop_database_failed_on_secondary_node_before_removing_keeper_path(
     node2.query(f"SYSTEM ENABLE FAILPOINT {failpoint_name}")
 
     node1.query(
-        r"CREATE DATABASE test ON CLUSTER 'test_cluster' ENGINE=Replicated('/clickhouse/db/test','{shard}','{replica}')"
+        r"CREATE DATABASE test ON CLUSTER 'test_cluster' ENGINE=Replicated('/datastore/db/test','{shard}','{replica}')"
     )
 
     node1.query("CREATE TABLE test.t (x INT, y String) ENGINE=MergeTree ORDER BY x")

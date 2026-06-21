@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103808
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103808
 --
 -- After PR #88770 enabled JIT compilation for `Decimal` types, `if(cond, decimal_col, int_literal)`
 -- (and the symmetric `if(cond, int_literal, decimal_col)`, plus `multiIf` with mixed branches)

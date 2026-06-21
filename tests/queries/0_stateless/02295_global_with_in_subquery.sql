@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/37141
+-- https://github.com/ClickHouse/Datastore/issues/37141
 
 WITH (SELECT 1) as v0
 SELECT v0, v > 0 FROM (

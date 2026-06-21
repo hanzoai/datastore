@@ -8,33 +8,33 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "CREATE TABLE floats (v Float64) Engine=MergeTree() ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 1.0"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE target_1 (v Float64) Engine=MergeTree() ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 1.0;"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE target_2 (v Float64) Engine=MergeTree() ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 1.0;"
-$CLICKHOUSE_CLIENT -q "CREATE MATERIALIZED VIEW floats_to_target TO target_1 AS SELECT * FROM floats"
-$CLICKHOUSE_CLIENT -q "CREATE MATERIALIZED VIEW floats_to_target_2 TO target_2 AS SELECT v FROM floats, numbers(2) n"
+$DATASTORE_CLIENT -q "CREATE TABLE floats (v Float64) Engine=MergeTree() ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 1.0"
+$DATASTORE_CLIENT -q "CREATE TABLE target_1 (v Float64) Engine=MergeTree() ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 1.0;"
+$DATASTORE_CLIENT -q "CREATE TABLE target_2 (v Float64) Engine=MergeTree() ORDER BY tuple() SETTINGS ratio_of_defaults_for_sparse_serialization = 1.0;"
+$DATASTORE_CLIENT -q "CREATE MATERIALIZED VIEW floats_to_target TO target_1 AS SELECT * FROM floats"
+$DATASTORE_CLIENT -q "CREATE MATERIALIZED VIEW floats_to_target_2 TO target_2 AS SELECT v FROM floats, numbers(2) n"
 
 # Insertions into table without MVs
-$CLICKHOUSE_CLIENT -q "INSERT into target_1 FORMAT CSV 1.0"
-$CLICKHOUSE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format Native | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+target_1+FORMAT+Native" --data-binary @-
-$CLICKHOUSE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format RowBinary | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+target_1+FORMAT+RowBinary" --data-binary @-
+$DATASTORE_CLIENT -q "INSERT into target_1 FORMAT CSV 1.0"
+$DATASTORE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format Native | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&query=INSERT+INTO+target_1+FORMAT+Native" --data-binary @-
+$DATASTORE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format RowBinary | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&query=INSERT+INTO+target_1+FORMAT+RowBinary" --data-binary @-
 
 # Insertions into table without 2 MVs (1:1 and 1:2 rows)
-$CLICKHOUSE_CLIENT -q "INSERT into floats FORMAT CSV 1.0"
-$CLICKHOUSE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format Native | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+floats+FORMAT+Native" --data-binary @-
-$CLICKHOUSE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format RowBinary | ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+floats+FORMAT+RowBinary" --data-binary @-
+$DATASTORE_CLIENT -q "INSERT into floats FORMAT CSV 1.0"
+$DATASTORE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format Native | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&query=INSERT+INTO+floats+FORMAT+Native" --data-binary @-
+$DATASTORE_LOCAL -q "SELECT number::Float64 AS v FROM numbers(10)" --format RowBinary | ${DATASTORE_CURL} -sS "${DATASTORE_URL}&query=INSERT+INTO+floats+FORMAT+RowBinary" --data-binary @-
 
 # Wait for all 6 insert queries to appear in query_log.
 # There is a race between HTTP response being sent and the query_log entry being written,
 # which can cause flakiness under TSan.
 for _ in $(seq 1 60); do
-    $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log, query_views_log"
-    count=$($CLICKHOUSE_CLIENT -q "SELECT count() FROM system.query_log WHERE event_date >= yesterday() AND event_time > now() - INTERVAL 600 SECOND AND type = 'QueryFinish' AND query_kind = 'Insert' AND current_database = currentDatabase()")
+    $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log, query_views_log"
+    count=$($DATASTORE_CLIENT -q "SELECT count() FROM system.query_log WHERE event_date >= yesterday() AND event_time > now() - INTERVAL 600 SECOND AND type = 'QueryFinish' AND query_kind = 'Insert' AND current_database = currentDatabase()")
     [ "$count" -ge 6 ] && break
     sleep 0.5
 done
 
-$CLICKHOUSE_CLIENT -q \
+$DATASTORE_CLIENT -q \
   "SELECT
     read_rows,
     read_bytes,
@@ -51,7 +51,7 @@ $CLICKHOUSE_CLIENT -q \
   ORDER BY event_time_microseconds ASC
   FORMAT TSKV"
 
-$CLICKHOUSE_CLIENT -q \
+$DATASTORE_CLIENT -q \
   "SELECT
     read_rows,
     read_bytes,

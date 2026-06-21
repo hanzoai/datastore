@@ -5,10 +5,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-TMP_DIR=${CLICKHOUSE_TMP}/tmp
+TMP_DIR=${DATASTORE_TMP}/tmp
 mkdir -p $TMP_DIR
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 DROP TABLE IF EXISTS polygons_array;
 
 CREATE TABLE polygons_array (key Array(Array(Array(Array(Float64)))), name String, value UInt64) ENGINE = Memory;
@@ -53,7 +53,7 @@ for type in "${SearchTypes[@]}";
 do
     outputFile="${TMP_DIR}/results${type}.out"
 
-    $CLICKHOUSE_CLIENT --query="
+    $DATASTORE_CLIENT --query="
     DROP DICTIONARY IF EXISTS dict_array;
     CREATE DICTIONARY dict_array
     (
@@ -62,7 +62,7 @@ do
     value UInt64 DEFAULT 101
     )
     PRIMARY KEY key
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'polygons_array' PASSWORD '' DB currentDatabase()))
+    SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'polygons_array' PASSWORD '' DB currentDatabase()))
     LIFETIME(0)
     LAYOUT($type());
 
@@ -75,7 +75,7 @@ do
     value UInt64 DEFAULT 101
     )
     PRIMARY KEY key
-    SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'polygons_tuple' PASSWORD '' DB currentDatabase()))
+    SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'polygons_tuple' PASSWORD '' DB currentDatabase()))
     LIFETIME(0)
     LAYOUT($type());
 
@@ -106,7 +106,7 @@ do
     diff -q "${CURDIR}/01037_polygon_dicts_simple_functions.ans" "$outputFile"
 done
 
-$CLICKHOUSE_CLIENT --query="
+$DATASTORE_CLIENT --query="
 DROP DICTIONARY dict_array;
 DROP DICTIONARY dict_tuple;
 DROP TABLE polygons_array;

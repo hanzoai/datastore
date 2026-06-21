@@ -1855,7 +1855,7 @@ Changelog::Changelog(
             load_from_disk(latest_log_disk);
 
         if (existing_changelogs.empty())
-            LOG_WARNING(log, "No logs exists in {}. It's Ok if it's the first run of clickhouse-keeper.", disk->getPath());
+            LOG_WARNING(log, "No logs exists in {}. It's Ok if it's the first run of datastore-keeper.", disk->getPath());
 
         background_changelog_operations_thread = std::make_unique<ThreadFromGlobalPool>([this] { backgroundChangelogOperationsThread(); });
 

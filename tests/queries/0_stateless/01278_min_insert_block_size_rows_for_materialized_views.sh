@@ -12,7 +12,7 @@ set -o pipefail
 # shellcheck disable=SC2120
 function execute()
 {
-    ${CLICKHOUSE_CLIENT} "$@"
+    ${DATASTORE_CLIENT} "$@"
 }
 
 #
@@ -57,17 +57,17 @@ EOL
 
 echo "create table null_01278 as data_01278 Engine=Null();" | execute
 for i in $(seq 1 $TEST_01278_PARTS); do
-    echo "create table part_01278_$i as data_01278 Engine=Buffer('$CLICKHOUSE_DATABASE', null_01278, 1, 86400, 86400, 1e5, 1e6, 10e6, 100e6);"
+    echo "create table part_01278_$i as data_01278 Engine=Buffer('$DATASTORE_DATABASE', null_01278, 1, 86400, 86400, 1e5, 1e6, 10e6, 100e6);"
     echo "create materialized view mv_01278_$i to part_01278_$i as select * from data_01278 where key%$TEST_01278_PARTS+1 != $i;"
 done | execute
-echo "create table out_01278 as data_01278 Engine=Merge('$CLICKHOUSE_DATABASE', 'part_01278_');" | execute
+echo "create table out_01278 as data_01278 Engine=Merge('$DATASTORE_DATABASE', 'part_01278_');" | execute
 
 #
 # INSERT
 #
 function execute_insert()
 {
-    ${CLICKHOUSE_CLIENT} --parallel_view_processing=0 --max_memory_usage=$TEST_01278_MEMORY --optimize_trivial_insert_select='false' "$@" -q "
+    ${DATASTORE_CLIENT} --parallel_view_processing=0 --max_memory_usage=$TEST_01278_MEMORY --optimize_trivial_insert_select='false' "$@" -q "
 insert into data_01278 select
     number,
     reinterpretAsString(number), // s1

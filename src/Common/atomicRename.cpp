@@ -83,7 +83,7 @@ static bool renameat2(const std::string & old_path, const std::string & new_path
         return true;
 
     /// EINVAL means that filesystem does not support one of the flags.
-    /// It also may happen when running clickhouse in docker with Mac OS as a host OS.
+    /// It also may happen when running datastore in docker with Mac OS as a host OS.
     /// supportsRenameat2() with uname is not enough in this case, because virtualized Linux kernel is used.
     /// Other cases when EINVAL can be returned should never happen.
     if (errno == EINVAL)

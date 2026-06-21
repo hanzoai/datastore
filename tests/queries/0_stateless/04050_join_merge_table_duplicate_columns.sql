@@ -1,6 +1,6 @@
 -- Regression test: duplicate columns in result_columns_from_left_table caused
 -- "Unexpected number of columns in result sample block" exception in `HashJoin::getNonJoinedBlocks`.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=99936&sha=494ca1e7a6070de924219397dd6a93afb0c714a0&name_0=PR&name_1=AST%20fuzzer%20%28amd_msan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?PR=99936&sha=494ca1e7a6070de924219397dd6a93afb0c714a0&name_0=PR&name_1=AST%20fuzzer%20%28amd_msan%29
 
 DROP TABLE IF EXISTS d1;
 DROP TABLE IF EXISTS d2;

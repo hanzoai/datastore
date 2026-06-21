@@ -48,13 +48,13 @@ def fill_nodes(nodes, dbname):
     cleanup_nodes(nodes, dbname)
     for node in nodes:
         node.query(
-            f"CREATE DATABASE {dbname} ENGINE = Replicated('/clickhouse/databases/{dbname}', 'default', '{node.name}')"
+            f"CREATE DATABASE {dbname} ENGINE = Replicated('/datastore/databases/{dbname}', 'default', '{node.name}')"
         )
 
 
 def drop_mysql_table(conn, tableName):
     with conn.cursor() as cursor:
-        cursor.execute(f"DROP TABLE IF EXISTS `clickhouse`.`{tableName}`")
+        cursor.execute(f"DROP TABLE IF EXISTS `datastore`.`{tableName}`")
 
 
 def get_mysql_conn(cluster):
@@ -72,25 +72,25 @@ def fill_tables(cluster, dbname):
 
     node1.query(
         f"""CREATE TABLE {dbname}.example_s3_engine_table (name String, value UInt32)
-ENGINE = S3('https://clickhouse-public-datasets.s3.amazonaws.com/my-test-bucket-768/test-data.csv.gz', 'CSV', 'gzip')
+ENGINE = S3('https://datastore-public-datasets.s3.amazonaws.com/my-test-bucket-768/test-data.csv.gz', 'CSV', 'gzip')
 SETTINGS input_format_with_names_use_header = 0"""
     )
 
     conn = get_mysql_conn(cluster)
 
     with conn.cursor() as cursor:
-        cursor.execute("DROP DATABASE IF EXISTS clickhouse")
-        cursor.execute("CREATE DATABASE clickhouse")
-        cursor.execute("DROP TABLE IF EXISTS clickhouse.inference_table")
+        cursor.execute("DROP DATABASE IF EXISTS datastore")
+        cursor.execute("CREATE DATABASE datastore")
+        cursor.execute("DROP TABLE IF EXISTS datastore.inference_table")
         cursor.execute(
-            "CREATE TABLE clickhouse.inference_table (id INT PRIMARY KEY, data BINARY(16) NOT NULL)"
+            "CREATE TABLE datastore.inference_table (id INT PRIMARY KEY, data BINARY(16) NOT NULL)"
         )
         cursor.execute(
-            "INSERT INTO clickhouse.inference_table VALUES (100, X'9fad5e9eefdfb449')"
+            "INSERT INTO datastore.inference_table VALUES (100, X'9fad5e9eefdfb449')"
         )
         conn.commit()
 
-    parameters = f"'mysql80:3306', 'clickhouse', 'inference_table', 'root', '{mysql_pass}'"
+    parameters = f"'mysql80:3306', 'datastore', 'inference_table', 'root', '{mysql_pass}'"
 
     node1.query(
         f"CREATE TABLE {dbname}.mysql_schema_inference_engine ENGINE=MySQL({parameters})"
@@ -123,19 +123,19 @@ SETTINGS input_format_with_names_use_header = 0"""
 
     node1.query(
         f"CREATE DICTIONARY {dbname}.dict1 (id INT, data String) PRIMARY KEY id "
-        f"SOURCE(MYSQL(HOST 'mysql80' PORT 3306 USER 'root' PASSWORD '{mysql_pass}' DB 'clickhouse' TABLE 'inference_table'))"
+        f"SOURCE(MYSQL(HOST 'mysql80' PORT 3306 USER 'root' PASSWORD '{mysql_pass}' DB 'datastore' TABLE 'inference_table'))"
         f"LAYOUT(FLAT()) LIFETIME(MIN 0 MAX 10)"
     )
 
     node1.query(
         f"CREATE DICTIONARY {dbname}.dict2 (name String, value UInt32) PRIMARY KEY value "
-        f"SOURCE(CLICKHOUSE(HOST '127.0.0.2' PORT 9000 USER 'default' PASSWORD '' DB '{dbname}' TABLE 'example_s3_engine_table'))"
+        f"SOURCE(DATASTORE(HOST '127.0.0.2' PORT 9000 USER 'default' PASSWORD '' DB '{dbname}' TABLE 'example_s3_engine_table'))"
         f"LAYOUT(FLAT()) LIFETIME(MIN 0 MAX 10)"
     )
 
     node1.query(
         f"CREATE DICTIONARY {dbname}.dict3 (name String, value UInt32) PRIMARY KEY value "
-        f"SOURCE(CLICKHOUSE(USER 'default' PASSWORD '' DB '{dbname}' TABLE 'example_s3_engine_table'))"
+        f"SOURCE(DATASTORE(USER 'default' PASSWORD '' DB '{dbname}' TABLE 'example_s3_engine_table'))"
         f"LAYOUT(FLAT()) LIFETIME(MIN 0 MAX 10)"
     )
 
@@ -264,5 +264,5 @@ def test_restore_table_null(start_cluster):
     )
     assert "SOURCE(NULL())" in node1.query("SHOW CREATE replicated2.dict1")
     assert "SOURCE(NULL())" in node1.query("SHOW CREATE replicated2.dict1")
-    assert "SOURCE(CLICKHOUSE(" in node1.query("SHOW CREATE replicated2.dict3")
+    assert "SOURCE(DATASTORE(" in node1.query("SHOW CREATE replicated2.dict3")
     cleanup_nodes(nodes, "replicated2")

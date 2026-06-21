@@ -47,7 +47,7 @@ def test_modify_engine_fails_if_zk_path_exists(started_cluster):
 
     q(
         ch1,
-        f"CREATE TABLE already_exists_2 ( A Int64, D Date, S String ) ENGINE ReplicatedMergeTree('/clickhouse/tables/{uuid}/{{shard}}', 'node2') PARTITION BY toYYYYMM(D) ORDER BY A;",
+        f"CREATE TABLE already_exists_2 ( A Int64, D Date, S String ) ENGINE ReplicatedMergeTree('/datastore/tables/{uuid}/{{shard}}', 'node2') PARTITION BY toYYYYMM(D) ORDER BY A;",
     )
 
     set_convert_flags(ch1, database_name, ["already_exists_1"])

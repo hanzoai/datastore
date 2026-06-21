@@ -29,7 +29,7 @@ def test_zookeeper_session_on_config_reload(started_cluster):
     # Make the session observe some non-zero zxid.
     node.query(
         "CREATE TABLE t (key UInt64) "
-        "ENGINE = ReplicatedMergeTree('/clickhouse/tables/t', 'r1') ORDER BY key"
+        "ENGINE = ReplicatedMergeTree('/datastore/tables/t', 'r1') ORDER BY key"
     )
 
     # Reloading an unchanged config must keep the session.

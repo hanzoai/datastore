@@ -41,7 +41,7 @@ def test_yaml_main_conf():
         main_config_name="config.yaml",
         users_config_name="users.yaml",
         copy_common_configs=False,
-        config_root_name="clickhouse",
+        config_root_name="datastore",
     )
 
     try:

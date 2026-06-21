@@ -15,9 +15,9 @@ To enable KeeperMap storage engine, you need to define a ZooKeeper path where th
 For example:
 
 ```xml
-<clickhouse>
+<datastore>
     <keeper_map_path_prefix>/keeper_map_tables</keeper_map_path_prefix>
-</clickhouse>
+</datastore>
 ```
 
 where path can be any other valid ZooKeeper path.
@@ -63,17 +63,17 @@ PRIMARY KEY key
 with
 
 ```xml
-<clickhouse>
+<datastore>
     <keeper_map_path_prefix>/keeper_map_tables</keeper_map_path_prefix>
-</clickhouse>
+</datastore>
 ```
 
 Each value, which is binary serialization of `(v1, v2, v3)`, will be stored inside `/keeper_map_tables/keeper_map_table/data/serialized_key` in `Keeper`.
 Additionally, number of keys will have a soft limit of 4 for the number of keys.
 
 If multiple tables are created on the same ZooKeeper path, the values are persisted until there exists at least 1 table using it.  
-As a result, it is possible to use `ON CLUSTER` clause when creating the table and sharing the data from multiple ClickHouse instances.  
-Of course, it's possible to manually run `CREATE TABLE` with same path on unrelated ClickHouse instances to have same data sharing effect.
+As a result, it is possible to use `ON CLUSTER` clause when creating the table and sharing the data from multiple Datastore instances.  
+Of course, it's possible to manually run `CREATE TABLE` with same path on unrelated Datastore instances to have same data sharing effect.
 
 ## Supported operations {#supported-operations}
 
@@ -116,4 +116,4 @@ ALTER TABLE keeper_map_table UPDATE v1 = v1 * 10 + 2 WHERE key LIKE 'some%' AND 
 
 ## Related content {#related-content}
 
-- Blog: [Building a Real-time Analytics Apps with ClickHouse and Hex](https://clickhouse.com/blog/building-real-time-applications-with-clickhouse-and-hex-notebook-keeper-engine)
+- Blog: [Building a Real-time Analytics Apps with Datastore and Hex](https://datastore.com/blog/building-real-time-applications-with-datastore-and-hex-notebook-keeper-engine)

@@ -58,7 +58,7 @@ TRUNCATE TABLE base64; INSERT INTO base64 SELECT number,
 FROM numbers(4000);
 TRUNCATE TABLE alp64; INSERT INTO alp64 SELECT i, f FROM base64;
 -- Compare bit patterns, but treat -0.0 and +0.0 as equivalent (sparse serialization may normalize -0.0 to +0.0).
--- Reason: https://github.com/ClickHouse/ClickHouse/issues/98637.
+-- Reason: https://github.com/ClickHouse/Datastore/issues/98637.
 -- We can return normal version once this issue is fixed.
 SELECT count(), sum(
     reinterpretAsUInt64(a.f) <> reinterpretAsUInt64(b.f)

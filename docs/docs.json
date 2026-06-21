@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "maple",
-  "name": "ClickHouse Documentation",
+  "name": "Datastore Documentation",
   "colors": {
     "primary": "#1c1c1c",
     "light": "#333431",
@@ -21,7 +21,7 @@
   },
   "favicon": "/assets/favicon.svg",
   "banner": {
-    "content": "Introducing Managed ClickStack: Observability for OpenTelemetry at scale [Read more \u2192](https://clickhouse.com/blog)",
+    "content": "Introducing Managed ClickStack: Observability for OpenTelemetry at scale [Read more \u2192](https://datastore.com/blog)",
     "dismissible": true
   },
   "scripts": [],

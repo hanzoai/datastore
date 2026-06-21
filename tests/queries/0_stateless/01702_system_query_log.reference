@@ -20,7 +20,7 @@ Select	SELECT \'CREATE queries\';
 Create	CREATE DATABASE sqllt;
 Create	CREATE TABLE sqllt.table\n(\n    i UInt8, s String\n)\nENGINE = MergeTree PARTITION BY tuple() ORDER BY tuple();
 Create	CREATE VIEW sqllt.view AS SELECT i, s FROM sqllt.table;
-Create	CREATE DICTIONARY sqllt.dictionary (key UInt64, value UInt64) PRIMARY KEY key SOURCE(CLICKHOUSE(DB \'sqllt\' TABLE \'table\' HOST \'localhost\' PORT 9001)) LIFETIME(0) LAYOUT(FLAT());
+Create	CREATE DICTIONARY sqllt.dictionary (key UInt64, value UInt64) PRIMARY KEY key SOURCE(DATASTORE(DB \'sqllt\' TABLE \'table\' HOST \'localhost\' PORT 9001)) LIFETIME(0) LAYOUT(FLAT());
 Create	CREATE USER sqllt_user IDENTIFIED WITH plaintext_password
 Create	CREATE ROLE sqllt_role;
 Create	CREATE POLICY sqllt_policy ON sqllt.table, sqllt.view, sqllt.dictionary AS PERMISSIVE TO ALL;

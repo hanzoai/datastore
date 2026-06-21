@@ -17,7 +17,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     DROP TABLE IF EXISTS mv1;
     DROP TABLE IF EXISTS mv2;
     DROP TABLE IF EXISTS mv3;
@@ -47,7 +47,7 @@ ${CLICKHOUSE_CLIENT} --query "
 
 # Run multiple iterations to increase the chance of triggering the race under TSan.
 for _ in $(seq 1 5); do
-    ${CLICKHOUSE_CLIENT} --query "
+    ${DATASTORE_CLIENT} --query "
         SET parallel_view_processing = 1;
         SET max_threads = 8, max_insert_threads = 8;
         SET max_block_size = 100, min_insert_block_size_rows = 0, min_insert_block_size_bytes = 0;
@@ -55,7 +55,7 @@ for _ in $(seq 1 5); do
     "
 done
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     DROP TABLE mv1;
     DROP TABLE mv2;
     DROP TABLE mv3;

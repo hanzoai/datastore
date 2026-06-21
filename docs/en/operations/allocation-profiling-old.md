@@ -1,5 +1,5 @@
 ---
-description: 'Page detailing allocation profiling in ClickHouse'
+description: 'Page detailing allocation profiling in Datastore'
 sidebar_label: 'Allocation profiling for versions before 25.9'
 slug: /operations/allocation-profiling-old
 title: 'Allocation profiling for versions before 25.9'
@@ -11,12 +11,12 @@ import TabItem from '@theme/TabItem';
 
 # Allocation profiling for versions before 25.9
 
-ClickHouse uses [jemalloc](https://github.com/jemalloc/jemalloc) as its global allocator. Jemalloc comes with some tools for allocation sampling and profiling.  
+Datastore uses [jemalloc](https://github.com/jemalloc/jemalloc) as its global allocator. Jemalloc comes with some tools for allocation sampling and profiling.  
 To make allocation profiling more convenient, `SYSTEM` commands are provided along with four letter word (4LW) commands in Keeper.
 
 ## Sampling allocations and flushing heap profiles {#sampling-allocations-and-flushing-heap-profiles}
 
-If you want to sample and profile allocations in `jemalloc`, you need to start ClickHouse/Keeper with profiling enabled using the environment variable `MALLOC_CONF`:
+If you want to sample and profile allocations in `jemalloc`, you need to start Datastore/Keeper with profiling enabled using the environment variable `MALLOC_CONF`:
 
 ```sh
 MALLOC_CONF=background_thread:true,prof:true,prof_active:true
@@ -27,7 +27,7 @@ MALLOC_CONF=background_thread:true,prof:true,prof_active:true
 You can tell `jemalloc` to flush the current profile by running:
 
 <Tabs groupId="binary">
-<TabItem value="clickhouse" label="ClickHouse">
+<TabItem value="datastore" label="Datastore">
     
 ```sql
 SYSTEM JEMALLOC FLUSH PROFILE
@@ -43,11 +43,11 @@ echo jmfp | nc localhost 9181
 </TabItem>
 </Tabs>
 
-By default, the heap profile file will be generated in `/tmp/jemalloc_clickhouse._pid_._seqnum_.heap` where `_pid_` is the PID of ClickHouse and `_seqnum_` is the global sequence number for the current heap profile.  
+By default, the heap profile file will be generated in `/tmp/jemalloc_clickhouse._pid_._seqnum_.heap` where `_pid_` is the PID of Datastore and `_seqnum_` is the global sequence number for the current heap profile.  
 For Keeper, the default file is `/tmp/jemalloc_keeper._pid_._seqnum_.heap`, and follows the same rules.
 
 A different location can be defined by appending the `MALLOC_CONF` environment variable with the `prof_prefix` option.  
-For example, if you want to generate profiles in the `/data` folder where the filename prefix will be `my_current_profile`, you can run ClickHouse/Keeper with the following environment variable:
+For example, if you want to generate profiles in the `/data` folder where the filename prefix will be `my_current_profile`, you can run Datastore/Keeper with the following environment variable:
 
 ```sh
 MALLOC_CONF=background_thread:true,prof:true,prof_prefix:/data/my_current_profile
@@ -125,13 +125,13 @@ Another interesting tool is [speedscope](https://www.speedscope.app/) that allow
 
 ## Controlling allocation profiler during runtime {#controlling-allocation-profiler-during-runtime}
 
-If ClickHouse/Keeper is started with the profiler enabled, additional commands for disabling/enabling allocation profiling during runtime are supported.
+If Datastore/Keeper is started with the profiler enabled, additional commands for disabling/enabling allocation profiling during runtime are supported.
 Using those commands, it's easier to profile only specific intervals.
 
 To disable the profiler:
 
 <Tabs groupId="binary">
-<TabItem value="clickhouse" label="ClickHouse">
+<TabItem value="datastore" label="Datastore">
 
 ```sql
 SYSTEM JEMALLOC DISABLE PROFILE
@@ -150,7 +150,7 @@ echo jmdp | nc localhost 9181
 To enable the profiler:
 
 <Tabs groupId="binary">
-<TabItem value="clickhouse" label="ClickHouse">
+<TabItem value="datastore" label="Datastore">
 
 ```sql
 SYSTEM JEMALLOC ENABLE PROFILE
@@ -167,7 +167,7 @@ echo jmep | nc localhost 9181
 </Tabs>
 
 It's also possible to control the initial state of the profiler by setting the `prof_active` option which is enabled by default.  
-For example, if you don't want to sample allocations during startup but only after, you can enable the profiler. You can start ClickHouse/Keeper with the following environment variable:
+For example, if you don't want to sample allocations during startup but only after, you can enable the profiler. You can start Datastore/Keeper with the following environment variable:
 
 ```sh
 MALLOC_CONF=background_thread:true,prof:true,prof_active:false
@@ -185,7 +185,7 @@ It is recommended to check `jemalloc`s [reference page](https://jemalloc.net/jem
 
 ## Other resources {#other-resources}
 
-ClickHouse/Keeper expose `jemalloc` related metrics in many different ways.
+Datastore/Keeper expose `jemalloc` related metrics in many different ways.
 
 :::warning Warning
 It's important to be aware that none of these metrics are synchronized with each other and values may drift.
@@ -210,7 +210,7 @@ Contains information about memory allocations done via the jemalloc allocator in
 
 ### Prometheus {#prometheus}
 
-All `jemalloc` related metrics from `asynchronous_metrics` are also exposed using the Prometheus endpoint in both ClickHouse and Keeper.
+All `jemalloc` related metrics from `asynchronous_metrics` are also exposed using the Prometheus endpoint in both Datastore and Keeper.
 
 [Reference](/operations/server-configuration-parameters/settings#prometheus)
 

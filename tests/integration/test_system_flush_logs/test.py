@@ -85,15 +85,15 @@ def test_log_max_size(start_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
                 <buffer_size_rows_flush_threshold replace=\\"replace\\">1000000</buffer_size_rows_flush_threshold>
                 <max_size_rows replace=\\"replace\\">10</max_size_rows>
                 <reserved_size_rows replace=\\"replace\\">10</reserved_size_rows>
             </query_log>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        </datastore>
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
@@ -116,7 +116,7 @@ def test_log_max_size(start_cluster):
     ) == TSV([[1, 1]])
 
     node.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", f"/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
 
 
@@ -126,14 +126,14 @@ def test_log_buffer_size_rows_flush_threshold(start_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
                 <buffer_size_rows_flush_threshold replace=\\"replace\\">10</buffer_size_rows_flush_threshold>
                 <max_size_rows replace=\\"replace\\">10000</max_size_rows>
             </query_log>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        </datastore>
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
@@ -156,14 +156,14 @@ def test_log_buffer_size_rows_flush_threshold(start_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
                 <buffer_size_rows_flush_threshold replace=\\"replace\\">10000</buffer_size_rows_flush_threshold>
                 <max_size_rows replace=\\"replace\\">10000</max_size_rows>
             </query_log>
-        </clickhouse>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        </datastore>
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
@@ -181,7 +181,7 @@ def test_log_buffer_size_rows_flush_threshold(start_cluster):
     )
 
     node.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", f"/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
 
 

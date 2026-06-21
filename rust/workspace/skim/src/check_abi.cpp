@@ -1,6 +1,6 @@
 #include <exception>
 
-/// ClickHouse patches std::exception with an embedded stack trace.
+/// Datastore patches std::exception with an embedded stack trace.
 /// The CXX bridge code must be compiled with the same define,
 /// otherwise sizeof(rust::Error) will be wrong and throw will
 /// cause a heap-buffer-overflow.

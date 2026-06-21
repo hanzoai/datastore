@@ -5,7 +5,7 @@ CREATE TABLE order_by_all
     b Nullable(Int32),
     all UInt64
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_03210', 'r1') ORDER BY tuple();
+ENGINE = ReplicatedMergeTree('/datastore/{database}/test_03210', 'r1') ORDER BY tuple();
 
 INSERT INTO order_by_all VALUES ('B', 3, 10), ('C', NULL, 40), ('D', 1, 20), ('A', 2, 30);
 

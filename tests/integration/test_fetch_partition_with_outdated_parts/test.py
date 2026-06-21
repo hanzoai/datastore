@@ -24,12 +24,12 @@ def start_cluster():
 
 def test_fetch_partition_with_outdated_parts(start_cluster):
     node.query(
-        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
     node.query("INSERT INTO simple VALUES ('2020-08-27', 1)")
 
     node.query(
-        "CREATE TABLE simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
+        "CREATE TABLE simple2 (date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/1/simple', 'node') ORDER BY tuple() PARTITION BY date;"
     )
     node.query("INSERT INTO simple2 VALUES ('2020-08-27', 2)")
     node.query("INSERT INTO simple2 VALUES ('2020-08-27', 3)")
@@ -38,7 +38,7 @@ def test_fetch_partition_with_outdated_parts(start_cluster):
     # until now both tables will have the same part
 
     node.query(
-        "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zookeeper2:/clickhouse/tables/0/simple';"
+        "ALTER TABLE simple2 FETCH PARTITION '2020-08-27' FROM 'zookeeper2:/datastore/tables/0/simple';"
     )
 
     node.query("ALTER TABLE simple2 ATTACH PARTITION '2020-08-27';")

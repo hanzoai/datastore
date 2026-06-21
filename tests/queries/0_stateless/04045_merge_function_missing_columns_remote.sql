@@ -1,6 +1,6 @@
 -- Tags: no-fasttest
 -- Test that merge() function works with remote/distributed tables that have different schemas.
--- https://github.com/ClickHouse/ClickHouse/issues/86393
+-- https://github.com/ClickHouse/Datastore/issues/86393
 
 SET enable_analyzer = 1;
 

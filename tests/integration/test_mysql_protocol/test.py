@@ -533,8 +533,8 @@ def test_mysql_federated(started_cluster):
         code, (stdout, stderr) = started_cluster.mysql_client_container.exec_run(
             """
             mysql
-            -e "DROP SERVER IF EXISTS clickhouse;"
-            -e "CREATE SERVER clickhouse FOREIGN DATA WRAPPER mysql
+            -e "DROP SERVER IF EXISTS datastore;"
+            -e "CREATE SERVER datastore FOREIGN DATA WRAPPER mysql
             OPTIONS (USER 'default', PASSWORD '123', HOST '{host}', PORT {port}, DATABASE 'mysql_federated');"
             -e "DROP DATABASE IF EXISTS mysql_federated;"
             -e "CREATE DATABASE mysql_federated;"
@@ -555,7 +555,7 @@ def test_mysql_federated(started_cluster):
         code, (stdout, stderr) = started_cluster.mysql_client_container.exec_run(
             """
             mysql
-            -e "CREATE TABLE mysql_federated.test(`col` int UNSIGNED) ENGINE=FEDERATED CONNECTION='clickhouse';"
+            -e "CREATE TABLE mysql_federated.test(`col` int UNSIGNED) ENGINE=FEDERATED CONNECTION='datastore';"
             -e "SELECT * FROM mysql_federated.test ORDER BY col;"
         """.format(
                 host=started_cluster.get_instance_ip("node"), port=server_port

@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Print server log in case of test hungs
 function cleanup()
 {
-    cat "${CLICKHOUSE_TMP}/server.log" >&2
+    cat "${DATASTORE_TMP}/server.log" >&2
 }
 trap cleanup EXIT
 
@@ -16,7 +16,7 @@ trap cleanup EXIT
 # In this example, we provide an invalid path to the server's config, ignore its logs and check the exit code.
 # The exception code is 76 = CANNOT_OPEN_FILE, so the exit code will be 76 % 256.
 
-${CLICKHOUSE_SERVER_BINARY} -- --path /dev/null 2>"${CLICKHOUSE_TMP}/server.log"
+${DATASTORE_SERVER_BINARY} -- --path /dev/null 2>"${DATASTORE_TMP}/server.log"
 [[ "$?" == "$((76 % 256))" ]] && echo 'Ok' || echo 'Fail'
 # Server terminated, reset debug trap
 trap '' EXIT

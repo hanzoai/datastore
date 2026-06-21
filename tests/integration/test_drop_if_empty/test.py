@@ -40,16 +40,16 @@ def start_cluster():
 def test_drop_if_empty(start_cluster):
     node1.query(
         "CREATE DATABASE replicateddb "
-        "ENGINE = Replicated('/clickhouse/databases/replicateddb', 'shard1', 'node1')",
+        "ENGINE = Replicated('/datastore/databases/replicateddb', 'shard1', 'node1')",
     )
     node2.query(
         "CREATE DATABASE replicateddb "
-        "ENGINE = Replicated('/clickhouse/databases/replicateddb', 'shard1', 'node2')",
+        "ENGINE = Replicated('/datastore/databases/replicateddb', 'shard1', 'node2')",
     )
     node1.query(
         "CREATE TABLE default.tbl ON CLUSTER 'cluster' ("
         "x UInt64"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
     node1.query(

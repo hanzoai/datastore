@@ -1,6 +1,6 @@
 -- Tags: no-random-merge-tree-settings
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/99388
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/99388
 -- CLEAR COLUMN must rebuild projections that depend on the cleared column,
 -- otherwise stale projection data causes sort order violations during merge.
 

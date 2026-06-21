@@ -174,7 +174,7 @@ def test_drop():
 
 def test_drop_role_cascades_to_disk():
     """
-    Regression test for https://github.com/ClickHouse/ClickHouse/issues/104298.
+    Regression test for https://github.com/ClickHouse/Datastore/issues/104298.
 
     Before the fix, DROP ROLE only removed the role from the in-memory entity map. Other
     entities that referenced the dropped role (e.g. a user's DEFAULT ROLE list, a settings
@@ -229,7 +229,7 @@ def test_drop_role_cascades_to_disk():
             [
                 "bash",
                 "-c",
-                f"grep -l '{drop_uuid}' /var/lib/clickhouse/access/*.sql || true",
+                f"grep -l '{drop_uuid}' /var/lib/datastore/access/*.sql || true",
             ]
         ).strip()
 

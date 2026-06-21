@@ -3,7 +3,7 @@ import logging
 import pytest
 
 from helpers.client import QueryRuntimeException
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
 upstream = cluster.add_instance(
@@ -11,8 +11,8 @@ upstream = cluster.add_instance(
 )
 backward = cluster.add_instance(
     "backward",
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     with_installed_binary=True,
 )
 

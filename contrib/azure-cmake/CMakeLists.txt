@@ -29,7 +29,7 @@ set(AZURE_SDK_INCLUDES
     "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-blobs/inc/"
 )
 
-if (CLICKHOUSE_CLOUD)
+if (DATASTORE_CLOUD)
     list(APPEND AZURE_SDK_SRC
         "${AZURE_SDK_LIBRARY_DIR}/keyvault/azure-security-keyvault-keys/src/*.cpp"
         "${AZURE_SDK_LIBRARY_DIR}/keyvault/azure-security-keyvault-keys/src/cryptography/*.cpp"

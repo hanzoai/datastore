@@ -1,14 +1,14 @@
 ---
 name: bisect
-description: Bisect a ClickHouse regression using pre-built master binaries from CI. Use when the user wants to find the commit that introduced a bug.
+description: Bisect a Datastore regression using pre-built master binaries from CI. Use when the user wants to find the commit that introduced a bug.
 argument-hint: <repro.sql> [good-ref] [bad-ref]
 disable-model-invocation: false
 allowed-tools: Task, Bash(git:*), Bash(curl:*), Bash(chmod:*), Bash(mkdir:*), Bash(ls:*), Bash(/tmp/*), Bash(cat:*), Bash(utils/auto-bisect/*), Read, Write, Glob, Grep, WebFetch, LSP
 ---
 
-# ClickHouse Bisect Skill
+# Datastore Bisect Skill
 
-Bisect a ClickHouse regression using `utils/auto-bisect/bisect.sh`, which downloads pre-built CI binaries and manages the bisect loop automatically.
+Bisect a Datastore regression using `utils/auto-bisect/bisect.sh`, which downloads pre-built CI binaries and manages the bisect loop automatically.
 
 ## Arguments
 
@@ -20,7 +20,7 @@ Bisect a ClickHouse regression using `utils/auto-bisect/bisect.sh`, which downlo
 
 `utils/auto-bisect/bisect.sh` orchestrates the full bisect:
 1. For each commit, `helpers/download.sh` fetches the release binary from CI S3
-2. `env/<option>.sh` installs configs and starts a ClickHouse server (configs go to `utils/auto-bisect/data/etc/`, never to `/etc/`)
+2. `env/<option>.sh` installs configs and starts a Datastore server (configs go to `utils/auto-bisect/data/etc/`, never to `/etc/`)
 3. Your test script is called with `$COMMIT_SHA`, `$CH_PATH` (binary), and `$GIT_WORK_TREE` in the environment
 4. Exit code from your test determines good/bad/skip
 
@@ -30,8 +30,8 @@ The working tree is **never checked out** — `BISECT_HEAD` is written for each 
 
 The test script receives these environment variables:
 - `$COMMIT_SHA` — full SHA of the commit being tested
-- `$CH_PATH` — path to the downloaded binary (e.g., `utils/auto-bisect/data/clickhouse`)
-- `$GIT_WORK_TREE` — path to the ClickHouse repository
+- `$CH_PATH` — path to the downloaded binary (e.g., `utils/auto-bisect/data/datastore`)
+- `$GIT_WORK_TREE` — path to the Datastore repository
 
 Exit codes:
 - `0` — good (bug not present)
@@ -54,7 +54,7 @@ Exit codes:
 
 Create `/tmp/bisect_test.sh`. Use `$CH_PATH` for the binary — do **not** download it yourself, the framework handles that.
 
-**For `clickhouse local` repros (no server needed — use `--env nothing`):**
+**For `datastore local` repros (no server needed — use `--env nothing`):**
 
 ```bash
 #!/bin/bash
@@ -77,7 +77,7 @@ fi
 ```bash
 #!/bin/bash
 # Server is already running when this script is called.
-# Use clickhouse-client on the default port (9000).
+# Use datastore-client on the default port (9000).
 set -e
 
 OUTPUT=$("$CH_PATH" client --multiquery 2>&1 <<'SQL'
@@ -107,7 +107,7 @@ BAD_SHA=$(git rev-parse <bad-ref>)
 
 Optionally do a quick walker sanity check over just the two endpoints:
 ```bash
-CH_PATH=/usr/local/bin/clickhouse /tmp/bisect_test.sh  # should exit 0 on good
+CH_PATH=/usr/local/bin/datastore /tmp/bisect_test.sh  # should exit 0 on good
 ```
 
 ### 4. Run bisect
@@ -117,12 +117,12 @@ cd utils/auto-bisect
 ./bisect.sh \
   --good <good-sha> \
   --bad  <bad-sha> \
-  --path /path/to/ClickHouse \
+  --path /path/to/Datastore \
   --test /tmp/bisect_test.sh \
   --env  nothing          # or: single (default), replicateddb, sharedcatalog
 ```
 
-Use `--env nothing` when the test uses `clickhouse local` (no server).
+Use `--env nothing` when the test uses `datastore local` (no server).
 Use `--env single` (default) when the test needs a running server.
 
 **Walker mode** — walk every commit linearly instead of bisecting (useful when you want to see the progression or the range is small):
@@ -146,14 +146,14 @@ git show --stat <bad-sha>
 
 Report:
 - First bad commit SHA and message
-- PR number from message (e.g., "Merge pull request #NNNNN") → link to `https://github.com/ClickHouse/ClickHouse/pull/<N>`
+- PR number from message (e.g., "Merge pull request #NNNNN") → link to `https://github.com/ClickHouse/Datastore/pull/<N>`
 - Brief description from `git show --stat`
 - Any skipped commits (no CI binary) that fall in the range
 
 ## Notes
 
-- Binaries are downloaded to `utils/auto-bisect/data/clickhouse` and overwritten each step (not cached between steps — use walker if you want to re-test)
+- Binaries are downloaded to `utils/auto-bisect/data/datastore` and overwritten each step (not cached between steps — use walker if you want to re-test)
 - Only first-parent merge commits on master have CI binaries; `bisect.sh` uses `--first-parent` automatically
-- Configs are installed to `utils/auto-bisect/data/etc/clickhouse-server/` — the host's `/etc/clickhouse-*` is never touched
+- Configs are installed to `utils/auto-bisect/data/etc/datastore-server/` — the host's `/etc/datastore-*` is never touched
 - The working tree is never modified during bisect or walker runs; `BISECT_HEAD` is used instead of `git checkout`
 - For private CI builds, set `CH_CI_USER` / `CH_CI_PASSWORD` and pass `--private`

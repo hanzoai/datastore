@@ -19,8 +19,8 @@ to have false positives.
 ### Where the results live
 
 In addition to the static `report.html` and `logs.tar.zst` bundle described
-below, every perf-comparison run uploads its results to the `play.clickhouse.com`
-ClickHouse cluster.
+below, every perf-comparison run uploads its results to the `play.datastore.com`
+Datastore cluster.
 
 | Table | Contents |
 | --- | --- |
@@ -77,10 +77,10 @@ Shows the queries we are unable to run on an old server -- probably because they
 #### Changes in Performance
 Action required for the cells marked in red, and some cheering is appropriate for the cells marked in green.
 
-These are the queries for which we observe a statistically significant change in performance. Note that there will always be some false positives -- we try to filter by p < 0.001, and have 2000 queries, so two false positives per run are expected. In practice we have more -- e.g. code layout changed because of some unknowable jitter in compiler internals, so the change we observe is real, but it is a 'false positive' in the sense that it is not directly caused by your changes. If, based on your knowledge of ClickHouse internals, you can decide that the observed test changes are not relevant to the changes made in the tested PR, you can ignore them.
+These are the queries for which we observe a statistically significant change in performance. Note that there will always be some false positives -- we try to filter by p < 0.001, and have 2000 queries, so two false positives per run are expected. In practice we have more -- e.g. code layout changed because of some unknowable jitter in compiler internals, so the change we observe is real, but it is a 'false positive' in the sense that it is not directly caused by your changes. If, based on your knowledge of Datastore internals, you can decide that the observed test changes are not relevant to the changes made in the tested PR, you can ignore them.
 
 You can find flame graphs for queries with performance changes in the test output archive, in files named as 'my_test_0_Cpu_SELECT 1 FROM....FORMAT Null.left.svg'. First goes the test name, then the query number in the test, then the trace type (same as in `system.trace_log`), and then the server version (left is old and right is new).
-Apart from flame graphs for execution on each of the nodes, we also build differential flame graphs, that can be quite useful to quickly spot the cause of a performance change. See an example [here](https://github.com/ClickHouse/ClickHouse/pull/87366#discussion_r2426184017).
+Apart from flame graphs for execution on each of the nodes, we also build differential flame graphs, that can be quite useful to quickly spot the cause of a performance change. See an example [here](https://github.com/ClickHouse/Datastore/pull/87366#discussion_r2426184017).
 
 #### Unstable Queries
 Action required for the cells marked in red.
@@ -130,7 +130,7 @@ pull requests (0 for master) manually.
 docker run --network=host --volume=$(pwd)/workspace:/workspace --volume=$(pwd)/output:/output
     [-e REF_PR={} -e REF_SHA={}]
     -e PR_TO_TEST={} -e SHA_TO_TEST={}
-    clickhouse/performance-comparison
+    datastore/performance-comparison
 ```
 
 Then see the `report.html` in the `output` directory.
@@ -163,7 +163,7 @@ $ PATH=$PATH:~/ch4/build-gcc9-rel/programs \
     stage=run_tests \
     ~/ch3/ch/docker/test/performance-comparison/compare.sh
 ```
-* `PATH` must contain `clickhouse-local` and `clickhouse-client`.
+* `PATH` must contain `datastore-local` and `datastore-client`.
 * `CHPC_TEST_PATH` -- path to performance test cases, e.g. `tests/performance`.
 * `CHPC_TEST_GREP` -- a filter for which tests to run, as a grep pattern.
 * `stage` -- from which execution stage to start. To run the tests, use

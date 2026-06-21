@@ -24,7 +24,7 @@
 ##################################################################################################
 
 # To minimize amount of error context sent on failed queries when talking to CH via MySQL protocol.
-export CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=none
+export DATASTORE_CLIENT_SERVER_LOGS_LEVEL=none
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -45,7 +45,7 @@ function reportError()
 {
     if [ -s "${TMP_QUERY_FILE}" ] ;
     then
-        echo "!!!!!! ERROR ${CLICKHOUSE_CLIENT} ${*} --queries-file ${TMP_QUERY_FILE}" >&2
+        echo "!!!!!! ERROR ${DATASTORE_CLIENT} ${*} --queries-file ${TMP_QUERY_FILE}" >&2
         echo "query:" >&2
         cat "${TMP_QUERY_FILE}" >&2
         rm -f "${TMP_QUERY_FILE}"
@@ -61,7 +61,7 @@ function executeQuery()
     trap "reportError $*" ERR
 
     cat - > "${TMP_QUERY_FILE}"
-    ${CLICKHOUSE_CLIENT} "${@}" --queries-file "${TMP_QUERY_FILE}"
+    ${DATASTORE_CLIENT} "${@}" --queries-file "${TMP_QUERY_FILE}"
 }
 
 function cleanup()
@@ -83,7 +83,7 @@ trap "cleanup" EXIT
 function executeQueryExpectError()
 {
     cat - > "${TMP_QUERY_FILE}"
-    ! ${CLICKHOUSE_CLIENT} --queries-file "${TMP_QUERY_FILE}" "${@}"  2>&1 | tee -a "${TMP_QUERY_FILE}"
+    ! ${DATASTORE_CLIENT} --queries-file "${TMP_QUERY_FILE}" "${@}"  2>&1 | tee -a "${TMP_QUERY_FILE}"
 }
 
 function createUser()
@@ -170,13 +170,13 @@ function testHTTPWithURL()
     local clickhouse_url="${4}"
 
     # Loging\Logout
-    ${CLICKHOUSE_CURL} -sS "${clickhouse_url}" \
-        -H "X-ClickHouse-User: ${username}" -H "X-ClickHouse-Key: ${password}" \
+    ${DATASTORE_CURL} -sS "${clickhouse_url}" \
+        -H "X-Datastore-User: ${username}" -H "X-Datastore-Key: ${password}" \
         -d 'SELECT 1 Format Null'
 
     # Wrong username
-    ${CLICKHOUSE_CURL} -sS "${clickhouse_url}" \
-        -H "X-ClickHouse-User: invalid_${username}" -H "X-ClickHouse-Key: ${password}" \
+    ${DATASTORE_CURL} -sS "${clickhouse_url}" \
+        -H "X-Datastore-User: invalid_${username}" -H "X-Datastore-Key: ${password}" \
         -d 'SELECT 1 Format Null' | grep -Eq "Code: 516. DB::Exception: invalid_${username}: Authentication failed: password is incorrect, or there is no user with such name"
 
     # Wrong password
@@ -185,8 +185,8 @@ function testHTTPWithURL()
         echo "HTTP 'wrong password' case is skipped for ${auth_type}."
     else
         # user with `no_password` is able to login with any password, so it makes sense to skip this testcase.
-        ${CLICKHOUSE_CURL} -sS "${clickhouse_url}" \
-            -H "X-ClickHouse-User: ${username}" -H "X-ClickHouse-Key: invalid_${password}" \
+        ${DATASTORE_CURL} -sS "${clickhouse_url}" \
+            -H "X-Datastore-User: ${username}" -H "X-Datastore-Key: invalid_${password}" \
             -d 'SELECT 1 Format Null' \
             | grep -Eq "Code: 516. .+ ${username}: Authentication failed: password is incorrect, or there is no user with such name"
     fi
@@ -195,7 +195,7 @@ function testHTTPWithURL()
 function testHTTP()
 {
     echo "HTTP endpoint"
-    testHTTPWithURL "${1}" "${2}" "${3}" "${CLICKHOUSE_URL}"
+    testHTTPWithURL "${1}" "${2}" "${3}" "${DATASTORE_URL}"
 }
 
 function testHTTPNamedSession()
@@ -203,9 +203,9 @@ function testHTTPNamedSession()
     echo "HTTP endpoint with named session"
     local HTTP_SESSION_ID
     HTTP_SESSION_ID="session_id_$(tr -cd 'a-f0-9' < /dev/urandom | head -c 32)"
-    CLICKHOUSE_URL_WITH_SESSION_ID="${CLICKHOUSE_URL}&session_id=${HTTP_SESSION_ID}"
+    DATASTORE_URL_WITH_SESSION_ID="${DATASTORE_URL}&session_id=${HTTP_SESSION_ID}"
 
-    testHTTPWithURL "${1}" "${2}" "${3}" "${CLICKHOUSE_URL_WITH_SESSION_ID}"
+    testHTTPWithURL "${1}" "${2}" "${3}" "${DATASTORE_URL_WITH_SESSION_ID}"
 }
 
 function testMySQL()
@@ -224,13 +224,13 @@ function testMySQL()
         echo "MySQL 'successful login' case is skipped for ${auth_type}."
     else
         executeQuery \
-            <<< "SELECT 1 FROM mysql('127.0.0.1:${CLICKHOUSE_PORT_MYSQL}', 'system', 'one', '${username}', '${password}') LIMIT 1 \
+            <<< "SELECT 1 FROM mysql('127.0.0.1:${DATASTORE_PORT_MYSQL}', 'system', 'one', '${username}', '${password}') LIMIT 1 \
             FORMAT Null"
     fi
 
     echo 'Wrong username'
     executeQueryExpectError \
-        <<< "SELECT 1 FROM mysql('127.0.0.1:${CLICKHOUSE_PORT_MYSQL}', 'system', 'one', 'invalid_${username}', '${password}') LIMIT 1 \
+        <<< "SELECT 1 FROM mysql('127.0.0.1:${DATASTORE_PORT_MYSQL}', 'system', 'one', 'invalid_${username}', '${password}') LIMIT 1 \
         FORMAT Null" \
         | grep -Eq "Code: 279\. DB::Exception: .* invalid_${username}"
 
@@ -242,7 +242,7 @@ function testMySQL()
         echo "MySQL 'wrong password' case is skipped for ${auth_type}."
     else
         executeQueryExpectError \
-            <<< "SELECT 1 FROM mysql('127.0.0.1:${CLICKHOUSE_PORT_MYSQL}', 'system', 'one', '${username}', 'invalid_${password}') LIMIT 1 \
+            <<< "SELECT 1 FROM mysql('127.0.0.1:${DATASTORE_PORT_MYSQL}', 'system', 'one', '${username}', 'invalid_${password}') LIMIT 1 \
             FORMAT Null" | grep -Eq "Code: 279\. DB::Exception: .* ${username}"
     fi
 }
@@ -259,15 +259,15 @@ function testMySQL()
     fi
 
     # TODO: Uncomment this case after implementation of postgresql function
-    # Connecting to ClickHouse server
+    # Connecting to Datastore server
     ## Loging\Logout
     ## CH is being able to log into itself via PostgreSQL protocol but query fails.
     #executeQueryExpectError \
-    #    <<< "SELECT 1 FROM postgresql('localhost:${CLICKHOUSE_PORT_POSTGRESQL', 'system', 'one', '${username}', '${password}') LIMIT 1 FORMAT Null" \
+    #    <<< "SELECT 1 FROM postgresql('localhost:${DATASTORE_PORT_POSTGRESQL', 'system', 'one', '${username}', '${password}') LIMIT 1 FORMAT Null" \
 
     # Wrong username
     executeQueryExpectError \
-        <<< "SELECT 1 FROM postgresql('localhost:${CLICKHOUSE_PORT_POSTGRESQL}', 'system', 'one', 'invalid_${username}', '${password}') LIMIT 1 FORMAT Null" \
+        <<< "SELECT 1 FROM postgresql('localhost:${DATASTORE_PORT_POSTGRESQL}', 'system', 'one', 'invalid_${username}', '${password}') LIMIT 1 FORMAT Null" \
         | grep -Eq "Invalid user or password"
 
     if [[ "${auth_type}" == "no_password" ]]
@@ -277,7 +277,7 @@ function testMySQL()
     else
         # Wrong password
         executeQueryExpectError \
-            <<< "SELECT 1 FROM postgresql('localhost:${CLICKHOUSE_PORT_POSTGRESQL}', 'system', 'one', '${username}', 'invalid_${password}') LIMIT 1 FORMAT Null" \
+            <<< "SELECT 1 FROM postgresql('localhost:${DATASTORE_PORT_POSTGRESQL}', 'system', 'one', '${username}', 'invalid_${password}') LIMIT 1 FORMAT Null" \
             | grep -Eq "Invalid user or password"
     fi
  }
@@ -295,7 +295,7 @@ function runEndpointTests()
     echo
     echo "#  ${auth_type} - ${case_name} "
 
-    ${CLICKHOUSE_CLIENT} -q "SET log_comment='${username} ${auth_type} - ${case_name}';"
+    ${DATASTORE_CLIENT} -q "SET log_comment='${username} ${auth_type} - ${case_name}';"
     if [[ -n "${setup_queries}" ]]
     then
         # echo "Executing setup queries: ${setup_queries}"

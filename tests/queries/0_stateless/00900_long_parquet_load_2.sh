@@ -18,7 +18,7 @@ DATA_DIR=$CUR_DIR/data_parquet
 
 # TODO [parquet]: Known issues to investigate:
 
-# ClickHouse Parquet reader doesn't support such complex types, so I didn't burrow into the issue.
+# Datastore Parquet reader doesn't support such complex types, so I didn't burrow into the issue.
 # There is failure due parsing nested arrays or nested maps with NULLs:
 # ../contrib/arrow/cpp/src/arrow/array/array_nested.cc:192:  Check failed: (self->list_type_->value_type()->id()) == (data->child_data[0]->type->id())
 
@@ -50,6 +50,6 @@ for NAME in $(find "$DATA_DIR" -type f \( -iname '*.parquet' -o -iname '*.parque
     # pseudorandomly chosen rows. We use a dummy GROUP BY WITH TOTALS for that.
     # (Maybe the unnecessary GROUP BY could be expensive if there are lots of rows, but these test
     #  files don't have lots of rows or they would be too big to check into git.)
-    ${CLICKHOUSE_LOCAL} --query="
+    ${DATASTORE_LOCAL} --query="
         SELECT _row_number, *, count(), sum(cityHash64(_row_number, *)) FROM file('$DATA_DIR/$NAME') GROUP BY all WITH TOTALS ORDER BY cityHash64(_row_number) LIMIT 20;" 2>&1
 done

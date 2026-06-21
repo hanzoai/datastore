@@ -785,7 +785,7 @@ The smaller the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples ngramSimHash_examples = {
         {
             "Usage example",
-            "SELECT ngramSimHash('ClickHouse') AS Hash;",
+            "SELECT ngramSimHash('Datastore') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 1627567969 │
@@ -814,7 +814,7 @@ The smaller the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples ngramSimHashCaseInsensitive_examples = {
         {
             "Usage example",
-            "SELECT ngramSimHashCaseInsensitive('ClickHouse') AS Hash;",
+            "SELECT ngramSimHashCaseInsensitive('Datastore') AS Hash;",
             R"(
 ┌──────Hash─┐
 │ 562180645 │
@@ -843,7 +843,7 @@ The smaller the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples ngramSimHashUTF8_examples = {
         {
             "Usage example",
-            "SELECT ngramSimHashUTF8('ClickHouse') AS Hash;",
+            "SELECT ngramSimHashUTF8('Datastore') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 1628157797 │
@@ -871,7 +871,7 @@ Can be used for detection of semi-duplicate strings with [bitHammingDistance](..
     FunctionDocumentation::Examples ngramSimHashCaseInsensitiveUTF8_examples = {
         {
             "Usage example",
-            "SELECT ngramSimHashCaseInsensitiveUTF8('ClickHouse') AS Hash;",
+            "SELECT ngramSimHashCaseInsensitiveUTF8('Datastore') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 1636742693 │
@@ -900,7 +900,7 @@ The smaller the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples wordShingleSimHash_examples = {
         {
             "Usage example",
-            "SELECT wordShingleSimHash('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
+            "SELECT wordShingleSimHash('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 2328277067 │
@@ -929,7 +929,7 @@ The smaller the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples wordShingleSimHashCaseInsensitive_examples = {
         {
             "Usage example",
-            "SELECT wordShingleSimHashCaseInsensitive('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
+            "SELECT wordShingleSimHashCaseInsensitive('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 2194812424 │
@@ -958,7 +958,7 @@ The smaller the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples wordShingleSimHashUTF8_examples = {
         {
             "Usage example",
-            "SELECT wordShingleSimHashUTF8('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
+            "SELECT wordShingleSimHashUTF8('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 2328277067 │
@@ -987,7 +987,7 @@ The smaller the [Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distanc
     FunctionDocumentation::Examples wordShingleSimHashCaseInsensitiveUTF8_examples = {
         {
             "Usage example",
-            "SELECT wordShingleSimHashCaseInsensitiveUTF8('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
+            "SELECT wordShingleSimHashCaseInsensitiveUTF8('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Hash;",
             R"(
 ┌───────Hash─┐
 │ 2194812424 │
@@ -1018,7 +1018,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples ngramMinHash_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHash('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHash('Datastore') AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────┐
 │ (18333312859352735453,9054248444481805918) │
@@ -1049,7 +1049,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples ngramMinHashCaseInsensitive_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashCaseInsensitive('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashCaseInsensitive('Datastore') AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────┐
 │ (2106263556442004574,13203602793651726206) │
@@ -1080,7 +1080,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples ngramMinHashUTF8_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashUTF8('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashUTF8('Datastore') AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────┐
 │ (18333312859352735453,6742163577938632877) │
@@ -1111,7 +1111,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples ngramMinHashCaseInsensitiveUTF8_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashCaseInsensitiveUTF8('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashCaseInsensitiveUTF8('Datastore') AS Tuple;",
             R"(
 ┌─Tuple───────────────────────────────────────┐
 │ (12493625717655877135,13203602793651726206) │
@@ -1142,7 +1142,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples wordShingleMinHash_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHash('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
+            "SELECT wordShingleMinHash('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────┐
 │ (16452112859864147620,5844417301642981317) │
@@ -1173,7 +1173,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples wordShingleMinHashCaseInsensitive_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashCaseInsensitive('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
+            "SELECT wordShingleMinHashCaseInsensitive('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────┐
 │ (3065874883688416519,1634050779997673240) │
@@ -1204,7 +1204,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples wordShingleMinHashUTF8_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashUTF8('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
+            "SELECT wordShingleMinHashUTF8('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────┐
 │ (16452112859864147620,5844417301642981317) │
@@ -1235,7 +1235,7 @@ For two strings, if the returned hashes are the same for both strings, then thos
     FunctionDocumentation::Examples wordShingleMinHashCaseInsensitiveUTF8_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashCaseInsensitiveUTF8('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
+            "SELECT wordShingleMinHashCaseInsensitiveUTF8('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).') AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────┐
 │ (3065874883688416519,1634050779997673240) │
@@ -1262,7 +1262,7 @@ It is case sensitive.
     FunctionDocumentation::Examples ngramMinHashArg_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashArg('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashArg('Datastore') AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────────────────────────────────────────┐
 │ (('ous','ick','lic','Hou','kHo','use'),('Hou','lic','ick','ous','ckH','Cli')) │
@@ -1289,7 +1289,7 @@ It is case insensitive.
     FunctionDocumentation::Examples ngramMinHashArgCaseInsensitive_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashArgCaseInsensitive('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashArgCaseInsensitive('Datastore') AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────────────────────────────────────────┐
 │ (('ous','ick','lic','kHo','use','Cli'),('kHo','lic','ick','ous','ckH','Hou')) │
@@ -1316,7 +1316,7 @@ It is case sensitive.
     FunctionDocumentation::Examples ngramMinHashArgUTF8_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashArgUTF8('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashArgUTF8('Datastore') AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────────────────────────────────────────┐
 │ (('ous','ick','lic','Hou','kHo','use'),('kHo','Hou','lic','ick','ous','ckH')) │
@@ -1343,7 +1343,7 @@ It is case insensitive.
     FunctionDocumentation::Examples ngramMinHashArgCaseInsensitiveUTF8_examples = {
         {
             "Usage example",
-            "SELECT ngramMinHashArgCaseInsensitiveUTF8('ClickHouse') AS Tuple;",
+            "SELECT ngramMinHashArgCaseInsensitiveUTF8('Datastore') AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────────────────────────────────────────┐
 │ (('ckH','ous','ick','lic','kHo','use'),('kHo','lic','ick','ous','ckH','Hou')) │
@@ -1370,7 +1370,7 @@ It is case sensitive.
     FunctionDocumentation::Examples wordShingleMinHashArg_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashArg('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
+            "SELECT wordShingleMinHashArg('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────────────────────────────────┐
 │ (('OLAP','database','analytical'),('online','oriented','processing')) │
@@ -1397,7 +1397,7 @@ It is case insensitive.
     FunctionDocumentation::Examples wordShingleMinHashArgCaseInsensitive_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashArgCaseInsensitive('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
+            "SELECT wordShingleMinHashArgCaseInsensitive('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────────────────────────────────┐
 │ (('queries','database','analytical'),('oriented','processing','DBMS')) │
@@ -1424,7 +1424,7 @@ It is case sensitive.
     FunctionDocumentation::Examples wordShingleMinHashArgUTF8_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashArgUTF8('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
+            "SELECT wordShingleMinHashArgUTF8('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
             R"(
 ┌─Tuple─────────────────────────────────────────────────────────────────┐
 │ (('OLAP','database','analytical'),('online','oriented','processing')) │
@@ -1451,7 +1451,7 @@ It is case insensitive.
     FunctionDocumentation::Examples wordShingleMinHashArgCaseInsensitiveUTF8_examples = {
         {
             "Usage example",
-            "SELECT wordShingleMinHashArgCaseInsensitiveUTF8('ClickHouse® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
+            "SELECT wordShingleMinHashArgCaseInsensitiveUTF8('Datastore® is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).', 1, 3) AS Tuple;",
             R"(
 ┌─Tuple──────────────────────────────────────────────────────────────────┐
 │ (('queries','database','analytical'),('oriented','processing','DBMS')) │

@@ -15,11 +15,11 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-ClickHouse supports reading and writing [MessagePack](https://msgpack.org/) data files.
+Datastore supports reading and writing [MessagePack](https://msgpack.org/) data files.
 
 ## Data types matching {#data-types-matching}
 
-| MessagePack data type (`INSERT`)                                   | ClickHouse data type                                                                                    | MessagePack data type (`SELECT`) |
+| MessagePack data type (`INSERT`)                                   | Datastore data type                                                                                    | MessagePack data type (`SELECT`) |
 |--------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|----------------------------------|
 | `uint N`, `positive fixint`                                        | [`UIntN`](/sql-reference/data-types/int-uint.md)                                                  | `uint N`                         |
 | `int N`, `negative fixint`                                         | [`IntN`](/sql-reference/data-types/int-uint.md)                                                   | `int N`                          |
@@ -47,9 +47,9 @@ ClickHouse supports reading and writing [MessagePack](https://msgpack.org/) data
 Writing to a file ".msgpk":
 
 ```sql
-$ clickhouse-client --query="CREATE TABLE msgpack (array Array(UInt8)) ENGINE = Memory;"
-$ clickhouse-client --query="INSERT INTO msgpack VALUES ([0, 1, 2, 3, 42, 253, 254, 255]), ([255, 254, 253, 42, 3, 2, 1, 0])";
-$ clickhouse-client --query="SELECT * FROM msgpack FORMAT MsgPack" > tmp_msgpack.msgpk;
+$ datastore-client --query="CREATE TABLE msgpack (array Array(UInt8)) ENGINE = Memory;"
+$ datastore-client --query="INSERT INTO msgpack VALUES ([0, 1, 2, 3, 42, 253, 254, 255]), ([255, 254, 253, 42, 3, 2, 1, 0])";
+$ datastore-client --query="SELECT * FROM msgpack FORMAT MsgPack" > tmp_msgpack.msgpk;
 ```
 
 ## Format settings {#format-settings}

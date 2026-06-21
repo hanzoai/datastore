@@ -23,7 +23,7 @@ Don't list too many values explicitly (i.e. millions). If a data set is large, 
 
 The right side of the operator can be a set of constant expressions, a set of tuples with constant expressions (shown in the examples above), or the name of a database table or `SELECT` subquery in brackets.
 
-For historical compatibility, when the right side is a single `tuple` expression, it can be interpreted either as a set of values or as one tuple value, depending on the left side of the `IN` operator. If the left side is a scalar value, ClickHouse treats the elements of this single right-side `tuple` expression as separate `IN` values:
+For historical compatibility, when the right side is a single `tuple` expression, it can be interpreted either as a set of values or as one tuple value, depending on the left side of the `IN` operator. If the left side is a scalar value, Datastore treats the elements of this single right-side `tuple` expression as separate `IN` values:
 
 ```sql title="Query"
 SELECT
@@ -60,7 +60,7 @@ SELECT 1 IN (tuple(1, 2), tuple(3, 4));
 Code: 43. DB::Exception: Unsupported types for IN. First argument type UInt8. Second argument type Tuple(Tuple(UInt8, UInt8), Tuple(UInt8, UInt8)). (ILLEGAL_TYPE_OF_ARGUMENT)
 ```
 
-ClickHouse allows types to differ in the left and the right parts of the `IN` subquery. 
+Datastore allows types to differ in the left and the right parts of the `IN` subquery. 
 In this case, it converts the right side value to the type of the left side, as 
 if the [accurateCastOrNull](/sql-reference/functions/type-conversion-functions#accurateCastOrNull) function were applied to the right side. 
 
@@ -146,7 +146,7 @@ Running the query `SELECT x FROM t_null WHERE y IN (NULL,3)` gives you the follo
 └───┘
 ```
 
-You can see that the row in which `y = NULL` is thrown out of the query results. This is because ClickHouse can't decide whether `NULL` is included in the `(NULL,3)` set, returns `0` as the result of the operation, and `SELECT` excludes this row from the final output.
+You can see that the row in which `y = NULL` is thrown out of the query results. This is because Datastore can't decide whether `NULL` is included in the `(NULL,3)` set, returns `0` as the result of the operation, and `SELECT` excludes this row from the final output.
 
 ```sql
 SELECT y IN (NULL, 3)
@@ -260,7 +260,7 @@ This is more optimal than using the normal `IN`. However, keep the following poi
 2.  The temporary table will be sent to all the remote servers. Transmission does not account for network topology. For example, if 10 remote servers reside in a datacenter that is very remote in relation to the requestor server, the data will be sent 10 times over the channel to the remote datacenter. Try to avoid large data sets when using `GLOBAL IN`.
 3.  When transmitting data to remote servers, restrictions on network bandwidth are not configurable. You might overload the network.
 4.  Try to distribute data across servers so that you do not need to use `GLOBAL IN` on a regular basis.
-5.  If you need to use `GLOBAL IN` often, plan the location of the ClickHouse cluster so that a single group of replicas resides in no more than one data center with a fast network between them, so that a query can be processed entirely within a single data center.
+5.  If you need to use `GLOBAL IN` often, plan the location of the Datastore cluster so that a single group of replicas resides in no more than one data center with a fast network between them, so that a query can be processed entirely within a single data center.
 
 It also makes sense to specify a local table in the `GLOBAL IN` clause, in case this local table is only available on the requestor server and you want to use data from it on remote servers.
 

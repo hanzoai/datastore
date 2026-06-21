@@ -42,9 +42,9 @@ See the detailed description of the [CREATE TABLE](/sql-reference/statements/cre
 
 ## Writing the data {#table_engines-tinylog-writing-the-data}
 
-The `TinyLog` engine stores all the columns in one file. For each `INSERT` query, ClickHouse appends the data block to the end of a table file, writing columns one by one.
+The `TinyLog` engine stores all the columns in one file. For each `INSERT` query, Datastore appends the data block to the end of a table file, writing columns one by one.
 
-For each table ClickHouse writes the files:
+For each table Datastore writes the files:
 
 - `<column>.bin`: A data file for each column, containing the serialized and compressed data.
 
@@ -73,7 +73,7 @@ INSERT INTO tiny_log_table VALUES (now(),'REGULAR','The second regular message')
 
 We used two `INSERT` queries to create two data blocks inside the `<column>.bin` files.
 
-ClickHouse uses a single stream selecting data. As a result, the order of blocks of rows in the output matches the order of the same blocks in the input. For example:
+Datastore uses a single stream selecting data. As a result, the order of blocks of rows in the output matches the order of the same blocks in the input. For example:
 
 ```sql
 SELECT * FROM tiny_log_table

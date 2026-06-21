@@ -16,7 +16,7 @@ CREATE DICTIONARY flat_dictionary
     array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(FLAT());
 
@@ -33,7 +33,7 @@ CREATE DICTIONARY hashed_dictionary
     array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(HASHED());
 
@@ -50,7 +50,7 @@ CREATE DICTIONARY cache_dictionary
     array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(CACHE(SIZE_IN_CELLS 10));
 
@@ -67,7 +67,7 @@ CREATE DICTIONARY direct_dictionary
     array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'dictionary_array_source_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Direct dictionary';
@@ -92,7 +92,7 @@ CREATE DICTIONARY ip_trie_dictionary
     array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(HOST 'localhost' port tcpPort() TABLE 'ip_trie_dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' port tcpPort() TABLE 'ip_trie_dictionary_array_source_table'))
 LIFETIME(MIN 10 MAX 1000)
 LAYOUT(IP_TRIE());
 
@@ -122,7 +122,7 @@ CREATE DICTIONARY polygon_dictionary
     array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'polygon_dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'polygon_dictionary_array_source_table'))
 LIFETIME(MIN 0 MAX 1000)
 LAYOUT(POLYGON());
 
@@ -153,7 +153,7 @@ CREATE DICTIONARY range_dictionary
   array_value Array(Int64) DEFAULT [1,2,3]
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'range_dictionary_array_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'range_dictionary_array_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start_date MAX end_date);

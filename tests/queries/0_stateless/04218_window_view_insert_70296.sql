@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/70296
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/70296
 -- INSERT into a source table of a `WINDOW VIEW` used to fail with
 -- `NOT_FOUND_COLUMN_IN_BLOCK` ("Not found column  in block") while pushing
 -- to the window view. The data was inserted into the main table but the

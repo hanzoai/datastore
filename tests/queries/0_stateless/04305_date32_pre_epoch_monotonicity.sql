@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/pull/105244
+-- Regression test for https://github.com/ClickHouse/Datastore/pull/105244
 --
 -- toMonday/toStartOfMonth/toStartOfYear clamp pre-epoch rounding results to 1970-01-01 for the
 -- Date result type. They are also used as the FactorTransform for toDayOfWeek/toDayOfMonth/toMonth,

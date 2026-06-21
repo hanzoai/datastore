@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <!-- Possible levels [1]:
 
@@ -15,8 +15,8 @@
             [1]: https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/Logger.h#L105-L114
         -->
         <level>trace</level>
-        <log>/var/log/clickhouse-keeper/clickhouse-keeper.log</log>
-        <errorlog>/var/log/clickhouse-keeper/clickhouse-keeper.err.log</errorlog>
+        <log>/var/log/datastore-keeper/datastore-keeper.log</log>
+        <errorlog>/var/log/datastore-keeper/datastore-keeper.err.log</errorlog>
         <!-- Rotation policy
              See https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/FileChannel.h#L54-L85
           -->
@@ -33,8 +33,8 @@
             <!-- Must be unique among all keeper serves -->
             <server_id>1</server_id>
 
-            <log_storage_path>/var/lib/clickhouse/coordination/logs</log_storage_path>
-            <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+            <log_storage_path>/var/lib/datastore/coordination/logs</log_storage_path>
+            <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
             <coordination_settings>
                 <operation_timeout_ms>10000</operation_timeout_ms>
@@ -42,7 +42,7 @@
                 <session_timeout_ms>100000</session_timeout_ms>
                 <raft_logs_level>information</raft_logs_level>
                 <compress_logs>false</compress_logs>
-                <!-- All settings listed in https://github.com/ClickHouse/ClickHouse/blob/master/src/Coordination/CoordinationSettings.h -->
+                <!-- All settings listed in https://github.com/ClickHouse/Datastore/blob/master/src/Coordination/CoordinationSettings.h -->
             </coordination_settings>
 
             <!-- enable sanity hostname checks for cluster configuration (e.g. if localhost is used with remote endpoints) -->
@@ -65,15 +65,15 @@
     <openSSL>
       <server>
             <!-- Used for secure tcp port -->
-            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt -->
-            <!-- <certificateFile>/etc/clickhouse-keeper/server.crt</certificateFile> -->
-            <!-- <privateKeyFile>/etc/clickhouse-keeper/server.key</privateKeyFile> -->
+            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/datastore-server/server.key -out /etc/datastore-server/server.crt -->
+            <!-- <certificateFile>/etc/datastore-keeper/server.crt</certificateFile> -->
+            <!-- <privateKeyFile>/etc/datastore-keeper/server.key</privateKeyFile> -->
             <!-- dhparams are optional. You can delete the <dhParamsFile> element.
                  To generate dhparams, use the following command:
-                  openssl dhparam -out /etc/clickhouse-keeper/dhparam.pem 4096
+                  openssl dhparam -out /etc/datastore-keeper/dhparam.pem 4096
                  Only file format with BEGIN DH PARAMETERS is supported.
               -->
-            <!-- <dhParamsFile>/etc/clickhouse-keeper/dhparam.pem</dhParamsFile> -->
+            <!-- <dhParamsFile>/etc/datastore-keeper/dhparam.pem</dhParamsFile> -->
             <verificationMode>none</verificationMode>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
@@ -82,4 +82,4 @@
         </server>
     </openSSL>
 
-</clickhouse>
+</datastore>

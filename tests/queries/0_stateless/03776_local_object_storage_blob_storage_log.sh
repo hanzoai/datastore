@@ -9,7 +9,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     DROP TABLE IF EXISTS test_local_blob_log;
 
     CREATE TABLE test_local_blob_log (a Int32, b String)
@@ -36,8 +36,8 @@ $CLICKHOUSE_CLIENT -q "
 
 # Wait for async blob removal by BlobKillerThread and check delete events
 for _ in $(seq 1 30); do
-    $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS blob_storage_log"
-    result=$($CLICKHOUSE_CLIENT -q "
+    $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS blob_storage_log"
+    result=$($DATASTORE_CLIENT -q "
         SELECT count() FROM system.blob_storage_log
         WHERE event_type = 'Delete'
             AND remote_path LIKE '%03776_test_local_blob_log%'

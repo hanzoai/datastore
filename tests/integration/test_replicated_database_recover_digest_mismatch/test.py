@@ -79,12 +79,12 @@ def create_some_tables(db):
     )
     main_node.query(
         f"CREATE DICTIONARY {db}.d1 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB 'recover')) "
+        "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt1' PASSWORD '' DB 'recover')) "
         "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT())"
     )
     dummy_node.query(
         f"CREATE DICTIONARY {db}.d2 (n int DEFAULT 0, m int DEFAULT 1) PRIMARY KEY n "
-        "SOURCE(CLICKHOUSE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt2' PASSWORD '' DB 'recover')) "
+        "SOURCE(DATASTORE(HOST 'localhost' PORT 9000 USER 'default' TABLE 'rmt2' PASSWORD '' DB 'recover')) "
         "LIFETIME(MIN 1 MAX 10) LAYOUT(FLAT())"
     )
 
@@ -94,10 +94,10 @@ def test_recover_digest_mismatch(started_cluster):
     dummy_node.query("DROP DATABASE IF EXISTS recover_digest_mismatch SYNC")
 
     main_node.query(
-        "CREATE DATABASE recover_digest_mismatch ENGINE = Replicated('/clickhouse/databases/recover_digest_mismatch', 'shard1', 'replica1');"
+        "CREATE DATABASE recover_digest_mismatch ENGINE = Replicated('/datastore/databases/recover_digest_mismatch', 'shard1', 'replica1');"
     )
     dummy_node.query(
-        "CREATE DATABASE recover_digest_mismatch ENGINE = Replicated('/clickhouse/databases/recover_digest_mismatch', 'shard1', 'replica2');"
+        "CREATE DATABASE recover_digest_mismatch ENGINE = Replicated('/datastore/databases/recover_digest_mismatch', 'shard1', 'replica2');"
     )
 
     create_some_tables("recover_digest_mismatch")
@@ -110,7 +110,7 @@ def test_recover_digest_mismatch(started_cluster):
         f"SELECT metadata_path FROM system.databases WHERE database='recover_digest_mismatch'"
     ).strip()
 
-    disk_cmd_prefix = f"/usr/bin/clickhouse disks -C /etc/clickhouse-server/config.xml --disk {db_disk_name} --save-logs --query "
+    disk_cmd_prefix = f"/usr/bin/datastore disks -C /etc/datastore-server/config.xml --disk {db_disk_name} --save-logs --query "
     db_disk_path = dummy_node.query(
         f"SELECT path FROM system.disks WHERE name='{db_disk_name}'"
     ).strip()
@@ -127,8 +127,8 @@ def test_recover_digest_mismatch(started_cluster):
         f"{disk_cmd_prefix} 'move --path-from {db_data_path}t1.sql --path-to {db_data_path}m1.sql'",
         f"""printf "%s" "{corrupted_mv1_metadata}" | {disk_cmd_prefix} 'write --path-to {db_data_path}mv1.sql'""",
         f"{disk_cmd_prefix} 'remove {db_data_path}d1.sql'",
-        "rm -rf /var/lib/clickhouse/metadata/recover_digest_mismatch/",  # Will trigger "Directory already exists"
-        f"{disk_cmd_prefix} 'remove -r {db_disk_path}store/' || true && rm -rf /var/lib/clickhouse/store"
+        "rm -rf /var/lib/datastore/metadata/recover_digest_mismatch/",  # Will trigger "Directory already exists"
+        f"{disk_cmd_prefix} 'remove -r {db_disk_path}store/' || true && rm -rf /var/lib/datastore/store"
     ]
 
     for command in ways_to_corrupt_metadata:

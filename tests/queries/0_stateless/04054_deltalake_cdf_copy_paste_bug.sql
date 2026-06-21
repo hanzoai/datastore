@@ -1,5 +1,5 @@
 -- Tags: no-fasttest
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100449
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100449
 --
 -- Copy-paste bug: both OR-branches of is_delta_lake_cdf checked
 -- delta_lake_snapshot_start_version.  Setting only delta_lake_snapshot_end_version

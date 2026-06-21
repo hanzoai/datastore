@@ -140,11 +140,11 @@ When creating a materialized view with `TO [db].[table]`, you can't also use `PO
 A materialized view is implemented as follows: when inserting data to the table specified in `SELECT`, part of the inserted data is converted by this `SELECT` query, and the result is inserted in the view.
 
 :::note
-Materialized views in ClickHouse use **column names** instead of column order during insertion into destination table. If some column names are not present in the `SELECT` query result, ClickHouse uses a default value, even if the column is not [Nullable](../../data-types/nullable.md). A safe practice would be to add aliases for every column when using Materialized views.
+Materialized views in Datastore use **column names** instead of column order during insertion into destination table. If some column names are not present in the `SELECT` query result, Datastore uses a default value, even if the column is not [Nullable](../../data-types/nullable.md). A safe practice would be to add aliases for every column when using Materialized views.
 
-Materialized views in ClickHouse are implemented more like insert triggers. If there's some aggregation in the view query, it's applied only to the batch of freshly inserted data. Any changes to existing data of source table (like update, delete, drop partition, etc.) does not change the materialized view.
+Materialized views in Datastore are implemented more like insert triggers. If there's some aggregation in the view query, it's applied only to the batch of freshly inserted data. Any changes to existing data of source table (like update, delete, drop partition, etc.) does not change the materialized view.
 
-Materialized views in ClickHouse do not have deterministic behaviour in case of errors. This means that blocks that had been already written will be preserved in the destination table, but all blocks after error will not.
+Materialized views in Datastore do not have deterministic behaviour in case of errors. This means that blocks that had been already written will be preserved in the destination table, but all blocks after error will not.
 
 By default if pushing to one of views fails, then the INSERT query will fail too, and some blocks may not be written to the destination table. This can be changed using `materialized_views_ignore_errors` setting (you should set it for `INSERT` query), if you will set `materialized_views_ignore_errors=true`, then any errors while pushing to views will be ignored and all blocks will be written to the destination table.
 
@@ -156,7 +156,7 @@ If you specify `POPULATE`, the existing table data is inserted into the view whe
 :::note
 Given that `POPULATE` works like `CREATE TABLE ... AS SELECT ...` it has limitations:
 - It is not supported with Replicated database
-- It is not supported in ClickHouse cloud
+- It is not supported in Datastore cloud
 
 Instead a separate `INSERT ... SELECT` can be used.
 :::
@@ -173,7 +173,7 @@ To delete a view, use [DROP VIEW](../../../sql-reference/statements/drop.md#drop
 
 ## SQL security {#sql_security}
 
-`DEFINER` and `SQL SECURITY` allow you to specify which ClickHouse user to use when executing the view's underlying query.
+`DEFINER` and `SQL SECURITY` allow you to specify which Datastore user to use when executing the view's underlying query.
 `SQL SECURITY` has three legal values: `DEFINER`, `INVOKER`, or `NONE`. You can specify any existing user or `CURRENT_USER` in the `DEFINER` clause.
 
 The following table will explain which rights are required for which user in order to select from view.
@@ -513,7 +513,7 @@ Alternatively, we can attach the output to another table using `TO` syntax.
 CREATE WINDOW VIEW wv TO dst AS SELECT count(id), tumbleStart(w_id) as window_start FROM data GROUP BY tumble(timestamp, INTERVAL '10' SECOND) as w_id
 ```
 
-Additional examples can be found among stateful tests of ClickHouse (they are named `*window_view*` there).
+Additional examples can be found among stateful tests of Datastore (they are named `*window_view*` there).
 
 ### Window View Usage {#window-view-usage}
 
@@ -524,12 +524,12 @@ The window view is useful in the following scenarios:
 
 ## Related Content {#related-content}
 
-- Blog: [Working with time series data in ClickHouse](https://clickhouse.com/blog/working-with-time-series-data-and-functions-ClickHouse)
-- Blog: [Building an Observability Solution with ClickHouse - Part 2 - Traces](https://clickhouse.com/blog/storing-traces-and-spans-open-telemetry-in-clickhouse)
+- Blog: [Working with time series data in Datastore](https://datastore.com/blog/working-with-time-series-data-and-functions-Datastore)
+- Blog: [Building an Observability Solution with Datastore - Part 2 - Traces](https://datastore.com/blog/storing-traces-and-spans-open-telemetry-in-datastore)
 
 ## Temporary Views {#temporary-views}
 
-ClickHouse supports **temporary views** with the following characteristics (matching temporary tables where applicable):
+Datastore supports **temporary views** with the following characteristics (matching temporary tables where applicable):
 
 * **Session-lifetime**
   A temporary view exists only for the duration of the current session. It is dropped automatically when the session ends.
@@ -616,7 +616,7 @@ CREATE TEMPORARY VIEW v_ids AS
 SELECT id FROM temp_ids;
 
 -- Replace 'test' with your cluster name.
--- GLOBAL JOIN forces ClickHouse to *ship* the small join-side (temp_ids via v_ids)
+-- GLOBAL JOIN forces Datastore to *ship* the small join-side (temp_ids via v_ids)
 -- to every remote server that executes the left side.
 SELECT count()
 FROM cluster('test', system.numbers) AS n

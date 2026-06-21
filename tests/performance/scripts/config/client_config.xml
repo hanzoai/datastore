@@ -1,5 +1,5 @@
 <!--
-    This config is used to upload test results to a public ClickHouse instance.
+    This config is used to upload test results to a public Datastore instance.
     It has bad certificates so we ignore them.
 -->
 <config>

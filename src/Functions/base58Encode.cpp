@@ -26,9 +26,9 @@ Encodes a string using [Base58](https://tools.ietf.org/id/draft-msporny-base58-0
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT base58Encode('ClickHouse');",
+        "SELECT base58Encode('Datastore');",
         R"(
-┌─base58Encode('ClickHouse')─┐
+┌─base58Encode('Datastore')─┐
 │ 4nhk8K7GHXf6zx             │
 └────────────────────────────┘
         )"

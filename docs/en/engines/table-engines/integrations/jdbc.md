@@ -1,5 +1,5 @@
 ---
-description: 'Allows ClickHouse to connect to external databases via JDBC.'
+description: 'Allows Datastore to connect to external databases via JDBC.'
 sidebar_label: 'JDBC'
 sidebar_position: 100
 slug: /engines/table-engines/integrations/jdbc
@@ -14,13 +14,13 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 <CloudNotSupportedBadge/>
 
 :::note
-clickhouse-jdbc-bridge contains experimental codes and is no longer supported. It may contain reliability issues and security vulnerabilities. Use it at your own risk. 
-ClickHouse recommend using built-in table functions in ClickHouse which provide a better alternative for ad-hoc querying scenarios (Postgres, MySQL, MongoDB, etc).
+datastore-jdbc-bridge contains experimental codes and is no longer supported. It may contain reliability issues and security vulnerabilities. Use it at your own risk. 
+Datastore recommend using built-in table functions in Datastore which provide a better alternative for ad-hoc querying scenarios (Postgres, MySQL, MongoDB, etc).
 :::
 
-Allows ClickHouse to connect to external databases via [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity).
+Allows Datastore to connect to external databases via [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity).
 
-To implement the JDBC connection, ClickHouse uses the separate program [clickhouse-jdbc-bridge](https://github.com/ClickHouse/clickhouse-jdbc-bridge) that should run as a daemon.
+To implement the JDBC connection, Datastore uses the separate program [datastore-jdbc-bridge](https://github.com/ClickHouse/datastore-jdbc-bridge) that should run as a daemon.
 
 This engine supports the [Nullable](../../../sql-reference/data-types/nullable.md) data type.
 
@@ -72,7 +72,7 @@ mysql> select * from test;
 1 row in set (0,00 sec)
 ```
 
-Creating a table in ClickHouse server and selecting data from it:
+Creating a table in Datastore server and selecting data from it:
 
 ```sql
 CREATE TABLE jdbc_table

@@ -42,14 +42,14 @@ SELECT substring(materialize('abc'), number - 5) FROM system.numbers LIMIT 10;
 SELECT substring(toFixedString('abc', 3), number - 5) FROM system.numbers LIMIT 10;
 SELECT substring(materialize(toFixedString('abc', 3)), number - 5) FROM system.numbers LIMIT 10;
 
-SELECT substring('clickhouse', 2, -2);
-SELECT substring(materialize('clickhouse'), 2, -2);
-SELECT substring('clickhouse', materialize(2), -2);
-SELECT substring(materialize('clickhouse'), materialize(2), -2);
-SELECT substring('clickhouse', 2, materialize(-2));
-SELECT substring(materialize('clickhouse'), 2, materialize(-2));
-SELECT substring('clickhouse', materialize(2), materialize(-2));
-SELECT substring(materialize('clickhouse'), materialize(2), materialize(-2));
+SELECT substring('datastore', 2, -2);
+SELECT substring(materialize('datastore'), 2, -2);
+SELECT substring('datastore', materialize(2), -2);
+SELECT substring(materialize('datastore'), materialize(2), -2);
+SELECT substring('datastore', 2, materialize(-2));
+SELECT substring(materialize('datastore'), 2, materialize(-2));
+SELECT substring('datastore', materialize(2), materialize(-2));
+SELECT substring(materialize('datastore'), materialize(2), materialize(-2));
 
 SELECT '-- negative length argument';
 

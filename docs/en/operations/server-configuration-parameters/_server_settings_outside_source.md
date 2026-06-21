@@ -1,15 +1,15 @@
 ## asynchronous_metric_log {#asynchronous_metric_log}
 
-Enabled by default on ClickHouse Cloud deployments.
+Enabled by default on Datastore Cloud deployments.
 
-If the setting is not enabled by default on your environment, depending on how ClickHouse was installed, you can follow the instruction below to enable or disable it.
+If the setting is not enabled by default on your environment, depending on how Datastore was installed, you can follow the instruction below to enable or disable it.
 
 **Enabling**
 
-To manually turn on asynchronous metric logs history collection [`system.asynchronous_metric_log`](../../operations/system-tables/asynchronous_metric_log.md), create `/etc/clickhouse-server/config.d/asynchronous_metric_log.xml` with the following content:
+To manually turn on asynchronous metric logs history collection [`system.asynchronous_metric_log`](../../operations/system-tables/asynchronous_metric_log.md), create `/etc/datastore-server/config.d/asynchronous_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
      <asynchronous_metric_log>
         <database>system</database>
         <table>asynchronous_metric_log</table>
@@ -20,15 +20,15 @@ To manually turn on asynchronous metric logs history collection [`system.asynchr
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </asynchronous_metric_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
 
-To disable `asynchronous_metric_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_asynchronous_metric_log.xml` with the following content:
+To disable `asynchronous_metric_log` setting, you should create the following file `/etc/datastore-server/config.d/disable_asynchronous_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse><asynchronous_metric_log remove="1" /></clickhouse>
+<datastore><asynchronous_metric_log remove="1" /></datastore>
 ```
 
 <SystemLogParameters/>
@@ -61,11 +61,11 @@ WITH settings AS (
     ('max_attempts_after_bad_version', 'UInt64', 'Maximum number of attempts to retry after encountering a bad version error during coordinated backup/restore.', '3'),
     ('max_sleep_before_next_attempt_to_collect_metadata', 'UInt64', 'Maximum sleep time in milliseconds before the next attempt to collect metadata.', '100'),
     ('min_sleep_before_next_attempt_to_collect_metadata', 'UInt64', 'Minimum sleep time in milliseconds before the next attempt to collect metadata.', '5000'),
-    ('remove_backup_files_after_failure', 'Bool', 'If the `BACKUP` command fails, ClickHouse will try to remove the files already copied to the backup before the failure,  otherwise it will leave the copied files as they are.', 'true'),
+    ('remove_backup_files_after_failure', 'Bool', 'If the `BACKUP` command fails, Datastore will try to remove the files already copied to the backup before the failure,  otherwise it will leave the copied files as they are.', 'true'),
     ('sync_period_ms', 'UInt64', 'Synchronization period in milliseconds for coordinated backup/restore.', '5000'),
     ('test_inject_sleep', 'Bool', 'Testing related sleep', 'false'),
     ('test_randomize_order', 'Bool', 'If true, randomizes the order of certain operations for testing purposes.', 'false'),
-    ('zookeeper_path', 'String', 'Path in ZooKeeper where backup and restore metadata is stored when using `ON CLUSTER` clause.', '/clickhouse/backups')
+    ('zookeeper_path', 'String', 'Path in ZooKeeper where backup and restore metadata is stored when using `ON CLUSTER` clause.', '/datastore/backups')
   ]) AS t )
 SELECT concat('`', t.1, '`') AS Setting, t.2 AS Type, t.3 AS Description, concat('`', t.4, '`') AS Default FROM settings FORMAT Markdown
 -->
@@ -82,11 +82,11 @@ SELECT concat('`', t.1, '`') AS Setting, t.2 AS Type, t.3 AS Description, concat
 | `max_attempts_after_bad_version` | UInt64 | Maximum number of attempts to retry after encountering a bad version error during coordinated backup/restore. | `3` |
 | `max_sleep_before_next_attempt_to_collect_metadata` | UInt64 | Maximum sleep time in milliseconds before the next attempt to collect metadata. | `100` |
 | `min_sleep_before_next_attempt_to_collect_metadata` | UInt64 | Minimum sleep time in milliseconds before the next attempt to collect metadata. | `5000` |
-| `remove_backup_files_after_failure` | Bool | If the `BACKUP` command fails, ClickHouse will try to remove the files already copied to the backup before the failure,  otherwise it will leave the copied files as they are. | `true` |
+| `remove_backup_files_after_failure` | Bool | If the `BACKUP` command fails, Datastore will try to remove the files already copied to the backup before the failure,  otherwise it will leave the copied files as they are. | `true` |
 | `sync_period_ms` | UInt64 | Synchronization period in milliseconds for coordinated backup/restore. | `5000` |
 | `test_inject_sleep` | Bool | Testing related sleep | `false` |
 | `test_randomize_order` | Bool | If true, randomizes the order of certain operations for testing purposes. | `false` |
-| `zookeeper_path` | String | Path in ZooKeeper where backup and restore metadata is stored when using `ON CLUSTER` clause. | `/clickhouse/backups` |
+| `zookeeper_path` | String | Path in ZooKeeper where backup and restore metadata is stored when using `ON CLUSTER` clause. | `/datastore/backups` |
 
 This setting is configured by default as:
 
@@ -142,7 +142,7 @@ By default, for backward compatibility creating table with a specific table engi
 
 The interval in seconds before reloading built-in dictionaries.
 
-ClickHouse reloads built-in dictionaries every x seconds. This makes it possible to edit dictionaries "on the fly" without restarting the server.
+Datastore reloads built-in dictionaries every x seconds. This makes it possible to edit dictionaries "on the fly" without restarting the server.
 
 **Example**
 
@@ -155,7 +155,7 @@ ClickHouse reloads built-in dictionaries every x seconds. This makes it possible
 Data compression settings for [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md)-engine tables.
 
 :::note
-We recommend not changing this if you have just started using ClickHouse.
+We recommend not changing this if you have just started using Datastore.
 :::
 
 **Configuration template**:
@@ -185,11 +185,11 @@ You can configure multiple `<case>` sections.
 
 **Actions when conditions are met**:
 
-- If a data part matches a condition set, ClickHouse uses the specified compression method.
-- If a data part matches multiple condition sets, ClickHouse uses the first matched condition set.
+- If a data part matches a condition set, Datastore uses the specified compression method.
+- If a data part matches multiple condition sets, Datastore uses the first matched condition set.
 
 :::note
-If no conditions are met for a data part, ClickHouse uses the `lz4` compression.
+If no conditions are met for a data part, Datastore uses the `lz4` compression.
 :::
 
 **Example**
@@ -292,10 +292,10 @@ It is disabled by default.
 
 **Enabling**
 
-To manually turn on error history collection [`system.error_log`](../../operations/system-tables/error_log.md), create `/etc/clickhouse-server/config.d/error_log.xml` with the following content:
+To manually turn on error history collection [`system.error_log`](../../operations/system-tables/error_log.md), create `/etc/datastore-server/config.d/error_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <error_log>
         <database>system</database>
         <table>error_log</table>
@@ -306,17 +306,17 @@ To manually turn on error history collection [`system.error_log`](../../operatio
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </error_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
 
-To disable `error_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_error_log.xml` with the following content:
+To disable `error_log` setting, you should create the following file `/etc/datastore-server/config.d/disable_error_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <error_log remove="1" />
-</clickhouse>
+</datastore>
 ```
 
 <SystemLogParameters/>
@@ -527,7 +527,7 @@ Example:
 
 ## http_server_default_response {#http_server_default_response}
 
-The page that is shown by default when you access the ClickHouse HTTP(s) server.
+The page that is shown by default when you access the Datastore HTTP(s) server.
 The default value is "Ok." (with a line feed at the end)
 
 **Example**
@@ -557,7 +557,7 @@ Example:
      </header>
      <header>
           <name>Access-Control-Allow-Headers</name>
-          <value>origin, x-requested-with, x-clickhouse-format, x-clickhouse-user, x-clickhouse-key, Authorization</value>
+          <value>origin, x-requested-with, x-datastore-format, x-datastore-user, x-datastore-key, Authorization</value>
      </header>
      <header>
           <name>Access-Control-Allow-Methods</name>
@@ -575,7 +575,7 @@ Example:
 Expired time for HSTS in seconds.
 
 :::note
-A value of `0` means ClickHouse disables HSTS. If you set a positive number, the HSTS will be enabled and the max-age is the number you set.
+A value of `0` means Datastore disables HSTS. If you set a positive number, the HSTS will be enabled and the max-age is the number you set.
 :::
 
 **Example**
@@ -586,7 +586,7 @@ A value of `0` means ClickHouse disables HSTS. If you set a positive number, the
 
 ## interserver_listen_host {#interserver_listen_host}
 
-Restriction on hosts that can exchange data between ClickHouse servers.
+Restriction on hosts that can exchange data between Datastore servers.
 If Keeper is used, the same restriction will be applied to the communication between different Keeper instances.
 
 :::note
@@ -611,7 +611,7 @@ A username and a password used to connect to other servers during [replication](
 
 :::note
 - By default, if `interserver_http_credentials` section is omitted, authentication is not used during replication.
-- `interserver_http_credentials` settings do not relate to a ClickHouse client credentials [configuration](../../interfaces/client.md#configuration_files).
+- `interserver_http_credentials` settings do not relate to a Datastore client credentials [configuration](../../interfaces/client.md#configuration_files).
 - These credentials are common for replication via `HTTP` and `HTTPS`.
 :::
 
@@ -624,7 +624,7 @@ The following settings can be configured by sub-tags:
 
 **Credentials Rotation**
 
-ClickHouse supports dynamic interserver credentials rotation without stopping all replicas at the same time to update their configuration. Credentials can be changed in several steps.
+Datastore supports dynamic interserver credentials rotation without stopping all replicas at the same time to update their configuration. Credentials can be changed in several steps.
 
 To enable authentication, set `interserver_http_credentials.allow_empty` to `true` and add credentials. This allows connections with authentication and without it.
 
@@ -744,11 +744,11 @@ The location and format of log messages.
 |------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `async` | When `true` (default) logging will happen asynchronously (one background thread per output channel). Otherwise it will log inside the thread calling LOG           |
 | `async_queue_max_size` | When using async logging, the max amount of messages that will be kept in the the queue waiting for flushing. Extra messages will be dropped                       |
-| `console` | Enable logging to the console. Set to `1` or `true` to enable. Default is `1` if ClickHouse does not run in daemon mode, `0` otherwise.                            |
+| `console` | Enable logging to the console. Set to `1` or `true` to enable. Default is `1` if Datastore does not run in daemon mode, `0` otherwise.                            |
 | `console_log_level` | Log level for console output. Defaults to `level`.                                                                                                                 |
 | `console_shutdown_log_level` | Shutdown level is used to set the console log level at server Shutdown.   
 | `console_startup_log_level` | Startup level is used to set the console log level at server startup. After startup log level is reverted to the `console_log_level` setting                                   |   
-| `count` | Rotation policy: How many historical log files ClickHouse are kept at most.                                                                                        |
+| `count` | Rotation policy: How many historical log files Datastore are kept at most.                                                                                        |
 | `errorlog` | The path to the error log file.                                                                                                                                    |
 | `formatting.type` | Log format for console output. Currently, only `json` is supported                                                                                                 |
 | `level` | Log level. Acceptable values: `none` (turn logging off), `fatal`, `critical`, `error`, `warning`, `notice`, `information`,`debug`, `trace`, `test`                 |
@@ -812,8 +812,8 @@ Column "Example" shows the output at `2023-07-06 18:32:07`.
 ```xml
 <logger>
     <level>trace</level>
-    <log>/var/log/clickhouse-server/clickhouse-server-%F-%T.log</log>
-    <errorlog>/var/log/clickhouse-server/clickhouse-server-%F-%T.err.log</errorlog>
+    <log>/var/log/datastore-server/datastore-server-%F-%T.log</log>
+    <errorlog>/var/log/datastore-server/datastore-server-%F-%T.err.log</errorlog>
     <size>1000M</size>
     <count>10</count>
     <stream_compress>true</stream_compress>
@@ -929,7 +929,7 @@ Log properties can be omitted by commenting out the property. For example, if yo
 
 ## send_crash_reports {#send_crash_reports}
 
-Settings for sending of crash reports to the ClickHouse core developers team.
+Settings for sending of crash reports to the Datastore core developers team.
 
 Enabling it, especially in pre-production environments, is highly appreciated.
 
@@ -939,7 +939,7 @@ Keys:
 |-----------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | `enabled` | Boolean flag to enable the feature, `true` by default. Set to `false` to avoid sending crash reports.                                |
 | `endpoint` | You can override the endpoint URL for sending crash reports.                                                                         |
-| `send_logical_errors` | `LOGICAL_ERROR` is like an `assert`, it is a bug in ClickHouse. This boolean flag enables sending this exceptions (Default: `true`). |
+| `send_logical_errors` | `LOGICAL_ERROR` is like an `assert`, it is a bug in Datastore. This boolean flag enables sending this exceptions (Default: `true`). |
 
 **Recommended usage**
 
@@ -1002,14 +1002,14 @@ Configuration of `disks` follows the structure given below:
 <storage_configuration>
     <disks>
         <disk_name_1>
-            <path>/mnt/fast_ssd/clickhouse/</path>
+            <path>/mnt/fast_ssd/datastore/</path>
         </disk_name_1>
         <disk_name_2>
-            <path>/mnt/hdd1/clickhouse/</path>
+            <path>/mnt/hdd1/datastore/</path>
             <keep_free_space_bytes>10485760</keep_free_space_bytes>
         </disk_name_2>
         <disk_name_3>
-            <path>/mnt/hdd2/clickhouse/</path>
+            <path>/mnt/hdd2/datastore/</path>
             <keep_free_space_bytes>10485760</keep_free_space_bytes>
         </disk_name_3>
         ...
@@ -1042,8 +1042,8 @@ The sub-tags above define the following settings for `policies`:
 | `move_factor`                | The share of available free space on the volume. If the space becomes less, the data will start transferring to the next volume, if there is one. For transfer, chunks are sorted by size from larger to smaller (descending) and chunks whose total size is sufficient to meet the `move_factor` condition are selected, if the total size of all chunks is insufficient, all chunks will be moved.                                                                                                             |
 | `perform_ttl_move_on_insert` | Disables moving data with expired TTL on insertion. By default (if enabled), if we insert a piece of data that has already expired according to the move on life rule, it is immediately moved to the volume / disk specified in the move rule. This can significantly slow down insertion in case the target volume / disk is slow (e.g. S3). If disabled, the expired portion of the data is written to the default volume and then immediately moved to the volume specified in the rule for the expired TTL. |
 | `load_balancing`             | Disk balancing policy, `round_robin` or `least_used`.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `least_used_ttl_ms`          | Sets the timeout (in milliseconds) to update the available space on all disks (`0` - always update, `-1` - never update, default value is `60000`). Note, if the disk is only used by ClickHouse and will not be subject to file system resizing on the fly, you can use the `-1` value. In all other cases this is not recommended, as it will eventually lead to incorrect space allocation.                                                                                                                   |
-| `prefer_not_to_merge`        | Disables merging parts of the data on this volume. Note: this is potentially harmful and can cause slowdown. When this setting is enabled (don't do this), merging data on this volume is prohibited (which is bad). This allows control of how ClickHouse interacts with slow disks. We recommend not to use this at all.                                                                                                                                                                                       |
+| `least_used_ttl_ms`          | Sets the timeout (in milliseconds) to update the available space on all disks (`0` - always update, `-1` - never update, default value is `60000`). Note, if the disk is only used by Datastore and will not be subject to file system resizing on the fly, you can use the `-1` value. In all other cases this is not recommended, as it will eventually lead to incorrect space allocation.                                                                                                                   |
+| `prefer_not_to_merge`        | Disables merging parts of the data on this volume. Note: this is potentially harmful and can cause slowdown. When this setting is enabled (don't do this), merging data on this volume is prohibited (which is bad). This allows control of how Datastore interacts with slow disks. We recommend not to use this at all.                                                                                                                                                                                       |
 | `volume_priority`            | Defines the priority (order) in which volumes are filled. The smaller the value, the higher the priority. The parameter values must be natural numbers and cover the range from 1 to N (N is the largest parameter value specified) with no gaps.                                                                                                                                                                                                                                                                |
 
 For the `volume_priority`:
@@ -1111,10 +1111,10 @@ It is disabled by default.
 
 **Enabling**
 
-To manually turn on metrics history collection [`system.metric_log`](../../operations/system-tables/metric_log.md), create `/etc/clickhouse-server/config.d/metric_log.xml` with the following content:
+To manually turn on metrics history collection [`system.metric_log`](../../operations/system-tables/metric_log.md), create `/etc/datastore-server/config.d/metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <metric_log>
         <database>system</database>
         <table>metric_log</table>
@@ -1125,17 +1125,17 @@ To manually turn on metrics history collection [`system.metric_log`](../../opera
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </metric_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
 
-To disable `metric_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_metric_log.xml` with the following content:
+To disable `metric_log` setting, you should create the following file `/etc/datastore-server/config.d/disable_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <metric_log remove="1" />
-</clickhouse>
+</datastore>
 ```
 
 <SystemLogParameters/>
@@ -1197,7 +1197,7 @@ Keys for server/client settings:
 | `extendedVerification` | If enabled, verify that the certificate CN or SAN matches the peer hostname.                                                                                                                                                                                                                                                                                                                                                                                           | `false`                                    |
 | `fips` | Activates OpenSSL FIPS mode. Supported if the library's OpenSSL version supports FIPS.                                                                                                                                                                                                                                                                                                                                                                                 | `false`                                    |
 | `invalidCertificateHandler` | Class (a subclass of CertificateHandler) for verifying invalid certificates. For example: `<invalidCertificateHandler> <name>RejectCertificateHandler</name> </invalidCertificateHandler>` .                                                                                                                                                                                                                                                                           | `RejectCertificateHandler`                 |
-| `loadDefaultCAFile` | Wether built-in CA certificates for OpenSSL will be used. ClickHouse assumes that builtin CA certificates are in the file `/etc/ssl/cert.pem` (resp. the directory `/etc/ssl/certs`) or in file (resp. directory) specified by the environment variable `SSL_CERT_FILE` (resp. `SSL_CERT_DIR`).                                                                                                                                                                        | `true`                                     |
+| `loadDefaultCAFile` | Wether built-in CA certificates for OpenSSL will be used. Datastore assumes that builtin CA certificates are in the file `/etc/ssl/cert.pem` (resp. the directory `/etc/ssl/certs`) or in file (resp. directory) specified by the environment variable `SSL_CERT_FILE` (resp. `SSL_CERT_DIR`).                                                                                                                                                                        | `true`                                     |
 | `preferServerCiphers` | Client-preferred server ciphers.                                                                                                                                                                                                                                                                                                                                                                                                                                       | `false`                                    |
 | `privateKeyFile` | Path to the file with the secret key of the PEM certificate. The file may contain a key and certificate at the same time.                                                                                                                                                                                                                                                                                                                                              |                                            |
 | `privateKeyPassphraseHandler` | Class (PrivateKeyPassphraseHandler subclass) that requests the passphrase for accessing the private key. For example: `<privateKeyPassphraseHandler>`, `<name>KeyFileHandler</name>`, `<options><password>test</password></options>`, `</privateKeyPassphraseHandler>`.                                                                                                                                                                                                | `KeyConsoleHandler`                        |
@@ -1215,11 +1215,11 @@ Keys for server/client settings:
 ```xml
 <openSSL>
     <server>
-        <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt -->
-        <certificateFile>/etc/clickhouse-server/server.crt</certificateFile>
-        <privateKeyFile>/etc/clickhouse-server/server.key</privateKeyFile>
-        <!-- openssl dhparam -out /etc/clickhouse-server/dhparam.pem 4096 -->
-        <dhParamsFile>/etc/clickhouse-server/dhparam.pem</dhParamsFile>
+        <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/datastore-server/server.key -out /etc/datastore-server/server.crt -->
+        <certificateFile>/etc/datastore-server/server.crt</certificateFile>
+        <privateKeyFile>/etc/datastore-server/server.key</privateKeyFile>
+        <!-- openssl dhparam -out /etc/datastore-server/dhparam.pem 4096 -->
+        <dhParamsFile>/etc/datastore-server/dhparam.pem</dhParamsFile>
         <verificationMode>none</verificationMode>
         <loadDefaultCAFile>true</loadDefaultCAFile>
         <cacheSessions>true</cacheSessions>
@@ -1300,7 +1300,7 @@ Settings:
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <listen_host>0.0.0.0</listen_host>
     <http_port>8123</http_port>
     <tcp_port>9000</tcp_port>
@@ -1314,10 +1314,10 @@ Settings:
         <errors>true</errors>
     </prometheus>
     <!-- highlight-end -->
-</clickhouse>
+</datastore>
 ```
 
-Check (replace `127.0.0.1` with the IP addr or hostname of your ClickHouse server):
+Check (replace `127.0.0.1` with the IP addr or hostname of your Datastore server):
 ```bash
 curl 127.0.0.1:9363/metrics
 ```
@@ -1330,7 +1330,7 @@ Queries are logged in the [system.query_log](/operations/system-tables/query_log
 
 <SystemLogParameters/>
 
-If the table does not exist, ClickHouse will create it. If the structure of the query log changed when the ClickHouse server was updated, the table with the old structure is renamed, and a new table is created automatically.
+If the table does not exist, Datastore will create it. If the structure of the query log changed when the Datastore server was updated, the table with the old structure is renamed, and a new table is created automatically.
 
 **Example**
 
@@ -1353,10 +1353,10 @@ It is disabled by default.
 
 **Enabling**
 
-To manually turn on metrics history collection [`system.query_metric_log`](../../operations/system-tables/query_metric_log.md), create `/etc/clickhouse-server/config.d/query_metric_log.xml` with the following content:
+To manually turn on metrics history collection [`system.query_metric_log`](../../operations/system-tables/query_metric_log.md), create `/etc/datastore-server/config.d/query_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <query_metric_log>
         <database>system</database>
         <table>query_metric_log</table>
@@ -1367,17 +1367,17 @@ To manually turn on metrics history collection [`system.query_metric_log`](../..
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </query_metric_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
 
-To disable `query_metric_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_query_metric_log.xml` with the following content:
+To disable `query_metric_log` setting, you should create the following file `/etc/datastore-server/config.d/disable_query_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <query_metric_log remove="1" />
-</clickhouse>
+</datastore>
 ```
 
 <SystemLogParameters/>
@@ -1419,7 +1419,7 @@ Queries are logged in the [system.query_thread_log](/operations/system-tables/qu
 
 <SystemLogParameters/>
 
-If the table does not exist, ClickHouse will create it. If the structure of the query thread log changed when the ClickHouse server was updated, the table with the old structure is renamed, and a new table is created automatically.
+If the table does not exist, Datastore will create it. If the structure of the query thread log changed when the Datastore server was updated, the table with the old structure is renamed, and a new table is created automatically.
 
 **Example**
 
@@ -1444,7 +1444,7 @@ Queries are logged in the [system.query_views_log](/operations/system-tables/que
 
 <SystemLogParameters/>
 
-If the table does not exist, ClickHouse will create it. If the structure of the query views log changed when the ClickHouse server was updated, the table with the old structure is renamed, and a new table is created automatically.
+If the table does not exist, Datastore will create it. If the structure of the query views log changed when the Datastore server was updated, the table with the old structure is renamed, and a new table is created automatically.
 
 **Example**
 
@@ -1476,7 +1476,7 @@ Additionally:
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <text_log>
         <level>notice</level>
         <database>system</database>
@@ -1489,7 +1489,7 @@ Additionally:
         <!-- <partition_by>event_date</partition_by> -->
         <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine>
     </text_log>
-</clickhouse>
+</datastore>
 ```
 
 ## trace_log {#trace_log}
@@ -1523,7 +1523,7 @@ Settings for the [asynchronous_insert_log](/operations/system-tables/asynchronou
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <asynchronous_insert_log>
         <database>system</database>
         <table>asynchronous_insert_log</table>
@@ -1535,7 +1535,7 @@ Settings for the [asynchronous_insert_log](/operations/system-tables/asynchronou
         <flush_on_crash>false</flush_on_crash>
         <!-- <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine> -->
     </asynchronous_insert_log>
-</clickhouse>
+</datastore>
 ```
 
 ## crash_log {#crash_log}
@@ -1591,7 +1591,7 @@ In this case, an exception will not be thrown, to allow the server to successful
 Example:
 
 ```xml
-<custom_cached_disks_base_directory>/var/lib/clickhouse/caches/</custom_cached_disks_base_directory>
+<custom_cached_disks_base_directory>/var/lib/datastore/caches/</custom_cached_disks_base_directory>
 ```
 
 ## backup_log {#backup_log}
@@ -1603,7 +1603,7 @@ Settings for the [backup_log](../../operations/system-tables/backup_log.md) syst
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <backup_log>
         <database>system</database>
         <table>backup_log</table>
@@ -1615,7 +1615,7 @@ Settings for the [backup_log](../../operations/system-tables/backup_log.md) syst
         <flush_on_crash>false</flush_on_crash>
         <!-- <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine> -->
     </backup_log>
-</clickhouse>
+</datastore>
 ```
 
 ## blob_storage_log {#blob_storage_log}
@@ -1692,9 +1692,9 @@ For the value of the `incl` attribute, see the section "[Configuration files](/o
 List of hosts which are allowed to be used in URL-related storage engines and table functions.
 
 When adding a host with the `\<host\>` xml tag:
-- it should be specified exactly as in the URL, as the name is checked before DNS resolution. For example: `<host>clickhouse.com</host>`
-- if the port is explicitly specified in the URL, then host:port is checked as a whole. For example: `<host>clickhouse.com:80</host>`
-- if the host is specified without a port, then any port of the host is allowed. For example: if `<host>clickhouse.com</host>` is specified then `clickhouse.com:20` (FTP), `clickhouse.com:80` (HTTP), `clickhouse.com:443` (HTTPS) etc are allowed.
+- it should be specified exactly as in the URL, as the name is checked before DNS resolution. For example: `<host>datastore.com</host>`
+- if the port is explicitly specified in the URL, then host:port is checked as a whole. For example: `<host>datastore.com:80</host>`
+- if the host is specified without a port, then any port of the host is allowed. For example: if `<host>datastore.com</host>` is specified then `datastore.com:20` (FTP), `datastore.com:80` (HTTP), `datastore.com:443` (HTTPS) etc are allowed.
 - if the host is specified as an IP address, then it is checked as specified in the URL. For example: `[2a02:6b8:a::a]`.
 - if there are redirects and support for redirects is enabled, then every redirect (the location field) is checked.
 
@@ -1702,7 +1702,7 @@ For example:
 
 ```sql
 <remote_url_allow_hosts>
-    <host>clickhouse.com</host>
+    <host>datastore.com</host>
 </remote_url_allow_hosts>
 ```
 
@@ -1801,7 +1801,7 @@ The directory with user defined files. Used for SQL user defined functions [SQL 
 **Example**
 
 ```xml
-<user_defined_path>/var/lib/clickhouse/user_defined/</user_defined_path>
+<user_defined_path>/var/lib/datastore/user_defined/</user_defined_path>
 ```
 
 ## users_config {#users_config}
@@ -1885,7 +1885,7 @@ The default settings are:
 
 ## zookeeper {#zookeeper}
 
-Contains settings that allow ClickHouse to interact with a [ZooKeeper](http://zookeeper.apache.org/) cluster. ClickHouse uses ZooKeeper for storing metadata of replicas when using replicated tables. If replicated tables are not used, this section of parameters can be omitted.
+Contains settings that allow Datastore to interact with a [ZooKeeper](http://zookeeper.apache.org/) cluster. Datastore uses ZooKeeper for storing metadata of replicas when using replicated tables. If replicated tables are not used, this section of parameters can be omitted.
 
 The following settings can be configured by sub-tags:
 
@@ -1894,13 +1894,13 @@ The following settings can be configured by sub-tags:
 | `node` | ZooKeeper endpoint. You can set multiple endpoints. Eg. `<node index="1"><host>example_host</host><port>2181</port></node>`. The `index` attribute specifies the node order when trying to connect to the ZooKeeper cluster.                                                                                                                                                                                                                                                                                            |
 | `operation_timeout_ms` | Maximum timeout for one operation in milliseconds.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `session_timeout_ms` | Maximum timeout for the client session in milliseconds.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `root` (optional)                          | The znode that is used as the root for znodes used by the ClickHouse server.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `root` (optional)                          | The znode that is used as the root for znodes used by the Datastore server.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `fallback_session_lifetime.min` (optional) | Minimum limit for the lifetime of a zookeeper session to the fallback node when primary is unavailable (load-balancing). Set in seconds. Default: 3 hours.                                                                                                                                                                                                                                                                                                                                                              |
 | `fallback_session_lifetime.max` (optional) | Maximum limit for the lifetime of a zookeeper session to the fallback node when primary is unavailable (load-balancing). Set in seconds. Default: 6 hours.                                                                                                                                                                                                                                                                                                                                                              |
 | `identity` (optional)                      | User and password required by ZooKeeper to access requested znodes.                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `use_compression` (optional)               | Enables compression in Keeper protocol if set to true.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `use_xid_64` (optional)                    | Enables 64-bit transaction IDs. Set to `true` to enable extended transaction ID format. Default: `false`.                                                                                                                                                                                                                                                                                                                                                |
-| `pass_opentelemetry_tracing_context` (optional) | Enables propagation of OpenTelemetry tracing context to Keeper requests. When enabled, tracing spans will be created for Keeper operations, allowing distributed tracing across ClickHouse and Keeper. See [Tracing ClickHouse Keeper Requests](/operations/opentelemetry#tracing-clickhouse-keeper-requests) for more details. Default: `false`.                                                                                                                                      |
+| `pass_opentelemetry_tracing_context` (optional) | Enables propagation of OpenTelemetry tracing context to Keeper requests. When enabled, tracing spans will be created for Keeper operations, allowing distributed tracing across Datastore and Keeper. See [Tracing Datastore Keeper Requests](/operations/opentelemetry#tracing-datastore-keeper-requests) for more details. Default: `false`.                                                                                                                                      |
 
 There is also the `zookeeper_load_balancing` setting (optional) which lets you select the algorithm for ZooKeeper node selection:
 
@@ -1944,7 +1944,7 @@ There is also the `zookeeper_load_balancing` setting (optional) which lets you s
 
 - [Replication](../../engines/table-engines/mergetree-family/replication.md)
 - [ZooKeeper Programmer's Guide](http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html)
-- [Optional secured communication between ClickHouse and Zookeeper](/operations/ssl-zookeeper)
+- [Optional secured communication between Datastore and Zookeeper](/operations/ssl-zookeeper)
 
 ## use_minimalistic_part_header_in_zookeeper {#use_minimalistic_part_header_in_zookeeper}
 
@@ -1952,7 +1952,7 @@ Storage method for data part headers in ZooKeeper. This setting only applies to 
 
 **Globally in the [merge_tree](#merge_tree) section of the `config.xml` file**
 
-ClickHouse uses the setting for all the tables on the server. You can change the setting at any time. Existing tables change their behaviour when the setting changes.
+Datastore uses the setting for all the tables on the server. You can change the setting at any time. Existing tables change their behaviour when the setting changes.
 
 **For each table**
 
@@ -1966,7 +1966,7 @@ When creating a table, specify the corresponding [engine setting](../../engines/
 If [`use_minimalistic_part_header_in_zookeeper = 1`](#use_minimalistic_part_header_in_zookeeper), then [replicated](../../engines/table-engines/mergetree-family/replication.md) tables store the headers of the data parts compactly using a single `znode`. If the table contains many columns, this storage method significantly reduces the volume of the data stored in Zookeeper.
 
 :::note
-After applying `use_minimalistic_part_header_in_zookeeper = 1`, you can't downgrade the ClickHouse server to a version that does not support this setting. Be careful when upgrading ClickHouse on servers in a cluster. Don't upgrade all the servers at once. It is safer to test new versions of ClickHouse in a test environment, or on just a few servers of a cluster.
+After applying `use_minimalistic_part_header_in_zookeeper = 1`, you can't downgrade the Datastore server to a version that does not support this setting. Be careful when upgrading Datastore on servers in a cluster. Don't upgrade all the servers at once. It is safer to test new versions of Datastore in a test environment, or on just a few servers of a cluster.
 
 Data part headers already stored with this setting can't be restored to their previous (non-compact) representation.
 :::
@@ -1992,7 +1992,7 @@ The configurable settings within `<distributed_ddl>` include:
 ```xml
 <distributed_ddl>
     <!-- Path in ZooKeeper to queue with DDL queries -->
-    <path>/clickhouse/task_queue/ddl</path>
+    <path>/datastore/task_queue/ddl</path>
 
     <!-- Settings from this profile will be used to execute DDL queries -->
     <profile>default</profile>
@@ -2017,7 +2017,7 @@ The configurable settings within `<distributed_ddl>` include:
 
 ## access_control_path {#access_control_path}
 
-Path to a folder where a ClickHouse server stores user and role configurations created by SQL commands.
+Path to a folder where a Datastore server stores user and role configurations created by SQL commands.
 
 **See also**
 
@@ -2085,10 +2085,10 @@ The `user_directories` section can contain any number of items, the order of the
 ```xml
 <user_directories>
     <users_xml>
-        <path>/etc/clickhouse-server/users.xml</path>
+        <path>/etc/datastore-server/users.xml</path>
     </users_xml>
     <local_directory>
-        <path>/var/lib/clickhouse/access/</path>
+        <path>/var/lib/datastore/access/</path>
     </local_directory>
 </user_directories>
 ```
@@ -2098,10 +2098,10 @@ Users, roles, row policies, quotas, and profiles can be also stored in ZooKeeper
 ```xml
 <user_directories>
     <users_xml>
-        <path>/etc/clickhouse-server/users.xml</path>
+        <path>/etc/datastore-server/users.xml</path>
     </users_xml>
     <replicated>
-        <zookeeper_path>/clickhouse/access/</zookeeper_path>
+        <zookeeper_path>/datastore/access/</zookeeper_path>
     </replicated>
 </user_directories>
 ```
@@ -2166,7 +2166,7 @@ only one proxy server and that proxy server doesn't change.
 
 This approach allows you to specify one or more
 proxy servers for a protocol. If more than one proxy server is defined,
-ClickHouse uses the different proxies on a round-robin basis, balancing the
+Datastore uses the different proxies on a round-robin basis, balancing the
 load across the servers. This is the simplest approach if there is more than
 one proxy server for a protocol and the list of proxy servers doesn't change.
 
@@ -2206,9 +2206,9 @@ Select a parent field in the tabs below to view their children:
 **Remote proxy resolvers**
 
 It's possible that the proxy servers change dynamically. In that
-case, you can define the endpoint of a resolver. ClickHouse sends
+case, you can define the endpoint of a resolver. Datastore sends
 an empty GET request to that endpoint, the remote resolver should return the proxy host.
-ClickHouse will use it to form the proxy URI using the following template: `\{proxy_scheme\}://\{proxy_host\}:{proxy_port}`
+Datastore will use it to form the proxy URI using the following template: `\{proxy_scheme\}://\{proxy_host\}:{proxy_port}`
 
 **Configuration template**
 
@@ -2267,7 +2267,7 @@ elements for that protocol are ignored. That means load balancing
 | `<endpoint>`        | The URI of the proxy resolver                                                                                                                                                          |
 | `<proxy_scheme>`    | The protocol of the final proxy URI. This can be either `http` or `https`.                                                                                                             |
 | `<proxy_port>`      | The port number of the proxy resolver                                                                                                                                                  |
-| `<proxy_cache_time>` | The time in seconds that values from the resolver should be cached by ClickHouse. Setting this value to `0` causes ClickHouse to contact the resolver for every HTTP or HTTPS request. |
+| `<proxy_cache_time>` | The time in seconds that values from the resolver should be cached by Datastore. Setting this value to `0` causes Datastore to contact the resolver for every HTTP or HTTPS request. |
 
   </TabItem>
 </Tabs>
@@ -2282,7 +2282,7 @@ Proxy settings are determined in the following order:
 | 2.    | Proxy lists            |
 | 3.    | Environment variables  |
 
-ClickHouse will check the highest priority resolver type for the request protocol. If it is not defined,
+Datastore will check the highest priority resolver type for the request protocol. If it is not defined,
 it will check the next highest priority resolver type, until it reaches the environment resolver.
 This also allows a mix of resolver types can be used.
 
@@ -2298,12 +2298,12 @@ It supports IP addresses, domains, subdomains and `'*'` wildcard for full bypass
 
 **Example**
 
-The below configuration bypasses proxy requests to `clickhouse.cloud` and all of its subdomains (e.g, `auth.clickhouse.cloud`).
+The below configuration bypasses proxy requests to `datastore.cloud` and all of its subdomains (e.g, `auth.datastore.cloud`).
 The same applies to GitLab, even though it has a leading dot. Both `gitlab.com` and `about.gitlab.com` would bypass the proxy.
 
 ```xml
 <proxy>
-    <no_proxy>clickhouse.cloud,.gitlab.com</no_proxy>
+    <no_proxy>datastore.cloud,.gitlab.com</no_proxy>
     <http>
         <uri>http://proxy1</uri>
         <uri>http://proxy2:3128</uri>
@@ -2321,7 +2321,7 @@ The directory used as a storage for all `CREATE WORKLOAD` and `CREATE RESOURCE` 
 **Example**
 
 ```xml
-<workload_path>/var/lib/clickhouse/workload/</workload_path>
+<workload_path>/var/lib/datastore/workload/</workload_path>
 ```
 
 **See Also**
@@ -2335,7 +2335,7 @@ The path to a ZooKeeper node, which is used as a storage for all `CREATE WORKLOA
 **Example**
 
 ```xml
-<workload_zookeeper_path>/clickhouse/workload/definitions.sql</workload_zookeeper_path>
+<workload_zookeeper_path>/datastore/workload/definitions.sql</workload_zookeeper_path>
 ```
 
 **See Also**
@@ -2353,12 +2353,12 @@ The following settings can be configured by sub-tags:
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <zookeeper_log>
         <database>system</database>
         <table>zookeeper_log</table>
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
         <ttl>event_date + INTERVAL 1 WEEK DELETE</ttl>
     </zookeeper_log>
-</clickhouse>
+</datastore>
 ```

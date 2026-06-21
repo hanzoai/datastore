@@ -6,9 +6,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-cd "$CLICKHOUSE_TMP"
+cd "$DATASTORE_TMP"
 
-$CLICKHOUSE_LOCAL -n <<'SQL'
+$DATASTORE_LOCAL -n <<'SQL'
 SET engine_file_truncate_on_insert = 1;
 
 SELECT 'Buffers: prepare base files for negative tests';

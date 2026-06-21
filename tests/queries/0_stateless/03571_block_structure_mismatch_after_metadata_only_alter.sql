@@ -7,7 +7,7 @@ CREATE TABLE t
     `branch` String,
     `generated_time` DateTime
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/t', 'r1')
 PARTITION BY (product, toYYYYMM(generated_time))
 ORDER BY (product, machine, branch, generated_time);
 

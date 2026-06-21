@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100129
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100129
 -- SELECT count() with max_rows_to_read / force_primary_key should succeed via
 -- exact count optimization when data is split across multiple parts with
 -- non-aligned granule boundaries.

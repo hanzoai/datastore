@@ -89,7 +89,7 @@ if [[ ! -f "$ZOO_SSL_KEYSTORE_LOCATION" ]]; then
 fi
 
 if [[ ! -f "$ZOO_SSL_TRUSTSTORE_LOCATION" ]]; then
-    keytool -importcert -alias zookeeper -file /clickhouse-config/client.crt -keystore $ZOO_SSL_TRUSTSTORE_LOCATION -storepass password -noprompt -deststoretype pkcs12
+    keytool -importcert -alias zookeeper -file /datastore-config/client.crt -keystore $ZOO_SSL_TRUSTSTORE_LOCATION -storepass password -noprompt -deststoretype pkcs12
 fi
 
 exec "$@"

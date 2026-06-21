@@ -35,12 +35,12 @@ def started_cluster():
 def test_default_database_on_cluster(started_cluster):
     ch1.query(
         database="test_default_database",
-        sql="CREATE TABLE test_local_table (x UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_local_table', 'r1') ORDER BY tuple();",
+        sql="CREATE TABLE test_local_table (x UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test_local_table', 'r1') ORDER BY tuple();",
     )
 
     ch2.query(
         database="test_default_database",
-        sql="CREATE TABLE test_local_table (x UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_local_table', 'r2') ORDER BY tuple();",
+        sql="CREATE TABLE test_local_table (x UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/test_local_table', 'r2') ORDER BY tuple();",
     )
 
     ch1.query(

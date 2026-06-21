@@ -6,4 +6,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # This should not be too slow, even under sanitizers.
-(echo "SYSTEM STOP THREAD FUZZER;"; yes "SELECT throwIf(1); SELECT '.' FORMAT Values;") | head -n 1001 | $CLICKHOUSE_LOCAL --ignore-error 2>/dev/null
+(echo "SYSTEM STOP THREAD FUZZER;"; yes "SELECT throwIf(1); SELECT '.' FORMAT Values;") | head -n 1001 | $DATASTORE_LOCAL --ignore-error 2>/dev/null

@@ -35,7 +35,7 @@ CREATE DICTIONARY colors
   n    UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_colors'))
+SOURCE(DATASTORE(TABLE 'ref_colors'))
 LAYOUT(HASHED())
 LIFETIME(0);
 
@@ -598,7 +598,7 @@ CREATE DICTIONARY colors
   payload String
 )
 PRIMARY KEY color_id
-SOURCE(CLICKHOUSE(TABLE 't__fuzz_0'))
+SOURCE(DATASTORE(TABLE 't__fuzz_0'))
 LAYOUT(HASHED())
 LIFETIME(0);
 
@@ -625,7 +625,7 @@ ENGINE = MergeTree ORDER BY id;
 CREATE DICTIONARY dictionary_all
 (`id` UInt64, `name` String, `i8` String, `i16` String, `i32` String, `i64` String, `u8` String, `u16` String, `u32` String, `u64` String, `f32` String, `f64` String, `d` String, `dt` String, `uid` String, `ip4` String, `ip6` String)
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_table_all'))
+SOURCE(DATASTORE(TABLE 'ref_table_all'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(HASHED());
 

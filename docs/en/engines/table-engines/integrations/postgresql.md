@@ -15,7 +15,7 @@ Currently, only PostgreSQL versions 12 and up are supported for the table engine
 :::
 
 :::tip
-Check out our [Managed Postgres](/docs/cloud/managed-postgres) service. Backed by NVMe storage that is physically co-located with compute, it delivers up to 10x faster performance for workloads that are disk-bound compared to alternatives using network-attached storage like EBS and allows you to replicate your Postgres data to ClickHouse using the Postgres CDC connector in ClickPipes.
+Check out our [Managed Postgres](/docs/cloud/managed-postgres) service. Backed by NVMe storage that is physically co-located with compute, it delivers up to 10x faster performance for workloads that are disk-bound compared to alternatives using network-attached storage like EBS and allows you to replicate your Postgres data to Datastore using the Postgres CDC connector in ClickPipes.
 :::
 
 ## Creating a table {#creating-a-table}
@@ -34,7 +34,7 @@ See a detailed description of the [CREATE TABLE](/sql-reference/statements/creat
 The table structure can differ from the original PostgreSQL table structure:
 
 - Column names should be the same as in the original PostgreSQL table, but you can use just some of these columns and in any order.
-- Column types may differ from those in the original PostgreSQL table. ClickHouse tries to [cast](../../../engines/database-engines/postgresql.md#data_types-support) values to the ClickHouse data types.
+- Column types may differ from those in the original PostgreSQL table. Datastore tries to [cast](../../../engines/database-engines/postgresql.md#data_types-support) values to the Datastore data types.
 - The [external_table_functions_use_nulls](/operations/settings/settings#external_table_functions_use_nulls) setting defines how to handle Nullable columns. Default value: 1. If 0, the table function does not make Nullable columns and inserts default values instead of nulls. This is also applicable for NULL values inside arrays.
 
 **Engine Parameters**
@@ -72,20 +72,20 @@ SELECT * FROM postgresql(postgres_creds, table='table1');
 
 Simple `WHERE` clauses such as `=`, `!=`, `>`, `>=`, `<`, `<=`, and `IN` are executed on the PostgreSQL server.
 
-All joins, aggregations, sorting, `IN [ array ]` conditions and the `LIMIT` sampling constraint are executed in ClickHouse only after the query to PostgreSQL finishes.
+All joins, aggregations, sorting, `IN [ array ]` conditions and the `LIMIT` sampling constraint are executed in Datastore only after the query to PostgreSQL finishes.
 
 `INSERT` queries on PostgreSQL side run as `COPY "table_name" (field1, field2, ... fieldN) FROM STDIN` inside PostgreSQL transaction with auto-commit after each `INSERT` statement.
 
-PostgreSQL `Array` types are converted into ClickHouse arrays.
+PostgreSQL `Array` types are converted into Datastore arrays.
 
 :::note
-Be careful - in PostgreSQL an array data, created like a `type_name[]`, may contain multi-dimensional arrays of different dimensions in different table rows in same column. But in ClickHouse it is only allowed to have multidimensional arrays of the same count of dimensions in all table rows in same column.
+Be careful - in PostgreSQL an array data, created like a `type_name[]`, may contain multi-dimensional arrays of different dimensions in different table rows in same column. But in Datastore it is only allowed to have multidimensional arrays of the same count of dimensions in all table rows in same column.
 :::
 
 Supports multiple replicas that must be listed by `|`. For example:
 
 ```sql
-CREATE TABLE test_replicas (id UInt32, name String) ENGINE = PostgreSQL(`postgres{2|3|4}:5432`, 'clickhouse', 'test_replicas', 'postgres', 'mysecretpassword');
+CREATE TABLE test_replicas (id UInt32, name String) ENGINE = PostgreSQL(`postgres{2|3|4}:5432`, 'datastore', 'test_replicas', 'postgres', 'mysecretpassword');
 ```
 
 Replicas priority for PostgreSQL dictionary source is supported. The bigger the number in map, the less the priority. The highest priority is `0`.
@@ -95,7 +95,7 @@ In the example below replica `example01-1` has the highest priority:
 ```xml
 <postgresql>
     <port>5432</port>
-    <user>clickhouse</user>
+    <user>datastore</user>
     <password>qwerty</password>
     <replica>
         <host>example01-1</host>
@@ -138,9 +138,9 @@ postgresql> SELECT * FROM test;
  (1 row)
 ```
 
-### Creating Table in ClickHouse, and connecting to  PostgreSQL table created above {#creating-table-in-clickhouse-and-connecting-to--postgresql-table-created-above}
+### Creating Table in Datastore, and connecting to  PostgreSQL table created above {#creating-table-in-datastore-and-connecting-to--postgresql-table-created-above}
 
-This example uses the [PostgreSQL table engine](/engines/table-engines/integrations/postgresql.md) to connect the ClickHouse table to the PostgreSQL table and use both SELECT and INSERT statements to the PostgreSQL database:
+This example uses the [PostgreSQL table engine](/engines/table-engines/integrations/postgresql.md) to connect the Datastore table to the PostgreSQL table and use both SELECT and INSERT statements to the PostgreSQL database:
 
 ```sql
 CREATE TABLE default.postgresql_table
@@ -152,9 +152,9 @@ CREATE TABLE default.postgresql_table
 ENGINE = PostgreSQL('localhost:5432', 'public', 'test', 'postgres_user', 'postgres_password');
 ```
 
-### Inserting initial data from PostgreSQL table into ClickHouse table, using a SELECT query {#inserting-initial-data-from-postgresql-table-into-clickhouse-table-using-a-select-query}
+### Inserting initial data from PostgreSQL table into Datastore table, using a SELECT query {#inserting-initial-data-from-postgresql-table-into-datastore-table-using-a-select-query}
 
-The [postgresql table function](/sql-reference/table-functions/postgresql.md) copies the data from PostgreSQL to ClickHouse, which is often used for improving the query performance of the data by querying or performing analytics in ClickHouse rather than in PostgreSQL, or can also be used for migrating data from PostgreSQL to ClickHouse. Since we will be copying the data from PostgreSQL to ClickHouse, we will use a MergeTree table engine in ClickHouse and call it postgresql_copy:
+The [postgresql table function](/sql-reference/table-functions/postgresql.md) copies the data from PostgreSQL to Datastore, which is often used for improving the query performance of the data by querying or performing analytics in Datastore rather than in PostgreSQL, or can also be used for migrating data from PostgreSQL to Datastore. Since we will be copying the data from PostgreSQL to Datastore, we will use a MergeTree table engine in Datastore and call it postgresql_copy:
 
 ```sql
 CREATE TABLE default.postgresql_copy
@@ -172,9 +172,9 @@ INSERT INTO default.postgresql_copy
 SELECT * FROM postgresql('localhost:5432', 'public', 'test', 'postgres_user', 'postgres_password');
 ```
 
-### Inserting incremental data from PostgreSQL table into ClickHouse table {#inserting-incremental-data-from-postgresql-table-into-clickhouse-table}
+### Inserting incremental data from PostgreSQL table into Datastore table {#inserting-incremental-data-from-postgresql-table-into-datastore-table}
 
-If then performing ongoing synchronization between the PostgreSQL table and ClickHouse table after the initial insert, you can use a WHERE clause in ClickHouse to insert only data added to PostgreSQL based on a timestamp or unique sequence ID.
+If then performing ongoing synchronization between the PostgreSQL table and Datastore table after the initial insert, you can use a WHERE clause in Datastore to insert only data added to PostgreSQL based on a timestamp or unique sequence ID.
 
 This would require keeping track of the max ID or timestamp previously added, such as the following:
 
@@ -190,7 +190,7 @@ SELECT * FROM postgresql('localhost:5432', 'public', 'test', 'postges_user', 'po
 WHERE int_id > maxIntID;
 ```
 
-### Selecting data from the resulting ClickHouse table {#selecting-data-from-the-resulting-clickhouse-table}
+### Selecting data from the resulting Datastore table {#selecting-data-from-the-resulting-datastore-table}
 
 ```sql
 SELECT * FROM postgresql_copy WHERE str IN ('test');
@@ -214,7 +214,7 @@ postgres=# INSERT INTO "nice.schema"."nice.table" SELECT i FROM generate_series(
 
 ```sql
 CREATE TABLE pg_table_schema_with_dots (a UInt32)
-        ENGINE PostgreSQL('localhost:5432', 'clickhouse', 'nice.table', 'postgrsql_user', 'password', 'nice.schema');
+        ENGINE PostgreSQL('localhost:5432', 'datastore', 'nice.table', 'postgrsql_user', 'password', 'nice.schema');
 ```
 
 **See Also**
@@ -224,5 +224,5 @@ CREATE TABLE pg_table_schema_with_dots (a UInt32)
 
 ## Related content {#related-content}
 
-- Blog: [ClickHouse and PostgreSQL - a match made in data heaven - part 1](https://clickhouse.com/blog/migrating-data-between-clickhouse-postgres)
-- Blog: [ClickHouse and PostgreSQL - a Match Made in Data Heaven - part 2](https://clickhouse.com/blog/migrating-data-between-clickhouse-postgres-part-2)
+- Blog: [Datastore and PostgreSQL - a match made in data heaven - part 1](https://datastore.com/blog/migrating-data-between-datastore-postgres)
+- Blog: [Datastore and PostgreSQL - a Match Made in Data Heaven - part 2](https://datastore.com/blog/migrating-data-between-datastore-postgres-part-2)

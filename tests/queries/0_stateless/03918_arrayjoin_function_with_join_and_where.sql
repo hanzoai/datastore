@@ -1,6 +1,6 @@
 -- Tags: no-random-settings
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/96398
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/96398
 -- arrayJoin() function with INNER JOIN and WHERE should not produce duplicate rows.
 -- The bug was in partial predicate push-down for JOINs (disjunction optimization):
 -- it didn't check for ARRAY_JOIN nodes, causing arrayJoin to execute both

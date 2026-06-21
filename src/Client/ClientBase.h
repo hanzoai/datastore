@@ -82,7 +82,7 @@ struct MergeTreeSettings;
 
 /**
  * The base class which encapsulates the core functionality of a client.
- * Can be used in a standalone application (clickhouse-client or clickhouse-local),
+ * Can be used in a standalone application (datastore-client or datastore-local),
  * or be embedded into server.
  * Always keep in mind that there can be several instances of this class within
  * a process. Thus, it cannot keep its state in global shared variables or even use them.
@@ -120,7 +120,7 @@ protected:
     void runNonInteractive();
 
     char * argv0 = nullptr;
-    String app_name; /// Application name for help messages (e.g., "clickhouse client" or "clickhouse-client")
+    String app_name; /// Application name for help messages (e.g., "datastore client" or "datastore-client")
     void runLibFuzzer();
 
     /// This is the analogue of Poco::Application::config()
@@ -133,7 +133,7 @@ protected:
 
     virtual bool buzzHouse()
     {
-        throw Exception(ErrorCodes::NOT_IMPLEMENTED, "ClickHouse was compiled without BuzzHouse enabled");
+        throw Exception(ErrorCodes::NOT_IMPLEMENTED, "Datastore was compiled without BuzzHouse enabled");
     }
 
     virtual void connect() = 0;
@@ -188,18 +188,18 @@ protected:
     /// Prints the help message. The fact whether it is verbose or not depends on the contents of
     /// the OptionsDescription object.
     virtual void printHelpMessage(const OptionsDescription & options_description) = 0;
-    /// Add options that are common for the embedded client, regular client or clickhouse-local.
+    /// Add options that are common for the embedded client, regular client or datastore-local.
     void addCommonOptions(OptionsDescription & options_description);
     /// Add user-level or MergeTree-level settings to the list of possible command line options.
     /// In case if any of that will appear during options parsing the corresponding setting will be
     /// changed in the cmd_settings or in cmd_merge_tree_settings object.
     void addSettingsToProgramOptionsAndSubscribeToChanges(OptionsDescription & options_description);
-    /// Add extra options depending on the application (e.g. clickhouse-local or clickhouse-client)
+    /// Add extra options depending on the application (e.g. datastore-local or datastore-client)
     virtual void addExtraOptions(OptionsDescription & options_description) = 0;
     /// Move options from the boost::program_options structure to the one returned by
     /// getClientConfiguration(). Missing options are filled in with the defaults.
     /// NB: This happens only for options that are common for the embedded client,
-    /// regular client and clickhouse-local. For any other specific option
+    /// regular client and datastore-local. For any other specific option
     /// please use processOptions method.
     void addOptionsToTheClientConfiguration(const CommandLineOptions & options);
     virtual void processOptions(const OptionsDescription & options_description,
@@ -353,7 +353,7 @@ protected:
 
     String default_output_format; /// Query results output format.
     CompressionMethod default_output_compression_method = CompressionMethod::None;
-    String default_input_format; /// Tables' format for clickhouse-local.
+    String default_input_format; /// Tables' format for datastore-local.
     CompressionMethod default_input_compression_method = CompressionMethod::None;
 
     bool select_into_file = false; /// If writing result INTO OUTFILE. It affects progress rendering.

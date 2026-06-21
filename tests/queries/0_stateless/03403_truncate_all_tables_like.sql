@@ -22,7 +22,7 @@ SELECT * FROM truncate_test_stripe_log;
 SELECT * FROM truncate_test_merge_tree;
 
 SELECT '======Testing Truncate Without ALL Keyword======';
-TRUNCATE TABLES FROM IF EXISTS {CLICKHOUSE_DATABASE:Identifier};
+TRUNCATE TABLES FROM IF EXISTS {DATASTORE_DATABASE:Identifier};
 SELECT * FROM system.numbers WHERE number NOT IN truncate_test_set LIMIT 1;
 SELECT * FROM truncate_test_log;
 SELECT * FROM truncate_test_memory;
@@ -39,7 +39,7 @@ INSERT INTO truncate_test_stripe_log VALUES(1);
 INSERT INTO truncate_test_merge_tree VALUES('2000-01-01', 1);
 
 SELECT '======Truncate With LIKE Keyword======';
-TRUNCATE TABLES FROM IF EXISTS {CLICKHOUSE_DATABASE:Identifier} LIKE '%merge_tree';
+TRUNCATE TABLES FROM IF EXISTS {DATASTORE_DATABASE:Identifier} LIKE '%merge_tree';
 SELECT * FROM truncate_test_stripe_log;
 SELECT * FROM truncate_test_merge_tree;
 
@@ -47,11 +47,11 @@ SELECT '======Insert Values Again======';
 INSERT INTO truncate_test_merge_tree VALUES('2000-01-01', 1);
 
 SELECT '======Truncate With NOT LIKE Keyword======';
-TRUNCATE TABLES FROM IF EXISTS {CLICKHOUSE_DATABASE:Identifier} NOT LIKE '%merge_tree';
+TRUNCATE TABLES FROM IF EXISTS {DATASTORE_DATABASE:Identifier} NOT LIKE '%merge_tree';
 SELECT * FROM truncate_test_stripe_log;
 SELECT * FROM truncate_test_merge_tree;
 
-TRUNCATE TABLES FROM IF EXISTS {CLICKHOUSE_DATABASE:Identifier} NOT LIKE '%stripe%';
+TRUNCATE TABLES FROM IF EXISTS {DATASTORE_DATABASE:Identifier} NOT LIKE '%stripe%';
 SELECT * FROM truncate_test_stripe_log;
 SELECT * FROM truncate_test_merge_tree;
 

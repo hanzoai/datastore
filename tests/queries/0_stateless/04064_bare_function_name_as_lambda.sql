@@ -4,7 +4,7 @@
 -- `CREATE FUNCTION` and `DROP FUNCTION` for these global names.
 
 -- Test passing bare function names to higher-order functions instead of lambdas.
--- https://github.com/ClickHouse/ClickHouse/issues/63498
+-- https://github.com/ClickHouse/Datastore/issues/63498
 
 -- The bare-function-to-lambda rewrite is implemented only in the new analyzer.
 SET enable_analyzer = 1;

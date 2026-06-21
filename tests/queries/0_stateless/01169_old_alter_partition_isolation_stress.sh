@@ -9,17 +9,17 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS src";
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS dst";
-$CLICKHOUSE_CLIENT --query "CREATE TABLE src (n UInt64, type UInt8) ENGINE=MergeTree ORDER BY type SETTINGS old_parts_lifetime=0";
-$CLICKHOUSE_CLIENT --query "CREATE TABLE dst (n UInt64, type UInt8) ENGINE=MergeTree ORDER BY type SETTINGS old_parts_lifetime=0";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS src";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS dst";
+$DATASTORE_CLIENT --query "CREATE TABLE src (n UInt64, type UInt8) ENGINE=MergeTree ORDER BY type SETTINGS old_parts_lifetime=0";
+$DATASTORE_CLIENT --query "CREATE TABLE dst (n UInt64, type UInt8) ENGINE=MergeTree ORDER BY type SETTINGS old_parts_lifetime=0";
 
 function thread_insert()
 {
     set -e
     val=1
     while true; do
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         INSERT INTO src VALUES /* ($val, 1) */ ($val, 1);
         INSERT INTO src VALUES /* ($val, 2) */ ($val, 2);
@@ -40,7 +40,7 @@ function thread_partition_src_to_dst()
     sum=0
     for i in {1..20}; do
         out=$(
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         INSERT INTO src VALUES /* ($i, 3) */ ($i, 3);
         INSERT INTO dst SELECT * FROM src;
@@ -49,7 +49,7 @@ function thread_partition_src_to_dst()
         SELECT throwIf((SELECT (count(), sum(n)) FROM merge(currentDatabase(), '') WHERE type=3) != ($count + 1, $sum + $i)) FORMAT Null;
         COMMIT;" 2>&1) ||:
 
-        echo "$out" | grep -Fv "SERIALIZATION_ERROR" | grep -F "Received from " && $CLICKHOUSE_CLIENT --query "
+        echo "$out" | grep -Fv "SERIALIZATION_ERROR" | grep -F "Received from " && $DATASTORE_CLIENT --query "
                                                                                    begin transaction;
                                                                                    set transaction snapshot 3;
                                                                                    select $i, 'src', type, n, _part from src order by type, n;
@@ -68,7 +68,7 @@ function thread_partition_dst_to_src()
         if (( i % 2 )); then
             action="COMMIT"
         fi
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
         SYSTEM STOP MERGES dst;
         ALTER TABLE dst DROP PARTITION ID 'nonexistent';  -- STOP MERGES doesn't wait for started merges to finish, so we use this trick
         SYSTEM SYNC TRANSACTION LOG;
@@ -87,7 +87,7 @@ function thread_select()
 {
     set -e
     while true; do
-        $CLICKHOUSE_CLIENT --query "
+        $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         -- no duplicates
         SELECT type, throwIf(count(n) != countDistinct(n)) FROM src GROUP BY type FORMAT Null;
@@ -113,11 +113,11 @@ kill -TERM $PID_2
 wait ||:
 wait_for_queries_to_finish 40
 
-$CLICKHOUSE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT type, count(n) = countDistinct(n) FROM merge(currentDatabase(), '') GROUP BY type ORDER BY type"
-$CLICKHOUSE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT DISTINCT arraySort(groupArrayIf(n, type=1)) = arraySort(groupArrayIf(n, type=2)) FROM merge(currentDatabase(), '') GROUP BY _table ORDER BY _table"
-$CLICKHOUSE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT count(n), sum(n) FROM merge(currentDatabase(), '') WHERE type=4"
-$CLICKHOUSE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT type, count(n) == max(n), sum(n) == max(n)*(max(n)+1)/2 FROM merge(currentDatabase(), '') WHERE type IN (1, 2) GROUP BY type ORDER BY type"
+$DATASTORE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT type, count(n) = countDistinct(n) FROM merge(currentDatabase(), '') GROUP BY type ORDER BY type"
+$DATASTORE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT DISTINCT arraySort(groupArrayIf(n, type=1)) = arraySort(groupArrayIf(n, type=2)) FROM merge(currentDatabase(), '') GROUP BY _table ORDER BY _table"
+$DATASTORE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT count(n), sum(n) FROM merge(currentDatabase(), '') WHERE type=4"
+$DATASTORE_CLIENT --implicit_transaction=1 --throw_on_unsupported_query_inside_transaction=0 -q "SELECT type, count(n) == max(n), sum(n) == max(n)*(max(n)+1)/2 FROM merge(currentDatabase(), '') WHERE type IN (1, 2) GROUP BY type ORDER BY type"
 
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE src";
-$CLICKHOUSE_CLIENT --query "DROP TABLE dst";
+$DATASTORE_CLIENT --query "DROP TABLE src";
+$DATASTORE_CLIENT --query "DROP TABLE dst";

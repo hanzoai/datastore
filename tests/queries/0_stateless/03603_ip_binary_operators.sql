@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/71415
+-- https://github.com/ClickHouse/Datastore/issues/71415
 SELECT now() + CAST(toFixedString(materialize(toNullable('1')), 1), 'IPv6'); -- {serverError ILLEGAL_TYPE_OF_ARGUMENT}
 SELECT CAST('2000-01-01', 'Date32') - CAST(0, 'IPv4');  -- {serverError ILLEGAL_TYPE_OF_ARGUMENT}
 
@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS t0;
 
 SELECT materialize('1')::IPv6 + '2000-01-01 00:00:00'::DateTime;  -- {serverError ILLEGAL_TYPE_OF_ARGUMENT}
 
--- https://github.com/ClickHouse/ClickHouse/issues/83963
+-- https://github.com/ClickHouse/Datastore/issues/83963
 CREATE TABLE `02763_alias__fuzz_25` (`x` DateTime64(3), `y` IPv4, `z` Float32 ALIAS x + y) ENGINE = MergeTree ORDER BY x; -- {serverError ILLEGAL_TYPE_OF_ARGUMENT}
 
 -- Other non sensical operations

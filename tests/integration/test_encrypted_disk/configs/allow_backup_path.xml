@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <backups>
         <allowed_path>/backups/</allowed_path>
     </backups>
-</clickhouse>
+</datastore>

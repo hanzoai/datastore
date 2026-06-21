@@ -8,4 +8,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_LOCAL --query "SELECT lowerUTF8('ESPAÑA')"
+$DATASTORE_LOCAL --query "SELECT lowerUTF8('ESPAÑA')"

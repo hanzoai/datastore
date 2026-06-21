@@ -173,7 +173,7 @@ void USearchIndexWithSerialization::deserialize(ReadBuffer & istr)
         throw Exception(ErrorCodes::INCORRECT_DATA, "Could not load vector similarity index. Please drop the index and create it again. Error: {}", result.error.release());
 
     /// USearch pre-allocates internal data structures for at most N threads. This makes the implicit assumption that the caller (this
-    /// class) uses at most this number of threads. The problem here is that there is no such guarantee in ClickHouse because of potential
+    /// class) uses at most this number of threads. The problem here is that there is no such guarantee in Datastore because of potential
     /// oversubscription. Therefore, set N as 2 * the available cores - that should be pretty safe. In the unlikely case there are still
     /// more threads at runtime than this limit, we patched usearch to return an error.
     try_reserve(unum::usearch::index_limits_t(limits().members, 2 * getNumberOfCPUCoresToUse()));
@@ -391,7 +391,7 @@ void updateImpl(const ColumnArray * column_array, const ColumnArray::Offsets & c
         if constexpr (std::is_same_v<Column, ColumnBFloat16>)
         {
             /// bf16 was standardized with C++23 but libcxx does not support it yet.
-            /// As a result, ClickHouse and usearch each emulate bf16 and we need to implement some ugly special handling for bf16 below.
+            /// As a result, Datastore and usearch each emulate bf16 and we need to implement some ugly special handling for bf16 below.
             result = index->add(key, reinterpret_cast<const unum::usearch::bf16_bits_t *>(&value.raw()));
         }
         else

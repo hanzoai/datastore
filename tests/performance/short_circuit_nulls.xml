@@ -3,7 +3,7 @@
         with
             null::Nullable(String) as x,
             'hello' as y,
-            ' clickhouse' as z
+            ' datastore' as z
         select
             concat(materialize(x), materialize(y), materialize(z))
         from
@@ -15,7 +15,7 @@
         with
             if(number % 10000 = 0, 'bye',  null)::Nullable(String) as x,
             'hello' as y,
-            ' clickhouse' as z
+            ' datastore' as z
         select
             concat(materialize(x), materialize(y), materialize(z))
         from
@@ -30,7 +30,7 @@
         with
             if(number % 10000 = 0, 'bye',  null)::Nullable(String) as x,
             'hello' as y,
-            ' clickhouse' as z
+            ' datastore' as z
         select
             concat(materialize(x), materialize(y), materialize(z))
         from

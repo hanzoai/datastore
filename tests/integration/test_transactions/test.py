@@ -437,7 +437,7 @@ def test_mutate_transaction_involved_parts(start_cluster):
     tx(2, "COMMIT")
 
     # When mutating table without a transaction, after restarting, the instance should load the outdated parts successfully
-    # Refer: https://github.com/ClickHouse/ClickHouse/pull/81734
+    # Refer: https://github.com/ClickHouse/Datastore/pull/81734
     node.query("ALTER TABLE mt3 UPDATE m = 10 WHERE 1")
     node.restart_clickhouse()
 

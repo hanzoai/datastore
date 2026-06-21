@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/448
+-- https://github.com/ClickHouse/Datastore/issues/448
 
 DROP TABLE IF EXISTS a;
 DROP TABLE iF EXISTS b;

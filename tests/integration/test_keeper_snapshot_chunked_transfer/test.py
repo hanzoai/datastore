@@ -7,7 +7,7 @@ import time
 import pytest
 
 import helpers.keeper_utils as keeper_utils
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.keeper_snapshot_utils import (
     generate_keeper_configs,
     fill_test_tree,
@@ -62,12 +62,12 @@ node11 = cluster.add_instance("node11", main_configs=["configs/enable_keeper11_l
 node12 = cluster.add_instance("node12", main_configs=["configs/enable_keeper12_large_chunk_s3.xml", "configs/text_log.xml"], user_configs=[_small_buf_cfg], stay_alive=True, with_minio=True, with_remote_database_disk=False)
 
 # compat: old-version leader (no chunking support), new-version follower
-compat1 = cluster.add_instance("compat1", main_configs=["configs/enable_keeper_compat1.xml"], stay_alive=True, image="clickhouse/clickhouse-server", tag=CLICKHOUSE_CI_MIN_TESTED_VERSION, with_installed_binary=True, with_remote_database_disk=False)
-compat2 = cluster.add_instance("compat2", main_configs=["configs/enable_keeper_compat2.xml"], stay_alive=True, image="clickhouse/clickhouse-server", tag=CLICKHOUSE_CI_MIN_TESTED_VERSION, with_installed_binary=True, with_remote_database_disk=False)
+compat1 = cluster.add_instance("compat1", main_configs=["configs/enable_keeper_compat1.xml"], stay_alive=True, image="datastore/datastore-server", tag=DATASTORE_CI_MIN_TESTED_VERSION, with_installed_binary=True, with_remote_database_disk=False)
+compat2 = cluster.add_instance("compat2", main_configs=["configs/enable_keeper_compat2.xml"], stay_alive=True, image="datastore/datastore-server", tag=DATASTORE_CI_MIN_TESTED_VERSION, with_installed_binary=True, with_remote_database_disk=False)
 compat3 = cluster.add_instance("compat3", main_configs=["configs/enable_keeper_compat3.xml", "configs/text_log.xml"], stay_alive=True, with_remote_database_disk=False)
 
-compat_s3_1 = cluster.add_instance("compat_s3_1", main_configs=["configs/enable_keeper_compat_s3_1.xml"], stay_alive=True, image="clickhouse/clickhouse-server", tag="25.12", with_installed_binary=True, with_remote_database_disk=False)
-compat_s3_2 = cluster.add_instance("compat_s3_2", main_configs=["configs/enable_keeper_compat_s3_2.xml"], stay_alive=True, image="clickhouse/clickhouse-server", tag="25.12", with_installed_binary=True, with_remote_database_disk=False)
+compat_s3_1 = cluster.add_instance("compat_s3_1", main_configs=["configs/enable_keeper_compat_s3_1.xml"], stay_alive=True, image="datastore/datastore-server", tag="25.12", with_installed_binary=True, with_remote_database_disk=False)
+compat_s3_2 = cluster.add_instance("compat_s3_2", main_configs=["configs/enable_keeper_compat_s3_2.xml"], stay_alive=True, image="datastore/datastore-server", tag="25.12", with_installed_binary=True, with_remote_database_disk=False)
 compat_s3_3 = cluster.add_instance("compat_s3_3", main_configs=["configs/enable_keeper_compat_s3_3.xml", "configs/text_log.xml"], user_configs=[_small_buf_cfg], stay_alive=True, with_minio=True, with_remote_database_disk=False)
 
 
@@ -223,7 +223,7 @@ def test_recover_after_interrupted_transfer(started_cluster, nodes):
         # reliable identity for the original interrupted-transfer file.
         interrupted_tmp_ids = {(o.object_name, o.last_modified) for o in tmp_objects}
     else:
-        snapshot_dir = "/var/lib/clickhouse/coordination/snapshots"
+        snapshot_dir = "/var/lib/datastore/coordination/snapshots"
         tmp_snapshot_path = node_lagging.exec_in_container(
             ["bash", "-c", f"find {snapshot_dir} -name 'tmp_snapshot_*.bin*' | sort | tail -1 || true"]
         ).strip()

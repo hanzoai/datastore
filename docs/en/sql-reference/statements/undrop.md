@@ -8,7 +8,7 @@ doc_type: 'reference'
 
 Cancels the dropping of the table.
 
-Beginning with ClickHouse version 23.3 it is possible to UNDROP a table in an Atomic database
+Beginning with Datastore version 23.3 it is possible to UNDROP a table in an Atomic database
 within `database_atomic_delay_before_drop_table_sec` (8 minutes by default) of issuing the DROP TABLE statement.  Dropped tables are listed in 
 a system table called `system.dropped_tables`.
 
@@ -49,7 +49,7 @@ database:              default
 table:                 tab
 uuid:                  aa696a1a-1d70-4e60-a841-4c80827706cc
 engine:                MergeTree
-metadata_dropped_path: /var/lib/clickhouse/metadata_dropped/default.tab.aa696a1a-1d70-4e60-a841-4c80827706cc.sql
+metadata_dropped_path: /var/lib/datastore/metadata_dropped/default.tab.aa696a1a-1d70-4e60-a841-4c80827706cc.sql
 table_dropped_time:    2023-04-05 14:12:12
 
 1 row in set. Elapsed: 0.001 sec. 

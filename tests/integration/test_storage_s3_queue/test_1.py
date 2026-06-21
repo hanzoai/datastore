@@ -171,7 +171,7 @@ def test_multiple_tables_streaming_sync(started_cluster, mode):
     table_name = f"multiple_tables_streaming_sync_{mode}"
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     files_to_generate = 300
 
@@ -257,7 +257,7 @@ def test_multiple_tables_streaming_sync_distributed(started_cluster, mode):
         f"multiple_tables_streaming_sync_distributed_{mode}_{generate_random_string()}"
     )
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 1000
     row_num = 10
@@ -352,7 +352,7 @@ def test_max_set_age(started_cluster, mode):
     table_name = f"max_set_age_{mode}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     max_age = 20
     files_to_generate = 10
@@ -491,7 +491,7 @@ def test_max_set_size(started_cluster):
     node = started_cluster.instances["instance_without_keeper_fault_injection"]
     table_name = f"max_set_size_{generate_random_string()}"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -538,7 +538,7 @@ def test_drop_table(started_cluster):
     table_name = f"test_drop"
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     files_to_generate = 300
 
@@ -572,7 +572,7 @@ def test_s3_client_reused(started_cluster):
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     row_num = 10
 
     def get_created_s3_clients_count():

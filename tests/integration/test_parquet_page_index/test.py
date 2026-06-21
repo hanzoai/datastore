@@ -7,7 +7,7 @@ import pytest
 from helpers.cluster import ClickHouseCluster
 
 cluster = ClickHouseCluster(__file__)
-path_to_userfiles = "/var/lib/clickhouse/user_files/"
+path_to_userfiles = "/var/lib/datastore/user_files/"
 node = cluster.add_instance("node", external_dirs=[path_to_userfiles])
 
 

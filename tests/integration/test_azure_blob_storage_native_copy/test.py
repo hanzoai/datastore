@@ -28,7 +28,7 @@ def generate_config(port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         TEMPLATE = """
-        <clickhouse>
+        <datastore>
             <storage_configuration>
                 <disks>
                     <disk_azure>
@@ -96,7 +96,7 @@ def generate_config(port):
                 <allowed_disk>disk_azure_cache</allowed_disk>
                 <allowed_disk>disk_azure_other_bucket</allowed_disk>
             </backups>
-        </clickhouse>
+        </datastore>
         """
         f.write(TEMPLATE.format(port=port))
     return path
@@ -330,12 +330,12 @@ def test_clickhouse_disks_azure(cluster):
         [
             "bash",
             "-c",
-            f"echo 'meow' | /usr/bin/clickhouse disks --disk {disk} --query 'write im_a_file.txt'",
+            f"echo 'meow' | /usr/bin/datastore disks --disk {disk} --query 'write im_a_file.txt'",
         ]
     )
     out = node4.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--disk",
             disk,
@@ -348,12 +348,12 @@ def test_clickhouse_disks_azure(cluster):
         [
             "bash",
             "-c",
-            f"/usr/bin/clickhouse disks --disk {disk} --log-level trace --query 'copy im_a_file.txt another_file.txt'",
+            f"/usr/bin/datastore disks --disk {disk} --log-level trace --query 'copy im_a_file.txt another_file.txt'",
         ]
     )
     out = node4.exec_in_container(
         [
-            "/usr/bin/clickhouse",
+            "/usr/bin/datastore",
             "disks",
             "--disk",
             disk,

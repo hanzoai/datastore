@@ -1,5 +1,5 @@
 ---
-description: 'This engine allows integrating ClickHouse with RocksDB'
+description: 'This engine allows integrating Datastore with RocksDB'
 sidebar_label: 'EmbeddedRocksDB'
 sidebar_position: 50
 slug: /engines/table-engines/integrations/embedded-rocksdb
@@ -13,7 +13,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 <CloudNotSupportedBadge />
 
-This engine allows integrating ClickHouse with [RocksDB](http://rocksdb.org/).
+This engine allows integrating Datastore with [RocksDB](http://rocksdb.org/).
 
 ## Creating a table {#creating-a-table}
 

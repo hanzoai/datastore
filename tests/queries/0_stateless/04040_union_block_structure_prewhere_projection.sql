@@ -3,7 +3,7 @@
 -- could fix the mismatch, causing an exception in debug/sanitizer builds.
 -- Triggered by PREWHERE optimization adding extra pass-through columns to ReadFromMergeTree
 -- output that are not consumed by the expression DAG above.
--- https://github.com/ClickHouse/ClickHouse/issues/96131
+-- https://github.com/ClickHouse/Datastore/issues/96131
 
 SET enable_analyzer = 1;
 SET parallel_replicas_local_plan = 1;

@@ -21,15 +21,15 @@ EXCEPTION_BEFORE_START_QUERY="WITH
 
 
 # For this query the system.query_log needs to show ExceptionBeforeStart and elapsed seconds <= 1.0
-QUERY_ID="${CLICKHOUSE_DATABASE}_$(date +%s)_02883_q1"
+QUERY_ID="${DATASTORE_DATABASE}_$(date +%s)_02883_q1"
 
 # Check that it happens at least once. So that the query has a chance to finish in less than a second despite the sleep in the subquery.
 # Occasional longer times are possible due to high system load, the usage of thread fuzzer and sanitizers.
 for _ in {1..100}
 do
-    ${CLICKHOUSE_CLIENT} --query "$EXCEPTION_BEFORE_START_QUERY" --query_id="$QUERY_ID" >/dev/null 2>&1
-    ${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
-    [[ "1" == "$(${CLICKHOUSE_CLIENT} --query "SELECT type == 'ExceptionBeforeStart' AND query_duration_ms <= 1000 FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$CLICKHOUSE_DATABASE' AND query_id='$QUERY_ID' ORDER BY event_time_microseconds DESC LIMIT 1")" ]] && echo 'Ok' && break
+    ${DATASTORE_CLIENT} --query "$EXCEPTION_BEFORE_START_QUERY" --query_id="$QUERY_ID" >/dev/null 2>&1
+    ${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
+    [[ "1" == "$(${DATASTORE_CLIENT} --query "SELECT type == 'ExceptionBeforeStart' AND query_duration_ms <= 1000 FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$DATASTORE_DATABASE' AND query_id='$QUERY_ID' ORDER BY event_time_microseconds DESC LIMIT 1")" ]] && echo 'Ok' && break
     sleep 0.1
 done
 
@@ -46,8 +46,8 @@ FROM
 )
 FORMAT JSON
 SETTINGS enable_global_with_statement = 1"
-QUERY_ID_2="${CLICKHOUSE_DATABASE}_$(date +%s)_02883_q2"
-${CLICKHOUSE_CLIENT} --query "$OK_QUERY_JSON" --query_id="${QUERY_ID_2}" | grep elapsed | awk '{ if($2 >= 1.0) { print "Greater (Ok)" } else { print "Smaller than expected: " $2 } }'
+QUERY_ID_2="${DATASTORE_DATABASE}_$(date +%s)_02883_q2"
+${DATASTORE_CLIENT} --query "$OK_QUERY_JSON" --query_id="${QUERY_ID_2}" | grep elapsed | awk '{ if($2 >= 1.0) { print "Greater (Ok)" } else { print "Smaller than expected: " $2 } }'
 
 OK_QUERY_XML="
 WITH (
@@ -61,11 +61,11 @@ FROM
 )
 FORMAT XML
 SETTINGS enable_global_with_statement = 1"
-QUERY_ID_3="${CLICKHOUSE_DATABASE}_$(date +%s)_02883_q3"
-${CLICKHOUSE_CLIENT} --query "$OK_QUERY_XML" --query_id="${QUERY_ID_3}" | grep elapsed | awk  -F '[<>]' '{ if($3 >= 1.0) { print "Greater (Ok)" } else { print "Smaller than expected: " $3 } }'
+QUERY_ID_3="${DATASTORE_DATABASE}_$(date +%s)_02883_q3"
+${DATASTORE_CLIENT} --query "$OK_QUERY_XML" --query_id="${QUERY_ID_3}" | grep elapsed | awk  -F '[<>]' '{ if($3 >= 1.0) { print "Greater (Ok)" } else { print "Smaller than expected: " $3 } }'
 
-${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "SYSTEM FLUSH LOGS query_log"
+${DATASTORE_CLIENT} --query "
   SELECT
     type,
     query_duration_ms >= 1000 as elapsed_more_than_one_second,

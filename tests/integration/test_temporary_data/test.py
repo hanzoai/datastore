@@ -53,7 +53,7 @@ def test_tmp_data_no_leftovers(start_cluster):
 
     # Hard restart the node
     node.restart_clickhouse(kill=True)
-    path_to_data = "/var/lib/clickhouse/"
+    path_to_data = "/var/lib/datastore/"
 
     # Check that there are no temporary files left.
     result = node.exec_in_container(["bash", "-c", f"ls -1 {path_to_data}tmp/"])

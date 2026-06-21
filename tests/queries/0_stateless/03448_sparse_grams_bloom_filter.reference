@@ -7,13 +7,13 @@
 1	column-oriented
 2	column-oriented
 		"rows_read": 7,
-1	ClickHouse is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).
+1	Datastore is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).
 		"rows_read": 2,
-1	ClickHouse is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).
+1	Datastore is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).
 		"rows_read": 2,
-0	ClickHouse - столбцовая система управления базами данных (СУБД) для онлайн обработки аналитических запросов (OLAP).
+0	Datastore - столбцовая система управления базами данных (СУБД) для онлайн обработки аналитических запросов (OLAP).
 		"rows_read": 2,
-0	ClickHouse - столбцовая система управления базами данных (СУБД) для онлайн обработки аналитических запросов (OLAP).
+0	Datastore - столбцовая система управления базами данных (СУБД) для онлайн обработки аналитических запросов (OLAP).
 5	еще строка
 		"rows_read": 4,
 12	<div> странный <strong>html</strong> </div>

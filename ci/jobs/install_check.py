@@ -6,8 +6,8 @@ from ci.jobs.scripts.docker_image import DockerImage
 from ci.praktika.result import Result
 from ci.praktika.utils import Shell, Utils
 
-RPM_IMAGE = "clickhouse/install-rpm-test"
-DEB_IMAGE = "clickhouse/install-deb-test"
+RPM_IMAGE = "datastore/install-rpm-test"
+DEB_IMAGE = "datastore/install-deb-test"
 REPO_PATH = Utils.cwd()
 TEMP_PATH = Path(f"{REPO_PATH}/ci/tmp/")
 
@@ -17,44 +17,44 @@ def prepare_test_scripts():
 set -e
 trap "bash -ex /packages/preserve_logs.sh" ERR
 test_env='TEST_THE_DEFAULT_PARAMETER=15'
-echo "$test_env" >> /etc/default/clickhouse
-# Note, clickhouse-server service notify systemd only when it is ready to
+echo "$test_env" >> /etc/default/datastore
+# Note, datastore-server service notify systemd only when it is ready to
 # accept connections, so we do not need to wait until it will open the port for
 # listening manually here.
-systemctl restart clickhouse-server
-clickhouse-client -q 'SELECT version()'
-grep "$test_env" /proc/$(cat /var/run/clickhouse-server/clickhouse-server.pid)/environ"""
+systemctl restart datastore-server
+datastore-client -q 'SELECT version()'
+grep "$test_env" /proc/$(cat /var/run/datastore-server/datastore-server.pid)/environ"""
     initd_via_systemd_test = r"""#!/bin/bash
 set -e
 trap "bash -ex /packages/preserve_logs.sh" ERR
 test_env='TEST_THE_DEFAULT_PARAMETER=15'
-echo "$test_env" >> /etc/default/clickhouse
+echo "$test_env" >> /etc/default/datastore
 # Note, this should use systemctl
-/etc/init.d/clickhouse-server start
-clickhouse-client -q 'SELECT version()'
-grep "$test_env" /proc/$(cat /var/run/clickhouse-server/clickhouse-server.pid)/environ"""
+/etc/init.d/datastore-server start
+datastore-client -q 'SELECT version()'
+grep "$test_env" /proc/$(cat /var/run/datastore-server/datastore-server.pid)/environ"""
     initd_test = r"""#!/bin/bash
 set -e
 trap "bash -ex /packages/preserve_logs.sh" ERR
 test_env='TEST_THE_DEFAULT_PARAMETER=15'
-echo "$test_env" >> /etc/default/clickhouse
+echo "$test_env" >> /etc/default/datastore
 # Do not use systemd, and hence we need to wait until the server will be ready below
-SYSTEMCTL_SKIP_REDIRECT=1 /etc/init.d/clickhouse-server start
+SYSTEMCTL_SKIP_REDIRECT=1 /etc/init.d/datastore-server start
 for i in {1..5}; do
-    clickhouse-client -q 'SELECT version()' && break || sleep 1
+    datastore-client -q 'SELECT version()' && break || sleep 1
 done
-clickhouse-client -q 'SELECT version()'
-grep "$test_env" /proc/$(cat /var/run/clickhouse-server/clickhouse-server.pid)/environ"""
+datastore-client -q 'SELECT version()'
+grep "$test_env" /proc/$(cat /var/run/datastore-server/datastore-server.pid)/environ"""
     keeper_test = r"""#!/bin/bash
 set -e
 trap "bash -ex /packages/preserve_logs.sh" ERR
-systemctl start clickhouse-keeper
+systemctl start datastore-keeper
 for i in {1..20}; do
-    echo wait for clickhouse-keeper to being up
+    echo wait for datastore-keeper to being up
     > /dev/tcp/127.0.0.1/9181 2>/dev/null && break || sleep 1
 done
 for i in {1..5}; do
-    echo wait for clickhouse-keeper to answer on mntr request
+    echo wait for datastore-keeper to answer on mntr request
     {
         exec 13<>/dev/tcp/127.0.0.1/9181
         echo mntr >&13
@@ -66,18 +66,18 @@ exec 13>&-"""
     binary_test = r"""#!/bin/bash
 set -e
 trap "bash -ex /packages/preserve_logs.sh" ERR
-/packages/clickhouse install
-clickhouse-server start --daemon
+/packages/datastore install
+datastore-server start --daemon
 for i in {1..5}; do
-    clickhouse-client -q 'SELECT version()' && break || sleep 1
+    datastore-client -q 'SELECT version()' && break || sleep 1
 done
-clickhouse-keeper start --daemon
+datastore-keeper start --daemon
 for i in {1..20}; do
-    echo wait for clickhouse-keeper to being up
+    echo wait for datastore-keeper to being up
     > /dev/tcp/127.0.0.1/9181 2>/dev/null && break || sleep 1
 done
 for i in {1..5}; do
-    echo wait for clickhouse-keeper to answer on mntr request
+    echo wait for datastore-keeper to answer on mntr request
     {
         exec 13<>/dev/tcp/127.0.0.1/9181
         echo mntr >&13
@@ -87,10 +87,10 @@ for i in {1..5}; do
 done
 exec 13>&-"""
     preserve_logs = r"""#!/bin/bash
-journalctl -u clickhouse-server > /packages/clickhouse-server.service.log || :
-journalctl -u clickhouse-keeper > /packages/clickhouse-keeper.service.log || :
-cp /var/log/clickhouse-server/clickhouse-server.* /packages/ || :
-cp /var/log/clickhouse-keeper/clickhouse-keeper.* /packages/ || :
+journalctl -u datastore-server > /packages/datastore-server.service.log || :
+journalctl -u datastore-keeper > /packages/datastore-keeper.service.log || :
+cp /var/log/datastore-server/datastore-server.* /packages/ || :
+cp /var/log/datastore-keeper/datastore-keeper.* /packages/ || :
 chmod a+rw -R /packages
 exit 1
 """
@@ -107,18 +107,18 @@ exit 1
 def test_install_deb(image: DockerImage) -> List[Result]:
     tests = {
         "Install server deb": r"""#!/bin/bash -ex
-apt-get install /packages/clickhouse-{server,client,common}*deb -y
+apt-get install /packages/datastore-{server,client,common}*deb -y
 bash -ex /packages/server_test.sh""",
         "Run server init.d (proxy to systemd)": r"""#!/bin/bash -ex
-apt-get install /packages/clickhouse-{server,client,common}*deb -y
+apt-get install /packages/datastore-{server,client,common}*deb -y
 bash -ex /packages/initd_via_systemd_test.sh""",
         "Run server init.d": r"""#!/bin/bash -ex
-apt-get install /packages/clickhouse-{server,client,common}*deb -y
+apt-get install /packages/datastore-{server,client,common}*deb -y
 bash -ex /packages/initd_test.sh""",
         "Install keeper deb": r"""#!/bin/bash -ex
-apt-get install /packages/clickhouse-keeper*deb -y
+apt-get install /packages/datastore-keeper*deb -y
 bash -ex /packages/keeper_test.sh""",
-        "Install clickhouse binary in deb": r"bash -ex /packages/binary_test.sh",
+        "Install datastore binary in deb": r"bash -ex /packages/binary_test.sh",
     }
     return test_install(image, tests)
 
@@ -128,13 +128,13 @@ def test_install_rpm(image: DockerImage) -> List[Result]:
     # systemd just ignores the watchdog completely
     tests = {
         "Install server rpm": r"""#!/bin/bash -ex
-yum localinstall --disablerepo=* --allowerasing -y /packages/clickhouse-{server,client,common}*rpm
-echo CLICKHOUSE_WATCHDOG_ENABLE=0 > /etc/default/clickhouse-server
+yum localinstall --disablerepo=* --allowerasing -y /packages/datastore-{server,client,common}*rpm
+echo DATASTORE_WATCHDOG_ENABLE=0 > /etc/default/datastore-server
 bash -ex /packages/server_test.sh""",
         "Install keeper rpm": r"""#!/bin/bash -ex
-yum localinstall --disablerepo=* --allowerasing -y /packages/clickhouse-keeper*rpm
+yum localinstall --disablerepo=* --allowerasing -y /packages/datastore-keeper*rpm
 bash -ex /packages/keeper_test.sh""",
-        "Install clickhouse binary in rpm": r"bash -ex /packages/binary_test.sh",
+        "Install datastore binary in rpm": r"bash -ex /packages/binary_test.sh",
     }
     return test_install(image, tests)
 
@@ -145,17 +145,17 @@ def test_install_tgz(image: DockerImage) -> List[Result]:
     tests = {
         f"Install server tgz in {image}": r"""#!/bin/bash -ex
 [ -f /etc/debian_version ] && CONFIGURE=configure || CONFIGURE=
-for pkg in /packages/clickhouse-{common,client,server}*tgz; do
+for pkg in /packages/datastore-{common,client,server}*tgz; do
     package=${pkg%-*}
     package=${package##*/}
     tar xf "$pkg"
     "/$package/install/doinst.sh" $CONFIGURE
 done
-[ -f /etc/yum.conf ] && echo CLICKHOUSE_WATCHDOG_ENABLE=0 > /etc/default/clickhouse-server
+[ -f /etc/yum.conf ] && echo DATASTORE_WATCHDOG_ENABLE=0 > /etc/default/datastore-server
 bash -ex /packages/server_test.sh""",
         f"Install keeper tgz in {image}": r"""#!/bin/bash -ex
 [ -f /etc/debian_version ] && CONFIGURE=configure || CONFIGURE=
-for pkg in /packages/clickhouse-keeper*tgz; do
+for pkg in /packages/datastore-keeper*tgz; do
     package=${pkg%-*}
     package=${package##*/}
     tar xf "$pkg"
@@ -230,7 +230,7 @@ def main():
     deb_image = DockerImage.get_docker_image(DEB_IMAGE).pull_image()
     rpm_image = DockerImage.get_docker_image(RPM_IMAGE).pull_image()
 
-    Shell.check(f"chmod +x {Utils.cwd()}/ci/tmp/clickhouse", verbose=True, strict=True)
+    Shell.check(f"chmod +x {Utils.cwd()}/ci/tmp/datastore", verbose=True, strict=True)
 
     prepare_test_scripts()
 

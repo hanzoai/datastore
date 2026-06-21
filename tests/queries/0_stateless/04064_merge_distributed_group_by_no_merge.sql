@@ -1,6 +1,6 @@
 -- Tags: distributed
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/75604
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/75604
 -- StorageMerge wrapping a Distributed table + another table crashed with
 -- "Logical error: Queries with distributed_group_by_no_merge=1 should be processed to Complete stage"
 -- when distributed_group_by_no_merge=1 was set, because StorageMerge caps

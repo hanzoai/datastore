@@ -1,5 +1,5 @@
 --  "0." -> CAST('0.0', 'Decimal(7, 2)') as "0." parsed as Float and did not convert to Decimal.
--- Needs to be fixed: https://github.com/ClickHouse/ClickHouse/issues/94671
+-- Needs to be fixed: https://github.com/ClickHouse/Datastore/issues/94671
 WITH
     all_sales AS
     (

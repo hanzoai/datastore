@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This scripts transforms the output of clang's -ftime-trace JSON files into a format to upload to ClickHouse
+# This scripts transforms the output of clang's -ftime-trace JSON files into a format to upload to Datastore
 
 # Example:
 #   mkdir time_trace
@@ -55,7 +55,7 @@ find "$INPUT_DIR" -name '*.json' -or -name '*.time-trace' | grep -P '\.(c|cpp|cc
 
 # Now you can upload it as follows:
 
-#cat "$OUTPUT_DIR"/* | clickhouse-client --progress --query "INSERT INTO build_time_trace (extra_column_names, file, library, time, pid, tid, ph, ts, dur, cat, name, detail, count, avgMs, args_name) FORMAT JSONCompactEachRow"
+#cat "$OUTPUT_DIR"/* | datastore-client --progress --query "INSERT INTO build_time_trace (extra_column_names, file, library, time, pid, tid, ph, ts, dur, cat, name, detail, count, avgMs, args_name) FORMAT JSONCompactEachRow"
 
 # Additionally, collect information about the sizes of translation units
 

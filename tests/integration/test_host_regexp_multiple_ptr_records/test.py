@@ -12,7 +12,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 cluster = ClickHouseCluster(__file__)
 
 ch_server = cluster.add_instance(
-    "clickhouse-server",
+    "datastore-server",
     with_coredns=True,
     main_configs=["configs/listen_host.xml"],
     user_configs=["configs/host_regexp.xml"],
@@ -20,7 +20,7 @@ ch_server = cluster.add_instance(
 )
 
 client = cluster.add_instance(
-    "clickhouse-client",
+    "datastore-client",
     ipv6_address="2001:3984:3989::1:1112",
 )
 
@@ -77,7 +77,7 @@ def build_endpoint_v6(ip):
 
 
 def test_host_regexp_multiple_ptr_v4_fails_with_wrong_resolution(started_cluster):
-    server_ip = cluster.get_instance_ip("clickhouse-server")
+    server_ip = cluster.get_instance_ip("datastore-server")
     random_ip = "9.9.9.9"
     dns_server_ip = cluster.get_instance_ip(cluster.coredns_host)
 
@@ -90,8 +90,8 @@ def test_host_regexp_multiple_ptr_v4_fails_with_wrong_resolution(started_cluster
 
 
 def test_host_regexp_multiple_ptr_v4(started_cluster):
-    server_ip = cluster.get_instance_ip("clickhouse-server")
-    client_ip = cluster.get_instance_ip("clickhouse-client")
+    server_ip = cluster.get_instance_ip("datastore-server")
+    client_ip = cluster.get_instance_ip("datastore-client")
     dns_server_ip = cluster.get_instance_ip(cluster.coredns_host)
 
     setup_dns_server(client_ip)

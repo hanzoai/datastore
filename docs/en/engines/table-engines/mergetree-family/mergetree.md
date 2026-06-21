@@ -13,7 +13,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 # MergeTree table engine
 
-The `MergeTree` engine and other engines of the `MergeTree` family (e.g. `ReplacingMergeTree`, `AggregatingMergeTree` ) are the most commonly used and most robust table engines in ClickHouse.
+The `MergeTree` engine and other engines of the `MergeTree` family (e.g. `ReplacingMergeTree`, `AggregatingMergeTree` ) are the most commonly used and most robust table engines in Datastore.
 
 `MergeTree`-family table engines are designed for high data ingest rates and huge data volumes.
 Insert operations create table parts which are merged by a background process with other table parts.
@@ -71,7 +71,7 @@ For a detailed description of the parameters, see the [CREATE TABLE](/sql-refere
 
 A tuple of column names or arbitrary expressions. Example: `ORDER BY (CounterID + 1, EventDate)`.
 
-If no primary key is defined (i.e. `PRIMARY KEY` was not specified), ClickHouse uses the the sorting key as primary key.
+If no primary key is defined (i.e. `PRIMARY KEY` was not specified), Datastore uses the the sorting key as primary key.
 
 If no sorting is required, you can use syntax `ORDER BY tuple()`.
 Alternatively, if setting `create_table_empty_primary_key_by_default` is enabled, `ORDER BY ()` is implicitly added to `CREATE TABLE` statements. See [Selecting a Primary Key](#selecting-a-primary-key).
@@ -120,7 +120,7 @@ ENGINE MergeTree() PARTITION BY toYYYYMM(EventDate) ORDER BY (CounterID, EventDa
 
 In the example, we set partitioning by month.
 
-We also set an expression for sampling as a hash by the user ID. This allows you to pseudorandomize the data in the table for each `CounterID` and `EventDate`. If you define a [SAMPLE](/sql-reference/statements/select/sample) clause when selecting the data, ClickHouse will return an evenly pseudorandom data sample for a subset of users.
+We also set an expression for sampling as a hash by the user ID. This allows you to pseudorandomize the data in the table for each `CounterID` and `EventDate`. If you define a [SAMPLE](/sql-reference/statements/select/sample) clause when selecting the data, Datastore will return an evenly pseudorandom data sample for a subset of users.
 
 The `index_granularity` setting can be omitted because 8192 is the default value.
 
@@ -143,7 +143,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
 
 **MergeTree() Parameters**
 
-- `date-column` — The name of a column of the [Date](/sql-reference/data-types/date.md) type. ClickHouse automatically creates partitions by month based on this column. The partition names are in the `"YYYYMM"` format.
+- `date-column` — The name of a column of the [Date](/sql-reference/data-types/date.md) type. Datastore automatically creates partitions by month based on this column. The partition names are in the `"YYYYMM"` format.
 - `sampling_expression` — An expression for sampling.
 - `(primary, key)` — Primary key. Type: [Tuple()](/sql-reference/data-types/tuple.md)
 - `index_granularity` — The granularity of an index. The number of data rows between the "marks" of an index. The value 8192 is appropriate for most tasks.
@@ -163,13 +163,13 @@ A table consists of data parts sorted by primary key.
 
 When data is inserted in a table, separate data parts are created and each of them is lexicographically sorted by primary key. For example, if the primary key is `(CounterID, Date)`, the data in the part is sorted by `CounterID`, and within each `CounterID`, it is ordered by `Date`.
 
-Data belonging to different partitions are separated into different parts. In the background, ClickHouse merges data parts for more efficient storage. Parts belonging to different partitions are not merged. The merge mechanism does not guarantee that all rows with the same primary key will be in the same data part.
+Data belonging to different partitions are separated into different parts. In the background, Datastore merges data parts for more efficient storage. Parts belonging to different partitions are not merged. The merge mechanism does not guarantee that all rows with the same primary key will be in the same data part.
 
 Data parts can be stored in `Wide` or `Compact` format. In `Wide` format each column is stored in a separate file in a filesystem, in `Compact` format all columns are stored in one file. `Compact` format can be used to increase performance of small and frequent inserts.
 
 Data storing format is controlled by the `min_bytes_for_wide_part` and `min_rows_for_wide_part` settings of the table engine. If the number of bytes or rows in a data part is less then the corresponding setting's value, the part is stored in `Compact` format. Otherwise it is stored in `Wide` format. If none of these settings is set, data parts are stored in `Wide` format.
 
-Each data part is logically divided into granules. A granule is the smallest indivisible data set that ClickHouse reads when selecting data. ClickHouse does not split rows or values, so each granule always contains an integer number of rows. The first row of a granule is marked with the value of the primary key for the row. For each data part, ClickHouse creates an index file that stores the marks. For each column, whether it's in the primary key or not, ClickHouse also stores the same marks. These marks let you find data directly in column files.
+Each data part is logically divided into granules. A granule is the smallest indivisible data set that Datastore reads when selecting data. Datastore does not split rows or values, so each granule always contains an integer number of rows. The first row of a granule is marked with the value of the primary key for the row. For each data part, Datastore creates an index file that stores the marks. For each column, whether it's in the primary key or not, Datastore also stores the same marks. These marks let you find data directly in column files.
 
 The granule size is restricted by the `index_granularity` and `index_granularity_bytes` settings of the table engine. The number of rows in a granule lays in the `[1, index_granularity]` range, depending on the size of the rows. The size of a granule can exceed `index_granularity_bytes` if the size of a single row is greater than the value of the setting. In this case, the size of the granule equals the size of the row.
 
@@ -198,7 +198,7 @@ A sparse index allows extra data to be read. When reading a single range of the 
 
 Sparse indexes allow you to work with a very large number of table rows, because in most cases, such indexes fit in the computer's RAM.
 
-ClickHouse does not require a unique primary key. You can insert multiple rows with the same primary key.
+Datastore does not require a unique primary key. You can insert multiple rows with the same primary key.
 
 You can use `Nullable`-typed expressions in the `PRIMARY KEY` and `ORDER BY` clauses but it is strongly discouraged. To allow this feature, turn on the [allow_nullable_key](/operations/settings/merge-tree-settings/#allow_nullable_key) setting. The [NULLS_LAST](/sql-reference/statements/select/order-by.md/#sorting-of-special-values) principle applies for `NULL` values in the `ORDER BY` clause.
 
@@ -215,15 +215,15 @@ The number of columns in the primary key is not explicitly limited. Depending on
 
 - Improve data compression.
 
-    ClickHouse sorts data by primary key, so the higher the consistency, the better the compression.
+    Datastore sorts data by primary key, so the higher the consistency, the better the compression.
 
 - Provide additional logic when merging data parts in the [CollapsingMergeTree](/engines/table-engines/mergetree-family/collapsingmergetree) and [SummingMergeTree](/engines/table-engines/mergetree-family/summingmergetree.md) engines.
 
     In this case it makes sense to specify the *sorting key* that is different from the primary key.
 
-A long primary key will negatively affect the insert performance and memory consumption, but extra columns in the primary key do not affect ClickHouse performance during `SELECT` queries.
+A long primary key will negatively affect the insert performance and memory consumption, but extra columns in the primary key do not affect Datastore performance during `SELECT` queries.
 
-You can create a table without a primary key using the `ORDER BY tuple()` syntax. In this case, ClickHouse stores data in the order of inserting. If you want to save data order when inserting data by `INSERT ... SELECT` queries, set [max_insert_threads = 1](/operations/settings/settings#max_insert_threads).
+You can create a table without a primary key using the `ORDER BY tuple()` syntax. In this case, Datastore stores data in the order of inserting. If you want to save data order when inserting data by `INSERT ... SELECT` queries, set [max_insert_threads = 1](/operations/settings/settings#max_insert_threads).
 
 To select data in the initial order, use [single-threaded](/operations/settings/settings.md/#max_threads) `SELECT` queries.
 
@@ -240,7 +240,7 @@ In this case it makes sense to leave only a few columns in the primary key that 
 
 ### Use of indexes and partitions in queries {#use-of-indexes-and-partitions-in-queries}
 
-For `SELECT` queries, ClickHouse analyzes whether an index can be used. An index can be used if the `WHERE/PREWHERE` clause has an expression (as one of the conjunction elements, or entirely) that represents an equality or inequality comparison operation, or if it has `IN` or `LIKE` with a fixed prefix on columns or expressions that are in the primary key or partitioning key, or on certain partially repetitive functions of these columns, or logical relationships of these expressions.
+For `SELECT` queries, Datastore analyzes whether an index can be used. An index can be used if the `WHERE/PREWHERE` clause has an expression (as one of the conjunction elements, or entirely) that represents an equality or inequality comparison operation, or if it has `IN` or `LIKE` with a fixed prefix on columns or expressions that are in the primary key or partitioning key, or on certain partially repetitive functions of these columns, or logical relationships of these expressions.
 
 Thus, it is possible to quickly run queries on one or many ranges of the primary key. In this example, queries will be fast when run for a specific tracking tag, for a specific tag and date range, for a specific tag and date, for multiple tags with a date range, and so on.
 
@@ -270,7 +270,7 @@ AND CounterID IN (101500, 731962, 160656)
 AND (CounterID = 101500 OR EventDate != toDate('2014-05-01'))
 ```
 
-ClickHouse will use the primary key index to trim improper data and the monthly partitioning key to trim partitions that are in improper date ranges.
+Datastore will use the primary key index to trim improper data and the monthly partitioning key to trim partitions that are in improper date ranges.
 
 The queries above show that the index is used even for complex expressions. Reading from the table is organized so that using the index can't be slower than a full scan.
 
@@ -280,7 +280,7 @@ In the example below, the index can't be used.
 SELECT count() FROM table WHERE CounterID = 34 OR URL LIKE '%upyachka%'
 ```
 
-To check whether ClickHouse can use the index when running a query, use the settings [force_index_by_date](/operations/settings/settings.md/#force_index_by_date) and [force_primary_key](/operations/settings/settings#force_primary_key).
+To check whether Datastore can use the index when running a query, use the settings [force_index_by_date](/operations/settings/settings.md/#force_index_by_date) and [force_primary_key](/operations/settings/settings#force_primary_key).
 
 The key for partitioning by month allows reading only those data blocks which contain dates from the proper range. In this case, the data block may contain data for many dates (up to an entire month). Within a block, data is sorted by primary key, which might not contain the date as the first column. Because of this, using a query with only a date condition that does not specify the primary key prefix will cause more data to be read than for a single date.
 
@@ -288,7 +288,7 @@ The key for partitioning by month allows reading only those data blocks which co
 
 The primary key can contain expressions, not only column names. These expressions are not limited to simple function chains: they can be arbitrary expression trees (for example, nested functions and composite expressions), as long as they are deterministic.
 
-An expression is **deterministic** if it always returns the same result for the same input values (for example: `length()`, `toDate()`, `lower()`, `left()`, `cityHash64()`, `toUUID()`; unlike `now()` or `rand()`). If the primary key contains deterministic expressions, ClickHouse can apply them to constant values from the query and use the result to build conditions on the primary key index. This enables data skipping for predicates like `=`, `IN`, and `has`.
+An expression is **deterministic** if it always returns the same result for the same input values (for example: `length()`, `toDate()`, `lower()`, `left()`, `cityHash64()`, `toUUID()`; unlike `now()` or `rand()`). If the primary key contains deterministic expressions, Datastore can apply them to constant values from the query and use the result to build conditions on the primary key index. This enables data skipping for predicates like `=`, `IN`, and `has`.
 
 A common use case is to keep the primary key compact (e.g. store a hash instead of a long `String`), while still allowing predicates on the original column to use the index.
 
@@ -305,9 +305,9 @@ SELECT * FROM table WHERE user_id IN ('alice', 'bob');
 SELECT * FROM table WHERE has(['alice', 'bob'], user_id);
 ```
 
-In these cases, ClickHouse computes `length('alice')` (and other constants) once and uses the length values to narrow the ranges in the primary key index. Since length of a string is **not injective**, different `user_id` strings can share the same length, so the index may read extra granules (false positives). The result remains correct because the original predicate (`user_id = ...`, `IN`, etc.) is still applied after reading.
+In these cases, Datastore computes `length('alice')` (and other constants) once and uses the length values to narrow the ranges in the primary key index. Since length of a string is **not injective**, different `user_id` strings can share the same length, so the index may read extra granules (false positives). The result remains correct because the original predicate (`user_id = ...`, `IN`, etc.) is still applied after reading.
 
-If the deterministic expression is also **injective** (different inputs cannot produce the same output for the argument types used), additionally ClickHouse can effectively use the index for the negated forms: `!=`, `NOT IN`, and `NOT has(...)`. For example, `reverse(p)` and `hex(p)` are injective for `String`.
+If the deterministic expression is also **injective** (different inputs cannot produce the same output for the argument types used), additionally Datastore can effectively use the index for the negated forms: `!=`, `NOT IN`, and `NOT has(...)`. For example, `reverse(p)` and `hex(p)` are injective for `String`.
 
 Example of an injective primary key:
 ```sql
@@ -330,11 +330,11 @@ SELECT * FROM table WHERE NOT has(['abc', '12345'], p);
 
 ### Use of index for partially-monotonic primary keys {#use-of-index-for-partially-monotonic-primary-keys}
 
-Consider, for example, the days of the month. They form a [monotonic sequence](https://en.wikipedia.org/wiki/Monotonic_function) for one month, but not monotonic for more extended periods. This is a partially-monotonic sequence. If a user creates the table with partially-monotonic primary key, ClickHouse creates a sparse index as usual. When a user selects data from this kind of table, ClickHouse analyzes the query conditions. If the user wants to get data between two marks of the index and both these marks fall within one month, ClickHouse can use the index in this particular case because it can calculate the distance between the parameters of a query and index marks.
+Consider, for example, the days of the month. They form a [monotonic sequence](https://en.wikipedia.org/wiki/Monotonic_function) for one month, but not monotonic for more extended periods. This is a partially-monotonic sequence. If a user creates the table with partially-monotonic primary key, Datastore creates a sparse index as usual. When a user selects data from this kind of table, Datastore analyzes the query conditions. If the user wants to get data between two marks of the index and both these marks fall within one month, Datastore can use the index in this particular case because it can calculate the distance between the parameters of a query and index marks.
 
-ClickHouse cannot use an index if the values of the primary key in the query parameter range do not represent a monotonic sequence. In this case, ClickHouse uses the full scan method.
+Datastore cannot use an index if the values of the primary key in the query parameter range do not represent a monotonic sequence. In this case, Datastore uses the full scan method.
 
-ClickHouse uses this logic not only for days of the month sequences, but for any primary key that represents a partially-monotonic sequence.
+Datastore uses this logic not only for days of the month sequences, but for any primary key that represents a partially-monotonic sequence.
 
 ### Data skipping indexes {#table_engine-mergetree-data_skipping-indexes}
 
@@ -366,7 +366,7 @@ CREATE TABLE table_name
 ...
 ```
 
-Indices from the example can be used by ClickHouse to reduce the amount of data to read from disk in the following queries:
+Indices from the example can be used by Datastore to reduce the amount of data to read from disk in the following queries:
 
 ```sql
 SELECT count() FROM table WHERE u64 == 10;
@@ -397,7 +397,7 @@ INDEX nested_2_index col.nested_col2 TYPE bloom_filter
 
 The `MergeTree` table engine supports the following types of skip indexes.
 For more information on how skip indexes can be used for performance optimization
-see ["Understanding ClickHouse data skipping indexes"](/optimize/skipping-indexes).
+see ["Understanding Datastore data skipping indexes"](/optimize/skipping-indexes).
 
 - [`MinMax`](#minmax) index
 - [`Set`](#set) index
@@ -460,7 +460,7 @@ For the [`JSON`](/sql-reference/data-types/newjson) data type, a bloom filter in
 #### N-gram bloom filter *(Deprecated)* {#n-gram-bloom-filter}
 
 :::note
-With general availability (GA) of the `text` index starting from ClickHouse version 26.2, the `ngrambf_v1` index is no longer recommended for full text search.
+With general availability (GA) of the `text` index starting from Datastore version 26.2, the `ngrambf_v1` index is no longer recommended for full text search.
 
 See page ["Full-text search with text indexes"](./textindexes.md) for details.
 :::
@@ -532,7 +532,7 @@ The functions above refer to the bloom filter calculator [here](https://hur.st/b
 #### Token bloom filter {#token-bloom-filter}
 
 :::note
-With general availability (GA) of the `text` index starting from ClickHouse version 26.2, the `tokenbf_v1` index is no longer recommended for full text search.
+With general availability (GA) of the `text` index starting from Datastore version 26.2, the `tokenbf_v1` index is no longer recommended for full text search.
 
 See page ["Full-text search with text indexes"](./textindexes.md) for details.
 :::
@@ -559,7 +559,7 @@ Supports approximate nearest neighbor search, see [here](annindexes.md) for deta
 
 ### Functions support {#functions-support}
 
-Conditions in the `WHERE` clause contains calls of the functions that operate with columns. If the column is a part of an index, ClickHouse tries to use this index when performing the functions. ClickHouse supports different subsets of functions for using indexes.
+Conditions in the `WHERE` clause contains calls of the functions that operate with columns. If the column is a part of an index, Datastore tries to use this index when performing the functions. Datastore supports different subsets of functions for using indexes.
 
 Indexes of type `set` can be utilized by all functions. The other index types are supported as follows:
 
@@ -699,7 +699,7 @@ Expressions must evaluate to [Date](/sql-reference/data-types/date.md), [Date32]
 :::tip[Avoid non-deterministic functions in TTL expressions]
 TTL is evaluated during background merges, and not at insert time.
 Functions like `rand()`, `now()`, or `now64()` will be re-evaluated on every merge, leading to unpredictable deletion behavior.
-ClickHouse blocks expressions with no column dependency at all, but does not currently reject non-deterministic functions mixed with a column reference (e.g. `ts + rand()`). TTL expressions should be based solely on deterministic, column-derived values for predictable results.
+Datastore blocks expressions with no column dependency at all, but does not currently reject non-deterministic functions mixed with a column reference (e.g. `ts + rand()`). TTL expressions should be based solely on deterministic, column-derived values for predictable results.
 :::
 
 **Syntax**
@@ -720,7 +720,7 @@ TTL date_time + INTERVAL 15 HOUR
 
 ### Column TTL {#mergetree-column-ttl}
 
-When the values in the column expire, ClickHouse replaces them with the default values for the column data type. If all the column values in the data part expire, ClickHouse deletes this column from the data part in a filesystem.
+When the values in the column expire, Datastore replaces them with the default values for the column data type. If all the column values in the data part expire, Datastore deletes this column from the data part in a filesystem.
 
 The `TTL` clause can't be used for key columns.
 
@@ -759,7 +759,7 @@ ALTER TABLE tab
 
 ### Table TTL {#mergetree-table-ttl}
 
-Table can have an expression for removal of expired rows, and multiple expressions for automatic move of parts between [disks or volumes](#table_engine-mergetree-multiple-volumes). When rows in the table expire, ClickHouse deletes all corresponding rows. For parts moving or recompressing, all rows of a part must satisfy the `TTL` expression criteria.
+Table can have an expression for removal of expired rows, and multiple expressions for automatic move of parts between [disks or volumes](#table_engine-mergetree-multiple-volumes). When rows in the table expire, Datastore deletes all corresponding rows. For parts moving or recompressing, all rows of a part must satisfy the `TTL` expression criteria.
 
 ```sql
 TTL expr
@@ -857,9 +857,9 @@ TTL d + INTERVAL 1 MONTH GROUP BY k1, k2 SET x = max(x), y = min(y);
 
 ### Removing expired data {#mergetree-removing-expired-data}
 
-Data with an expired `TTL` is removed when ClickHouse merges data parts.
+Data with an expired `TTL` is removed when Datastore merges data parts.
 
-When ClickHouse detects that data is expired, it performs an off-schedule merge. To control the frequency of such merges, you can set `merge_with_ttl_timeout`. If the value is too low, it will perform many off-schedule merges that may consume a lot of resources.
+When Datastore detects that data is expired, it performs an off-schedule merge. To control the frequency of such merges, you can set `merge_with_ttl_timeout`. If the value is too low, it will perform many off-schedule merges that may consume a lot of resources.
 
 If you perform the `SELECT` query between merges, you may get expired data. To avoid it, use the [OPTIMIZE](/sql-reference/statements/optimize.md) query before `SELECT`.
 
@@ -869,7 +869,7 @@ If you perform the `SELECT` query between merges, you may get expired data. To a
 
 ## Disk types {#disk-types}
 
-In addition to local block devices, ClickHouse supports these storage types:
+In addition to local block devices, Datastore supports these storage types:
 - [`s3` for S3 and MinIO](#table_engine-mergetree-s3)
 - [`gcs` for GCS](/integrations/data-ingestion/gcs/index.md/#creating-a-disk)
 - [`blob_storage_disk` for Azure Blob Storage](/operations/storing-data#azure-blob-storage)
@@ -914,14 +914,14 @@ Configuration structure:
 <storage_configuration>
     <disks>
         <disk_name_1> <!-- disk name -->
-            <path>/mnt/fast_ssd/clickhouse/</path>
+            <path>/mnt/fast_ssd/datastore/</path>
         </disk_name_1>
         <disk_name_2>
-            <path>/mnt/hdd1/clickhouse/</path>
+            <path>/mnt/hdd1/datastore/</path>
             <keep_free_space_bytes>10485760</keep_free_space_bytes>
         </disk_name_2>
         <disk_name_3>
-            <path>/mnt/hdd2/clickhouse/</path>
+            <path>/mnt/hdd2/datastore/</path>
             <keep_free_space_bytes>10485760</keep_free_space_bytes>
         </disk_name_3>
 
@@ -976,11 +976,11 @@ Tags:
 - `volume_name_N` — Volume name. Volume names must be unique.
 - `disk` — a disk within a volume.
 - `max_data_part_size_bytes` — the maximum size of a part that can be stored on any of the volume's disks. If the a size of a merged part estimated to be bigger than `max_data_part_size_bytes` then this part will be written to a next volume. Basically this feature allows to keep new/small parts on a hot (SSD) volume and move them to a cold (HDD) volume when they reach large size. Do not use this setting if your policy has only one volume.
-- `move_factor` — when the amount of available space gets lower than this factor, data automatically starts to move on the next volume if any (by default, 0.1). ClickHouse sorts existing parts by size from largest to smallest (in descending order) and selects parts with the total size that is sufficient to meet the `move_factor` condition. If the total size of all parts is insufficient, all parts will be moved.
+- `move_factor` — when the amount of available space gets lower than this factor, data automatically starts to move on the next volume if any (by default, 0.1). Datastore sorts existing parts by size from largest to smallest (in descending order) and selects parts with the total size that is sufficient to meet the `move_factor` condition. If the total size of all parts is insufficient, all parts will be moved.
 - `perform_ttl_move_on_insert` — Disables TTL move on data part INSERT. By default (if enabled) if we insert a data part that already expired by the TTL move rule it immediately goes to a volume/disk declared in move rule. This can significantly slowdown insert in case if destination volume/disk is slow (e.g. S3). If disabled then already expired data part is written into a default volume and then right after moved to TTL volume.
 - `load_balancing` - Policy for disk balancing, `round_robin` or `least_used`.
-- `least_used_ttl_ms` - Configure timeout (in milliseconds) for the updating available space on all disks (`0` - update always, `-1` - never update, default is `60000`). Note, if the disk can be used by ClickHouse only and is not subject to a online filesystem resize/shrink you can use `-1`, in all other cases it is not recommended, since eventually it will lead to incorrect space distribution.
-- `prefer_not_to_merge` — You should not use this setting. Disables merging of data parts on this volume (this is harmful and leads to performance degradation). When this setting is enabled (don't do it), merging data on this volume is not allowed (which is bad). This allows (but you don't need it) controlling (if you want to control something, you're making a mistake) how ClickHouse works with slow disks (but ClickHouse knows better, so please don't use this setting).
+- `least_used_ttl_ms` - Configure timeout (in milliseconds) for the updating available space on all disks (`0` - update always, `-1` - never update, default is `60000`). Note, if the disk can be used by Datastore only and is not subject to a online filesystem resize/shrink you can use `-1`, in all other cases it is not recommended, since eventually it will lead to incorrect space distribution.
+- `prefer_not_to_merge` — You should not use this setting. Disables merging of data parts on this volume (this is harmful and leads to performance degradation). When this setting is enabled (don't do it), merging data on this volume is not allowed (which is bad). This allows (but you don't need it) controlling (if you want to control something, you're making a mistake) how Datastore works with slow disks (but Datastore knows better, so please don't use this setting).
 - `volume_priority` — Defines the priority (order) in which volumes are filled. Lower value means higher priority. The parameter values should be natural numbers and collectively cover the range from 1 to N (lowest priority given) without skipping any numbers.
   * If _all_ volumes are tagged, they are prioritized in given order.
   * If only _some_ volumes are tagged, those without the tag have the lowest priority, and they are prioritized in the order they are defined in config.
@@ -1099,7 +1099,7 @@ Configuration markup:
         <s3>
             <type>s3</type>
             <support_batch_delete>true</support_batch_delete>
-            <endpoint>https://clickhouse-public-datasets.s3.amazonaws.com/my-bucket/root-path/</endpoint>
+            <endpoint>https://datastore-public-datasets.s3.amazonaws.com/my-bucket/root-path/</endpoint>
             <access_key_id>your_access_key_id</access_key_id>
             <secret_access_key>your_secret_access_key</secret_access_key>
             <region></region>
@@ -1117,13 +1117,13 @@ Configuration markup:
             <retry_attempts>10</retry_attempts>
             <single_read_retries>4</single_read_retries>
             <min_bytes_for_seek>1000</min_bytes_for_seek>
-            <metadata_path>/var/lib/clickhouse/disks/s3/</metadata_path>
+            <metadata_path>/var/lib/datastore/disks/s3/</metadata_path>
             <skip_access_check>false</skip_access_check>
         </s3>
         <s3_cache>
             <type>cache</type>
             <disk>s3</disk>
-            <path>/var/lib/clickhouse/disks/s3_cache/</path>
+            <path>/var/lib/datastore/disks/s3_cache/</path>
             <max_size>10Gi</max_size>
         </s3_cache>
     </disks>
@@ -1174,7 +1174,7 @@ You can also combine local and S3 volumes in a tiered policy, for example moving
 <storage_configuration>
     <disks>
         <local_ssd>
-            <path>/mnt/fast_ssd/clickhouse/</path>
+            <path>/mnt/fast_ssd/datastore/</path>
         </local_ssd>
         <s3_cold>
             <type>s3</type>
@@ -1207,7 +1207,7 @@ When using `use_environment_credentials` for S3 authentication, the environment 
 It is possible to set up non-replicated MergeTree tables with a one-writer, many-readers scenario on shared storage. This is provided by the automatic refresh of the parts list, which can be set up on readers. Note that this requires shared filesystem metadata across replicas (or `table_disk = true` with a table-local disk). See [refresh_parts_interval and table_disk](/operations/storing-data.md/#refresh-parts-interval-and-table-disk).
 
 :::note cache configuration
-ClickHouse versions 22.3 through 22.7 use a different cache configuration, see [using local cache](/operations/storing-data.md/#using-local-cache) if you are using one of those versions.
+Datastore versions 22.3 through 22.7 use a different cache configuration, see [using local cache](/operations/storing-data.md/#using-local-cache) if you are using one of those versions.
 :::
 
 ## Virtual columns {#virtual-columns}
@@ -1255,7 +1255,7 @@ They can be used for prewhere optimization only if we enable `set use_statistics
 #### Part Pruning with Statistics {#part-pruning-with-statistics}
 
 When `use_statistics_for_part_pruning` is enabled, statistics can be used for part pruning.
-Currently, only `MinMax` statistics support part pruning. When MinMax statistics are defined on a column, ClickHouse tracks the minimum and maximum values for that column in each part.
+Currently, only `MinMax` statistics support part pruning. When MinMax statistics are defined on a column, Datastore tracks the minimum and maximum values for that column in each part.
 Part pruning allows to skip reading entire data parts when the query filter condition cannot match any rows in that part.
 
 **Example:**

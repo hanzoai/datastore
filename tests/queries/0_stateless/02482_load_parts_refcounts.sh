@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS load_parts_refcounts SYNC;
 
     CREATE TABLE load_parts_refcounts (id UInt32)
@@ -24,13 +24,13 @@ $CLICKHOUSE_CLIENT --query "
 
 query_with_retry "OPTIMIZE TABLE load_parts_refcounts FINAL SETTINGS optimize_throw_if_noop = 1"
 
-$CLICKHOUSE_CLIENT --query "DETACH TABLE load_parts_refcounts"
-$CLICKHOUSE_CLIENT --query "ATTACH TABLE load_parts_refcounts"
+$DATASTORE_CLIENT --query "DETACH TABLE load_parts_refcounts"
+$DATASTORE_CLIENT --query "ATTACH TABLE load_parts_refcounts"
 
-$CLICKHOUSE_CLIENT --query "SYSTEM WAIT LOADING PARTS load_parts_refcounts"
+$DATASTORE_CLIENT --query "SYSTEM WAIT LOADING PARTS load_parts_refcounts"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT DISTINCT refcount FROM system.parts
-    WHERE database = '$CLICKHOUSE_DATABASE' AND table = 'load_parts_refcounts' AND NOT active"
+    WHERE database = '$DATASTORE_DATABASE' AND table = 'load_parts_refcounts' AND NOT active"
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE load_parts_refcounts SYNC"
+$DATASTORE_CLIENT --query "DROP TABLE load_parts_refcounts SYNC"

@@ -4,7 +4,7 @@
 
 TPCH_SETTINGS_JSON="$CURDIR/../../benchmarks/tpc-h/settings.json"
 
-# --max_rows_to_read 0 because of https://github.com/ClickHouse/ClickHouse/issues/99937. Can be removed after the issue is closed.
+# --max_rows_to_read 0 because of https://github.com/ClickHouse/Datastore/issues/99937. Can be removed after the issue is closed.
 SETTINGS=(-m --max_rows_to_read 0)
 _tpch_output=$(jq -e -r '
     (.settings | to_entries[] | "--\(.key)", (.value | tostring))

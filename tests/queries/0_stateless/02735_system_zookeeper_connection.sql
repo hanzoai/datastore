@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS test_zk_connection_table;
 CREATE TABLE test_zk_connection_table (
     key UInt64
 )
-ENGINE ReplicatedMergeTree('zookeeper2:/clickhouse/{database}/02731_zk_connection/{shard}', '{replica}')
+ENGINE ReplicatedMergeTree('zookeeper2:/datastore/{database}/02731_zk_connection/{shard}', '{replica}')
 ORDER BY tuple();
 
 SET session_timezone = 'UTC';

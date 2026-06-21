@@ -1,6 +1,6 @@
 -- Regression test: set index on Dynamic column with indexHint should not cause
 -- "ColumnUInt8 is expected as a Set index condition result" exception.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=a1ce95512f6c8d75e10929bc4835787e194eeed8&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_ubsan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=a1ce95512f6c8d75e10929bc4835787e194eeed8&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_ubsan%29
 
 SET allow_suspicious_indices = 1;
 SET allow_experimental_dynamic_type = 1;

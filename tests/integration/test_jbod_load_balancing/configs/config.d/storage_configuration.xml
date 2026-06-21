@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <jbod1>
@@ -37,4 +37,4 @@
             </jbod_least_used>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

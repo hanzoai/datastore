@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for clickhousectl, the CLI for ClickHouse: local and cloud'
+description: 'Documentation for clickhousectl, the CLI for Datastore: local and cloud'
 sidebar_label: 'clickhousectl'
 sidebar_position: 17
 slug: /interfaces/cli
@@ -11,25 +11,25 @@ import BetaBadge from '@theme/badges/BetaBadge';
 
 <BetaBadge/>
 
-`clickhousectl` is the CLI for ClickHouse: local and cloud.
+`clickhousectl` is the CLI for Datastore: local and cloud.
 
 With `clickhousectl` you can:
-- Install and manage local ClickHouse versions
-- Launch and manage local ClickHouse servers
-- Execute queries against ClickHouse servers
-- Set up ClickHouse Cloud and create cloud-managed ClickHouse clusters
-- Manage ClickHouse Cloud resources
-- Install the official ClickHouse agent skills into supported coding agents
-- Push your local ClickHouse development to cloud
+- Install and manage local Datastore versions
+- Launch and manage local Datastore servers
+- Execute queries against Datastore servers
+- Set up Datastore Cloud and create cloud-managed Datastore clusters
+- Manage Datastore Cloud resources
+- Install the official Datastore agent skills into supported coding agents
+- Push your local Datastore development to cloud
 
-`clickhousectl` helps humans and AI-agents to develop with ClickHouse.
+`clickhousectl` helps humans and AI-agents to develop with Datastore.
 
 ## Installation {#installation}
 
 ### Quick install {#quick-install}
 
 ```bash
-curl https://clickhouse.com/cli | sh
+curl https://datastore.com/cli | sh
 ```
 
 The install script downloads the correct version for your OS and installs to `~/.local/bin/clickhousectl`. A `chctl` alias is also created automatically for convenience.
@@ -37,13 +37,13 @@ The install script downloads the correct version for your OS and installs to `~/
 ## Requirements {#requirements}
 
 - macOS (aarch64, x86_64) or Linux (aarch64, x86_64)
-- Cloud commands require a [ClickHouse Cloud API key](/cloud/manage/api/api-overview)
+- Cloud commands require a [Datastore Cloud API key](/cloud/manage/api/api-overview)
 
 ## Local {#local}
 
-### Installing and managing ClickHouse versions {#installing-versions}
+### Installing and managing Datastore versions {#installing-versions}
 
-`clickhousectl` downloads ClickHouse binaries from [GitHub releases](https://github.com/ClickHouse/ClickHouse/releases).
+`clickhousectl` downloads Datastore binaries from [GitHub releases](https://github.com/ClickHouse/Datastore/releases).
 
 ```bash
 # Install a version
@@ -67,15 +67,15 @@ clickhousectl local which                   # Show current default
 clickhousectl local remove 26.3.4.3
 ```
 
-#### ClickHouse binary storage {#binary-storage}
+#### Datastore binary storage {#binary-storage}
 
-ClickHouse binaries are stored in a global repository, so they can be used by multiple projects without duplicating storage. Binaries are stored in `~/.clickhousectl/`:
+Datastore binaries are stored in a global repository, so they can be used by multiple projects without duplicating storage. Binaries are stored in `~/.clickhousectl/`:
 
 ```bash
 ~/.clickhousectl/
 ├── versions/
 │   └── 26.3.4.3/
-│       └── clickhouse
+│       └── datastore
 └── default              # tracks the active version
 ```
 
@@ -85,12 +85,12 @@ ClickHouse binaries are stored in a global repository, so they can be used by mu
 clickhousectl local init
 ```
 
-`init` bootstraps your current working directory with a standard folder structure for your ClickHouse project files. It is optional; you are welcome to use your own folder structure if preferred.
+`init` bootstraps your current working directory with a standard folder structure for your Datastore project files. It is optional; you are welcome to use your own folder structure if preferred.
 
 It creates the following structure:
 
 ```bash
-clickhouse/
+datastore/
 ├── tables/                 # Table definitions (CREATE TABLE ...)
 ├── materialized_views/     # Materialized view definitions
 ├── queries/                # Saved queries
@@ -100,7 +100,7 @@ clickhouse/
 ### Running queries {#running-queries}
 
 ```bash
-# Connect to a running server with clickhouse-client
+# Connect to a running server with datastore-client
 clickhousectl local client                           # Connects to "default" server
 clickhousectl local client --name dev                # Connects to "dev" server
 clickhousectl local client --query "SHOW DATABASES"  # Run a query
@@ -108,9 +108,9 @@ clickhousectl local client --queries-file schema.sql # Run queries from a file
 clickhousectl local client --host remote-host --port 9000  # Connect to a specific host/port
 ```
 
-### Creating and managing ClickHouse servers {#managing-servers}
+### Creating and managing Datastore servers {#managing-servers}
 
-Start and manage ClickHouse server instances. Each server gets its own isolated data directory at `.clickhousectl/servers/<name>/data/`.
+Start and manage Datastore server instances. Each server gets its own isolated data directory at `.clickhousectl/servers/<name>/data/`.
 
 ```bash
 # Start a server (runs in background by default)
@@ -145,16 +145,16 @@ All server data lives inside `.clickhousectl/` in your project directory:
 ├── credentials.json        # cloud API credentials (if configured)
 └── servers/
     ├── default/
-    │   └── data/           # ClickHouse data files for "default" server
+    │   └── data/           # Datastore data files for "default" server
     └── dev/
-        └── data/           # ClickHouse data files for "dev" server
+        └── data/           # Datastore data files for "dev" server
 ```
 
 Each named server has its own data directory, so servers are fully isolated from each other. Data persists between restarts — stop and start a server by name to pick up where you left off. Use `clickhousectl local server remove <name>` to permanently delete a server's data.
 
 ## Authentication {#authentication}
 
-Authenticate to ClickHouse Cloud using OAuth (browser-based) or API keys.
+Authenticate to Datastore Cloud using OAuth (browser-based) or API keys.
 
 ### OAuth login (recommended) {#oauth-login}
 
@@ -178,8 +178,8 @@ Credentials are saved to `.clickhousectl/credentials.json` (project-local).
 
 You can also use environment variables:
 ```bash
-export CLICKHOUSE_CLOUD_API_KEY=your-key
-export CLICKHOUSE_CLOUD_API_SECRET=your-secret
+export DATASTORE_CLOUD_API_KEY=your-key
+export DATASTORE_CLOUD_API_SECRET=your-secret
 ```
 
 Or pass credentials directly via flags on any command:
@@ -198,7 +198,7 @@ Credential resolution order: CLI flags > OAuth tokens > `.clickhousectl/credenti
 
 ## Cloud {#cloud}
 
-Manage ClickHouse Cloud services via the API.
+Manage Datastore Cloud services via the API.
 
 ### Organizations {#organizations}
 
@@ -250,12 +250,12 @@ clickhousectl cloud service create --name my-service --release-channel fast
 clickhousectl cloud service start <service-id>
 clickhousectl cloud service stop <service-id>
 
-# Connect to a cloud service with clickhouse-client
+# Connect to a cloud service with datastore-client
 clickhousectl cloud service client --name my-service --password secret
 clickhousectl cloud service client --id <service-id> -q "SELECT 1" --password secret
 
-# Use CLICKHOUSE_PASSWORD env var (recommended for scripts/agents)
-CLICKHOUSE_PASSWORD=secret clickhousectl cloud service client \
+# Use DATASTORE_PASSWORD env var (recommended for scripts/agents)
+DATASTORE_PASSWORD=secret clickhousectl cloud service client \
   --name my-service -q "SELECT count() FROM system.tables"
 
 # Update service metadata and patches
@@ -384,7 +384,7 @@ clickhousectl cloud --json service get <service-id>
 
 ## Skills {#skills}
 
-Install the official ClickHouse Agent Skills from [ClickHouse/agent-skills](https://github.com/ClickHouse/agent-skills).
+Install the official Datastore Agent Skills from [Datastore/agent-skills](https://github.com/ClickHouse/agent-skills).
 
 ```bash
 # Default: interactive mode for humans, choose scope, then choose agents

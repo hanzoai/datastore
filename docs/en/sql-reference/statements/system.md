@@ -46,7 +46,7 @@ SELECT name, status FROM system.dictionaries;
 ## SYSTEM RELOAD MODELS {#reload-models}
 
 :::note
-This statement and `SYSTEM RELOAD MODEL` merely unload catboost models from the clickhouse-library-bridge. The function `catboostEvaluate()`
+This statement and `SYSTEM RELOAD MODEL` merely unload catboost models from the datastore-library-bridge. The function `catboostEvaluate()`
 loads a model upon first access if it is not loaded yet.
 :::
 
@@ -89,7 +89,7 @@ SYSTEM RELOAD ASYNCHRONOUS METRICS [ON CLUSTER cluster_name]
 
 ## SYSTEM CLEAR|DROP DNS CACHE {#drop-dns-cache}
 
-Clears ClickHouse's internal DNS cache. Sometimes (for old ClickHouse versions) it is necessary to use this command when changing the infrastructure (changing the IP address of another ClickHouse server or the server used by dictionaries).
+Clears Datastore's internal DNS cache. Sometimes (for old Datastore versions) it is necessary to use this command when changing the infrastructure (changing the IP address of another Datastore server or the server used by dictionaries).
 
 For more convenient (automatic) cache management, see `disable_internal_dns_cache`, `dns_cache_max_entries`, `dns_cache_update_period` parameters.
 
@@ -204,7 +204,7 @@ SYSTEM FLUSH LOGS query_log, system.query_views_log;
 
 ## SYSTEM RELOAD CONFIG {#reload-config}
 
-Reloads ClickHouse configuration. Used when configuration is stored in ZooKeeper. Note that `SYSTEM RELOAD CONFIG` does not reload `USER` configuration stored in ZooKeeper, it only reloads `USER` configuration that is stored in `users.xml`.  To reload all `USER` config use `SYSTEM RELOAD USERS`
+Reloads Datastore configuration. Used when configuration is stored in ZooKeeper. Note that `SYSTEM RELOAD CONFIG` does not reload `USER` configuration stored in ZooKeeper, it only reloads `USER` configuration that is stored in `users.xml`.  To reload all `USER` config use `SYSTEM RELOAD USERS`
 
 ```sql
 SYSTEM RELOAD CONFIG [ON CLUSTER cluster_name]
@@ -222,15 +222,15 @@ SYSTEM RELOAD USERS [ON CLUSTER cluster_name]
 
 <CloudNotSupportedBadge/>
 
-Normally shuts down ClickHouse (like `service clickhouse-server stop` / `kill {$pid_clickhouse-server}`)
+Normally shuts down Datastore (like `service datastore-server stop` / `kill {$pid_datastore-server}`)
 
 ## SYSTEM KILL {#kill}
 
-Aborts ClickHouse process (like `kill -9 {$ pid_clickhouse-server}`)
+Aborts Datastore process (like `kill -9 {$ pid_datastore-server}`)
 
 ## SYSTEM INSTRUMENT {#instrument}
 
-Manages instrumentation points using LLVM's XRay feature which is available when ClickHouse is built using `ENABLE_XRAY=1`.
+Manages instrumentation points using LLVM's XRay feature which is available when Datastore is built using `ENABLE_XRAY=1`.
 This enables to debug and profile in production without modifying the source code and with minimal overhead.
 When no instrumentation point is added, the performance penalty is negligible because it only adds an extra jump to a nearby
 address at the prolog and epilog of those functions that are longer than 200 instructions.
@@ -312,7 +312,7 @@ The instrumentation point information can be collected from [`system.instrumenta
 
 ## Managing Distributed Tables {#managing-distributed-tables}
 
-ClickHouse can manage [distributed](../../engines/table-engines/special/distributed.md) tables. When a user inserts data into these tables, ClickHouse first creates a queue of the data that should be sent to cluster nodes, then asynchronously sends it. You can manage queue processing with the [`STOP DISTRIBUTED SENDS`](#stop-distributed-sends), [FLUSH DISTRIBUTED](#flush-distributed), and [`START DISTRIBUTED SENDS`](#start-distributed-sends) queries. You can also synchronously insert distributed data with the [`distributed_foreground_insert`](../../operations/settings/settings.md#distributed_foreground_insert) setting.
+Datastore can manage [distributed](../../engines/table-engines/special/distributed.md) tables. When a user inserts data into these tables, Datastore first creates a queue of the data that should be sent to cluster nodes, then asynchronously sends it. You can manage queue processing with the [`STOP DISTRIBUTED SENDS`](#stop-distributed-sends), [FLUSH DISTRIBUTED](#flush-distributed), and [`START DISTRIBUTED SENDS`](#start-distributed-sends) queries. You can also synchronously insert distributed data with the [`distributed_foreground_insert`](../../operations/settings/settings.md#distributed_foreground_insert) setting.
 
 ### SYSTEM STOP DISTRIBUTED SENDS {#stop-distributed-sends}
 
@@ -328,7 +328,7 @@ In case of [`prefer_localhost_replica`](../../operations/settings/settings.md#pr
 
 ### SYSTEM FLUSH DISTRIBUTED {#flush-distributed}
 
-Forces ClickHouse to send data to cluster nodes synchronously. If any nodes are unavailable, ClickHouse throws an exception and stops query execution. You can retry the query until it succeeds, which will happen when all nodes are back online.
+Forces Datastore to send data to cluster nodes synchronously. If any nodes are unavailable, Datastore throws an exception and stops query execution. You can retry the query until it succeeds, which will happen when all nodes are back online.
 
 You can also override some settings via `SETTINGS` clause, this can be useful to avoid some temporary limitations, like `max_concurrent_queries_for_all_users` or `max_memory_usage`.
 
@@ -352,7 +352,7 @@ SYSTEM START DISTRIBUTED SENDS [db.]<distributed_table_name> [ON CLUSTER cluster
 
 Closes the socket and gracefully terminates the existing connections to the server on the specified port with the specified protocol.
 
-However, if the corresponding protocol settings were not specified in the clickhouse-server configuration, this command will have no effect.
+However, if the corresponding protocol settings were not specified in the datastore-server configuration, this command will have no effect.
 
 ```sql
 SYSTEM STOP LISTEN [ON CLUSTER cluster_name] [QUERIES ALL | QUERIES DEFAULT | QUERIES CUSTOM | TCP | TCP WITH PROXY | TCP SECURE | HTTP | HTTPS | MYSQL | GRPC | POSTGRESQL | PROMETHEUS | CUSTOM 'protocol']
@@ -375,7 +375,7 @@ SYSTEM START LISTEN [ON CLUSTER cluster_name] [QUERIES ALL | QUERIES DEFAULT | Q
 
 ## Managing MergeTree Tables {#managing-mergetree-tables}
 
-ClickHouse can manage background processes in [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) tables.
+Datastore can manage background processes in [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) tables.
 
 ### SYSTEM STOP MERGES {#stop-merges}
 
@@ -459,7 +459,7 @@ SYSTEM WAIT LOADING PARTS [ON CLUSTER cluster_name] [db.]merge_tree_family_table
 
 ## Managing ReplicatedMergeTree Tables {#managing-replicatedmergetree-tables}
 
-ClickHouse can manage background replication related processes in [ReplicatedMergeTree](/engines/table-engines/mergetree-family/replication) tables.
+Datastore can manage background replication related processes in [ReplicatedMergeTree](/engines/table-engines/mergetree-family/replication) tables.
 
 ### SYSTEM STOP FETCHES {#stop-fetches}
 
@@ -598,13 +598,13 @@ SYSTEM RESTORE DATABASE REPLICA repl_db [ON CLUSTER cluster]
 
 ```sql
 CREATE DATABASE repl_db
-ENGINE=Replicated("/clickhouse/repl_db", shard1, replica1);
+ENGINE=Replicated("/datastore/repl_db", shard1, replica1);
 
 CREATE TABLE repl_db.test_table (n UInt32)
 ENGINE = ReplicatedMergeTree
 ORDER BY n PARTITION BY n % 10;
 
--- zookeeper_delete_path("/clickhouse/repl_db", recursive=True) <- root loss.
+-- zookeeper_delete_path("/datastore/repl_db", recursive=True) <- root loss.
 
 SYSTEM RESTORE DATABASE REPLICA repl_db;
 ```
@@ -627,12 +627,12 @@ Creating a table on multiple servers. After the replica's metadata in ZooKeeper 
 
 ```sql
 CREATE TABLE test(n UInt32)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/', '{replica}')
+ENGINE = ReplicatedMergeTree('/datastore/tables/test/', '{replica}')
 ORDER BY n PARTITION BY n % 10;
 
 INSERT INTO test SELECT * FROM numbers(1000);
 
--- zookeeper_delete_path("/clickhouse/tables/test", recursive=True) <- root loss.
+-- zookeeper_delete_path("/datastore/tables/test", recursive=True) <- root loss.
 
 SYSTEM RESTART REPLICA test;
 SYSTEM RESTORE REPLICA test;

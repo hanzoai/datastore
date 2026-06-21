@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <database_replicated>
         <max_broken_tables_ratio>0.75</max_broken_tables_ratio>
         <max_replication_lag_to_enqueue>100</max_replication_lag_to_enqueue>
@@ -8,4 +8,4 @@
         <max_retries_before_automatic_recovery>5</max_retries_before_automatic_recovery>
         <logs_to_keep>200</logs_to_keep>
     </database_replicated>
-</clickhouse>
+</datastore>

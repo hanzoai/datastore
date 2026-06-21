@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
                 <type>local_blob_storage</type>
-                <path>/var/lib/clickhouse/local_disk_3/</path>
+                <path>/var/lib/datastore/local_disk_3/</path>
             </hdd_blob>
             <cache_dynamic_resize>
                 <type>cache</type>
@@ -33,4 +33,4 @@
             <database>system</database>
             <table>filesystem_cache_log</table>
     </filesystem_cache_log>
-</clickhouse>
+</datastore>

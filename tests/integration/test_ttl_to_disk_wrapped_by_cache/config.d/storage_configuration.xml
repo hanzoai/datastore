@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -33,4 +33,4 @@
             </s3_cold>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

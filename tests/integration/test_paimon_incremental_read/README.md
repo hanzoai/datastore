@@ -3,8 +3,8 @@
 This test validates Paimon incremental read with:
 
 - A dedicated writer jar (`paimon-incremental-writer`) built inside the
-  `clickhouse/integration-test-with-hms` Docker image
-- A ClickHouse table created by `ENGINE = PaimonLocal(...)`
+  `datastore/integration-test-with-hms` Docker image
+- A Datastore table created by `ENGINE = PaimonLocal(...)`
 - Incremental reads with Keeper state
 
 ### Test entry
@@ -20,9 +20,9 @@ This test validates Paimon incremental read with:
 ### How it works
 
 The writer jar is built from source during the Docker image build
-(`clickhouse/integration-test-with-hms`) via a multi-stage Dockerfile.
+(`datastore/integration-test-with-hms`) via a multi-stage Dockerfile.
 At test time, a sidecar container running the same image shares a Docker
-named volume with the ClickHouse node. The test invokes the writer via
+named volume with the Datastore node. The test invokes the writer via
 `docker exec` into the sidecar container.
 
 ### Assertions covered

@@ -26,14 +26,14 @@ def apply_config(config_name):
     """Copy a config file into the container and reload."""
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, f"configs/{config_name}"),
-        f"/etc/clickhouse-server/config.d/{config_name}",
+        f"/etc/datastore-server/config.d/{config_name}",
     )
     node.query("SYSTEM RELOAD CONFIG")
 
 
 def remove_config(config_name):
     node.exec_in_container(
-        ["rm", "-f", f"/etc/clickhouse-server/config.d/{config_name}"]
+        ["rm", "-f", f"/etc/datastore-server/config.d/{config_name}"]
     )
 
 
@@ -54,7 +54,7 @@ def reload_with_invalid_config_and_check_log(config_name, group_name):
     """Copy an invalid config and reload, then verify rejection is logged."""
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, f"configs/{config_name}"),
-        f"/etc/clickhouse-server/config.d/{config_name}",
+        f"/etc/datastore-server/config.d/{config_name}",
     )
     query_id = f"test_invalid_{group_name}_{random.randint(10000, 99999)}"
     node.query("SYSTEM RELOAD CONFIG", query_id=query_id)
@@ -122,7 +122,7 @@ def test_receive_buffer_size_applied(started_cluster):
 
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/small_rcvbuf.xml"),
-        "/etc/clickhouse-server/config.d/small_rcvbuf.xml",
+        "/etc/datastore-server/config.d/small_rcvbuf.xml",
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -143,9 +143,9 @@ def test_receive_buffer_size_applied(started_cluster):
 
     # Use `ss -tmpn` to inspect sockets and their owning PIDs.
     # Filter to established connections to localhost:8123 owned by the
-    # clickhouse-server process (pid obtained from the container).
-    pid = node.get_process_pid("clickhouse")
-    assert pid is not None, "clickhouse-server process not found"
+    # datastore-server process (pid obtained from the container).
+    pid = node.get_process_pid("datastore")
+    assert pid is not None, "datastore-server process not found"
     # ss -m prints skmem info on the line following the connection line,
     # so use grep -A1 to capture both the connection and its skmem data.
     ss_output = node.exec_in_container(

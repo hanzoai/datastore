@@ -1,6 +1,6 @@
-1	Well, Hello ClickHouse !
+1	Well, Hello Datastore !
 2	Well, Hello World !
-1	Hello ClickHouse
+1	Hello Datastore
 2	Hello World
             Granules: 6/6
             Granules: 2/6
@@ -11,10 +11,10 @@
             Granules: 6/6
             Granules: 2/6
 ---
-1	Well, Hello ClickHouse !
+1	Well, Hello Datastore !
 2	Well, Hello World !
 6	True World Champion
-1	Hello ClickHouse
+1	Hello Datastore
 2	Hello World
 6	World Champion
             Granules: 6/6

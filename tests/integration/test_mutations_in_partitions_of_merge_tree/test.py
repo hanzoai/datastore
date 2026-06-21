@@ -131,7 +131,7 @@ def test_trivial_alter_in_partition_replicated_merge_tree(started_cluster):
 
         for node in (node1, node2):
             node.query(
-                "CREATE TABLE {name} (p Int64, x Int64) ENGINE=ReplicatedMergeTree('/clickhouse/{name}', '{{instance}}') ORDER BY tuple() PARTITION BY p".format(
+                "CREATE TABLE {name} (p Int64, x Int64) ENGINE=ReplicatedMergeTree('/datastore/{name}', '{{instance}}') ORDER BY tuple() PARTITION BY p".format(
                     name=name
                 )
             )

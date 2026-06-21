@@ -15,7 +15,7 @@ CREATE DICTIONARY 02843_dict
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02843_source'))
+SOURCE(DATASTORE(TABLE '02843_source'))
 LAYOUT(DIRECT());
 
 SELECT 1 IN (SELECT dictGet('02843_dict', 'value', materialize('1')));

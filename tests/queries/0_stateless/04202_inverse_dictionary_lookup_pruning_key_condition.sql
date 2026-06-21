@@ -15,7 +15,7 @@ CREATE TABLE pruning_ref (id UInt64, name String) ENGINE = MergeTree ORDER BY id
 INSERT INTO pruning_ref VALUES (4242, 'match');
 
 CREATE DICTIONARY pruning_dict (id UInt64, name String)
-PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'pruning_ref')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY id SOURCE(DATASTORE(TABLE 'pruning_ref')) LAYOUT(HASHED()) LIFETIME(0);
 
 CREATE TABLE pruning_data (id UInt64) ENGINE = MergeTree ORDER BY id
 SETTINGS index_granularity = 100, add_minmax_index_for_numeric_columns = 0;

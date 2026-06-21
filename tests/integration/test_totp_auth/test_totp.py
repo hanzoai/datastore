@@ -48,7 +48,7 @@ def get_one_time_password(
 
 def create_config(totp_secret):
     config = f"""
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
@@ -85,7 +85,7 @@ def create_config(totp_secret):
             </time_based_one_time_password>
         </totuser_empty_password>
     </users>
-</clickhouse>
+</datastore>
 """.lstrip()
 
     with open(os.path.join(SCRIPT_DIR, "config/users.xml"), "w") as f:

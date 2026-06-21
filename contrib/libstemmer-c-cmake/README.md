@@ -11,8 +11,8 @@ Sources:
 Set these variables before starting (adjust paths to match your checkout):
 
 ```Bash
-CLICKHOUSE_DIR=/path/to/ClickHouse
-SUBMODULE_DIR=$CLICKHOUSE_DIR/contrib/libstemmer_c
+DATASTORE_DIR=/path/to/Datastore
+SUBMODULE_DIR=$DATASTORE_DIR/contrib/libstemmer_c
 ```
 
 1. Go to the submodule directory and create a new branch for the new version:
@@ -53,10 +53,10 @@ git commit -m "Snapshot to version vX.X.X"
 git push --set-upstream origin Clickhouse/release/vX.X.X
 ```
 
-5. Regenerate the `CMakeLists.txt` in THIS directory (run from the ClickHouse repo root):
+5. Regenerate the `CMakeLists.txt` in THIS directory (run from the Datastore repo root):
 
 ```Bash
-cd $CLICKHOUSE_DIR
+cd $DATASTORE_DIR
 
 SOURCES=$(find contrib/libstemmer_c -name "*.c" -not -path "*/examples/*" | sort | sed 's|contrib/libstemmer_c/|    ${LIBRARY_DIR}/|')
 

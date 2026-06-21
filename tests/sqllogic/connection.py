@@ -75,7 +75,7 @@ def _random_str(length=8):
 def default_clickhouse_odbc_conn_str():
     return str(
         OdbcConnectingArgs.create_from_kw(
-            dsn="ClickHouse DSN (ANSI)",
+            dsn="Datastore DSN (ANSI)",
             Timeout="300",
             Url="http://localhost:8123/query?default_format=ODBCDriver2&"
             "default_table_engine=MergeTree&union_default_mode=DISTINCT&"
@@ -113,7 +113,7 @@ class Engines(enum.Enum):
 
 class KnownDBMS(str, enum.Enum):
     sqlite = "sqlite"
-    clickhouse = "ClickHouse"
+    datastore = "Datastore"
 
 
 class ConnectionWrap:
@@ -155,7 +155,7 @@ class ConnectionWrap:
         return self
 
     def drop_all_tables(self):
-        if self.DBMS_NAME == KnownDBMS.clickhouse.value:
+        if self.DBMS_NAME == KnownDBMS.datastore.value:
             list_query = (
                 f"SELECT name FROM system.tables WHERE database='{self.DATABASE_NAME}'"
             )
@@ -180,14 +180,14 @@ class ConnectionWrap:
             logger.debug("success drop table: %s", table_name)
 
     def _use_database(self, database="default"):
-        if self.DBMS_NAME == KnownDBMS.clickhouse.value:
+        if self.DBMS_NAME == KnownDBMS.datastore.value:
             logger.info("use test database: %s", database)
             self._factory_kwargs.update_database(database)
             self.reconnect()
             self.DATABASE_NAME = database
 
     def use_random_database(self):
-        if self.DBMS_NAME == KnownDBMS.clickhouse.value:
+        if self.DBMS_NAME == KnownDBMS.datastore.value:
             database = f"test_{_random_str()}"
             execute_request(f"CREATE DATABASE {database}", self).assert_no_exception()
             self._use_database(database)
@@ -211,7 +211,7 @@ class ConnectionWrap:
             yield self
         finally:
             self._use_database()
-            if self.DBMS_NAME == KnownDBMS.clickhouse.value and db_name != "default":
+            if self.DBMS_NAME == KnownDBMS.datastore.value and db_name != "default":
                 result = execute_request(f"DROP DATABASE IF EXISTS {db_name}", self)
                 exc = result.get_exception()
                 if exc is not None:
@@ -273,7 +273,7 @@ def setup_connection(engine, conn_str=None, make_debug_request=True):
             factory_kwargs=native_args,
         )
 
-        connection.DBMS_NAME = "ClickHouse"
+        connection.DBMS_NAME = "Datastore"
         connection.DATABASE_NAME = native_args.database
         connection.USER_NAME = native_args.user
 

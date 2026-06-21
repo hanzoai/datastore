@@ -1,7 +1,7 @@
 logger:
   level: trace
-  log: /var/log/clickhouse-server/clickhouse-server.log
-  errorlog: /var/log/clickhouse-server/clickhouse-server.err.log
+  log: /var/log/datastore-server/datastore-server.log
+  errorlog: /var/log/datastore-server/datastore-server.err.log
   size: 1000M
   count: 10
 http_port: 8123
@@ -24,9 +24,9 @@ grpc:
   verbose_logs: false
 openSSL:
   server:
-    certificateFile: /etc/clickhouse-server/server.crt
-    privateKeyFile: /etc/clickhouse-server/server.key
-    dhParamsFile: /etc/clickhouse-server/dhparam.pem
+    certificateFile: /etc/datastore-server/server.crt
+    privateKeyFile: /etc/datastore-server/server.key
+    dhParamsFile: /etc/datastore-server/dhparam.pem
     verificationMode: none
     loadDefaultCAFile: true
     cacheSessions: true
@@ -55,7 +55,7 @@ user_directories:
   users_xml:
     path: users.yml
   local_directory:
-    path: /var/lib/clickhouse/access/
+    path: /var/lib/datastore/access/
 default_profile: default
 custom_settings_prefixes: ''
 default_database: default
@@ -109,7 +109,7 @@ crash_log:
 top_level_domains_lists: ''
 dictionaries_config: '*_dictionary.xml'
 distributed_ddl:
-  path: /clickhouse/task_queue/ddl
+  path: /datastore/task_queue/ddl
 graphite_rollup_example:
   pattern:
     regexp: click_cost
@@ -128,7 +128,7 @@ graphite_rollup_example:
         precision: 300
       - age: 86400
         precision: 3600
-format_schema_path: /var/lib/clickhouse/format_schemas/
+format_schema_path: /var/lib/datastore/format_schemas/
 query_masking_rules:
   rule:
     name: hide encrypt/decrypt arguments

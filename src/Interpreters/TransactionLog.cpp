@@ -57,7 +57,7 @@ catch (...)
 TransactionLog::TransactionLog()
     : global_context(Context::getGlobalContextInstance())
     , log(getLogger("TransactionLog"))
-    , zookeeper_path(global_context->getConfigRef().getString("transaction_log.zookeeper_path", "/clickhouse/txn"))
+    , zookeeper_path(global_context->getConfigRef().getString("transaction_log.zookeeper_path", "/datastore/txn"))
     , zookeeper_path_log(zookeeper_path + "/log")
     , fault_probability_before_commit(global_context->getConfigRef().getDouble("transaction_log.fault_probability_before_commit", 0))
     , fault_probability_after_commit(global_context->getConfigRef().getDouble("transaction_log.fault_probability_after_commit", 0))
@@ -286,7 +286,7 @@ void TransactionLog::removeOldEntries()
         return;
 
     /// Because `loadTableFromMetadataAsync` is running asynchronously, it is possible that the outdated parts are loading while the `tail_ptr` is updated here.
-    /// It might trigger assertion when the part `create_csn` is lower than `tail_ptr`. Refer: https://github.com/ClickHouse/ClickHouse/issues/60406
+    /// It might trigger assertion when the part `create_csn` is lower than `tail_ptr`. Refer: https://github.com/ClickHouse/Datastore/issues/60406
     /// We keep track of `asyncTablesLoadingJobNumber`, and not update `tail_ptr` if there are running jobs.
     if (!updated_tail_ptr.load(std::memory_order_relaxed) && asyncTablesLoadingJobNumber() != 0)
     {

@@ -1,5 +1,5 @@
 ---
-description: 'Allows ClickHouse to connect to external databases via ODBC.'
+description: 'Allows Datastore to connect to external databases via ODBC.'
 sidebar_label: 'ODBC'
 sidebar_position: 150
 slug: /engines/table-engines/integrations/odbc
@@ -13,9 +13,9 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 <CloudNotSupportedBadge/>
 
-Allows ClickHouse to connect to external databases via [ODBC](https://en.wikipedia.org/wiki/Open_Database_Connectivity).
+Allows Datastore to connect to external databases via [ODBC](https://en.wikipedia.org/wiki/Open_Database_Connectivity).
 
-To safely implement ODBC connections, ClickHouse uses a separate program `clickhouse-odbc-bridge`. If the ODBC driver is loaded directly from `clickhouse-server`, driver problems can crash the ClickHouse server. ClickHouse automatically starts `clickhouse-odbc-bridge` when it is required. The ODBC bridge program is installed from the same package as the `clickhouse-server`.
+To safely implement ODBC connections, Datastore uses a separate program `datastore-odbc-bridge`. If the ODBC driver is loaded directly from `datastore-server`, driver problems can crash the Datastore server. Datastore automatically starts `datastore-odbc-bridge` when it is required. The ODBC bridge program is installed from the same package as the `datastore-server`.
 
 This engine supports the [Nullable](../../../sql-reference/data-types/nullable.md) data type.
 
@@ -36,7 +36,7 @@ See a detailed description of the [CREATE TABLE](/sql-reference/statements/creat
 The table structure can differ from the source table structure:
 
 - Column names should be the same as in the source table, but you can use just some of these columns and in any order.
-- Column types may differ from those in the source table. ClickHouse tries to [cast](/sql-reference/functions/type-conversion-functions#CAST) values to the ClickHouse data types.
+- Column types may differ from those in the source table. Datastore tries to [cast](/sql-reference/functions/type-conversion-functions#CAST) values to the Datastore data types.
 - The [external_table_functions_use_nulls](/operations/settings/settings#external_table_functions_use_nulls) setting defines how to handle Nullable columns. Default value: 1. If 0, the table function does not make Nullable columns and inserts default values instead of nulls. This is also applicable for NULL values inside arrays.
 
 **Engine Parameters**
@@ -55,15 +55,15 @@ This example is checked for Ubuntu Linux 18.04 and MySQL server 5.7.
 
 Ensure that unixODBC and MySQL Connector are installed.
 
-By default (if installed from packages), ClickHouse starts as user `clickhouse`. Thus, you need to create and configure this user in the MySQL server.
+By default (if installed from packages), Datastore starts as user `datastore`. Thus, you need to create and configure this user in the MySQL server.
 
 ```bash
 $ sudo mysql
 ```
 
 ```sql
-mysql> CREATE USER 'clickhouse'@'localhost' IDENTIFIED BY 'clickhouse';
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'clickhouse'@'localhost' WITH GRANT OPTION;
+mysql> CREATE USER 'datastore'@'localhost' IDENTIFIED BY 'datastore';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'datastore'@'localhost' WITH GRANT OPTION;
 ```
 
 Then configure the connection in `/etc/odbc.ini`.
@@ -75,8 +75,8 @@ DRIVER = /usr/local/lib/libmyodbc5w.so
 SERVER = 127.0.0.1
 PORT = 3306
 DATABASE = test
-USER = clickhouse
-PASSWORD = clickhouse
+USER = datastore
+PASSWORD = datastore
 ```
 
 You can check the connection using the `isql` utility from the unixODBC installation.
@@ -115,7 +115,7 @@ mysql> select * from test.test;
 1 row in set (0,00 sec)
 ```
 
-Table in ClickHouse, retrieving data from the MySQL table:
+Table in Datastore, retrieving data from the MySQL table:
 
 ```sql
 CREATE TABLE odbc_t

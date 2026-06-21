@@ -11,7 +11,7 @@ CREATE DICTIONARY 02183_flat_dictionary
 )
 PRIMARY KEY id
 LAYOUT(FLAT())
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_test_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_test_table'))
 LIFETIME(0);
 
 SELECT 'FlatDictionary';
@@ -32,7 +32,7 @@ CREATE DICTIONARY 02183_hashed_dictionary
 )
 PRIMARY KEY id
 LAYOUT(HASHED())
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_test_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_test_table'))
 LIFETIME(0);
 
 SELECT 'HashedDictionary';
@@ -52,7 +52,7 @@ CREATE DICTIONARY 02183_hashed_array_dictionary
 )
 PRIMARY KEY id
 LAYOUT(HASHED_ARRAY())
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_test_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_test_table'))
 LIFETIME(0);
 
 SELECT 'HashedArrayDictionary';
@@ -72,7 +72,7 @@ CREATE DICTIONARY 02183_cache_dictionary
 )
 PRIMARY KEY id
 LAYOUT(CACHE(SIZE_IN_CELLS 10))
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_test_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_test_table'))
 LIFETIME(0);
 
 SELECT 'CacheDictionary';
@@ -92,7 +92,7 @@ CREATE DICTIONARY 02183_direct_dictionary
 )
 PRIMARY KEY id
 LAYOUT(HASHED())
-SOURCE(CLICKHOUSE(TABLE '02183_dictionary_test_table'))
+SOURCE(DATASTORE(TABLE '02183_dictionary_test_table'))
 LIFETIME(0);
 
 SELECT 'DirectDictionary';
@@ -121,7 +121,7 @@ CREATE DICTIONARY 02183_ip_trie_dictionary
     prefix String
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(TABLE 'ip_trie_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'ip_trie_dictionary_source_table'))
 LAYOUT(IP_TRIE())
 LIFETIME(0);
 
@@ -148,7 +148,7 @@ CREATE DICTIONARY 02183_polygon_dictionary
     key Array(Array(Array(Tuple(Float64, Float64))))
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE '02183_polygon_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_polygon_dictionary_source_table'))
 LAYOUT(POLYGON(store_polygon_key_column 1))
 LIFETIME(0);
 
@@ -180,7 +180,7 @@ CREATE DICTIONARY 02183_range_dictionary
   end UInt64
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE '02183_range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02183_range_dictionary_source_table'))
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start MAX end)
 LIFETIME(0);

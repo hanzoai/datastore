@@ -4,7 +4,7 @@
 - Generate `library definition file` as described in
 https://github.com/docker-library/official-images/blob/master/README.md#library-definition-files
 - Create a PR with it to https://github.com/docker-library/official-images, the file
-name will be `library/clickhouse`"""
+name will be `library/datastore`"""
 
 import argparse
 import logging
@@ -33,15 +33,15 @@ UBUNTU_NAMES = {
 if not IS_CI:
     GIT_PREFIX = "git"
 
-DOCKER_LIBRARY_REPOSITORY = "ClickHouse/docker-library"
+DOCKER_LIBRARY_REPOSITORY = "Datastore/docker-library"
 
-DOCKER_LIBRARY_NAME = {"server": "clickhouse"}
+DOCKER_LIBRARY_NAME = {"server": "datastore"}
 
 MAINTAINERS_HEADER = (
-    "Maintainers: Misha f. Shiryaev <felixoid@clickhouse.com> (@Felixoid),\n"
-    "             Max Kainov <max.kainov@clickhouse.com> (@mkaynov),\n"
-    "             Alexander Tokmakov <tavplubix@clickhouse.com> (@tavplubix),\n"
-    "             Alexander Sapin <alesapin@clickhouse.com> (@alesapin)"
+    "Maintainers: Misha f. Shiryaev <felixoid@datastore.com> (@Felixoid),\n"
+    "             Max Kainov <max.kainov@datastore.com> (@mkaynov),\n"
+    "             Alexander Tokmakov <tavplubix@datastore.com> (@tavplubix),\n"
+    "             Alexander Sapin <alesapin@datastore.com> (@alesapin)"
 )
 
 

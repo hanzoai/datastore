@@ -9,7 +9,7 @@ doc_type: 'reference'
 ---
 
 :::note
-In ClickHouse Cloud, if your service was created with a version earlier than 25.4, you will need to set the compatibility to at least 25.4 using  `SET compatibility=25.4`.
+In Datastore Cloud, if your service was created with a version earlier than 25.4, you will need to set the compatibility to at least 25.4 using  `SET compatibility=25.4`.
 :::
 
 A data set that is always in RAM. It is intended for use on the right side of the `IN` operator (see the section "IN operators").

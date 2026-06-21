@@ -25,7 +25,7 @@ def test_metadata_cache_memleak(started_cluster):
         drop table if exists test;
         drop dictionary if exists dict;
 
-        create dictionary dict (key UInt64, value UInt64) PRIMARY KEY key SOURCE(CLICKHOUSE(QUERY 'select 1, 1')) LIFETIME(0) LAYOUT(HASHED());
+        create dictionary dict (key UInt64, value UInt64) PRIMARY KEY key SOURCE(DATASTORE(QUERY 'select 1, 1')) LIFETIME(0) LAYOUT(HASHED());
 
         create table test
         (

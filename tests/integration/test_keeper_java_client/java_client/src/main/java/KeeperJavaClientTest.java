@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Tests ZooKeeper Java client compatibility with ClickHouse Keeper.
+ * Tests ZooKeeper Java client compatibility with Datastore Keeper.
  * Specifically tests all watch-related request types:
  * - addWatch (PERSISTENT and PERSISTENT_RECURSIVE)
  * - checkWatches

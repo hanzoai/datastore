@@ -10,11 +10,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS test_native_max_rows"
-$CLICKHOUSE_CLIENT -q "CREATE TABLE test_native_max_rows (id UInt64) ENGINE = MergeTree() ORDER BY id"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS test_native_max_rows"
+$DATASTORE_CLIENT -q "CREATE TABLE test_native_max_rows (id UInt64) ENGINE = MergeTree() ORDER BY id"
 
-$CLICKHOUSE_CLIENT -q "SELECT number FROM numbers(100) FORMAT Native" | \
-$CLICKHOUSE_CLIENT \
+$DATASTORE_CLIENT -q "SELECT number FROM numbers(100) FORMAT Native" | \
+$DATASTORE_CLIENT \
     --max_insert_block_size_rows=23 \
     --max_insert_block_size_bytes=0 \
     --min_insert_block_size_rows=0 \
@@ -23,10 +23,10 @@ $CLICKHOUSE_CLIENT \
     --async_insert=0 \
     -q "INSERT INTO test_native_max_rows FORMAT Native"
 
-$CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS part_log;"
+$DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS part_log;"
 
 # Test 1: Expect  parts (ceil(100 / 23) = 5)
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 SELECT count()
 FROM system.part_log
 WHERE table = 'test_native_max_rows'
@@ -35,6 +35,6 @@ AND database = currentDatabase()
 AND event_time > (now() - 120);
 "
 
-$CLICKHOUSE_CLIENT -q "SELECT count() FROM test_native_max_rows"
+$DATASTORE_CLIENT -q "SELECT count() FROM test_native_max_rows"
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE test_native_max_rows"
+$DATASTORE_CLIENT -q "DROP TABLE test_native_max_rows"

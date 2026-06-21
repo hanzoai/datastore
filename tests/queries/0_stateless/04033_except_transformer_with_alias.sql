@@ -2,7 +2,7 @@
 -- This used to cause LOGICAL_ERROR "Bad cast from type DB::ASTFunction to DB::ASTIdentifier"
 -- because QueryNormalizer could replace the ASTIdentifier inside the EXCEPT transformer
 -- with an ASTFunction from the alias before the transformer was expanded.
--- https://github.com/ClickHouse/clickhouse-core-incidents/issues/1433
+-- https://github.com/ClickHouse/datastore-core-incidents/issues/1433
 
 SET allow_experimental_analyzer = 0;
 

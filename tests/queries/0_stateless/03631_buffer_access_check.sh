@@ -6,10 +6,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-user="user03631_${CLICKHOUSE_DATABASE}_$RANDOM"
-db=${CLICKHOUSE_DATABASE}
+user="user03631_${DATASTORE_DATABASE}_$RANDOM"
+db=${DATASTORE_DATABASE}
 
-${CLICKHOUSE_CLIENT} <<EOF
+${DATASTORE_CLIENT} <<EOF
 CREATE TABLE $db.test_table (s String) ENGINE = MergeTree ORDER BY s;
 INSERT INTO $db.test_table VALUES ('foo');
 
@@ -19,11 +19,11 @@ GRANT SELECT, CREATE, INSERT ON $db.test_buffer TO $user;
 GRANT TABLE ENGINE ON Buffer TO $user;
 EOF
 
-${CLICKHOUSE_CLIENT} --user $user --query "CREATE TABLE $db.test_buffer ENGINE = Buffer($db, test_table, 1, 10, 100, 10000, 1000000, 10000000, 100000000)"
-(( $(${CLICKHOUSE_CLIENT} --user $user --query "SELECT * FROM $db.test_buffer" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
-(( $(${CLICKHOUSE_CLIENT} --user $user --query "INSERT INTO $db.test_buffer VALUES ('bar')" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+${DATASTORE_CLIENT} --user $user --query "CREATE TABLE $db.test_buffer ENGINE = Buffer($db, test_table, 1, 10, 100, 10000, 1000000, 10000000, 100000000)"
+(( $(${DATASTORE_CLIENT} --user $user --query "SELECT * FROM $db.test_buffer" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
+(( $(${DATASTORE_CLIENT} --user $user --query "INSERT INTO $db.test_buffer VALUES ('bar')" 2>&1 | grep -c "Not enough privileges") >= 1 )) && echo "OK" || echo "UNEXPECTED"
 
-${CLICKHOUSE_CLIENT} --query "GRANT SELECT ON $db.test_table TO $user"
-${CLICKHOUSE_CLIENT} --user $user --query "SELECT * FROM $db.test_buffer"
+${DATASTORE_CLIENT} --query "GRANT SELECT ON $db.test_table TO $user"
+${DATASTORE_CLIENT} --user $user --query "SELECT * FROM $db.test_buffer"
 
-${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS $user"
+${DATASTORE_CLIENT} --query "DROP USER IF EXISTS $user"

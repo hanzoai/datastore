@@ -22,7 +22,7 @@ class ClickHouseBinary:
         self.path = temp_dir
         self.config_path = f"{temp_dir}/config"
         self.start_cmd = (
-            f"{self.path}/clickhouse-server --config-file={self.config_path}/config.xml"
+            f"{self.path}/datastore-server --config-file={self.config_path}/config.xml"
         )
         self.log_file = f"{temp_dir}/server.log"
         self.port = 9000
@@ -33,9 +33,9 @@ class ClickHouseBinary:
             f"mkdir -p {self.config_path}/users.d",
             f"cp ./programs/server/config.xml ./programs/server/users.xml {self.config_path}",
             f"cp -r --dereference ./programs/server/config.d {self.config_path}",
-            f"chmod +x {self.path}/clickhouse",
-            f"ln -sf {self.path}/clickhouse {self.path}/clickhouse-server",
-            f"ln -sf {self.path}/clickhouse {self.path}/clickhouse-client",
+            f"chmod +x {self.path}/datastore",
+            f"ln -sf {self.path}/datastore {self.path}/datastore-server",
+            f"ln -sf {self.path}/datastore {self.path}/datastore-client",
         ]
         res = True
         for command in commands:
@@ -43,7 +43,7 @@ class ClickHouseBinary:
         return res
 
     def start(self):
-        print(f"Starting ClickHouse server")
+        print(f"Starting Datastore server")
         print("Command: ", self.start_cmd)
         self.log_fd = open(self.log_file, "w")
         self.proc = subprocess.Popen(
@@ -54,14 +54,14 @@ class ClickHouseBinary:
         if retcode is not None:
             stdout = self.proc.stdout.read().strip() if self.proc.stdout else ""
             stderr = self.proc.stderr.read().strip() if self.proc.stderr else ""
-            Utils.print_formatted_error("Failed to start ClickHouse", stdout, stderr)
+            Utils.print_formatted_error("Failed to start Datastore", stdout, stderr)
             return False
-        print(f"ClickHouse server process started -> wait ready")
+        print(f"Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print(f"ClickHouse server ready")
+            print(f"Datastore server ready")
         else:
-            print(f"ClickHouse server NOT ready")
+            print(f"Datastore server NOT ready")
         return res
 
     def wait_ready(self):
@@ -70,7 +70,7 @@ class ClickHouseBinary:
         delay = 2
         for attempt in range(attempts):
             res, out, err = Shell.get_res_stdout_stderr(
-                f'clickhouse-client --port {self.port} --query "select 1"', verbose=True
+                f'datastore-client --port {self.port} --query "select 1"', verbose=True
             )
             if out.strip() == "1":
                 print("Server ready")
@@ -105,14 +105,14 @@ def main():
     }
 
     if True:
-        print("Start ClickHouse")
+        print("Start Datastore")
 
         def start():
             return ch.install() and ch.start()
 
         results.append(
             Result.from_commands_run(
-                name="Start ClickHouse",
+                name="Start Datastore",
                 command=start,
             )
         )

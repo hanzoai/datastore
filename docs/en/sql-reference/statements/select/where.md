@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the `WHERE` clause in ClickHouse'
+description: 'Documentation for the `WHERE` clause in Datastore'
 sidebar_label: 'WHERE'
 slug: /sql-reference/statements/select/where
 title: 'WHERE clause'
@@ -41,7 +41,7 @@ You can use the following [logical functions](/sql-reference/functions/logical-f
 
 ## Using UInt8 columns as a condition {#using-uint8-columns-as-a-condition}
 
-In ClickHouse, `UInt8` columns can be used directly as boolean conditions, where `0` is `false` and any non-zero value (typically `1`) is `true`.
+In Datastore, `UInt8` columns can be used directly as boolean conditions, where `0` is `false` and any non-zero value (typically `1`) is `true`.
 An example of this is given in the section [below](#example-uint8-column-as-condition).
 
 ## Using comparison operators {#using-comparison-operators}

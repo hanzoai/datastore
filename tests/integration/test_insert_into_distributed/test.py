@@ -72,12 +72,12 @@ CREATE TABLE distributed_on_local (d Date, x UInt32) ENGINE = Distributed('test_
 
         node1.query(
             """
-CREATE TABLE replicated(date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/replicated', 'node1') PARTITION BY toYYYYMM(date) ORDER BY id
+CREATE TABLE replicated(date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/replicated', 'node1') PARTITION BY toYYYYMM(date) ORDER BY id
 """
         )
         node2.query(
             """
-CREATE TABLE replicated(date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/replicated', 'node2') PARTITION BY toYYYYMM(date) ORDER BY id
+CREATE TABLE replicated(date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/replicated', 'node2') PARTITION BY toYYYYMM(date) ORDER BY id
 """
         )
 
@@ -144,7 +144,7 @@ CREATE TABLE distributed_one_replica_no_internal_replication (date Date, id UInt
 
         node2.query(
             """
-CREATE TABLE single_replicated(date Date, id UInt32) ENGINE = ReplicatedMergeTree('/clickhouse/tables/0/single_replicated', 'node2') PARTITION BY toYYYYMM(date) ORDER BY id
+CREATE TABLE single_replicated(date Date, id UInt32) ENGINE = ReplicatedMergeTree('/datastore/tables/0/single_replicated', 'node2') PARTITION BY toYYYYMM(date) ORDER BY id
 """
         )
 

@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS e;
--- https://github.com/ClickHouse/ClickHouse/issues/36891
+-- https://github.com/ClickHouse/Datastore/issues/36891
 
 CREATE TABLE e ( a UInt64, t DateTime ) ENGINE = MergeTree PARTITION BY toDate(t) ORDER BY tuple();
 INSERT INTO e SELECT 1, toDateTime('2020-02-01 12:00:01') + INTERVAL number MONTH FROM numbers(10);

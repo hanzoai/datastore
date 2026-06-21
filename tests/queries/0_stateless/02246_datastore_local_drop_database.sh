@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=../shell_config.sh
+. "$CURDIR"/../shell_config.sh
+
+dir=${DATASTORE_TEST_UNIQUE_NAME}
+[[ -d $dir ]] && rm -r $dir
+mkdir $dir
+$DATASTORE_LOCAL --multiline --path $dir -q """
+DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_1};
+CREATE DATABASE IF NOT EXISTS ${DATASTORE_DATABASE_1};
+USE ${DATASTORE_DATABASE_1};
+CREATE TABLE test (id Int32) ENGINE=MergeTree() ORDER BY id;
+DROP DATABASE ${DATASTORE_DATABASE_1};
+"""
+
+$DATASTORE_LOCAL --multiline -q """
+DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_1};
+CREATE DATABASE IF NOT EXISTS ${DATASTORE_DATABASE_1};
+USE ${DATASTORE_DATABASE_1};
+CREATE TABLE test (id Int32) ENGINE=MergeTree() ORDER BY id;
+DROP DATABASE ${DATASTORE_DATABASE_1};
+"""
+
+rm -r $dir

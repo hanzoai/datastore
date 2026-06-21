@@ -9,7 +9,7 @@ CREATE TABLE test_01191.t (n UInt64, s String) ENGINE = Memory();
 CREATE DICTIONARY test_01191.dict (n UInt64, s String)
 PRIMARY KEY n
 LAYOUT(DIRECT())
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE '_' DB 'test_01191'));
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE '_' DB 'test_01191'));
 
 INSERT INTO test_01191._ VALUES (42, 'test');
 

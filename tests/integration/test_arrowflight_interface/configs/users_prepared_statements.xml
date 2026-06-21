@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <user_ps1>
             <password>pass1</password>
@@ -7,4 +7,4 @@
             <password>pass2</password>
         </user_ps2>
     </users>
-</clickhouse>
+</datastore>

@@ -65,13 +65,13 @@ def test_startup_execution_state(start_cluster):
     bad.stop_clickhouse()
     # Set throw_on_error: true for the startup_script
     bad.replace_in_config(
-        "/etc/clickhouse-server/config.d/bad_script.xml",
+        "/etc/datastore-server/config.d/bad_script.xml",
         "<throw_on_error>false",
         "<throw_on_error>true",
     )
     bad.start_clickhouse(start_wait_sec=120, expected_to_fail=True)
     # server can't start with errors in startup_script
-    assert bad.get_process_pid("clickhouse") is None
+    assert bad.get_process_pid("datastore") is None
     assert bad.contains_in_log("Failed to parse startup scripts file")
     # Logs contains the original error
     assert bad.contains_in_log(
@@ -80,12 +80,12 @@ def test_startup_execution_state(start_cluster):
     assert bad.contains_in_log("Cannot finish startup_script successfully")
 
     bad.replace_in_config(
-        "/etc/clickhouse-server/config.d/bad_script.xml",
+        "/etc/datastore-server/config.d/bad_script.xml",
         "<throw_on_error>true",
         "<throw_on_error>false",
     )
     bad.start_clickhouse()
-    assert bad.get_process_pid("clickhouse") is not None
+    assert bad.get_process_pid("datastore") is not None
 
     # startup script wasn't executed, but the server is up
     assert_startup_script_failed()

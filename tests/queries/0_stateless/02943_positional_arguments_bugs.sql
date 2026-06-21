@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/46628
+-- https://github.com/ClickHouse/Datastore/issues/46628
 DROP TABLE IF EXISTS t;
 CREATE TABLE t
 (

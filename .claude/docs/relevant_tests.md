@@ -3,7 +3,7 @@
 ## Overview
 
 The coverage-based related test selector (`ci/jobs/scripts/find_tests.py`) finds
-stateless tests likely to catch regressions in a PR by querying a ClickHouse CI
+stateless tests likely to catch regressions in a PR by querying a Datastore CI
 database (CIDB) that records which lines each test covered in recent nightly runs.
 
 ---
@@ -16,7 +16,7 @@ database (CIDB) that records which lines each test covered in recent nightly run
 NightlyCoverage CI job (nightly at 02:13 UTC)
   └─ Build amd_per_test_coverage binary
        (WITH_COVERAGE=ON -DWITH_COVERAGE_DEPTH=ON -finstrument-functions-after-inlining)
-  └─ Run stateless tests including --long (clickhouse-test --collect-per-test-coverage)
+  └─ Run stateless tests including --long (datastore-test --collect-per-test-coverage)
        ├─ SYSTEM SET COVERAGE TEST 'test_name'  (before each test)
        └─ SYSTEM SET COVERAGE TEST ''           (flush + reset counters)
   └─ export_coverage.py (reads local server tables, inserts into CIDB)
@@ -24,7 +24,7 @@ NightlyCoverage CI job (nightly at 02:13 UTC)
        └─ system.coverage_indirect_calls → checks_coverage_indirect_calls
 ```
 
-### CIDB tables (ClickHouse cluster, read-only via play user)
+### CIDB tables (Datastore cluster, read-only via play user)
 
 | Table | Content |
 |---|---|
@@ -225,7 +225,7 @@ See `.claude/docs/compare_find_tests_algos.md` for the comparison methodology.
 ## Running find_tests locally
 
 ```bash
-cd /path/to/ClickHouse
+cd /path/to/Datastore
 # Get related tests for a PR
 PYTHONPATH=./ci:. python3 ci/jobs/scripts/find_tests.py <PR_NUMBER>
 
@@ -263,8 +263,8 @@ with `WITH_COVERAGE=ON -DWITH_COVERAGE_DEPTH=ON -finstrument-functions-after-inl
 
 Trigger manually on a branch:
 ```bash
-gh workflow run NightlyCoverage --repo ClickHouse/ClickHouse --ref <branch>
-gh run list --repo ClickHouse/ClickHouse --workflow=NightlyCoverage --limit 5
+gh workflow run NightlyCoverage --repo Datastore/Datastore --ref <branch>
+gh run list --repo Datastore/Datastore --workflow=NightlyCoverage --limit 5
 ```
 
 ---
@@ -280,7 +280,7 @@ gh run list --repo ClickHouse/ClickHouse --workflow=NightlyCoverage --limit 5
 | `base/base/coverage.cpp` | Runtime: reads LLVM profile data, resets per-test, collects indirect calls |
 | `src/Common/CoverageCollection.cpp` | Server-side: maps counters to source regions, inserts into system tables |
 | `src/Common/LLVMCoverageMapping.cpp` | Parses ELF `__llvm_covmap`/`__llvm_covfun` sections at startup |
-| `tests/clickhouse-test` | Creates `system.coverage_log` and `system.coverage_indirect_calls` tables |
+| `tests/datastore-test` | Creates `system.coverage_log` and `system.coverage_indirect_calls` tables |
 
 ---
 

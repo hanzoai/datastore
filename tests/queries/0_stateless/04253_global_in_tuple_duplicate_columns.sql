@@ -1,5 +1,5 @@
 -- Tags: no-replicated-database, no-parallel-replicas
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103228
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103228
 --
 -- `GLOBAL IN` with a tuple LHS and a subquery RHS whose projection produces
 -- columns with duplicate names (e.g. `SELECT number, number FROM ...`) used

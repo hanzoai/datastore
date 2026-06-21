@@ -3,7 +3,7 @@ import pytest
 from helpers.cluster import ClickHouseCluster
 from helpers.test_tools import assert_eq_with_retry
 
-CLICKHOUSE_DATABASE = "test"
+DATASTORE_DATABASE = "test"
 
 
 def initialize_database(nodes, shard):
@@ -12,17 +12,17 @@ def initialize_database(nodes, shard):
             """
             CREATE DATABASE {database};
             CREATE TABLE `{database}`.src (p UInt64, d UInt64)
-            ENGINE = ReplicatedMergeTree('/clickhouse/{database}/tables/test_consistent_shard1{shard}/replicated', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/{database}/tables/test_consistent_shard1{shard}/replicated', '{replica}')
             ORDER BY d PARTITION BY p
             SETTINGS min_replicated_logs_to_keep=3, max_replicated_logs_to_keep=5,
             cleanup_delay_period=0, cleanup_delay_period_random_add=0, cleanup_thread_preferred_points_per_iteration=0;
             CREATE TABLE `{database}`.dest (p UInt64, d UInt64)
-            ENGINE = ReplicatedMergeTree('/clickhouse/{database}/tables/test_consistent_shard2{shard}/replicated', '{replica}')
+            ENGINE = ReplicatedMergeTree('/datastore/{database}/tables/test_consistent_shard2{shard}/replicated', '{replica}')
             ORDER BY d PARTITION BY p
             SETTINGS min_replicated_logs_to_keep=3, max_replicated_logs_to_keep=5,
             cleanup_delay_period=0, cleanup_delay_period_random_add=0, cleanup_thread_preferred_points_per_iteration=0, temporary_directories_lifetime=1;
         """.format(
-                shard=shard, replica=node.name, database=CLICKHOUSE_DATABASE
+                shard=shard, replica=node.name, database=DATASTORE_DATABASE
             )
         )
 
@@ -53,21 +53,21 @@ def test_consistent_part_after_move_partition(start_cluster):
     for i in range(100):
         node1.query(
             "INSERT INTO `{database}`.src VALUES ({value} % 2, {value})".format(
-                database=CLICKHOUSE_DATABASE, value=i
+                database=DATASTORE_DATABASE, value=i
             )
         )
     query_source = "SELECT COUNT(*) FROM `{database}`.src".format(
-        database=CLICKHOUSE_DATABASE
+        database=DATASTORE_DATABASE
     )
     query_dest = "SELECT COUNT(*) FROM `{database}`.dest".format(
-        database=CLICKHOUSE_DATABASE
+        database=DATASTORE_DATABASE
     )
     assert_eq_with_retry(node2, query_source, node1.query(query_source))
     assert_eq_with_retry(node2, query_dest, node1.query(query_dest))
 
     node1.query(
         "ALTER TABLE `{database}`.src MOVE PARTITION 1 TO TABLE `{database}`.dest".format(
-            database=CLICKHOUSE_DATABASE
+            database=DATASTORE_DATABASE
         )
     )
 

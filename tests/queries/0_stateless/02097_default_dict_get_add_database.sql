@@ -22,7 +22,7 @@ CREATE DICTIONARY test_dictionary
 )
 PRIMARY KEY key_column
 LAYOUT(DIRECT())
-SOURCE(CLICKHOUSE(TABLE 'test_table'));
+SOURCE(DATASTORE(TABLE 'test_table'));
 
 CREATE TABLE test_table_default
 (

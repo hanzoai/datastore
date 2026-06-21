@@ -9,7 +9,7 @@ CREATE TABLE json_test
         foo Variant(String, Array(String))
     )
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/json_test', '1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/json_test', '1')
 PARTITION BY tuple()
 ORDER BY id
 SETTINGS index_granularity = 8192, min_rows_for_wide_part = 0, min_bytes_for_wide_part = 0;

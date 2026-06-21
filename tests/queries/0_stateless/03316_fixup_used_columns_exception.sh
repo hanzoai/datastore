@@ -4,10 +4,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query="DROP TABLE IF EXISTS test_exception;"
+$DATASTORE_CLIENT --query="DROP TABLE IF EXISTS test_exception;"
 
 
-create_status=$($CLICKHOUSE_CLIENT --query="
+create_status=$($DATASTORE_CLIENT --query="
 CREATE TABLE test_exception(
     id UInt64
 )

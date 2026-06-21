@@ -4,10 +4,10 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-path="$USER_FILES_PATH/$CLICKHOUSE_DATABASE.data"
+path="$USER_FILES_PATH/$DATASTORE_DATABASE.data"
 
-# Test from https://github.com/ClickHouse/ClickHouse/issues/83123
-$CLICKHOUSE_CLIENT --ignore-error -nm -q "
+# Test from https://github.com/ClickHouse/Datastore/issues/83123
+$DATASTORE_CLIENT --ignore-error -nm -q "
 DROP TABLE IF EXISTS t0;
 DROP TABLE IF EXISTS t1;
 

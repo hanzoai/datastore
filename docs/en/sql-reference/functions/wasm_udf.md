@@ -11,37 +11,37 @@ import ExperimentalBadge from '@theme/badges/ExperimentalBadge';
 
 # WebAssembly User-Defined Functions
 
-ClickHouse supports creating user-defined functions (UDFs) written in WebAssembly. This allows you to execute custom logic written in languages like Rust, C, C++, or others by compiling them to WebAssembly modules.
+Datastore supports creating user-defined functions (UDFs) written in WebAssembly. This allows you to execute custom logic written in languages like Rust, C, C++, or others by compiling them to WebAssembly modules.
 
 <CloudNotSupportedBadge/>
 <ExperimentalBadge/>
 
 ## Overview
 
-A WebAssembly module is a compiled binary file that contains one or more functions that can be called from ClickHouse.
+A WebAssembly module is a compiled binary file that contains one or more functions that can be called from Datastore.
 Think of a module as a library or shared object that you load once and reuse many times.
 
 WebAssembly module containing UDFs can be written in any language that can compile to WebAssembly, such as Rust, C, or C++.
 
-Code compiled to WebAssembly ("guest" code) and executed by ClickHouse  ("host") run in a sandboxed environment having access only to a dedicated memory space.
+Code compiled to WebAssembly ("guest" code) and executed by Datastore  ("host") run in a sandboxed environment having access only to a dedicated memory space.
 
-Guest code exports functions that ClickHouse can invoke - these include the functions that implement your custom logic (used to define UDFs) as well as support functions required for memory management and data exchange between ClickHouse and the WebAssembly code.
+Guest code exports functions that Datastore can invoke - these include the functions that implement your custom logic (used to define UDFs) as well as support functions required for memory management and data exchange between Datastore and the WebAssembly code.
 
 Your code should be compiled to "freestanding" WebAssembly (aka `wasm32-unknown-unknown`) without any dependencies on an operating system or standard library. Also only default 32-bit WebAssembly target is supported (no `wasm64` extension).
-The module must follow one of the supported communication protocols (ABIs) for interacting with ClickHouse.
+The module must follow one of the supported communication protocols (ABIs) for interacting with Datastore.
 
-Once compiled, the module's binary code is loaded into ClickHouse by inserting it into the `system.webassembly_modules` table.
+Once compiled, the module's binary code is loaded into Datastore by inserting it into the `system.webassembly_modules` table.
 After that, you can create UDFs that reference functions exported by the module using the `CREATE FUNCTION ... LANGUAGE WASM` statement.
 
 ## Prerequisites
 
-Enable WebAssembly support in your ClickHouse configuration:
+Enable WebAssembly support in your Datastore configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_webassembly_udf>true</allow_experimental_webassembly_udf>
     <webassembly_udf_engine>wasmtime</webassembly_udf_engine>
-</clickhouse>
+</datastore>
 ```
 
 Available Engine Implementations:
@@ -55,11 +55,11 @@ Available Engine Implementations:
 This example demonstrates the complete workflow of creating a WebAssembly UDF by implementing the [Collatz conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture) calculator.
 
 We'll write the code in WebAssembly Text format (WAT), which is a human-readable representation of WebAssembly, so no any programming language is required at this stage.
-ClickHouse requires the module to be in binary format, so we'll use the transpiler to convert WAT to WASM.
+Datastore requires the module to be in binary format, so we'll use the transpiler to convert WAT to WASM.
 To perform this conversion you may use `wat2wasm` from the [WebAssembly Binary Toolkit (WABT)](https://github.com/WebAssembly/wabt) or `parse` command from the [wasm-tools](https://github.com/bytecodealliance/wasm-tools).
 
 ```bash
-cat << 'EOF' | wasm-tools parse | clickhouse client -q "INSERT INTO system.webassembly_modules (name, code) SELECT 'collatz', code FROM input('code String') FORMAT RawBlob"
+cat << 'EOF' | wasm-tools parse | datastore client -q "INSERT INTO system.webassembly_modules (name, code) SELECT 'collatz', code FROM input('code String') FORMAT RawBlob"
 (module
   (func $next (param $n i32) (result i32)
     local.get $n i32.const 1 i32.and
@@ -80,7 +80,7 @@ cat << 'EOF' | wasm-tools parse | clickhouse client -q "INSERT INTO system.webas
 EOF
 ```
 
-In snippet above we pipe binary WASM code directly into ClickHouse client using `FORMAT RawBlob` to insert it into `system.webassembly_modules` table.
+In snippet above we pipe binary WASM code directly into Datastore client using `FORMAT RawBlob` to insert it into `system.webassembly_modules` table.
 
 Then we define the UDF that references the `steps` function exported by the module:
 
@@ -146,7 +146,7 @@ while adding user defined function `collatz_steps`. (RESOURCE_NOT_FOUND)
 To fan an insert out to every node, write to the `cluster` table function instead of the local `system.webassembly_modules` table:
 
 ```bash
-cat collatz.wasm | clickhouse client -q "
+cat collatz.wasm | datastore client -q "
   INSERT INTO FUNCTION cluster('default', 'system', 'webassembly_modules') (name, code)
   SELECT 'collatz', code FROM input('code String') FORMAT RawBlob"
 ```
@@ -215,20 +215,20 @@ RETURNS return_type
 
 **Parameters**:
 
-- `function_name`: Name of the function in ClickHouse. May be different from the exported function name in the module.
+- `function_name`: Name of the function in Datastore. May be different from the exported function name in the module.
 - `FROM 'module_name' :: 'source_function_name'`: Name of the loaded WASM module and function name in WASM module to use (defaults to function_name)
 - `ARGUMENTS`: List of argument names and types (names optional and used for serialization formats that support named fields)
 - `ABI`: Application Binary Interface version
   - `ROW_DIRECT`: Direct type mapping, row-by-row processing
   - `BUFFERED_V1`: Block-based processing with serialization
-- `DETERMINISTIC`: Declares the function as deterministic — always returns the same output for the same input. When specified, ClickHouse may constant-fold calls where all arguments are constants: the function is evaluated once at query analysis time and the result is reused for every row.
+- `DETERMINISTIC`: Declares the function as deterministic — always returns the same output for the same input. When specified, Datastore may constant-fold calls where all arguments are constants: the function is evaluated once at query analysis time and the result is reused for every row.
 - `SHA256_HASH`: Expected module hash for verification (auto-filled if omitted), can be used to ensure the correct WASM module loaded across different replicas.
 - `SETTINGS`: Per-function settings
     - `serialization_format` String — Serialization format for ABI requires it. Default: `MsgPack`.
 
 ## ABIs Versions
 
-To interact with ClickHouse, WebAssembly modules must adhere to one of the supported ABIs (Application Binary Interfaces).
+To interact with Datastore, WebAssembly modules must adhere to one of the supported ABIs (Application Binary Interfaces).
 
 - `ROW_DIRECT`: Direct type mapping (primitive types `Int32`, `UInt32`, `Int64`, `UInt64`, `Float32`, `Float64` only)
 - `BUFFERED_V1`: Complex types with serialization
@@ -310,7 +310,7 @@ ClickhouseBuffer * user_defined_function2(ClickhouseBuffer * span, uint32_t n) {
 
 ### Note for developing UDFs in Rust
 
-For Rust programs we provide a helper crate [clickhouse-wasm-udf](https://crates.io/crates/clickhouse-wasm-udf) to simplify development of WebAssembly UDFs for ClickHouse. The crate provides function for memory management, so you don't need to implement `clickhouse_create_buffer` and `clickhouse_destroy_buffer` functions manually, but rather add the crate as a dependency. Also there are macros `#[clickhouse_wasm_udf]` to wrap your regular Rust functions into the required ABI format.
+For Rust programs we provide a helper crate [datastore-wasm-udf](https://crates.io/crates/datastore-wasm-udf) to simplify development of WebAssembly UDFs for Datastore. The crate provides function for memory management, so you don't need to implement `clickhouse_create_buffer` and `clickhouse_destroy_buffer` functions manually, but rather add the crate as a dependency. Also there are macros `#[clickhouse_wasm_udf]` to wrap your regular Rust functions into the required ABI format.
 
 With the crate you can write UDFs like this:
 
@@ -332,9 +332,9 @@ Macros will generate wrapper function accepting and returning buffer structures 
 
 The following host functions may be imported and used by modules:
 
-- `clickhouse_server_version() -> i64` — returns ClickHouse server version as integer (e.g. 25011001 for v25.11.1.1).
+- `clickhouse_server_version() -> i64` — returns Datastore server version as integer (e.g. 25011001 for v25.11.1.1).
 - `clickhouse_throw(ptr: i32, size: i32)` — throws an error with the provided message. Accepts pointer to the memory location containing the error message string and size of the string.
-- `clickhouse_log(ptr: i32, size: i32)` — logs a message to ClickHouse server text log.
+- `clickhouse_log(ptr: i32, size: i32)` — logs a message to Datastore server text log.
 - `clickhouse_random(ptr: i32, size: i32)` — fills memory with random bytes.
 
 ## Settings
@@ -358,4 +358,4 @@ SELECT my_wasm_udf(column) FROM table;
 
 ## See also
 
-- [ClickHouse UDF overview](/sql-reference/functions/udf)
+- [Datastore UDF overview](/sql-reference/functions/udf)

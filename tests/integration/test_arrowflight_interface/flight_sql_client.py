@@ -331,7 +331,7 @@ class FlightSQLClient:
     """
     Thin Flight SQL wrapper around pyarrow.flight.FlightClient.
 
-    Implements only the subset used by the ClickHouse integration tests:
+    Implements only the subset used by the Datastore integration tests:
     execute, execute_update, do_get, and Flight SQL metadata commands,
     plus access to the underlying client.
     """

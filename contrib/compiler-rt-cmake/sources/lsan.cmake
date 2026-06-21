@@ -2,7 +2,7 @@
 #   - LSAN_COMMON_SOURCES is the upstream variable name.
 #
 # The "main" lsan runtime (lsan.cpp, lsan_allocator.cpp, ...) is *not* built —
-# ClickHouse only enables LSan as part of ASan, where these helpers are
+# Datastore only enables LSan as part of ASan, where these helpers are
 # already pulled into clang_rt.asan via the LSAN common helpers below.
 
 set(LSAN_COMMON_SOURCES

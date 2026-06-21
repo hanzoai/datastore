@@ -42,7 +42,7 @@ OPTIMIZE TABLE values_01564 DEDUPLICATE BY; -- { clientError SYNTAX_ERROR }
 OPTIMIZE TABLE values_01564 DEDUPLICATE BY a EXCEPT a; -- { clientError SYNTAX_ERROR }
 select 'a' || distinct one || 'c' from system.one; -- { clientError SYNTAX_ERROR }
 
--- a failing insert and then a normal insert (#https://github.com/ClickHouse/ClickHouse/issues/19353)
+-- a failing insert and then a normal insert (#https://github.com/ClickHouse/Datastore/issues/19353)
 CREATE TABLE t0 (c0 String, c1 Int32) ENGINE = Memory() ;
 INSERT INTO t0(c0, c1) VALUES ("1",1) ; -- { error UNKNOWN_IDENTIFIER }
 INSERT INTO t0(c0, c1) VALUES ('1', 1) ;

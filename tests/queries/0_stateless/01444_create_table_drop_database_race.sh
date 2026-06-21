@@ -14,8 +14,8 @@ function thread1()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CLIENT} --query="DROP DATABASE IF EXISTS $DB" 2>&1| grep -F "Code: " | grep -Fv "Code: 219"
-        ${CLICKHOUSE_CLIENT} --query="CREATE DATABASE IF NOT EXISTS $DB"
+        ${DATASTORE_CLIENT} --query="DROP DATABASE IF EXISTS $DB" 2>&1| grep -F "Code: " | grep -Fv "Code: 219"
+        ${DATASTORE_CLIENT} --query="CREATE DATABASE IF NOT EXISTS $DB"
     done
 }
 
@@ -23,7 +23,7 @@ function thread2()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        ${CLICKHOUSE_CLIENT} --query="CREATE TABLE IF NOT EXISTS $DB.t$RANDOM (x UInt8) ENGINE = MergeTree ORDER BY tuple()" 2>/dev/null
+        ${DATASTORE_CLIENT} --query="CREATE TABLE IF NOT EXISTS $DB.t$RANDOM (x UInt8) ENGINE = MergeTree ORDER BY tuple()" 2>/dev/null
     done
 }
 
@@ -35,4 +35,4 @@ thread2 &
 
 wait
 
-${CLICKHOUSE_CLIENT} --query="DROP DATABASE IF EXISTS ${DB}" 2>&1| grep -F "Code: " | grep -Fv "Code: 219" || exit 0
+${DATASTORE_CLIENT} --query="DROP DATABASE IF EXISTS ${DB}" 2>&1| grep -F "Code: " | grep -Fv "Code: 219" || exit 0

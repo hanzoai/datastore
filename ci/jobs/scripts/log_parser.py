@@ -297,7 +297,7 @@ class FuzzerLogParser:
                 r"(==\d+==\s*)?(ERROR|WARNING): \w+Sanitizer:|: runtime error: "
             )
             summary_pattern = re.compile(r"SUMMARY: \w+Sanitizer:")
-            # ClickHouse log line: "2024.01.15 12:34:56.789 [ 123 ] {id} <Level>"
+            # Datastore log line: "2024.01.15 12:34:56.789 [ 123 ] {id} <Level>"
             clickhouse_log_line = re.compile(
                 r"\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}\.\d+\s+\["
             )
@@ -333,7 +333,7 @@ class FuzzerLogParser:
                         clickhouse_log_line.search(stripped)
                         or sanitizer_start.search(stripped)
                     ):
-                        # In runtime-error mode, stop at ClickHouse log lines
+                        # In runtime-error mode, stop at Datastore log lines
                         # or new sanitizer reports since UBSan may not emit
                         # a SUMMARY line.
                         break
@@ -384,9 +384,9 @@ class FuzzerLogParser:
                 if match:
                     # Extract only the part after the pattern
                     extracted = line[match.end() :]
-                    # Remove everything before and including 'ClickHouse/' if present
-                    if "ClickHouse/" in extracted:
-                        extracted = extracted.split("ClickHouse/")[-1]
+                    # Remove everything before and including 'Datastore/' if present
+                    if "Datastore/" in extracted:
+                        extracted = extracted.split("Datastore/")[-1]
                     elif "/./" in extracted:
                         extracted = extracted.split("/./")[-1]
                     # Only append if there's meaningful content after extraction
@@ -411,8 +411,8 @@ class FuzzerLogParser:
                         # Remove everything before and including './ci/tmp/build/./' or similar patterns
                         if "/./" in extracted:
                             extracted = extracted.split("/./")[-1]
-                        elif "ClickHouse/" in extracted:
-                            extracted = extracted.split("ClickHouse/")[-1]
+                        elif "Datastore/" in extracted:
+                            extracted = extracted.split("Datastore/")[-1]
                         # Only append if there's meaningful content after extraction
                         if extracted.strip():
                             lines.append(extracted)
@@ -428,7 +428,7 @@ class FuzzerLogParser:
         Generate a stack trace ID (hash) to match and connect related stack traces.
 
         Implementation aims to increase true-positive matches while minimizing false-positives by:
-        - Counting only ClickHouse functions in DB:: namespace
+        - Counting only Datastore functions in DB:: namespace
         - Dropping templates and input arguments from function signatures
         - Limiting depth to top ST_MAX_DEPTH functions for broader matching
         - Excluding DB::Exception functions and everything above them (issue typically occurs before exception is thrown)

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <output_format_json_quote_64bit_integers>0</output_format_json_quote_64bit_integers>
@@ -41,4 +41,4 @@
             <profile>async_insert_profile</profile>
         </async_insert_user>
     </users>
-</clickhouse>
+</datastore>

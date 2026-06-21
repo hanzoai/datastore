@@ -1,12 +1,12 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
-        <stderr>/var/log/clickhouse-server/stderr.log</stderr>
-        <stdout>/var/log/clickhouse-server/stdout.log</stdout>
+        <stderr>/var/log/datastore-server/stderr.log</stderr>
+        <stdout>/var/log/datastore-server/stdout.log</stdout>
     </logger>
 
     <tcp_port>9000</tcp_port>
@@ -23,8 +23,8 @@
     </openSSL>
 
     <max_concurrent_queries>500</max_concurrent_queries>
-    <path>./clickhouse/</path>
+    <path>./datastore/</path>
     <users_config>users.xml</users_config>
 
-    <dictionaries_config>/etc/clickhouse-server/config.d/*.xml</dictionaries_config>
-</clickhouse>
+    <dictionaries_config>/etc/datastore-server/config.d/*.xml</dictionaries_config>
+</datastore>

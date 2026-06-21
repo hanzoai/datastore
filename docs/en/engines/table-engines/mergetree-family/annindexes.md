@@ -33,7 +33,7 @@ Any of the available [distance function](/sql-reference/functions/distance-funct
 
 An exact vector search can be performed using above SELECT query as is.
 The runtime of such queries is generally proportional to the number of stored vectors and their dimension, i.e. the number of array elements.
-Also, since ClickHouse performs a brute-force scan of all vectors, the runtime depends also on the number of threads by the query (see setting [max_threads](../../../operations/settings/settings.md#max_threads)).
+Also, since Datastore performs a brute-force scan of all vectors, the runtime depends also on the number of threads by the query (see setting [max_threads](../../../operations/settings/settings.md#max_threads)).
 
 ### Example {#exact-nearest-neighbor-search-example}
 
@@ -63,11 +63,11 @@ returns
 
 ### Vector Similarity Indexes {#vector-similarity-index}
 
-ClickHouse provides a special "vector similarity" index to perform approximate vector search.
+Datastore provides a special "vector similarity" index to perform approximate vector search.
 
 :::note
-Vector similarity indexes are available in ClickHouse version 25.8 and higher.
-If you run into problems, kindly open an issue in the [ClickHouse repository](https://github.com/clickhouse/clickhouse/issues).
+Vector similarity indexes are available in Datastore version 25.8 and higher.
+If you run into problems, kindly open an issue in the [Datastore repository](https://github.com/datastore/datastore/issues).
 :::
 
 #### Creating a Vector Similarity Index {#creating-a-vector-similarity-index}
@@ -112,7 +112,7 @@ As a result, vector indexes with `L2Distance` and `cosineDistance` can only be u
 :::
 
 `<dimensions>` specifies the array cardinality (number of elements) in the underlying column.
-If ClickHouse finds an array with a different cardinality during index creation, the index is discarded and an error is returned.
+If Datastore finds an array with a different cardinality during index creation, the index is discarded and an error is returned.
 
 The optional GRANULARITY parameter `<N>` refers to the size of the index granules (see [here](../../../optimize/skipping-indexes)).
 Unlike regular skip indexes, which use a default index granularity of 1, vector similarity indexes use 100 million as default index granularity.
@@ -208,14 +208,14 @@ ORDER BY <DistanceFunction>(vectors, reference_vector)
 LIMIT <N>
 ```
 
-ClickHouse's query optimizer tries to match above query template and make use of available vector similarity indexes.
+Datastore's query optimizer tries to match above query template and make use of available vector similarity indexes.
 A query can only use a vector similarity index if the distance function in the SELECT query is the same as the distance function in the index definition.
 
 Advanced users may provide a custom value for setting [hnsw_candidate_list_size_for_search](../../../operations/settings/settings.md#hnsw_candidate_list_size_for_search) (also know as HNSW hyperparameter "ef_search") to tune the size of the candidate list during search (e.g.  `SELECT [...] SETTINGS hnsw_candidate_list_size_for_search = <value>`).
 The default value of the setting 256 works well in the majority of use cases.
 Higher setting values mean better accuracy at the cost of slower performance.
 
-If the query can use a vector similarity index, ClickHouse checks that the LIMIT `<N>` provided in SELECT queries is within reasonable bounds.
+If the query can use a vector similarity index, Datastore checks that the LIMIT `<N>` provided in SELECT queries is within reasonable bounds.
 More specifically, an error is returned if `<N>` is bigger than the value of setting [max_limit_for_vector_search_queries](../../../operations/settings/settings.md#max_limit_for_vector_search_queries) with default value 100.
 Too large LIMIT values can slow down searches and usually indicate a usage error.
 
@@ -269,20 +269,20 @@ To enforce index usage, you can run the SELECT query with setting [force_data_sk
 **Post-filtering and Pre-filtering**
 
 Users may optionally specify a `WHERE` clause with additional filter conditions for the SELECT query.
-ClickHouse will evaluate these filter conditions using post-filtering or pre-filtering strategy.
+Datastore will evaluate these filter conditions using post-filtering or pre-filtering strategy.
 In short, both strategies determine the order in which the filters are evaluated:
-- Post-filtering means that the vector similarity index is evaluated first, afterwards ClickHouse evaluates the additional filter(s) specified in the `WHERE` clause.
+- Post-filtering means that the vector similarity index is evaluated first, afterwards Datastore evaluates the additional filter(s) specified in the `WHERE` clause.
 - Pre-filtering means that the filter evaluation order is the other way round.
 
 The strategies have different trade-offs:
 - Post-filtering has the general problem that it may return less than the number of rows requested in the `LIMIT <N>` clause. This situation happens when one or more result rows returned by the vector similarity index fails to satisfy the additional filters.
-- Pre-filtering is generally an unsolved problem. Certain specialized vector databases provide pre-filtering algorithms but most relational databases (including ClickHouse) will fall back to exact neighbor search, i.e., a brute-force scan without index.
+- Pre-filtering is generally an unsolved problem. Certain specialized vector databases provide pre-filtering algorithms but most relational databases (including Datastore) will fall back to exact neighbor search, i.e., a brute-force scan without index.
 
 What strategy is used depends on the filter condition.
 
 *Additional filters are part of the partition key*
 
-If the additional filter condition is part of the partition key, then ClickHouse will apply partition pruning.
+If the additional filter condition is part of the partition key, then Datastore will apply partition pruning.
 As an example, a table is range-partitioned by column `year` and the following query is run:
 
 ```sql
@@ -294,17 +294,17 @@ ORDER BY L2Distance(vec, reference_vec) ASC
 LIMIT 3;
 ```
 
-ClickHouse will prune all partitions except the 2025 one.
+Datastore will prune all partitions except the 2025 one.
 
 *Additional filters cannot be evaluated using indexes*
 
-If additional filter conditions cannot be evaluated using indexes (primary key index, skipping index), ClickHouse will apply post-filtering.
+If additional filter conditions cannot be evaluated using indexes (primary key index, skipping index), Datastore will apply post-filtering.
 
 *Additional filters can be evaluated using the primary key index*
 
 If additional filter conditions can be evaluated using the [primary key](mergetree.md#primary-key) (i.e., they form a prefix of the primary key) and
-- the filter condition eliminates at least one row within a part, the ClickHouse will fall back to pre-filtering for the "surviving" ranges within the part,
-- the filter condition eliminates no rows within a part, the ClickHouse will perform post-filtering for the part.
+- the filter condition eliminates at least one row within a part, the Datastore will fall back to pre-filtering for the "surviving" ranges within the part,
+- the filter condition eliminates no rows within a part, the Datastore will perform post-filtering for the part.
 
 In practical use cases, the latter case is rather unlikely.
 
@@ -328,7 +328,7 @@ LIMIT 10
 ```
 
 Assuming that only a very small number of books cost less than 2 dollar, post-filtering may return zero rows because the top 10 matches returned by the vector index could all be priced above 2 dollar.
-By forcing pre-filtering (add `SETTINGS vector_search_filter_strategy = 'prefilter'` to the query), ClickHouse first finds all books with a price of less than 2 dollar and then executes a brute-force vector search for the found books.
+By forcing pre-filtering (add `SETTINGS vector_search_filter_strategy = 'prefilter'` to the query), Datastore first finds all books with a price of less than 2 dollar and then executes a brute-force vector search for the found books.
 
 As an alternative approach to resolve above issue, setting [vector_search_index_fetch_multiplier](../../../operations/settings/settings#vector_search_index_fetch_multiplier) (default: `1.0`, maximum: `1000.0`) may be configured to a value > `1.0` (for example, `2.0`).
 The number of nearest neighbors fetched from the vector index is multiplied by the setting value and then the additional filter to be applied on those rows to return LIMIT-many rows.
@@ -343,21 +343,21 @@ LIMIT 10
 SETTING vector_search_index_fetch_multiplier = 3.0;
 ```
 
-ClickHouse will fetch 3.0 x 10 = 30 nearest neighbors from the vector index in each part and afterwards evaluate the additional filters.
+Datastore will fetch 3.0 x 10 = 30 nearest neighbors from the vector index in each part and afterwards evaluate the additional filters.
 Only the ten closest neighbors will be returned.
 We note that setting `vector_search_index_fetch_multiplier` can mitigate the problem but in extreme cases (very selective WHERE condition), it is still possible that less than N requested rows returned.
 
 **Rescoring**
 
-Skip indexes in ClickHouse generally filter at the granule level, i.e. a lookup in a skip index (internally) returns a list of potentially matching granules which reduces the number of read data in the subsequent scan.
+Skip indexes in Datastore generally filter at the granule level, i.e. a lookup in a skip index (internally) returns a list of potentially matching granules which reduces the number of read data in the subsequent scan.
 This works well for skip indexes in general but in the case of vector similarity indexes, it creates a "granularity mismatch".
 In more detail, the vector similarity index determines the row numbers of the N most similar vectors for a given reference vector, but it then needs to extrapolate these row numbers to granule numbers.
-ClickHouse will then load these granules from disk, and repeat the distance calculation for all vectors in these granules.
+Datastore will then load these granules from disk, and repeat the distance calculation for all vectors in these granules.
 This step is called rescoring and while it can theoretically improve accuracy - remember the vector similarity index returns only an _approximate_ result, it is obvious not optimal in terms of performance.
 
-ClickHouse therefore provides an optimization which disables rescoring and returns the most similar vectors and their distances directly from the index.
+Datastore therefore provides an optimization which disables rescoring and returns the most similar vectors and their distances directly from the index.
 The optimization is enabled by default, see setting [vector_search_with_rescoring](../../../operations/settings/settings#vector_search_with_rescoring).
-The way it works at a high level is that ClickHouse makes the most similar vectors and their distances available as a virtual column `_distances`.
+The way it works at a high level is that Datastore makes the most similar vectors and their distances available as a virtual column `_distances`.
 To see this, run a vector search query with `EXPLAIN header = 1`:
 
 ```sql
@@ -412,7 +412,7 @@ CREATE TABLE tab(id Int32, vec Array(Float32) CODEC(NONE), INDEX idx vec TYPE ve
 
 The life cycle of vector similarity indexes is tied to the life cycle of parts.
 In other words, whenever a new part with defined vector similarity index is created, the index is create as well.
-This typically happens when data is [inserted](https://clickhouse.com/docs/guides/inserting-data) or during [merges](https://clickhouse.com/docs/merges).
+This typically happens when data is [inserted](https://datastore.com/docs/guides/inserting-data) or during [merges](https://datastore.com/docs/merges).
 Unfortunately, HNSW is known for long index creation times which can significantly slow down inserts and merges.
 Vector similarity indexes are ideally only used if the data is immutable or rarely changed.
 
@@ -433,7 +433,7 @@ For example, index creation can be deferred until all data was ingested or until
 **Tuning index usage**
 
 SELECT queries need to load vector similarity indexes into main memory to use them.
-To avoid that the same vector similarity index is loaded repeatedly into main memory, ClickHouse provides a dedicated in-memory cache for such indexes.
+To avoid that the same vector similarity index is loaded repeatedly into main memory, Datastore provides a dedicated in-memory cache for such indexes.
 The bigger this cache is, the fewer unnecessary loads will happen.
 The maximum cache size can be configured using server setting [vector_similarity_index_cache_size](../../../operations/server-configuration-parameters/settings.md#vector_similarity_index_cache_size).
 By default, the cache can grow up to 5 GB in size.
@@ -481,7 +481,7 @@ For production use-cases, we recommend that the cache is sized large enough so t
 **Tuning quantization**
 
 [Quantization](https://huggingface.co/blog/embedding-quantization) is a technique to reduce the memory footprint of vectors and the computational costs of building and traversing vector indexes.
-ClickHouse vector indexes supports the following quantization options:
+Datastore vector indexes supports the following quantization options:
 
 | Quantization   | Name                         | Storage per dimension |
 |----------------|------------------------------|---------------------- |
@@ -503,7 +503,7 @@ The rescoring step uses the original full-precision vectors stored in the table 
 **Tuning data transfer**
 
 The reference vector in a vector search query is provided by the user and generally retrieved by making a call to a Large Language Model (LLM).
-Typical Python code which runs a vector search in ClickHouse might look like this
+Typical Python code which runs a vector search in Datastore might look like this
 
 ```python
 search_v = openai_client.embeddings.create(input = "[Good Books]", model='text-embedding-3-large', dimensions=1536).data[0].embedding
@@ -518,10 +518,10 @@ result = chclient.query(
 
 Embedding vectors (`search_v` in above snippet) could have a very large dimension.
 For example, OpenAI provides models that generate embeddings vectors with 1536 or even 3072 dimensions.
-In above code, the ClickHouse Python driver substitutes the embedding vector by a human readable string and subsequently send the SELECT query entirely as a string.
+In above code, the Datastore Python driver substitutes the embedding vector by a human readable string and subsequently send the SELECT query entirely as a string.
 Assuming the embedding vector consists of 1536 single-precision floating point values, the sent string reaches a length of 20 kB.
 This creates a high CPU usage for tokenizing, parsing and performing thousands of string-to-float conversions.
-Also, significant space is required in the ClickHouse server log file, causing bloat in `system.query_log` as well.
+Also, significant space is required in the Datastore server log file, causing bloat in `system.query_log` as well.
 
 Note that most LLM models return an embedding vector as a list or NumPy array of native floats.
 We therefore recommend Python applications to bind the reference vector parameter in binary form by using the following style:
@@ -566,17 +566,17 @@ However, data structures and algorithms for approximate neighbor search are inhe
 They store a compact representation of a set of rows and also return rows for vector search queries.
 This causes some rather unintuitive differences in the way vector similarity indexes behave compared to normal skipping indexes.
 
-When a user defines a vector similarity index on a column, ClickHouse internally creates a vector similarity "sub-index" for each index block.
+When a user defines a vector similarity index on a column, Datastore internally creates a vector similarity "sub-index" for each index block.
 The sub-index is "local" in the sense that it only knows about the rows of its containing index block.
 In the previous example and assuming that a column has 65536 rows, we obtain four index blocks (spanning eight granules) and a vector similarity sub-index for each index block.
 A sub-index is theoretically able to return the rows with the N closest points within its index block directly.
-However, since ClickHouse loads data from disk to memory at the granularity of granules, sub-indexes extrapolate matching rows to granule granularity.
+However, since Datastore loads data from disk to memory at the granularity of granules, sub-indexes extrapolate matching rows to granule granularity.
 This is different from regular skipping indexes which skip data at the granularity of index blocks.
 
 The `GRANULARITY` parameter determines how many vector similarity sub-indexes are created.
 Bigger `GRANULARITY` values mean fewer but larger vector similarity sub-indexes, up to the point where a column (or a column's data part) has only a single sub-index.
 In that case, the sub-index has a "global" view of all column rows and can directly return all granules of the column (part) with relevant rows (there are at most `LIMIT [N]`-many such granules).
-In a second step, ClickHouse will load these granules and identify the actually best rows by performing a brute-force distance calculation over all rows of the granules.
+In a second step, Datastore will load these granules and identify the actually best rows by performing a brute-force distance calculation over all rows of the granules.
 With a small `GRANULARITY` value, each of the sub-indexes returns up to `LIMIT N`-many granules.
 As a result, more granules need to be loaded and post-filtered.
 Note that the search accuracy is with both cases equally good, only the processing performance differs.
@@ -621,7 +621,7 @@ This method is known as quantization. While it speeds up computation, it may red
 
 With traditional quantization, we lose precision both during search and when storing the data. In the example above, we would store `BFloat16` instead of `Float32`, meaning we can never perform a more accurate search later, even if desired. One alternative approach is to store two copies of the data: quantized and full-precision. While this works, it requires redundant storage. Consider a scenario where we have `Float64` as original data and want to run searches with different precision (16-bit, 32-bit, or full 64-bit). We would need to store three separate copies of the data.
 
-ClickHouse offers the Quantized Bit (`QBit`) data type that addresses these limitations by:
+Datastore offers the Quantized Bit (`QBit`) data type that addresses these limitations by:
 1. Storing the original full-precision data.
 2. Allowing quantization precision to be specified at query time.
 
@@ -715,6 +715,6 @@ The performance benefit of `QBit` comes from reduced I/O operations, as less dat
 ### References {#references}
 
 Blogs:
-- [Vector Search with ClickHouse - Part 1](https://clickhouse.com/blog/vector-search-clickhouse-p1)
-- [Vector Search with ClickHouse - Part 2](https://clickhouse.com/blog/vector-search-clickhouse-p2)
-- [We built a vector search engine that lets you choose precision at query time](https://clickhouse.com/blog/qbit-vector-search)
+- [Vector Search with Datastore - Part 1](https://datastore.com/blog/vector-search-datastore-p1)
+- [Vector Search with Datastore - Part 2](https://datastore.com/blog/vector-search-datastore-p2)
+- [We built a vector search engine that lets you choose precision at query time](https://datastore.com/blog/qbit-vector-search)

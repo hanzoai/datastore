@@ -49,13 +49,13 @@ def change_config_to_key(name, pass_phrase=""):
         [
             "bash",
             "-c",
-            """cat > /etc/clickhouse-server/config.d/cert.xml << EOF
-<clickhouse>
+            """cat > /etc/datastore-server/config.d/cert.xml << EOF
+<datastore>
     <https_port>8443</https_port>
     <openSSL>
         <server>
-            <certificateFile>/etc/clickhouse-server/config.d/{cur_name}.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/{cur_name}.key</privateKeyFile>
+            <certificateFile>/etc/datastore-server/config.d/{cur_name}.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/{cur_name}.key</privateKeyFile>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
             <disableProtocols>sslv2,sslv3</disableProtocols>
@@ -63,7 +63,7 @@ def change_config_to_key(name, pass_phrase=""):
             {pass_phrase}
         </server>
     </openSSL>
-</clickhouse>
+</datastore>
 EOF""".format(
                 cur_name=name, pass_phrase=pass_phrase
             ),
@@ -85,7 +85,7 @@ def check_certificate_switch(
                 "curl",
                 "--silent",
                 "--cacert",
-                "/etc/clickhouse-server/config.d/{cur_name}.crt".format(cur_name=first),
+                "/etc/datastore-server/config.d/{cur_name}.crt".format(cur_name=first),
                 "https://localhost:8443/",
             ]
         )
@@ -101,7 +101,7 @@ def check_certificate_switch(
                 "curl",
                 "--silent",
                 "--cacert",
-                "/etc/clickhouse-server/config.d/{cur_name}.crt".format(
+                "/etc/datastore-server/config.d/{cur_name}.crt".format(
                     cur_name=second
                 ),
                 "https://localhost:8443/",
@@ -121,7 +121,7 @@ def check_certificate_switch(
                 "curl",
                 "--silent",
                 "--cacert",
-                "/etc/clickhouse-server/config.d/{cur_name}.crt".format(
+                "/etc/datastore-server/config.d/{cur_name}.crt".format(
                     cur_name=second
                 ),
                 "https://localhost:8443/",
@@ -138,7 +138,7 @@ def check_certificate_switch(
                 "curl",
                 "--silent",
                 "--cacert",
-                "/etc/clickhouse-server/config.d/{cur_name}.crt".format(cur_name=first),
+                "/etc/datastore-server/config.d/{cur_name}.crt".format(cur_name=first),
                 "https://localhost:8443/",
             ]
         )

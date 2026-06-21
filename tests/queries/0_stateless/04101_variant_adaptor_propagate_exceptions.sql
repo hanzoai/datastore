@@ -1,7 +1,7 @@
 -- Tags: no-random-settings
 -- Test that non-type-conversion exceptions (like MEMORY_LIMIT_EXCEEDED) are propagated
 -- from FunctionVariantAdaptor instead of being incorrectly wrapped as LOGICAL_ERROR.
--- See https://github.com/ClickHouse/ClickHouse/issues/93960
+-- See https://github.com/ClickHouse/Datastore/issues/93960
 
 SET allow_experimental_variant_type = 1;
 SET use_variant_as_common_type = 1;

@@ -13,15 +13,15 @@ set -e
 # Pin date_time_input_format to 'basic' so JSON path inference matches the
 # pre-existing reference (best_effort would infer DateTime64 from ISO date strings,
 # which changes JSONAllValues output and the cityHash64 result).
-MY_CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --enable_analyzer 1 --date_time_input_format=basic"
+MY_DATASTORE_CLIENT="${DATASTORE_CLIENT} --enable_analyzer 1 --date_time_input_format=basic"
 
 function run_query()
 {
     local query=$1
     echo "$query"
-    $MY_CLICKHOUSE_CLIENT --query "$query"
+    $MY_DATASTORE_CLIENT --query "$query"
 
-    $MY_CLICKHOUSE_CLIENT --query "
+    $MY_DATASTORE_CLIENT --query "
         SELECT trimLeft(explain) FROM (
             EXPLAIN indexes = 1 $query
         )
@@ -33,10 +33,10 @@ function run_query()
 function run_query_no_idx()
 {
     local query=$1
-    $MY_CLICKHOUSE_CLIENT --query "$query" --use_skip_indexes_on_data_read=0
+    $MY_DATASTORE_CLIENT --query "$query" --use_skip_indexes_on_data_read=0
 }
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS ghdata;
 
     CREATE TABLE ghdata
@@ -49,10 +49,10 @@ $MY_CLICKHOUSE_CLIENT --query "
     SETTINGS index_granularity = 100, index_granularity_bytes = '10M';
 "
 
-cat "$CUR_DIR"/data_json/ghdata_sample.json | $MY_CLICKHOUSE_CLIENT \
+cat "$CUR_DIR"/data_json/ghdata_sample.json | $MY_DATASTORE_CLIENT \
     --max_memory_usage 10G --query "INSERT INTO ghdata FORMAT JSONAsObject"
 
-$MY_CLICKHOUSE_CLIENT --query "OPTIMIZE TABLE ghdata FINAL;"
+$MY_DATASTORE_CLIENT --query "OPTIMIZE TABLE ghdata FINAL;"
 
 echo "-- Point lookup by string value"
 run_query "SELECT count() FROM ghdata WHERE data.actor.login = 'dependabot[bot]'"
@@ -128,4 +128,4 @@ run_query_no_idx "SELECT count() FROM ghdata WHERE has(data.payload.pull_request
 run_query_no_idx "SELECT count() FROM ghdata WHERE data.payload.pull_request.labels[].name = ['dependencies', 'submodules']"
 run_query_no_idx "SELECT length(JSONAllPaths(data)), cityHash64(JSONAllPaths(data)), length(JSONAllValues(data)), cityHash64(JSONAllValues(data)) FROM ghdata WHERE data.id::UInt64 = 14690746673"
 
-$MY_CLICKHOUSE_CLIENT --query "DROP TABLE ghdata;"
+$MY_DATASTORE_CLIENT --query "DROP TABLE ghdata;"

@@ -206,7 +206,7 @@ void DatabaseReplicatedDDLWorker::initializeReplication()
     else
     {
         LOG_WARNING(log, "Did not find digest in ZooKeeper, creating it");
-        /// Database was created by old ClickHouse versions, let's create the node
+        /// Database was created by old Datastore versions, let's create the node
         std::lock_guard lock{database->metadata_mutex};
         digest = local_digest = database->tables_metadata_digest;
         digest_str = toString(digest);
@@ -440,7 +440,7 @@ String DatabaseReplicatedDDLWorker::tryEnqueueAndExecuteEntry(DDLLogEntry & entr
     /// but it requires more complex logic around /try node.
 
     OpenTelemetry::SpanHolder span(__FUNCTION__);
-    span.addAttribute("clickhouse.cluster", database->getDatabaseName());
+    span.addAttribute("datastore.cluster", database->getDatabaseName());
     entry.tracing_context = OpenTelemetry::CurrentContext();
 
     auto zookeeper = getZooKeeperFromContext();

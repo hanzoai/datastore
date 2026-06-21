@@ -74,7 +74,7 @@ Number of async messages queued pending for logging in this channel
 
 ### BlockActiveTime_*name* {#blockactivetime_name}
 
-Time in seconds the block device had the IO requests queued. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Time in seconds the block device had the IO requests queued. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockActiveTimePerOp_*name* {#blockactivetimeperop_name}
 
@@ -82,27 +82,27 @@ Similar to the `BlockActiveTime` metrics, but the value is divided to the number
 
 ### BlockDiscardBytes_*name* {#blockdiscardbytes_name}
 
-Number of discarded bytes on the block device. These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of discarded bytes on the block device. These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockDiscardMerges_*name* {#blockdiscardmerges_name}
 
-Number of discard operations requested from the block device and merged together by the OS IO scheduler. These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of discard operations requested from the block device and merged together by the OS IO scheduler. These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockDiscardOps_*name* {#blockdiscardops_name}
 
-Number of discard operations requested from the block device. These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of discard operations requested from the block device. These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockDiscardTime_*name* {#blockdiscardtime_name}
 
-Time in seconds spend in discard operations requested from the block device, summed across all the operations. These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Time in seconds spend in discard operations requested from the block device, summed across all the operations. These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockInFlightOps_*name* {#blockinflightops_name}
 
-This value counts the number of I/O requests that have been issued to the device driver but have not yet completed. It does not include IO requests that are in the queue but not yet issued to the device driver. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+This value counts the number of I/O requests that have been issued to the device driver but have not yet completed. It does not include IO requests that are in the queue but not yet issued to the device driver. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockQueueTime_*name* {#blockqueuetime_name}
 
-This value counts the number of milliseconds that IO requests have waited on this block device. If there are multiple IO requests waiting, this value will increase as the product of the number of milliseconds times the number of requests waiting. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+This value counts the number of milliseconds that IO requests have waited on this block device. If there are multiple IO requests waiting, this value will increase as the product of the number of milliseconds times the number of requests waiting. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockQueueTimePerOp_*name* {#blockqueuetimeperop_name}
 
@@ -110,35 +110,35 @@ Similar to the `BlockQueueTime` metrics, but the value is divided to the number 
 
 ### BlockReadBytes_*name* {#blockreadbytes_name}
 
-Number of bytes read from the block device. It can be lower than the number of bytes read from the filesystem due to the usage of the OS page cache, that saves IO. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of bytes read from the block device. It can be lower than the number of bytes read from the filesystem due to the usage of the OS page cache, that saves IO. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockReadMerges_*name* {#blockreadmerges_name}
 
-Number of read operations requested from the block device and merged together by the OS IO scheduler. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of read operations requested from the block device and merged together by the OS IO scheduler. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockReadOps_*name* {#blockreadops_name}
 
-Number of read operations requested from the block device. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of read operations requested from the block device. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockReadTime_*name* {#blockreadtime_name}
 
-Time in seconds spend in read operations requested from the block device, summed across all the operations. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Time in seconds spend in read operations requested from the block device, summed across all the operations. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockWriteBytes_*name* {#blockwritebytes_name}
 
-Number of bytes written to the block device. It can be lower than the number of bytes written to the filesystem due to the usage of the OS page cache, that saves IO. A write to the block device may happen later than the corresponding write to the filesystem due to write-through caching. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of bytes written to the block device. It can be lower than the number of bytes written to the filesystem due to the usage of the OS page cache, that saves IO. A write to the block device may happen later than the corresponding write to the filesystem due to write-through caching. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockWriteMerges_*name* {#blockwritemerges_name}
 
-Number of write operations requested from the block device and merged together by the OS IO scheduler. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of write operations requested from the block device and merged together by the OS IO scheduler. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockWriteOps_*name* {#blockwriteops_name}
 
-Number of write operations requested from the block device. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Number of write operations requested from the block device. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### BlockWriteTime_*name* {#blockwritetime_name}
 
-Time in seconds spend in write operations requested from the block device, summed across all the operations. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
+Time in seconds spend in write operations requested from the block device, summed across all the operations. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt
 
 ### CGroupMaxCPU {#cgroupmaxcpu}
 
@@ -154,7 +154,7 @@ The amount of memory used in cgroup, in bytes. On cgroup v2 this is anon + sock 
 
 ### CGroupMemoryUsedWithoutPageCache {#cgroupmemoryusedwithoutpagecache}
 
-The amount of memory used in cgroup, in bytes, excluding the ClickHouse userspace page cache. This is CGroupMemoryUsed minus the userspace page cache size. When userspace page cache is disabled, this value equals CGroupMemoryUsed.
+The amount of memory used in cgroup, in bytes, excluding the Datastore userspace page cache. This is CGroupMemoryUsed minus the userspace page cache size. When userspace page cache is disabled, this value equals CGroupMemoryUsed.
 
 ### CGroupSystemTime {#cgroupsystemtime}
 
@@ -238,51 +238,51 @@ Total number of cached file segments in the `cache` virtual filesystem. This cac
 
 ### FilesystemLogsPathAvailableBytes {#filesystemlogspathavailablebytes}
 
-Available bytes on the volume where ClickHouse logs path is mounted. If this value approaches zero, you should tune the log rotation in the configuration file.
+Available bytes on the volume where Datastore logs path is mounted. If this value approaches zero, you should tune the log rotation in the configuration file.
 
 ### FilesystemLogsPathAvailableINodes {#filesystemlogspathavailableinodes}
 
-The number of available inodes on the volume where ClickHouse logs path is mounted.
+The number of available inodes on the volume where Datastore logs path is mounted.
 
 ### FilesystemLogsPathTotalBytes {#filesystemlogspathtotalbytes}
 
-The size of the volume where ClickHouse logs path is mounted, in bytes. It's recommended to have at least 10 GB for logs.
+The size of the volume where Datastore logs path is mounted, in bytes. It's recommended to have at least 10 GB for logs.
 
 ### FilesystemLogsPathTotalINodes {#filesystemlogspathtotalinodes}
 
-The total number of inodes on the volume where ClickHouse logs path is mounted.
+The total number of inodes on the volume where Datastore logs path is mounted.
 
 ### FilesystemLogsPathUsedBytes {#filesystemlogspathusedbytes}
 
-Used bytes on the volume where ClickHouse logs path is mounted.
+Used bytes on the volume where Datastore logs path is mounted.
 
 ### FilesystemLogsPathUsedINodes {#filesystemlogspathusedinodes}
 
-The number of used inodes on the volume where ClickHouse logs path is mounted.
+The number of used inodes on the volume where Datastore logs path is mounted.
 
 ### FilesystemMainPathAvailableBytes {#filesystemmainpathavailablebytes}
 
-Available bytes on the volume where the main ClickHouse path is mounted.
+Available bytes on the volume where the main Datastore path is mounted.
 
 ### FilesystemMainPathAvailableINodes {#filesystemmainpathavailableinodes}
 
-The number of available inodes on the volume where the main ClickHouse path is mounted. If it is close to zero, it indicates a misconfiguration, and you will get 'no space left on device' even when the disk is not full.
+The number of available inodes on the volume where the main Datastore path is mounted. If it is close to zero, it indicates a misconfiguration, and you will get 'no space left on device' even when the disk is not full.
 
 ### FilesystemMainPathTotalBytes {#filesystemmainpathtotalbytes}
 
-The size of the volume where the main ClickHouse path is mounted, in bytes.
+The size of the volume where the main Datastore path is mounted, in bytes.
 
 ### FilesystemMainPathTotalINodes {#filesystemmainpathtotalinodes}
 
-The total number of inodes on the volume where the main ClickHouse path is mounted. If it is less than 25 million, it indicates a misconfiguration.
+The total number of inodes on the volume where the main Datastore path is mounted. If it is less than 25 million, it indicates a misconfiguration.
 
 ### FilesystemMainPathUsedBytes {#filesystemmainpathusedbytes}
 
-Used bytes on the volume where the main ClickHouse path is mounted.
+Used bytes on the volume where the main Datastore path is mounted.
 
 ### FilesystemMainPathUsedINodes {#filesystemmainpathusedinodes}
 
-The number of used inodes on the volume where the main ClickHouse path is mounted. This value mostly corresponds to the number of files.
+The number of used inodes on the volume where the main Datastore path is mounted. This value mostly corresponds to the number of files.
 
 ### GRPCRejectedConnections {#grpcrejectedconnections}
 
@@ -454,11 +454,11 @@ The difference in time the thread for calculation of the asynchronous metrics wa
 
 ### KeeperApproximateDataSize {#keeperapproximatedatasize}
 
-The approximate data size of ClickHouse Keeper, in bytes.
+The approximate data size of Datastore Keeper, in bytes.
 
 ### KeeperAvgLatency {#keeperavglatency}
 
-Average request latency of ClickHouse Keeper.
+Average request latency of Datastore Keeper.
 
 ### KeeperCommitLogsCacheEntries {#keepercommitlogscacheentries}
 
@@ -470,47 +470,47 @@ Total size of in-memory cache for next logs to be committed
 
 ### KeeperEphemeralsCount {#keeperephemeralscount}
 
-The number of ephemeral nodes in ClickHouse Keeper.
+The number of ephemeral nodes in Datastore Keeper.
 
 ### KeeperFollowers {#keeperfollowers}
 
-The number of followers of ClickHouse Keeper.
+The number of followers of Datastore Keeper.
 
 ### KeeperIsExceedingMemorySoftLimitHit {#keeperisexceedingmemorysoftlimithit}
 
-1 if ClickHouse Keeper is exceeding the memory soft limit, 0 otherwise.
+1 if Datastore Keeper is exceeding the memory soft limit, 0 otherwise.
 
 ### KeeperIsFollower {#keeperisfollower}
 
-1 if ClickHouse Keeper is a follower, 0 otherwise.
+1 if Datastore Keeper is a follower, 0 otherwise.
 
 ### KeeperIsLeader {#keeperisleader}
 
-1 if ClickHouse Keeper is a leader, 0 otherwise.
+1 if Datastore Keeper is a leader, 0 otherwise.
 
 ### KeeperIsObserver {#keeperisobserver}
 
-1 if ClickHouse Keeper is an observer, 0 otherwise.
+1 if Datastore Keeper is an observer, 0 otherwise.
 
 ### KeeperIsStandalone {#keeperisstandalone}
 
-1 if ClickHouse Keeper is in a standalone mode, 0 otherwise.
+1 if Datastore Keeper is in a standalone mode, 0 otherwise.
 
 ### KeeperKeyArenaSize {#keeperkeyarenasize}
 
-The size in bytes of the memory arena for keys in ClickHouse Keeper.
+The size in bytes of the memory arena for keys in Datastore Keeper.
 
 ### KeeperLastCommittedLogIdx {#keeperlastcommittedlogidx}
 
-Index of the last committed log in ClickHouse Keeper.
+Index of the last committed log in Datastore Keeper.
 
 ### KeeperLastLogIdx {#keeperlastlogidx}
 
-Index of the last log stored in ClickHouse Keeper.
+Index of the last log stored in Datastore Keeper.
 
 ### KeeperLastLogTerm {#keeperlastlogterm}
 
-Raft term of the last log stored in ClickHouse Keeper.
+Raft term of the last log stored in Datastore Keeper.
 
 ### KeeperLastSnapshotIdx {#keeperlastsnapshotidx}
 
@@ -526,47 +526,47 @@ Total size of in-memory cache for latest logs
 
 ### KeeperLatestSnapshotSize {#keeperlatestsnapshotsize}
 
-The uncompressed size in bytes of the latest snapshot created by ClickHouse Keeper.
+The uncompressed size in bytes of the latest snapshot created by Datastore Keeper.
 
 ### KeeperMaxFileDescriptorCount {#keepermaxfiledescriptorcount}
 
-The maximum number of open file descriptors in ClickHouse Keeper.
+The maximum number of open file descriptors in Datastore Keeper.
 
 ### KeeperMaxLatency {#keepermaxlatency}
 
-Maximum request latency of ClickHouse Keeper.
+Maximum request latency of Datastore Keeper.
 
 ### KeeperMinLatency {#keeperminlatency}
 
-Minimal request latency of ClickHouse Keeper.
+Minimal request latency of Datastore Keeper.
 
 ### KeeperOpenFileDescriptorCount {#keeperopenfiledescriptorcount}
 
-The number of open file descriptors in ClickHouse Keeper.
+The number of open file descriptors in Datastore Keeper.
 
 ### KeeperPacketsReceived {#keeperpacketsreceived}
 
-Number of packets received by ClickHouse Keeper.
+Number of packets received by Datastore Keeper.
 
 ### KeeperPacketsSent {#keeperpacketssent}
 
-Number of packets sent by ClickHouse Keeper.
+Number of packets sent by Datastore Keeper.
 
 ### KeeperPathsWatched {#keeperpathswatched}
 
-The number of different paths watched by the clients of ClickHouse Keeper.
+The number of different paths watched by the clients of Datastore Keeper.
 
 ### KeeperSessionWithWatches {#keepersessionwithwatches}
 
-The number of client sessions of ClickHouse Keeper having watches.
+The number of client sessions of Datastore Keeper having watches.
 
 ### KeeperSyncedFollowers {#keepersyncedfollowers}
 
-The number of followers of ClickHouse Keeper who are also in-sync.
+The number of followers of Datastore Keeper who are also in-sync.
 
 ### KeeperTargetCommitLogIdx {#keepertargetcommitlogidx}
 
-Index until which logs can be committed in ClickHouse Keeper.
+Index until which logs can be committed in Datastore Keeper.
 
 ### KeeperTCPRejectedConnections {#keepertcprejectedconnections}
 
@@ -586,27 +586,27 @@ Number of threads in the server of the Keeper TCP protocol (without TLS).
 
 ### KeeperWatchCount {#keeperwatchcount}
 
-The number of watches in ClickHouse Keeper.
+The number of watches in Datastore Keeper.
 
 ### KeeperZnodeCount {#keeperznodecount}
 
-The number of nodes (data entries) in ClickHouse Keeper.
+The number of nodes (data entries) in Datastore Keeper.
 
 ### KeeperZxid {#keeperzxid}
 
-The current transaction id number (zxid) in ClickHouse Keeper.
+The current transaction id number (zxid) in Datastore Keeper.
 
 ### LoadAverage1 {#loadaverage1}
 
-The whole system load, averaged with exponential smoothing over 1 minute. The load represents the number of threads across all the processes (the scheduling entities of the OS kernel), that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time. This number includes all the processes, not only clickhouse-server. The number can be greater than the number of CPU cores, if the system is overloaded, and many processes are ready to run but waiting for CPU or IO.
+The whole system load, averaged with exponential smoothing over 1 minute. The load represents the number of threads across all the processes (the scheduling entities of the OS kernel), that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time. This number includes all the processes, not only datastore-server. The number can be greater than the number of CPU cores, if the system is overloaded, and many processes are ready to run but waiting for CPU or IO.
 
 ### LoadAverage15 {#loadaverage15}
 
-The whole system load, averaged with exponential smoothing over 15 minutes. The load represents the number of threads across all the processes (the scheduling entities of the OS kernel), that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time. This number includes all the processes, not only clickhouse-server. The number can be greater than the number of CPU cores, if the system is overloaded, and many processes are ready to run but waiting for CPU or IO.
+The whole system load, averaged with exponential smoothing over 15 minutes. The load represents the number of threads across all the processes (the scheduling entities of the OS kernel), that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time. This number includes all the processes, not only datastore-server. The number can be greater than the number of CPU cores, if the system is overloaded, and many processes are ready to run but waiting for CPU or IO.
 
 ### LoadAverage5 {#loadaverage5}
 
-The whole system load, averaged with exponential smoothing over 5 minutes. The load represents the number of threads across all the processes (the scheduling entities of the OS kernel), that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time. This number includes all the processes, not only clickhouse-server. The number can be greater than the number of CPU cores, if the system is overloaded, and many processes are ready to run but waiting for CPU or IO.
+The whole system load, averaged with exponential smoothing over 5 minutes. The load represents the number of threads across all the processes (the scheduling entities of the OS kernel), that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time. This number includes all the processes, not only datastore-server. The number can be greater than the number of CPU cores, if the system is overloaded, and many processes are ready to run but waiting for CPU or IO.
 
 ### LongestRunningMerge {#longestrunningmerge}
 
@@ -638,7 +638,7 @@ The amount of physical memory used by the server process, excluding userspace pa
 
 ### MemoryShared {#memoryshared}
 
-The amount of memory used by the server process, that is also shared by another processes, in bytes. ClickHouse does not use shared memory, but some memory can be labeled by OS as shared for its own reasons. This metric does not make a lot of sense to watch, and it exists only for completeness reasons.
+The amount of memory used by the server process, that is also shared by another processes, in bytes. Datastore does not use shared memory, but some memory can be labeled by OS as shared for its own reasons. This metric does not make a lot of sense to watch, and it exists only for completeness reasons.
 
 ### MemoryVirtual {#memoryvirtual}
 
@@ -654,35 +654,35 @@ Number of threads in the server of the MySQL compatibility protocol.
 
 ### NetworkReceiveBytes_*interface_name* {#networkreceivebytes_interface_name}
 
-Number of bytes received via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of bytes received via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkReceiveDrop_*interface_name* {#networkreceivedrop_interface_name}
 
-Number of bytes a packet was dropped while received via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of bytes a packet was dropped while received via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkReceiveErrors_*interface_name* {#networkreceiveerrors_interface_name}
 
-Number of times error happened receiving via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of times error happened receiving via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkReceivePackets_*interface_name* {#networkreceivepackets_interface_name}
 
-Number of network packets received via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of network packets received via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkSendBytes_*interface_name* {#networksendbytes_interface_name}
 
-Number of bytes sent via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of bytes sent via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkSendDrop_*interface_name* {#networksenddrop_interface_name}
 
-Number of times a packed was dropped while sending via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of times a packed was dropped while sending via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkSendErrors_*interface_name* {#networksenderrors_interface_name}
 
-Number of times error (e.g. TCP retransmit) happened while sending via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of times error (e.g. TCP retransmit) happened while sending via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkSendPackets_*interface_name* {#networksendpackets_interface_name}
 
-Number of network packets sent via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of network packets sent via the network interface. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### NetworkTCPReceiveQueue {#networktcpreceivequeue}
 
@@ -738,7 +738,7 @@ Total number of tables in the system database on the server stored in tables of 
 
 ### OSContextSwitches {#oscontextswitches}
 
-The number of context switches that the system underwent on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The number of context switches that the system underwent on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSCPUOverload {#oscpuoverload}
 
@@ -746,7 +746,7 @@ Relative CPU deficit, calculated as: how many threads are waiting for CPU relati
 
 ### OSGuestNiceTime*cpu_suffix* {#osguestnicetimecpu_suffix}
 
-The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel, when a guest was set to a higher priority (See `man procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. This metric is irrelevant for ClickHouse, but still exists for completeness. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel, when a guest was set to a higher priority (See `man procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. This metric is irrelevant for Datastore, but still exists for completeness. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSGuestNiceTimeNormalized {#osguestnicetimenormalized}
 
@@ -754,7 +754,7 @@ The value is similar to `OSGuestNiceTime` but divided to the number of CPU cores
 
 ### OSGuestTime*cpu_suffix* {#osguesttimecpu_suffix}
 
-The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel (See `man procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. This metric is irrelevant for ClickHouse, but still exists for completeness. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel (See `man procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. This metric is irrelevant for Datastore, but still exists for completeness. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSGuestTimeNormalized {#osguesttimenormalized}
 
@@ -762,7 +762,7 @@ The value is similar to `OSGuestTime` but divided to the number of CPU cores to 
 
 ### OSIdleTime*cpu_suffix* {#osidletimecpu_suffix}
 
-The ratio of time the CPU core was idle (not even ready to run a process waiting for IO) from the OS kernel standpoint. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. This does not include the time when the CPU was under-utilized due to the reasons internal to the CPU (memory loads, pipeline stalls, branch mispredictions, running another SMT core). The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time the CPU core was idle (not even ready to run a process waiting for IO) from the OS kernel standpoint. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. This does not include the time when the CPU was under-utilized due to the reasons internal to the CPU (memory loads, pipeline stalls, branch mispredictions, running another SMT core). The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSIdleTimeNormalized {#osidletimenormalized}
 
@@ -770,11 +770,11 @@ The value is similar to `OSIdleTime` but divided to the number of CPU cores to b
 
 ### OSInterrupts {#osinterrupts}
 
-The number of interrupts on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The number of interrupts on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSIOWaitTime*cpu_suffix* {#osiowaittimecpu_suffix}
 
-The ratio of time the CPU core was not running the code but when the OS kernel did not run any other process on this CPU as the processes were waiting for IO. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time the CPU core was not running the code but when the OS kernel did not run any other process on this CPU as the processes were waiting for IO. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSIOWaitTimeNormalized {#osiowaittimenormalized}
 
@@ -782,7 +782,7 @@ The value is similar to `OSIOWaitTime` but divided to the number of CPU cores to
 
 ### OSIrqTime*cpu_suffix* {#osirqtimecpu_suffix}
 
-The ratio of time spent for running hardware interrupt requests on the CPU. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. A high number of this metric may indicate hardware misconfiguration or a very high network load. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time spent for running hardware interrupt requests on the CPU. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. A high number of this metric may indicate hardware misconfiguration or a very high network load. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSIrqTimeNormalized {#osirqtimenormalized}
 
@@ -790,27 +790,27 @@ The value is similar to `OSIrqTime` but divided to the number of CPU cores to be
 
 ### OSMemoryAvailable {#osmemoryavailable}
 
-The amount of memory available to be used by programs, in bytes. This is very similar to the `OSMemoryFreePlusCached` metric. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The amount of memory available to be used by programs, in bytes. This is very similar to the `OSMemoryFreePlusCached` metric. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSMemoryBuffers {#osmemorybuffers}
 
-The amount of memory used by OS kernel buffers, in bytes. This should be typically small, and large values may indicate a misconfiguration of the OS. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The amount of memory used by OS kernel buffers, in bytes. This should be typically small, and large values may indicate a misconfiguration of the OS. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSMemoryCached {#osmemorycached}
 
-The amount of memory used by the OS page cache, in bytes. Typically, almost all available memory is used by the OS page cache - high values of this metric are normal and expected. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The amount of memory used by the OS page cache, in bytes. Typically, almost all available memory is used by the OS page cache - high values of this metric are normal and expected. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSMemoryFreePlusCached {#osmemoryfreepluscached}
 
-The amount of free memory plus OS page cache memory on the host system, in bytes. This memory is available to be used by programs. The value should be very similar to `OSMemoryAvailable`. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The amount of free memory plus OS page cache memory on the host system, in bytes. This memory is available to be used by programs. The value should be very similar to `OSMemoryAvailable`. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSMemoryFreeWithoutCached {#osmemoryfreewithoutcached}
 
-The amount of free memory on the host system, in bytes. This does not include the memory used by the OS page cache memory, in bytes. The page cache memory is also available for usage by programs, so the value of this metric can be confusing. See the `OSMemoryAvailable` metric instead. For convenience we also provide the `OSMemoryFreePlusCached` metric, that should be somewhat similar to OSMemoryAvailable. See also https://www.linuxatemyram.com/. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The amount of free memory on the host system, in bytes. This does not include the memory used by the OS page cache memory, in bytes. The page cache memory is also available for usage by programs, so the value of this metric can be confusing. See the `OSMemoryAvailable` metric instead. For convenience we also provide the `OSMemoryFreePlusCached` metric, that should be somewhat similar to OSMemoryAvailable. See also https://www.linuxatemyram.com/. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSMemorySwapCached {#osmemoryswapcached}
 
-The amount of memory in swap that was also loaded in RAM. Swap should be disabled on production systems. If the value of this metric is large, it indicates a misconfiguration. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The amount of memory in swap that was also loaded in RAM. Swap should be disabled on production systems. If the value of this metric is large, it indicates a misconfiguration. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSMemoryTotal {#osmemorytotal}
 
@@ -818,7 +818,7 @@ The total amount of memory on the host system, in bytes.
 
 ### OSNiceTime*cpu_suffix* {#osnicetimecpu_suffix}
 
-The ratio of time the CPU core was running userspace code with higher priority. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time the CPU core was running userspace code with higher priority. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSNiceTimeNormalized {#osnicetimenormalized}
 
@@ -826,23 +826,23 @@ The value is similar to `OSNiceTime` but divided to the number of CPU cores to b
 
 ### OSOpenFiles {#osopenfiles}
 
-The total number of opened files on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The total number of opened files on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSProcessesBlocked {#osprocessesblocked}
 
-Number of threads blocked waiting for I/O to complete (`man procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+Number of threads blocked waiting for I/O to complete (`man procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSProcessesCreated {#osprocessescreated}
 
-The number of processes created. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The number of processes created. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSProcessesRunning {#osprocessesrunning}
 
-The number of runnable (running or ready to run) threads by the operating system. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server.
+The number of runnable (running or ready to run) threads by the operating system. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server.
 
 ### OSSoftIrqTime*cpu_suffix* {#ossoftirqtimecpu_suffix}
 
-The ratio of time spent for running software interrupt requests on the CPU. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. A high number of this metric may indicate inefficient software running on the system. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time spent for running software interrupt requests on the CPU. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. A high number of this metric may indicate inefficient software running on the system. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSSoftIrqTimeNormalized {#ossoftirqtimenormalized}
 
@@ -850,7 +850,7 @@ The value is similar to `OSSoftIrqTime` but divided to the number of CPU cores t
 
 ### OSStealTime*cpu_suffix* {#osstealtimecpu_suffix}
 
-The ratio of time spent in other operating systems by the CPU when running in a virtualized environment. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. Not every virtualized environments present this metric, and most of them don't. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time spent in other operating systems by the CPU when running in a virtualized environment. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. Not every virtualized environments present this metric, and most of them don't. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSStealTimeNormalized {#osstealtimenormalized}
 
@@ -858,7 +858,7 @@ The value is similar to `OSStealTime` but divided to the number of CPU cores to 
 
 ### OSSystemTime*cpu_suffix* {#ossystemtimecpu_suffix}
 
-The ratio of time the CPU core was running OS kernel (system) code. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time the CPU core was running OS kernel (system) code. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSSystemTimeNormalized {#ossystemtimenormalized}
 
@@ -874,11 +874,11 @@ The total number of threads, as the OS kernel scheduler seeing it.
 
 ### OSUptime {#osuptime}
 
-The uptime of the host server (the machine where ClickHouse is running), in seconds.
+The uptime of the host server (the machine where Datastore is running), in seconds.
 
 ### OSUserTime*cpu_suffix* {#osusertimecpu_suffix}
 
-The ratio of time the CPU core was running userspace code. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server. This includes also the time when the CPU was under-utilized due to the reasons internal to the CPU (memory loads, pipeline stalls, branch mispredictions, running another SMT core). The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
+The ratio of time the CPU core was running userspace code. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server. This includes also the time when the CPU was under-utilized due to the reasons internal to the CPU (memory loads, pipeline stalls, branch mispredictions, running another SMT core). The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across them [0..num cores].
 
 ### OSUserTimeNormalized {#osusertimenormalized}
 
@@ -1042,7 +1042,7 @@ Total amount of rows (records) stored in tables of MergeTree family in the syste
 
 ### TrackedMemory {#trackedmemory}
 
-Memory tracked by ClickHouse (should be equal to MemoryTracking metric), in bytes.
+Memory tracked by Datastore (should be equal to MemoryTracking metric), in bytes.
 
 ### Uptime {#uptime}
 
@@ -1064,7 +1064,7 @@ The last ZXID seen by the current ZooKeeper client session. This value increases
 
 **See Also**
 
-- [Monitoring](../../operations/monitoring.md) — Base concepts of ClickHouse monitoring.
+- [Monitoring](../../operations/monitoring.md) — Base concepts of Datastore monitoring.
 - [system.metrics](/operations/system-tables/metrics) — Contains instantly calculated metrics.
 - [system.events](/operations/system-tables/events) — Contains a number of events that have occurred.
 - [system.metric_log](/operations/system-tables/metric_log) — Contains a history of metrics values from tables `system.metrics` and `system.events`.

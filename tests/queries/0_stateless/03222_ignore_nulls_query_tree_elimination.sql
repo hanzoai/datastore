@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ${HOME}/clickhouse-client --queries-file
+#!/usr/bin/env -S ${HOME}/datastore-client --queries-file
 
 DROP TABLE IF EXISTS with_fill_date__fuzz_0;
 

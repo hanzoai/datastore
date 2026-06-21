@@ -1,6 +1,6 @@
 SET allow_suspicious_low_cardinality_types = 1;
 
-SELECT 'Test fixture for issue: https://github.com/ClickHouse/ClickHouse/issues/72265';
+SELECT 'Test fixture for issue: https://github.com/ClickHouse/Datastore/issues/72265';
 
 DROP TABLE IF EXISTS test_table_72265_1;
 CREATE TABLE test_table_72265_1 

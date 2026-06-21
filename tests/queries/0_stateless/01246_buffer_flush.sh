@@ -14,7 +14,7 @@ function query()
         query_id="&query_id=$2"
         shift 2
     fi
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}$query_id" -d "$*"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}$query_id" -d "$*"
 }
 
 function wait_until()
@@ -27,10 +27,10 @@ function wait_until()
 function get_buffer_delay()
 {
     local buffer_insert_id=$1 && shift
-    $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
+    $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS query_log"
     query "
         WITH
-            (SELECT event_time_microseconds FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$CLICKHOUSE_DATABASE' AND type = 'QueryStart' AND query_id = '$buffer_insert_id') AS begin_,
+            (SELECT event_time_microseconds FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND current_database = '$DATASTORE_DATABASE' AND type = 'QueryStart' AND query_id = '$buffer_insert_id') AS begin_,
             (SELECT max(event_time) FROM data_01256) AS end_
         SELECT dateDiff('seconds', begin_, end_)::UInt64
     "
@@ -42,7 +42,7 @@ query "create table data_01256 (key UInt64, event_time DateTime(6) MATERIALIZED 
 
 echo "min"
 query "
-    create table buffer_01256 (key UInt64) Engine=Buffer($CLICKHOUSE_DATABASE, data_01256, 1,
+    create table buffer_01256 (key UInt64) Engine=Buffer($DATASTORE_DATABASE, data_01256, 1,
         2, 100, /* time */
         4, 100, /* rows */
         1, 1e6  /* bytes */
@@ -60,7 +60,7 @@ query "drop table buffer_01256"
 
 echo "max"
 query "
-    create table buffer_01256 (key UInt64) Engine=Buffer($CLICKHOUSE_DATABASE, data_01256, 1,
+    create table buffer_01256 (key UInt64) Engine=Buffer($DATASTORE_DATABASE, data_01256, 1,
         100, 2,   /* time */
         0,   100, /* rows */
         0,   1e6  /* bytes */
@@ -77,7 +77,7 @@ query "drop table buffer_01256"
 
 echo "direct"
 query "
-    create table buffer_01256 (key UInt64) Engine=Buffer($CLICKHOUSE_DATABASE, data_01256, 1,
+    create table buffer_01256 (key UInt64) Engine=Buffer($DATASTORE_DATABASE, data_01256, 1,
         100, 100, /* time */
         0,   9,   /* rows */
         0,   1e6  /* bytes */

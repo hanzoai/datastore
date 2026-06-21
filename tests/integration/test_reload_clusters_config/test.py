@@ -37,7 +37,7 @@ def started_cluster():
 
 
 base_config = """
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -66,11 +66,11 @@ base_config = """
             </shard>
         </test_cluster2>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 test_config1 = """
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -95,11 +95,11 @@ test_config1 = """
             </shard>
         </test_cluster2>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 test_config2 = """
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -115,11 +115,11 @@ test_config2 = """
             </shard>
         </test_cluster>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 test_config3 = """
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -157,7 +157,7 @@ test_config3 = """
             </shard>
         </test_cluster3>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 
@@ -182,7 +182,7 @@ def get_errors_count(cluster, host_name="node_1"):
 
 
 def set_config(config):
-    node.replace_config("/etc/clickhouse-server/config.d/remote_servers.xml", config)
+    node.replace_config("/etc/datastore-server/config.d/remote_servers.xml", config)
     node.query("SYSTEM RELOAD CONFIG")
 
 

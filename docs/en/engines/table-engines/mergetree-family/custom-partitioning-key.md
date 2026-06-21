@@ -15,7 +15,7 @@ You should never use too granular of partitioning. Don't partition your data by 
 
 Partitioning is available for the [MergeTree family tables](../../../engines/table-engines/mergetree-family/mergetree.md), including [replicated tables](../../../engines/table-engines/mergetree-family/replication.md) and [materialized views](/sql-reference/statements/create/view#materialized-view).
 
-A partition is a logical combination of records in a table by a specified criterion. You can set a partition by an arbitrary criterion, such as by month, by day, or by event type. Each partition is stored separately to simplify manipulations of this data. When accessing the data, ClickHouse uses the smallest subset of partitions possible. Partitions improve performance for queries containing a partitioning key because ClickHouse will filter for that partition before selecting the parts and granules within the partition.
+A partition is a logical combination of records in a table by a specified criterion. You can set a partition by an arbitrary criterion, such as by month, by day, or by event type. Each partition is stored separately to simplify manipulations of this data. When accessing the data, Datastore uses the smallest subset of partitions possible. Partitions improve performance for queries containing a partitioning key because Datastore will filter for that partition before selecting the parts and granules within the partition.
 
 The partition is specified in the `PARTITION BY expr` clause when [creating a table](../../../engines/table-engines/mergetree-family/mergetree.md#table_engine-mergetree-creating-a-table). The partition key can be any expression from the table columns. For example, to specify partitioning by month, use the expression `toYYYYMM(date_column)`:
 
@@ -34,7 +34,7 @@ ORDER BY Hour;
 The partition key can also be a tuple of expressions (similar to the [primary key](../../../engines/table-engines/mergetree-family/mergetree.md#primary-keys-and-indexes-in-queries)). For example:
 
 ```sql
-ENGINE = ReplicatedCollapsingMergeTree('/clickhouse/tables/name', 'replica1', Sign)
+ENGINE = ReplicatedCollapsingMergeTree('/datastore/tables/name', 'replica1', Sign)
 PARTITION BY (toMonday(StartDate), EventType)
 ORDER BY (CounterID, StartDate, intHash32(UserID));
 ```
@@ -90,7 +90,7 @@ The parts of old-type tables have the name: `20190117_20190123_2_2_0` (minimum d
 
 The `active` column shows the status of the part. `1` is active; `0` is inactive. The inactive parts are, for example, source parts remaining after merging to a larger part. The corrupted data parts are also indicated as inactive.
 
-As you can see in the example, there are several separated parts of the same partition (for example, `201901_1_3_1` and `201901_1_9_2`). This means that these parts are not merged yet. ClickHouse merges the inserted parts of data periodically, approximately 15 minutes after inserting. In addition, you can perform a non-scheduled merge using the [OPTIMIZE](../../../sql-reference/statements/optimize.md) query. Example:
+As you can see in the example, there are several separated parts of the same partition (for example, `201901_1_3_1` and `201901_1_9_2`). This means that these parts are not merged yet. Datastore merges the inserted parts of data periodically, approximately 15 minutes after inserting. In addition, you can perform a non-scheduled merge using the [OPTIMIZE](../../../sql-reference/statements/optimize.md) query. Example:
 
 ```sql
 OPTIMIZE TABLE visits PARTITION 201902;
@@ -111,20 +111,20 @@ OPTIMIZE TABLE visits PARTITION 201902;
 
 Inactive parts will be deleted approximately 10 minutes after merging.
 
-Another way to view a set of parts and partitions is to go into the directory of the table: `/var/lib/clickhouse/data/<database>/<table>/`. For example:
+Another way to view a set of parts and partitions is to go into the directory of the table: `/var/lib/datastore/data/<database>/<table>/`. For example:
 
 ```bash
-/var/lib/clickhouse/data/default/visits$ ls -l
+/var/lib/datastore/data/default/visits$ ls -l
 total 40
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  1 16:48 201901_1_3_1
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 16:17 201901_1_9_2_11
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 15:52 201901_8_8_0
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 15:52 201901_9_9_0
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 16:17 201902_10_10_0
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 16:17 201902_11_11_0
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 16:19 201902_4_11_2_11
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  5 12:09 201902_4_6_1
-drwxr-xr-x 2 clickhouse clickhouse 4096 Feb  1 16:48 detached
+drwxr-xr-x 2 datastore datastore 4096 Feb  1 16:48 201901_1_3_1
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 16:17 201901_1_9_2_11
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 15:52 201901_8_8_0
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 15:52 201901_9_9_0
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 16:17 201902_10_10_0
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 16:17 201902_11_11_0
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 16:19 201902_4_11_2_11
+drwxr-xr-x 2 datastore datastore 4096 Feb  5 12:09 201902_4_6_1
+drwxr-xr-x 2 datastore datastore 4096 Feb  1 16:48 detached
 ```
 
 The folders '201901_1_1_0', '201901_1_7_1' and so on are the directories of the parts. Each part relates to a corresponding partition and contains data just for a certain month (the table in this example has partitioning by month).
@@ -133,7 +133,7 @@ The `detached` directory contains parts that were detached from the table using 
 
 Note that on the operating server, you cannot manually change the set of parts or their data on the file system, since the server will not know about it. For non-replicated tables, you can do this when the server is stopped, but it isn't recommended. For replicated tables, the set of parts cannot be changed in any case.
 
-ClickHouse allows you to perform operations with the partitions: delete them, copy from one table to another, or create a backup. See the list of all operations in the section [Manipulations With Partitions and Parts](/sql-reference/statements/alter/partition).
+Datastore allows you to perform operations with the partitions: delete them, copy from one table to another, or create a backup. See the list of all operations in the section [Manipulations With Partitions and Parts](/sql-reference/statements/alter/partition).
 
 ## Group By optimisation using partition key {#group-by-optimisation-using-partition-key}
 

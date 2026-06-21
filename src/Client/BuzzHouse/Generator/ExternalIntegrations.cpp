@@ -332,7 +332,7 @@ bool ClickHouseIntegratedDatabase::performQueryOnServerOrRemote(const PeerTableD
 {
     switch (pt)
     {
-        case PeerTableDatabase::ClickHouse:
+        case PeerTableDatabase::Datastore:
         case PeerTableDatabase::MySQL:
         case PeerTableDatabase::PostgreSQL:
         case PeerTableDatabase::SQLite:
@@ -381,7 +381,7 @@ MySQLIntegration::testAndAddMySQLConnection(FuzzConfig & fcc, const ServerCreden
     else
     {
         std::unique_ptr<MySQLIntegration> mysql
-            = std::make_unique<MySQLIntegration>(fcc, scc, server == "ClickHouse", MySQLUniqueKeyPtr(mcon, closeMySQLConnection));
+            = std::make_unique<MySQLIntegration>(fcc, scc, server == "Datastore", MySQLUniqueKeyPtr(mcon, closeMySQLConnection));
 
         if (read_log
             || (!mysql->performQuery("DROP DATABASE IF EXISTS " + scc.database + ";")
@@ -581,7 +581,7 @@ String MySQLIntegration::columnTypeAsString(RandomGenerator & rg, const bool is_
 std::unique_ptr<MySQLIntegration>
 MySQLIntegration::testAndAddMySQLConnection(FuzzConfig & fcc, const ServerCredentials &, const bool, const String &)
 {
-    LOG_INFO(fcc.log, "ClickHouse not compiled with MySQL connector, skipping MySQL integration");
+    LOG_INFO(fcc.log, "Datastore not compiled with MySQL connector, skipping MySQL integration");
     return nullptr;
 }
 #endif
@@ -796,7 +796,7 @@ String PostgreSQLIntegration::columnTypeAsString(RandomGenerator & rg, const boo
 std::unique_ptr<PostgreSQLIntegration>
 PostgreSQLIntegration::testAndAddPostgreSQLIntegration(FuzzConfig & fcc, const ServerCredentials &, const bool)
 {
-    LOG_INFO(fcc.log, "ClickHouse not compiled with PostgreSQL connector, skipping PostgreSQL integration");
+    LOG_INFO(fcc.log, "Datastore not compiled with PostgreSQL connector, skipping PostgreSQL integration");
     return nullptr;
 }
 #endif
@@ -910,7 +910,7 @@ String SQLiteIntegration::columnTypeAsString(RandomGenerator & rg, const bool is
 #else
 std::unique_ptr<SQLiteIntegration> SQLiteIntegration::testAndAddSQLiteIntegration(FuzzConfig & fcc, const ServerCredentials &)
 {
-    LOG_INFO(fcc.log, "ClickHouse not compiled with SQLite connector, skipping SQLite integration");
+    LOG_INFO(fcc.log, "Datastore not compiled with SQLite connector, skipping SQLite integration");
     return nullptr;
 }
 #endif
@@ -1476,7 +1476,7 @@ bool MongoDBIntegration::performTableIntegration(
 #else
 std::unique_ptr<MongoDBIntegration> MongoDBIntegration::testAndAddMongoDBIntegration(FuzzConfig & fcc, const ServerCredentials &)
 {
-    LOG_INFO(fcc.log, "ClickHouse not compiled with MongoDB connector, skipping MongoDB integration");
+    LOG_INFO(fcc.log, "Datastore not compiled with MongoDB connector, skipping MongoDB integration");
     return nullptr;
 }
 #endif
@@ -1957,7 +1957,7 @@ ExternalIntegrations::ExternalIntegrations(FuzzConfig & fcc)
     }
     if (fc.clickhouse_server.has_value())
     {
-        clickhouse = MySQLIntegration::testAndAddMySQLConnection(fc, fc.clickhouse_server.value(), fc.read_log, "ClickHouse");
+        datastore = MySQLIntegration::testAndAddMySQLConnection(fc, fc.clickhouse_server.value(), fc.read_log, "Datastore");
     }
 }
 
@@ -2079,8 +2079,8 @@ ClickHouseIntegratedDatabase * ExternalIntegrations::getPeerPtr(const PeerTableD
 {
     switch (pt)
     {
-        case PeerTableDatabase::ClickHouse:
-            return clickhouse.get();
+        case PeerTableDatabase::Datastore:
+            return datastore.get();
         case PeerTableDatabase::MySQL:
             return mysql.get();
         case PeerTableDatabase::PostgreSQL:
@@ -2096,7 +2096,7 @@ void ExternalIntegrations::createPeerTable(
     RandomGenerator & rg, const PeerTableDatabase pt, SQLTable & t, const CreateTable * ct, std::vector<ColumnPathChain> & entries)
 {
     requires_external_call_check++;
-    next_calls_succeeded.emplace_back(getPeerPtr(pt)->performCreatePeerTable(rg, pt == PeerTableDatabase::ClickHouse, t, ct, entries));
+    next_calls_succeeded.emplace_back(getPeerPtr(pt)->performCreatePeerTable(rg, pt == PeerTableDatabase::Datastore, t, ct, entries));
 }
 
 bool ExternalIntegrations::truncatePeerTableOnRemote(const SQLTable & t)
@@ -2108,8 +2108,8 @@ bool ExternalIntegrations::optimizeTableForOracle(const PeerTableDatabase pt, co
 {
     switch (t.peer_table)
     {
-        case PeerTableDatabase::ClickHouse:
-            return clickhouse->optimizeTableForOracle(pt, t);
+        case PeerTableDatabase::Datastore:
+            return datastore->optimizeTableForOracle(pt, t);
         default:
             return false;
     }
@@ -2169,7 +2169,7 @@ bool ExternalIntegrations::getPerformanceMetricsForLastQuery(const PeerTableData
         return false;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(fc.flush_log_wait_time));
-    if (clickhouse->performQueryOnServerOrRemote(
+    if (datastore->performQueryOnServerOrRemote(
             pt,
             fmt::format(
                 "INSERT INTO TABLE FUNCTION file('{}', 'TabSeparated', 'c0 UInt64, c1 UInt64, c2 UInt64') SELECT query_duration_ms, "
@@ -2202,8 +2202,8 @@ void ExternalIntegrations::setDefaultSettings(const PeerTableDatabase pt, const 
 {
     for (const auto & entry : settings)
     {
-        /// Some settings may not exist in earlier ClickHouse versions, so we can ignore the errors here
-        const auto u = clickhouse->performQueryOnServerOrRemote(pt, fmt::format("SET {} = 1;", entry));
+        /// Some settings may not exist in earlier Datastore versions, so we can ignore the errors here
+        const auto u = datastore->performQueryOnServerOrRemote(pt, fmt::format("SET {} = 1;", entry));
         UNUSED(u);
     }
 }
@@ -2270,8 +2270,8 @@ void ExternalIntegrations::replicateSettings(const PeerTableDatabase pt)
                         replaced += c;
                 }
             }
-            /// Some settings may not exist in earlier ClickHouse versions, so we can ignore the errors here
-            auto u = clickhouse->performQueryOnServerOrRemote(pt, fmt::format("SET {} = '{}';", nname, replaced));
+            /// Some settings may not exist in earlier Datastore versions, so we can ignore the errors here
+            auto u = datastore->performQueryOnServerOrRemote(pt, fmt::format("SET {} = '{}';", nname, replaced));
             UNUSED(u);
             buf.resize(0);
         }

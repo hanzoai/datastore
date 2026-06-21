@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <profile>default</profile>
@@ -12,4 +12,4 @@
             <allow_experimental_database_iceberg>true</allow_experimental_database_iceberg>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

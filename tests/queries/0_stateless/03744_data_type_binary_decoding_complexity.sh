@@ -35,6 +35,6 @@ for _ in range(outer_elements):
     sys.stdout.buffer.write(b"\x1F")
     write_varint(inner_elements)
     sys.stdout.buffer.write(b"\x01" * inner_elements)
-' 2>/dev/null | ${CLICKHOUSE_LOCAL} --input-format=RowBinaryWithNamesAndTypes \
+' 2>/dev/null | ${DATASTORE_LOCAL} --input-format=RowBinaryWithNamesAndTypes \
     --input_format_binary_decode_types_in_binary_format=1 \
     -q "SELECT * FROM table" 2>&1 | grep -o 'Binary type decoding complexity limit exceeded'

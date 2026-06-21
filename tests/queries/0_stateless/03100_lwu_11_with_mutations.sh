@@ -11,7 +11,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_mutations SYNC;
     SET enable_lightweight_update = 1;
 
@@ -56,7 +56,7 @@ $CLICKHOUSE_CLIENT --query "
 
 wait_for_mutation "t_lwu_mutations" "0000000000"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT sum(u), countIf(endsWith(s, '_foo')) FROM t_lwu_mutations SETTINGS apply_patch_parts = 0;
     SELECT sum(u), countIf(endsWith(s, '_foo')) FROM t_lwu_mutations SETTINGS apply_patch_parts = 1;
 

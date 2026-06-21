@@ -1,8 +1,8 @@
-<clickhouse>
+<datastore>
 	<logger>
 		<level>information</level>
-		<log>/var/log/clickhouse-server/clickhouse-server.log</log>
-		<errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+		<log>/var/log/datastore-server/datastore-server.log</log>
+		<errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
 		<size>1000M</size>
 		<count>10</count>
 	</logger>
@@ -20,5 +20,5 @@
     <max_concurrent_queries>500</max_concurrent_queries>
     <users_config>users.xml</users_config>
 
-    <dictionaries_config>/etc/clickhouse-server/config.d/*.xml</dictionaries_config>
-</clickhouse>
+    <dictionaries_config>/etc/datastore-server/config.d/*.xml</dictionaries_config>
+</datastore>

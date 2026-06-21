@@ -1,15 +1,15 @@
-<clickhouse>
+<datastore>
     <local_disk_check_period_ms>1000</local_disk_check_period_ms>
-    <path>/var/lib/clickhouse/</path>
+    <path>/var/lib/datastore/</path>
     <storage_configuration>
         <disks>
             <test1>
                 <type>local</type>
-                <path>/var/lib/clickhouse/path1/</path>
+                <path>/var/lib/datastore/path1/</path>
             </test1>
             <test2>
                 <type>local</type>
-                <path>/var/lib/clickhouse/path2/</path>
+                <path>/var/lib/datastore/path2/</path>
             </test2>
         </disks>
         <policies>
@@ -29,4 +29,4 @@
             </test2>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

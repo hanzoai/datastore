@@ -5,11 +5,11 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE IF EXISTS 02419_test SYNC;"
+$DATASTORE_CLIENT -q "DROP TABLE IF EXISTS 02419_test SYNC;"
 
 test_primary_key()
 {
-    $CLICKHOUSE_CLIENT -m -q "
+    $DATASTORE_CLIENT -m -q "
     CREATE TABLE 02419_test (key UInt64, value Float64) Engine=KeeperMap('/' || currentDatabase() || '/test2419', 3) PRIMARY KEY($1);
     INSERT INTO 02419_test VALUES (1, 1.1), (2, 2.2);
     SELECT value FROM 02419_test WHERE key = 1;

@@ -1,7 +1,7 @@
 -- Tags: no-random-merge-tree-settings
 
 -- Verify that sparse serialization preserves -0.0 (negative zero)
--- GitHub issue: https://github.com/ClickHouse/ClickHouse/issues/98637
+-- GitHub issue: https://github.com/ClickHouse/Datastore/issues/98637
 
 -- BFloat16
 DROP TABLE IF EXISTS t_sparse_neg_zero_bf16;

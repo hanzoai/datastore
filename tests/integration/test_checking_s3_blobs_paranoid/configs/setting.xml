@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <async_insert>0</async_insert>
@@ -28,4 +28,4 @@
     <max_thread_pool_size>10000</max_thread_pool_size>
     <thread_pool_queue_size>10000</thread_pool_queue_size>
 
-</clickhouse>
+</datastore>

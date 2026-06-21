@@ -71,7 +71,7 @@ def test_iceberg_s3_explicit_path_style(started_cluster_iceberg_with_spark):
         DROP TABLE IF EXISTS {TABLE_NAME};
         CREATE TABLE {TABLE_NAME}
         ENGINE=IcebergS3(s3,
-            filename = 'var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/',
+            filename = 'var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/',
             url = 'http://minio1:9001/{bucket}/')
         SETTINGS s3_uri_style = 'path', iceberg_format_version = 2
         """

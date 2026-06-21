@@ -57,7 +57,7 @@ UNIQUE KEY (id); -- { serverError BAD_ARGUMENTS }
 -- replicas could diverge silently. The supports_unique_key feature flag is
 -- set only on the non-replicated variants.
 CREATE TABLE uk_t (id UInt64, v String)
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/04046_uk_repl', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/04046_uk_repl', 'r1')
 UNIQUE KEY (id)
 ORDER BY (id); -- { serverError BAD_ARGUMENTS }
 

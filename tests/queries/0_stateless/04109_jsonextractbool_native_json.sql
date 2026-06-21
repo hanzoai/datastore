@@ -1,4 +1,4 @@
--- Regression for https://github.com/ClickHouse/ClickHouse/issues/104373
+-- Regression for https://github.com/ClickHouse/Datastore/issues/104373
 -- JSONExtractBool on native JSON must return UInt8 0/1 with boolean
 -- semantics, not the extracted value cast to UInt8.
 

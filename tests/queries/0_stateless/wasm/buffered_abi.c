@@ -95,7 +95,7 @@ Span * digest_newline_rows(Span * span, uint32_t n) {
    Shallow check: each row must start with '{' and end with '}'.
    Output rows: {"result":[<hash>,<content_len>]}\n per row — an array of two
    UInt64 values: FNV-1a hash of the row bytes and the content byte length.
-   This exercises array return-type parsing on the ClickHouse side. */
+   This exercises array return-type parsing on the Datastore side. */
 Span * digest_json_rows(Span * span, uint32_t n) {
     /* {"result":[,]}\n = 14 chars, two UInt64 max 20 digits each → 54 bytes max */
     Span * res = clickhouse_create_buffer(n * 54);

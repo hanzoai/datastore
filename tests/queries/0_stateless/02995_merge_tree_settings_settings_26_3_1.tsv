@@ -220,7 +220,7 @@ refresh_parts_interval	0
 refresh_statistics_interval	300
 remote_fs_execute_merges_on_single_replica_time_threshold	10800
 remote_fs_zero_copy_path_compatible_mode	0
-remote_fs_zero_copy_zookeeper_path	/clickhouse/zero_copy
+remote_fs_zero_copy_zookeeper_path	/datastore/zero_copy
 remove_empty_parts	1
 remove_rolled_back_parts_immediately	1
 remove_unused_patch_parts	1

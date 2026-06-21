@@ -15,8 +15,8 @@ function query() {
 }
 
 function ch_url() {
-    ${CLICKHOUSE_CURL_COMMAND} -q -sS \
-        "${CLICKHOUSE_URL}${max_block_size:+"&max_block_size=$max_block_size"}&$1" \
+    ${DATASTORE_CURL_COMMAND} -q -sS \
+        "${DATASTORE_URL}${max_block_size:+"&max_block_size=$max_block_size"}&$1" \
         -d "$(query "$2")"
 }
 
@@ -111,14 +111,14 @@ max_block_size=500000
 corner_sizes="1048576 $(seq 500000 1000000 3500000)"
 
 
-# Check HTTP results with $CLICKHOUSE_CLIENT in normal case
+# Check HTTP results with $DATASTORE_CLIENT in normal case
 
 function cmp_cli_and_http() {
-    $CLICKHOUSE_CLIENT -q "$(query "$1")" > "${CLICKHOUSE_TMP}"/res1
-    ch_url "http_response_buffer_size=$2&http_wait_end_of_query=0" "$1" > "${CLICKHOUSE_TMP}"/res2
-    ch_url "http_response_buffer_size=$2&http_wait_end_of_query=1" "$1" > "${CLICKHOUSE_TMP}"/res3
-    cmp "${CLICKHOUSE_TMP}"/res1 "${CLICKHOUSE_TMP}"/res2 && cmp "${CLICKHOUSE_TMP}"/res1 "${CLICKHOUSE_TMP}"/res3 || echo FAIL 5 "$@"
-    rm -rf "${CLICKHOUSE_TMP}"/res1 "${CLICKHOUSE_TMP}"/res2 "${CLICKHOUSE_TMP}"/res3
+    $DATASTORE_CLIENT -q "$(query "$1")" > "${DATASTORE_TMP}"/res1
+    ch_url "http_response_buffer_size=$2&http_wait_end_of_query=0" "$1" > "${DATASTORE_TMP}"/res2
+    ch_url "http_response_buffer_size=$2&http_wait_end_of_query=1" "$1" > "${DATASTORE_TMP}"/res3
+    cmp "${DATASTORE_TMP}"/res1 "${DATASTORE_TMP}"/res2 && cmp "${DATASTORE_TMP}"/res1 "${DATASTORE_TMP}"/res3 || echo FAIL 5 "$@"
+    rm -rf "${DATASTORE_TMP}"/res1 "${DATASTORE_TMP}"/res2 "${DATASTORE_TMP}"/res3
 }
 
 function check_cli_and_http() {
@@ -136,14 +136,14 @@ check_cli_and_http
 # Check HTTP internal compression in normal case
 
 function cmp_http_compression() {
-    $CLICKHOUSE_CLIENT -q "$(query "$1")" > "${CLICKHOUSE_TMP}"/res0
-    ch_url 'compress=1' "$1" | "${CLICKHOUSE_COMPRESSOR}" --decompress > "${CLICKHOUSE_TMP}"/res1
-    ch_url "compress=1&http_response_buffer_size=$2&http_wait_end_of_query=0" "$1" | "${CLICKHOUSE_COMPRESSOR}" --decompress > "${CLICKHOUSE_TMP}"/res2
-    ch_url "compress=1&http_response_buffer_size=$2&http_wait_end_of_query=1" "$1" | "${CLICKHOUSE_COMPRESSOR}" --decompress > "${CLICKHOUSE_TMP}"/res3
-    cmp "${CLICKHOUSE_TMP}"/res0 "${CLICKHOUSE_TMP}"/res1
-    cmp "${CLICKHOUSE_TMP}"/res1 "${CLICKHOUSE_TMP}"/res2
-    cmp "${CLICKHOUSE_TMP}"/res1 "${CLICKHOUSE_TMP}"/res3
-    rm -rf "${CLICKHOUSE_TMP}"/res0 "${CLICKHOUSE_TMP}"/res1 "${CLICKHOUSE_TMP}"/res2 "${CLICKHOUSE_TMP}"/res3
+    $DATASTORE_CLIENT -q "$(query "$1")" > "${DATASTORE_TMP}"/res0
+    ch_url 'compress=1' "$1" | "${DATASTORE_COMPRESSOR}" --decompress > "${DATASTORE_TMP}"/res1
+    ch_url "compress=1&http_response_buffer_size=$2&http_wait_end_of_query=0" "$1" | "${DATASTORE_COMPRESSOR}" --decompress > "${DATASTORE_TMP}"/res2
+    ch_url "compress=1&http_response_buffer_size=$2&http_wait_end_of_query=1" "$1" | "${DATASTORE_COMPRESSOR}" --decompress > "${DATASTORE_TMP}"/res3
+    cmp "${DATASTORE_TMP}"/res0 "${DATASTORE_TMP}"/res1
+    cmp "${DATASTORE_TMP}"/res1 "${DATASTORE_TMP}"/res2
+    cmp "${DATASTORE_TMP}"/res1 "${DATASTORE_TMP}"/res3
+    rm -rf "${DATASTORE_TMP}"/res0 "${DATASTORE_TMP}"/res1 "${DATASTORE_TMP}"/res2 "${DATASTORE_TMP}"/res3
 }
 
 function check_http_compression() {

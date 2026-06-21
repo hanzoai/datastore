@@ -1,6 +1,6 @@
 SET optimize_respect_aliases = 1;
 
--- https://github.com/ClickHouse/ClickHouse/issues/77558
+-- https://github.com/ClickHouse/Datastore/issues/77558
 DROP TABLE IF EXISTS t0;
 CREATE TABLE t0 (c0 Int, c1 Int ALIAS 1) ENGINE = Memory;
 SELECT t0.c1 FROM t0 ORDER BY 1;

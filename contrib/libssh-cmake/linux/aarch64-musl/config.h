@@ -5,8 +5,8 @@
 #define VERSION "0.9.7"
 
 #define SYSCONFDIR "etc"
-#define BINARYDIR "/home/ubuntu/workdir/ClickHouse/build/aarch64-musl"
-#define SOURCEDIR "/home/ubuntu/workdir/ClickHouse"
+#define BINARYDIR "/home/ubuntu/workdir/Datastore/build/aarch64-musl"
+#define SOURCEDIR "/home/ubuntu/workdir/Datastore"
 
 /* Global bind configuration file path */
 #define GLOBAL_BIND_CONFIG "/etc/ssh/libssh_server_config"

@@ -19,7 +19,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -82,8 +82,8 @@ check_incorrect_data() {
 # so __builtin_mul_overflow fires and rejects the file as INCORRECT_DATA ("buffer size overflow")
 # rather than reaching reserve(2^62).  Asserting INCORRECT_DATA proves the checked-arithmetic path
 # (a build that skipped it would instead throw CANNOT_ALLOCATE_MEMORY and fail this assertion).
-check_incorrect_data overflow $CLICKHOUSE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/overflow.arrow', Arrow)"
+check_incorrect_data overflow $DATASTORE_LOCAL --query "SELECT x FROM file('${TMP_DIR}/overflow.arrow', Arrow)"
 
 # Issue B: bitmap — checkValidityBitmap must produce INCORRECT_DATA before IsNull reads.
 # Use sum() to force column materialisation; count(*) is optimised away and skips data reads.
-check_incorrect_data bitmap $CLICKHOUSE_LOCAL --query "SELECT sum(x) FROM file('${TMP_DIR}/bitmap_shrink.arrow', Arrow)"
+check_incorrect_data bitmap $DATASTORE_LOCAL --query "SELECT sum(x) FROM file('${TMP_DIR}/bitmap_shrink.arrow', Arrow)"

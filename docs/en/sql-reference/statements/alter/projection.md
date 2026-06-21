@@ -15,7 +15,7 @@ Projections store data in a format that optimizes query execution, this feature 
 - Running queries on a column that is not a part of the primary key
 - Pre-aggregating columns, it will reduce both computation and IO
 
-You can define one or more projections for a table, and during the query analysis the projection with the least data to scan will be selected by ClickHouse without modifying the query provided by the user.
+You can define one or more projections for a table, and during the query analysis the projection with the least data to scan will be selected by Datastore without modifying the query provided by the user.
 
 :::note[Disk usage]
 Projections will create internally a new hidden table, this means that more IO and space on disk will be required.
@@ -65,7 +65,7 @@ FROM numbers(1, 100);
 ```
 
 The Projection will allow us to filter by `user_name` fast even if in the original Table `user_name` was not defined as a `PRIMARY_KEY`.
-At query time, ClickHouse determines that less data will be processed if the projection is used, as the data is ordered by `user_name`.
+At query time, Datastore determines that less data will be processed if the projection is used, as the data is ordered by `user_name`.
 
 ```sql
 SELECT
@@ -283,7 +283,7 @@ ALTER TABLE [db.]table [ON CLUSTER cluster] CLEAR PROJECTION [IF EXISTS] name [I
 ```
 
 The commands `ADD`, `DROP` and `CLEAR` are lightweight in the sense that they only change metadata or remove files.
-Additionally, they are replicated, and sync projection metadata via ClickHouse Keeper or ZooKeeper.
+Additionally, they are replicated, and sync projection metadata via Datastore Keeper or ZooKeeper.
 
 :::note
 Projection manipulation is supported only for tables with [`*MergeTree`](/engines/table-engines/mergetree-family/mergetree.md) engine (including [replicated](/engines/table-engines/mergetree-family/replication.md) variants).
@@ -291,13 +291,13 @@ Projection manipulation is supported only for tables with [`*MergeTree`](/engine
 
 ### Controlling projection merge behavior {#control-projections-merges}
 
-When you execute a query, ClickHouse chooses between reading from the original table or one of its projections.
+When you execute a query, Datastore chooses between reading from the original table or one of its projections.
 The decision to read from the original table or one of its projections is made individually per every table part.
-ClickHouse generally aims to read as little data as possible and employs a couple of tricks to identify the best part to read from, for example, sampling the primary key of a part.
+Datastore generally aims to read as little data as possible and employs a couple of tricks to identify the best part to read from, for example, sampling the primary key of a part.
 In some cases, source table parts have no corresponding projection parts.
 This can happen, for example, because creating a projection for a table in SQL is “lazy” by default - it only affects newly inserted data but keeps existing parts unaltered.
 
-As one of the projections already contains the pre-computed aggregate values, ClickHouse tries to read from the corresponding projection parts to avoid aggregating at query runtime again. If a specific part lacks the corresponding projection part, query execution falls back to the original part.
+As one of the projections already contains the pre-computed aggregate values, Datastore tries to read from the corresponding projection parts to avoid aggregating at query runtime again. If a specific part lacks the corresponding projection part, query execution falls back to the original part.
 
 But what happens if the rows in the original table change in a non-trivial way by non-trivial data part background merges?
 For example, assume the table is stored using the `ReplacingMergeTree` table engine.
@@ -305,7 +305,7 @@ If the same row is detected in multiple input parts during merge, only the most 
 
 Similarly, if the table is stored using the `AggregatingMergeTree` table engine, the merge operation may fold the same rows in the input parts (based on the primary key values) into a single row to update partial aggregation states.
 
-Before ClickHouse v24.8, projection parts either silently got out of sync with the main data, or certain operations like updates and deletes could not be run at all as the database automatically threw an exception if the table had projections.
+Before Datastore v24.8, projection parts either silently got out of sync with the main data, or certain operations like updates and deletes could not be run at all as the database automatically threw an exception if the table had projections.
 
 Since v24.8, a new table-level setting [`deduplicate_merge_projection_mode`](/operations/settings/merge-tree-settings#deduplicate_merge_projection_mode) controls the behavior if the aforementioned non-trivial background merge operations occur in parts of the original table.
 
@@ -360,6 +360,6 @@ ENGINE = MergeTree ORDER BY id;
 ```
 
 ## See also {#see-also}
-- ["Control Of Projections During Merges" (blog post)](https://clickhouse.com/blog/clickhouse-release-24-08#control-of-projections-during-merges)
+- ["Control Of Projections During Merges" (blog post)](https://datastore.com/blog/datastore-release-24-08#control-of-projections-during-merges)
 - ["Projections" (guide)](/data-modeling/projections#using-projections-to-speed-up-UK-price-paid)
-- ["Materialized Views versus Projections"](https://clickhouse.com/docs/managing-data/materialized-views-versus-projections)
+- ["Materialized Views versus Projections"](https://datastore.com/docs/managing-data/materialized-views-versus-projections)

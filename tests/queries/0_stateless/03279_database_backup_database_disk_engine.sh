@@ -5,8 +5,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-db=${CLICKHOUSE_DATABASE}_inner
-$CLICKHOUSE_CLIENT -nm -q "
+db=${DATASTORE_DATABASE}_inner
+$DATASTORE_CLIENT -nm -q "
 DROP DATABASE IF EXISTS ${db};
 CREATE DATABASE ${db};
 

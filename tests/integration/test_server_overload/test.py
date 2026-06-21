@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster, CLICKHOUSE_START_COMMAND
+from helpers.cluster import ClickHouseCluster, DATASTORE_START_COMMAND
 from helpers.client import CommandRequest, QueryRuntimeException
 
 
@@ -12,12 +12,12 @@ cluster = ClickHouseCluster(__file__)
 node1 = cluster.add_instance(
     "node1",
     main_configs=["configs/min_cpu_busy_time.xml"],
-    clickhouse_start_cmd=f"taskset -c 0 {CLICKHOUSE_START_COMMAND}",
+    clickhouse_start_cmd=f"taskset -c 0 {DATASTORE_START_COMMAND}",
 )
 node2 = cluster.add_instance(
     "node2",
     main_configs=["configs/early_drop.xml"],
-    clickhouse_start_cmd=f"taskset -c 1 {CLICKHOUSE_START_COMMAND}",
+    clickhouse_start_cmd=f"taskset -c 1 {DATASTORE_START_COMMAND}",
 )
 
 

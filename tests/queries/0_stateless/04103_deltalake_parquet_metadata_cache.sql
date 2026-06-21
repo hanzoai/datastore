@@ -9,14 +9,14 @@ set send_logs_level = 'fatal';
 system drop parquet metadata cache;
 
 select count(), ParamCurrency
-from deltaLake('https://clickhouse-public-datasets.s3.amazonaws.com/delta_lake/hits/', nosign, settings allow_experimental_delta_kernel_rs = 1) 
+from deltaLake('https://datastore-public-datasets.s3.amazonaws.com/delta_lake/hits/', nosign, settings allow_experimental_delta_kernel_rs = 1) 
 where Robotness > 0
 group by ParamCurrency
 format null 
 settings use_parquet_metadata_cache=1, log_comment='04103-pq-cache-miss-and-load';
 
 select count(), ParamCurrency
-from deltaLake('https://clickhouse-public-datasets.s3.amazonaws.com/delta_lake/hits/', nosign, settings allow_experimental_delta_kernel_rs = 1)
+from deltaLake('https://datastore-public-datasets.s3.amazonaws.com/delta_lake/hits/', nosign, settings allow_experimental_delta_kernel_rs = 1)
 where Robotness > 0
 group by ParamCurrency
 format null

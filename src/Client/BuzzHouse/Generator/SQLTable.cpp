@@ -833,7 +833,7 @@ void StatementGenerator::generateTableKey(
             if (b.teng != SummingMergeTree && rg.nextSmallNumber() < 3)
             {
                 /// Use a single expression for the entire table
-                /// See https://github.com/ClickHouse/ClickHouse/issues/72043 for SummingMergeTree exception
+                /// See https://github.com/ClickHouse/Datastore/issues/72043 for SummingMergeTree exception
                 TableKeyExpr * tke = tkey->add_exprs();
                 Expr * expr = tke->mutable_expr();
                 SQLFuncCall * func_call = expr->mutable_comp_expr()->mutable_func_call();
@@ -950,7 +950,7 @@ void StatementGenerator::generateMergeTreeEngineDetails(
 {
     if (rg.nextSmallNumber() < 9)
     {
-        generateTableKey(rg, rel, b, b.peer_table != PeerTableDatabase::ClickHouse, te->mutable_order());
+        generateTableKey(rg, rel, b, b.peer_table != PeerTableDatabase::Datastore, te->mutable_order());
     }
     if (te->has_order() && add_pkey && rg.nextSmallNumber() < 5)
     {
@@ -978,7 +978,7 @@ void StatementGenerator::generateMergeTreeEngineDetails(
     {
         generateTableKey(rg, rel, b, false, te->mutable_partition_by());
     }
-    /// TODO re-enable this once https://github.com/ClickHouse/ClickHouse/issues/104963 is fixed
+    /// TODO re-enable this once https://github.com/ClickHouse/Datastore/issues/104963 is fixed
     if (!entries.empty() && rg.nextSmallNumber() < 1)
     {
         TableKey * ukey = te->mutable_unique_key();
@@ -1082,7 +1082,7 @@ void StatementGenerator::generateMergeTreeEngineDetails(
                 b.replica_table = "{table}";
                 b.replica_name = "{replica}";
             }
-            b.keeper_path = fmt::format("/clickhouse/tables/{}/{}/{}", b.shard_name, b.replica_db, b.replica_table);
+            b.keeper_path = fmt::format("/datastore/tables/{}/{}/{}", b.shard_name, b.replica_db, b.replica_table);
 
             for (const auto & item : te->params())
             {
@@ -1726,7 +1726,7 @@ String StatementGenerator::addTableColumn(
     }
     if (t.hasDatabasePeer())
     {
-        /// ClickHouse's UUID sorting order is different from other databases
+        /// Datastore's UUID sorting order is different from other databases
         this->next_type_mask &= ~(allow_uuid);
     }
     addTableColumnInternal(rg, t, modify, is_pk, special, col, cd);
@@ -2027,8 +2027,8 @@ void StatementGenerator::getNextPeerTableDatabase(RandomGenerator & rg, SQLBase 
         if ((b.isMergeTreeFamily() || b.isLogFamily() || b.isRocksEngine() || b.isKeeperMapEngine() || b.isJoinEngine() || b.isSetEngine())
             && connections.hasClickHouseExtraServerConnection())
         {
-            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::ClickHouse));
-            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::ClickHouse)); /// give more probability
+            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::Datastore));
+            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::Datastore)); /// give more probability
         }
     }
     b.peer_table
@@ -2723,7 +2723,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               else
               {
                   t.setName(dsd->mutable_est(), false);
-                  dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+                  dsd->set_source(DictionarySourceDetails::DATASTORE);
                   clickhouse_dsd = dsd;
               }
           }},
@@ -2736,7 +2736,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
 
               est->mutable_database()->set_value(ntable.schema_name);
               est->mutable_table()->set_value(ntable.table_name);
-              dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+              dsd->set_source(DictionarySourceDetails::DATASTORE);
               clickhouse_dsd = dsd;
           }},
          {dict_view,
@@ -2746,7 +2746,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               const SQLView & v = rg.pickRandomly(filterCollection<SQLView>(dictionary_view_lambda));
 
               v.setName(dsd->mutable_est(), false);
-              dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+              dsd->set_source(DictionarySourceDetails::DATASTORE);
               clickhouse_dsd = dsd;
           }},
          {dict_dict,
@@ -2756,7 +2756,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               const SQLDictionary & d = rg.pickRandomly(filterCollection<SQLDictionary>(dictionary_dictionary_lambda));
 
               d.setName(dsd->mutable_est(), false);
-              dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
+              dsd->set_source(DictionarySourceDetails::DATASTORE);
               clickhouse_dsd = dsd;
           }},
          {null_src, [&] { cd->mutable_source()->set_null_src(true); }},
@@ -3117,7 +3117,7 @@ void StatementGenerator::generateDatabaseEngineDetails(RandomGenerator & rg, SQL
             d.shard_counter = rg.nextBool() ? db->shard_counter++ : db->shard_counter;
             d.replica_counter = rg.nextBool() ? db->replica_counter++ : db->replica_counter;
             /// At the moment, two replicas cannot share the same path
-            d.keeper_path = "/clickhouse/databases/" + d.getName();
+            d.keeper_path = "/datastore/databases/" + d.getName();
             d.shard_name = "s" + std::to_string(d.shard_counter);
             d.replica_name = "d" + std::to_string(d.replica_counter);
         }
@@ -3125,14 +3125,14 @@ void StatementGenerator::generateDatabaseEngineDetails(RandomGenerator & rg, SQL
         {
             /// Make this the first replica of all
             d.shard_counter = d.replica_counter = 1;
-            d.keeper_path = "/clickhouse/databases/" + d.getName();
+            d.keeper_path = "/datastore/databases/" + d.getName();
             d.shard_name = "s0";
             d.replica_name = "d0";
         }
         else
         {
             /// Use default as last case
-            d.keeper_path = "/clickhouse/databases/" + d.getName();
+            d.keeper_path = "/datastore/databases/" + d.getName();
             d.shard_name = "{shard}";
             d.replica_name = "{replica}";
         }

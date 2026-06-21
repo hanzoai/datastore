@@ -8,10 +8,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 timer=3
 
-$CLICKHOUSE_CLIENT --query="SELECT sleep($timer)" &
-$CLICKHOUSE_CLIENT --query="SELECT sleep($timer)" &
-$CLICKHOUSE_CLIENT --query="SELECT sleep($timer)" &
-$CLICKHOUSE_CLIENT --query="SELECT sleep($timer)" &
-$CLICKHOUSE_CLIENT --query="SELECT sleep($timer)" &
-$CLICKHOUSE_CLIENT --query="SELECT 1" &
+$DATASTORE_CLIENT --query="SELECT sleep($timer)" &
+$DATASTORE_CLIENT --query="SELECT sleep($timer)" &
+$DATASTORE_CLIENT --query="SELECT sleep($timer)" &
+$DATASTORE_CLIENT --query="SELECT sleep($timer)" &
+$DATASTORE_CLIENT --query="SELECT sleep($timer)" &
+$DATASTORE_CLIENT --query="SELECT 1" &
 wait

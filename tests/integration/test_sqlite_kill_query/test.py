@@ -101,7 +101,7 @@ def test_kill_query(started_cluster):
 
     query_thread.join()
 
-    # Verify that query was successfully cancelled in ClickHouse server
+    # Verify that query was successfully cancelled in Datastore server
     result = node1.query(
         f"SELECT count(*) FROM system.processes WHERE query_id='{query_id}'"
     )
@@ -116,7 +116,7 @@ def test_cancel_query(started_cluster):
             [
                 "bash",
                 "-c",
-                f"""/usr/bin/clickhouse client --query "{SELECT_FROM_SQLITE_TABLE}" --format Null""",
+                f"""/usr/bin/datastore client --query "{SELECT_FROM_SQLITE_TABLE}" --format Null""",
             ]
         )
 

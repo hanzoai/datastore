@@ -1,5 +1,5 @@
 ---
-description: 'Guide to configuring and using SQL startup scripts in ClickHouse for
+description: 'Guide to configuring and using SQL startup scripts in Datastore for
   automatic schema creation and migrations'
 sidebar_label: 'Startup scripts'
 slug: /operations/startup-scripts
@@ -7,10 +7,10 @@ title: 'Startup scripts'
 doc_type: 'guide'
 ---
 
-ClickHouse can run arbitrary SQL queries from the server configuration during startup. This can be useful for migrations or automatic schema creation.
+Datastore can run arbitrary SQL queries from the server configuration during startup. This can be useful for migrations or automatic schema creation.
 
 ```xml
-<clickhouse>
+<datastore>
     <startup_scripts>
         <throw_on_error>false</throw_on_error>
         <scripts>
@@ -21,14 +21,14 @@ ClickHouse can run arbitrary SQL queries from the server configuration during st
             <condition>SELECT 1;</condition>
         </scripts>
         <scripts>
-            <query>CREATE DICTIONARY test_dict (...) SOURCE(CLICKHOUSE(...))</query>
+            <query>CREATE DICTIONARY test_dict (...) SOURCE(DATASTORE(...))</query>
             <user>default</user>
         </scripts>
     </startup_scripts>
-</clickhouse>
+</datastore>
 ```
 
-ClickHouse executes all queries from the `startup_scripts` sequentially in the specified order. If any of the queries fail, the execution of the following queries won't be interrupted. However, if `throw_on_error` is set to true,
+Datastore executes all queries from the `startup_scripts` sequentially in the specified order. If any of the queries fail, the execution of the following queries won't be interrupted. However, if `throw_on_error` is set to true,
 the server will not start if an error occurs during script execution.
 
 You can specify a conditional query in the config. In that case, the corresponding query executes only when the condition query returns the value `1` or `true`.

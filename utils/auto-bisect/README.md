@@ -1,6 +1,6 @@
 # auto-bisect
 
-Automated ClickHouse regression bisection using CI pre-built binaries. Downloads the binary for each merge commit, sets up the test environment, and runs your test to locate the first bad commit.
+Automated Datastore regression bisection using CI pre-built binaries. Downloads the binary for each merge commit, sets up the test environment, and runs your test to locate the first bad commit.
 
 ## Usage
 
@@ -14,7 +14,7 @@ Automated ClickHouse regression bisection using CI pre-built binaries. Downloads
 |--------|-------------|
 | `--good <sha>` | Known good commit hash |
 | `--bad <sha>` | Known bad commit hash |
-| `--path <path>` | Path to ClickHouse repo (`CH_ROOT` env var used by default) |
+| `--path <path>` | Path to Datastore repo (`CH_ROOT` env var used by default) |
 | `--test <file>` | Test script to run per commit (default: `tests/test.sh`) |
 | `--env <mode>` | Environment: `single` (default), `replicateddb`, `sharedcatalog`, `nothing` |
 | `--private` | Use private CI builds (requires credentials; see below) |
@@ -26,7 +26,7 @@ Automated ClickHouse regression bisection using CI pre-built binaries. Downloads
 
 ## Environments
 
-- **`single`** — single ClickHouse server on port 9000
+- **`single`** — single Datastore server on port 9000
 - **`replicateddb`** — two nodes with Keeper, replicateddb database
 - **`sharedcatalog`** — two nodes with Keeper, Shared Catalog
 - **`nothing`** — no server setup (for client-side bisection)
@@ -35,17 +35,17 @@ Automated ClickHouse regression bisection using CI pre-built binaries. Downloads
 
 ```bash
 # Basic bisect on single-node setup
-./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/ClickHouse
+./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/Datastore
 # Replicated setup with custom test
-./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/ClickHouse \
+./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/Datastore \
   --env replicateddb --test ./tests/my_repro.sh
 
 # Walker mode: test every commit, 20 evenly-spaced steps
-./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/ClickHouse \
+./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/Datastore \
   --walker --walker-steps 20
 
 # Private CI builds
-./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/ClickHouse \
+./bisect.sh --good a1b2c3d4 --bad e5f6g7h8 --path ~/work/Datastore \
   --private```
 
 ## Prerequisites
@@ -53,15 +53,15 @@ Automated ClickHouse regression bisection using CI pre-built binaries. Downloads
 The following directories must exist and be writable by the current user:
 
 ```
-/etc/clickhouse-server
-/etc/clickhouse-client
-/var/lib/clickhouse
+/etc/datastore-server
+/etc/datastore-client
+/var/lib/datastore
 ```
 
 For replicateddb/sharedcatalog environments, also:
 
 ```
-/etc/clickhouse-server1
+/etc/datastore-server1
 /var/lib/clickhouse1
 ```
 
@@ -80,7 +80,7 @@ The script will fail immediately if `--private` is used without these variables 
 
 ## Writing a Test Script
 
-The test script receives the ClickHouse work tree path as `$1` and must return:
+The test script receives the Datastore work tree path as `$1` and must return:
 - `0` — commit is **good** (bug not present)
 - `1` — commit is **bad** (bug present)
 - `125` — **skip** this commit (e.g., unrelated build failure)

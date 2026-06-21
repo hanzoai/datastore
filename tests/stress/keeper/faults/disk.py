@@ -62,11 +62,11 @@ def _dm_img(prefix, node):
 
 
 def _kill_clickhouse(node, signal="STOP"):
-    """Send signal to clickhouse processes."""
+    """Send signal to datastore processes."""
     try:
         sh(
             node,
-            f'PIDS=$(pidof clickhouse clickhouse-server 2>/dev/null || true); [ -n "$PIDS" ] && kill -{signal} $PIDS || true',
+            f'PIDS=$(pidof datastore datastore-server 2>/dev/null || true); [ -n "$PIDS" ] && kill -{signal} $PIDS || true',
             timeout=30,
         )
     except Exception:
@@ -74,7 +74,7 @@ def _kill_clickhouse(node, signal="STOP"):
 
 
 def _restart_clickhouse(node):
-    """Restart clickhouse process after it was killed. No-op for non-ClickHouse nodes."""
+    """Restart datastore process after it was killed. No-op for non-Datastore nodes."""
     if not hasattr(node, "start_clickhouse"):
         return
     try:
@@ -105,9 +105,9 @@ def _check_dm_exists(node, dm_name):
 
 
 def _coord_mounted(node):
-    """Check if /var/lib/clickhouse/coordination is still bind-mounted."""
+    """Check if /var/lib/datastore/coordination is still bind-mounted."""
     try:
-        r = sh_root(node, "mountpoint -q /var/lib/clickhouse/coordination; echo $?", timeout=10)
+        r = sh_root(node, "mountpoint -q /var/lib/datastore/coordination; echo $?", timeout=10)
         return str((r or {}).get("out", "")).strip().endswith("0")
     except Exception:
         return False
@@ -184,12 +184,12 @@ def dm_delay(node, ms=3):
         # Wait for the process to exit and release all fds before touching mounts.
         sh(
             node,
-            "for i in $(seq 40); do pidof clickhouse clickhouse-server 2>/dev/null || break; sleep 0.5; done; true",
+            "for i in $(seq 40); do pidof datastore datastore-server 2>/dev/null || break; sleep 0.5; done; true",
             timeout=25,
         )
         try:
-            sh_root_strict(node, "umount /var/lib/clickhouse/coordination || true", timeout=60)
-            sh_root_strict(node, f"mkdir -p /var/lib/clickhouse/coordination /mnt/{dm_name} || true", timeout=30)
+            sh_root_strict(node, "umount /var/lib/datastore/coordination || true", timeout=60)
+            sh_root_strict(node, f"mkdir -p /var/lib/datastore/coordination /mnt/{dm_name} || true", timeout=30)
 
             if not ram:
                 # Mount the loop device DIRECTLY (bypassing dm delay) to copy data fast.
@@ -201,19 +201,19 @@ def dm_delay(node, ms=3):
                 )
                 sh_root(
                     node,
-                    f"cp -a /var/lib/clickhouse/coordination/. /mnt/{dm_name}/ 2>/dev/null || true; sync || true",
+                    f"cp -a /var/lib/datastore/coordination/. /mnt/{dm_name}/ 2>/dev/null || true; sync || true",
                     timeout=180,
                 )
                 # Fix ext4 root ownership: mkfs.ext4 creates root:root root dir, but
-                # the bind mount maps this root dir to /var/lib/clickhouse/coordination.
+                # the bind mount maps this root dir to /var/lib/datastore/coordination.
                 # If the keeper process (non-root user) tries to create STATE_COPY_LOCK
                 # or other files directly in coordination/, it gets Permission denied.
                 # Copy ownership+mode from the original coordination dir to the ext4 root.
                 sh_root(
                     node,
                     (
-                        f"_coord_owner=$(stat -c '%u:%g' /var/lib/clickhouse/coordination 2>/dev/null || echo ''); "
-                        f"_coord_mode=$(stat -c '%a' /var/lib/clickhouse/coordination 2>/dev/null || echo ''); "
+                        f"_coord_owner=$(stat -c '%u:%g' /var/lib/datastore/coordination 2>/dev/null || echo ''); "
+                        f"_coord_mode=$(stat -c '%a' /var/lib/datastore/coordination 2>/dev/null || echo ''); "
                         f"[ -n \"$_coord_owner\" ] && chown \"$_coord_owner\" /mnt/{dm_name}/ 2>/dev/null || true; "
                         f"[ -n \"$_coord_mode\" ] && chmod \"$_coord_mode\" /mnt/{dm_name}/ 2>/dev/null || true"
                     ),
@@ -256,7 +256,7 @@ def dm_delay(node, ms=3):
             )
             sh_root_strict(
                 node,
-                f"mount --bind /mnt/{dm_name} /var/lib/clickhouse/coordination",
+                f"mount --bind /mnt/{dm_name} /var/lib/datastore/coordination",
                 timeout=30,
             )
             # Restart keeper with fresh fds pointing entirely at dm ext4.
@@ -281,7 +281,7 @@ def dm_delay(node, ms=3):
             # Wait for the process to actually exit so the kernel releases all dm-backed fds.
             sh(
                 node,
-                "for i in $(seq 40); do pidof clickhouse clickhouse-server 2>/dev/null || break; sleep 0.5; done; true",
+                "for i in $(seq 40); do pidof datastore datastore-server 2>/dev/null || break; sleep 0.5; done; true",
                 timeout=25,
             )
 
@@ -305,8 +305,8 @@ def dm_delay(node, ms=3):
             node,
             (
                 f"sync || true; "
-                f"umount /var/lib/clickhouse/coordination 2>/dev/null || umount -l /var/lib/clickhouse/coordination 2>/dev/null || true; "
-                f"mountpoint -q /var/lib/clickhouse/coordination && umount -l /var/lib/clickhouse/coordination 2>/dev/null || true; "
+                f"umount /var/lib/datastore/coordination 2>/dev/null || umount -l /var/lib/datastore/coordination 2>/dev/null || true; "
+                f"mountpoint -q /var/lib/datastore/coordination && umount -l /var/lib/datastore/coordination 2>/dev/null || true; "
                 f"umount /mnt/{dm_name} 2>/dev/null || umount -l /mnt/{dm_name} 2>/dev/null || true; "
                 f"dmsetup remove --retry -f {dm_name} || true"
             ),
@@ -329,7 +329,7 @@ def dm_delay(node, ms=3):
         #  - Clear destination first: cp -a does not delete stale files.  Leftover
         #    RocksDB SST/WAL files from before the fault confuse keeper on restart.
         if backend_dev and not ram:
-            sh_root_strict(node, f"mkdir -p /var/lib/clickhouse/coordination /mnt/{dm_name}", timeout=10)
+            sh_root_strict(node, f"mkdir -p /var/lib/datastore/coordination /mnt/{dm_name}", timeout=10)
             # Strict mount: a silently-failed mount means cp reads an empty
             # mountpoint and restores an empty coordination directory, causing
             # keeper to fail to start without any visible error.
@@ -338,21 +338,21 @@ def dm_delay(node, ms=3):
             print(f"[dm_delay][copyback][{node.name}] loop files: {(r_ls or {}).get('out', '')!r}")
             # Clear stale pre-fault files, then copy back — both strict so silent
             # failure cannot silently leave an empty coordination directory.
-            sh_root_strict(node, f"find /var/lib/clickhouse/coordination -mindepth 1 -delete", timeout=30)
-            sh_root_strict(node, f"cp -a /mnt/{dm_name}/. /var/lib/clickhouse/coordination/", timeout=60)
-            r_coord = sh_root(node, f"ls -la /var/lib/clickhouse/coordination/ 2>&1", timeout=10)
+            sh_root_strict(node, f"find /var/lib/datastore/coordination -mindepth 1 -delete", timeout=30)
+            sh_root_strict(node, f"cp -a /mnt/{dm_name}/. /var/lib/datastore/coordination/", timeout=60)
+            r_coord = sh_root(node, f"ls -la /var/lib/datastore/coordination/ 2>&1", timeout=10)
             print(f"[dm_delay][copyback][{node.name}] coord files: {(r_coord or {}).get('out', '')!r}")
             sh_root(node, f"sync || true; umount /mnt/{dm_name} 2>/dev/null || true", timeout=30)
-            # Restore coordination dir ownership from parent (/var/lib/clickhouse)
+            # Restore coordination dir ownership from parent (/var/lib/datastore)
             # in case it was recreated as root:root during cleanup teardown.
             sh_root(
                 node,
-                f"chown $(stat -c '%u:%g' /var/lib/clickhouse 2>/dev/null || echo '0:0') "
-                f"  /var/lib/clickhouse/coordination 2>/dev/null || true",
+                f"chown $(stat -c '%u:%g' /var/lib/datastore 2>/dev/null || echo '0:0') "
+                f"  /var/lib/datastore/coordination 2>/dev/null || true",
                 timeout=10,
             )
         else:
-            sh_root(node, "mkdir -p /var/lib/clickhouse/coordination || true", timeout=10)
+            sh_root(node, "mkdir -p /var/lib/datastore/coordination || true", timeout=10)
 
         if backend_dev is not None:
             _restart_clickhouse(node)

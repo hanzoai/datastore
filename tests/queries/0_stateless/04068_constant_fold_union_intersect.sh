@@ -18,9 +18,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # generate an action name from the source expression of the constant-folded
 # INTERSECT ALL (a UNION node). Without the fix, this throws
 # "Invalid action query tree node".
-$CLICKHOUSE_CLIENT --query_kind=secondary_query -q "SELECT (SELECT 1 INTERSECT ALL SELECT 1)"
-$CLICKHOUSE_CLIENT --query_kind=secondary_query -q "SELECT (SELECT min(*) FROM (SELECT number FROM numbers(10)) INTERSECT ALL SELECT min(*) FROM (SELECT number FROM numbers(10)))"
+$DATASTORE_CLIENT --query_kind=secondary_query -q "SELECT (SELECT 1 INTERSECT ALL SELECT 1)"
+$DATASTORE_CLIENT --query_kind=secondary_query -q "SELECT (SELECT min(*) FROM (SELECT number FROM numbers(10)) INTERSECT ALL SELECT min(*) FROM (SELECT number FROM numbers(10)))"
 
 # Also test that the queries work normally (initial_query context).
-$CLICKHOUSE_CLIENT -q "SELECT (SELECT 1 INTERSECT ALL SELECT 1)"
-$CLICKHOUSE_CLIENT -q "SELECT min(*) FROM (SELECT number FROM numbers(10)) INTERSECT ALL SELECT min(*) FROM (SELECT number FROM numbers(10))"
+$DATASTORE_CLIENT -q "SELECT (SELECT 1 INTERSECT ALL SELECT 1)"
+$DATASTORE_CLIENT -q "SELECT min(*) FROM (SELECT number FROM numbers(10)) INTERSECT ALL SELECT min(*) FROM (SELECT number FROM numbers(10))"

@@ -1,4 +1,4 @@
--- Test for issue: https://github.com/ClickHouse/ClickHouse/issues/97489
+-- Test for issue: https://github.com/ClickHouse/Datastore/issues/97489
 -- NOT_FOUND_COLUMN_IN_BLOCK when using UNION ALL with CTEs and a table with skip indexes.
 -- The outer WHERE pushes a constant-false predicate into the Medians UNION ALL branch.
 -- filterPartsByVirtualColumns must not ignore constant-false predicates. Instead, it should

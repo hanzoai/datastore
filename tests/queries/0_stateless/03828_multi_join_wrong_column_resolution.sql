@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/36702
+-- https://github.com/ClickHouse/Datastore/issues/36702
 
 -- Two tables joined: correctly raises error for non-existent column q2.b
 SELECT

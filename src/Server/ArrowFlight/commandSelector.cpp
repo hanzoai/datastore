@@ -124,7 +124,7 @@ static arrow::Result<std::shared_ptr<arrow::Table>> commandGetSqlInfo(const arro
 
         std::unordered_map<SqlInfo, std::function<arrow::Status()>> selector
         {
-            SQL_INFO_SELECTOR(SqlInfo::FLIGHT_SQL_SERVER_NAME, builder_string_append, "ClickHouse"),
+            SQL_INFO_SELECTOR(SqlInfo::FLIGHT_SQL_SERVER_NAME, builder_string_append, "Datastore"),
             SQL_INFO_SELECTOR(SqlInfo::FLIGHT_SQL_SERVER_VERSION, builder_string_append, VERSION_STRING),
             SQL_INFO_SELECTOR(SqlInfo::FLIGHT_SQL_SERVER_ARROW_VERSION, builder_string_append, ARROW_VERSION_STRING),
             SQL_INFO_SELECTOR(SqlInfo::FLIGHT_SQL_SERVER_READ_ONLY, builder_boolean_append, false),

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/44414
+-- https://github.com/ClickHouse/Datastore/issues/44414
 SET enable_analyzer=1;
 DROP TABLE IF EXISTS alias_bug;
 DROP TABLE IF EXISTS alias_bug_dist;

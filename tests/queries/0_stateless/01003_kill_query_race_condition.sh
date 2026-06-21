@@ -12,7 +12,7 @@ function thread1()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query_id=hello_01003 --query "SELECT count() FROM numbers(1000000000)" --format Null;
+        $DATASTORE_CLIENT --query_id=hello_01003 --query "SELECT count() FROM numbers(1000000000)" --format Null;
     done
 }
 
@@ -21,7 +21,7 @@ function thread2()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "KILL QUERY WHERE query_id = 'hello_01003'" --format Null;
+        $DATASTORE_CLIENT --query "KILL QUERY WHERE query_id = 'hello_01003'" --format Null;
         sleep 0.$RANDOM
     done
 }
@@ -31,8 +31,8 @@ function thread3()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "SHOW PROCESSLIST" --format Null;
-        $CLICKHOUSE_CLIENT --query "SELECT * FROM system.processes" --format Null;
+        $DATASTORE_CLIENT --query "SHOW PROCESSLIST" --format Null;
+        $DATASTORE_CLIENT --query "SELECT * FROM system.processes" --format Null;
     done
 }
 

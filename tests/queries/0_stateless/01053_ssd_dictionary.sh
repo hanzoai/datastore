@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Tags: no-parallel, no-fasttest
-# Tag no-fasttest: this test mistakenly requires access to /var/lib/clickhouse -- can't run this locally, disabled
+# Tag no-fasttest: this test mistakenly requires access to /var/lib/datastore -- can't run this locally, disabled
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --allow_deprecated_database_ordinary=1 --query="
-  DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE_1};
+$DATASTORE_CLIENT --allow_deprecated_database_ordinary=1 --query="
+  DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_1};
 
-  CREATE DATABASE ${CLICKHOUSE_DATABASE_1};
+  CREATE DATABASE ${DATASTORE_DATABASE_1};
 
-  DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE_1}.table_for_dict;
+  DROP TABLE IF EXISTS ${DATASTORE_DATABASE_1}.table_for_dict;
 
-  CREATE TABLE ${CLICKHOUSE_DATABASE_1}.table_for_dict
+  CREATE TABLE ${DATASTORE_DATABASE_1}.table_for_dict
   (
     id UInt64,
     a UInt64,
@@ -23,15 +23,15 @@ $CLICKHOUSE_CLIENT --allow_deprecated_database_ordinary=1 --query="
   ENGINE = MergeTree()
   ORDER BY id;
 
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.table_for_dict VALUES (1, 100, -100, 'clickhouse'), (2, 3, 4, 'database'), (5, 6, 7, 'columns'), (10, 9, 8, '');
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.table_for_dict SELECT number, 0, -1, 'a' FROM system.numbers WHERE number NOT IN (1, 2, 5, 10) LIMIT 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.table_for_dict SELECT number, 0, -1, 'b' FROM system.numbers WHERE number NOT IN (1, 2, 5, 10) LIMIT 370, 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.table_for_dict SELECT number, 0, -1, 'c' FROM system.numbers WHERE number NOT IN (1, 2, 5, 10) LIMIT 700, 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.table_for_dict VALUES (1, 100, -100, 'datastore'), (2, 3, 4, 'database'), (5, 6, 7, 'columns'), (10, 9, 8, '');
+  INSERT INTO ${DATASTORE_DATABASE_1}.table_for_dict SELECT number, 0, -1, 'a' FROM system.numbers WHERE number NOT IN (1, 2, 5, 10) LIMIT 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.table_for_dict SELECT number, 0, -1, 'b' FROM system.numbers WHERE number NOT IN (1, 2, 5, 10) LIMIT 370, 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.table_for_dict SELECT number, 0, -1, 'c' FROM system.numbers WHERE number NOT IN (1, 2, 5, 10) LIMIT 700, 370;
 
-  DROP DICTIONARY IF EXISTS ${CLICKHOUSE_DATABASE_1}.ssd_dict;
+  DROP DICTIONARY IF EXISTS ${DATASTORE_DATABASE_1}.ssd_dict;
 
   -- Probably we need rewrite it to integration test
-  CREATE DICTIONARY ${CLICKHOUSE_DATABASE_1}.ssd_dict
+  CREATE DICTIONARY ${DATASTORE_DATABASE_1}.ssd_dict
   (
       id UInt64,
       a UInt64 DEFAULT 0,
@@ -39,40 +39,40 @@ $CLICKHOUSE_CLIENT --allow_deprecated_database_ordinary=1 --query="
       c String DEFAULT 'none'
   )
   PRIMARY KEY id
-  SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB '${CLICKHOUSE_DATABASE_1}'))
+  SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB '${DATASTORE_DATABASE_1}'))
   LIFETIME(MIN 1000 MAX 2000)
   LAYOUT(SSD_CACHE(FILE_SIZE 8192 PATH '$USER_FILES_PATH/0d'));
 
   SELECT 'TEST_SMALL';
-  SELECT dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(1));
-  SELECT dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(4));
-  SELECT dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(5));
-  SELECT dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(6));
-  SELECT dictGetString('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'c', toUInt64(2));
-  SELECT dictGetString('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'c', toUInt64(3));
+  SELECT dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(1));
+  SELECT dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(4));
+  SELECT dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(5));
+  SELECT dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(6));
+  SELECT dictGetString('${DATASTORE_DATABASE_1}.ssd_dict', 'c', toUInt64(2));
+  SELECT dictGetString('${DATASTORE_DATABASE_1}.ssd_dict', 'c', toUInt64(3));
 
-  SELECT * FROM ${CLICKHOUSE_DATABASE_1}.ssd_dict ORDER BY id;
-  DROP DICTIONARY ${CLICKHOUSE_DATABASE_1}.ssd_dict;
+  SELECT * FROM ${DATASTORE_DATABASE_1}.ssd_dict ORDER BY id;
+  DROP DICTIONARY ${DATASTORE_DATABASE_1}.ssd_dict;
 
-  DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE_1}.keys_table;
+  DROP TABLE IF EXISTS ${DATASTORE_DATABASE_1}.keys_table;
 
-  CREATE TABLE ${CLICKHOUSE_DATABASE_1}.keys_table
+  CREATE TABLE ${DATASTORE_DATABASE_1}.keys_table
   (
     id UInt64
   )
   ENGINE = StripeLog();
 
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (1);
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table SELECT 11 + intHash64(number) % 1200 FROM system.numbers LIMIT 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (2);
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table SELECT 11 + intHash64(number) % 1200 FROM system.numbers LIMIT 370, 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (5);
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table SELECT 11 + intHash64(number) % 1200 FROM system.numbers LIMIT 700, 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (10);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (1);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table SELECT 11 + intHash64(number) % 1200 FROM system.numbers LIMIT 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (2);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table SELECT 11 + intHash64(number) % 1200 FROM system.numbers LIMIT 370, 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (5);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table SELECT 11 + intHash64(number) % 1200 FROM system.numbers LIMIT 700, 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (10);
 
-  DROP DICTIONARY IF EXISTS ${CLICKHOUSE_DATABASE_1}.ssd_dict;
+  DROP DICTIONARY IF EXISTS ${DATASTORE_DATABASE_1}.ssd_dict;
 
-  CREATE DICTIONARY ${CLICKHOUSE_DATABASE_1}.ssd_dict
+  CREATE DICTIONARY ${DATASTORE_DATABASE_1}.ssd_dict
   (
       id UInt64,
       a UInt64 DEFAULT 0,
@@ -80,76 +80,76 @@ $CLICKHOUSE_CLIENT --allow_deprecated_database_ordinary=1 --query="
       c String DEFAULT 'none'
   )
   PRIMARY KEY id
-  SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB '${CLICKHOUSE_DATABASE_1}'))
+  SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB '${DATASTORE_DATABASE_1}'))
   LIFETIME(MIN 1000 MAX 2000)
   LAYOUT(SSD_CACHE(FILE_SIZE 8192 PATH '$USER_FILES_PATH/1d' BLOCK_SIZE 512 WRITE_BUFFER_SIZE 4096));
 
   SELECT 'UPDATE DICTIONARY';
-  SELECT sum(dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${CLICKHOUSE_DATABASE_1}.keys_table;
+  SELECT sum(dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${DATASTORE_DATABASE_1}.keys_table;
 
   SELECT 'VALUE FROM DISK';
-  SELECT dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(1));
+  SELECT dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(1));
 
-  SELECT dictGetString('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'c', toUInt64(1));
+  SELECT dictGetString('${DATASTORE_DATABASE_1}.ssd_dict', 'c', toUInt64(1));
 
   SELECT 'VALUE FROM RAM BUFFER';
-  SELECT dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(10));
-  SELECT dictGetString('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'c', toUInt64(10));
+  SELECT dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(10));
+  SELECT dictGetString('${DATASTORE_DATABASE_1}.ssd_dict', 'c', toUInt64(10));
 
   SELECT 'VALUES FROM DISK AND RAM BUFFER';
-  SELECT sum(dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${CLICKHOUSE_DATABASE_1}.keys_table;
+  SELECT sum(dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${DATASTORE_DATABASE_1}.keys_table;
 
   SELECT 'HAS';
-  SELECT count() FROM ${CLICKHOUSE_DATABASE_1}.keys_table WHERE dictHas('${CLICKHOUSE_DATABASE_1}.ssd_dict', toUInt64(id));
+  SELECT count() FROM ${DATASTORE_DATABASE_1}.keys_table WHERE dictHas('${DATASTORE_DATABASE_1}.ssd_dict', toUInt64(id));
 
   SELECT 'VALUES NOT FROM TABLE';
 
-  SELECT dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(1000000)), dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(1000000)), dictGetString('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'c', toUInt64(1000000));
-  SELECT dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(1000000)), dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(1000000)), dictGetString('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'c', toUInt64(1000000));
+  SELECT dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(1000000)), dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(1000000)), dictGetString('${DATASTORE_DATABASE_1}.ssd_dict', 'c', toUInt64(1000000));
+  SELECT dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(1000000)), dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(1000000)), dictGetString('${DATASTORE_DATABASE_1}.ssd_dict', 'c', toUInt64(1000000));
 
   SELECT 'DUPLICATE KEYS';
-  SELECT arrayJoin([1, 2, 3, 3, 2, 1]) AS id, dictGetInt32('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'b', toUInt64(id));
+  SELECT arrayJoin([1, 2, 3, 3, 2, 1]) AS id, dictGetInt32('${DATASTORE_DATABASE_1}.ssd_dict', 'b', toUInt64(id));
   --SELECT
-  DROP DICTIONARY IF EXISTS ${CLICKHOUSE_DATABASE_1}.ssd_dict;
+  DROP DICTIONARY IF EXISTS ${DATASTORE_DATABASE_1}.ssd_dict;
 
-  DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE_1}.keys_table;
+  DROP TABLE IF EXISTS ${DATASTORE_DATABASE_1}.keys_table;
 
-  CREATE TABLE ${CLICKHOUSE_DATABASE_1}.keys_table
+  CREATE TABLE ${DATASTORE_DATABASE_1}.keys_table
   (
     id UInt64
   )
   ENGINE = MergeTree()
   ORDER BY id;
 
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (1);
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table SELECT intHash64(number) FROM system.numbers LIMIT 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (2);
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table SELECT intHash64(number) FROM system.numbers LIMIT 370, 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (5);
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table SELECT intHash64(number) FROM system.numbers LIMIT 700, 370;
-  INSERT INTO ${CLICKHOUSE_DATABASE_1}.keys_table VALUES (10);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (1);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table SELECT intHash64(number) FROM system.numbers LIMIT 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (2);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table SELECT intHash64(number) FROM system.numbers LIMIT 370, 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (5);
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table SELECT intHash64(number) FROM system.numbers LIMIT 700, 370;
+  INSERT INTO ${DATASTORE_DATABASE_1}.keys_table VALUES (10);
 
-  OPTIMIZE TABLE ${CLICKHOUSE_DATABASE_1}.keys_table;
+  OPTIMIZE TABLE ${DATASTORE_DATABASE_1}.keys_table;
 
-  CREATE DICTIONARY ${CLICKHOUSE_DATABASE_1}.ssd_dict
+  CREATE DICTIONARY ${DATASTORE_DATABASE_1}.ssd_dict
   (
       id UInt64,
       a UInt64 DEFAULT 0,
       b Int32 DEFAULT -1
   )
   PRIMARY KEY id
-  SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB '${CLICKHOUSE_DATABASE_1}'))
+  SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'table_for_dict' PASSWORD '' DB '${DATASTORE_DATABASE_1}'))
   LIFETIME(MIN 1000 MAX 2000)
   LAYOUT(SSD_CACHE(FILE_SIZE 8192 PATH '$USER_FILES_PATH/2d' BLOCK_SIZE 512 WRITE_BUFFER_SIZE 1024));
 
   SELECT 'UPDATE DICTIONARY (MT)';
-  SELECT sum(dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${CLICKHOUSE_DATABASE_1}.keys_table;
+  SELECT sum(dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${DATASTORE_DATABASE_1}.keys_table;
 
   SELECT 'VALUES FROM DISK AND RAM BUFFER (MT)';
-  SELECT sum(dictGetUInt64('${CLICKHOUSE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${CLICKHOUSE_DATABASE_1}.keys_table;
+  SELECT sum(dictGetUInt64('${DATASTORE_DATABASE_1}.ssd_dict', 'a', toUInt64(id))) FROM ${DATASTORE_DATABASE_1}.keys_table;
 
-  DROP DICTIONARY IF EXISTS ${CLICKHOUSE_DATABASE_1}.ssd_dict;
+  DROP DICTIONARY IF EXISTS ${DATASTORE_DATABASE_1}.ssd_dict;
 
-  DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE_1}.table_for_dict;
+  DROP TABLE IF EXISTS ${DATASTORE_DATABASE_1}.table_for_dict;
 
-  DROP DATABASE IF EXISTS ${CLICKHOUSE_DATABASE_1};"
+  DROP DATABASE IF EXISTS ${DATASTORE_DATABASE_1};"

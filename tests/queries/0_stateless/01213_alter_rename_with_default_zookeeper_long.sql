@@ -40,7 +40,7 @@ CREATE TABLE table_rename_with_ttl
   value1 String,
   value2 String TTL date1 + INTERVAL 500 MONTH
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_01213/table_rename_with_ttl', '1')
+ENGINE = ReplicatedMergeTree('/datastore/{database}/test_01213/table_rename_with_ttl', '1')
 ORDER BY tuple()
 TTL date2 + INTERVAL 500 MONTH;
 

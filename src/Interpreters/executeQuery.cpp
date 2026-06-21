@@ -70,7 +70,7 @@
 #include <QueryPipeline/printPipeline.h>
 #include <IO/Progress.h>
 #include <Parsers/ASTIdentifier_fwd.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Common/Licensing/LicenseChecker.h>
 #endif
 #include <Core/ServerSettings.h>
@@ -580,7 +580,7 @@ static ResultProgress flushQueryProgress(const QueryPipeline & pipeline, bool pu
         res.result_bytes = progress_out.written_bytes;
     }
 
-    /// Report same memory_usage in X-ClickHouse-Summary as in query_log
+    /// Report same memory_usage in X-Datastore-Summary as in query_log
     if (process_list_elem)
         res.memory_usage = std::max<Int64>(process_list_elem->getInfo().peak_memory_usage, 0);
 
@@ -714,19 +714,19 @@ void logQueryFinishImpl(
     if (query_span && query_span->isTraceEnabled())
     {
         query_span->addAttribute("db.statement", elem.query);
-        query_span->addAttribute("clickhouse.query_id", elem.client_info.current_query_id);
-        query_span->addAttribute("clickhouse.query_status", "QueryFinish");
-        query_span->addAttributeIfNotEmpty("clickhouse.tracestate", OpenTelemetry::CurrentContext().tracestate);
-        query_span->addAttributeIfNotZero("clickhouse.read_rows", elem.read_rows);
-        query_span->addAttributeIfNotZero("clickhouse.read_bytes", elem.read_bytes);
-        query_span->addAttributeIfNotZero("clickhouse.written_rows", elem.written_rows);
-        query_span->addAttributeIfNotZero("clickhouse.written_bytes", elem.written_bytes);
-        query_span->addAttributeIfNotZero("clickhouse.memory_usage", elem.memory_usage);
+        query_span->addAttribute("datastore.query_id", elem.client_info.current_query_id);
+        query_span->addAttribute("datastore.query_status", "QueryFinish");
+        query_span->addAttributeIfNotEmpty("datastore.tracestate", OpenTelemetry::CurrentContext().tracestate);
+        query_span->addAttributeIfNotZero("datastore.read_rows", elem.read_rows);
+        query_span->addAttributeIfNotZero("datastore.read_bytes", elem.read_bytes);
+        query_span->addAttributeIfNotZero("datastore.written_rows", elem.written_rows);
+        query_span->addAttributeIfNotZero("datastore.written_bytes", elem.written_bytes);
+        query_span->addAttributeIfNotZero("datastore.memory_usage", elem.memory_usage);
 
         if (context)
         {
             std::string user_name = context->getUserName();
-            query_span->addAttribute("clickhouse.user", user_name);
+            query_span->addAttribute("datastore.user", user_name);
         }
 
         if (settings[Setting::log_query_settings])
@@ -734,7 +734,7 @@ void logQueryFinishImpl(
             auto changes = settings.changes();
             for (const auto & change : changes)
             {
-                query_span->addAttribute(fmt::format("clickhouse.setting.{}", change.name), convertFieldToString(change.value));
+                query_span->addAttribute(fmt::format("datastore.setting.{}", change.name), convertFieldToString(change.value));
             }
         }
         query_span->finish(time);
@@ -847,9 +847,9 @@ void logQueryException(
     if (query_span)
     {
         query_span->addAttribute("db.statement", elem.query);
-        query_span->addAttribute("clickhouse.query_id", elem.client_info.current_query_id);
-        query_span->addAttribute("clickhouse.exception", elem.exception);
-        query_span->addAttribute("clickhouse.exception_code", elem.exception_code);
+        query_span->addAttribute("datastore.query_id", elem.client_info.current_query_id);
+        query_span->addAttribute("datastore.exception", elem.exception);
+        query_span->addAttribute("datastore.exception_code", elem.exception_code);
         query_span->finish(time_now);
     }
 }
@@ -979,10 +979,10 @@ void logExceptionBeforeStart(
 
     if (query_span)
     {
-        query_span->addAttribute("clickhouse.exception_code", elem.exception_code);
-        query_span->addAttribute("clickhouse.exception", elem.exception);
+        query_span->addAttribute("datastore.exception_code", elem.exception_code);
+        query_span->addAttribute("datastore.exception", elem.exception);
         query_span->addAttribute("db.statement", elem.query);
-        query_span->addAttribute("clickhouse.query_id", elem.client_info.current_query_id);
+        query_span->addAttribute("datastore.query_id", elem.client_info.current_query_id);
         query_span->finish(query_end_time);
     }
 }
@@ -1121,7 +1121,7 @@ static BlockIO executeQueryImpl(
     {
         // If we don't see an initial_query_start_time yet, initialize it to current time.
         // It's possible to have unset initial_query_start_time for non-initial queries. For
-        // example, the query is from an initiator that is running an old version of clickhouse.
+        // example, the query is from an initiator that is running an old version of datastore.
         // On the other hand, if it's initialized then take it as the start of the query
         context->setInitialQueryStartTime(query_start_time);
     }
@@ -1177,7 +1177,7 @@ static BlockIO executeQueryImpl(
             /// Pass through to `ParserPolyglotQuery` which handles SET queries
             /// internally (via the standard parser) even when the feature gate
             /// is off.  This lets users recover from misconfigured profiles
-            /// (e.g. `SET dialect = 'clickhouse'`) without being locked out.
+            /// (e.g. `SET dialect = 'datastore'`) without being locked out.
             ParserPolyglotQuery parser(
                 max_query_size,
                 settings[Setting::max_parser_depth],
@@ -2580,7 +2580,7 @@ void executeQuery(
     /// 1. `onFinish` is invoked after the transaction is committed.
     /// 2. When handling HTTP requests, in `HTTPHandler::processQuery`, there is `query_finish_callback` which is invoked before `onFinish`.
     /// It releases the session and finalizes the output. The client might use the same session to query other queries. Hence, the transaction must be committed before `query_finish_callback`.
-    /// Refer: https://github.com/ClickHouse/ClickHouse/issues/80428
+    /// Refer: https://github.com/ClickHouse/Datastore/issues/80428
     if (implicit_tcl_executor->transactionRunning())
         implicit_tcl_executor->commit(context);
 
@@ -2595,7 +2595,7 @@ void executeQuery(
     ///
     /// That way we have:
     /// - correct finish time of the query (regardless of how long does the query_finish_callback() takes)
-    /// - correct progress for HTTP (X-ClickHouse-Summary requires result_rows/result_bytes)
+    /// - correct progress for HTTP (X-Datastore-Summary requires result_rows/result_bytes)
     /// - correct NetworkSendElapsedMicroseconds/NetworkSendBytes in query_log
     const auto finish_time = std::chrono::system_clock::now();
     std::exception_ptr exception_ptr;

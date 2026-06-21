@@ -27,7 +27,7 @@ def started_cluster():
         node4.stop_clickhouse()
         node4.copy_file_to_container(
             join(CONFIG_DIR, "keeper4.xml"),
-            "/etc/clickhouse-server/config.d/keeper.xml",
+            "/etc/datastore-server/config.d/keeper.xml",
         )
 
         yield cluster
@@ -42,7 +42,7 @@ def started_cluster():
         cluster.shutdown()
 
 
-# can't use create_client as clickhouse-keeper-client 's reconfig doesn't support
+# can't use create_client as datastore-keeper-client 's reconfig doesn't support
 # joining and adding in single reconfig command, thus duplication
 # TODO myrrc this should be removed once keeper-client is updated
 

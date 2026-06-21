@@ -62,14 +62,14 @@ def test_login_as_dropped_user_xml():
                 "bash",
                 "-c",
                 """
-            cat > /etc/clickhouse-server/users.d/user_c.xml << EOF
-<clickhouse>
+            cat > /etc/datastore-server/users.d/user_c.xml << EOF
+<datastore>
     <users>
         <C>
             <no_password/>
         </C>
     </users>
-</clickhouse>
+</datastore>
 EOF""",
             ]
         )
@@ -79,7 +79,7 @@ EOF""",
         )
 
         instance.exec_in_container(
-            ["bash", "-c", "rm /etc/clickhouse-server/users.d/user_c.xml"]
+            ["bash", "-c", "rm /etc/datastore-server/users.d/user_c.xml"]
         )
         instance.query("SYSTEM RELOAD CONFIG")
 

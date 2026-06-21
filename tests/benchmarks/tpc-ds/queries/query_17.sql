@@ -1,4 +1,4 @@
--- Returns nan instead of NULL as stddev_samp is called on a single value: https://github.com/ClickHouse/ClickHouse/issues/94683
+-- Returns nan instead of NULL as stddev_samp is called on a single value: https://github.com/ClickHouse/Datastore/issues/94683
 
 SELECT
     i_item_id,

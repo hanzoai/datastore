@@ -242,7 +242,7 @@ def complete_hello_handshake(sock, tcp_protocol_version=54471):
 
 
 def send_packet_expect_rejection(node, packet):
-    """Send a raw packet to the ClickHouse native port and expect rejection.
+    """Send a raw packet to the Datastore native port and expect rejection.
 
     The server should close the connection or send an error response.
     Returns True if the connection was rejected (as expected).

@@ -9,7 +9,7 @@ in this scenario, causing DatabaseCatalog to retry the drop forever.
 After the fix, it calls removeSharedRecursive with keep_all_shared_data=true
 to safely clean up local metadata while preserving shared S3 objects.
 
-Regression test for https://github.com/ClickHouse/ClickHouse/issues/82676
+Regression test for https://github.com/ClickHouse/Datastore/issues/82676
 """
 
 import pytest

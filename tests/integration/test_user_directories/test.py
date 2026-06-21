@@ -19,8 +19,8 @@ def started_cluster():
             node.exec_in_container(
                 [
                     "cp",
-                    "/etc/clickhouse-server/users.xml",
-                    "/etc/clickhouse-server/users{}.xml".format(i),
+                    "/etc/datastore-server/users.xml",
+                    "/etc/datastore-server/users{}.xml".format(i),
                 ]
             )
 
@@ -33,7 +33,7 @@ def started_cluster():
 def test_old_style():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/old_style.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
     node.restart_clickhouse()
     assert node.query("SELECT * FROM system.user_directories") == TSV(
@@ -41,13 +41,13 @@ def test_old_style():
             [
                 "local_directory",
                 "local_directory",
-                '{"path":"\\\\/var\\\\/lib\\\\/clickhouse\\\\/access2\\\\/"}',
+                '{"path":"\\\\/var\\\\/lib\\\\/datastore\\\\/access2\\\\/"}',
                 1,
             ],
             [
                 "users_xml",
                 "users_xml",
-                '{"path":"\\\\/etc\\\\/clickhouse-server\\\\/users2.xml"}',
+                '{"path":"\\\\/etc\\\\/datastore-server\\\\/users2.xml"}',
                 2,
             ],
         ]
@@ -57,7 +57,7 @@ def test_old_style():
 def test_local_directories():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/local_directories.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
     node.restart_clickhouse()
     assert node.query("SELECT * FROM system.user_directories") == TSV(
@@ -65,19 +65,19 @@ def test_local_directories():
             [
                 "users_xml",
                 "users_xml",
-                '{"path":"\\\\/etc\\\\/clickhouse-server\\\\/users3.xml"}',
+                '{"path":"\\\\/etc\\\\/datastore-server\\\\/users3.xml"}',
                 1,
             ],
             [
                 "local_directory",
                 "local_directory",
-                '{"path":"\\\\/var\\\\/lib\\\\/clickhouse\\\\/access3\\\\/"}',
+                '{"path":"\\\\/var\\\\/lib\\\\/datastore\\\\/access3\\\\/"}',
                 2,
             ],
             [
                 "local directory (ro)",
                 "local_directory",
-                '{"path":"\\\\/var\\\\/lib\\\\/clickhouse\\\\/access3-ro\\\\/","readonly":true}',
+                '{"path":"\\\\/var\\\\/lib\\\\/datastore\\\\/access3-ro\\\\/","readonly":true}',
                 3,
             ],
         ]
@@ -87,7 +87,7 @@ def test_local_directories():
 def test_relative_path():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/relative_path.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
     node.restart_clickhouse()
     assert node.query("SELECT * FROM system.user_directories") == TSV(
@@ -95,7 +95,7 @@ def test_relative_path():
             [
                 "users_xml",
                 "users_xml",
-                '{"path":"\\\\/etc\\\\/clickhouse-server\\\\/users4.xml"}',
+                '{"path":"\\\\/etc\\\\/datastore-server\\\\/users4.xml"}',
                 1,
             ]
         ]
@@ -105,7 +105,7 @@ def test_relative_path():
 def test_memory():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/memory.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
     node.restart_clickhouse()
     assert node.query("SELECT * FROM system.user_directories") == TSV(
@@ -113,7 +113,7 @@ def test_memory():
             [
                 "users_xml",
                 "users_xml",
-                '{"path":"\\\\/etc\\\\/clickhouse-server\\\\/users5.xml"}',
+                '{"path":"\\\\/etc\\\\/datastore-server\\\\/users5.xml"}',
                 1,
             ],
             ["memory", "memory", "{}", 2],
@@ -124,7 +124,7 @@ def test_memory():
 def test_mixed_style():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/mixed_style.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
     node.restart_clickhouse()
     assert node.query("SELECT * FROM system.user_directories") == TSV(
@@ -132,19 +132,19 @@ def test_mixed_style():
             [
                 "local_directory",
                 "local_directory",
-                '{"path":"\\\\/var\\\\/lib\\\\/clickhouse\\\\/access6\\\\/"}',
+                '{"path":"\\\\/var\\\\/lib\\\\/datastore\\\\/access6\\\\/"}',
                 1,
             ],
             [
                 "users_xml",
                 "users_xml",
-                '{"path":"\\\\/etc\\\\/clickhouse-server\\\\/users6.xml"}',
+                '{"path":"\\\\/etc\\\\/datastore-server\\\\/users6.xml"}',
                 2,
             ],
             [
                 "local_directory",
                 "local_directory",
-                '{"path":"\\\\/var\\\\/lib\\\\/clickhouse\\\\/access6a\\\\/"}',
+                '{"path":"\\\\/var\\\\/lib\\\\/datastore\\\\/access6a\\\\/"}',
                 3,
             ],
             ["memory", "memory", "{}", 4],
@@ -155,7 +155,7 @@ def test_mixed_style():
 def test_duplicates():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/duplicates.xml"),
-        "/etc/clickhouse-server/config.d/z.xml",
+        "/etc/datastore-server/config.d/z.xml",
     )
     node.restart_clickhouse()
     assert node.query("SELECT * FROM system.user_directories") == TSV(
@@ -163,13 +163,13 @@ def test_duplicates():
             [
                 "local_directory",
                 "local_directory",
-                '{"path":"\\\\/var\\\\/lib\\\\/clickhouse\\\\/access7\\\\/"}',
+                '{"path":"\\\\/var\\\\/lib\\\\/datastore\\\\/access7\\\\/"}',
                 1,
             ],
             [
                 "users_xml",
                 "users_xml",
-                '{"path":"\\\\/etc\\\\/clickhouse-server\\\\/users7.xml"}',
+                '{"path":"\\\\/etc\\\\/datastore-server\\\\/users7.xml"}',
                 2,
             ],
         ]

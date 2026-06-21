@@ -47,7 +47,7 @@ def test_move_partition_to_disk_on_cluster(start_cluster):
         node.query(
             sql="CREATE TABLE test_local_table"
             "(x UInt64) "
-            "ENGINE=ReplicatedMergeTree('/clickhouse/tables/test_local_table', '{replica}') "
+            "ENGINE=ReplicatedMergeTree('/datastore/tables/test_local_table', '{replica}') "
             "ORDER BY tuple()"
             "SETTINGS storage_policy = 'jbod_with_external', temporary_directories_lifetime=1;",
         )

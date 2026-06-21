@@ -11,20 +11,20 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # For example this logical error: Invalid number of rows in Chunk  Int32(size = 5) Tuple(size = 0) column Tuple() at position 1: expected 5, got 0
 # was triggered when there was another column in addition to the empty tuple. This test covers that case.
 
-FILE=03277_$CLICKHOUSE_DATABASE
+FILE=03277_$DATASTORE_DATABASE
 
 # With schema inference.
 for format in Native TSV CSV TSKV JSON JSONCompact JSONEachRow JSONObjectEachRow JSONCompactEachRow JSONColumns JSONCompactColumns JSONColumnsWithMetadata ORC Arrow
 do
   echo $format
-  $CLICKHOUSE_LOCAL -q "
+  $DATASTORE_LOCAL -q "
     insert into function file('$FILE', '$format') select number, () from numbers(5) settings engine_file_truncate_on_insert=1;
     select * from file('$FILE', '$format');"
 done
 
 # Picky about column names.
 echo Avro
-$CLICKHOUSE_LOCAL -q "
+$DATASTORE_LOCAL -q "
   insert into function file('$FILE', 'Avro') select number as x, () as y from numbers(5) settings engine_file_truncate_on_insert=1;
   select * from file('$FILE', 'Avro');"
 
@@ -32,13 +32,13 @@ $CLICKHOUSE_LOCAL -q "
 for format in RowBinary Values BSONEachRow MsgPack Native TSV CSV TSKV JSON JSONCompact JSONEachRow JSONObjectEachRow JSONCompactEachRow JSONColumns JSONCompactColumns JSONColumnsWithMetadata ORC Arrow
 do
   echo $format
-  $CLICKHOUSE_LOCAL -q "
+  $DATASTORE_LOCAL -q "
     insert into function file('$FILE', '$format', 'x UInt64, y Tuple()') select number as x, () as y from numbers(5) settings engine_file_truncate_on_insert=1;
     select * from file('$FILE', '$format', 'x UInt64, y Tuple()');"
 done
 
 # Formats that don't support empty tuples/multiple columns.
-$CLICKHOUSE_LOCAL -q "
+$DATASTORE_LOCAL -q "
   insert into function file('$FILE', 'Parquet') select number, () from numbers(5) settings engine_file_truncate_on_insert=1; -- {serverError BAD_ARGUMENTS}
   insert into function file('$FILE', 'Npy') select number, () from numbers(5) settings engine_file_truncate_on_insert=1; -- {serverError TOO_MANY_COLUMNS}
   insert into function file('$FILE', 'CapnProto', 'x UInt64, y Tuple()') select number as x, () as y from numbers(5) settings engine_file_truncate_on_insert=1; -- {serverError CAPN_PROTO_BAD_CAST}

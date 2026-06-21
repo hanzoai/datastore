@@ -1,5 +1,5 @@
 -- Projections should use ReadType: InOrder when ORDER BY matches projection's sorting key.
--- Previously, ReadType would be Default (https://github.com/ClickHouse/ClickHouse/issues/89453)
+-- Previously, ReadType would be Default (https://github.com/ClickHouse/Datastore/issues/89453)
 -- Tags: no-random-settings
 
 SET optimize_read_in_order = 1, force_optimize_projection = 1;

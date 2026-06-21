@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
      <remote_servers>
         <test_shard_names_incorrect_empty_name>
             <node>
@@ -8,4 +8,4 @@
             </node>
         </test_shard_names_incorrect_empty_name>
      </remote_servers>
- </clickhouse>
+ </datastore>

@@ -62,7 +62,7 @@ from helpers.test_tools import TSV
 from helpers.spark_tools import ResilientSparkSession, write_spark_log_config
 
 
-SCRIPT_DIR = "/var/lib/clickhouse/user_files" + os.path.join(
+SCRIPT_DIR = "/var/lib/datastore/user_files" + os.path.join(
     os.path.dirname(os.path.realpath(__file__))
 )
 cluster = ClickHouseCluster(__file__, with_spark=True)
@@ -82,7 +82,7 @@ def get_spark(log_dir=None):
         )
         .config(
             "spark.sql.catalog.spark_catalog.warehouse",
-            "/var/lib/clickhouse/user_files/test_storage_delta",
+            "/var/lib/datastore/user_files/test_storage_delta",
         )
         .config("spark.driver.memory", "8g")
         .config("spark.executor.memory", "8g")
@@ -172,7 +172,7 @@ def started_cluster():
             ],
             user_configs=["configs/users.d/users.xml"],
             with_installed_binary=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="25.3.3.42",
             with_minio=True,
             with_azurite=True,
@@ -841,7 +841,7 @@ def test_types(started_cluster, use_delta_kernel):
 def test_varchar_char_types(started_cluster, use_delta_kernel):
     """
     VARCHAR(n) and CHAR(n) are valid Delta Lake column types emitted by Spark/Databricks
-    when tables originate from relational databases. ClickHouse must map them to String.
+    when tables originate from relational databases. Datastore must map them to String.
     """
     instance = get_node(started_cluster, use_delta_kernel)
     TABLE_NAME = randomize_table_name("test_varchar_char_types")
@@ -1565,10 +1565,10 @@ def test_replicated_database_and_unavailable_s3(started_cluster, use_delta_kerne
         minio_client.make_bucket(bucket)
 
     node1.query(
-        f"CREATE DATABASE {DB_NAME} ENGINE=Replicated('/clickhouse/databases/{DB_NAME}', 'shard1', 'node1')"
+        f"CREATE DATABASE {DB_NAME} ENGINE=Replicated('/datastore/databases/{DB_NAME}', 'shard1', 'node1')"
     )
     node2.query(
-        f"CREATE DATABASE {DB_NAME} ENGINE=Replicated('/clickhouse/databases/{DB_NAME}', 'shard1', 'node2')"
+        f"CREATE DATABASE {DB_NAME} ENGINE=Replicated('/datastore/databases/{DB_NAME}', 'shard1', 'node2')"
     )
 
     parquet_data_path = create_initial_data_file(
@@ -1639,7 +1639,7 @@ def test_replicated_database_and_unavailable_s3(started_cluster, use_delta_kerne
             f"select name from system.tables where database = '{DB_NAME}'"
         )
 
-        replica_path = f"/clickhouse/databases/{DB_NAME}/replicas/shard1|node2"
+        replica_path = f"/datastore/databases/{DB_NAME}/replicas/shard1|node2"
         zk = started_cluster.get_kazoo_client("zoo1")
         zk.set(replica_path + "/digest", "123456".encode())
 
@@ -2817,7 +2817,7 @@ def test_join_with_distributed(started_cluster):
     table_function = f"deltaLake('http://{started_cluster.minio_ip}:{started_cluster.minio_port}/{bucket}/{result_file}/', 'minio', '{minio_secret_key}')"
 
     instance.query(
-        f"create table {clickhouse_table_name} on cluster cluster (id UInt8, val char) engine = ReplicatedMergeTree('/clickhouse/tables/{{shard}}/{clickhouse_table_name}', '{{replica}}') order by id"
+        f"create table {clickhouse_table_name} on cluster cluster (id UInt8, val char) engine = ReplicatedMergeTree('/datastore/tables/{{shard}}/{clickhouse_table_name}', '{{replica}}') order by id"
     )
     instance.query(
         f"create table {clickhouse_table_name}_dist on cluster cluster AS {clickhouse_table_name} engine = Distributed(cluster, default, {clickhouse_table_name}, rand())"
@@ -3602,7 +3602,7 @@ def test_writes_spark_compatibility(started_cluster):
     minio_client = started_cluster.minio_client
     bucket = started_cluster.minio_bucket
     table_name = randomize_table_name("test_writes")
-    result_file = f"/var/lib/clickhouse/user_files/{table_name}_data"
+    result_file = f"/var/lib/datastore/user_files/{table_name}_data"
 
     schema = pa.schema([("id", pa.int32()), ("name", pa.string())])
     empty_arrays = [pa.array([], type=pa.int32()), pa.array([], type=pa.string())]
@@ -3680,7 +3680,7 @@ def test_write_limits(started_cluster, partitioned, limit_enabled):
     minio_client = started_cluster.minio_client
     bucket = started_cluster.minio_bucket
     table_name = randomize_table_name("test_write_limits")
-    result_file = f"/var/lib/clickhouse/user_files/{table_name}_data"
+    result_file = f"/var/lib/datastore/user_files/{table_name}_data"
 
     schema = pa.schema([("id", pa.int32(), False), ("name", pa.string(), False)])
     empty_arrays = [pa.array([], type=pa.int32()), pa.array([], type=pa.string())]
@@ -3882,7 +3882,7 @@ def test_subcolumns_2(started_cluster, column_mapping):
     bucket = started_cluster.minio_bucket
     table_name = randomize_table_name("test_write_column_order")
     spark = started_cluster.spark_session
-    path = f"/var/lib/clickhouse/user_files/{table_name}"
+    path = f"/var/lib/datastore/user_files/{table_name}"
 
     if column_mapping == "name":
         table_properties = "'delta.minReaderVersion' = '2', 'delta.minWriterVersion' = '5', 'delta.columnMapping.mode' = 'name'"
@@ -3947,7 +3947,7 @@ def test_write_column_order(started_cluster):
     minio_client = started_cluster.minio_client
     bucket = started_cluster.minio_bucket
     table_name = randomize_table_name("test_write_column_order")
-    result_file = f"/var/lib/clickhouse/user_files/{table_name}_data"
+    result_file = f"/var/lib/datastore/user_files/{table_name}_data"
     schema = pa.schema([("c1", pa.int32(), False), ("c0", pa.string(), False)])
     empty_arrays = [pa.array([], type=pa.int32()), pa.array([], type=pa.string())]
     write_deltalake(
@@ -3983,7 +3983,7 @@ def test_type_from_storage_def(started_cluster, column_mapping):
     instance = started_cluster.instances["node1"]
     table_name = randomize_table_name("test_types_2")
     spark = started_cluster.spark_session
-    path = f"/var/lib/clickhouse/user_files/{table_name}"
+    path = f"/var/lib/datastore/user_files/{table_name}"
 
     spark_schema = StructType(
         [
@@ -4210,10 +4210,10 @@ deltaLake{suffix}({cluster}
 
 @pytest.mark.parametrize("cluster", [False, True])
 def test_partition_columns_3(started_cluster, cluster):
-    """Test for bug https://github.com/ClickHouse/ClickHouse/issues/95526
+    """Test for bug https://github.com/ClickHouse/Datastore/issues/95526
 
     Reproduces issue where partition column values become incorrect when inserting
-    from DeltaLake into ClickHouse with many columns and type conversions.
+    from DeltaLake into Datastore with many columns and type conversions.
     """
     node = started_cluster.instances["node1"]
     table_name = randomize_table_name("test_partition_columns_jumbled")
@@ -4775,7 +4775,7 @@ def test_struct_dotted_field_names(started_cluster):
     instance = started_cluster.instances["node1"]
     spark = started_cluster.spark_session
     table_name = randomize_table_name("test_struct_dotted_field_names")
-    path = f"/var/lib/clickhouse/user_files/{table_name}"
+    path = f"/var/lib/datastore/user_files/{table_name}"
 
     # ── Table 1: column mapping "name" mode ──────────────────────────────────────
     spark.sql(
@@ -4850,7 +4850,7 @@ def test_struct_dotted_field_names(started_cluster):
 
     # ── Table 2: no column mapping (default) ─────────────────────────────────────
     table_name2 = randomize_table_name("test_struct_dotted_field_names_no_cm")
-    path2 = f"/var/lib/clickhouse/user_files/{table_name2}"
+    path2 = f"/var/lib/datastore/user_files/{table_name2}"
 
     spark.sql(
         f"""
@@ -5150,7 +5150,7 @@ def test_insert_select_from_cluster_with_partition_pruning(started_cluster, allo
     total = int(node.query(f"SELECT count() FROM {table_function}"))
     assert total == 15, f"Expected 15 total rows, got {total}"
 
-    zk_path = f"/clickhouse/tables/{{shard}}/{table_name}_dst"
+    zk_path = f"/datastore/tables/{{shard}}/{table_name}_dst"
     node.query(
         f"""
         CREATE TABLE {table_name}_dst ON CLUSTER cluster
@@ -5199,7 +5199,7 @@ def test_insert_select_from_cluster_with_partition_pruning(started_cluster, allo
     assert pruned >= 2
     node.query(f"DROP TABLE IF EXISTS {table_name}_dst ON CLUSTER cluster")
     table_name2 = randomize_table_name("test_insert_select_cluster_pruning_virt")
-    zk_path2 = f"/clickhouse/tables/{{shard}}/{table_name2}_dst"
+    zk_path2 = f"/datastore/tables/{{shard}}/{table_name2}_dst"
     query_id = f"{table_name2}-insert-{uuid.uuid4()}"
 
     node.query(

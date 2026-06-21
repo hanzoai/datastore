@@ -49,7 +49,7 @@ The `remote` table function can be useful in the following cases:
 
 - One-time data migration from one system to another
 - Accessing a specific server for data comparison, debugging, and testing, i.e. ad-hoc connections.
-- Queries between various ClickHouse clusters for research purposes.
+- Queries between various Datastore clusters for research purposes.
 - Infrequent distributed requests that are made manually.
 - Distributed requests where the set of servers is re-defined each time.
 
@@ -66,7 +66,7 @@ localhost
 [2a02:6b8:0:1111::11]:9000
 ```
 
-Multiple addresses can be comma-separated. In this case, ClickHouse will use distributed processing and send the query to all specified addresses (like shards with different data). Example:
+Multiple addresses can be comma-separated. In this case, Datastore will use distributed processing and send the query to all specified addresses (like shards with different data). Example:
 
 ```text
 example01-01-1,example01-02-1
@@ -101,7 +101,7 @@ SELECT * FROM remote_table;
 
 This example uses one table from a sample dataset.  The database is `imdb`, and the table is `actors`.
 
-#### On the source ClickHouse system (the system that currently hosts the data) {#on-the-source-clickhouse-system-the-system-that-currently-hosts-the-data}
+#### On the source Datastore system (the system that currently hosts the data) {#on-the-source-datastore-system-the-system-that-currently-hosts-the-data}
 
 - Verify the source database and table name (`imdb.actors`)
 
@@ -132,7 +132,7 @@ This example uses one table from a sample dataset.  The database is `imdb`, and 
                   ORDER BY (id, first_name, last_name, gender);
   ```
 
-#### On the destination ClickHouse system {#on-the-destination-clickhouse-system}
+#### On the destination Datastore system {#on-the-destination-datastore-system}
 
 - Create the destination database:
 
@@ -157,7 +157,7 @@ Insert into the new database and table created on the remote system.  You will n
 
 ```sql
 INSERT INTO FUNCTION
-remoteSecure('remote.clickhouse.cloud:9440', 'imdb.actors', 'USER', 'PASSWORD')
+remoteSecure('remote.datastore.cloud:9440', 'imdb.actors', 'USER', 'PASSWORD')
 SELECT * from imdb.actors
 ```
 

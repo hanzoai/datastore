@@ -22,7 +22,7 @@ def pytest_addoption(parser):
     pa = parser.addoption
     pa("--commit-sha", action="store", default=os.environ.get("COMMIT_SHA", "local"))
     pa("--branch", action="store", default=os.environ.get("BRANCH", "master"))
-    # Sink URL is resolved via CI ClickHouse helper; no explicit option needed
+    # Sink URL is resolved via CI Datastore helper; no explicit option needed
     pa("--duration", type=int, default=None)
     pa(
         "--matrix-backends",
@@ -118,7 +118,7 @@ def _print_failure_diagnostics(topology, builder):
                 print(f"==== {name} config ====\n{cfg.read_text()[:800]}")
 
             # Print logs
-            for log_type, suffix in [("err", "clickhouse-server.err.log"), ("log", "clickhouse-server.log")]:
+            for log_type, suffix in [("err", "datastore-server.err.log"), ("log", "datastore-server.log")]:
                 log_path = inst_dir / name / "logs" / suffix
                 if log_path.exists():
                     try:

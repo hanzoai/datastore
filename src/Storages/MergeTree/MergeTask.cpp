@@ -69,7 +69,7 @@
     #include <Processors/Transforms/CheckSortedTransform.h>
 #endif
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     #include <Interpreters/FileCache/FileCacheFactory.h>
     #include <Disks/DiskObjectStorage/DiskObjectStorage.h>
     #include <Storages/MergeTree/DataPartStorageOnDiskPacked.h>
@@ -616,7 +616,7 @@ bool MergeTask::ExecuteAndFinalizeHorizontalPart::prepare() const
     ///
     /// NOTE:
     /// Handling missing columns that have default expressions is non-trivial and currently unresolved
-    /// (see https://github.com/ClickHouse/ClickHouse/issues/91127).
+    /// (see https://github.com/ClickHouse/Datastore/issues/91127).
     /// For now, we conservatively avoid expiring such columns.
     ///
     /// The main challenges include:

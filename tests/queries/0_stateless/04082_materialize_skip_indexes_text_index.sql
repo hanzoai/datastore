@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/101666
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/101666
 -- materialize_skip_indexes_on_merge=false must suppress text (full-text) indexes during merge,
 -- not only minmax/set/bloom_filter etc. Text indexes use a separate container
 -- (text_indexes_to_merge) which was previously not cleared by the setting.

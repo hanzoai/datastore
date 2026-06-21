@@ -4,7 +4,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_insert_sparse_columns;
 
     CREATE TABLE t_insert_sparse_columns (a UInt64, b UInt64, c UInt64)
@@ -14,17 +14,17 @@ $CLICKHOUSE_CLIENT --query "
     SYSTEM STOP MERGES t_insert_sparse_columns;
 "
 
-${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+t_insert_sparse_columns+FORMAT+CSV" --data-binary @- <<EOF
+${DATASTORE_CURL} -sS "${DATASTORE_URL}&query=INSERT+INTO+t_insert_sparse_columns+FORMAT+CSV" --data-binary @- <<EOF
 1, 0, 0
 2, 0, 0
 EOF
 
-${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&query=INSERT+INTO+t_insert_sparse_columns+FORMAT+CSV" --data-binary @- <<EOF 2>&1 | grep -o "Code: 27"
+${DATASTORE_CURL} -sS "${DATASTORE_URL}&query=INSERT+INTO+t_insert_sparse_columns+FORMAT+CSV" --data-binary @- <<EOF 2>&1 | grep -o "Code: 27"
 3, 0
 4, 0
 EOF
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT * FROM t_insert_sparse_columns;
     SELECT column, serialization_kind FROM system.parts_columns WHERE database = currentDatabase() AND table = 't_insert_sparse_columns' AND active ORDER BY column, serialization_kind;
     DROP TABLE IF EXISTS t_insert_sparse_columns;

@@ -6,7 +6,7 @@
 
 TEST(Common, ConfigHostValidation)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <IPv4_1>0.0.0.0</IPv4_1>
     <IPv4_2>192.168.0.1</IPv4_2>
     <IPv4_3>127.0.0.1</IPv4_3>
@@ -31,7 +31,7 @@ TEST(Common, ConfigHostValidation)
     <Domain_Invalid_2>5example.com</Domain_Invalid_2>
     <Domain_Invalid_3>example.com-</Domain_Invalid_3>
     <Domain_Invalid_4>exa_mple.com</Domain_Invalid_4>
-</clickhouse>)CONFIG");
+</datastore>)CONFIG");
 
     Poco::XML::DOMParser dom_parser;
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);

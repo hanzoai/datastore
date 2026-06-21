@@ -185,7 +185,7 @@ IMPLEMENT_SETTING_ENUM(MsgPackUUIDRepresentation, ErrorCodes::BAD_ARGUMENTS,
                         {"ext", FormatSettings::MsgPackUUIDRepresentation::EXT}})
 
 IMPLEMENT_SETTING_ENUM(Dialect, ErrorCodes::BAD_ARGUMENTS,
-    {{"clickhouse", Dialect::clickhouse},
+    {{"datastore", Dialect::datastore},
      {"kusto", Dialect::kusto},
      {"prql", Dialect::prql},
      {"promql", Dialect::promql},

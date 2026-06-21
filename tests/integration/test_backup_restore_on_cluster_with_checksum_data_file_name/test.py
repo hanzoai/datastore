@@ -89,7 +89,7 @@ def test_replicated_table():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -127,7 +127,7 @@ def test_empty_replicated_table():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt8, y String"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -152,7 +152,7 @@ def test_empty_replicated_table():
 def test_replicated_database():
     node1.query("DROP DATABASE IF EXISTS mydb ON CLUSTER 'cluster' SYNC")
     node1.query(
-        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+        "CREATE DATABASE mydb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
     )
 
     node1.query(
@@ -198,7 +198,7 @@ def test_replicated_table_restored_into_bigger_cluster():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -225,7 +225,7 @@ def test_replicated_table_restored_into_smaller_cluster():
     node1.query(
         "CREATE TABLE tbl ON CLUSTER 'cluster' ("
         "x UInt32"
-        ") ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')"
+        ") ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')"
         "ORDER BY x"
     )
 
@@ -245,7 +245,7 @@ def test_projection():
     node1.query("DROP TABLE IF EXISTS tbl ON CLUSTER 'cluster' SYNC")
 
     node1.query(
-        "CREATE TABLE tbl ON CLUSTER 'cluster' (x UInt32, y String) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}') "
+        "CREATE TABLE tbl ON CLUSTER 'cluster' (x UInt32, y String) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}') "
         "ORDER BY y PARTITION BY x%10"
     )
     node1.query(f"INSERT INTO tbl SELECT number, toString(number) FROM numbers(3)")
@@ -297,7 +297,7 @@ def test_file_deduplication():
         f"""
         CREATE TABLE tbl ON CLUSTER 'cluster' (
         {column_name} Int32
-        ) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{{replica}}')
+        ) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{{replica}}')
         ORDER BY tuple() SETTINGS min_bytes_for_wide_part=0
         """
     )
@@ -306,7 +306,7 @@ def test_file_deduplication():
         f"""
         CREATE TABLE tbl2 ON CLUSTER 'cluster' (
         {column_name} Int32
-        ) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{{replica}}-2')
+        ) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{{replica}}-2')
         ORDER BY tuple() SETTINGS min_bytes_for_wide_part=0
         """
     )

@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the JSON data type in ClickHouse, which provides native
+description: 'Documentation for the JSON data type in Datastore, which provides native
   support for working with JSON data'
 keywords: ['json', 'data type']
 sidebar_label: 'JSON'
@@ -9,7 +9,7 @@ title: 'JSON Data Type'
 doc_type: 'reference'
 ---
 
-import {CardSecondary} from '@clickhouse/click-ui/bundled';
+import {CardSecondary} from '@datastore/click-ui/bundled';
 import WhenToUseJson from '@site/docs/best-practices/_snippets/_when-to-use-json.md';
 import Link from '@docusaurus/Link'
 
@@ -29,7 +29,7 @@ import Link from '@docusaurus/Link'
 The `JSON` type stores JavaScript Object Notation (JSON) documents in a single column.
 
 :::note
-In ClickHouse Open-Source JSON data type is marked as production ready in version 25.3. It's not recommended to use this type in production in previous versions.
+In Datastore Open-Source JSON data type is marked as production ready in version 25.3. It's not recommended to use this type in production in previous versions.
 :::
 
 To declare a column of `JSON` type, you can use the following syntax:
@@ -380,7 +380,7 @@ When paths are stored in basic (`map`) [shared data](#shared-data-structure), re
 
 ## Type inference for paths {#type-inference-for-paths}
 
-During parsing of `JSON`, ClickHouse tries to detect the most appropriate data type for each JSON path.
+During parsing of `JSON`, Datastore tries to detect the most appropriate data type for each JSON path.
 It works similarly to [automatic schema inference from input data](/interfaces/schema-inference.md),
 and is controlled by the same settings:
 
@@ -768,8 +768,8 @@ and they got inserted into a shared data structure.
 
 During a merge of several data parts in a `MergeTree` table the `JSON` column in the resulting data part can reach the limit of dynamic paths
 and won't be able to store all paths from source parts as sub-columns.
-In this case, ClickHouse chooses what paths will remain as sub-columns after merge and what paths will be stored in the shared data structure.
-In most cases, ClickHouse tries to keep paths that contain
+In this case, Datastore chooses what paths will remain as sub-columns after merge and what paths will be stored in the shared data structure.
+In most cases, Datastore tries to keep paths that contain
 the largest number of non-null values and move the rarest paths to the shared data structure. This does, however, depend on the implementation.
 
 Let's see an example of such a merge.
@@ -827,7 +827,7 @@ ORDER BY _part ASC
 └─────────┴───────────────┴───────────────────┴───────────┘
 ```
 
-As we can see, ClickHouse kept the most frequent paths `a`, `b` and `c` and moved paths `d` and `e` to a shared data structure.
+As we can see, Datastore kept the most frequent paths `a`, `b` and `c` and moved paths `d` and `e` to a shared data structure.
 
 ## Shared data structure {#shared-data-structure}
 
@@ -858,7 +858,7 @@ for `v3` [object serialization version](../../operations/settings/merge-tree-set
 #### Map {#shared-data-map}
 
 In `map` serialization version shared data is serialized as a single column with type `Map(String, String)` the same as it's stored in
-memory. To read path sub-column from this type of serialization ClickHouse reads the whole `Map` column and
+memory. To read path sub-column from this type of serialization Datastore reads the whole `Map` column and
 extracts the requested path in memory.
 
 This serialization is efficient for writing data and reading the whole `JSON` column, but it's not efficient for reading paths sub-columns.
@@ -866,7 +866,7 @@ This serialization is efficient for writing data and reading the whole `JSON` co
 #### Map with buckets {#shared-data-map-with-buckets}
 
 In `map_with_buckets` serialization version shared data is serialized as `N` columns ("buckets") with type `Map(String, String)`.
-Each such bucket contains only subset of paths. To read path sub-column from this type of serialization ClickHouse
+Each such bucket contains only subset of paths. To read path sub-column from this type of serialization Datastore
 reads the whole `Map` column from a single bucket and extracts the requested path in memory.
 
 This serialization is less efficient for writing data and reading the whole `JSON` column, but it's more efficient for reading paths sub-columns
@@ -889,7 +889,7 @@ This serialization is quite inefficient for writing data (so it's not recommende
 Note: because of storing some additional information inside the data structure, the disk storage size is higher with this serialization compared to
 `map` and `map_with_buckets` serializations.
 
-For more detailed overview of the new shared data serializations and implementation details read the [blog post](https://clickhouse.com/blog/json-data-type-gets-even-better).
+For more detailed overview of the new shared data serializations and implementation details read the [blog post](https://datastore.com/blog/json-data-type-gets-even-better).
 
 ## Controlling the number of dynamic paths inside JSON in MergeTree parts {#controlling-the-number-of-dynamic-paths}
 
@@ -922,7 +922,7 @@ Let's investigate the content of the [GH Archive](https://www.gharchive.org/) da
 
 ```sql title="Query"
 SELECT arrayJoin(distinctJSONPaths(json))
-FROM s3('s3://clickhouse-public-datasets/gharchive/original/2020-01-01-*.json.gz', JSONAsObject)
+FROM s3('s3://datastore-public-datasets/gharchive/original/2020-01-01-*.json.gz', JSONAsObject)
 ```
 
 ```text title="Response"
@@ -982,7 +982,7 @@ FROM s3('s3://clickhouse-public-datasets/gharchive/original/2020-01-01-*.json.gz
 
 ```sql title="Query"
 SELECT arrayJoin(distinctJSONPathsAndTypes(json))
-FROM s3('s3://clickhouse-public-datasets/gharchive/original/2020-01-01-*.json.gz', JSONAsObject)
+FROM s3('s3://datastore-public-datasets/gharchive/original/2020-01-01-*.json.gz', JSONAsObject)
 SETTINGS date_time_input_format = 'best_effort'
 ```
 
@@ -1069,7 +1069,7 @@ SELECT json, json.a, json.b, json.c FROM test;
 This feature is experimental and requires the setting `allow_experimental_json_lazy_type_hints` to be enabled.
 :::
 
-When you add or modify type hints on a JSON column using `ALTER TABLE ... MODIFY COLUMN`, ClickHouse normally rewrites all data parts to materialize the new type hints. For tables with large amounts of historical data (hundreds of terabytes), this can be extremely expensive.
+When you add or modify type hints on a JSON column using `ALTER TABLE ... MODIFY COLUMN`, Datastore normally rewrites all data parts to materialize the new type hints. For tables with large amounts of historical data (hundreds of terabytes), this can be extremely expensive.
 
 **Lazy type hints** allow adding type hints as a metadata-only operation without rewriting existing data:
 
@@ -1122,7 +1122,7 @@ With lazy type hints enabled, this query returns no rows, confirming the operati
 
 To materialize type hints in existing data, you can either:
 
-1. **Wait for background merges**: ClickHouse will automatically materialize type hints when parts are merged
+1. **Wait for background merges**: Datastore will automatically materialize type hints when parts are merged
 2. **Force merge**: Use `OPTIMIZE TABLE test_lazy FINAL` to merge all parts immediately
 3. **Rewrite parts**: Use `ALTER TABLE test_lazy REWRITE PARTS` to rewrite parts with the new metadata
 
@@ -1346,5 +1346,5 @@ Before creating `JSON` column and loading data into it, consider the following t
 
 ## Further Reading {#further-reading}
 
-- [How we built a new powerful JSON data type for ClickHouse](https://clickhouse.com/blog/a-new-powerful-json-data-type-for-clickhouse)
-- [The billion docs JSON Challenge: ClickHouse vs. MongoDB, Elasticsearch, and more](https://clickhouse.com/blog/json-bench-clickhouse-vs-mongodb-elasticsearch-duckdb-postgresql)
+- [How we built a new powerful JSON data type for Datastore](https://datastore.com/blog/a-new-powerful-json-data-type-for-datastore)
+- [The billion docs JSON Challenge: Datastore vs. MongoDB, Elasticsearch, and more](https://datastore.com/blog/json-bench-datastore-vs-mongodb-elasticsearch-duckdb-postgresql)

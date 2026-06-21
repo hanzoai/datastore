@@ -89,7 +89,7 @@ namespace
 /// function_id to a demangled symbol name, whose FNV64 hash is matched against
 /// LLVMProfileData::NameRef to write g_func_min_depth[profile_index].
 
-#ifdef CLICKHOUSE_XRAY_INSTRUMENT_COVERAGE
+#ifdef DATASTORE_XRAY_INSTRUMENT_COVERAGE
 
 #include <xray/xray_interface.h>
 #include <dlfcn.h>
@@ -199,7 +199,7 @@ static void xrayHandler(int32_t func_id, XRayEntryType type)
 
 } // anonymous namespace
 
-#endif // CLICKHOUSE_XRAY_INSTRUMENT_COVERAGE
+#endif // DATASTORE_XRAY_INSTRUMENT_COVERAGE
 
 /// Stubs for -finstrument-functions (kept for link compatibility with builds that
 /// add the flag without XRay).
@@ -248,9 +248,9 @@ std::vector<CovCounter> getCurrentCoveredNameRefs()
 
         /// min_depth: prefer XRay call depth (exact, built via text_addr→profile mapping)
         /// over the call-count proxy.  XRay depth is populated only when the binary is
-        /// built with -DCLICKHOUSE_XRAY_INSTRUMENT_COVERAGE=1 and XRay is activated.
+        /// built with -DDATASTORE_XRAY_INSTRUMENT_COVERAGE=1 and XRay is activated.
         uint8_t min_depth;
-#ifdef CLICKHOUSE_XRAY_INSTRUMENT_COVERAGE
+#ifdef DATASTORE_XRAY_INSTRUMENT_COVERAGE
         if (g_xray_min_depth && idx < g_xray_depth_size)
         {
             const uint32_t xray_d = g_xray_min_depth[idx].load(std::memory_order_relaxed);
@@ -375,7 +375,7 @@ void setCoverageTest(std::string_view test_name)
 
         __llvm_profile_reset_counters(); // NOLINT
 
-#ifdef CLICKHOUSE_XRAY_INSTRUMENT_COVERAGE
+#ifdef DATASTORE_XRAY_INSTRUMENT_COVERAGE
         /// Bump XRay generation so every thread resets its depth baseline on next call.
         g_xray_generation.fetch_add(1, std::memory_order_relaxed);
         /// Reset per-function min-depth array.

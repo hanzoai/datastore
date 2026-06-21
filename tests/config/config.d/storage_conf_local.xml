@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <local_disk_check_period_ms>30000</local_disk_check_period_ms>
 
     <storage_configuration>
@@ -78,4 +78,4 @@
             </local_cache_3>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

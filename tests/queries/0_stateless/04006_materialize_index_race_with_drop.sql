@@ -1,6 +1,6 @@
 -- Test that MATERIALIZE INDEX mutation does not get stuck
 -- when the index is dropped before the mutation executes.
--- https://github.com/ClickHouse/ClickHouse/issues/38643
+-- https://github.com/ClickHouse/Datastore/issues/38643
 
 SET mutations_sync = 0;
 

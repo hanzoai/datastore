@@ -14,17 +14,17 @@ echo "Starting the test"
 # Let's run this test with a random M between 2 and 200, even odd.
 # This test is to test usearch graph memory layout / alignment, serialization / deserialization
 
-hnsw_max_connections_per_layer=`$CLICKHOUSE_CLIENT -q "SELECT (rand() % 199) + 2"`
+hnsw_max_connections_per_layer=`$DATASTORE_CLIENT -q "SELECT (rand() % 199) + 2"`
 
 # hnsw_candidate_list_size_for_construction must be >= hnsw_max_connections_per_layer
-hnsw_candidate_list_size_for_construction=`$CLICKHOUSE_CLIENT -q "SELECT $hnsw_max_connections_per_layer + (rand() % 100)"`
+hnsw_candidate_list_size_for_construction=`$DATASTORE_CLIENT -q "SELECT $hnsw_max_connections_per_layer + (rand() % 100)"`
 
 # hnsw_candidate_list_size_for_search must also be >= hnsw_max_connections_per_layer
-hnsw_candidate_list_size_for_search=`$CLICKHOUSE_CLIENT -q "SELECT $hnsw_max_connections_per_layer + (rand() % 100)"`
+hnsw_candidate_list_size_for_search=`$DATASTORE_CLIENT -q "SELECT $hnsw_max_connections_per_layer + (rand() % 100)"`
 
 test_runtime_hnsw_settings="hnsw M $hnsw_max_connections_per_layer efc $hnsw_candidate_list_size_for_construction efsearch $hnsw_candidate_list_size_for_search"
 
-res=`$CLICKHOUSE_CLIENT -mq "
+res=`$DATASTORE_CLIENT -mq "
     DROP TABLE IF EXISTS tab;
 
     CREATE TABLE tab

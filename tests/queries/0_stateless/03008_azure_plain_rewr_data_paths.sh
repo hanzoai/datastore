@@ -10,7 +10,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # Base container name
-base_container="cont-$(echo "${CLICKHOUSE_TEST_UNIQUE_NAME}" | tr _ -)"
+base_container="cont-$(echo "${DATASTORE_TEST_UNIQUE_NAME}" | tr _ -)"
 
 declare -A disk_configs
 
@@ -82,9 +82,9 @@ for config in $(printf "%s\n" "${!disk_configs[@]}" | sort); do
 
     echo "=== Running test for configuration: $config ==="
 
-    ${CLICKHOUSE_CLIENT} --query "DROP TABLE IF EXISTS ${table}"
+    ${DATASTORE_CLIENT} --query "DROP TABLE IF EXISTS ${table}"
 
-    ${CLICKHOUSE_CLIENT} -nm --query "
+    ${DATASTORE_CLIENT} -nm --query "
     CREATE TABLE ${table} (a Int32, b Int32)
     ENGINE = MergeTree()
     ORDER BY a
@@ -92,7 +92,7 @@ for config in $(printf "%s\n" "${!disk_configs[@]}" | sort); do
     "
 
     echo "-- Checking data paths for ${table}"
-    ${CLICKHOUSE_CLIENT} --query "
+    ${DATASTORE_CLIENT} --query "
     SELECT count(path) >= 1 FROM system.tables
     ARRAY JOIN data_paths AS path
     WHERE database = currentDatabase()
@@ -100,7 +100,7 @@ for config in $(printf "%s\n" "${!disk_configs[@]}" | sort); do
         AND startsWith(path, '${expected_prefix}');
     "
 
-    ${CLICKHOUSE_CLIENT} --query "
+    ${DATASTORE_CLIENT} --query "
     SELECT path FROM system.tables
     ARRAY JOIN data_paths AS path
     WHERE database = currentDatabase()
@@ -108,7 +108,7 @@ for config in $(printf "%s\n" "${!disk_configs[@]}" | sort); do
         AND NOT startsWith(path, '${expected_prefix}');
     "
 
-    ${CLICKHOUSE_CLIENT} --query "DROP TABLE ${table}"
+    ${DATASTORE_CLIENT} --query "DROP TABLE ${table}"
 
     echo
 done

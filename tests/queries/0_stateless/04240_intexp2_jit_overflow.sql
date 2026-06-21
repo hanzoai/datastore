@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/101540
+-- https://github.com/ClickHouse/Datastore/issues/101540
 -- JIT-compiled `intExp2` must match the non-JIT path: clamp shifts `>= 64` to `UINT64_MAX`,
 -- return `0` for negative inputs, and preserve exceptions for `NaN` / big-integer inputs.
 -- Forcing JIT requires a compilable subexpression in the argument (e.g. `toInt32(number + k)`).

@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "
 
 DROP TABLE IF EXISTS test;
 CREATE TABLE test (a String, b String, c String) ENGINE = MergeTree ORDER BY (a, b, c) SETTINGS index_granularity = 11;
@@ -40,6 +40,6 @@ WHERE a >= (round(pow(sipHash64(1, try), 1 / (3 + sipHash64(2, try) % 8))) AS a1
 HAVING count() > 0
 SETTINGS trace_profile_events=0 -- test is too slow with profiling
 ;"
-done | ${CLICKHOUSE_CLIENT}
+done | ${DATASTORE_CLIENT}
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE test"
+${DATASTORE_CLIENT} -q "DROP TABLE test"

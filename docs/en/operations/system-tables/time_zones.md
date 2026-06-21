@@ -1,6 +1,6 @@
 ---
 description: 'System table containing a list of time zones that are supported by the
-  ClickHouse server.'
+  Datastore server.'
 keywords: ['system table', 'time_zones']
 slug: /operations/system-tables/time_zones
 title: 'system.time_zones'
@@ -9,7 +9,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-Contains a list of time zones that are supported by the ClickHouse server. This list of timezones might vary depending on the version of ClickHouse.
+Contains a list of time zones that are supported by the Datastore server. This list of timezones might vary depending on the version of Datastore.
 
 ## Columns {#columns}
 

@@ -20,7 +20,7 @@
 #include <Processors/Sinks/EmptySink.h>
 #include <base/sort.h>
 #include <Common/ZooKeeper/ZooKeeper.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -108,7 +108,7 @@ BlockIO executeDDLQueryOnCluster(const ASTPtr & query_ptr_, ContextPtr context, 
         cluster = context->getCluster(query->cluster);
     }
 
-    span.addAttribute("clickhouse.cluster", query->cluster);
+    span.addAttribute("datastore.cluster", query->cluster);
 
     if (!cluster->areDistributedDDLQueriesAllowed())
         throw Exception(ErrorCodes::QUERY_IS_PROHIBITED, "Distributed DDL queries are prohibited for the cluster");

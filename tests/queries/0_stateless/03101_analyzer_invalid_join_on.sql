@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/50271
+-- https://github.com/ClickHouse/Datastore/issues/50271
 
 drop table if exists t1;
 drop table if exists t2;

@@ -13,18 +13,18 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-DB_OLD="${CLICKHOUSE_DATABASE}_04141_old"
-DB_NEW="${CLICKHOUSE_DATABASE}_04141_new"
+DB_OLD="${DATASTORE_DATABASE}_04141_old"
+DB_NEW="${DATASTORE_DATABASE}_04141_new"
 
 function cleanup()
 {
-    ${CLICKHOUSE_CLIENT} -q "DROP DATABASE IF EXISTS ${DB_OLD} SYNC" 2>/dev/null ||:
-    ${CLICKHOUSE_CLIENT} -q "DROP DATABASE IF EXISTS ${DB_NEW} SYNC" 2>/dev/null ||:
+    ${DATASTORE_CLIENT} -q "DROP DATABASE IF EXISTS ${DB_OLD} SYNC" 2>/dev/null ||:
+    ${DATASTORE_CLIENT} -q "DROP DATABASE IF EXISTS ${DB_NEW} SYNC" 2>/dev/null ||:
 }
 trap cleanup EXIT
 cleanup
 
-${CLICKHOUSE_CLIENT} -nm -q "
+${DATASTORE_CLIENT} -nm -q "
     CREATE DATABASE ${DB_OLD} ENGINE = Atomic;
     CREATE TABLE ${DB_OLD}.src (c0 Int) ENGINE = Memory;
     CREATE TABLE ${DB_OLD}.target (c0 Int) ENGINE = Memory;

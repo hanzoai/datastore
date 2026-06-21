@@ -5,20 +5,20 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --optimize_trivial_insert_select=0"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --optimize_trivial_insert_select=0"
 
-$CLICKHOUSE_LOCAL --query "SELECT number FROM numbers(10)" > "${CLICKHOUSE_TMP}/numbers.jsonl.gz"
-$CLICKHOUSE_LOCAL --query "SELECT * FROM table" < "${CLICKHOUSE_TMP}/numbers.jsonl.gz"
-$CLICKHOUSE_LOCAL --query "SELECT * FROM table" < "${CLICKHOUSE_TMP}/numbers.jsonl.gz" > "${CLICKHOUSE_TMP}/numbers.csv.bz2"
-$CLICKHOUSE_LOCAL --copy < "${CLICKHOUSE_TMP}/numbers.csv.bz2" > "${CLICKHOUSE_TMP}/numbers.parquet"
-$CLICKHOUSE_LOCAL --copy < "${CLICKHOUSE_TMP}/numbers.parquet"
+$DATASTORE_LOCAL --query "SELECT number FROM numbers(10)" > "${DATASTORE_TMP}/numbers.jsonl.gz"
+$DATASTORE_LOCAL --query "SELECT * FROM table" < "${DATASTORE_TMP}/numbers.jsonl.gz"
+$DATASTORE_LOCAL --query "SELECT * FROM table" < "${DATASTORE_TMP}/numbers.jsonl.gz" > "${DATASTORE_TMP}/numbers.csv.bz2"
+$DATASTORE_LOCAL --copy < "${DATASTORE_TMP}/numbers.csv.bz2" > "${DATASTORE_TMP}/numbers.parquet"
+$DATASTORE_LOCAL --copy < "${DATASTORE_TMP}/numbers.parquet"
 
 echo '---'
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test"
-$CLICKHOUSE_CLIENT --query "CREATE TABLE test (number UInt64) ENGINE = Memory"
-$CLICKHOUSE_CLIENT --query "INSERT INTO test FORMAT JSONLines" < "${CLICKHOUSE_TMP}/numbers.jsonl.gz"
-$CLICKHOUSE_CLIENT --query "INSERT INTO test FORMAT CSV" < "${CLICKHOUSE_TMP}/numbers.csv.bz2"
-$CLICKHOUSE_CLIENT --query "INSERT INTO test SELECT c1 FROM input() FORMAT Parquet" < "${CLICKHOUSE_TMP}/numbers.parquet"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM test"
-$CLICKHOUSE_CLIENT --query "DROP TABLE test"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test"
+$DATASTORE_CLIENT --query "CREATE TABLE test (number UInt64) ENGINE = Memory"
+$DATASTORE_CLIENT --query "INSERT INTO test FORMAT JSONLines" < "${DATASTORE_TMP}/numbers.jsonl.gz"
+$DATASTORE_CLIENT --query "INSERT INTO test FORMAT CSV" < "${DATASTORE_TMP}/numbers.csv.bz2"
+$DATASTORE_CLIENT --query "INSERT INTO test SELECT c1 FROM input() FORMAT Parquet" < "${DATASTORE_TMP}/numbers.parquet"
+$DATASTORE_CLIENT --query "SELECT * FROM test"
+$DATASTORE_CLIENT --query "DROP TABLE test"

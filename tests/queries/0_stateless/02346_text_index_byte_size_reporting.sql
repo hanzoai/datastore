@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS tab;
 
 -- Tests that text indexes report correct compressed and uncompressed byte sizes.
--- Related issue: https://github.com/ClickHouse/ClickHouse/issues/87846
+-- Related issue: https://github.com/ClickHouse/Datastore/issues/87846
 
 CREATE TABLE tab
 (

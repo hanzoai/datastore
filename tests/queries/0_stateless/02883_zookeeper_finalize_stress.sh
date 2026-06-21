@@ -9,4 +9,4 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Transient connection errors (SOCKET_TIMEOUT) are expected under heavy parallel load,
 # so we suppress stderr and ignore non-zero exit codes from individual processes.
-yes /keeper/api_version | head -n1000 | xargs -P30 -i $CLICKHOUSE_KEEPER_CLIENT -q "get '{}'" > /dev/null 2>&1 || true
+yes /keeper/api_version | head -n1000 | xargs -P30 -i $DATASTORE_KEEPER_CLIENT -q "get '{}'" > /dev/null 2>&1 || true

@@ -36,7 +36,7 @@ public:
         registerFunction<Function>(Function::name, std::move(documentation), case_sensitiveness);
     }
 
-    /// This function is used by YQL - innovative transactional DBMS that depends on ClickHouse by source code.
+    /// This function is used by YQL - innovative transactional DBMS that depends on Datastore by source code.
     std::vector<std::string> getAllNames() const;
 
     bool has(const std::string & name) const;

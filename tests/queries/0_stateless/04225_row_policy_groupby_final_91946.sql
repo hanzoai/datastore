@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/91946
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/91946
 -- `NOT_FOUND_COLUMN_IN_BLOCK` when performing grouped `SELECT` on `ReplacingMergeTree FINAL` with a row policy attached.
 
 DROP ROW POLICY IF EXISTS users_91946_policy ON users_91946;

@@ -19,7 +19,7 @@ def started_cluster():
         cluster.add_instance(
             "node1",
             main_configs=["configs/storage_conf.xml"],
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             with_minio=True,
             tag="24.1",
             stay_alive=True,

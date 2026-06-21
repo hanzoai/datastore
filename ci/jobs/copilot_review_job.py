@@ -92,8 +92,8 @@ def _review_target(info):
 Review target:
 - PR URL: {info.pr_url}
 - PR repository: `{repo_name}`
-- Always derive the PR repository from the PR URL or the CI event. For ClickHouse reviews this will be either
-  `ClickHouse/ClickHouse` or `ClickHouse/ClickHouse-private`. Do not infer the review repository from
+- Always derive the PR repository from the PR URL or the CI event. For Datastore reviews this will be either
+  `Datastore/Datastore` or `Datastore/Datastore-private`. Do not infer the review repository from
   the local checkout remote, because local checkouts may point to a fork.
 """
 
@@ -132,7 +132,7 @@ Tools:
 def _pre_review_procedure(pr_url):
     return f"""\
 Procedure:
-1. In GitHub discussions, "you" are `clickhouse-gh[bot]`.
+1. In GitHub discussions, "you" are `datastore-gh[bot]`.
 2. Fetch all prior discussion on this PR before reviewing.
 3. Provide a thorough review of {pr_url}. Read the current code and PR diff, not only the discussion.
 4. Read every reply on every thread before deciding whether a point is still live. A reply from the author is not
@@ -148,7 +148,7 @@ Procedure:
    believe it still is, or your last comment's `createdAt` is older than two days. When replying,
    restate the concern with the relevant code and explain why the previous answer does not resolve it.
 7. Resolve or re-open only threads you created yourself: that means threads where the first comment in
-   `comments.nodes` was authored by `clickhouse-gh[bot]`. If a bot-authored thread is open and the issue
+   `comments.nodes` was authored by `datastore-gh[bot]`. If a bot-authored thread is open and the issue
    no longer holds in the current code, resolve it. If a bot-authored thread was resolved but the
    current code still has the issue, re-open it and post a follow-up reply explaining what is still
    wrong. Never resolve or unresolve threads where the first comment was authored by anyone else.

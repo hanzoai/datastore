@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/96588
+-- https://github.com/ClickHouse/Datastore/issues/96588
 -- CHECK TABLE on a Tuple with a Dynamic element and a sparse-serialized element
 -- used to fail with "Unexpected size of tuple element" because deserializeOffsets
 -- in SerializationSparse treated limit=0 as "read everything" instead of "read nothing".

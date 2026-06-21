@@ -1,24 +1,24 @@
 # Hanzo Datastore
 
-Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
+Hanzo's analytics database — a fork of Datastore with Hanzo-side overlays.
 
 - **Repo**: https://github.com/hanzoai/datastore
-- **Upstream**: https://github.com/ClickHouse/ClickHouse (`upstream` remote)
+- **Upstream**: https://github.com/ClickHouse/Datastore (`upstream` remote)
 - **Image**: `ghcr.io/hanzoai/datastore`
 
 ## Stack
 
-- **Server**: C++ (the ClickHouse codebase under `programs/`, `src/`, `base/`)
-- **Bridge**: Go (`cmd/zap-bridge/`) — ZAP duplex listener on `:9999` that proxies to ClickHouse native protocol on `127.0.0.1:9000`. Baked into the same image as the server. Single container, two processes.
-- **Build**: CMake → `clickhouse` binary; Go → `zap-bridge` binary
+- **Server**: C++ (the Datastore codebase under `programs/`, `src/`, `base/`)
+- **Bridge**: Go (`cmd/zap-bridge/`) — ZAP duplex listener on `:9999` that proxies to Datastore native protocol on `127.0.0.1:9000`. Baked into the same image as the server. Single container, two processes.
+- **Build**: CMake → `datastore` binary; Go → `zap-bridge` binary
 
 ## Ports
 
 | Port | Protocol | Purpose |
 |------|----------|---------|
-| 8123 | HTTP | ClickHouse HTTP interface |
-| 9000 | TCP | ClickHouse native binary protocol |
-| 9009 | TCP | ClickHouse interserver replication |
+| 8123 | HTTP | Datastore HTTP interface |
+| 9000 | TCP | Datastore native binary protocol |
+| 9009 | TCP | Datastore interserver replication |
 | **9999** | **TCP** | **ZAP duplex (Hanzo canonical service port)** |
 | 9181 | TCP | hanzo-datastore-keeper client port (separate image) |
 
@@ -26,8 +26,8 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 
 ```
 datastore/
-├── programs/, src/, base/, contrib/  ← upstream ClickHouse C++
-├── cmd/zap-bridge/                    ← Go ZAP→ClickHouse bridge
+├── programs/, src/, base/, contrib/  ← upstream Datastore C++
+├── cmd/zap-bridge/                    ← Go ZAP→Datastore bridge
 ├── hanzo/                             ← Hanzo overlay: compose, config.xml, schema.sql
 ├── packages/, pkg/                    ← RPM/deb packaging
 ├── docker/, Dockerfile.hanzo          ← Hanzo image build
@@ -61,7 +61,7 @@ top-level `CMakeLists.txt`, and any upstream rename of `cmd/`.
 
 ## Phase 1 — Single Binary (Embedded Coordination)
 
-`hanzo-datastore` ships exactly one server binary. The standalone `clickhouse-keeper`/`datastore-keeper` entry-point is no longer a default build target. Coordination still works — it runs **in-process** inside `hanzo-datastore-server` whenever `<keeper_server>` is present in the runtime config.
+`hanzo-datastore` ships exactly one server binary. The standalone `datastore-keeper`/`datastore-keeper` entry-point is no longer a default build target. Coordination still works — it runs **in-process** inside `hanzo-datastore-server` whenever `<keeper_server>` is present in the runtime config.
 
 ### What changed
 

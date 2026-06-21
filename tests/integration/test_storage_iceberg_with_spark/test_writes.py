@@ -50,14 +50,14 @@ def test_writes(started_cluster_iceberg_with_spark, format_version, storage_type
     initial_files = default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
-    with open(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/metadata/version-hint.text", "wb") as f:
+    with open(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/metadata/version-hint.text", "wb") as f:
         f.write(b"4")
 
-    df = spark.read.format("iceberg").load(f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}").collect()
+    df = spark.read.format("iceberg").load(f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}").collect()
     assert len(df) == 3
 
     instance.query("SYSTEM ENABLE FAILPOINT iceberg_writes_cleanup")
@@ -68,8 +68,8 @@ def test_writes(started_cluster_iceberg_with_spark, format_version, storage_type
     files = default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     assert len(initial_files) == len(files)
@@ -79,7 +79,7 @@ def test_writes_parquet_field_ids(started_cluster_iceberg_with_spark, storage_ty
     instance = started_cluster_iceberg_with_spark.instances["node1"]
     spark = started_cluster_iceberg_with_spark.spark_session
     TABLE_NAME = "test_field_ids_" + storage_type + "_" + get_uuid_str()
-    local_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}"
+    local_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}"
 
     create_iceberg_table(
         storage_type,
@@ -102,8 +102,8 @@ def test_writes_parquet_field_ids(started_cluster_iceberg_with_spark, storage_ty
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     metadata_dir = os.path.join(local_dir, "metadata")
@@ -154,7 +154,7 @@ def test_writes_parquet_field_ids_complex_types(
 ):
     instance = started_cluster_iceberg_with_spark.instances["node1"]
     TABLE_NAME = "test_field_ids_complex_" + storage_type + "_" + get_uuid_str()
-    local_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}"
+    local_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}"
 
     schema = "(x Array(Nullable(Int32)), z Map(Int32, Nullable(Int64)), y Tuple(zip Nullable(Int32), foo Nullable(Int32)))"
     create_iceberg_table(
@@ -175,8 +175,8 @@ def test_writes_parquet_field_ids_complex_types(
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     metadata_dir = os.path.join(local_dir, "metadata")
@@ -221,7 +221,7 @@ def test_writes_parquet_field_ids_update(
 ):
     instance = started_cluster_iceberg_with_spark.instances["node1"]
     TABLE_NAME = "test_field_ids_update_" + storage_type + "_" + get_uuid_str()
-    local_dir = f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}"
+    local_dir = f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}"
 
     create_iceberg_table(
         storage_type,
@@ -253,8 +253,8 @@ def test_writes_parquet_field_ids_update(
     default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     data_dir = os.path.join(local_dir, "data")
@@ -308,8 +308,8 @@ def test_writes_orc_format(started_cluster_iceberg_with_spark, format_version, s
     files = default_download_directory(
         started_cluster_iceberg_with_spark,
         storage_type,
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
-        f"/var/lib/clickhouse/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
+        f"/var/lib/datastore/user_files/iceberg_data/default/{TABLE_NAME}/",
     )
 
     found_orc_files = False

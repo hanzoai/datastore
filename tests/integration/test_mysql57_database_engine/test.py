@@ -424,8 +424,8 @@ int16_values = [0, 1, -1, 32767, -32768]
 uint16_values = [0, 1, 65535]
 int8_values = [0, 1, -1, 127, -128]
 uint8_values = [0, 1, 255]
-string_values = ["'ClickHouse'", "NULL"]
-clickhouse_string_values = ["ClickHouse", "\\N"]
+string_values = ["'Datastore'", "NULL"]
+clickhouse_string_values = ["Datastore", "\\N"]
 date_values = ["'1970-01-01'"]
 date2Date32_values = ["'1925-01-01'", "'2283-11-11'"]
 date2String_values = ["'1000-01-01'", "'9999-12-31'"]
@@ -452,7 +452,7 @@ def arryToString(expected_clickhouse_values):
     return "\n".join(str(value) for value in expected_clickhouse_values)
 
 
-#  if expected_clickhouse_values is "", compare MySQL and ClickHouse query results directly
+#  if expected_clickhouse_values is "", compare MySQL and Datastore query results directly
 @pytest.mark.parametrize(
     "case_name, mysql_type, expected_ch_type, mysql_values, expected_clickhouse_values, setting_mysql_datatypes_support_level",
     [
@@ -839,7 +839,7 @@ def test_mysql_types(
     expected_clickhouse_values,
     setting_mysql_datatypes_support_level,
 ):
-    """Verify that values written to MySQL can be read on ClickHouse side via DB engine MySQL,
+    """Verify that values written to MySQL can be read on Datastore side via DB engine MySQL,
     or Table engine MySQL, or mysql() table function.
     Make sure that type is converted properly and values match exactly.
     """
@@ -1120,6 +1120,6 @@ def test_password_leak(started_cluster):
         clickhouse_node.query(
             f"CREATE DATABASE test_database ENGINE = MySQL('mysql57:3306', 'test_database', 'root', '{mysql_pass}') SETTINGS connection_auto_close = 1"
         )
-        assert "clickhouse" not in clickhouse_node.query(
+        assert "datastore" not in clickhouse_node.query(
             "SHOW CREATE test_database.test_table"
         )

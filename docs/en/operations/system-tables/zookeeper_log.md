@@ -60,7 +60,7 @@ SELECT * FROM system.zookeeper_log WHERE (session_id = '106662742089334927') AND
 ```text title="Response"
 Row 1:
 ──────
-hostname:         clickhouse.eu-central1.internal
+hostname:         datastore.eu-central1.internal
 type:             Request
 event_date:       2021-08-09
 event_time:       2021-08-09 21:38:30.291792
@@ -70,7 +70,7 @@ session_id:       106662742089334927
 xid:              10858
 has_watch:        1
 op_num:           List
-path:             /clickhouse/task_queue/ddl
+path:             /datastore/task_queue/ddl
 data:
 is_ephemeral:     0
 is_sequential:    0
@@ -102,7 +102,7 @@ session_id:       106662742089334927
 xid:              10858
 has_watch:        1
 op_num:           List
-path:             /clickhouse/task_queue/ddl
+path:             /datastore/task_queue/ddl
 data:
 is_ephemeral:     0
 is_sequential:    0

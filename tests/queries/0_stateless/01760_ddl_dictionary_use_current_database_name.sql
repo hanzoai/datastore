@@ -16,7 +16,7 @@ CREATE DICTIONARY ddl_dictionary_test
    value UInt64 DEFAULT 0
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'ddl_dictonary_test_source'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'ddl_dictonary_test_source'))
 LAYOUT(DIRECT());
 
 SELECT 'dictGet';

@@ -9,8 +9,8 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-DATA_FILE="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}_geo.arrow"
-DATA_FILE_VALID="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}_geo_valid.arrow"
+DATA_FILE="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}_geo.arrow"
+DATA_FILE_VALID="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}_geo_valid.arrow"
 trap 'rm -f "$DATA_FILE" "$DATA_FILE_VALID"' EXIT
 
 # Build a valid Arrow IPC file with WKB Point rows and geo schema metadata.
@@ -44,7 +44,7 @@ with pa.OSFile(path, 'wb') as f:
     w.close()
 EOF
 
-$CLICKHOUSE_LOCAL --input_format_parquet_allow_geoparquet_parser=1 \
+$DATASTORE_LOCAL --input_format_parquet_allow_geoparquet_parser=1 \
     --query "SELECT x FROM file('${DATA_FILE_VALID}', 'Arrow')" 2>&1
 
 # Build an Arrow IPC file with WKB binary rows, geo schema metadata, and a
@@ -86,6 +86,6 @@ data[idx + 4 : idx + 8] = struct.pack('<I', 0x40000000)
 open(path, 'wb').write(bytes(data))
 EOF
 
-$CLICKHOUSE_LOCAL --input_format_parquet_allow_geoparquet_parser=1 \
+$DATASTORE_LOCAL --input_format_parquet_allow_geoparquet_parser=1 \
     --query "SELECT x FROM file('${DATA_FILE}', 'Arrow')" 2>&1 \
     | grep -oF 'INCORRECT_DATA' || echo 'FAIL: expected INCORRECT_DATA'

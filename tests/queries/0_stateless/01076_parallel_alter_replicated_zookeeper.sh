@@ -9,7 +9,7 @@
 # part before source part.
 
 # Messages about deleting of tmp-fetch directories are ok.
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=fatal
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=fatal
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -18,13 +18,13 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPLICAS=5
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS concurrent_mutate_mt_$i"
+    $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS concurrent_mutate_mt_$i"
 done
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         CREATE TABLE concurrent_mutate_mt_$i (key UInt64, value1 UInt64, value2 String)
-        ENGINE = ReplicatedMergeTree('/clickhouse/tables/$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX/concurrent_mutate_mt', '$i')
+        ENGINE = ReplicatedMergeTree('/datastore/tables/$DATASTORE_TEST_ZOOKEEPER_PREFIX/concurrent_mutate_mt', '$i')
         ORDER BY key
         SETTINGS max_replicated_mutations_in_queue = 1000,
                  number_of_free_entries_in_pool_to_execute_mutation = 0,
@@ -35,18 +35,18 @@ for i in $(seq $REPLICAS); do
                  cleanup_thread_preferred_points_per_iteration=0"
 done
 
-$CLICKHOUSE_CLIENT --query "INSERT INTO concurrent_mutate_mt_1 SELECT number, number + 10, toString(number) from numbers(10)"
-$CLICKHOUSE_CLIENT --query "INSERT INTO concurrent_mutate_mt_1 SELECT number, number + 10, toString(number) from numbers(10, 40)"
+$DATASTORE_CLIENT --query "INSERT INTO concurrent_mutate_mt_1 SELECT number, number + 10, toString(number) from numbers(10)"
+$DATASTORE_CLIENT --query "INSERT INTO concurrent_mutate_mt_1 SELECT number, number + 10, toString(number) from numbers(10, 40)"
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_mutate_mt_$i"
+    $DATASTORE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_mutate_mt_$i"
 done
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "SELECT SUM(value1) FROM concurrent_mutate_mt_$i"
+    $DATASTORE_CLIENT --query "SELECT SUM(value1) FROM concurrent_mutate_mt_$i"
 done
 
-INITIAL_SUM=$($CLICKHOUSE_CLIENT --query "SELECT SUM(value1) FROM concurrent_mutate_mt_1")
+INITIAL_SUM=$($DATASTORE_CLIENT --query "SELECT SUM(value1) FROM concurrent_mutate_mt_1")
 
 # Run mutation on random replica
 function correct_alter_thread()
@@ -55,7 +55,7 @@ function correct_alter_thread()
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
         REPLICA=$(($RANDOM % 5 + 1))
-        $CLICKHOUSE_CLIENT --query "ALTER TABLE concurrent_mutate_mt_$REPLICA UPDATE value1 = value1 + 1 WHERE 1";
+        $DATASTORE_CLIENT --query "ALTER TABLE concurrent_mutate_mt_$REPLICA UPDATE value1 = value1 + 1 WHERE 1";
         sleep 1
     done
 }
@@ -69,7 +69,7 @@ function insert_thread()
     do
         REPLICA=$(($RANDOM % 5 + 1))
         VALUE=${VALUES[$RANDOM % ${#VALUES[@]} ]}
-        $CLICKHOUSE_CLIENT --query "INSERT INTO concurrent_mutate_mt_$REPLICA VALUES($RANDOM, $VALUE, toString($VALUE))"
+        $DATASTORE_CLIENT --query "INSERT INTO concurrent_mutate_mt_$REPLICA VALUES($RANDOM, $VALUE, toString($VALUE))"
         sleep 0.$RANDOM
     done
 }
@@ -80,11 +80,11 @@ function detach_attach_thread()
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
         REPLICA=$(($RANDOM % 5 + 1))
-        $CLICKHOUSE_CLIENT --query "DETACH TABLE concurrent_mutate_mt_$REPLICA"
+        $DATASTORE_CLIENT --query "DETACH TABLE concurrent_mutate_mt_$REPLICA"
         sleep 0.$RANDOM
         sleep 0.$RANDOM
         sleep 0.$RANDOM
-        $CLICKHOUSE_CLIENT --query "ATTACH TABLE concurrent_mutate_mt_$REPLICA"
+        $DATASTORE_CLIENT --query "ATTACH TABLE concurrent_mutate_mt_$REPLICA"
     done
 }
 
@@ -111,14 +111,14 @@ wait
 echo "Finishing alters"
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "ATTACH TABLE concurrent_mutate_mt_$i" 2> /dev/null
+    $DATASTORE_CLIENT --query "ATTACH TABLE concurrent_mutate_mt_$i" 2> /dev/null
 done
 
 sleep 1
 
 counter=0
-have_undone_mutations_query="select * from system.mutations where table like 'concurrent_mutate_mt_%' and is_done=0 and database='${CLICKHOUSE_DATABASE}'"
-have_all_tables_query="select count() FROM system.tables WHERE name LIKE 'concurrent_mutate_mt_%' and database='${CLICKHOUSE_DATABASE}'"
+have_undone_mutations_query="select * from system.mutations where table like 'concurrent_mutate_mt_%' and is_done=0 and database='${DATASTORE_DATABASE}'"
+have_all_tables_query="select count() FROM system.tables WHERE name LIKE 'concurrent_mutate_mt_%' and database='${DATASTORE_DATABASE}'"
 
 while true ; do
     if [ "$counter" -gt 120 ]
@@ -127,25 +127,25 @@ while true ; do
     fi
     sleep 1
     for i in $(seq $REPLICAS); do
-        $CLICKHOUSE_CLIENT --query "ATTACH TABLE concurrent_mutate_mt_$i" 2> /dev/null
+        $DATASTORE_CLIENT --query "ATTACH TABLE concurrent_mutate_mt_$i" 2> /dev/null
     done
 
     counter=$(($counter + 1))
 
     # no active mutations and all tables attached
-    if [[ -z $($CLICKHOUSE_CLIENT --query "$have_undone_mutations_query" 2>&1) && $($CLICKHOUSE_CLIENT --query "$have_all_tables_query" 2>&1) == "$REPLICAS" ]]; then
+    if [[ -z $($DATASTORE_CLIENT --query "$have_undone_mutations_query" 2>&1) && $($DATASTORE_CLIENT --query "$have_all_tables_query" 2>&1) == "$REPLICAS" ]]; then
         break
     fi
 done
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_mutate_mt_$i"
-    $CLICKHOUSE_CLIENT --query "CHECK TABLE concurrent_mutate_mt_$i" &> /dev/null # if we will remove something the output of select will be wrong
-    $CLICKHOUSE_CLIENT --query "SELECT SUM(toUInt64(value1)) > $INITIAL_SUM FROM concurrent_mutate_mt_$i"
-    $CLICKHOUSE_CLIENT --query "SELECT COUNT() FROM system.mutations WHERE table='concurrent_mutate_mt_$i' and is_done=0" # all mutations have to be done
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM system.mutations WHERE table='concurrent_mutate_mt_$i' and is_done=0" # for verbose output
+    $DATASTORE_CLIENT --query "SYSTEM SYNC REPLICA concurrent_mutate_mt_$i"
+    $DATASTORE_CLIENT --query "CHECK TABLE concurrent_mutate_mt_$i" &> /dev/null # if we will remove something the output of select will be wrong
+    $DATASTORE_CLIENT --query "SELECT SUM(toUInt64(value1)) > $INITIAL_SUM FROM concurrent_mutate_mt_$i"
+    $DATASTORE_CLIENT --query "SELECT COUNT() FROM system.mutations WHERE table='concurrent_mutate_mt_$i' and is_done=0" # all mutations have to be done
+    $DATASTORE_CLIENT --query "SELECT * FROM system.mutations WHERE table='concurrent_mutate_mt_$i' and is_done=0" # for verbose output
 done
 
 for i in $(seq $REPLICAS); do
-    $CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS concurrent_mutate_mt_$i"
+    $DATASTORE_CLIENT --query "DROP TABLE IF EXISTS concurrent_mutate_mt_$i"
 done

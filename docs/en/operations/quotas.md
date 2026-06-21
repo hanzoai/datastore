@@ -1,5 +1,5 @@
 ---
-description: 'Guide to configuring and managing resource usage quotas in ClickHouse'
+description: 'Guide to configuring and managing resource usage quotas in Datastore'
 sidebar_label: 'Quotas'
 sidebar_position: 51
 slug: /operations/quotas
@@ -7,8 +7,8 @@ title: 'Quotas'
 doc_type: 'guide'
 ---
 
-:::note Quotas in ClickHouse Cloud
-Quotas are supported in ClickHouse Cloud but must be created using the [DDL syntax](/sql-reference/statements/create/quota). The XML configuration approach documented below is **not supported**.
+:::note Quotas in Datastore Cloud
+Quotas are supported in Datastore Cloud but must be created using the [DDL syntax](/sql-reference/statements/create/quota). The XML configuration approach documented below is **not supported**.
 :::
 
 Quotas allow you to limit resource usage over a period of time or track the use of resources.
@@ -147,4 +147,4 @@ When the server is restarted, quotas are reset.
 
 ## Related Content {#related-content}
 
-- Blog: [Building single page applications with ClickHouse](https://clickhouse.com/blog/building-single-page-applications-with-clickhouse-and-http)
+- Blog: [Building single page applications with Datastore](https://datastore.com/blog/building-single-page-applications-with-datastore-and-http)

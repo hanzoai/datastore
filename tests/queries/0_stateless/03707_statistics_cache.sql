@@ -55,7 +55,7 @@ ORDER BY event_time_microseconds DESC
 LIMIT 1;
 
 ------------------------------------------------------------
--- LowCardinality: CountMin https://github.com/ClickHouse/ClickHouse/issues/87886
+-- LowCardinality: CountMin https://github.com/ClickHouse/Datastore/issues/87886
 ------------------------------------------------------------
 DROP TABLE IF EXISTS st_cm_lc SYNC;
 

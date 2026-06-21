@@ -24,7 +24,7 @@ func compress(data io.Reader) io.Reader {
 }
 
 func main() {
-	database := os.Getenv("CLICKHOUSE_DATABASE")
+	database := os.Getenv("DATASTORE_DATABASE")
 	p, err := url.Parse("http://localhost:8123/")
 	if err != nil {
 		panic(err)
@@ -56,6 +56,6 @@ func main() {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	if resp.StatusCode != 200 {
-		panic(fmt.Errorf("clickhouse response status %d: %s", resp.StatusCode, string(body)))
+		panic(fmt.Errorf("datastore response status %d: %s", resp.StatusCode, string(body)))
 	}
 }

@@ -14,12 +14,12 @@ def main():
     info = Info()
 
     if res:
-        print("Install ClickHouse")
+        print("Install Datastore")
 
         def install():
             res = ch.install_clickbench_config()
             # The ClickBench `create.sql` attaches `hits` on a cached disk
-            # rooted at `/dev/shm/clickhouse/`; ship the matching server-side
+            # rooted at `/dev/shm/datastore/`; ship the matching server-side
             # allowed-directory override alongside it.
             res = res and Shell.check(
                 f"cp ./ci/jobs/scripts/clickbench/filesystem_caches_path.xml {temp_dir}/config.d/",
@@ -29,7 +29,7 @@ def main():
             # the test-only config that defines pre-configured `local_cache*`
             # disks with `max_size = 22548578304` (~21 GiB) under relative path
             # `local_cache/`. With our `filesystem_caches_path` override the
-            # cache base path becomes `/dev/shm/clickhouse/local_cache/`, but
+            # cache base path becomes `/dev/shm/datastore/local_cache/`, but
             # the ClickBench container runs with `--shm-size=16g`, so the
             # capacity check in `FileCache::initialize` rejects the disk and
             # the server fails to start. ClickBench doesn't use these test
@@ -43,12 +43,12 @@ def main():
             return res and ch.create_log_export_config()
 
         results.append(
-            Result.from_commands_run(name="Install ClickHouse", command=install)
+            Result.from_commands_run(name="Install Datastore", command=install)
         )
         res = results[-1].is_ok()
 
     if res:
-        print("Start ClickHouse")
+        print("Start Datastore")
 
         def start():
             res = ch.start_light()
@@ -59,7 +59,7 @@ def main():
 
         results.append(
             Result.from_commands_run(
-                name="Start ClickHouse",
+                name="Start Datastore",
                 command=start,
             )
         )
@@ -70,7 +70,7 @@ def main():
         results.append(
             Result.from_commands_run(
                 name="Load the data",
-                command="clickhouse-client --time < ./ci/jobs/scripts/clickbench/create.sql",
+                command="datastore-client --time < ./ci/jobs/scripts/clickbench/create.sql",
             )
         )
         res = results[-1].is_ok()
@@ -90,7 +90,7 @@ def main():
                 for i in range(1, TRIES + 1):
                     query_id = f"q{QUERY_NUM}-{i}"
                     res, out, time_err = Shell.get_res_stdout_stderr(
-                        f'clickhouse-client --query_id {query_id} --time --format Null --query "{query}" --progress 0',
+                        f'datastore-client --query_id {query_id} --time --format Null --query "{query}" --progress 0',
                         verbose=True,
                     )
                     timing.append(time_err)

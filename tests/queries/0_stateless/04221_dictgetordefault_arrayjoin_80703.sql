@@ -1,7 +1,7 @@
 -- Tags: no-parallel-replicas
 -- no-parallel-replicas: Dictionary is not available on parallel-replica workers.
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/80703
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/80703
 -- `dictGetOrDefault` + `arrayJoin` in WHERE on a `MergeTree` with a `PROJECTION` used to throw `NOT_FOUND_COLUMN_IN_BLOCK`.
 
 DROP DICTIONARY IF EXISTS tags_80703;
@@ -22,7 +22,7 @@ CREATE DICTIONARY tags_80703
     site_name String
 )
 PRIMARY KEY p_id
-SOURCE(CLICKHOUSE(TABLE tags_src_80703))
+SOURCE(DATASTORE(TABLE tags_src_80703))
 LAYOUT(HASHED())
 LIFETIME(0);
 

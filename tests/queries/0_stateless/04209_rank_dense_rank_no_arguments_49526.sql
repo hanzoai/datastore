@@ -1,6 +1,6 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/49526
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/49526
 -- The `RANK` and `DENSE_RANK` window functions take zero arguments per SQL standard.
--- ClickHouse used to silently accept and ignore arbitrary arguments, which was confusing
+-- Datastore used to silently accept and ignore arbitrary arguments, which was confusing
 -- for users (the visible argument suggested it influenced the ranking, but it did not).
 -- Such queries now throw `NUMBER_OF_ARGUMENTS_DOESNT_MATCH`. The legacy permissive
 -- behavior is gated behind the `allow_rank_dense_rank_arguments` compatibility setting.

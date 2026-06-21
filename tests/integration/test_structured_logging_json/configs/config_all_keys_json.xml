@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<clickhouse>
+<datastore>
     <logger>
         <!-- Structured log formatting:
         You can specify log format(for now, JSON only). In that case, the console log will be printed
@@ -26,4 +26,4 @@
         </formatting>
     </logger>
 
-</clickhouse>
+</datastore>

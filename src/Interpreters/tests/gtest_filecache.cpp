@@ -23,7 +23,7 @@
 #include <Interpreters/FileCache/FileSegment.h>
 #include <Interpreters/FileCache/EvictionCandidates.h>
 #include <Interpreters/FileCache/SLRUFileCachePriority.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/Cache/OvercommitFileCachePriority.h>
 #endif
 #include <Interpreters/Context.h>
@@ -403,8 +403,8 @@ TEST_F(FileCacheTest, LRUPolicy)
     std::string query_id = "query_id";
 
     Poco::XML::DOMParser dom_parser;
-    std::string xml(R"CONFIG(<clickhouse>
-</clickhouse>)CONFIG");
+    std::string xml(R"CONFIG(<datastore>
+</datastore>)CONFIG");
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(document);
     getMutableContext().context->setConfig(config);
@@ -1136,8 +1136,8 @@ TEST_F(FileCacheTest, CachedReadBuffer)
     std::string query_id = "query_id";
 
     Poco::XML::DOMParser dom_parser;
-    std::string xml(R"CONFIG(<clickhouse>
-</clickhouse>)CONFIG");
+    std::string xml(R"CONFIG(<datastore>
+</datastore>)CONFIG");
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(document);
     getMutableContext().context->setConfig(config);
@@ -1266,8 +1266,8 @@ TEST_F(FileCacheTest, SLRUPolicy)
     std::string query_id = "query_id"; /// To work with cache need query_id and query context.
 
     Poco::XML::DOMParser dom_parser;
-    std::string xml(R"CONFIG(<clickhouse>
-</clickhouse>)CONFIG");
+    std::string xml(R"CONFIG(<datastore>
+</datastore>)CONFIG");
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(document);
     getMutableContext().context->setConfig(config);
@@ -1562,7 +1562,7 @@ TEST_F(FileCacheTest, SLRUDynamicResizeCorrectEviction)
 
 TEST_F(FileCacheTest, SLRUFreeSpaceKeepingProtectedOnly)
 {
-    /// Regression test for https://github.com/ClickHouse/ClickHouse/issues/104307
+    /// Regression test for https://github.com/ClickHouse/Datastore/issues/104307
     ///
     /// `SLRUFileCachePriority::collectEvictionInfo` is invoked from
     /// `FileCache::freeSpaceRatioKeepingThreadFunc` (driven by the
@@ -2000,7 +2000,7 @@ TEST_F(FileCacheTest, PartiallyDownloadedDynamicResizeAssertion)
     DB::ThreadStatus thread_status;
 
     Poco::XML::DOMParser dom_parser;
-    std::string xml(R"CONFIG(<clickhouse></clickhouse>)CONFIG");
+    std::string xml(R"CONFIG(<datastore></datastore>)CONFIG");
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(document);
     getMutableContext().context->setConfig(config);
@@ -2106,7 +2106,7 @@ TEST_F(FileCacheTest, FailedEvictionRestorePreservesInvariants)
     DB::ThreadStatus thread_status;
 
     Poco::XML::DOMParser dom_parser;
-    std::string xml(R"CONFIG(<clickhouse></clickhouse>)CONFIG");
+    std::string xml(R"CONFIG(<datastore></datastore>)CONFIG");
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(document);
     getMutableContext().context->setConfig(config);

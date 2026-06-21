@@ -3,13 +3,13 @@
 
 # Verify that cached schema filenames contain a hex-encoded content sample prefix
 # that differs between schemas with different content.
-# Regression test for https://github.com/ClickHouse/ClickHouse/issues/101904
+# Regression test for https://github.com/ClickHouse/Datastore/issues/101904
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-WORKDIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORKDIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "$WORKDIR"
 mkdir -p "$WORKDIR"
 
@@ -21,14 +21,14 @@ SCHEMA2='syntax = "proto3"; message B04094 { string y = 1; }'
 #   <hex_content_sample>-<hash>.proto
 # Before the fix, the hex content sample was always the same (encoding of zero bytes).
 
-(cd "$WORKDIR" && ${CLICKHOUSE_LOCAL} --logger.console=0 --query "
+(cd "$WORKDIR" && ${DATASTORE_LOCAL} --logger.console=0 --query "
     SELECT 42 AS x FORMAT Protobuf
     SETTINGS format_schema_source = 'string',
              format_schema = '$SCHEMA1',
              format_schema_message_name = 'A04094'
 " > /dev/null)
 
-(cd "$WORKDIR" && ${CLICKHOUSE_LOCAL} --logger.console=0 --query "
+(cd "$WORKDIR" && ${DATASTORE_LOCAL} --logger.console=0 --query "
     SELECT 'hello' AS y FORMAT Protobuf
     SETTINGS format_schema_source = 'string',
              format_schema = '$SCHEMA2',

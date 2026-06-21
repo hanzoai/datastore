@@ -22,7 +22,7 @@ To start logging:
 
 The flushing period of data is set in `flush_interval_milliseconds` parameter of the [query_thread_log](/operations/server-configuration-parameters/settings#query_thread_log) server settings section. To force flushing, use the [SYSTEM FLUSH LOGS](/sql-reference/statements/system#flush-logs) query.
 
-ClickHouse does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
+Datastore does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
 
 You can use the [log_queries_probability](/operations/settings/settings#log_queries_probability)) setting to reduce the number of queries, registered in the `query_thread_log` table.
 
@@ -64,13 +64,13 @@ You can use the [log_queries_probability](/operations/settings/settings#log_quer
 - `authenticated_user` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Name of the user who was authenticated in the session.
 - `interface` ([UInt8](/sql-reference/data-types/int-uint)) — Interface that the query was initiated from. Possible values: 1 — TCP, 2 — HTTP.
 - `is_secure` ([UInt8](/sql-reference/data-types/int-uint)) — The flag which shows whether the connection was secure.
-- `os_user` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — OSs username who runs clickhouse-client.
-- `client_hostname` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Hostname of the client machine where the clickhouse-client or another TCP client is run.
-- `client_name` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — The clickhouse-client or another TCP client name.
-- `client_revision` ([UInt32](/sql-reference/data-types/int-uint)) — Revision of the clickhouse-client or another TCP client.
-- `client_version_major` ([UInt32](/sql-reference/data-types/int-uint)) — Major version of the clickhouse-client or another TCP client.
-- `client_version_minor` ([UInt32](/sql-reference/data-types/int-uint)) — Minor version of the clickhouse-client or another TCP client.
-- `client_version_patch` ([UInt32](/sql-reference/data-types/int-uint)) — Patch component of the clickhouse-client or another TCP client version.
+- `os_user` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — OSs username who runs datastore-client.
+- `client_hostname` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — Hostname of the client machine where the datastore-client or another TCP client is run.
+- `client_name` ([LowCardinality(String)](/sql-reference/data-types/lowcardinality)) — The datastore-client or another TCP client name.
+- `client_revision` ([UInt32](/sql-reference/data-types/int-uint)) — Revision of the datastore-client or another TCP client.
+- `client_version_major` ([UInt32](/sql-reference/data-types/int-uint)) — Major version of the datastore-client or another TCP client.
+- `client_version_minor` ([UInt32](/sql-reference/data-types/int-uint)) — Minor version of the datastore-client or another TCP client.
+- `client_version_patch` ([UInt32](/sql-reference/data-types/int-uint)) — Patch component of the datastore-client or another TCP client version.
 - `script_query_number` ([UInt32](/sql-reference/data-types/int-uint)) — A sequential query number in a multi-query script.
 - `script_line_number` ([UInt32](/sql-reference/data-types/int-uint)) — A line number in a multi-query script where the current query starts.
 - `http_method` ([UInt8](/sql-reference/data-types/int-uint)) — HTTP method that initiated the query. Possible values: 0 — The query was launched from the TCP interface, 1 — GET method was used., 2 — POST method was used.
@@ -79,7 +79,7 @@ You can use the [log_queries_probability](/operations/settings/settings#log_quer
 - `forwarded_for` ([String](/sql-reference/data-types/string)) — HTTP header `X-Forwarded-For` passed in the HTTP query.
 - `quota_key` ([String](/sql-reference/data-types/string)) — The 'quota key' specified in the quotas setting.
 - `distributed_depth` ([UInt64](/sql-reference/data-types/int-uint)) — How many times a query was forwarded between servers.
-- `revision` ([UInt32](/sql-reference/data-types/int-uint)) — ClickHouse revision.
+- `revision` ([UInt32](/sql-reference/data-types/int-uint)) — Datastore revision.
 - `ProfileEvents` ([Map(LowCardinality(String), UInt64)](/sql-reference/data-types/map)) — ProfileEvents that measure different metrics for this thread. The description of them could be found in the table system.events.
 
 **Aliases:**
@@ -97,7 +97,7 @@ You can use the [log_queries_probability](/operations/settings/settings#log_quer
 ```text
 Row 1:
 ──────
-hostname:                      clickhouse.eu-central1.internal
+hostname:                      datastore.eu-central1.internal
 event_date:                    2020-09-11
 event_time:                    2020-09-11 10:08:17
 event_time_microseconds:       2020-09-11 10:08:17.134042
@@ -126,7 +126,7 @@ initial_port:                  33452
 interface:                     1
 os_user:                       bharatnc
 client_hostname:               tower
-client_name:                   ClickHouse
+client_name:                   Datastore
 client_revision:               54437
 client_version_major:          20
 client_version_minor:          7

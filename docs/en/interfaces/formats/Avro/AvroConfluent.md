@@ -19,7 +19,7 @@ import DataTypesMatching from './_snippets/data-types-matching.md'
 
 [Apache Avro](https://avro.apache.org/) is a row-oriented serialization format that uses binary encoding for efficient data processing. The `AvroConfluent` format supports reading and writing Avro-encoded messages using the [Confluent Schema Registry](https://docs.confluent.io/current/schema-registry/index.html) (or API-compatible services).
 
-Each message uses the Confluent wire format: a magic byte (`0x00`) followed by a 4-byte big-endian schema ID, followed by the Avro binary datum. When reading, ClickHouse resolves the schema ID by querying the registry. When writing, ClickHouse registers the schema derived from the output columns and prepends the resulting ID to each row. Schemas are cached for optimal performance.
+Each message uses the Confluent wire format: a magic byte (`0x00`) followed by a 4-byte big-endian schema ID, followed by the Avro binary datum. When reading, Datastore resolves the schema ID by querying the registry. When writing, Datastore registers the schema derived from the output columns and prepends the resulting ID to each row. Schemas are cached for optimal performance.
 
 <a id="data-types-matching"></a>
 ## Data type mapping {#data-type-mapping}
@@ -106,17 +106,17 @@ format_avro_schema_registry_url = 'https://<username>:<password>@schema-registry
 
 ## Troubleshooting {#troubleshooting}
 
-To monitor ingestion progress and debug errors with the Kafka consumer, you can query the [`system.kafka_consumers` system table](../../../operations/system-tables/kafka_consumers.md). If your deployment has multiple replicas (e.g., ClickHouse Cloud), you must use the [`clusterAllReplicas`](../../../sql-reference/table-functions/cluster.md) table function.
+To monitor ingestion progress and debug errors with the Kafka consumer, you can query the [`system.kafka_consumers` system table](../../../operations/system-tables/kafka_consumers.md). If your deployment has multiple replicas (e.g., Datastore Cloud), you must use the [`clusterAllReplicas`](../../../sql-reference/table-functions/cluster.md) table function.
 
 ```sql
 SELECT * FROM clusterAllReplicas('default',system.kafka_consumers)
 ORDER BY assignments.partition_id ASC;
 ```
 
-If you run into schema resolution issues, you can use [kafkacat](https://github.com/edenhill/kafkacat) with [clickhouse-local](/operations/utilities/clickhouse-local.md) to troubleshoot:
+If you run into schema resolution issues, you can use [kafkacat](https://github.com/edenhill/kafkacat) with [datastore-local](/operations/utilities/datastore-local.md) to troubleshoot:
 
 ```bash
-$ kafkacat -b kafka-broker  -C -t topic1 -o beginning -f '%s' -c 3 | clickhouse-local   --input-format AvroConfluent --format_avro_schema_registry_url 'http://schema-registry' -S "field1 Int64, field2 String"  -q 'select *  from table'
+$ kafkacat -b kafka-broker  -C -t topic1 -o beginning -f '%s' -c 3 | datastore-local   --input-format AvroConfluent --format_avro_schema_registry_url 'http://schema-registry' -S "field1 Int64, field2 String"  -q 'select *  from table'
 1 a
 2 b
 3 c

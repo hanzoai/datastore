@@ -8,9 +8,9 @@
 -- so the right-side USING key column remained non-nullable (UInt32) instead of being cast
 -- to Nullable(UInt32). The QUALIFY filter then expected Nullable(UInt8) from `equals` but got UInt8.
 --
--- https://github.com/ClickHouse/ClickHouse/issues/96101
--- https://github.com/ClickHouse/ClickHouse/issues/95678
--- https://github.com/ClickHouse/ClickHouse/issues/89802
+-- https://github.com/ClickHouse/Datastore/issues/96101
+-- https://github.com/ClickHouse/Datastore/issues/95678
+-- https://github.com/ClickHouse/Datastore/issues/89802
 
 SET enable_analyzer = 1;
 SET query_plan_use_new_logical_join_step = 0;

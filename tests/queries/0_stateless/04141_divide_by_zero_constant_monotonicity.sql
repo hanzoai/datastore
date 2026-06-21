@@ -8,7 +8,7 @@
 -- `src/Interpreters/Set.cpp`, so the user-visible query result and pruning effectiveness are
 -- unchanged. The `Bugfix validation (functional tests)` job runs against a release master
 -- binary and therefore cannot reproduce the original `LOGICAL_ERROR`.
--- https://github.com/ClickHouse/ClickHouse/issues/90461
+-- https://github.com/ClickHouse/Datastore/issues/90461
 
 DROP TABLE IF EXISTS t_divide_zero_mono;
 

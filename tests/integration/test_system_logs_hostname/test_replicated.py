@@ -10,7 +10,7 @@ def fill_nodes(nodes, shard):
                 CREATE DATABASE test;
     
                 CREATE TABLE test.test_table(date Date, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{shard}/replicated/test_table', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date);
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{shard}/replicated/test_table', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date);
             """.format(
                 shard=shard, replica=node.name
             )

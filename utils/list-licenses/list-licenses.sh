@@ -19,9 +19,9 @@ LIBS_PATH="${ROOT_PATH}/contrib"
 
 # Convert absolute paths under ROOT_PATH to repository-relative paths.
 # Unnested example:
-#   /workspace/clickhouse/contrib/zstd/LICENSE -> /contrib/zstd/LICENSE
+#   /workspace/datastore/contrib/zstd/LICENSE -> /contrib/zstd/LICENSE
 # Nested contrib example:
-#   /workspace/clickhouse/contrib/rapidjson/contrib/natvis/README.md
+#   /workspace/datastore/contrib/rapidjson/contrib/natvis/README.md
 #   -> /contrib/rapidjson/contrib/natvis/README.md
 # Keeping the full suffix avoids truncation when a dependency contains its own
 # nested "contrib/" subtree.

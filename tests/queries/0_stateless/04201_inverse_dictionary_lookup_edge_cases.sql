@@ -52,13 +52,13 @@ CREATE TABLE ref_str (id UInt64, name String) ENGINE = MergeTree ORDER BY id;
 INSERT INTO ref_str VALUES (1, 'abc');
 
 CREATE DICTIONARY dict_int_default_minus1 (`to` UInt64, `from` Int32 DEFAULT -1)
-PRIMARY KEY `to` SOURCE(CLICKHOUSE(TABLE 'ref_int')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY `to` SOURCE(DATASTORE(TABLE 'ref_int')) LAYOUT(HASHED()) LIFETIME(0);
 
 CREATE DICTIONARY dict_int_nullable_default_minus1 (`to` UInt64, `from` Int32 DEFAULT -1)
-PRIMARY KEY `to` SOURCE(CLICKHOUSE(TABLE 'ref_int_nullable')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY `to` SOURCE(DATASTORE(TABLE 'ref_int_nullable')) LAYOUT(HASHED()) LIFETIME(0);
 
 CREATE DICTIONARY dict_string (id UInt64, name String)
-PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_str')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_str')) LAYOUT(HASHED()) LIFETIME(0);
 
 CREATE TABLE data_int (id Int32) ENGINE = MergeTree ORDER BY id;
 INSERT INTO data_int VALUES (53);
@@ -140,7 +140,7 @@ SETTINGS optimize_inverse_dictionary_lookup = 1;
 CREATE TABLE ref_complex_str (k1 UInt64, k2 String, name String) ENGINE = MergeTree ORDER BY (k1, k2);
 INSERT INTO ref_complex_str VALUES (1, 'a', 'abc');
 CREATE DICTIONARY dict_complex_str (k1 UInt64, k2 String, name String)
-PRIMARY KEY k1, k2 SOURCE(CLICKHOUSE(TABLE 'ref_complex_str')) LAYOUT(COMPLEX_KEY_HASHED()) LIFETIME(0);
+PRIMARY KEY k1, k2 SOURCE(DATASTORE(TABLE 'ref_complex_str')) LAYOUT(COMPLEX_KEY_HASHED()) LIFETIME(0);
 CREATE TABLE data_complex (k1 Nullable(UInt64), k2 String) ENGINE = MergeTree ORDER BY tuple();
 INSERT INTO data_complex VALUES (1, 'a'), (2, 'a');
 
@@ -169,7 +169,7 @@ SETTINGS optimize_inverse_dictionary_lookup = 1;
 CREATE TABLE ref_complex_nullable_dict_key (k1 Nullable(UInt64), k2 String, name String) ENGINE = MergeTree ORDER BY tuple();
 INSERT INTO ref_complex_nullable_dict_key VALUES (NULL, 'x', 'nullhit'), (1, 'x', 'one');
 CREATE DICTIONARY dict_complex_nullable_dict_key (k1 Nullable(UInt64), k2 String, name String)
-PRIMARY KEY k1, k2 SOURCE(CLICKHOUSE(TABLE 'ref_complex_nullable_dict_key')) LAYOUT(COMPLEX_KEY_HASHED()) LIFETIME(0);
+PRIMARY KEY k1, k2 SOURCE(DATASTORE(TABLE 'ref_complex_nullable_dict_key')) LAYOUT(COMPLEX_KEY_HASHED()) LIFETIME(0);
 CREATE TABLE data_complex_nullable_dict_key (k1 Nullable(UInt64), k2 String) ENGINE = MergeTree ORDER BY tuple();
 INSERT INTO data_complex_nullable_dict_key VALUES (NULL, 'x'), (1, 'x'), (2, 'x');
 
@@ -198,7 +198,7 @@ SETTINGS optimize_inverse_dictionary_lookup = 1;
 CREATE TABLE ref_nullable_attr_stored (id UInt64, name Nullable(String)) ENGINE = MergeTree ORDER BY id;
 INSERT INTO ref_nullable_attr_stored VALUES (1, 'abc'), (2, NULL);
 CREATE DICTIONARY dict_nullable_attr_stored (id UInt64, name Nullable(String) DEFAULT 'missing')
-PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_nullable_attr_stored')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_nullable_attr_stored')) LAYOUT(HASHED()) LIFETIME(0);
 
 SELECT 'Nullable attr with stored NULL, isNull(predicate), no rewrite - plan';
 EXPLAIN SYNTAX run_query_tree_passes=1
@@ -213,7 +213,7 @@ SETTINGS optimize_inverse_dictionary_lookup = 1;
 CREATE TABLE ref_ops (id UInt64, name String, n UInt64) ENGINE = MergeTree ORDER BY id;
 INSERT INTO ref_ops VALUES (1, 'apple', 5);
 CREATE DICTIONARY dict_ops (id UInt64, name String, n UInt64)
-PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_ops')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_ops')) LAYOUT(HASHED()) LIFETIME(0);
 CREATE TABLE data_ops (id UInt64) ENGINE = MergeTree ORDER BY id;
 INSERT INTO data_ops VALUES (1), (2);
 
@@ -268,13 +268,13 @@ INSERT INTO ref_layouts_simple VALUES (1, 'red');
 CREATE TABLE ref_layouts_complex (k1 UInt64, k2 String, name String) ENGINE = MergeTree ORDER BY (k1, k2);
 INSERT INTO ref_layouts_complex VALUES (1, 'a', 'red');
 
-CREATE DICTIONARY dict_flat (id UInt64, name String) PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_layouts_simple')) LAYOUT(FLAT()) LIFETIME(0);
-CREATE DICTIONARY dict_hashed (id UInt64, name String) PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_layouts_simple')) LAYOUT(HASHED()) LIFETIME(0);
-CREATE DICTIONARY dict_hashed_array (id UInt64, name String) PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_layouts_simple')) LAYOUT(HASHED_ARRAY()) LIFETIME(0);
-CREATE DICTIONARY dict_sparse_hashed (id UInt64, name String) PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_layouts_simple')) LAYOUT(SPARSE_HASHED()) LIFETIME(0);
-CREATE DICTIONARY dict_complex (k1 UInt64, k2 String, name String) PRIMARY KEY k1, k2 SOURCE(CLICKHOUSE(TABLE 'ref_layouts_complex')) LAYOUT(COMPLEX_KEY_HASHED()) LIFETIME(0);
-CREATE DICTIONARY dict_complex_array (k1 UInt64, k2 String, name String) PRIMARY KEY k1, k2 SOURCE(CLICKHOUSE(TABLE 'ref_layouts_complex')) LAYOUT(COMPLEX_KEY_HASHED_ARRAY()) LIFETIME(0);
-CREATE DICTIONARY dict_complex_sparse (k1 UInt64, k2 String, name String) PRIMARY KEY k1, k2 SOURCE(CLICKHOUSE(TABLE 'ref_layouts_complex')) LAYOUT(COMPLEX_KEY_SPARSE_HASHED()) LIFETIME(0);
+CREATE DICTIONARY dict_flat (id UInt64, name String) PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_layouts_simple')) LAYOUT(FLAT()) LIFETIME(0);
+CREATE DICTIONARY dict_hashed (id UInt64, name String) PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_layouts_simple')) LAYOUT(HASHED()) LIFETIME(0);
+CREATE DICTIONARY dict_hashed_array (id UInt64, name String) PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_layouts_simple')) LAYOUT(HASHED_ARRAY()) LIFETIME(0);
+CREATE DICTIONARY dict_sparse_hashed (id UInt64, name String) PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_layouts_simple')) LAYOUT(SPARSE_HASHED()) LIFETIME(0);
+CREATE DICTIONARY dict_complex (k1 UInt64, k2 String, name String) PRIMARY KEY k1, k2 SOURCE(DATASTORE(TABLE 'ref_layouts_complex')) LAYOUT(COMPLEX_KEY_HASHED()) LIFETIME(0);
+CREATE DICTIONARY dict_complex_array (k1 UInt64, k2 String, name String) PRIMARY KEY k1, k2 SOURCE(DATASTORE(TABLE 'ref_layouts_complex')) LAYOUT(COMPLEX_KEY_HASHED_ARRAY()) LIFETIME(0);
+CREATE DICTIONARY dict_complex_sparse (k1 UInt64, k2 String, name String) PRIMARY KEY k1, k2 SOURCE(DATASTORE(TABLE 'ref_layouts_complex')) LAYOUT(COMPLEX_KEY_SPARSE_HASHED()) LIFETIME(0);
 
 SELECT 'layout Flat, no rewrite';
 EXPLAIN SYNTAX run_query_tree_passes=1 SELECT id FROM data_ops WHERE dictGetString('dict_flat', 'name', id) LIKE '%' ORDER BY id
@@ -412,7 +412,7 @@ SETTINGS optimize_inverse_dictionary_lookup = 1;
 CREATE TABLE ref_set_limit (id UInt64, name String) ENGINE = MergeTree ORDER BY id;
 INSERT INTO ref_set_limit VALUES (1, 'hit'), (2, 'hit'), (3, 'miss');
 CREATE DICTIONARY dict_set_limit (id UInt64, name String)
-PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'ref_set_limit')) LAYOUT(HASHED()) LIFETIME(0);
+PRIMARY KEY id SOURCE(DATASTORE(TABLE 'ref_set_limit')) LAYOUT(HASHED()) LIFETIME(0);
 CREATE TABLE data_set_limit (id UInt64) ENGINE = MergeTree ORDER BY id;
 INSERT INTO data_set_limit VALUES (1), (2), (3);
 

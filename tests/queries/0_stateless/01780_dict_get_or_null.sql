@@ -18,7 +18,7 @@ CREATE DICTIONARY simple_key_dictionary
     value_nullable Nullable(String)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'simple_key_dictionary_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'simple_key_dictionary_source_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Simple key dictionary dictGetOrNull';
@@ -56,7 +56,7 @@ CREATE DICTIONARY complex_key_dictionary
     value_nullable Nullable(String)
 )
 PRIMARY KEY id, id_key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'complex_key_dictionary_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'complex_key_dictionary_source_table'))
 LAYOUT(COMPLEX_KEY_DIRECT());
 
 SELECT 'Complex key dictionary dictGetOrNull';
@@ -97,7 +97,7 @@ CREATE DICTIONARY range_key_dictionary
     value_nullable Nullable(String)
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'range_key_dictionary_source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'range_key_dictionary_source_table'))
 LIFETIME(MIN 1 MAX 1000)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start_date MAX end_date);

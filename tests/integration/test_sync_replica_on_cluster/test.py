@@ -39,7 +39,7 @@ def test_sync_replica_on_cluster():
     node1.query(
         f"""
         CREATE TABLE {table} ON CLUSTER 'cluster' (id Int64, str String)
-        ENGINE=ReplicatedMergeTree('/clickhouse/tables/{table}/', '{{replica}}')
+        ENGINE=ReplicatedMergeTree('/datastore/tables/{table}/', '{{replica}}')
         ORDER BY id
         """
     )
@@ -93,7 +93,7 @@ def test_sync_replica_if_not_exists():
     node1.query(
         f"""
         CREATE TABLE {table} (id Int64, str String)
-        ENGINE=ReplicatedMergeTree('/clickhouse/tables/{table}/', '{{replica}}')
+        ENGINE=ReplicatedMergeTree('/datastore/tables/{table}/', '{{replica}}')
         ORDER BY id
         """
     )

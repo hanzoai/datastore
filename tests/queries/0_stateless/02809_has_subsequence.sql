@@ -33,20 +33,20 @@ select hasSubsequenceCaseInsensitive(materialize('garbage'), materialize('ARG'))
 select hasSubsequenceCaseInsensitive(materialize('GARGAGE'), materialize('arg'));
 
 select 'hasSubsequenceUTF8';
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', '');
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'C');     -- eng
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'С');     -- cyrilic
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'House');
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'house');
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'система');
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'Система');
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', 'ссубд');
-select hasSubsequence(materialize('ClickHouse - столбцовая система управления базами данных'), 'субд');
-select hasSubsequence(materialize('ClickHouse - столбцовая система управления базами данных'), 'суббд');
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', materialize('стул'));
-select hasSubsequence('ClickHouse - столбцовая система управления базами данных', materialize('два стула'));
-select hasSubsequence(materialize('ClickHouse - столбцовая система управления базами данных'), materialize('орех'));
-select hasSubsequence(materialize('ClickHouse - столбцовая система управления базами данных'), materialize('два ореха'));
+select hasSubsequence('Datastore - столбцовая система управления базами данных', '');
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'C');     -- eng
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'С');     -- cyrilic
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'House');
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'house');
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'система');
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'Система');
+select hasSubsequence('Datastore - столбцовая система управления базами данных', 'ссубд');
+select hasSubsequence(materialize('Datastore - столбцовая система управления базами данных'), 'субд');
+select hasSubsequence(materialize('Datastore - столбцовая система управления базами данных'), 'суббд');
+select hasSubsequence('Datastore - столбцовая система управления базами данных', materialize('стул'));
+select hasSubsequence('Datastore - столбцовая система управления базами данных', materialize('два стула'));
+select hasSubsequence(materialize('Datastore - столбцовая система управления базами данных'), materialize('орех'));
+select hasSubsequence(materialize('Datastore - столбцовая система управления базами данных'), materialize('два ореха'));
 
 select 'hasSubsequenceCaseInsensitiveUTF8';
 select hasSubsequenceCaseInsensitiveUTF8('для онлайн обработки аналитических запросов (OLAP)', 'oltp');

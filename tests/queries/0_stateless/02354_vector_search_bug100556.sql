@@ -1,6 +1,6 @@
 -- Tags: no-fasttest, no-ordinary-database
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100556
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100556
 -- A huge neighbor count caused ceil2() overflow in usearch reserve(), leading to
 -- heap-buffer-overflow in sorted_buffer_gt::insert(). With the fix, an error is returned.
 

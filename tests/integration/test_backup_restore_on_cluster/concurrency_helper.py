@@ -17,7 +17,7 @@ def generate_cluster_def(file: str, num_nodes: int) -> str:
                 </replica>"""
         for i in range(num_nodes)
     )
-    config = f"""<clickhouse>
+    config = f"""<datastore>
     <remote_servers>
         <cluster>
             <shard>
@@ -25,7 +25,7 @@ def generate_cluster_def(file: str, num_nodes: int) -> str:
             </shard>
         </cluster>
     </remote_servers>
-</clickhouse>"""
+</datastore>"""
     if path.is_file():
         existing = path.read_text(encoding="utf-8")
         if existing == config:
@@ -63,6 +63,6 @@ def add_nodes_to_cluster(
 def create_test_table(node: ClickHouseInstance) -> None:
     node.query(
         """CREATE TABLE tbl ON CLUSTER 'cluster' ( x UInt64 )
-ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')
+ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')
 ORDER BY tuple()"""
     )

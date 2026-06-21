@@ -5,15 +5,15 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-MY_CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --enable_analyzer 1"
+MY_DATASTORE_CLIENT="${DATASTORE_CLIENT} --enable_analyzer 1"
 
 function run_query()
 {
     local query=$1
     echo "$query"
-    $MY_CLICKHOUSE_CLIENT --query "$query"
+    $MY_DATASTORE_CLIENT --query "$query"
 
-    $MY_CLICKHOUSE_CLIENT --query "
+    $MY_DATASTORE_CLIENT --query "
         SELECT trimLeft(explain) FROM (
             EXPLAIN indexes = 1 $query
         )
@@ -26,10 +26,10 @@ function run_query_no_idx()
 {
     local query=$1
     echo "$query"
-    $MY_CLICKHOUSE_CLIENT --use_skip_indexes_on_data_read=0 --query "$query"
+    $MY_DATASTORE_CLIENT --use_skip_indexes_on_data_read=0 --query "$query"
 }
 
-$MY_CLICKHOUSE_CLIENT --query "
+$MY_DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS tab;
 
     CREATE TABLE tab
@@ -42,14 +42,14 @@ $MY_CLICKHOUSE_CLIENT --query "
     ORDER BY (id) SETTINGS index_granularity = 1;
 "
 
-cat <<'JSON' | $MY_CLICKHOUSE_CLIENT --query "INSERT INTO tab FORMAT JSONEachRow"
+cat <<'JSON' | $MY_DATASTORE_CLIENT --query "INSERT INTO tab FORMAT JSONEachRow"
 {"id":0,"data":{"title":"[\"foo\",\"bar\"]","first":"foo","second":"bar","name":"alice"}}
 {"id":1,"data":{"title":"[\"foo\"]","name":"bob"}}
 {"id":2,"data":{"title":"[\"bar\"]","name":"carol"}}
 {"id":3,"data":{"title":"[\"baz\"]","other":{"first":"foo","second":"bar"},"name":"distractor"}}
 JSON
 
-$MY_CLICKHOUSE_CLIENT --query "SYSTEM STOP MERGES tab;"
+$MY_DATASTORE_CLIENT --query "SYSTEM STOP MERGES tab;"
 
 echo "-- Equality on JSON subcolumn"
 run_query "SELECT id FROM tab WHERE data.title::String = '[\"foo\",\"bar\"]' ORDER BY id"
@@ -69,4 +69,4 @@ run_query "SELECT id FROM tab WHERE hasAnyTokens(JSONAllValues(data), ['foo', 'b
 echo "-- JSONAllValues hasAnyTokens without index"
 run_query_no_idx "SELECT id FROM tab WHERE hasAnyTokens(JSONAllValues(data), ['foo', 'bar']) ORDER BY id"
 
-$MY_CLICKHOUSE_CLIENT --query "DROP TABLE tab;"
+$MY_DATASTORE_CLIENT --query "DROP TABLE tab;"

@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_lwu_cleanup SYNC;
     SET enable_lightweight_update = 1;
 
@@ -37,14 +37,14 @@ $CLICKHOUSE_CLIENT --query "
 "
 
 for _ in {0..50}; do
-    res=`$CLICKHOUSE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_lwu_cleanup' AND active AND startsWith(name, 'patch')"`
+    res=`$DATASTORE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_lwu_cleanup' AND active AND startsWith(name, 'patch')"`
     if [[ $res == "0" ]]; then
         break
     fi
     sleep 1.0
 done
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 't_lwu_cleanup' AND active AND startsWith(name, 'patch');
     DROP TABLE t_lwu_cleanup SYNC;
 "

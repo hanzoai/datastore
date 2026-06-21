@@ -1,6 +1,6 @@
 SELECT decodeHTMLComponent('Hello, &quot;world&quot;!');
 SELECT decodeHTMLComponent('&lt;123&gt;');
-SELECT decodeHTMLComponent('&amp;clickhouse');
+SELECT decodeHTMLComponent('&amp;datastore');
 SELECT decodeHTMLComponent('&apos;foo&apos;');
 SELECT decodeHTMLComponent('Hello, &&amp; world');
 SELECT decodeHTMLComponent('Hello, &;&amp; world');

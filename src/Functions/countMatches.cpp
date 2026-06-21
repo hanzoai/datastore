@@ -180,7 +180,7 @@ REGISTER_FUNCTION(CountMatches)
 Returns number of matches of a regular expression in a string.
 
 :::note Version dependent behavior
-The behavior of this function depends on the ClickHouse version:
+The behavior of this function depends on the Datastore version:
 
 - in versions < v25.6, the function stops counting at the first empty match even if a pattern accepts.
 - in versions >= 25.6, the function continues execution when an empty match occurs. The legacy behavior can be restored using setting `count_matches_stop_at_empty_match = true`;

@@ -501,7 +501,7 @@ static bool preprocessUnionJoin(IParser::Pos & pos, ASTPtr & node, Expected & ex
     }
     else
     {
-        /// Map KQL join kind to ClickHouse join type.
+        /// Map KQL join kind to Datastore join type.
         /// Reject unsupported `kind=...` values rather than silently treating them as `INNER`,
         /// which would mask typos and unsupported kinds with semantically different results.
         /// Mirrors the explicit-reject behavior in `ParserKQLJoin::parseImpl`.

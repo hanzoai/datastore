@@ -22,12 +22,12 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             sample_data = [
                 {
-                    "title": "ClickHouse Newsletter June 2022: Materialized, but still real-time",
+                    "title": "Datastore Newsletter June 2022: Materialized, but still real-time",
                     "theme": "Newsletter",
                 },
                 {
-                    "title": "ClickHouse Over the Years with Benchmarks",
-                    "theme": "ClickHouse Journey",
+                    "title": "Datastore Over the Years with Benchmarks",
+                    "theme": "Datastore Journey",
                 },
             ]
             self.wfile.write(bytes(json.dumps(sample_data), "UTF-8"))

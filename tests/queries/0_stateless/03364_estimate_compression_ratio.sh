@@ -17,7 +17,7 @@ create_table() {
     local num_rows=$1
 
     query="DROP TABLE IF EXISTS $table_name"
-    $CLICKHOUSE_CLIENT -q "$query"
+    $DATASTORE_CLIENT -q "$query"
 
     query="CREATE TABLE $table_name (
         number_col UInt64,
@@ -29,7 +29,7 @@ create_table() {
     ) ENGINE = MergeTree ORDER BY number_col
     SETTINGS min_bytes_for_wide_part = 0, ratio_of_defaults_for_sparse_serialization=1, index_granularity=8128"
 
-    $CLICKHOUSE_CLIENT -q "$query"
+    $DATASTORE_CLIENT -q "$query"
 
     query="INSERT INTO $table_name
     SELECT
@@ -41,7 +41,7 @@ create_table() {
         (number, (0, 0)) as tuple_col
     FROM system.numbers LIMIT $num_rows"
 
-    $CLICKHOUSE_CLIENT -q "$query"
+    $DATASTORE_CLIENT -q "$query"
 }
 
 apply_codec() {
@@ -57,10 +57,10 @@ apply_codec() {
            SETTINGS min_compress_block_size = $block_size,
                     max_compress_block_size = $block_size"
 
-    $CLICKHOUSE_CLIENT -q "$query"
+    $DATASTORE_CLIENT -q "$query"
 
     query="OPTIMIZE TABLE $table_name FINAL"
-    $CLICKHOUSE_CLIENT -q "$query"
+    $DATASTORE_CLIENT -q "$query"
 }
 
 test_compression_ratio() {
@@ -75,7 +75,7 @@ test_compression_ratio() {
     FROM $table_name
     FORMAT TSV"
 
-    ratios=$($CLICKHOUSE_CLIENT -q "$query")
+    ratios=$($DATASTORE_CLIENT -q "$query")
 
     declare -A estimated_ratios
     i=1
@@ -96,7 +96,7 @@ test_compression_ratio() {
     ORDER BY name ASC
     FORMAT TSV"
 
-    actual_ratios=$($CLICKHOUSE_CLIENT -q "$query")
+    actual_ratios=$($DATASTORE_CLIENT -q "$query")
 
     failures=0
 

@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 
-DATA_FILE=$CLICKHOUSE_TEST_UNIQUE_NAME.data
+DATA_FILE=$DATASTORE_TEST_UNIQUE_NAME.data
 
 formats="Parquet Arrow"
 queries=(
@@ -30,8 +30,8 @@ do
     for format in $formats
     do
         echo $format
-        $CLICKHOUSE_LOCAL -q "$query format $format" > $DATA_FILE
-        $CLICKHOUSE_LOCAL -q "$describe_queries"
+        $DATASTORE_LOCAL -q "$query format $format" > $DATA_FILE
+        $DATASTORE_LOCAL -q "$describe_queries"
     done
 done
 

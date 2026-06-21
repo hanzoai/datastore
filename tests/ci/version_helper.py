@@ -506,7 +506,7 @@ def main():
         update_cmake_version(version)
 
     for k, v in version.as_dict().items():
-        name = f"CLICKHOUSE_VERSION_{k.upper()}"
+        name = f"DATASTORE_VERSION_{k.upper()}"
         print(f"{name}='{v}'")
         if args.export:
             print(f"export {name}")

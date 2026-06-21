@@ -25,7 +25,7 @@ CREATE DICTIONARY test_dict
     population UInt64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dict_source' DB currentDatabase()))
+SOURCE(DATASTORE(TABLE 'dict_source' DB currentDatabase()))
 LAYOUT(FLAT())
 LIFETIME(0);
 

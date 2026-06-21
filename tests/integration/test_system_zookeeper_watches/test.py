@@ -20,7 +20,7 @@ def start_cluster():
 def test_zookeeper_watches_after_reconnect(start_cluster):
     instance.query(
         "CREATE TABLE test_watches (key UInt64, value String) "
-        "ENGINE = ReplicatedMergeTree('/clickhouse/tables/test_watches', '1') ORDER BY key"
+        "ENGINE = ReplicatedMergeTree('/datastore/tables/test_watches', '1') ORDER BY key"
     )
     instance.query("INSERT INTO test_watches VALUES (1, 'a')")
     instance.query("SYSTEM SYNC REPLICA test_watches")

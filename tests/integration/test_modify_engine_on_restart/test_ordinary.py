@@ -64,7 +64,7 @@ def remove_convert_flags():
         [
             "bash",
             "-c",
-            f"rm /var/lib/clickhouse/data/{database_name}/mt/convert_to_replicated",
+            f"rm /var/lib/datastore/data/{database_name}/mt/convert_to_replicated",
         ]
     )
 

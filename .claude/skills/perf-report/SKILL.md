@@ -1,6 +1,6 @@
 ---
 name: perf-report
-description: Analyze CI performance comparison reports for a ClickHouse PR. Lists all regressions and improvements, cross-references with master history to distinguish real changes from flaky tests.
+description: Analyze CI performance comparison reports for a Datastore PR. Lists all regressions and improvements, cross-references with master history to distinguish real changes from flaky tests.
 argument-hint: "<PR-number or CI-report-URL>"
 disable-model-invocation: false
 allowed-tools: Bash, Read, Grep, Glob, WebFetch
@@ -19,8 +19,8 @@ allowed-tools: Bash, Read, Grep, Glob, WebFetch
 Use the `fetch_perf_report.py` tool to get TSV data for both architectures:
 
 ```bash
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/$PR" --arch amd --tsv
-python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/ClickHouse/pull/$PR" --arch arm --tsv
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/$PR" --arch amd --tsv
+python3 .claude/tools/fetch_perf_report.py "https://github.com/ClickHouse/Datastore/pull/$PR" --arch arm --tsv
 ```
 
 If a direct CI report URL is given instead of a PR number, use it directly.
@@ -49,7 +49,7 @@ For every test that shows as slower or faster above 1.10x, check the public CI d
 Query the public CI database:
 
 ```bash
-clickhouse client --host play.clickhouse.com --user explorer --secure -q "
+datastore client --host play.datastore.com --user explorer --secure -q "
 SELECT
     replaceRegexpOne(test_name, '::(new|old)$', '') AS test,
     countIf(test_status = 'slower') AS slower_count,
@@ -150,7 +150,7 @@ The perf framework uses query IDs like `{test_name.query{N}.run{M}}` (e.g. `math
 **Check the git hash** of the binary that actually ran:
 
 ```bash
-grep "Starting ClickHouse" tmp/right/server.log | head -1
+grep "Starting Datastore" tmp/right/server.log | head -1
 ```
 
 This shows the exact revision, build ID, and PID. Compare with what you expect — the CI perf test may use a different binary than the latest commit if the build was cached.

@@ -13,7 +13,7 @@ SYSTEM ENABLE FAILPOINT parallel_replicas_wait_for_unused_replicas;
 
 -- TODO: this query will fail if parallel_replicas_filter_pushdown is enabled
 --       enable parallel_replicas_filter_pushdown setting explicitly
---       after https://github.com/ClickHouse/ClickHouse/issues/95524 is fixed
+--       after https://github.com/ClickHouse/Datastore/issues/95524 is fixed
 SELECT a
 FROM t1
 GROUP BY a

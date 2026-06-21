@@ -1,6 +1,6 @@
 -- Tags: no-fasttest
 -- Test that cast_string_to_date_time_mode setting works with Nullable(DateTime) CAST
--- https://github.com/ClickHouse/ClickHouse/issues/101840
+-- https://github.com/ClickHouse/Datastore/issues/101840
 
 SET session_timezone = 'UTC';
 

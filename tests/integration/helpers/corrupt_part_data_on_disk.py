@@ -32,6 +32,6 @@ def corrupt_part_data_by_path(node, part_path, file_ext=".bin"):
 
 
 def break_part(node, table, part_name):
-    path = f"/var/lib/clickhouse/data/default/{table}/{part_name}/columns.txt"
+    path = f"/var/lib/datastore/data/default/{table}/{part_name}/columns.txt"
     print(f"Corrupting part {part_name}, removing file: {path}")
     node.exec_in_container(["bash", "-c", f"rm {path}"])

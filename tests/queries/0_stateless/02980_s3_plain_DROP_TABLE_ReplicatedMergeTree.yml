@@ -3,5 +3,5 @@ storage_configuration:
     s3_plain_disk:
       type: s3_plain
       endpoint: http://localhost:11111/test/s3_plain/
-      access_key_id: clickhouse
-      secret_access_key: clickhouse
+      access_key_id: datastore
+      secret_access_key: datastore

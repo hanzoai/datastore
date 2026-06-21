@@ -6,9 +6,9 @@ import socket
 import sys
 import uuid
 
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST", "127.0.0.1")
-CLICKHOUSE_PORT = int(os.environ.get("CLICKHOUSE_PORT_TCP", "900000"))
-CLICKHOUSE_DATABASE = os.environ.get("CLICKHOUSE_DATABASE", "default")
+DATASTORE_HOST = os.environ.get("DATASTORE_HOST", "127.0.0.1")
+DATASTORE_PORT = int(os.environ.get("DATASTORE_PORT_TCP", "900000"))
+DATASTORE_DATABASE = os.environ.get("DATASTORE_DATABASE", "default")
 CLIENT_NAME = "simple native protocol"
 
 
@@ -92,7 +92,7 @@ def sendHello(s):
     writeVarUInt(21, ba)
     writeVarUInt(9, ba)
     writeVarUInt(54449, ba)
-    writeStringBinary(CLICKHOUSE_DATABASE, ba)  # database
+    writeStringBinary(DATASTORE_DATABASE, ba)  # database
     writeStringBinary("default", ba)  # user
     writeStringBinary("", ba)  # pwd
     s.sendall(ba)
@@ -242,7 +242,7 @@ def main():
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(30)
-        s.connect((CLICKHOUSE_HOST, CLICKHOUSE_PORT))
+        s.connect((DATASTORE_HOST, DATASTORE_PORT))
         sendHello(s)
         receiveHello(s)
 

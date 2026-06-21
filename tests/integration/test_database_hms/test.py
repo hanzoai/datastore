@@ -48,7 +48,7 @@ def test_hive_catalog_url_parsing(started_cluster):
         node.query("DROP DATABASE IF EXISTS test_hms_support_check")
     except Exception as e:
         if "compiled without USE_HIVE" in str(e) or "compiled without USE_AVRO" in str(e):
-            pytest.skip("HMS catalog not available: ClickHouse compiled without required features")
+            pytest.skip("HMS catalog not available: Datastore compiled without required features")
         if "Invalid URL format" in str(e):
             pass
 
@@ -200,7 +200,7 @@ def test_check_database(started_cluster):
         )
     except Exception as e:
         if "compiled without USE_HIVE" in str(e) or "compiled without USE_AVRO" in str(e):
-            pytest.skip("HMS catalog not available: ClickHouse compiled without required features")
+            pytest.skip("HMS catalog not available: Datastore compiled without required features")
         if "Invalid URL format" in str(e):
             pass
     finally:

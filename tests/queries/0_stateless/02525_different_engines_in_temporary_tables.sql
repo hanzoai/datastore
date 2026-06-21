@@ -55,7 +55,7 @@ CREATE TEMPORARY TABLE table_replicated_merge_tree_02525
     id UInt64,
     info String
 )
-ENGINE ReplicatedMergeTree('/clickhouse/tables/{database}/test_02525/table_replicated_merge_tree_02525', 'r1')
+ENGINE ReplicatedMergeTree('/datastore/tables/{database}/test_02525/table_replicated_merge_tree_02525', 'r1')
 ORDER BY id
 PRIMARY KEY id; -- { serverError INCORRECT_QUERY }
 

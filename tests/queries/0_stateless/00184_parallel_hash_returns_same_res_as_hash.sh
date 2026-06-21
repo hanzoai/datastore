@@ -9,9 +9,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 
 ROWS=123456
-SEED=$(${CLICKHOUSE_CLIENT} -q "SELECT reinterpretAsUInt32(today())")
+SEED=$(${DATASTORE_CLIENT} -q "SELECT reinterpretAsUInt32(today())")
 
-${CLICKHOUSE_CLIENT} --max_threads 16 --query="
+${DATASTORE_CLIENT} --max_threads 16 --query="
 CREATE TABLE t1 ENGINE = MergeTree ORDER BY tuple() AS
 SELECT
     sipHash64(CounterID, $SEED) AS CounterID,

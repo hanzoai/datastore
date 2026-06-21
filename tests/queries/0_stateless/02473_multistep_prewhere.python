@@ -192,7 +192,7 @@ class Tester:
 
 def main():
     # Set mutations to synchronous mode and enable lightweight DELETE's
-    url = os.environ["CLICKHOUSE_URL"] + "&max_threads=1"
+    url = os.environ["DATASTORE_URL"] + "&max_threads=1"
 
     default_index_granularity = 10
     total_rows = 7 * default_index_granularity

@@ -25,7 +25,7 @@ def reset_to_normal_settings_after_test():
     try:
         node.copy_file_to_container(
             os.path.join(SCRIPT_DIR, "configs/normal_settings.xml"),
-            "/etc/clickhouse-server/users.d/z.xml",
+            "/etc/datastore-server/users.d/z.xml",
         )
         node.query("SYSTEM RELOAD CONFIG")
         yield
@@ -40,7 +40,7 @@ def test_force_reload():
 
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/changed_settings.xml"),
-        "/etc/clickhouse-server/users.d/z.xml",
+        "/etc/datastore-server/users.d/z.xml",
     )
     node.query("SYSTEM RELOAD CONFIG")
 
@@ -58,7 +58,7 @@ def test_reload_on_timeout():
     # because config files are reload by timer only when the modification time is changed.
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/changed_settings.xml"),
-        "/etc/clickhouse-server/users.d/z.xml",
+        "/etc/datastore-server/users.d/z.xml",
     )
 
     assert_eq_with_retry(node, "SELECT getSetting('max_memory_usage')", "20000000000")
@@ -71,7 +71,7 @@ def test_reload_on_timeout():
 def test_unknown_setting_force_reload():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/unknown_setting.xml"),
-        "/etc/clickhouse-server/users.d/z.xml",
+        "/etc/datastore-server/users.d/z.xml",
     )
 
     error_message = "Setting xyz is neither a builtin setting nor started with the prefix 'custom_' registered for user-defined settings"
@@ -87,7 +87,7 @@ def test_unknown_setting_reload_on_timeout():
     # because config files are reload by timer only when the modification time is changed.
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/unknown_setting.xml"),
-        "/etc/clickhouse-server/users.d/z.xml",
+        "/etc/datastore-server/users.d/z.xml",
     )
 
     error_message = "Setting xyz is neither a builtin setting nor started with the prefix 'custom_' registered for user-defined settings"
@@ -101,7 +101,7 @@ def test_unknown_setting_reload_on_timeout():
 def test_unexpected_setting_int():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/unexpected_setting_int.xml"),
-        "/etc/clickhouse-server/users.d/z.xml",
+        "/etc/datastore-server/users.d/z.xml",
     )
     error_message = "Cannot parse"
     assert error_message in node.query_and_get_error("SYSTEM RELOAD CONFIG")
@@ -114,7 +114,7 @@ def test_unexpected_setting_int():
 def test_unexpected_setting_enum():
     node.copy_file_to_container(
         os.path.join(SCRIPT_DIR, "configs/unexpected_setting_int.xml"),
-        "/etc/clickhouse-server/users.d/z.xml",
+        "/etc/datastore-server/users.d/z.xml",
     )
     error_message = "Cannot parse"
     assert error_message in node.query_and_get_error("SYSTEM RELOAD CONFIG")

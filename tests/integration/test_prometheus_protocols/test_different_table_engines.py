@@ -79,8 +79,8 @@ def check_queries_in_prometheus_receiver():
 
 
 # Executes the test queries in the "prometheus_reader" service and check the results.
-# We send data to ClickHouse via RemoteWrite protocol and
-# then "prometheus_reader" reads data from ClickHouse via RemoteRead protocol.
+# We send data to Datastore via RemoteWrite protocol and
+# then "prometheus_reader" reads data from Datastore via RemoteRead protocol.
 def check_queries_in_prometheus_reader():
     for query, result, _ in test_queries:
         assert (
@@ -95,7 +95,7 @@ def check_queries_in_prometheus_reader():
         )
 
 
-# Executes the test queries in ClickHouse and test the results.
+# Executes the test queries in Datastore and test the results.
 def check_queries_in_clickhouse():
     for query, _, chresult in test_queries:
         assert node.query(
@@ -114,7 +114,7 @@ def start_cluster():
         cluster.shutdown()
 
 
-# Sends presets to clickhouse and execute the test queries.
+# Sends presets to datastore and execute the test queries.
 def check():
     send_preset_to_clickhouse()
     check_queries_in_prometheus_reader()

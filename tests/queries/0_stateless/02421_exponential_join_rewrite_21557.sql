@@ -1,6 +1,6 @@
 -- Tags: long
 
--- https://github.com/ClickHouse/ClickHouse/issues/21557
+-- https://github.com/ClickHouse/Datastore/issues/21557
 
 DROP TABLE IF EXISTS store_returns;
 DROP TABLE IF EXISTS catalog_sales;

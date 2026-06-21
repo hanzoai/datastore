@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-ClickHouse Memory Leak Detection Script
+Datastore Memory Leak Detection Script
 
-Monitors ClickHouse memory usage over multiple iterations to detect potential leaks.
+Monitors Datastore memory usage over multiple iterations to detect potential leaks.
 Uses system.asynchronous_metrics for accurate memory tracking.
 """
 
@@ -26,10 +26,10 @@ class MemorySnapshot:
 
 
 class ElOracloDeLeaks:
-    """Detects memory leaks in ClickHouse by monitoring metrics over iterations."""
+    """Detects memory leaks in Datastore by monitoring metrics over iterations."""
 
     def __init__(self):
-        """Initialize the detector with ClickHouse connection."""
+        """Initialize the detector with Datastore connection."""
         self.snapshots: List[MemorySnapshot] = []
         self.logger = logging.getLogger(__name__)
         self.counter: int = 0
@@ -37,7 +37,7 @@ class ElOracloDeLeaks:
     def _get_memory_snapshot(
         self, phase: str, cluster: ClickHouseCluster
     ) -> Optional[MemorySnapshot]:
-        """Capture current memory metrics from ClickHouse."""
+        """Capture current memory metrics from Datastore."""
         try:
             next_node: ClickHouseInstance = cluster.instances["node0"]
             client = Client(
@@ -165,7 +165,7 @@ class ElOracloDeLeaks:
 
                 # Restore everything
                 client.query(
-                    f"RESTORE ALL FROM File('/var/lib/clickhouse/user_files/leaks{backupn}');"
+                    f"RESTORE ALL FROM File('/var/lib/datastore/user_files/leaks{backupn}');"
                 )
             else:
                 start_time = time.time()
@@ -195,7 +195,7 @@ class ElOracloDeLeaks:
 
                 # Backup then drop all databases
                 client.query(
-                    f"BACKUP ALL TO File('/var/lib/clickhouse/user_files/leaks{backupn}');"
+                    f"BACKUP ALL TO File('/var/lib/datastore/user_files/leaks{backupn}');"
                 )
                 dbs_str = client.query(
                     "SELECT name FROM system.databases WHERE name NOT IN ('system', 'information_schema', 'INFORMATION_SCHEMA');"

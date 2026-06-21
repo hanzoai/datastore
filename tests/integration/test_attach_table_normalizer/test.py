@@ -61,5 +61,5 @@ def test_attach_substr_restart(started_cluster):
     if db_disk_name != "default":
         node.query(f"SYSTEM CLEAR DISK METADATA CACHE {db_disk_name}")
 
-    # Restart clickhouse
+    # Restart datastore
     node.restart_clickhouse(kill=True)

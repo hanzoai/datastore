@@ -8,7 +8,7 @@
 # no-flaky-check: the test is deterministic by design (it constructs the specific on-disk
 #   state and asserts the `DETACH`+`ATTACH` behavior). Running it 50x in parallel inside
 #   the flaky-check / targeted variants under sanitizers exceeds the 600s per-test budget.
-# Regression test for https://github.com/ClickHouse/ClickHouse/pull/92141
+# Regression test for https://github.com/ClickHouse/Datastore/pull/92141
 # (STID 3547-447e):
 #
 # When a part on disk has `txn_version.txt.tmp` but no `txn_version.txt` (an
@@ -33,7 +33,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # emits a `LOG_WARNING` about the bogus `txn_version.txt.tmp` left on disk. This is
 # exactly the code path this regression test exercises — suppress the expected warning
 # so the Fast test runner does not flag the stderr as a failure.
-CH_CLIENT="${CLICKHOUSE_CLIENT} --send_logs_level=error"
+CH_CLIENT="${DATASTORE_CLIENT} --send_logs_level=error"
 
 # Set up the table, insert one row, and return the active part path. Combined into a
 # single client invocation so the `flaky check` job (runs the test 50x in parallel under

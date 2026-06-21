@@ -13,7 +13,7 @@ stage=${stage:-}
 
 repo_dir=/repo
 
-CONFIG_DIR="/etc/clickhouse-server"
+CONFIG_DIR="/etc/datastore-server"
 
 export PATH="$repo_dir/ci/tmp/:$PATH"
 export PYTHONPATH=$repo_dir:$repo_dir/ci
@@ -22,12 +22,12 @@ cd /workspace
 
 function configure
 {
-    chmod +x $repo_dir/ci/tmp/clickhouse
-    # clickhouse may be compressed - run once to decompress
-    $repo_dir/ci/tmp/clickhouse --query "SELECT 1" ||:
-    ln -sf $repo_dir/ci/tmp/clickhouse $repo_dir/ci/tmp/clickhouse-server
-    ln -sf $repo_dir/ci/tmp/clickhouse $repo_dir/ci/tmp/clickhouse-client
-    ln -sf $repo_dir/ci/tmp/clickhouse $repo_dir/ci/tmp/clickhouse-local
+    chmod +x $repo_dir/ci/tmp/datastore
+    # datastore may be compressed - run once to decompress
+    $repo_dir/ci/tmp/datastore --query "SELECT 1" ||:
+    ln -sf $repo_dir/ci/tmp/datastore $repo_dir/ci/tmp/datastore-server
+    ln -sf $repo_dir/ci/tmp/datastore $repo_dir/ci/tmp/datastore-client
+    ln -sf $repo_dir/ci/tmp/datastore $repo_dir/ci/tmp/datastore-local
     rm -rf $CONFIG_DIR ||:
     mkdir -p $CONFIG_DIR ||:
     cp -av --dereference "$repo_dir"/programs/server/config* $CONFIG_DIR
@@ -40,21 +40,21 @@ function configure
 
     if [[ -n "${SERVER_FUZZER_ENABLED:-}" ]]; then
         cat > $CONFIG_DIR/users.d/serverfuzz-tweaks.xml <<EOL
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <ast_fuzzer_runs>5</ast_fuzzer_runs>
             <ast_fuzzer_any_query>true</ast_fuzzer_any_query>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 EOL
     fi
 
     cat > $CONFIG_DIR/config.d/max_server_memory_usage_to_ram_ratio.xml <<EOL
-<clickhouse>
+<datastore>
     <max_server_memory_usage_to_ram_ratio>0.75</max_server_memory_usage_to_ram_ratio>
-</clickhouse>
+</datastore>
 EOL
 
 
@@ -78,8 +78,8 @@ function filter_exists_and_template
 
 function stop_server
 {
-    clickhouse-client --query "select elapsed, query from system.processes" ||:
-    clickhouse stop
+    datastore-client --query "select elapsed, query from system.processes" ||:
+    datastore stop
 
     # Debug.
     date
@@ -104,13 +104,13 @@ function fuzz
         NEW_TESTS_OPT="${NEW_TESTS_OPT:-}"
     fi
 
-    mkdir -p /var/run/clickhouse-server
+    mkdir -p /var/run/datastore-server
 
     # server.log -> All server logs, including sanitizer
     # stderr.log -> Process logs (sanitizer) only
-    ( clickhouse-server \
+    ( datastore-server \
           --config-file $CONFIG_DIR/config.xml \
-          --pid-file /var/run/clickhouse-server/clickhouse-server.pid \
+          --pid-file /var/run/datastore-server/datastore-server.pid \
           --  --path $CONFIG_DIR \
               --logger.console=0 \
               --logger.log=server.log 2>&1 | tee -a stderr.log >> server.log 2>&1
@@ -118,23 +118,23 @@ function fuzz
     server_bg_pid=$!
     for _ in {1..30}
     do
-        if clickhouse-client --query "select 1"
+        if datastore-client --query "select 1"
         then
             break
         fi
         sleep 1
     done
-    server_pid=$(cat /var/run/clickhouse-server/clickhouse-server.pid)
+    server_pid=$(cat /var/run/datastore-server/datastore-server.pid)
 
     kill -0 $server_pid
 
-    IS_ASAN=$(clickhouse-client --query "SELECT count() FROM system.build_options WHERE name = 'CXX_FLAGS' AND position('sanitize=address' IN value)")
+    IS_ASAN=$(datastore-client --query "SELECT count() FROM system.build_options WHERE name = 'CXX_FLAGS' AND position('sanitize=address' IN value)")
     if [[ "$IS_ASAN" = "1" ]];
     then
         echo "ASAN build detected. Not using gdb since it disables LeakSanitizer detections"
     else
-        # Set follow-fork-mode to parent, because we attach to clickhouse-server, not to watchdog
-        # and clickhouse-server can do fork-exec, for example, to run some bridge.
+        # Set follow-fork-mode to parent, because we attach to datastore-server, not to watchdog
+        # and datastore-server can do fork-exec, for example, to run some bridge.
         # Do not set nostop noprint for all signals, because some it may cause gdb to hang,
         # explicitly ignore non-fatal signals that are used by server.
         # Number of SIGRTMIN can be determined only in runtime.
@@ -167,13 +167,13 @@ function fuzz
         gdb -batch -command script.gdb -p $server_pid &
         sleep 5
         # gdb will send SIGSTOP, spend some time loading debug info, and then send SIGCONT, wait for it (up to send_timeout, 300s)
-        time clickhouse-client --query "SELECT 'Connected to clickhouse-server after attaching gdb'" ||:
+        time datastore-client --query "SELECT 'Connected to datastore-server after attaching gdb'" ||:
 
         # Check connectivity after we attach gdb, because it might cause the server
         # to freeze, and the fuzzer will fail. In debug build, it can take a lot of time.
         for _ in {1..180}
         do
-            if clickhouse-client --query "select 1"
+            if datastore-client --query "select 1"
             then
                 break
             fi
@@ -217,7 +217,7 @@ function fuzz
     # Allow the fuzzer to run for some time, giving it a grace period of 5m to finish once the time
     # out triggers. After that, it'll send a SIGKILL to the fuzzer to make sure it finishes within
     # a reasonable time.
-    timeout --verbose --signal TERM --kill-after=5m --preserve-status "${FUZZ_TIME_LIMIT:-30m}" clickhouse-client \
+    timeout --verbose --signal TERM --kill-after=5m --preserve-status "${FUZZ_TIME_LIMIT:-30m}" datastore-client \
         --max_memory_usage_in_client=1000000000 \
         --receive_timeout=10 \
         --receive_data_timeout_ms=10000 \
@@ -263,13 +263,13 @@ function fuzz
     # If the server dies, most often the fuzzer returns Code 210: Connetion
     # refused, and sometimes also code 32: attempt to read after eof. For
     # simplicity, check again whether the server is accepting connections using
-    # clickhouse-client. We don't check for the existence of the server process, because
+    # datastore-client. We don't check for the existence of the server process, because
     # the process is still present while the server is terminating and not
     # accepting the connections anymore.
 
     for _ in {1..100}
     do
-        if clickhouse-client --query "SELECT 1" 2> err
+        if datastore-client --query "SELECT 1" 2> err
         then
             server_died=0
             break
@@ -279,7 +279,7 @@ function fuzz
             if grep -F 'TOO_MANY_SIMULTANEOUS_QUERIES' err
             then
                 # Give it some time to cool down
-                clickhouse-client --query "SHOW PROCESSLIST"
+                datastore-client --query "SHOW PROCESSLIST"
                 sleep 1
             elif grep -F 'MEMORY_LIMIT_EXCEEDED' err
             then
@@ -299,7 +299,7 @@ function fuzz
     # the server pipeline) rather than server_pid (from the PID file), because
     # the PID file contains the forked server process which is not a direct
     # child of this shell, so wait would fail with "not a child of this shell".
-    # The subshell exits with clickhouse-server's exit code via PIPESTATUS.
+    # The subshell exits with datastore-server's exit code via PIPESTATUS.
     stop_server &
     server_exit_code=0
     wait $server_bg_pid || server_exit_code=$?

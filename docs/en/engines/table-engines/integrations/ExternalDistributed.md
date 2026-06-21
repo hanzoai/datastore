@@ -27,7 +27,7 @@ See a detailed description of the [CREATE TABLE](/sql-reference/statements/creat
 The table structure can differ from the original table structure:
 
 - Column names should be the same as in the original table, but you can use just some of these columns and in any order.
-- Column types may differ from those in the original table. ClickHouse tries to [cast](/sql-reference/functions/type-conversion-functions#CAST) values to the ClickHouse data types.
+- Column types may differ from those in the original table. Datastore tries to [cast](/sql-reference/functions/type-conversion-functions#CAST) values to the Datastore data types.
 
 **Engine Parameters**
 
@@ -43,7 +43,7 @@ The table structure can differ from the original table structure:
 Supports multiple replicas that must be listed by `|` and shards must be listed by `,`. For example:
 
 ```sql
-CREATE TABLE test_shards (id UInt32, name String, age UInt32, money UInt32) ENGINE = ExternalDistributed('MySQL', `mysql{1|2}:3306,mysql{3|4}:3306`, 'clickhouse', 'test_replicas', 'root', 'clickhouse');
+CREATE TABLE test_shards (id UInt32, name String, age UInt32, money UInt32) ENGINE = ExternalDistributed('MySQL', `mysql{1|2}:3306,mysql{3|4}:3306`, 'datastore', 'test_replicas', 'root', 'datastore');
 ```
 
 When specifying replicas, one of the available replicas is selected for each of the shards when reading. If the connection fails, the next replica is selected, and so on for all the replicas. If the connection attempt fails for all the replicas, the attempt is repeated the same way several times.

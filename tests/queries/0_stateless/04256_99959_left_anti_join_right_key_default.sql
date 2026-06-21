@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/99959
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/99959
 -- In a LEFT ANTI JOIN, the result contains only rows from the left table that have no
 -- matching row in the right table. The right-table columns (including the join key)
 -- must contain default values for those unmatched rows, not the left key value.

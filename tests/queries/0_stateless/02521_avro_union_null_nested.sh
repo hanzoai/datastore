@@ -9,5 +9,5 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 DATA_DIR=$CUR_DIR/data_avro
 
-$CLICKHOUSE_LOCAL -q "desc file('$DATA_DIR/union_null_nested.avro')"
-$CLICKHOUSE_LOCAL -q "select * from file('$DATA_DIR/union_null_nested.avro')"
+$DATASTORE_LOCAL -q "desc file('$DATA_DIR/union_null_nested.avro')"
+$DATASTORE_LOCAL -q "select * from file('$DATA_DIR/union_null_nested.avro')"

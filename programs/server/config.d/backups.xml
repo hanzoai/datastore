@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <backups>
@@ -10,4 +10,4 @@
     <backups>
         <allowed_disk>backups</allowed_disk>
     </backups>
-</clickhouse>
+</datastore>

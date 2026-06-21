@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster_two_shards>
             <shard>
@@ -37,4 +37,4 @@
             </jbod_policy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

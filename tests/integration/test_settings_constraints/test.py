@@ -331,7 +331,7 @@ def test_disallowed_value_is_clamped_not_thrown(started_cluster):
     # the value alone (no clamp target for disallowed entries) and proceed.
     result = instance.exec_in_container(
         [
-            "clickhouse",
+            "datastore",
             "client",
             "--query_kind=secondary_query",
             "--max_memory_usage=6000000000",
@@ -354,7 +354,7 @@ def test_disallowed_value_overlapping_clamp_target(started_cluster):
 
     result = instance.exec_in_container(
         [
-            "clickhouse",
+            "datastore",
             "client",
             "--user=overlap_constraint_user",
             "--query_kind=secondary_query",

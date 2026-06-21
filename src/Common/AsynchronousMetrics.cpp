@@ -684,7 +684,7 @@ void AsynchronousMetrics::applyCPUMetricsUpdate(
     new_values["OSUserTime" + cpu_suffix]
         = {static_cast<double>(delta_values.user) * multiplier,
            "The ratio of time the CPU core was running userspace code. This is a system-wide metric, it includes all the processes on the "
-           "host machine, not just clickhouse-server."
+           "host machine, not just datastore-server."
            " This includes also the time when the CPU was under-utilized due to the reasons internal to the CPU (memory loads, pipeline "
            "stalls, branch mispredictions, running another SMT core)."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
@@ -692,19 +692,19 @@ void AsynchronousMetrics::applyCPUMetricsUpdate(
     new_values["OSNiceTime" + cpu_suffix]
         = {static_cast<double>(delta_values.nice) * multiplier,
            "The ratio of time the CPU core was running userspace code with higher priority. This is a system-wide metric, it includes all "
-           "the processes on the host machine, not just clickhouse-server."
+           "the processes on the host machine, not just datastore-server."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSSystemTime" + cpu_suffix]
         = {static_cast<double>(delta_values.system) * multiplier,
            "The ratio of time the CPU core was running OS kernel (system) code. This is a system-wide metric, it includes all the "
-           "processes on the host machine, not just clickhouse-server."
+           "processes on the host machine, not just datastore-server."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSIdleTime" + cpu_suffix]
         = {static_cast<double>(delta_values.idle) * multiplier,
            "The ratio of time the CPU core was idle (not even ready to run a process waiting for IO) from the OS kernel standpoint. This "
-           "is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server."
+           "is a system-wide metric, it includes all the processes on the host machine, not just datastore-server."
            " This does not include the time when the CPU was under-utilized due to the reasons internal to the CPU (memory loads, pipeline "
            "stalls, branch mispredictions, running another SMT core)."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
@@ -713,43 +713,43 @@ void AsynchronousMetrics::applyCPUMetricsUpdate(
         = {static_cast<double>(delta_values.iowait) * multiplier,
            "The ratio of time the CPU core was not running the code but when the OS kernel did not run any other process on this CPU as "
            "the processes were waiting for IO. This is a system-wide metric, it includes all the processes on the host machine, not just "
-           "clickhouse-server."
+           "datastore-server."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSIrqTime" + cpu_suffix]
         = {static_cast<double>(delta_values.irq) * multiplier,
            "The ratio of time spent for running hardware interrupt requests on the CPU. This is a system-wide metric, it includes all the "
-           "processes on the host machine, not just clickhouse-server."
+           "processes on the host machine, not just datastore-server."
            " A high number of this metric may indicate hardware misconfiguration or a very high network load."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSSoftIrqTime" + cpu_suffix]
         = {static_cast<double>(delta_values.softirq) * multiplier,
            "The ratio of time spent for running software interrupt requests on the CPU. This is a system-wide metric, it includes all the "
-           "processes on the host machine, not just clickhouse-server."
+           "processes on the host machine, not just datastore-server."
            " A high number of this metric may indicate inefficient software running on the system."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSStealTime" + cpu_suffix]
         = {static_cast<double>(delta_values.steal) * multiplier,
            "The ratio of time spent in other operating systems by the CPU when running in a virtualized environment. This is a system-wide "
-           "metric, it includes all the processes on the host machine, not just clickhouse-server."
+           "metric, it includes all the processes on the host machine, not just datastore-server."
            " Not every virtualized environments present this metric, and most of them don't."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSGuestTime" + cpu_suffix]
         = {static_cast<double>(delta_values.guest) * multiplier,
            "The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel (See `man "
-           "procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server."
-           " This metric is irrelevant for ClickHouse, but still exists for completeness."
+           "procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server."
+           " This metric is irrelevant for Datastore, but still exists for completeness."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSGuestNiceTime" + cpu_suffix]
         = {static_cast<double>(delta_values.guest_nice) * multiplier,
            "The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel, when a guest "
            "was set to a higher priority (See `man procfs`). This is a system-wide metric, it includes all the processes on the host "
-           "machine, not just clickhouse-server."
-           " This metric is irrelevant for ClickHouse, but still exists for completeness."
+           "machine, not just datastore-server."
+           " This metric is irrelevant for Datastore, but still exists for completeness."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
 }
@@ -1025,7 +1025,7 @@ void AsynchronousMetrics::processWarningForMemoryOverload(const AsynchronousMetr
     const int usage_percent = static_cast<int>(std::lround(clamped_ratio * 100.0));
 
     const auto warning_message = PreformattedMessage::create(
-        "High ClickHouse memory usage: {} of {} used ({}%) for at least {} second(s)",
+        "High Datastore memory usage: {} of {} used ({}%) for at least {} second(s)",
         formatReadableSizeWithDecimalSuffix(memory_resident),
         formatReadableSizeWithDecimalSuffix(memory_total),
         usage_percent,
@@ -1253,7 +1253,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
 #if !defined(OS_FREEBSD)
         new_values["MemoryShared"] = { data.shared,
             "The amount of memory used by the server process, that is also shared by another processes, in bytes."
-            " ClickHouse does not use shared memory, but some memory can be labeled by OS as shared for its own reasons."
+            " Datastore does not use shared memory, but some memory can be labeled by OS as shared for its own reasons."
             " This metric does not make a lot of sense to watch, and it exists only for completeness reasons."};
 #endif
         new_values["MemoryCode"] = { data.code,
@@ -1281,7 +1281,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
     }
 #endif
 
-    new_values["TrackedMemory"] = { total_memory_tracker.get(), "Memory tracked by ClickHouse (should be equal to MemoryTracking metric), in bytes." };
+    new_values["TrackedMemory"] = { total_memory_tracker.get(), "Memory tracked by Datastore (should be equal to MemoryTracking metric), in bytes." };
 
 #if defined(OS_LINUX)
     if (loadavg)
@@ -1309,7 +1309,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
 #define LOAD_AVERAGE_DOCUMENTATION \
     " The load represents the number of threads across all the processes (the scheduling entities of the OS kernel)," \
     " that are currently running by CPU or waiting for IO, or ready to run but not being scheduled at this point of time." \
-    " This number includes all the processes, not only clickhouse-server. The number can be greater than the number of CPU cores," \
+    " This number includes all the processes, not only datastore-server. The number can be greater than the number of CPU cores," \
     " if the system is overloaded, and many processes are ready to run but waiting for CPU or IO."
 
             new_values["LoadAverage1"] = { loadavg1,
@@ -1327,9 +1327,9 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
         {
             tryLogCurrentException(__PRETTY_FUNCTION__);
 
-            /// A slight improvement for the rare case when ClickHouse is run inside LXC and LXCFS is used.
+            /// A slight improvement for the rare case when Datastore is run inside LXC and LXCFS is used.
             /// The LXCFS has an issue: sometimes it returns an error "Transport endpoint is not connected" on reading from the file inside `/proc`.
-            /// This error was correctly logged into ClickHouse's server log, but it was a source of annoyance to some users.
+            /// This error was correctly logged into Datastore's server log, but it was a source of annoyance to some users.
             /// We additionally workaround this issue by reopening a file.
             openFileIfExists("/proc/loadavg", loadavg);
         }
@@ -1344,7 +1344,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
             Float64 uptime_seconds = 0;
             readText(uptime_seconds, *uptime);
 
-            new_values["OSUptime"] = { uptime_seconds, "The uptime of the host server (the machine where ClickHouse is running), in seconds." };
+            new_values["OSUptime"] = { uptime_seconds, "The uptime of the host server (the machine where Datastore is running), in seconds." };
         }
         catch (...)
         {
@@ -1557,7 +1557,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                     skipToNextLineOrEOF(*proc_stat);
                     new_values["OSProcessesRunning"] = { processes_running,
                         "The number of runnable (running or ready to run) threads by the operating system."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
                 else if (name == "procs_blocked")
                 {
@@ -1566,7 +1566,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                     skipToNextLineOrEOF(*proc_stat);
                     new_values["OSProcessesBlocked"] = { processes_blocked,
                         "Number of threads blocked waiting for I/O to complete (`man procfs`)."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
                 else
                     skipToNextLineOrEOF(*proc_stat);
@@ -1576,9 +1576,9 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
             {
                 ProcStatValuesOther delta_values = current_other_values - proc_stat_values_other;
 
-                new_values["OSInterrupts"] = { delta_values.interrupts, "The number of interrupts on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
-                new_values["OSContextSwitches"] = { delta_values.context_switches, "The number of context switches that the system underwent on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
-                new_values["OSProcessesCreated"] = { delta_values.processes_created, "The number of processes created. This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                new_values["OSInterrupts"] = { delta_values.interrupts, "The number of interrupts on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
+                new_values["OSContextSwitches"] = { delta_values.context_switches, "The number of context switches that the system underwent on the host machine. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
+                new_values["OSProcessesCreated"] = { delta_values.processes_created, "The number of processes created. This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
 
                 /// Also write values normalized to 0..1 by diving to the number of CPUs.
                 /// These values are good to be averaged across the cluster of non-uniform servers.
@@ -1623,7 +1623,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
 
             new_values["CGroupMemoryUsedWithoutPageCache"] = {
                 cgroup_usage_without_page_cache,
-                "The amount of memory used in cgroup, in bytes, excluding the ClickHouse userspace page cache. "
+                "The amount of memory used in cgroup, in bytes, excluding the Datastore userspace page cache. "
                 "This is CGroupMemoryUsed minus the userspace page cache size. "
                 "When userspace page cache is disabled, this value equals CGroupMemoryUsed."
             };
@@ -1688,35 +1688,35 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                         " See the `OSMemoryAvailable` metric instead."
                         " For convenience we also provide the `OSMemoryFreePlusCached` metric, that should be somewhat similar to OSMemoryAvailable."
                         " See also https://www.linuxatemyram.com/."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
                 else if (name == "MemAvailable:")
                 {
                     new_values["OSMemoryAvailable"] = { bytes, "The amount of memory available to be used by programs, in bytes. This is very similar to the `OSMemoryFreePlusCached` metric."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
                 else if (name == "Buffers:")
                 {
                     new_values["OSMemoryBuffers"] = { bytes, "The amount of memory used by OS kernel buffers, in bytes. This should be typically small, and large values may indicate a misconfiguration of the OS."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
                 else if (name == "Cached:")
                 {
                     free_plus_cached_bytes += bytes;
                     new_values["OSMemoryCached"] = { bytes, "The amount of memory used by the OS page cache, in bytes. Typically, almost all available memory is used by the OS page cache - high values of this metric are normal and expected."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
                 else if (name == "SwapCached:")
                 {
                     new_values["OSMemorySwapCached"] = { bytes, "The amount of memory in swap that was also loaded in RAM. Swap should be disabled on production systems. If the value of this metric is large, it indicates a misconfiguration."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
 
                 skipToNextLineOrEOF(*meminfo);
             }
 
             new_values["OSMemoryFreePlusCached"] = { free_plus_cached_bytes, "The amount of free memory plus OS page cache memory on the host system, in bytes. This memory is available to be used by programs. The value should be very similar to `OSMemoryAvailable`."
-                " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
         }
         catch (...)
         {
@@ -1825,7 +1825,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
             uint64_t open_files = 0;
             readText(open_files, *file_nr);
             new_values["OSOpenFiles"] = { open_files, "The total number of opened files on the host machine."
-                " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
         }
         catch (...)
         {
@@ -1872,7 +1872,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
             static constexpr double time_multiplier = 1e-3;
 
 #define BLOCK_DEVICE_EXPLANATION \
-    " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." \
+    " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." \
     " Source: `/sys/block`. See https://www.kernel.org/doc/Documentation/block/stat.txt"
 
             new_values["BlockReadOps_" + name] = { delta_values.read_ios,
@@ -1883,7 +1883,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardOps_" + name] = { delta_values.discard_ops,
                 "Number of discard operations requested from the block device. These operations are relevant for SSD."
-                " Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockReadMerges_" + name] = { delta_values.read_merges,
@@ -1894,7 +1894,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardMerges_" + name] = { delta_values.discard_merges,
                 "Number of discard operations requested from the block device and merged together by the OS IO scheduler."
-                " These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockReadBytes_" + name] = { delta_values.read_sectors * sector_size,
@@ -1908,7 +1908,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardBytes_" + name] = { delta_values.discard_sectors * sector_size,
                 "Number of discarded bytes on the block device."
-                " These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockReadTime_" + name] = { static_cast<double>(delta_values.read_ticks) * time_multiplier,
@@ -1919,7 +1919,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardTime_" + name] = { static_cast<double>(delta_values.discard_ticks) * time_multiplier,
                 "Time in seconds spend in discard operations requested from the block device, summed across all the operations."
-                " These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockInFlightOps_" + name] = { delta_values.in_flight_ios,
@@ -2034,29 +2034,29 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 {
                     new_values["NetworkReceiveBytes_" + interface_name] = { delta_values.recv_bytes,
                         " Number of bytes received via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                     new_values["NetworkReceivePackets_" + interface_name] = { delta_values.recv_packets,
                         " Number of network packets received via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                     new_values["NetworkReceiveErrors_" + interface_name] = { delta_values.recv_errors,
                         " Number of times error happened receiving via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                     new_values["NetworkReceiveDrop_" + interface_name] = { delta_values.recv_drop,
                         " Number of bytes a packet was dropped while received via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
 
                     new_values["NetworkSendBytes_" + interface_name] = { delta_values.send_bytes,
                         " Number of bytes sent via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                     new_values["NetworkSendPackets_" + interface_name] = { delta_values.send_packets,
                         " Number of network packets sent via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                     new_values["NetworkSendErrors_" + interface_name] = { delta_values.send_errors,
                         " Number of times error (e.g. TCP retransmit) happened while sending via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                     new_values["NetworkSendDrop_" + interface_name] = { delta_values.send_drop,
                         " Number of times a packed was dropped while sending via the network interface."
-                        " This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server." };
+                        " This is a system-wide metric, it includes all the processes on the host machine, not just datastore-server." };
                 }
             }
         }

@@ -1,11 +1,11 @@
 SET enable_analyzer = 1;
 SELECT '=====================================================================';
-SELECT 'Test : ClickHouse NULL-safe comparison';
+SELECT 'Test : Datastore NULL-safe comparison';
 SELECT '(1) <=> (IS NOT DISTINCT FROM)';
 SELECT '(2) IS DISTINCT FROM';
 SELECT '=====================================================================';
 SELECT 'Purpose:';
-SELECT '1. Validate behavior of <=> and IS DISTINCT FROM across a wide range of ClickHouse data types and SQL clauses.';
+SELECT '1. Validate behavior of <=> and IS DISTINCT FROM across a wide range of Datastore data types and SQL clauses.';
 SELECT '2. Cover numeric, floating, string, enum, date/time, complex types, and NULL / NaN edge cases.';
 SELECT '3. test null-safe comparison in SELECT clause, WHERE, ORDER BY, GROUP BY, HAVING, JOIN, CASE/IF, WINDOW, and subqueries.';
 SELECT '=====================================================================';

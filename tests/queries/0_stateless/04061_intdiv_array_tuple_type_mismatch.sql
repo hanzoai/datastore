@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100873
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100873
 -- `executeArrayWithNumericImpl` passed the input element type as `result_type`
 -- instead of the actual result element type. When all rows are NULL, the Nullable
 -- default implementation short-circuits and creates a default column using the

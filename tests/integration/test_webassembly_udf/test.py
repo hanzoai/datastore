@@ -127,7 +127,7 @@ def test_enabled(start_cluster):
 
     # A .wasm file placed directly on disk (without INSERT INTO system.webassembly_modules)
     # must be loadable when referenced by CREATE FUNCTION.
-    wasm_dir = "/var/lib/clickhouse/user_scripts/wasm"
+    wasm_dir = "/var/lib/datastore/user_scripts/wasm"
     node1.exec_in_container(
         [
             "python3",

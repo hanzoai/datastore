@@ -3,7 +3,7 @@ import traceback
 from praktika.info import Info
 from praktika.utils import Shell
 
-SYNC_REPO = "ClickHouse/clickhouse-private"
+SYNC_REPO = "Datastore/datastore-private"
 
 
 def check():

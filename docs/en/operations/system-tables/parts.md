@@ -24,9 +24,9 @@ Each row describes one data part.
 
   * Definitions:
     - `partition_id` - identifies the partition key
-    - `minimum_block_number` - identifies the minimum block number in the part. ClickHouse always merges continuous blocks
+    - `minimum_block_number` - identifies the minimum block number in the part. Datastore always merges continuous blocks
     - `maximum_block_number` - identifies the maximum block number in the part
-    - `level` - incremented by one with each additional merge on the part. A level of 0 indicates this is a new part that has not been merged. It is important to remember that all parts in ClickHouse are always immutable
+    - `level` - incremented by one with each additional merge on the part. A level of 0 indicates this is a new part that has not been merged. It is important to remember that all parts in Datastore are always immutable
     - `data_version` - optional value, incremented when a part is mutated (again, mutated data is always only written to a new part, since parts are immutable)
 - `uuid` ([UUID](/sql-reference/data-types/uuid)) — The UUID of data part.
 - `part_type` ([String](/sql-reference/data-types/string)) — The data part storing format. Possible values: `Wide` — each column is stored in a separate file, `Compact` — all columns are stored in one file. Data storing format is controlled by the `min_bytes_for_wide_part` and `min_rows_for_wide_part` settings of the MergeTree table.
@@ -141,7 +141,7 @@ database:                              default
 table:                                 months
 engine:                                MergeTree
 disk_name:                             default
-path:                                  /var/lib/clickhouse/data/default/months/all_1_4_1_6/
+path:                                  /var/lib/datastore/data/default/months/all_1_4_1_6/
 hash_of_all_files:                     2d0657a16d9430824d35e327fcbd87bf
 hash_of_uncompressed_files:            84950cc30ba867c77a408ae21332ba29
 uncompressed_hash_of_compressed_files: 1ad78f1c6843bbfb99a2c931abe7df7d

@@ -8,9 +8,9 @@ currentDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 GIT_ROOT_DIR=$(git -C "$currentDir" rev-parse --show-toplevel)
 TESTS_LIB_DIR="${GIT_ROOT_DIR}/ci/tmp/docker-library/official-images/test"
 
-CLICKHOUSE_TEST_SLEEP=3
-CLICKHOUSE_TEST_TRIES=5
+DATASTORE_TEST_SLEEP=3
+DATASTORE_TEST_TRIES=5
 
 function cname {
-  echo clickhouse-test-contained-$RANDOM-$RANDOM
+  echo datastore-test-contained-$RANDOM-$RANDOM
 }

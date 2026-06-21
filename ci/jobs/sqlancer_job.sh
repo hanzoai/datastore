@@ -15,8 +15,8 @@ JOB_START_TIME=$(date +%s)
 
 TMP_PATH=$(readlink -f ./ci/tmp/)
 OUTPUT_PATH="$TMP_PATH/sqlancer_output"
-PID_FILE="$TMP_PATH/clickhouse-server.pid"
-CLICKHOUSE_BIN="$TMP_PATH/clickhouse"
+PID_FILE="$TMP_PATH/datastore-server.pid"
+DATASTORE_BIN="$TMP_PATH/datastore"
 
 # Praktika reads the job result from `./ci/tmp/result_<normalized_job_name>.json`,
 # where the normalization matches `Utils.normalize_string` in `ci/praktika/utils.py`.
@@ -71,7 +71,7 @@ write_result() {
 
     # Build files array
     local files_json=""
-    for f in "$OUTPUT_PATH/clickhouse-server.log" "$OUTPUT_PATH/clickhouse-server.log.err"; do
+    for f in "$OUTPUT_PATH/datastore-server.log" "$OUTPUT_PATH/datastore-server.log.err"; do
         if [ -f "$f" ]; then
             if [ -n "$files_json" ]; then
                 files_json+=", "
@@ -112,18 +112,18 @@ RESULT_INFO=""
 
 trap write_result EXIT
 
-if [[ -f "$CLICKHOUSE_BIN" ]]; then
-    echo "$CLICKHOUSE_BIN exists"
+if [[ -f "$DATASTORE_BIN" ]]; then
+    echo "$DATASTORE_BIN exists"
 else
-    echo "$CLICKHOUSE_BIN does not exists"
+    echo "$DATASTORE_BIN does not exists"
     exit 1
 fi
 
-chmod +x $CLICKHOUSE_BIN
-$CLICKHOUSE_BIN local --version
+chmod +x $DATASTORE_BIN
+$DATASTORE_BIN local --version
 
-echo "Starting ClickHouse server..."
-$CLICKHOUSE_BIN server -P $PID_FILE 1>$OUTPUT_PATH/clickhouse-server.log 2>$OUTPUT_PATH/clickhouse-server.log.err &
+echo "Starting Datastore server..."
+$DATASTORE_BIN server -P $PID_FILE 1>$OUTPUT_PATH/datastore-server.log 2>$OUTPUT_PATH/datastore-server.log.err &
 for _ in $(seq 1 60); do if [[ $(wget -q 'localhost:8123' -O- 2>/dev/null) == 'Ok.' ]]; then break ; else sleep 1; fi ; done
 
 cd /sqlancer/sqlancer-main
@@ -144,7 +144,7 @@ for TEST in "${TESTS[@]}"; do
     if [[ $(wget -q 'localhost:8123' -O- 2>/dev/null) == 'Ok.' ]]; then
         echo "Server is OK"
         java_exit=0
-        ( java -jar target/sqlancer-*.jar --log-each-select true --print-failed false --num-threads "$NUM_THREADS" --timeout-seconds "$TIMEOUT" --num-queries "$NUM_QUERIES"  --username default --password "" clickhouse --oracle "$TEST" | tee "./$TEST.out" )  3>&1 1>&2 2>&3 | tee "$error_output_file" || java_exit=$?
+        ( java -jar target/sqlancer-*.jar --log-each-select true --print-failed false --num-threads "$NUM_THREADS" --timeout-seconds "$TIMEOUT" --num-queries "$NUM_QUERIES"  --username default --password "" datastore --oracle "$TEST" | tee "./$TEST.out" )  3>&1 1>&2 2>&3 | tee "$error_output_file" || java_exit=$?
 
         if [[ $(wget -q 'localhost:8123' -O- 2>/dev/null) != 'Ok.' ]]; then
             echo "Server crashed during $TEST"
@@ -181,16 +181,16 @@ if [ -f "$PID_FILE" ]; then
     pid="$(cat "$PID_FILE" 2>/dev/null || true)"
     # Validate the PID before sending a signal: it must be numeric, the process
     # must still exist, and `/proc/<pid>/exe` must resolve to the exact
-    # `clickhouse` binary that this job started. This protects against
+    # `datastore` binary that this job started. This protects against
     # signalling an unrelated process on a shared runner if the PID file is
-    # stale or the PID has been reused by another `clickhouse` process.
-    expected_exe="$(readlink -f "$CLICKHOUSE_BIN" 2>/dev/null || true)"
+    # stale or the PID has been reused by another `datastore` process.
+    expected_exe="$(readlink -f "$DATASTORE_BIN" 2>/dev/null || true)"
     if [[ "$pid" =~ ^[0-9]+$ ]] && [ -e "/proc/$pid/exe" ]; then
         proc_exe="$(readlink -f "/proc/$pid/exe" 2>/dev/null || true)"
         if [ -n "$expected_exe" ] && [ "$proc_exe" = "$expected_exe" ]; then
             kill "$pid" || true
         else
-            echo "Warning: PID $pid in $PID_FILE does not belong to this job's clickhouse binary (exe=[$proc_exe], expected=[$expected_exe]); not signalling"
+            echo "Warning: PID $pid in $PID_FILE does not belong to this job's datastore binary (exe=[$proc_exe], expected=[$expected_exe]); not signalling"
         fi
     else
         echo "Warning: PID file $PID_FILE contains invalid or stale PID [$pid]; not signalling"

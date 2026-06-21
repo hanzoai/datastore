@@ -2,7 +2,7 @@
 #
 # CMake's stock `generate_export_header` runs `try_compile` checks for hidden visibility
 # and the `__attribute__((__deprecated__))` attribute. Build-time CMake checks are
-# forbidden in ClickHouse (see `cmake/block_build_time_checks.cmake`); the compiler is
+# forbidden in Datastore (see `cmake/block_build_time_checks.cmake`); the compiler is
 # fixed (Clang, see `cmake/tools.cmake`), and both features are statically known to be
 # supported, so we emit the export header directly.
 #

@@ -98,11 +98,11 @@ def setupSsl(node, filename, password, ssl_conf_file="configs/ssl_conf.yml"):
     if password is None:
         node.copy_file_to_container(
             os.path.join(CURRENT_TEST_DIR, ssl_conf_file),
-            "/etc/clickhouse-server/config.d/ssl_conf.yml",
+            "/etc/datastore-server/config.d/ssl_conf.yml",
         )
 
         node.replace_in_config(
-            "/etc/clickhouse-server/config.d/ssl_conf.yml",
+            "/etc/datastore-server/config.d/ssl_conf.yml",
             "WithoutPassPhrase",
             filename,
         )
@@ -110,17 +110,17 @@ def setupSsl(node, filename, password, ssl_conf_file="configs/ssl_conf.yml"):
 
     node.copy_file_to_container(
         os.path.join(CURRENT_TEST_DIR, "configs/ssl_conf_password.yml"),
-        "/etc/clickhouse-server/config.d/ssl_conf.yml",
+        "/etc/datastore-server/config.d/ssl_conf.yml",
     )
 
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/ssl_conf.yml",
+        "/etc/datastore-server/config.d/ssl_conf.yml",
         "WithoutPassPhrase",
         filename,
     )
 
     node.replace_in_config(
-        "/etc/clickhouse-server/config.d/ssl_conf.yml",
+        "/etc/datastore-server/config.d/ssl_conf.yml",
         "PASSWORD",
         password,
     )
@@ -131,7 +131,7 @@ def stop_all_clickhouse():
         node.stop_clickhouse()
 
     for node in nodes:
-        node.exec_in_container(["rm", "-rf", "/var/lib/clickhouse/coordination"])
+        node.exec_in_container(["rm", "-rf", "/var/lib/datastore/coordination"])
 
 
 def start_clickhouse(node):

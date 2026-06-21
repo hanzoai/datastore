@@ -21,7 +21,7 @@ Names are escaped the same way as in the [`TabSeparated`](./TabSeparated.md) for
 ```text
 SearchPhrase=   count()=8267016
 SearchPhrase=bathroom interior design    count()=2166
-SearchPhrase=clickhouse     count()=1655
+SearchPhrase=datastore     count()=1655
 SearchPhrase=2014 spring fashion    count()=1549
 SearchPhrase=freeform photos       count()=1480
 SearchPhrase=angelina jolie    count()=1245

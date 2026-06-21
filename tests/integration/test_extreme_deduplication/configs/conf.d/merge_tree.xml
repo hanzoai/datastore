@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <merge_tree>
         <replicated_deduplication_window>999999999</replicated_deduplication_window>
         <replicated_deduplication_window_seconds>1</replicated_deduplication_window_seconds>
@@ -7,4 +7,4 @@
         <max_cleanup_delay_period>1</max_cleanup_delay_period>
         <old_parts_lifetime>1</old_parts_lifetime>
     </merge_tree>
-</clickhouse>
+</datastore>

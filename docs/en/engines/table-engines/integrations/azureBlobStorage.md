@@ -30,7 +30,7 @@ CREATE TABLE azure_blob_storage_table (name String, value UInt32)
 - `format` — The [format](/interfaces/formats.md) of the file.
 - `compression` — Supported values: `none`, `gzip/gz`, `brotli/br`, `xz/LZMA`, `zstd/zst`. By default, it will autodetect compression by file extension. (same as setting to `auto`).
 - `partition_strategy` – Options: `WILDCARD` or `HIVE`. `WILDCARD` requires a `{_partition_id}` in the path, which is replaced with the partition key. `HIVE` does not allow wildcards, assumes the path is the table root, and generates Hive-style partitioned directories with Snowflake IDs as filenames and the file format as the extension. Defaults to `WILDCARD`
-- `partition_columns_in_data_file` - Only used with `HIVE` partition strategy. Tells ClickHouse whether to expect partition columns to be written in the data file. Defaults `false`.
+- `partition_columns_in_data_file` - Only used with `HIVE` partition strategy. Tells Datastore whether to expect partition columns to be written in the data file. Defaults `false`.
 - `extra_credentials` - Use `client_id` and `tenant_id` for authentication. If extra_credentials are provided, they are given priority over `account_name` and `account_key`.
 
 **Example**
@@ -72,7 +72,7 @@ Currently there are 3 ways to authenticate:
 
 `Azure` table engine supports data caching on local disk.
 See filesystem cache configuration options and usage in this [section](/operations/storing-data.md/#using-local-cache).
-Caching is made depending on the path and ETag of the storage object, so clickhouse will not read a stale cache version.
+Caching is made depending on the path and ETag of the storage object, so datastore will not read a stale cache version.
 
 To enable caching use a setting `filesystem_cache_name = '<name>'` and `enable_filesystem_cache = 1`.
 
@@ -82,20 +82,20 @@ FROM azureBlobStorage('DefaultEndpointsProtocol=http;AccountName=devstoreaccount
 SETTINGS filesystem_cache_name = 'cache_for_azure', enable_filesystem_cache = 1;
 ```
 
-1. add the following section to clickhouse configuration file:
+1. add the following section to datastore configuration file:
 
 ```xml
-<clickhouse>
+<datastore>
     <filesystem_caches>
         <cache_for_azure>
             <path>path to cache directory</path>
             <max_size>10Gi</max_size>
         </cache_for_azure>
     </filesystem_caches>
-</clickhouse>
+</datastore>
 ```
 
-2. reuse cache configuration (and therefore cache storage) from clickhouse `storage_configuration` section, [described here](/operations/storing-data.md/#using-local-cache)
+2. reuse cache configuration (and therefore cache storage) from datastore `storage_configuration` section, [described here](/operations/storing-data.md/#using-local-cache)
 
 ### PARTITION BY {#partition-by}
 

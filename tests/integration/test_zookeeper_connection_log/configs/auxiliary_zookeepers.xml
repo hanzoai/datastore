@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <auxiliary_zookeepers>
         <zk_conn_log_test_2>
             <node index="1">
@@ -13,4 +13,4 @@
             </node>
         </zk_conn_log_test_3>
     </auxiliary_zookeepers>
-</clickhouse>
+</datastore>

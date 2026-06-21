@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103475
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103475
 --
 -- PR #95905 narrowed the `DETACH` guard in `executeToTableImpl` to
 -- `query.kind == Detach && query.isTemporary()`, which only catches explicit

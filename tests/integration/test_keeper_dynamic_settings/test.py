@@ -37,10 +37,10 @@ def get_coordination_settings(node):
     return result
 
 
-DYNAMIC_CONFIG_PATH = "/etc/clickhouse-server/config.d/keeper_dynamic.xml"
+DYNAMIC_CONFIG_PATH = "/etc/datastore-server/config.d/keeper_dynamic.xml"
 
 UPDATED_DYNAMIC_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <coordination_settings>
             <snapshot_distance>99999</snapshot_distance>
@@ -49,7 +49,7 @@ UPDATED_DYNAMIC_CONFIG = """
             <max_request_size>1024</max_request_size>
         </coordination_settings>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 
@@ -65,7 +65,7 @@ def test_dynamic_settings_hot_reload(started_cluster):
     assert settings["quorum_reads"] == "false"
     assert settings["snapshot_distance"] == "75"
 
-    # 2. Replace the config file in-place.  ClickHouse picks up config
+    # 2. Replace the config file in-place.  Datastore picks up config
     #    changes automatically (ConfigReloader), so no restart is needed.
     with node.with_replace_config(DYNAMIC_CONFIG_PATH, UPDATED_DYNAMIC_CONFIG, reload_after=True):
         # 3. Wait for the config reload to take effect.

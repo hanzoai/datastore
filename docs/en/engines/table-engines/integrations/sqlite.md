@@ -1,6 +1,6 @@
 ---
 description: 'The engine allows to import and export data to SQLite and supports queries
-  to SQLite tables directly from ClickHouse.'
+  to SQLite tables directly from Datastore.'
 sidebar_label: 'SQLite'
 sidebar_position: 185
 slug: /engines/table-engines/integrations/sqlite
@@ -14,7 +14,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 <CloudNotSupportedBadge/>
 
-The engine allows to import and export data to SQLite and supports queries to SQLite tables directly from ClickHouse.
+The engine allows to import and export data to SQLite and supports queries to SQLite tables directly from Datastore.
 
 ## Creating a table {#creating-a-table}
 
@@ -33,7 +33,7 @@ The engine allows to import and export data to SQLite and supports queries to SQ
 
 ## Data types support {#data-types-support}
 
-When you explicitly specify ClickHouse column types in the table definition, the following ClickHouse types can be parsed from SQLite TEXT columns:
+When you explicitly specify Datastore column types in the table definition, the following Datastore types can be parsed from SQLite TEXT columns:
 
 - [Date](../../../sql-reference/data-types/date.md), [Date32](../../../sql-reference/data-types/date32.md)
 - [DateTime](../../../sql-reference/data-types/datetime.md), [DateTime64](../../../sql-reference/data-types/datetime64.md)

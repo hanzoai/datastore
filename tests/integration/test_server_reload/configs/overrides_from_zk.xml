@@ -1,10 +1,10 @@
-<clickhouse>
+<datastore>
     <listen_host remove="remove"/>
-    <include from_zk="/clickhouse/listen_hosts" />
-    <tcp_port from_zk="/clickhouse/ports/tcp" replace="replace" />
-    <http_port from_zk="/clickhouse/ports/http" replace="replace" />
-    <mysql_port from_zk="/clickhouse/ports/mysql" replace="replace" />
-    <postgresql_port from_zk="/clickhouse/ports/postgresql" replace="replace" />
-    <grpc_port from_zk="/clickhouse/ports/grpc" replace="replace" />
-    <http_handlers from_zk="/clickhouse/http_handlers" replace="replace" />
-</clickhouse>
+    <include from_zk="/datastore/listen_hosts" />
+    <tcp_port from_zk="/datastore/ports/tcp" replace="replace" />
+    <http_port from_zk="/datastore/ports/http" replace="replace" />
+    <mysql_port from_zk="/datastore/ports/mysql" replace="replace" />
+    <postgresql_port from_zk="/datastore/ports/postgresql" replace="replace" />
+    <grpc_port from_zk="/datastore/ports/grpc" replace="replace" />
+    <http_handlers from_zk="/datastore/http_handlers" replace="replace" />
+</datastore>

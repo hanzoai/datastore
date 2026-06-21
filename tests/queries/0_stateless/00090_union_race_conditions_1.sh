@@ -14,9 +14,9 @@ echo "
     CREATE TABLE two_blocks (d Date) ENGINE = MergeTree(d, d, 1);
     INSERT INTO two_blocks VALUES ('2000-01-01');
     INSERT INTO two_blocks VALUES ('2000-01-02');
-" | $CLICKHOUSE_CLIENT -n
+" | $DATASTORE_CLIENT -n
 
 TIMELIMIT=$((SECONDS + 100))
-while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 100 | sed 's/.*/SELECT count() FROM (SELECT * FROM two_blocks);/' | $CLICKHOUSE_CLIENT -n | grep -vE '^2$' && echo 'Fail!' && break; done; echo 'OK'
+while [ $SECONDS -lt "$TIMELIMIT" ]; do seq 1 100 | sed 's/.*/SELECT count() FROM (SELECT * FROM two_blocks);/' | $DATASTORE_CLIENT -n | grep -vE '^2$' && echo 'Fail!' && break; done; echo 'OK'
 
-echo "DROP TABLE two_blocks;" | $CLICKHOUSE_CLIENT -n
+echo "DROP TABLE two_blocks;" | $DATASTORE_CLIENT -n

@@ -85,7 +85,7 @@ def create_and_fill_table(node, num_parts=10, on_cluster=True):
     node.query(
         "CREATE TABLE tbl "
         + ("ON CLUSTER 'cluster' " if on_cluster else "")
-        + "(x UInt64) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}') "
+        + "(x UInt64) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}') "
         + "ORDER BY tuple()"
         + partition_by_clause
     )
@@ -294,7 +294,7 @@ class NoTrashChecker:
 
         self.__previous_list_of_znodes = set(
             node1.query(
-                "SELECT name FROM system.zookeeper WHERE path = '/clickhouse/backups' "
+                "SELECT name FROM system.zookeeper WHERE path = '/datastore/backups' "
                 + "AND NOT (name == 'alive_tracker')"
             ).splitlines()
         )
@@ -305,7 +305,7 @@ class NoTrashChecker:
     def __exit__(self, type, value, traceback):
         list_of_znodes = set(
             node1.query(
-                "SELECT name FROM system.zookeeper WHERE path = '/clickhouse/backups' "
+                "SELECT name FROM system.zookeeper WHERE path = '/datastore/backups' "
                 + "AND NOT (name == 'alive_tracker')"
             ).splitlines()
         )
@@ -314,15 +314,15 @@ class NoTrashChecker:
             print(f"Found nodes in ZooKeeper: {new_znodes}")
             for node in new_znodes:
                 print(
-                    f"Nodes in '/clickhouse/backups/{node}':\n"
+                    f"Nodes in '/datastore/backups/{node}':\n"
                     + node1.query(
-                        f"SELECT name FROM system.zookeeper WHERE path = '/clickhouse/backups/{node}'"
+                        f"SELECT name FROM system.zookeeper WHERE path = '/datastore/backups/{node}'"
                     )
                 )
                 print(
-                    f"Nodes in '/clickhouse/backups/{node}/stage':\n"
+                    f"Nodes in '/datastore/backups/{node}/stage':\n"
                     + node1.query(
-                        f"SELECT name FROM system.zookeeper WHERE path = '/clickhouse/backups/{node}/stage'"
+                        f"SELECT name FROM system.zookeeper WHERE path = '/datastore/backups/{node}/stage'"
                     )
                 )
         if self.check_zookeeper:

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/101913
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/101913
 -- Full-text index direct-read threw LOGICAL_ERROR when multiple filter conditions
 -- (e.g. hasAllTokens AND LIKE) were used on a Merge table with query_plan_direct_read_from_text_index=1.
 

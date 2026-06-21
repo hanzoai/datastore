@@ -13,10 +13,10 @@ from ci.praktika.result import Result
 from ci.praktika.settings import Settings
 from ci.praktika.utils import Shell
 
-# Coverage data lives in the public ClickHouse CIDB, accessible from any CI environment.
+# Coverage data lives in the public Datastore CIDB, accessible from any CI environment.
 # Use this URL for all coverage queries so that private-repo CI (which may not have
 # access to an internal CIDB) can still query test coverage data.
-_PUBLIC_CIDB_URL = "https://play.clickhouse.com"
+_PUBLIC_CIDB_URL = "https://play.datastore.com"
 
 # Query to fetch failed tests from CIDB for a given PR.
 # Pre-filters out commit/check_name combinations with >= 20 failures — these indicate
@@ -62,14 +62,14 @@ class Targeting:
         else:
             self.job_type = None
 
-    # Keep in sync with TEST_FILE_EXTENSIONS in tests/clickhouse-test.
+    # Keep in sync with TEST_FILE_EXTENSIONS in tests/datastore-test.
     _TEST_FILE_EXTENSIONS = (".sql.j2", ".sql", ".sh", ".py", ".expect")
 
     @classmethod
     def _derive_test_name(cls, fpath: str):
         """Map a changed file under `tests/queries/0_stateless/` to a test name.
 
-        Returns the test base name (without extension) suitable for `clickhouse-test --test`,
+        Returns the test base name (without extension) suitable for `datastore-test --test`,
         or `None` if the file does not correspond to a real test (e.g. a data file like
         `02995_settings_26_4_1.tsv`, which is consumed by `02995_new_settings_history.sh`
         but has no test of its own).
@@ -107,7 +107,7 @@ class Targeting:
             ]
         elif self.info.is_local_run:
             changed_files = Shell.get_output(
-                f"gh pr diff {self.info.pr_number} --repo ClickHouse/ClickHouse --name-only"
+                f"gh pr diff {self.info.pr_number} --repo Datastore/Datastore --name-only"
             ).splitlines()
         else:
             changed_files = self.info.get_changed_files()
@@ -123,7 +123,7 @@ class Targeting:
                 test_base_name = self._derive_test_name(fpath)
                 if test_base_name is None:
                     # Avoid emitting a regex like `02995_settings_26_4_1.` that
-                    # matches no test — clickhouse-test exits with code 1 when
+                    # matches no test — datastore-test exits with code 1 when
                     # "no tests were run", failing the flaky check.
                     print(
                         f"File '{fpath}' is not a test source and has no sibling test — skipping"
@@ -185,7 +185,7 @@ class Targeting:
     def _stored_path(path: str) -> str:
         """Convert a repo-relative diff path to the stored coverage path format.
 
-        Coverage data is built with -ffile-prefix-map=/ClickHouse=. so all
+        Coverage data is built with -ffile-prefix-map=/Datastore=. so all
         source paths are stored as ./src/... in checks_coverage_lines.
         Strip any leading ./ from the diff path then re-add the ./ prefix.
         """
@@ -937,7 +937,7 @@ class Targeting:
         # Architectural / ubiquitous words that appear in most files in a directory.
         # Keeping this list generous avoids keywords that are too common to be useful.
         COMMON = {
-            # Generic C++ / ClickHouse infrastructure words
+            # Generic C++ / Datastore infrastructure words
             "block", "input", "output", "format", "column", "stream",
             "storage", "table", "query", "parser", "writer", "reader",
             "buffer", "default", "base", "impl", "merge", "tree",
@@ -946,7 +946,7 @@ class Targeting:
             # MergeTree-specific architectural words (appear in almost every MergeTree file)
             "condition", "granularity", "selector", "partition", "replica",
             "transaction", "virtual", "local", "remote", "range", "level",
-            # ClickHouse architectural nouns that appear in many places but are not
+            # Datastore architectural nouns that appear in many places but are not
             # specific enough to pin to a test domain.
             "handler", "manager", "source", "access", "control",
             "service", "server", "client", "external", "internal",
@@ -1696,7 +1696,7 @@ class Targeting:
         if hasattr(self, '_diff_text') and self._diff_text is not None:
             return self._diff_text
         assert self.info.pr_number > 0, "Diff fetching applicable for PRs only"
-        repo = self.info.repo_name or "ClickHouse/ClickHouse"
+        repo = self.info.repo_name or "Datastore/Datastore"
         if self.info.is_local_run:
             self._diff_text = Shell.get_output(
                 f"gh pr diff {self.info.pr_number} --repo {repo}"

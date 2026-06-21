@@ -2,7 +2,7 @@
 """
 macOS Smoke Test
 
-This script runs a basic smoke test for ClickHouse on native macOS.
+This script runs a basic smoke test for Datastore on native macOS.
 It downloads the pre-built binary via public HTTP (no AWS credentials needed),
 starts the server and executes a simple query to verify the binary works.
 
@@ -17,26 +17,26 @@ from ci.praktika.result import Result
 from ci.praktika.utils import Shell, Utils
 
 TEMP_DIR = Path(f"{Utils.cwd()}/ci/tmp")
-BINARY_PATH = TEMP_DIR / "clickhouse"
+BINARY_PATH = TEMP_DIR / "datastore"
 DATA_DIR = TEMP_DIR / "data"
 LOG_DIR = TEMP_DIR / "log"
 
-# S3_BUCKET_HTTP_ENDPOINT = "clickhouse-builds.s3.amazonaws.com"
+# S3_BUCKET_HTTP_ENDPOINT = "datastore-builds.s3.amazonaws.com"
 
 
 def prepare_directories():
-    """Create necessary directories for ClickHouse."""
+    """Create necessary directories for Datastore."""
     for dir_path in [DATA_DIR, LOG_DIR]:
         dir_path.mkdir(parents=True, exist_ok=True)
 
 
 def start_server():
-    """Start ClickHouse server using embedded config with overrides."""
+    """Start Datastore server using embedded config with overrides."""
     cmd = (
         f"{BINARY_PATH} server --daemon"
         f" -- --path {DATA_DIR}/"
-        f" --logger.log {LOG_DIR}/clickhouse-server.log"
-        f" --logger.errorlog {LOG_DIR}/clickhouse-server.err.log"
+        f" --logger.log {LOG_DIR}/datastore-server.log"
+        f" --logger.errorlog {LOG_DIR}/datastore-server.err.log"
         f" --logger.level information"
         f" --logger.console 0"
         f" --tcp_port 9000"
@@ -65,8 +65,8 @@ def wait_for_server(timeout=60):
 
 
 def stop_server():
-    """Stop ClickHouse server."""
-    pid_file = DATA_DIR / "clickhouse-server.pid"
+    """Stop Datastore server."""
+    pid_file = DATA_DIR / "datastore-server.pid"
     if pid_file.exists():
         pid = int(pid_file.read_text().strip())
         try:
@@ -124,7 +124,7 @@ def main():
             server_started = True
         else:
             # Collect error log for diagnostics
-            err_log = LOG_DIR / "clickhouse-server.err.log"
+            err_log = LOG_DIR / "datastore-server.err.log"
             err_content = ""
             if err_log.exists():
                 err_content = err_log.read_text()[-2000:]  # Last 2000 chars

@@ -1,5 +1,5 @@
 
--- https://github.com/ClickHouse/ClickHouse/issues/37561
+-- https://github.com/ClickHouse/Datastore/issues/37561
 
 SELECT NULL
 FROM

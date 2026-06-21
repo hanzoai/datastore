@@ -5,9 +5,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS t_json_nested"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS t_json_nested"
 
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "
     CREATE TABLE t_json_nested
     (
         id UInt32,
@@ -15,7 +15,7 @@ ${CLICKHOUSE_CLIENT} -q "
     )
     ENGINE = MergeTree ORDER BY id" --enable_json_type 1
 
-cat <<EOF | $CLICKHOUSE_CLIENT -q "INSERT INTO t_json_nested FORMAT JSONEachRow"
+cat <<EOF | $DATASTORE_CLIENT -q "INSERT INTO t_json_nested FORMAT JSONEachRow"
 {
     "id": 1,
     "data":[
@@ -47,7 +47,7 @@ cat <<EOF | $CLICKHOUSE_CLIENT -q "INSERT INTO t_json_nested FORMAT JSONEachRow"
 }
 EOF
 
-cat <<EOF | $CLICKHOUSE_CLIENT -q "INSERT INTO t_json_nested FORMAT JSONEachRow"
+cat <<EOF | $DATASTORE_CLIENT -q "INSERT INTO t_json_nested FORMAT JSONEachRow"
 {
     "id": 3,
     "data":[
@@ -62,21 +62,21 @@ cat <<EOF | $CLICKHOUSE_CLIENT -q "INSERT INTO t_json_nested FORMAT JSONEachRow"
 }
 EOF
 
-$CLICKHOUSE_CLIENT -q "SELECT toTypeName(data) FROM t_json_nested LIMIT 1"
+$DATASTORE_CLIENT -q "SELECT toTypeName(data) FROM t_json_nested LIMIT 1"
 
 echo "============="
 
-$CLICKHOUSE_CLIENT -q "SELECT * FROM t_json_nested ORDER BY id FORMAT JSONEachRow"
+$DATASTORE_CLIENT -q "SELECT * FROM t_json_nested ORDER BY id FORMAT JSONEachRow"
 
 echo "============="
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT (data.2)['aa'] AS aa, (data.2)['bb'] AS bb
     FROM t_json_nested ORDER BY id FORMAT JSONEachRow"
 
 echo "============="
 
-$CLICKHOUSE_CLIENT --enable_analyzer=1 -q "
+$DATASTORE_CLIENT --enable_analyzer=1 -q "
     WITH (data.2)['aa'] AS aa, (data.2)['bb'] AS bb
     SELECT aa.k1 AS k1,
            aa.k4 AS k4
@@ -84,6 +84,6 @@ $CLICKHOUSE_CLIENT --enable_analyzer=1 -q "
 
 echo "============="
 
-$CLICKHOUSE_CLIENT -q "SELECT data.3 AS obj FROM t_json_nested ORDER BY id FORMAT JSONEachRow"
+$DATASTORE_CLIENT -q "SELECT data.3 AS obj FROM t_json_nested ORDER BY id FORMAT JSONEachRow"
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS t_json_nested"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS t_json_nested"

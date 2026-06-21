@@ -10,11 +10,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # If USER_FILES_PATH doesn't exist (local dev), query the server for the actual path
 if [ ! -d "${USER_FILES_PATH}" ]; then
-    USER_FILES_PATH=$($CLICKHOUSE_CLIENT_BINARY --query "select _path,_file from file('nonexist.txt', 'CSV', 'val1 char')" 2>&1 | grep Exception | awk '{gsub("/nonexist.txt","",$9); print $9}')
+    USER_FILES_PATH=$($DATASTORE_CLIENT_BINARY --query "select _path,_file from file('nonexist.txt', 'CSV', 'val1 char')" 2>&1 | grep Exception | awk '{gsub("/nonexist.txt","",$9); print $9}')
 fi
 
 # Setup test directory using standard pattern from other tests
-unique_name=${CLICKHOUSE_TEST_UNIQUE_NAME}
+unique_name=${DATASTORE_TEST_UNIQUE_NAME}
 TEST_DIR=${USER_FILES_PATH}/${unique_name}
 
 function cleanup()
@@ -77,4 +77,4 @@ EOF
 
 # Test 4: DESCRIBE icebergLocal - verify type mappings
 echo "Type mappings (DESCRIBE icebergLocal):"
-$CLICKHOUSE_CLIENT --query "DESCRIBE TABLE icebergLocal('${TEST_DIR}/', 'Parquet')" | cut -f 1,2 | grep -E '^(id|ts_)' | sort
+$DATASTORE_CLIENT --query "DESCRIBE TABLE icebergLocal('${TEST_DIR}/', 'Parquet')" | cut -f 1,2 | grep -E '^(id|ts_)' | sort

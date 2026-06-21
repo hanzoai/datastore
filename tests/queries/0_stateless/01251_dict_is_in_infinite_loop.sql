@@ -1,21 +1,21 @@
 -- Tags: no-parallel, no-fasttest
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
-USE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE_1:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE_1:Identifier};
+USE {DATASTORE_DATABASE_1:Identifier};
 
-DROP TABLE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier}.dict_source;
-CREATE TABLE {CLICKHOUSE_DATABASE_1:Identifier}.dict_source (id UInt64, parent_id UInt64, value String) ENGINE = Memory;
-INSERT INTO {CLICKHOUSE_DATABASE_1:Identifier}.dict_source VALUES (1, 0, 'hello'), (2, 1, 'world'), (3, 2, 'upyachka'), (11, 22, 'a'), (22, 11, 'b');
+DROP TABLE IF EXISTS {DATASTORE_DATABASE_1:Identifier}.dict_source;
+CREATE TABLE {DATASTORE_DATABASE_1:Identifier}.dict_source (id UInt64, parent_id UInt64, value String) ENGINE = Memory;
+INSERT INTO {DATASTORE_DATABASE_1:Identifier}.dict_source VALUES (1, 0, 'hello'), (2, 1, 'world'), (3, 2, 'upyachka'), (11, 22, 'a'), (22, 11, 'b');
 
-DROP DICTIONARY IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
+DROP DICTIONARY IF EXISTS {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy
 (
     id UInt64, parent_id UInt64 HIERARCHICAL, value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(host 'localhost' port tcpPort() user 'default' db currentDatabase() table 'dict_source'))
+SOURCE(DATASTORE(host 'localhost' port tcpPort() user 'default' db currentDatabase() table 'dict_source'))
 LAYOUT(HASHED())
 LIFETIME(MIN 1 MAX 1);
 
@@ -37,14 +37,14 @@ SELECT dictGetHierarchy('dictionary_with_hierarchy', materialize(toUInt64(11)));
 SELECT dictGetHierarchy('dictionary_with_hierarchy', materialize(toUInt64(22)));
 
 
-DROP DICTIONARY IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
+DROP DICTIONARY IF EXISTS {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy
 (
     id UInt64, parent_id UInt64 HIERARCHICAL, value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(host 'localhost' port tcpPort() user 'default' db currentDatabase() table 'dict_source'))
+SOURCE(DATASTORE(host 'localhost' port tcpPort() user 'default' db currentDatabase() table 'dict_source'))
 LAYOUT(FLAT())
 LIFETIME(MIN 1 MAX 1);
 
@@ -66,14 +66,14 @@ SELECT dictGetHierarchy('dictionary_with_hierarchy', materialize(toUInt64(11)));
 SELECT dictGetHierarchy('dictionary_with_hierarchy', materialize(toUInt64(22)));
 
 
-DROP DICTIONARY IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
+DROP DICTIONARY IF EXISTS {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
 
-CREATE DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy
+CREATE DICTIONARY {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy
 (
     id UInt64, parent_id UInt64 HIERARCHICAL, value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(host 'localhost' port tcpPort() user 'default' db currentDatabase() table 'dict_source'))
+SOURCE(DATASTORE(host 'localhost' port tcpPort() user 'default' db currentDatabase() table 'dict_source'))
 LAYOUT(CACHE(SIZE_IN_CELLS 10))
 LIFETIME(MIN 1 MAX 1);
 
@@ -95,6 +95,6 @@ SELECT dictGetHierarchy('dictionary_with_hierarchy', materialize(toUInt64(11)));
 SELECT dictGetHierarchy('dictionary_with_hierarchy', materialize(toUInt64(22)));
 
 
-DROP DICTIONARY {CLICKHOUSE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
-DROP TABLE {CLICKHOUSE_DATABASE_1:Identifier}.dict_source;
-DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
+DROP DICTIONARY {DATASTORE_DATABASE_1:Identifier}.dictionary_with_hierarchy;
+DROP TABLE {DATASTORE_DATABASE_1:Identifier}.dict_source;
+DROP DATABASE {DATASTORE_DATABASE_1:Identifier};

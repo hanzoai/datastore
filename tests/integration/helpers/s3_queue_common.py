@@ -161,7 +161,7 @@ def create_table(
     settings = {
         "s3queue_loading_retries": 0,
         "after_processing": after_processing,
-        "keeper_path": f"/clickhouse/test_{table_name}",
+        "keeper_path": f"/datastore/test_{table_name}",
         "mode": f"{mode}",
     }
     if version is None:

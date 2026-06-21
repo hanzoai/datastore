@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/ytsaurus
 title: 'YTsaurus dictionary source'
 sidebar_position: 13
 sidebar_label: 'YTsaurus'
-description: 'Configure YTsaurus as a dictionary source in ClickHouse.'
+description: 'Configure YTsaurus as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 

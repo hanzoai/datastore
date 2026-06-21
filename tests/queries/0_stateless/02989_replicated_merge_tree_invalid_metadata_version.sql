@@ -5,7 +5,7 @@ CREATE TABLE test_table_replicated
 (
     id UInt64,
     value String
-) ENGINE=ReplicatedMergeTree('/clickhouse/tables/{database}/test_table_replicated', '1_replica') ORDER BY id;
+) ENGINE=ReplicatedMergeTree('/datastore/tables/{database}/test_table_replicated', '1_replica') ORDER BY id;
 
 ALTER TABLE test_table_replicated ADD COLUMN insert_time DateTime;
 
@@ -19,7 +19,7 @@ CREATE TABLE test_table_replicated_second
     id UInt64,
     value String,
     insert_time DateTime
-) ENGINE=ReplicatedMergeTree('/clickhouse/tables/{database}/test_table_replicated', '2_replica') ORDER BY id;
+) ENGINE=ReplicatedMergeTree('/datastore/tables/{database}/test_table_replicated', '2_replica') ORDER BY id;
 
 DROP TABLE test_table_replicated;
 

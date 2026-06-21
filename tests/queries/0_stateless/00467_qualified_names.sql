@@ -24,7 +24,7 @@ SELECT system.one.* FROM one;
 SELECT system.one.dummy FROM `one` AS `t`;
 SELECT system.one.* FROM one AS `t`;
 
-USE {CLICKHOUSE_DATABASE:Identifier};
+USE {DATASTORE_DATABASE:Identifier};
 
 DROP TABLE IF EXISTS nested;
 CREATE TABLE nested (nest Nested(a UInt8, b String)) ENGINE = Memory;

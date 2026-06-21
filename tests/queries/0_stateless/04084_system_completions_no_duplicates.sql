@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/102013
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/102013
 -- system.completions should not contain duplicate rows for MergeTree settings.
 -- Previously, both getMergeTreeSettings() and getReplicatedMergeTreeSettings()
 -- were dumped, producing identical rows since they share the same setting names.

@@ -132,13 +132,13 @@ def grpc_query(channel, query_text):
 
 def configure_from_zk(zk, querier=None):
     default_config = [
-        ("/clickhouse/listen_hosts", b"<listen_host>0.0.0.0</listen_host>"),
-        ("/clickhouse/ports/tcp", b"9000"),
-        ("/clickhouse/ports/http", b"8123"),
-        ("/clickhouse/ports/mysql", b"9004"),
-        ("/clickhouse/ports/postgresql", b"9005"),
-        ("/clickhouse/ports/grpc", b"9100"),
-        ("/clickhouse/http_handlers", b"<defaults/>"),
+        ("/datastore/listen_hosts", b"<listen_host>0.0.0.0</listen_host>"),
+        ("/datastore/ports/tcp", b"9000"),
+        ("/datastore/ports/http", b"8123"),
+        ("/datastore/ports/mysql", b"9004"),
+        ("/datastore/ports/postgresql", b"9005"),
+        ("/datastore/ports/grpc", b"9100"),
+        ("/datastore/http_handlers", b"<defaults/>"),
     ]
     for path, value in default_config:
         if querier is not None:
@@ -192,7 +192,7 @@ def test_change_tcp_port(cluster, zk):
     with default_client(cluster, zk, restore_via_http=True) as client:
         assert client.query("SELECT 1") == "1\n"
         with sync_loaded_config(instance.http_query):
-            zk.set("/clickhouse/ports/tcp", b"9090")
+            zk.set("/datastore/ports/tcp", b"9090")
         with pytest.raises(QueryRuntimeException, match="Connection refused"):
             client.query("SELECT 1")
         client_on_new_port = get_client(cluster, port=9090)
@@ -204,7 +204,7 @@ def test_change_http_port(cluster, zk):
         retry_strategy = Retry(total=10, backoff_factor=0.1)
         assert instance.http_query("SELECT 1", retry_strategy=retry_strategy) == "1\n"
         with sync_loaded_config(client.query):
-            zk.set("/clickhouse/ports/http", b"9090")
+            zk.set("/datastore/ports/http", b"9090")
         with pytest.raises(ConnectionError, match="Connection refused"):
             instance.http_query("SELECT 1")
         assert instance.http_query("SELECT 1", port=9090) == "1\n"
@@ -215,7 +215,7 @@ def test_change_mysql_port(cluster, zk):
         mysql_client = get_mysql_client(cluster, port=9004)
         assert mysql_client.query("SELECT 1") == 1
         with sync_loaded_config(client.query):
-            zk.set("/clickhouse/ports/mysql", b"9090")
+            zk.set("/datastore/ports/mysql", b"9090")
         with pytest.raises(pymysql.err.OperationalError, match="Lost connection"):
             mysql_client.query("SELECT 1")
         mysql_client_on_new_port = get_mysql_client(cluster, port=9090)
@@ -229,7 +229,7 @@ def test_change_postgresql_port(cluster, zk):
         cursor.execute("SELECT 1")
         assert cursor.fetchall() == [(1,)]
         with sync_loaded_config(client.query):
-            zk.set("/clickhouse/ports/postgresql", b"9090")
+            zk.set("/datastore/ports/postgresql", b"9090")
         with pytest.raises(psycopg2.OperationalError, match="closed"):
             cursor.execute("SELECT 1")
         pgsql_client_on_new_port = get_pgsql_client(cluster, port=9090)
@@ -243,7 +243,7 @@ def test_change_grpc_port(cluster, zk):
         with get_grpc_channel(cluster, port=9100) as grpc_channel:
             assert grpc_query(grpc_channel, "SELECT 1") == "1\n"
             with sync_loaded_config(client.query):
-                zk.set("/clickhouse/ports/grpc", b"9090")
+                zk.set("/datastore/ports/grpc", b"9090")
             with pytest.raises(
                 grpc._channel._InactiveRpcError, match="StatusCode.UNAVAILABLE"
             ):
@@ -257,7 +257,7 @@ def test_remove_tcp_port(cluster, zk):
     with default_client(cluster, zk, restore_via_http=True) as client:
         assert client.query("SELECT 1") == "1\n"
         with sync_loaded_config(instance.http_query):
-            zk.delete("/clickhouse/ports/tcp")
+            zk.delete("/datastore/ports/tcp")
         with pytest.raises(QueryRuntimeException, match="Connection refused"):
             client.query("SELECT 1")
 
@@ -266,7 +266,7 @@ def test_remove_http_port(cluster, zk):
     with default_client(cluster, zk) as client:
         assert instance.http_query("SELECT 1") == "1\n"
         with sync_loaded_config(client.query):
-            zk.delete("/clickhouse/ports/http")
+            zk.delete("/datastore/ports/http")
         with pytest.raises(ConnectionError, match="Connection refused"):
             instance.http_query("SELECT 1")
 
@@ -276,7 +276,7 @@ def test_remove_mysql_port(cluster, zk):
         mysql_client = get_mysql_client(cluster, port=9004)
         assert mysql_client.query("SELECT 1") == 1
         with sync_loaded_config(client.query):
-            zk.delete("/clickhouse/ports/mysql")
+            zk.delete("/datastore/ports/mysql")
         with pytest.raises(pymysql.err.OperationalError, match="Lost connection"):
             mysql_client.query("SELECT 1")
 
@@ -288,7 +288,7 @@ def test_remove_postgresql_port(cluster, zk):
         cursor.execute("SELECT 1")
         assert cursor.fetchall() == [(1,)]
         with sync_loaded_config(client.query):
-            zk.delete("/clickhouse/ports/postgresql")
+            zk.delete("/datastore/ports/postgresql")
         with pytest.raises(psycopg2.OperationalError, match="closed"):
             cursor.execute("SELECT 1")
 
@@ -298,7 +298,7 @@ def test_remove_grpc_port(cluster, zk):
         with get_grpc_channel(cluster, port=9100) as grpc_channel:
             assert grpc_query(grpc_channel, "SELECT 1") == "1\n"
             with sync_loaded_config(client.query):
-                zk.delete("/clickhouse/ports/grpc")
+                zk.delete("/datastore/ports/grpc")
             with pytest.raises(
                 grpc._channel._InactiveRpcError, match="StatusCode.UNAVAILABLE"
             ):
@@ -307,9 +307,9 @@ def test_remove_grpc_port(cluster, zk):
 
 def test_change_listen_host(cluster, zk):
     localhost_client = Client(
-        host="127.0.0.1", port=9000, command="/usr/bin/clickhouse"
+        host="127.0.0.1", port=9000, command="/usr/bin/datastore"
     )
-    # Clear LLVM_PROFILE_FILE so this manually-launched clickhouse process
+    # Clear LLVM_PROFILE_FILE so this manually-launched datastore process
     # does not race with the server over the same profraw merge-pool slots.
     localhost_client.command = [
         "docker",
@@ -322,7 +322,7 @@ def test_change_listen_host(cluster, zk):
     try:
         client = get_client(cluster, port=9000)
         with sync_loaded_config(localhost_client.query):
-            zk.set("/clickhouse/listen_hosts", b"<listen_host>127.0.0.1</listen_host>")
+            zk.set("/datastore/listen_hosts", b"<listen_host>127.0.0.1</listen_host>")
         with pytest.raises(QueryRuntimeException, match="Connection refused"):
             client.query("SELECT 1")
         assert localhost_client.query("SELECT 1") == "1\n"
@@ -330,7 +330,7 @@ def test_change_listen_host(cluster, zk):
         configure_from_zk(zk, localhost_client.query)
 
 
-# This is a regression test for the case when the clickhouse-server was waiting
+# This is a regression test for the case when the datastore-server was waiting
 # for the connection that had been issued "SYSTEM RELOAD CONFIG" indefinitely.
 #
 # Configuration reload directly from the query,
@@ -340,9 +340,9 @@ def test_reload_via_client(cluster, zk):
     exception = None
 
     localhost_client = Client(
-        host="127.0.0.1", port=9000, command="/usr/bin/clickhouse"
+        host="127.0.0.1", port=9000, command="/usr/bin/datastore"
     )
-    # Clear LLVM_PROFILE_FILE so this manually-launched clickhouse process
+    # Clear LLVM_PROFILE_FILE so this manually-launched datastore process
     # does not race with the server over the same profraw merge-pool slots.
     localhost_client.command = [
         "docker",
@@ -353,7 +353,7 @@ def test_reload_via_client(cluster, zk):
         instance.docker_id,
     ] + localhost_client.command
 
-    listen_config = "/etc/clickhouse-server/config.d/99-listen.yaml"
+    listen_config = "/etc/datastore-server/config.d/99-listen.yaml"
     # NOTE: this test cannot use ZooKeeper since it uses watches to subscribe to changes and they are very fast
     for i in range(0, 10):
         try:
@@ -409,7 +409,7 @@ def test_change_http_handlers(cluster, zk):
 
         with sync_loaded_config(client.query):
             zk.set(
-                "/clickhouse/http_handlers",
+                "/datastore/http_handlers",
                 b"""
                 <defaults/>
 

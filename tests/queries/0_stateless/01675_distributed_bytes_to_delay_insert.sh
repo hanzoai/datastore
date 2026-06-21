@@ -9,8 +9,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function drop_tables()
 {
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"drop table if exists dist_01675"
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"drop table if exists data_01675"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"drop table if exists dist_01675"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"drop table if exists data_01675"
 }
 
 #
@@ -21,19 +21,19 @@ function test_max_delay_to_insert_will_throw()
     echo "max_delay_to_insert will throw"
 
     local max_delay_to_insert=2
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"create table data_01675 (key Int) engine=Null()"
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"create table dist_01675 (key Int) engine=Distributed(test_shard_localhost, currentDatabase(), data_01675) settings bytes_to_delay_insert=1, max_delay_to_insert=$max_delay_to_insert"
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"system stop distributed sends dist_01675"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"create table data_01675 (key Int) engine=Null()"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"create table dist_01675 (key Int) engine=Distributed(test_shard_localhost, currentDatabase(), data_01675) settings bytes_to_delay_insert=1, max_delay_to_insert=$max_delay_to_insert"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"system stop distributed sends dist_01675"
 
     local start_seconds=$SECONDS
     # first batch is always OK, since there is no pending bytes yet
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0"
     # second will fail, because of bytes_to_delay_insert=1 and max_delay_to_insert>0,
     # while distributed sends is stopped.
     #
     # (previous block definitelly takes more, since it has header)
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0" |& grep -o 'Too many bytes pending for async INSERT'
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"system flush distributed dist_01675"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0" |& grep -o 'Too many bytes pending for async INSERT'
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"system flush distributed dist_01675"
     local end_seconds=$SECONDS
 
     if (( (end_seconds-start_seconds)<(max_delay_to_insert-1) )); then
@@ -51,14 +51,14 @@ function test_max_delay_to_insert_will_succeed_once()
 
     drop_tables
 
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"create table data_01675 (key Int) engine=Null()"
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"create table dist_01675 (key Int) engine=Distributed(test_shard_localhost, currentDatabase(), data_01675) settings bytes_to_delay_insert=1, max_delay_to_insert=$max_delay_to_insert"
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"system stop distributed sends dist_01675"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"create table data_01675 (key Int) engine=Null()"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"create table dist_01675 (key Int) engine=Distributed(test_shard_localhost, currentDatabase(), data_01675) settings bytes_to_delay_insert=1, max_delay_to_insert=$max_delay_to_insert"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"system stop distributed sends dist_01675"
 
     function flush_distributed_worker()
     {
         sleep $flush_delay
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d @- <<<"system flush distributed dist_01675"
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d @- <<<"system flush distributed dist_01675"
     }
     flush_distributed_worker &
 
@@ -69,9 +69,9 @@ function test_max_delay_to_insert_will_succeed_once()
         # (this is possible on CI)
 
         # first batch is always OK, since there is no pending bytes yet
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&extremes=1" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&extremes=1" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0" >& /dev/null
         # second will succeed, due to SYSTEM FLUSH DISTRIBUTED in background.
-        ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&extremes=1" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0" >& /dev/null
+        ${DATASTORE_CURL} -sS "${DATASTORE_URL}&extremes=1" -d @- <<<"insert into dist_01675 select * from numbers(1) settings prefer_localhost_replica=0" >& /dev/null
     }
     local end_seconds=$SECONDS
 

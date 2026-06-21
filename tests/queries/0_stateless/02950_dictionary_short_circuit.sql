@@ -20,7 +20,7 @@ CREATE DICTIONARY flat_dictionary
     v3 Nullable(UInt64)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(FLAT());
 
@@ -43,7 +43,7 @@ CREATE DICTIONARY hashed_dictionary
     v3 Nullable(UInt64)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(HASHED());
 
@@ -68,7 +68,7 @@ CREATE DICTIONARY hashed_array_dictionary
     v3 Nullable(UInt64)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(HASHED_ARRAY());
 
@@ -106,7 +106,7 @@ CREATE DICTIONARY range_hashed_dictionary
     val Nullable(UInt64)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'range_dictionary_source_table'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(RANGE_HASHED())
 RANGE(MIN start MAX end);
@@ -127,7 +127,7 @@ CREATE DICTIONARY cache_dictionary
     v3 Nullable(UInt64)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LIFETIME(MIN 0 MAX 0)
 LAYOUT(CACHE(SIZE_IN_CELLS 10));
 
@@ -150,7 +150,7 @@ CREATE DICTIONARY direct_dictionary
     v3 Nullable(UInt64)
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'dictionary_source_table'))
 LAYOUT(DIRECT());
 
 SELECT 'Direct dictionary';
@@ -186,7 +186,7 @@ CREATE DICTIONARY ip_dictionary
     cca2 String
 )
 PRIMARY KEY prefix
-SOURCE(CLICKHOUSE(TABLE 'ip_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'ip_dictionary_source_table'))
 LAYOUT(IP_TRIE)
 LIFETIME(3600);
 
@@ -214,7 +214,7 @@ CREATE DICTIONARY polygon_dictionary
     name Nullable(String)
 )
 PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE 'polygon_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'polygon_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(POLYGON());
 
@@ -257,7 +257,7 @@ create dictionary regexp_dict
     comment String default 'nothing'
 )
 PRIMARY KEY(regexp)
-SOURCE(CLICKHOUSE(TABLE 'regexp_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE 'regexp_dictionary_source_table'))
 LIFETIME(0)
 LAYOUT(regexp_tree);
 

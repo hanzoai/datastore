@@ -1,6 +1,6 @@
 from helpers.iceberg_utils import get_uuid_str
 
-ICEBERG_DIR_NODE1 = "/var/lib/clickhouse/user_files/iceberg_node1"
+ICEBERG_DIR_NODE1 = "/var/lib/datastore/user_files/iceberg_node1"
 
 
 def test_nodes_dont_see_each_other(started_cluster_iceberg):
@@ -50,19 +50,19 @@ def test_nodes_dont_see_each_other(started_cluster_iceberg):
         """
     )
 
-    # Create ClickHouse tables — each node reads from its own iceberg directory
+    # Create Datastore tables — each node reads from its own iceberg directory
     node1.query(
         f"""
         CREATE TABLE {TABLE_NAME}
         ENGINE=IcebergLocal(local,
-            path = '/var/lib/clickhouse/user_files/iceberg_node1/default/{TABLE_NAME}')
+            path = '/var/lib/datastore/user_files/iceberg_node1/default/{TABLE_NAME}')
         """
     )
     node2.query(
         f"""
         CREATE TABLE {TABLE_NAME}
         ENGINE=IcebergLocal(local,
-            path = '/var/lib/clickhouse/user_files/iceberg_node2/default/{TABLE_NAME}')
+            path = '/var/lib/datastore/user_files/iceberg_node2/default/{TABLE_NAME}')
         """
     )
 
@@ -90,7 +90,7 @@ def test_nodes_dont_see_each_other(started_cluster_iceberg):
 
 def test_ch_write_spark_read(started_cluster_iceberg):
     """
-    Spark creates a table, ClickHouse writes to it, Spark reads back.
+    Spark creates a table, Datastore writes to it, Spark reads back.
     Validates that the external_dirs mount works bidirectionally.
     """
     node1 = started_cluster_iceberg.instances["node1"]
@@ -109,16 +109,16 @@ def test_ch_write_spark_read(started_cluster_iceberg):
         """
     )
 
-    # Create ClickHouse table pointing to the same location
+    # Create Datastore table pointing to the same location
     node1.query(
         f"""
         CREATE TABLE {TABLE_NAME}
         ENGINE=IcebergLocal(local,
-            path = '/var/lib/clickhouse/user_files/iceberg_node1/default/{TABLE_NAME}')
+            path = '/var/lib/datastore/user_files/iceberg_node1/default/{TABLE_NAME}')
         """
     )
 
-    # ClickHouse writes data
+    # Datastore writes data
     node1.query(
         f"INSERT INTO {TABLE_NAME} VALUES (42)",
         settings={"allow_insert_into_iceberg": 1},
@@ -128,10 +128,10 @@ def test_ch_write_spark_read(started_cluster_iceberg):
         settings={"allow_insert_into_iceberg": 1},
     )
 
-    # ClickHouse can read its own writes
+    # Datastore can read its own writes
     assert int(node1.query(f"SELECT count() FROM {TABLE_NAME}")) == 2
 
-    # Spark should also see the data written by ClickHouse.
+    # Spark should also see the data written by Datastore.
     # Spark's catalog caches metadata, so we need to refresh it first.
     spark.sql(f"REFRESH TABLE node1_catalog.default.{TABLE_NAME}")
 
@@ -165,7 +165,7 @@ def test_spark_write_ch_read_append(started_cluster_iceberg):
         f"INSERT INTO node1_catalog.default.{TABLE_NAME} SELECT id as number FROM range(100)"
     )
 
-    # Create ClickHouse table pointing to the same location
+    # Create Datastore table pointing to the same location
     node1.query(
         f"""
         CREATE TABLE {TABLE_NAME}
@@ -217,7 +217,7 @@ def test_spark_delete_ch_read(started_cluster_iceberg):
         f"INSERT INTO node1_catalog.default.{TABLE_NAME} SELECT id as number FROM range(100)"
     )
 
-    # Create ClickHouse table
+    # Create Datastore table
     node1.query(
         f"""
         CREATE TABLE {TABLE_NAME}
@@ -276,7 +276,7 @@ def test_ch_delete_spark_read(started_cluster_iceberg):
         f"INSERT INTO node1_catalog.default.{TABLE_NAME} SELECT id as number FROM range(50)"
     )
 
-    # Create ClickHouse table
+    # Create Datastore table
     node1.query(
         f"""
         CREATE TABLE {TABLE_NAME}

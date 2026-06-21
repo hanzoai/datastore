@@ -1,10 +1,10 @@
-<clickhouse>
+<datastore>
     <zookeeper>
-        <identity>clickhouse:withauth</identity>
+        <identity>datastore:withauth</identity>
     </zookeeper>
     <auxiliary_zookeepers>
         <zookeeper2>
-            <identity>clickhouse:withauth</identity>
+            <identity>datastore:withauth</identity>
         </zookeeper2>
     </auxiliary_zookeepers>
-</clickhouse>
+</datastore>

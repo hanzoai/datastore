@@ -8,7 +8,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE IF EXISTS src;
 DROP TABLE IF EXISTS mv;
 
@@ -39,7 +39,7 @@ function alter_thread()
     local TIMELIMIT=$((SECONDS+10))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --allow_experimental_alter_materialized_view_structure=1 -q "${ALTERS[$RANDOM % 2]}"
+        $DATASTORE_CLIENT --allow_experimental_alter_materialized_view_structure=1 -q "${ALTERS[$RANDOM % 2]}"
         sleep "$(echo 0.$RANDOM)";
     done
 }
@@ -49,12 +49,12 @@ alter_thread &
 for _ in {1..100}; do
     # Retry (hopefully retriable (deadlock avoided)) errors.
     while true; do
-        $CLICKHOUSE_CLIENT -q "INSERT INTO src VALUES (1);" 2>/dev/null && break
+        $DATASTORE_CLIENT -q "INSERT INTO src VALUES (1);" 2>/dev/null && break
     done
 done
 
-$CLICKHOUSE_CLIENT -q "SELECT count() FROM mv;"
+$DATASTORE_CLIENT -q "SELECT count() FROM mv;"
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP VIEW mv"
-$CLICKHOUSE_CLIENT -q "DROP TABLE src"
+$DATASTORE_CLIENT -q "DROP VIEW mv"
+$DATASTORE_CLIENT -q "DROP TABLE src"

@@ -54,7 +54,7 @@ def started_cluster():
 
         instances[0].query("CREATE DATABASE atomicdb ON CLUSTER 'cluster'")
         instances[0].query(
-            "CREATE DATABASE repldb ON CLUSTER 'cluster' ENGINE=Replicated('/clickhouse/path/','{shard}','{replica}')"
+            "CREATE DATABASE repldb ON CLUSTER 'cluster' ENGINE=Replicated('/datastore/path/','{shard}','{replica}')"
         )
 
         yield cluster
@@ -95,7 +95,7 @@ def test_create_or_replace(database, instance_to_create_dictionary, instances_to
     num_steps = 2
     dict_uuids = {}
     for step in range(0, num_steps):
-        create_dictionary_query = f"CREATE OR REPLACE DICTIONARY {database}.dict (key Int64, value Int64) PRIMARY KEY key SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'src' PASSWORD '' DB 'default')) LIFETIME(0) LAYOUT(FLAT())"
+        create_dictionary_query = f"CREATE OR REPLACE DICTIONARY {database}.dict (key Int64, value Int64) PRIMARY KEY key SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' TABLE 'src' PASSWORD '' DB 'default')) LIFETIME(0) LAYOUT(FLAT())"
         instance_to_create_dictionary.query(create_dictionary_query)
 
         for instance in instances_to_check:

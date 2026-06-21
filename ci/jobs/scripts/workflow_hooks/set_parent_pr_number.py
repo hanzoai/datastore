@@ -6,7 +6,7 @@ if __name__ == "__main__":
     info = Info()
     if info.pr_number == 0:
         # Extract original PR number from backport merge commits
-        # Example: "Merge pull request #92596 from ClickHouse/backport/25.12/92538" -> extract 92538
+        # Example: "Merge pull request #92596 from Datastore/backport/25.12/92538" -> extract 92538
         commit_message = info.commit_message
         match = re.search(r"backport/[^/]+/(\d+)", commit_message)
         if match:

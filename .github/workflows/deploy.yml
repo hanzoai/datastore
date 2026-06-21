@@ -20,6 +20,6 @@ jobs:
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       image: ghcr.io/hanzoai/datastore
-      # Hanzo overlay: ClickHouse fork + native ZAP bridge in cmd/zap-bridge.
+      # Hanzo overlay: Datastore fork + native ZAP bridge in cmd/zap-bridge.
       dockerfile: Dockerfile.hanzo
     secrets: inherit

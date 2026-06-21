@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS mt_without_pk SYNC;
 
 DROP TABLE IF EXISTS replicated_mt_without_pk SYNC;
 
-CREATE TABLE replicated_mt_without_pk (SomeField1 Int64, SomeField2 Double) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_01037/replicated_mt_without_pk', '1') ORDER BY tuple();
+CREATE TABLE replicated_mt_without_pk (SomeField1 Int64, SomeField2 Double) ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_01037/replicated_mt_without_pk', '1') ORDER BY tuple();
 
 INSERT INTO replicated_mt_without_pk VALUES (1, 2);
 

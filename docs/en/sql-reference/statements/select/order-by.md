@@ -236,7 +236,7 @@ SELECT * FROM collate_test ORDER BY s ASC COLLATE 'en';
 
 Less RAM is used if a small enough [LIMIT](../../../sql-reference/statements/select/limit.md) is specified in addition to `ORDER BY`. Otherwise, the amount of memory spent is proportional to the volume of data for sorting. For distributed query processing, if [GROUP BY](/sql-reference/statements/select/group-by) is omitted, sorting is partially done on remote servers, and the results are merged on the requestor server. This means that for distributed sorting, the volume of data to sort can be greater than the amount of memory on a single server.
 
-If there is not enough RAM, it is possible to perform sorting in external memory (creating temporary files on a disk). Use the setting `max_bytes_before_external_sort` for this purpose. If it is set to 0 (the default), external sorting is disabled. If it is enabled, when the volume of data to sort reaches the specified number of bytes, the collected data is sorted and dumped into a temporary file. After all data is read, all the sorted files are merged and the results are output. Files are written to the `/var/lib/clickhouse/tmp/` directory in the config (by default, but you can use the `tmp_path` parameter to change this setting). You can also use spilling to disk only if query exceeds memory limits, i.e. `max_bytes_ratio_before_external_sort=0.6` will enable spilling to disk only once the query hits `60%` memory limit (user/sever).
+If there is not enough RAM, it is possible to perform sorting in external memory (creating temporary files on a disk). Use the setting `max_bytes_before_external_sort` for this purpose. If it is set to 0 (the default), external sorting is disabled. If it is enabled, when the volume of data to sort reaches the specified number of bytes, the collected data is sorted and dumped into a temporary file. After all data is read, all the sorted files are merged and the results are output. Files are written to the `/var/lib/datastore/tmp/` directory in the config (by default, but you can use the `tmp_path` parameter to change this setting). You can also use spilling to disk only if query exceeds memory limits, i.e. `max_bytes_ratio_before_external_sort=0.6` will enable spilling to disk only once the query hits `60%` memory limit (user/sever).
 
 Running a query may use more memory than `max_bytes_before_external_sort`. For this reason, this setting must have a value significantly smaller than `max_memory_usage`. As an example, if your server has 128 GB of RAM and you need to run a single query, set `max_memory_usage` to 100 GB, and `max_bytes_before_external_sort` to 80 GB.
 
@@ -246,11 +246,11 @@ External sorting works much less effectively than sorting in RAM.
 
  If `ORDER BY` expression has a prefix that coincides with the table sorting key, you can optimize the query by using the [optimize_read_in_order](../../../operations/settings/settings.md#optimize_read_in_order) setting.
 
- When the `optimize_read_in_order` setting is enabled, the ClickHouse server uses the table index and reads the data in order of the `ORDER BY` key. This allows to avoid reading all data in case of specified [LIMIT](../../../sql-reference/statements/select/limit.md). So queries on big data with small limit are processed faster.
+ When the `optimize_read_in_order` setting is enabled, the Datastore server uses the table index and reads the data in order of the `ORDER BY` key. This allows to avoid reading all data in case of specified [LIMIT](../../../sql-reference/statements/select/limit.md). So queries on big data with small limit are processed faster.
 
 Optimization works with both `ASC` and `DESC` and does not work together with [GROUP BY](/sql-reference/statements/select/group-by) clause and [FINAL](/sql-reference/statements/select/from#final-modifier) modifier.
 
-When the `optimize_read_in_order` setting is disabled, the ClickHouse server does not use the table index while processing `SELECT` queries.
+When the `optimize_read_in_order` setting is disabled, the Datastore server does not use the table index while processing `SELECT` queries.
 
 Consider disabling `optimize_read_in_order` manually, when running queries that have `ORDER BY` clause, large `LIMIT` and [WHERE](../../../sql-reference/statements/select/where.md) condition that requires to read huge amount of records before queried data is found.
 
@@ -628,4 +628,4 @@ This behavior is controlled by setting `use_with_fill_by_sorting_prefix` (enable
 
 ## Related content {#related-content}
 
-- Blog: [Working with time series data in ClickHouse](https://clickhouse.com/blog/working-with-time-series-data-and-functions-ClickHouse)
+- Blog: [Working with time series data in Datastore](https://datastore.com/blog/working-with-time-series-data-and-functions-Datastore)

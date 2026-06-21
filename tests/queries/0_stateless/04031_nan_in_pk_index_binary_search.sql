@@ -3,7 +3,7 @@
 -- Regression test: NaN values in primary key index broke binary search
 -- in markRangesFromPKRange because Range::intersectsRange gives wrong
 -- results for IEEE 754 NaN (NaN is incomparable).
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=744485a03e0c78561cc7f820e9b43decf2cea69d&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_debug%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=744485a03e0c78561cc7f820e9b43decf2cea69d&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_debug%29
 
 DROP TABLE IF EXISTS t_nan_pk;
 

@@ -1,4 +1,4 @@
--- Test for https://github.com/ClickHouse/ClickHouse/issues/95744
+-- Test for https://github.com/ClickHouse/Datastore/issues/95744
 -- Fix: Not-ready Set should not throw exception in dry-run mode (EXPLAIN PIPELINE)
 
 -- This query would previously fail with:

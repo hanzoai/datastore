@@ -1,4 +1,4 @@
--- Test for https://github.com/ClickHouse/ClickHouse/issues/95670
+-- Test for https://github.com/ClickHouse/Datastore/issues/95670
 -- cast_keep_nullable should work with LowCardinality(Nullable(T)) types
 
 SET cast_keep_nullable = 1;

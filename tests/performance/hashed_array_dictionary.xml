@@ -32,7 +32,7 @@
             value_string_nullable Nullable(String)
         )
         PRIMARY KEY id
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'simple_key_hashed_array_dictionary_source_table'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'simple_key_hashed_array_dictionary_source_table'))
         LAYOUT(HASHED_ARRAY())
         LIFETIME(MIN 0 MAX 1000);
     </create_query>
@@ -48,7 +48,7 @@
             value_string_nullable Nullable(String)
         )
         PRIMARY KEY id, id_key
-        SOURCE(CLICKHOUSE(DB 'default' TABLE 'complex_key_hashed_array_dictionary_source_table'))
+        SOURCE(DATASTORE(DB 'default' TABLE 'complex_key_hashed_array_dictionary_source_table'))
         LAYOUT(COMPLEX_KEY_HASHED_ARRAY())
         LIFETIME(MIN 0 MAX 1000);
     </create_query>

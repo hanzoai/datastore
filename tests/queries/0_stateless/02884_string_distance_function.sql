@@ -1,16 +1,16 @@
 SELECT '-- const arguments';
 -- just to see it works
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, byteHammingDistance(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, editDistance(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, damerauLevenshteinDistance(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, stringJaccardIndex(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, stringJaccardIndexUTF8(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, jaroSimilarity(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, jaroWinklerSimilarity(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, byteHammingDistance(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, editDistance(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, damerauLevenshteinDistance(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, stringJaccardIndex(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, stringJaccardIndexUTF8(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, jaroSimilarity(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, jaroWinklerSimilarity(s1, s2);
 
 SELECT '-- test aliases';
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, mismatches(s1, s2);
-SELECT 'clickhouse' AS s1, 'mouse' AS s2, levenshteinDistance(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, mismatches(s1, s2);
+SELECT 'datastore' AS s1, 'mouse' AS s2, levenshteinDistance(s1, s2);
 
 SELECT '-- Deny DoS using too large inputs';
 SELECT editDistance(randomString(power(2, 17)), 'abc'); -- { serverError TOO_LARGE_STRING_SIZE}
@@ -26,7 +26,7 @@ CREATE TABLE t
 ) ENGINE = MergeTree ORDER BY s1;
 
 -- actual test cases
-INSERT INTO t VALUES ('', '') ('abc', '') ('', 'abc') ('abc', 'abc') ('abc', 'ab') ('abc', 'bc') ('clickhouse', 'mouse') ('我是谁', 'Tom') ('Jerry', '我是谁') ('我是谁', '我是我');
+INSERT INTO t VALUES ('', '') ('abc', '') ('', 'abc') ('abc', 'abc') ('abc', 'ab') ('abc', 'bc') ('datastore', 'mouse') ('我是谁', 'Tom') ('Jerry', '我是谁') ('我是谁', '我是我');
 
 SELECT '-- non-const arguments';
 SELECT 'byteHammingDistance', s1, s2, byteHammingDistance(s1, s2) FROM t ORDER BY ALL;

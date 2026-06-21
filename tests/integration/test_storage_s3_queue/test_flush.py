@@ -121,7 +121,7 @@ def test_flush_blocks_until_commit_succeeds(started_cluster, mode):
     table_name = f"flush_block_{mode}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     file_path = f"{files_path}/test_0.csv"
 
     generate_random_files(started_cluster, files_path, count=1, row_num=5)
@@ -183,7 +183,7 @@ def test_flush_returns_quickly_if_already_processed(started_cluster, mode):
     table_name = f"flush_already_{mode}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
 
     generate_random_files(started_cluster, files_path, count=1, row_num=3)
     file_path = f"{files_path}/test_0.csv"
@@ -226,7 +226,7 @@ def test_flush_raises_on_failed_path(started_cluster, mode):
     table_name = f"flush_fail_{mode}_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     file_path = f"{files_path}/bad.csv"
 
     # Upload a file whose first column cannot be parsed as UInt32.
@@ -277,7 +277,7 @@ def test_flush_ordered_with_buckets(started_cluster):
     table_name = f"flush_buckets_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     file_path = f"{files_path}/test_0.csv"
 
     generate_random_files(started_cluster, files_path, count=1, row_num=4)
@@ -338,7 +338,7 @@ def test_flush_ordered_with_hive_partitioning(started_cluster):
     table_name = f"flush_hive_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     partition_subpath = "date=2021-01-01/city=NYC"
     file_path = f"{files_path}/{partition_subpath}/test_0.csv"
 
@@ -406,7 +406,7 @@ def test_flush_ordered_with_regex_partitioning(started_cluster):
     table_name = f"flush_regex_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
     files_path = f"{table_name}_data"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     file_path = f"{files_path}/server-1_20251217T100000.000000Z_0001.csv"
 
     put_s3_file_content(

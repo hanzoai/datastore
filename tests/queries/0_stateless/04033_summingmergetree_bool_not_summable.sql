@@ -3,7 +3,7 @@
 -- When SummingMergeTree() is used without explicit columns, it sums all
 -- summable numeric columns. Bool (a domain over UInt8) should NOT be
 -- considered summable, so it must be kept as-is (first value).
--- See https://github.com/ClickHouse/ClickHouse/issues/39965
+-- See https://github.com/ClickHouse/Datastore/issues/39965
 
 DROP TABLE IF EXISTS test_summing_bool;
 

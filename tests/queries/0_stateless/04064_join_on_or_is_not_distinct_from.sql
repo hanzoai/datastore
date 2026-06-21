@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/40976
+-- https://github.com/ClickHouse/Datastore/issues/40976
 -- Test that OR conditions in JOIN ON and IS NOT DISTINCT FROM work correctly.
 
 SET enable_analyzer = 1;

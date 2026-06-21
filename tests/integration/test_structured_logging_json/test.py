@@ -134,13 +134,13 @@ def validate_everything(config, node, config_type):
 
 def test_structured_logging_json_format(start_cluster):
     config_all_keys = node_all_keys.exec_in_container(
-        ["cat", "/etc/clickhouse-server/config.d/config_all_keys_json.xml"]
+        ["cat", "/etc/datastore-server/config.d/config_all_keys_json.xml"]
     )
     config_some_keys = node_some_keys.exec_in_container(
-        ["cat", "/etc/clickhouse-server/config.d/config_some_keys_json.xml"]
+        ["cat", "/etc/datastore-server/config.d/config_some_keys_json.xml"]
     )
     config_no_keys = node_no_keys.exec_in_container(
-        ["cat", "/etc/clickhouse-server/config.d/config_no_keys_json.xml"]
+        ["cat", "/etc/datastore-server/config.d/config_no_keys_json.xml"]
     )
 
     assert (
@@ -157,6 +157,6 @@ def test_structured_logging_per_channel(start_cluster):
     assert len(logs) > 0
     assert not validate_logs(logs)
 
-    error_logs = node_json_logging_per_channel.grep_in_log("", filename="clickhouse-server.err.log").strip().split("\n")
+    error_logs = node_json_logging_per_channel.grep_in_log("", filename="datastore-server.err.log").strip().split("\n")
     assert len(error_logs) > 0
     assert validate_logs(error_logs)

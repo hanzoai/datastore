@@ -73,7 +73,7 @@ def test_zookeeper_partition_locks(kafka_cluster):
     admin = k.get_admin_client(kafka_cluster)
     num_partitions = 3
     topic_name = "zk_locks_topic"
-    keeper_path = "/clickhouse/test/zk_locks"
+    keeper_path = "/datastore/test/zk_locks"
 
     k.kafka_create_topic(admin, "zk_locks_topic", num_partitions=num_partitions)
     with k.existing_kafka_topic(admin, topic_name):
@@ -126,7 +126,7 @@ def test_three_replicas_ten_partitions_rebalance(kafka_cluster):
     topic_name= "zk_dist_topic_10p"
     num_partitions = 10
     replica_names = ["r1", "r2", "r3"]
-    keeper_path = "/clickhouse/test/zk_dist3"
+    keeper_path = "/datastore/test/zk_dist3"
 
     k.kafka_create_topic(admin, topic_name, num_partitions=num_partitions)
     with k.existing_kafka_topic(admin, topic_name):

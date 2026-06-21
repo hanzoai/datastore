@@ -6,4 +6,4 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 # Parquet files with empty row groups (num_rows == 0) should be readable without errors.
-${CLICKHOUSE_LOCAL} --query="SELECT * FROM file('$CUR_DIR/data_parquet/04057_empty_row_group.parquet') FORMAT TabSeparatedWithNamesAndTypes"
+${DATASTORE_LOCAL} --query="SELECT * FROM file('$CUR_DIR/data_parquet/04057_empty_row_group.parquet') FORMAT TabSeparatedWithNamesAndTypes"

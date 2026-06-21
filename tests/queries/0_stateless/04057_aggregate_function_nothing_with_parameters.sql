@@ -3,7 +3,7 @@
 -- When all arguments are NULL, the Null combinator creates AggregateFunctionNothingNull
 -- with the original parameters. AggregateFunctionNothingImpl must preserve these parameters
 -- so outer combinator wrappers (like Array) stay consistent with nested_func->getParameters().
--- https://github.com/ClickHouse/ClickHouse/issues/100584
+-- https://github.com/ClickHouse/Datastore/issues/100584
 
 -- These queries used to crash with: Assertion `parameters == nested_func->getParameters()' failed
 SELECT quantileIfArrayArray(0.5)([[NULL]], [[1]]);

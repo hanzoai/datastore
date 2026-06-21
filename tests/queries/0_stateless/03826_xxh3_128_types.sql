@@ -4,7 +4,7 @@
 --   pip install xxhash
 --
 -- For strings:
---   python3 -c "import xxhash; print(xxhash.xxh3_128_hexdigest(b'ClickHouse').upper())"
+--   python3 -c "import xxhash; print(xxhash.xxh3_128_hexdigest(b'Datastore').upper())"
 --
 -- For integers (uses little-endian binary representation):
 --   python3 -c "import xxhash, struct; print(xxhash.xxh3_128_hexdigest(struct.pack('<B', 42)).upper())"
@@ -14,11 +14,11 @@
 --   python3 -c "import xxhash, struct; print(xxhash.xxh3_128_hexdigest(struct.pack('<f', 3.14159)).upper())"
 --   python3 -c "import xxhash, struct; print(xxhash.xxh3_128_hexdigest(struct.pack('<d', 2.718281828459045)).upper())"
 --
--- Note: Complex types (arrays, tuples) use ClickHouse's internal representation
+-- Note: Complex types (arrays, tuples) use Datastore's internal representation
 --       and may not directly match raw binary xxhash due to formatting/padding.
 
 -- Strings
-SELECT hex(xxh3_128('ClickHouse'));
+SELECT hex(xxh3_128('Datastore'));
 SELECT hex(xxh3_128(''));
 SELECT hex(xxh3_128('test'));
 

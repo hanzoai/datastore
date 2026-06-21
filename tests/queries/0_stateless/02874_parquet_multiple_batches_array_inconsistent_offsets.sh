@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 echo "Parquet"
 
-# More info on: https://github.com/ClickHouse/ClickHouse/pull/54370
+# More info on: https://github.com/ClickHouse/Datastore/pull/54370
 
 # File generated with the below code
 
@@ -123,7 +123,7 @@ echo "Parquet"
 
 DATA_FILE=$CUR_DIR/data_parquet/string_int_list_inconsistent_offset_multiple_batches.parquet
 
-${CLICKHOUSE_LOCAL} "
+${DATASTORE_LOCAL} "
 DROP TABLE IF EXISTS parquet_load;
 CREATE TABLE parquet_load (ints Array(Int64), strings Nullable(String)) ENGINE = Memory;
 INSERT INTO parquet_load FROM INFILE '$DATA_FILE';

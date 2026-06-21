@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <any_join_distinct_right_table_keys>1</any_join_distinct_right_table_keys>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

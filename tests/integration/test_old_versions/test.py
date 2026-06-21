@@ -1,13 +1,13 @@
 import pytest
 
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.test_tools import assert_eq_with_retry
 
 cluster = ClickHouseCluster(__file__)
 node_oldest = cluster.add_instance(
     "node_oldest",
-    image="clickhouse/clickhouse-server",
-    tag=CLICKHOUSE_CI_MIN_TESTED_VERSION,
+    image="datastore/datastore-server",
+    tag=DATASTORE_CI_MIN_TESTED_VERSION,
     with_installed_binary=True,
     main_configs=["configs/config.d/test_cluster.xml"],
 )
@@ -20,7 +20,7 @@ def query_from_one_node_to_another(client_node, server_node, query):
         [
             "bash",
             "-c",
-            "/usr/bin/clickhouse client --host {} --query {!r}".format(
+            "/usr/bin/datastore client --host {} --query {!r}".format(
                 server_node.name, query
             ),
         ]

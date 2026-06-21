@@ -1,10 +1,10 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <use_cluster>false</use_cluster>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
@@ -32,4 +32,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

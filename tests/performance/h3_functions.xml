@@ -1,6 +1,6 @@
 <test>
     <!-- Performance tests for the H3 functions whose performance is improved by switching the
-         backend to h3o (Rust) - see https://github.com/ClickHouse/ClickHouse/pull/100272.
+         backend to h3o (Rust) - see https://github.com/ClickHouse/Datastore/pull/100272.
          The existing h3.xml only exercises geoToH3 at resolution 15. -->
 
     <create_query>CREATE TABLE h3_indexes_perf (h3 UInt64) ENGINE = Memory</create_query>

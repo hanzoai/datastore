@@ -77,7 +77,7 @@ using BuildStatisticsTransformMap = std::unordered_map<String, BuildStatisticsTr
  *
  * With this kind of task we can give a merge a priority.
  * A priority is simple - the lower the size of the merge, the higher priority.
- * So, if ClickHouse wants to merge some really big parts into a bigger part,
+ * So, if Datastore wants to merge some really big parts into a bigger part,
  * then it will be executed for a long time, because the result of the merge is not really needed immediately.
  * It is better to merge small parts as soon as possible.
 */

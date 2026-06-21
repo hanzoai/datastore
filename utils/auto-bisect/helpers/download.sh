@@ -10,22 +10,22 @@ if [ -z "$1" ]; then
 fi
 
 COMMIT_SHA="$1"
-CH_PATH="$PARENT_DIR/data/clickhouse"
+CH_PATH="$PARENT_DIR/data/datastore"
 mkdir -p "$PARENT_DIR/data"
 
 # Build types to search for
 BUILD_TYPES=("build_amd_release")
 VERSIONS=("25.8" "25.9" "25.10" "25.11" "25.12" "26.1" "26.2" "26.3" "26.4" "26.5" "26.6" "26.7" "26.8" "26.9" "26.10" "26.11" "26.12")
 
-# Public builds (default): https://clickhouse-builds.s3.amazonaws.com
-# Private builds (--private): https://d1k2gkhrlfqv31.cloudfront.net/clickhouse-builds-private
+# Public builds (default): https://datastore-builds.s3.amazonaws.com
+# Private builds (--private): https://d1k2gkhrlfqv31.cloudfront.net/datastore-builds-private
 #
 # Private build credentials must be set via CH_CI_USER + CH_CI_PASSWORD env vars.
 
 if [[ "${PRIVATE:-false}" == "true" ]]; then
-  BASE_URL="https://d1k2gkhrlfqv31.cloudfront.net/clickhouse-builds-private"
+  BASE_URL="https://d1k2gkhrlfqv31.cloudfront.net/datastore-builds-private"
 else
-  BASE_URL="https://clickhouse-builds.s3.amazonaws.com"
+  BASE_URL="https://datastore-builds.s3.amazonaws.com"
 fi
 
 # Build Basic Auth header from CH_CI_USER + CH_CI_PASSWORD (validated in bisect.sh)
@@ -60,11 +60,11 @@ function try_download() {
     if [ $? -eq 0 ]; then
         chmod +x "$CH_PATH"
         # 3. Validation: binary may be self-decompressing, so allow output through
-        if "$CH_PATH" --version 2>&1 | grep -q "ClickHouse"; then
+        if "$CH_PATH" --version 2>&1 | grep -q "Datastore"; then
             echo "Successfully verified binary from $URL"
             exit 0
         else
-            echo "Warning: Downloaded file from $URL is not a valid ClickHouse binary."
+            echo "Warning: Downloaded file from $URL is not a valid Datastore binary."
             rm -f "$CH_PATH"
         fi
     fi
@@ -78,21 +78,21 @@ echo "Starting deep search for $COMMIT_SHA..."
 # 1. Try Pull Request paths (High probability for recent PRs)
 for BT in "${BUILD_TYPES[@]}"; do
     # Try REFs/master
-    try_download "${BASE_URL}/REFs/master/${COMMIT_SHA}/${BT}/clickhouse"
+    try_download "${BASE_URL}/REFs/master/${COMMIT_SHA}/${BT}/datastore"
     # Try direct PR paths
-    try_download "${BASE_URL}/PRs/0/${COMMIT_SHA}/${BT}/clickhouse"
+    try_download "${BASE_URL}/PRs/0/${COMMIT_SHA}/${BT}/datastore"
 done
 
 # 2. Try Versioned Release Paths
 for VER in "${VERSIONS[@]}"; do
     for BT in "${BUILD_TYPES[@]}"; do
-        try_download "${BASE_URL}/release/${VER}/${COMMIT_SHA}/${BT}/clickhouse"
-        try_download "${BASE_URL}/${VER}/${COMMIT_SHA}/${BT}/clickhouse"
+        try_download "${BASE_URL}/release/${VER}/${COMMIT_SHA}/${BT}/datastore"
+        try_download "${BASE_URL}/${VER}/${COMMIT_SHA}/${BT}/datastore"
     done
 done
 
 # 3. Try "Latest" and Tag-based structures
-try_download "${BASE_URL}/REFs/heads/master/${COMMIT_SHA}/build_amd_release/clickhouse"
+try_download "${BASE_URL}/REFs/heads/master/${COMMIT_SHA}/build_amd_release/datastore"
 
 echo "Can't find pre-built binary for commit ${COMMIT_SHA} in CI after exhaustive search."
 

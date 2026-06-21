@@ -12,14 +12,14 @@ configure_file(
     COPYONLY)
 
 configure_file(
-    "${CURRENT_DIR_IN_SOURCES}/clickhouse-template.g"
-    "${CURRENT_DIR_IN_BINARY}/clickhouse-template.g"
+    "${CURRENT_DIR_IN_SOURCES}/datastore-template.g"
+    "${CURRENT_DIR_IN_BINARY}/datastore-template.g"
     COPYONLY)
 
 # Note that it depends on all.dict file!
 add_custom_command(
     OUTPUT
-        "${CURRENT_DIR_IN_BINARY}/clickhouse.g"
+        "${CURRENT_DIR_IN_BINARY}/datastore.g"
     COMMAND ./update.sh "${ClickHouse_SOURCE_DIR}/tests/fuzz/all.dict"
 )
 
@@ -27,8 +27,8 @@ add_custom_command(
     OUTPUT
         "${CURRENT_DIR_IN_BINARY}/out.cpp"
         "${CURRENT_DIR_IN_BINARY}/out.proto"
-    COMMAND python3 gen.py clickhouse.g out.cpp out.proto
-    DEPENDS "${CURRENT_DIR_IN_BINARY}/clickhouse.g"
+    COMMAND python3 gen.py datastore.g out.cpp out.proto
+    DEPENDS "${CURRENT_DIR_IN_BINARY}/datastore.g"
 )
 
 set(PROTOBUF_GENERATE_CPP_APPEND_PATH TRUE)

@@ -35,7 +35,7 @@ def start_cluster():
 def copy_keys(instance, keys_file_name):
     instance.copy_file_to_container(
         os.path.join(SCRIPT_DIR, f"configs/{keys_file_name}.xml"),
-        "/etc/clickhouse-server/config.d/z_keys.xml",
+        "/etc/datastore-server/config.d/z_keys.xml",
     )
     instance.query("SYSTEM RELOAD CONFIG")
 
@@ -47,7 +47,7 @@ def create_table():
         CREATE TABLE tbl ON CLUSTER 'cluster' (
             id Int64,
             str String Codec(AES_128_GCM_SIV)
-        ) ENGINE=ReplicatedMergeTree('/clickhouse/tables/tbl/', '{replica}')
+        ) ENGINE=ReplicatedMergeTree('/datastore/tables/tbl/', '{replica}')
         ORDER BY id
         """
     )

@@ -1,8 +1,8 @@
 position: 101
-label: 'Building ClickHouse'
+label: 'Building Datastore'
 collapsible: true
 collapsed: true
 link:
   type: generated-index
-  title: Building ClickHouse
+  title: Building Datastore
   slug: /development

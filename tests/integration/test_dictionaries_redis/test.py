@@ -101,7 +101,7 @@ def generate_dict_configs():
                 cluster.redis_host,
                 "6379",
                 "",
-                "clickhouse",
+                "datastore",
                 i * 2,
                 storage_type="simple",
             )
@@ -114,7 +114,7 @@ def generate_dict_configs():
                 cluster.redis_host,
                 "6379",
                 "",
-                "clickhouse",
+                "datastore",
                 i * 2 + 1,
                 storage_type="hash_map",
             )

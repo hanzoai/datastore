@@ -3,7 +3,7 @@ slug: /sql-reference/statements/create/dictionary/sources/postgresql
 title: 'PostgreSQL dictionary source'
 sidebar_position: 12
 sidebar_label: 'PostgreSQL'
-description: 'Configure PostgreSQL as a dictionary source in ClickHouse.'
+description: 'Configure PostgreSQL as a dictionary source in Datastore.'
 doc_type: 'reference'
 ---
 
@@ -39,7 +39,7 @@ SOURCE(POSTGRESQL(
   <postgresql>
       <host>postgresql-hostname</hoat>
       <port>5432</port>
-      <user>clickhouse</user>
+      <user>datastore</user>
       <password>qwerty</password>
       <db>db_name</db>
       <table>table_name</table>
@@ -65,7 +65,7 @@ Setting fields:
 | `replica` | Section of replica configurations. There can be multiple sections. |
 | `replica/host` | The PostgreSQL host. |
 | `replica/port` | The PostgreSQL port. |
-| `replica/priority` | The replica priority. When attempting to connect, ClickHouse traverses the replicas in order of priority. The lower the number, the higher the priority. |
+| `replica/priority` | The replica priority. When attempting to connect, Datastore traverses the replicas in order of priority. The lower the number, the higher the priority. |
 | `db` | Name of the database. |
 | `table` | Name of the table. |
 | `where` | The selection criteria. The syntax for conditions is the same as for `WHERE` clause in PostgreSQL. For example, `id > 10 AND id < 20`. Optional. |

@@ -21,7 +21,7 @@ set(LIBBSON_BINARY_ROOT "${ClickHouse_BINARY_DIR}/contrib/mongo-c-driver/src")
 set(LIBBSON_BINARY_DIR "${LIBBSON_BINARY_ROOT}/libbson/src")
 
 # Hard-code endianness based on the target architecture (set in cmake/arch.cmake) instead
-# of probing the compiler. Of ClickHouse's supported architectures, only s390x is
+# of probing the compiler. Of Datastore's supported architectures, only s390x is
 # big-endian; everything else is little-endian.
 if (ARCH_S390X)
     set(BSON_BIG_ENDIAN 1)

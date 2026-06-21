@@ -88,7 +88,7 @@ def test_kafka_sasl(kafka_cluster):
 def test_kafka_sasl_settings_precedence(kafka_cluster):
     # Test that SASL related settings in create query override those in config
     config_with_wrong_passwords = """
-    <clickhouse>
+    <datastore>
     <kafka>
         <security_protocol>plaintext</security_protocol>
         <sasl_mechanism>SCRAM-SHA-256</sasl_mechanism>
@@ -101,9 +101,9 @@ def test_kafka_sasl_settings_precedence(kafka_cluster):
             <sasl_password>wrong_password_2</sasl_password>
         </consumer>
     </kafka>
-</clickhouse>
+</datastore>
 """
-    config_file_path = "/etc/clickhouse-server/config.d/sasl_settings.xml"
+    config_file_path = "/etc/datastore-server/config.d/sasl_settings.xml"
 
     try:
         with instance.with_replace_config(config_file_path, config_with_wrong_passwords):
@@ -113,7 +113,7 @@ def test_kafka_sasl_settings_precedence(kafka_cluster):
         instance.restart_clickhouse()
 
 
-# ClickHouse may crash when the table is created with an option to put
+# Datastore may crash when the table is created with an option to put
 # broken messages to a dead letter queue, while the table
 # system.dead_letter_queue is not configured.
 def test_dead_letter_segfault(kafka_cluster):

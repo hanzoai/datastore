@@ -15,7 +15,7 @@ counters_query="SELECT active_on_fly_metadata_mutations FROM system.tables WHERE
 function wait_for_mutation_cleanup()
 {
     for _ in {0..50}; do
-        res=`$CLICKHOUSE_CLIENT --query "$counters_query"`
+        res=`$DATASTORE_CLIENT --query "$counters_query"`
         if [[ $res == "0" ]]; then
             break
         fi
@@ -23,7 +23,7 @@ function wait_for_mutation_cleanup()
     done
 }
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS t_mutations_counters_rename;
 
     CREATE TABLE t_mutations_counters_rename (a UInt64, b UInt64) ENGINE = MergeTree ORDER BY a SETTINGS cleanup_delay_period = 1, cleanup_delay_period_random_add = 0, cleanup_thread_preferred_points_per_iteration = 0;
@@ -43,7 +43,7 @@ $CLICKHOUSE_CLIENT --query "
 wait_for_mutation "t_mutations_counters_rename" "mutation_2.txt"
 wait_for_mutation_cleanup
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     $counters_query;
     SELECT count() FROM system.mutations WHERE database = currentDatabase() AND table = 't_mutations_counters_rename' AND NOT is_done;
     DROP TABLE t_mutations_counters_rename;

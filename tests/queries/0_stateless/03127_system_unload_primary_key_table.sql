@@ -10,10 +10,10 @@ SELECT round(primary_key_bytes_in_memory, -7), round(primary_key_bytes_in_memory
 INSERT INTO test2 SELECT randomString(1000) FROM numbers(10000);
 SELECT round(primary_key_bytes_in_memory, -7), round(primary_key_bytes_in_memory_allocated, -7) FROM system.parts WHERE database = currentDatabase() AND table IN ('test', 'test2');
 
-SYSTEM UNLOAD PRIMARY KEY {CLICKHOUSE_DATABASE:Identifier}.test;
+SYSTEM UNLOAD PRIMARY KEY {DATASTORE_DATABASE:Identifier}.test;
 SELECT round(primary_key_bytes_in_memory, -7), round(primary_key_bytes_in_memory_allocated, -7) FROM system.parts WHERE database = currentDatabase() AND table IN ('test', 'test2');
 
-SYSTEM UNLOAD PRIMARY KEY {CLICKHOUSE_DATABASE:Identifier}.test2;
+SYSTEM UNLOAD PRIMARY KEY {DATASTORE_DATABASE:Identifier}.test2;
 SELECT round(primary_key_bytes_in_memory, -7), round(primary_key_bytes_in_memory_allocated, -7) FROM system.parts WHERE database = currentDatabase() AND table IN ('test', 'test2');
 
 SELECT 'Query that does not use index for table `test`';

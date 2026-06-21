@@ -61,7 +61,7 @@ class AwsGlueCatalogManager(CatalogManager):
             os.getenv("E2E_AWS_REGION", "")
         )
         bucket = os.getenv("E2E_AWS_S3_BUCKET", "")
-        prefix = os.getenv("E2E_AWS_S3_PREFIX", "clickhouse-e2e-glue")
+        prefix = os.getenv("E2E_AWS_S3_PREFIX", "datastore-e2e-glue")
         access_key_id = os.getenv("E2E_AWS_ACCESS_KEY_ID", "")
         secret_access_key = os.getenv("E2E_AWS_SECRET_ACCESS_KEY", "")
         session_token = os.getenv("AWS_SESSION_TOKEN", "")

@@ -7,7 +7,7 @@ title: 'Workload scheduling'
 doc_type: 'reference'
 ---
 
-When ClickHouse execute multiple queries simultaneously, they may be using shared resources (e.g. disks and CPU cores). Scheduling constraints and policies can be applied to regulate how resources are utilized and shared between different workloads. For all resources a common scheduling hierarchy can be configured. Hierarchy root represents shared resources, while leafs are specific workloads, holding requests that exceed resource capacity.
+When Datastore execute multiple queries simultaneously, they may be using shared resources (e.g. disks and CPU cores). Scheduling constraints and policies can be applied to regulate how resources are utilized and shared between different workloads. For all resources a common scheduling hierarchy can be configured. Hierarchy root represents shared resources, while leafs are specific workloads, holding requests that exceed resource capacity.
 
 :::note
 Currently [remote disk IO](#disk_config) and [CPU](#cpu_scheduling) can be scheduled using described method. For flexible memory limits see [Memory overcommit](settings/memory-overcommit.md)
@@ -33,20 +33,20 @@ CREATE RESOURCE all_io (READ ANY DISK, WRITE ANY DISK);
 An alternative way to express which disks are used by a resource is server's `storage_configuration`:
 
 :::warning
-Workload scheduling using clickhouse configuration is deprecated. SQL syntax should be used instead.
+Workload scheduling using datastore configuration is deprecated. SQL syntax should be used instead.
 :::
 
-To enable IO scheduling for a specific disk, you have to specify `read_resource` and/or `write_resource` in storage configuration. It says ClickHouse what resource should be used for every read and write requests with given disk. Read and write resource can refer to the same resource name, which is useful for local SSDs or HDDs. Multiple different disks also can refer to the same resource, which is useful for remote disks: if you want to be able to allow fair division of network bandwidth between e.g. "production" and "development" workloads.
+To enable IO scheduling for a specific disk, you have to specify `read_resource` and/or `write_resource` in storage configuration. It says Datastore what resource should be used for every read and write requests with given disk. Read and write resource can refer to the same resource name, which is useful for local SSDs or HDDs. Multiple different disks also can refer to the same resource, which is useful for remote disks: if you want to be able to allow fair division of network bandwidth between e.g. "production" and "development" workloads.
 
 Example:
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         ...
         <disks>
             <s3>
                 <type>s3</type>
-                <endpoint>https://clickhouse-public-datasets.s3.amazonaws.com/my-bucket/root-path/</endpoint>
+                <endpoint>https://datastore-public-datasets.s3.amazonaws.com/my-bucket/root-path/</endpoint>
                 <access_key_id>your_access_key_id</access_key_id>
                 <secret_access_key>your_secret_access_key</secret_access_key>
                 <read_resource>network_read</read_resource>
@@ -63,7 +63,7 @@ Example:
             </s3_main>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 Note that server configuration options have priority over SQL way to define resources.
@@ -105,7 +105,7 @@ graph TD
 ```
 
 :::warning
-Workload scheduling using clickhouse configuration is deprecated. SQL syntax should be used instead. SQL syntax creates all necessary scheduling nodes automatically and the following scheduling node description should be considered as lower level implementation details, accessible through [system.scheduler](/operations/system-tables/scheduler.md) table.
+Workload scheduling using datastore configuration is deprecated. SQL syntax should be used instead. SQL syntax creates all necessary scheduling nodes automatically and the following scheduling node description should be considered as lower level implementation details, accessible through [system.scheduler](/operations/system-tables/scheduler.md) table.
 :::
 
 **Possible node types:**
@@ -120,7 +120,7 @@ To be able to use the full capacity of the underlying resource, you should use `
 The following example shows how to define IO scheduling hierarchies shown in the picture:
 
 ```xml
-<clickhouse>
+<datastore>
     <resources>
         <network_read>
             <node path="/">
@@ -155,20 +155,20 @@ The following example shows how to define IO scheduling hierarchies shown in the
             </node>
         </network_write>
     </resources>
-</clickhouse>
+</datastore>
 ```
 
 ## Workload classifiers {#workload_classifiers}
 
 :::warning
-Workload scheduling using clickhouse configuration is deprecated. SQL syntax should be used instead. Classifiers are created automatically when using SQL syntax.
+Workload scheduling using datastore configuration is deprecated. SQL syntax should be used instead. Classifiers are created automatically when using SQL syntax.
 :::
 
 Workload classifiers are used to define mapping from `workload` specified by a query into leaf-queues that should be used for specific resources. At the moment, workload classification is simple: only static mapping is available.
 
 Example:
 ```xml
-<clickhouse>
+<datastore>
     <workload_classifiers>
         <production>
             <network_read>/fair/prod</network_read>
@@ -183,12 +183,12 @@ Example:
             <network_write>/fair/dev</network_write>
         </default>
     </workload_classifiers>
-</clickhouse>
+</datastore>
 ```
 
 ## Workload hierarchy {#workloads}
 
-ClickHouse provides convenient SQL syntax to define scheduling hierarchy. All resources that were created with `CREATE RESOURCE` share the same structure of the hierarchy, but could differ in some aspects. Every workload created with `CREATE WORKLOAD` maintains a few automatically created scheduling nodes for every resource. A child workload can be created inside another parent workload. Here is the example that defines exactly the same hierarchy as XML configuration above:
+Datastore provides convenient SQL syntax to define scheduling hierarchy. All resources that were created with `CREATE RESOURCE` share the same structure of the hierarchy, but could differ in some aspects. Every workload created with `CREATE WORKLOAD` maintains a few automatically created scheduling nodes for every resource. A child workload can be created inside another parent workload. Here is the example that defines exactly the same hierarchy as XML configuration above:
 
 ```sql
 CREATE RESOURCE network_write (WRITE DISK s3)
@@ -236,7 +236,7 @@ CREATE RESOURCE cpu (MASTER THREAD, WORKER THREAD)
 CREATE WORKLOAD all SETTINGS max_concurrent_threads = 100
 ```
 
-When ClickHouse server executes many concurrent queries with [multiple threads](/operations/settings/settings.md#max_threads) and all CPU slots are in use the overload state is reached. In the overload state every released CPU slot is rescheduled to proper workload according to scheduling policies. For queries sharing the same workload, slots are allocated using round robin. For queries in separate workloads, slots are allocated according to weights, priorities, and limits specified for workloads.
+When Datastore server executes many concurrent queries with [multiple threads](/operations/settings/settings.md#max_threads) and all CPU slots are in use the overload state is reached. In the overload state every released CPU slot is rescheduled to proper workload according to scheduling policies. For queries sharing the same workload, slots are allocated using round robin. For queries in separate workloads, slots are allocated according to weights, priorities, and limits specified for workloads.
 
 CPU time is consumed by threads when they are not blocked and work on CPU-intensive tasks. For scheduling purpose, two kinds of threads are distinguished:
 * Master thread — the first thread that starts working on a query or background activity like a merge or a mutation.
@@ -315,7 +315,7 @@ CREATE WORKLOAD development IN all SETTINGS max_cpu_share = 0.3
 Here we limit the total number of threads for all queries to be x2 of the available CPUs. Admin workload is limited to exactly two threads at most, regardless of the number of available CPUs. Admin has priority -1 (less than default 0) and it gets any CPU slot first if required. When the admin does not run queries, CPU resources are divided among production and development workloads. Guaranteed shares of CPU time are based on weights (4 to 1): At least 80% goes to production (if required), and at least 20% goes to development (if required). While weights form guarantees, CPU throttling forms limits: production is not limited and can consume 100%, while development has a limit of 30%, which is applied even if there are no queries from other workloads. Production workload is not a leaf, so its resources are split among analytics and ingestion according to weights (3 to 1). It means that analytics has a guarantee of at least 0.8 * 0.75 = 60%, and based on `max_cpu_share`, it has a limit of 70% of total CPU resources. While ingestion is left with a guarantee of at least 0.8 * 0.25 = 20%, it has no upper limit.
 
 :::note
-If you want to maximize CPU utilization on your ClickHouse server, avoid using `max_cpus` and `max_cpu_share` for the root workload `all`. Instead, set a higher value for `max_concurrent_threads`. For example, on a system with 8 CPUs, set `max_concurrent_threads = 16`. This allows 8 threads to run CPU tasks while 8 other threads can handle I/O operations. Additional threads will create CPU pressure, ensuring scheduling rules are enforced. In contrast, setting `max_cpus = 8` will never create CPU pressure because the server cannot exceed the 8 available CPUs.
+If you want to maximize CPU utilization on your Datastore server, avoid using `max_cpus` and `max_cpu_share` for the root workload `all`. Instead, set a higher value for `max_concurrent_threads`. For example, on a system with 8 CPUs, set `max_concurrent_threads = 16`. This allows 8 threads to run CPU tasks while 8 other threads can handle I/O operations. Additional threads will create CPU pressure, ensuring scheduling rules are enforced. In contrast, setting `max_cpus = 8` will never create CPU pressure because the server cannot exceed the 8 available CPUs.
 :::
 
 ## Query slot scheduling {#query_scheduling}
@@ -348,14 +348,14 @@ In addition to SQL-based definitions, workloads and resources can be predefined 
 ### Configuration format {#config_based_workloads_format}
 
 ```xml
-<clickhouse>
+<datastore>
     <resources_and_workloads>
         CREATE RESOURCE s3disk_read (READ DISK s3);
         CREATE RESOURCE s3disk_write (WRITE DISK s3);
         CREATE WORKLOAD all SETTINGS max_io_requests = 500 FOR s3disk_read, max_io_requests = 1000 FOR s3disk_write, max_bytes_per_second = 1342177280 FOR s3disk_read, max_bytes_per_second = 3355443200 FOR s3disk_write;
         CREATE WORKLOAD production IN all SETTINGS weight = 3;
     </resources_and_workloads>
-</clickhouse>
+</datastore>
 ```
 
 The configuration uses the same SQL syntax as `CREATE WORKLOAD` and `CREATE RESOURCE` statements. All queries must be valid.

@@ -4,10 +4,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DB_PATH=${USER_FILES_PATH}/${CLICKHOUSE_DATABASE}
+DB_PATH=${USER_FILES_PATH}/${DATASTORE_DATABASE}
 trap 'rm -rf ${DB_PATH}' EXIT
 
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
     SELECT '-- test FORMAT clause --';
     SET output_format_write_statistics = 0;
     SELECT number, 'Hello & world' FROM numbers(3) FORMAT Tsv;

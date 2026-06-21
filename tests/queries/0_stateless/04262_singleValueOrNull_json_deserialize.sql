@@ -1,6 +1,6 @@
 -- Tags: no-fasttest
 
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/103630
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/103630
 -- singleValueOrNull(JSON) crashed with SEGFAULT during deserialization because
 -- result_type (Nullable(JSON)) was passed instead of value_type (JSON) to
 -- SingleValueDataGenericWithColumn::read, causing a type/serialization mismatch.

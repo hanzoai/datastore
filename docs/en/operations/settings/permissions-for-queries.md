@@ -7,7 +7,7 @@ title: 'Permissions for queries'
 doc_type: 'reference'
 ---
 
-Queries in ClickHouse can be divided into several types:
+Queries in Datastore can be divided into several types:
 
 1.  Read data queries: `SELECT`, `SHOW`, `DESCRIBE`, `EXISTS`.
 2.  Write data queries: `INSERT`, `OPTIMIZE`.

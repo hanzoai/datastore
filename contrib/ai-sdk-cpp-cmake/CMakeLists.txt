@@ -168,7 +168,7 @@ target_compile_definitions(_ai-sdk-cpp
         AI_SDK_HAS_ANTHROPIC=1
 )
 
-# Create main alias for ClickHouse usage
+# Create main alias for Datastore usage
 add_library(ch_contrib::ai-sdk-cpp ALIAS _ai-sdk-cpp)
 
 # Create ai:: namespace alias for compatibility with SDK examples

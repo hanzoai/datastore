@@ -1,17 +1,17 @@
-<clickhouse>
-    <path>/var/lib/clickhouse/</path>
+<datastore>
+    <path>/var/lib/datastore/</path>
     <logger>
-        <clickhouse-disks>/clickhouse-disks.log</clickhouse-disks>
+        <datastore-disks>/datastore-disks.log</datastore-disks>
     </logger>
     <storage_configuration>
         <disks>
             <test1>
                 <type>local</type>
-                <path>/var/lib/clickhouse/path1/</path>
+                <path>/var/lib/datastore/path1/</path>
             </test1>
             <test2>
                 <type>local</type>
-                <path>/var/lib/clickhouse/path2/</path>
+                <path>/var/lib/datastore/path2/</path>
             </test2>
             <test3>
                 <type>s3</type>
@@ -58,4 +58,4 @@
             </test4>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

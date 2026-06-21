@@ -1,27 +1,27 @@
 < Content-Type: application/json; charset=UTF-8
-< X-ClickHouse-Format: JSONCompact
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
+< X-Datastore-Format: JSONCompact
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
 < Content-Type: application/json; charset=UTF-8
-< X-ClickHouse-Format: JSON
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
+< X-Datastore-Format: JSON
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
 < Content-Type: text/tab-separated-values; charset=UTF-8
-< X-ClickHouse-Format: TabSeparated
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
+< X-Datastore-Format: TabSeparated
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
 < Content-Type: text/tab-separated-values; charset=UTF-8
-< X-ClickHouse-Format: TabSeparated
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
+< X-Datastore-Format: TabSeparated
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
 < Content-Type: text/plain; charset=UTF-8
-< X-ClickHouse-Format: Vertical
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
+< X-Datastore-Format: Vertical
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
 < Content-Type: application/octet-stream
-< X-ClickHouse-Format: Native
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
+< X-Datastore-Format: Native
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
 < Content-Type: application/octet-stream
-< X-ClickHouse-Format: RowBinary
-< X-ClickHouse-Timezone: CLICKHOUSE_TIMEZONE
-< X-ClickHouse-Timezone: Europe/Berlin
-< X-ClickHouse-Timezone: Africa/Cairo
-< X-ClickHouse-Timezone: Europe/Berlin
-< X-ClickHouse-Timezone: America/Denver
-< X-ClickHouse-Timezone: Europe/Lisbon
-< X-ClickHouse-Timezone: Europe/Lisbon
+< X-Datastore-Format: RowBinary
+< X-Datastore-Timezone: DATASTORE_TIMEZONE
+< X-Datastore-Timezone: Europe/Berlin
+< X-Datastore-Timezone: Africa/Cairo
+< X-Datastore-Timezone: Europe/Berlin
+< X-Datastore-Timezone: America/Denver
+< X-Datastore-Timezone: Europe/Lisbon
+< X-Datastore-Timezone: Europe/Lisbon

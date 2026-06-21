@@ -11,7 +11,7 @@ doc_type: 'reference'
 
 The engine is based on the [Atomic](../../engines/database-engines/atomic.md) engine. It supports replication of metadata via DDL log being written to ZooKeeper and executed on all of the replicas for a given database.
 
-One ClickHouse server can have multiple replicated databases running and updating at the same time. But there can't be multiple replicas of the same replicated database.
+One Datastore server can have multiple replicated databases running and updating at the same time. But there can't be multiple replicas of the same replicated database.
 
 ## Creating a database {#creating-a-database}
 ```sql
@@ -28,7 +28,7 @@ Parameters can be omitted, in such case missing parameters are substituted with 
 
 If `zoo_path` contains macro `{uuid}`, it is required to specify explicit UUID or add [ON CLUSTER](../../sql-reference/distributed-ddl.md) to create statement to ensure all replicas use the same UUID for this database.
 
-For [ReplicatedMergeTree](/engines/table-engines/mergetree-family/replication) tables if no arguments provided, then default arguments are used: `/clickhouse/tables/{uuid}/{shard}` and `{replica}`. These can be changed in the server settings [default_replica_path](../../operations/server-configuration-parameters/settings.md#default_replica_path) and [default_replica_name](../../operations/server-configuration-parameters/settings.md#default_replica_name). Macro `{uuid}` is unfolded to table's uuid, `{shard}` and `{replica}` are unfolded to values from server config, not from database engine arguments. But in the future, it will be possible to use `shard_name` and `replica_name` of Replicated database.
+For [ReplicatedMergeTree](/engines/table-engines/mergetree-family/replication) tables if no arguments provided, then default arguments are used: `/datastore/tables/{uuid}/{shard}` and `{replica}`. These can be changed in the server settings [default_replica_path](../../operations/server-configuration-parameters/settings.md#default_replica_path) and [default_replica_name](../../operations/server-configuration-parameters/settings.md#default_replica_name). Macro `{uuid}` is unfolded to table's uuid, `{shard}` and `{replica}` are unfolded to values from server config, not from database engine arguments. But in the future, it will be possible to use `shard_name` and `replica_name` of Replicated database.
 
 Auxiliary ZooKeeper cluster is also supported for storing metadata of a replicated database instead of using the default ZooKeeper cluster. We can use SQL to create the replicated database with auxiliary ZooKeeper cluster as follows:
 
@@ -161,14 +161,14 @@ The following settings are supported:
 | `max_retries_before_automatic_recovery`                                      | 10                             | Max number of attempts to execute a queue entry before marking replica as lost recovering it from snapshot (0 means infinite)                                                                                                                                                                                                         |
 | `allow_skipping_old_temporary_tables_ddls_of_refreshable_materialized_views` | false                          | If enabled, when processing DDLs in Replicated databases, it skips creating and exchanging DDLs of the temporary tables of refreshable materialized views if possible                                                                                                                                                                 |
 | `logs_to_keep`                                                               | 1000                           | Default number of logs to keep in ZooKeeper for Replicated database.                                                                                                                                                                                                                                                                  |
-| `default_replica_path`                                                       | `/clickhouse/databases/{uuid}` | The path to the database in ZooKeeper. Used during database creation if arguments are omitted.                                                                                                                                                                                                                                        |
+| `default_replica_path`                                                       | `/datastore/databases/{uuid}` | The path to the database in ZooKeeper. Used during database creation if arguments are omitted.                                                                                                                                                                                                                                        |
 | `default_replica_shard_name`                                                 | `{shard}`                      | The shard name of the replica in the database. Used during database creation if arguments are omitted.                                                                                                                                                                                                                                |
 | `default_replica_name`                                                       | `{replica}`                    | The name of the replica in the database. Used during database creation if arguments are omitted.                                                                                                                                                                                                                                      |
 | `internal_replication`                                                       | false                          | Whether a Distributed table created with the cluster of this Replicated database will send data to one of replicas (internal replication means that cluster's replicas do replication by themselves) or to all replicas (no internal replication means that the Distributed table will send the inserted data to all of the replicas) |
 
 Default values may be overwritten in the configuration file
 ```xml
-<clickhouse>
+<datastore>
     <database_replicated>
         <max_broken_tables_ratio>0.75</max_broken_tables_ratio>
         <max_replication_lag_to_enqueue>100</max_replication_lag_to_enqueue>
@@ -176,10 +176,10 @@ Default values may be overwritten in the configuration file
         <collection_name>postgres1</collection_name>
         <check_consistency>false</check_consistency>
         <max_retries_before_automatic_recovery>5</max_retries_before_automatic_recovery>
-        <default_replica_path>/clickhouse/databases/{uuid}</default_replica_path>
+        <default_replica_path>/datastore/databases/{uuid}</default_replica_path>
         <default_replica_shard_name>{shard}</default_replica_shard_name>
         <default_replica_name>{replica}</default_replica_name>
         <internal_replication>false</internal_replication>
     </database_replicated>
-</clickhouse>
+</datastore>
 ```

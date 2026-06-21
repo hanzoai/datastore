@@ -1,5 +1,5 @@
 -- Tags: no-replicated-database
--- https://github.com/ClickHouse/ClickHouse/issues/58500
+-- https://github.com/ClickHouse/Datastore/issues/58500
 
 SET enable_analyzer=1;
 

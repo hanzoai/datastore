@@ -92,7 +92,7 @@ def started_cluster():
         cluster.add_instance(
             "instance_23.12",
             with_zookeeper=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="23.12",
             stay_alive=True,
             with_installed_binary=True,
@@ -101,7 +101,7 @@ def started_cluster():
         cluster.add_instance(
             "instance_24.5",
             with_zookeeper=True,
-            image="clickhouse/clickhouse-server",
+            image="datastore/datastore-server",
             tag="24.5",
             stay_alive=True,
             user_configs=[
@@ -124,7 +124,7 @@ def test_settings_check(started_cluster):
     node_2 = started_cluster.instances["instance2"]
     table_name = f"test_settings_check"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     mode = "ordered"
 
@@ -168,7 +168,7 @@ def test_processed_file_setting(started_cluster, processing_threads):
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
     keeper_path = (
-        f"/clickhouse/test_{table_name}_{processing_threads}_{generate_random_string()}"
+        f"/datastore/test_{table_name}_{processing_threads}_{generate_random_string()}"
     )
     files_path = f"{table_name}_data"
     files_to_generate = 10
@@ -222,7 +222,7 @@ def test_processed_file_setting_distributed(started_cluster, processing_threads)
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
     keeper_path = (
-        f"/clickhouse/test_{table_name}_{processing_threads}_{generate_random_string()}"
+        f"/datastore/test_{table_name}_{processing_threads}_{generate_random_string()}"
     )
     files_path = f"{table_name}_data"
     files_to_generate = 10
@@ -282,7 +282,7 @@ def test_upgrade(started_cluster):
     table_name = f"test_upgrade"
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}_{generate_random_string()}"
+    keeper_path = f"/datastore/test_{table_name}_{generate_random_string()}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 
@@ -327,7 +327,7 @@ def test_commit_on_limit(started_cluster, processing_threads):
     # A unique table name is necessary for repeatable tests
     table_name = f"test_commit_on_limit_{generate_random_string()}"
     dst_table_name = f"{table_name}_dst"
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     dst_table_name = f"{table_name}_dst"
     files_to_generate = 40
@@ -488,7 +488,7 @@ def test_upgrade_2(started_cluster):
     table_name = f"test_upgrade_2_{uuid.uuid4().hex[:8]}"
     dst_table_name = f"{table_name}_dst"
     # A unique path is necessary for repeatable tests
-    keeper_path = f"/clickhouse/test_{table_name}"
+    keeper_path = f"/datastore/test_{table_name}"
     files_path = f"{table_name}_data"
     files_to_generate = 10
 

@@ -114,7 +114,7 @@ jobs:
                 # lowercase, replace non-alphanumeric chars with underscore, collapse runs
                 normalized=$(echo "$job_name" | tr '[:upper:]' '[:lower:]' | \
                   sed 's/[^a-z0-9_]/_/g; s/__*/_/g')
-                result_url="https://s3.amazonaws.com/clickhouse-test-reports/PRs/${pr_number}/${run_sha}/result_${normalized}.json"
+                result_url="https://s3.amazonaws.com/datastore-test-reports/PRs/${pr_number}/${run_sha}/result_${normalized}.json"
 
                 result_json=$(curl -sf --compressed "$result_url" 2>/dev/null || true)
                 if [ -z "$result_json" ]; then
@@ -160,7 +160,7 @@ jobs:
                 has_jobs=true
                 normalized=$(echo "$job_name" | tr '[:upper:]' '[:lower:]' | \
                   sed 's/[^a-z0-9_]/_/g; s/__*/_/g')
-                result_url="https://s3.amazonaws.com/clickhouse-test-reports/PRs/${pr_number}/${run_sha}/result_${normalized}.json"
+                result_url="https://s3.amazonaws.com/datastore-test-reports/PRs/${pr_number}/${run_sha}/result_${normalized}.json"
 
                 result_json=$(curl -sf --compressed "$result_url" 2>/dev/null || true)
                 if [ -z "$result_json" ]; then

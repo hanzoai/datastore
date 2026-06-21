@@ -28,7 +28,7 @@ else
 fi
 
 export BUILD_VERSION
-export CH_PATH="$SCRIPT_DIR/data/clickhouse"
+export CH_PATH="$SCRIPT_DIR/data/datastore"
 mkdir -p "$SCRIPT_DIR/data"
 
 # 255 - exit from bisect

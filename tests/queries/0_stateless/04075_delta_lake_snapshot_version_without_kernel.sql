@@ -1,5 +1,5 @@
 -- Tags: no-fasttest, no-msan
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/100502
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/100502
 --
 -- delta_lake_snapshot_version and CDF settings must raise an error
 -- when DeltaKernel is not active (legacy metadata reader),

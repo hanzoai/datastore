@@ -1,5 +1,5 @@
 -- Test for crash when LIMIT 0 is used with use_skip_indexes_for_top_k
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/95065
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/95065
 
 DROP TABLE IF EXISTS tab;
 

@@ -147,7 +147,7 @@ def test_dependent_tables(started_cluster):
     )
     query(
         "create dictionary test.d (n int default 0, m int default 42) primary key n "
-        "source(clickhouse(host 'localhost' port tcpPort() user 'default' table 'src' password '' db 'default'))"
+        "source(datastore(host 'localhost' port tcpPort() user 'default' table 'src' password '' db 'default'))"
         "lifetime(min 1 max 10) layout(flat())"
     )
     query(

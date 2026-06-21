@@ -10,7 +10,7 @@ tests_with_query_log=( $(
 ) )
 for test_case in "${tests_with_query_log[@]}"; do
     grep -qE current_database.*currentDatabase "$test_case" || {
-        grep -qE 'current_database.*\$CLICKHOUSE_DATABASE' "$test_case"
+        grep -qE 'current_database.*\$DATASTORE_DATABASE' "$test_case"
     } || {
         grep -qE 'has\(databases\,\ currentDatabase\(\)\)' "$test_case"
     } || {
@@ -38,18 +38,18 @@ tests_with_database_column=( $(
     find $ROOT_PATH/tests/queries -iname '*.sql' -or -iname '*.sh' -or -iname '*.py' -or -iname '*.j2' |
         xargs grep --with-filename $(printf -- "-e %s " "${tables_with_database_column[@]}") |
         grep -v -e ':--' -e ':#' |
-        # to exclude clickhouse-local flags: --only-system-tables and --no-system-tables.
+        # to exclude datastore-local flags: --only-system-tables and --no-system-tables.
         grep -v -e '--[a-zA-Z-]*system[a-zA-Z-]*' |
         cut -d: -f1 | sort -u
 ) )
 for test_case in "${tests_with_database_column[@]}"; do
     grep -qE database.*currentDatabase "$test_case" || {
-        grep -qE 'database.*\$CLICKHOUSE_DATABASE' "$test_case"
+        grep -qE 'database.*\$DATASTORE_DATABASE' "$test_case"
     } || {
         # explicit database
         grep -qE "database[ ]*=[ ]*'" "$test_case"
     } || {
-        echo "Queries to ${tables_with_database_column[*]} does not have database = currentDatabase()/\$CLICKHOUSE_DATABASE condition in $test_case"
+        echo "Queries to ${tables_with_database_column[*]} does not have database = currentDatabase()/\$DATASTORE_DATABASE condition in $test_case"
     }
 done
 
@@ -64,7 +64,7 @@ for test_case in "${tests_with_replicated_merge_tree[@]}"; do
         *.gen.*)
             ;;
         *.sh)
-            test_case_zk_prefix="\(\$CLICKHOUSE_TEST_ZOOKEEPER_PREFIX\|{database}\)"
+            test_case_zk_prefix="\(\$DATASTORE_TEST_ZOOKEEPER_PREFIX\|{database}\)"
             grep -q -e "Replicated.*MergeTree[ ]*(.*$test_case_zk_prefix" "$test_case" || echo "Replicated.*MergeTree should contain '$test_case_zk_prefix' in zookeeper path to avoid overlaps ($test_case)"
             ;;
         *.sql|*.sql.j2)
@@ -85,8 +85,8 @@ for i in "${ROOT_PATH}"/tests/integration/test_*; do FILE="${i}/__init__.py"; [ 
 
 # Docker compose files in integration tests should not use :latest for third-party images,
 # because it leads to non-reproducible builds and unexpected breakage when upstream images change.
-# ClickHouse-owned images with ${VAR:-latest} pattern are excluded since the variable is set in CI.
-find "${ROOT_PATH}/tests/integration/compose" -name '*.yml' -print0 | xargs -0 grep -P 'image:\s*\S+:latest\s*$' | grep -v '\${\|clickhouse/' && echo "Docker compose files should use pinned versions instead of :latest for third-party images"
+# Datastore-owned images with ${VAR:-latest} pattern are excluded since the variable is set in CI.
+find "${ROOT_PATH}/tests/integration/compose" -name '*.yml' -print0 | xargs -0 grep -P 'image:\s*\S+:latest\s*$' | grep -v '\${\|datastore/' && echo "Docker compose files should use pinned versions instead of :latest for third-party images"
 
 # Check for executable bit on non-executable files
 git ls-files -s $ROOT_PATH/{src,base,programs,utils,tests,docs,cmake} | \
@@ -197,7 +197,7 @@ done
 # Shell tests that send HTTP requests via curl and then check system log tables
 # must use a retry loop around SYSTEM FLUSH LOGS, because the query_log entry is
 # written after the HTTP response is sent (see executeQuery.cpp).
-# https://github.com/ClickHouse/ClickHouse/issues/84364
+# https://github.com/ClickHouse/Datastore/issues/84364
 #
 # Known exceptions where the retry is not needed:
 # - 00956: checks for ABSENCE of secrets in logs, missing entries = pass
@@ -207,7 +207,7 @@ done
 # - 03760: checks for absence of error in text_log
 curl_flush_logs_tests=( $(
     find $ROOT_PATH/tests/queries -iname '*.sh' |
-        xargs grep -l -E 'CLICKHOUSE_CURL|curl ' |
+        xargs grep -l -E 'DATASTORE_CURL|curl ' |
         xargs grep -l -iE 'system\.(query_log|query_views_log|text_log|trace_log|asynchronous_insert_log|part_log)' |
         xargs grep -l -iE 'SYSTEM\s+FLUSH\s+LOGS' |
         grep -vP '00956_sensitive_data_masking|02122_join_group_by_timeout|02125_many_mutations|03229_async_insert_alter|03760_keep_alive_insert_select' |
@@ -220,12 +220,12 @@ for test_case in "${curl_flush_logs_tests[@]}"; do
     # while ... sleep/break pattern
     if grep -qP 'while ' "$test_case" && (grep -q 'sleep' "$test_case" || grep -q 'break' "$test_case"); then has_retry=true; fi
     if [ "$has_retry" = false ]; then
-        echo "$test_case uses curl and SYSTEM FLUSH LOGS without a retry loop. Add a retry loop to handle the race between HTTP response and log entry writing. See https://github.com/ClickHouse/ClickHouse/issues/84364"
+        echo "$test_case uses curl and SYSTEM FLUSH LOGS without a retry loop. Add a retry loop to handle the race between HTTP response and log entry writing. See https://github.com/ClickHouse/Datastore/issues/84364"
     fi
 done
 
-# CLICKHOUSE_URL already includes "?"
-git grep -P 'CLICKHOUSE_URL(|_HTTPS)(}|}/|/|)\?' $ROOT_PATH/tests/queries/0_stateless/*.sh && echo "CLICKHOUSE_URL already includes '?', use '&' to append query parameters"
+# DATASTORE_URL already includes "?"
+git grep -P 'DATASTORE_URL(|_HTTPS)(}|}/|/|)\?' $ROOT_PATH/tests/queries/0_stateless/*.sh && echo "DATASTORE_URL already includes '?', use '&' to append query parameters"
 
 # Large files checked into git.
 # Every byte committed is cloned by every contributor forever and cannot be removed without history rewriting.

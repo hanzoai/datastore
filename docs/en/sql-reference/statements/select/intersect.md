@@ -61,7 +61,7 @@ PRIMARY KEY (crypto_name, trade_date);
 INSERT INTO crypto_prices
    SELECT *
    FROM s3(
-    'https://learn-clickhouse.s3.us-east-2.amazonaws.com/crypto_prices.csv',
+    'https://learn-datastore.s3.us-east-2.amazonaws.com/crypto_prices.csv',
     'CSVWithNames'
 );
 

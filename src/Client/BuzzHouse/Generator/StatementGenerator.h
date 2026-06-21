@@ -637,9 +637,9 @@ private:
         std::array<Candidate, 5> candidates = {{
             {"Accept-Encoding", String(rg.pickRandomly(encodings))},
             {"Content-Encoding", String(rg.pickRandomly(encodings))},
-            {"X-ClickHouse-Compress", rg.nextBool() ? "1" : "0"},
-            {"X-ClickHouse-Progress", rg.nextBool() ? "1" : "0"},
-            {"X-ClickHouse-Database",
+            {"X-Datastore-Compress", rg.nextBool() ? "1" : "0"},
+            {"X-Datastore-Progress", rg.nextBool() ? "1" : "0"},
+            {"X-Datastore-Database",
              collectionHas<std::shared_ptr<SQLDatabase>>(attached_databases)
                  ? rg.pickRandomly(filterCollection<std::shared_ptr<SQLDatabase>>(attached_databases)).get()->getName()
                  : "default"},

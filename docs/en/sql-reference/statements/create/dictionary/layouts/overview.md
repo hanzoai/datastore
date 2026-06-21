@@ -59,7 +59,7 @@ LAYOUT(LAYOUT_TYPE(param value)) -- layout settings
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         ...
         <layout>
@@ -69,7 +69,7 @@ LAYOUT(LAYOUT_TYPE(param value)) -- layout settings
         </layout>
         ...
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>
@@ -149,7 +149,7 @@ There are several ways to improve dictionary performance:
   An attribute is called injective if different keys correspond to different attribute values.
   So when `GROUP BY` uses a function that fetches an attribute value by the key, this function is automatically taken out of `GROUP BY`.
 
-ClickHouse generates an exception for errors with dictionaries.
+Datastore generates an exception for errors with dictionaries.
 Examples of errors can be:
 
 - The dictionary being accessed could not be loaded.

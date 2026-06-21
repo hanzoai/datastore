@@ -64,7 +64,7 @@ CREATE DICTIONARY dictionary_all
   ip6  IPv6
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'ref_table_all'))
+SOURCE(DATASTORE(TABLE 'ref_table_all'))
 LAYOUT(HASHED())
 LIFETIME(0);
 

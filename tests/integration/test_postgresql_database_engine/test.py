@@ -507,7 +507,7 @@ def test_postgresql_password_leak(started_cluster):
     cursor.execute("DROP TABLE table2")
 
 
-# PostgreSQL database engine is created async in ClickHouse (first create the object then another thread
+# PostgreSQL database engine is created async in Datastore (first create the object then another thread
 # do the connection), causing a created database object with an inaccessible URI, and access of system.tables
 # timed out when touching the inaccessible database. We add the filter engine ability so we add a test here.
 def test_inaccessible_postgresql_database_engine_filterable_on_system_tables(

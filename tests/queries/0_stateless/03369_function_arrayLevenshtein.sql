@@ -93,7 +93,7 @@ SELECT arraySimilarity(['1', '2'], ['1'], [toUInt8(1), 2], [toUInt8(1)]),
   arraySimilarity(['1', '2'], ['1'], [toFloat64(1), 2], [toFloat64(1)]);
 SELECT '';
 
--- Regression test for consecutive matching elements (https://github.com/ClickHouse/ClickHouse/issues/101725)
+-- Regression test for consecutive matching elements (https://github.com/ClickHouse/Datastore/issues/101725)
 SELECT arrayLevenshteinDistanceWeighted(['A', 'A', 'B'], ['A', 'A', 'C'], [1.0, 1, 1], [1.0, 1, 1]);
 SELECT arrayLevenshteinDistanceWeighted([1, 1, 2], [1, 1, 3], [1.0, 1, 1], [1.0, 1, 1]);
 SELECT arrayLevenshteinDistanceWeighted([1, 1, 1, 1, 2], [1, 1, 1, 1, 3], [1.0, 1, 1, 1, 1], [1.0, 1, 1, 1, 1]);

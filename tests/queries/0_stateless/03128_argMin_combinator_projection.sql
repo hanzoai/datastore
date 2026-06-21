@@ -15,7 +15,7 @@ CREATE TABLE combinator_argMin_table_r1
         GROUP BY id
     )
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_03128/combinator_argMin_table', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_03128/combinator_argMin_table', 'r1')
 ORDER BY (id);
 
 INSERT INTO combinator_argMin_table_r1
@@ -49,7 +49,7 @@ CREATE TABLE combinator_argMin_table_r2
         GROUP BY id
         )
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/test_03128/combinator_argMin_table', 'r2')
+ENGINE = ReplicatedMergeTree('/datastore/tables/{database}/test_03128/combinator_argMin_table', 'r2')
 ORDER BY (id);
 
 SYSTEM SYNC REPLICA combinator_argMin_table_r2;

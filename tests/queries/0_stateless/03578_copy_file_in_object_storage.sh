@@ -15,23 +15,23 @@ function test_copy()
     file_name_existing_target="file_existing_target_03578_$(random_str 10).txt"
     file_name_non_existing_target="file_non_existing_target_03578_$(random_str 10).txt"
 
-    printf "%s" "abc" | clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "write $file_name_src"
-    printf "%s" "123" | clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "write --mode append $file_name_src" 2>/dev/null
-    printf "%s" "def" | clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "write --mode append $file_name_src" 2>/dev/null
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "read $file_name_src"
+    printf "%s" "abc" | datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "write $file_name_src"
+    printf "%s" "123" | datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "write --mode append $file_name_src" 2>/dev/null
+    printf "%s" "def" | datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "write --mode append $file_name_src" 2>/dev/null
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "read $file_name_src"
 
-    printf "%s" "xyz" | clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "write $file_name_existing_target"
+    printf "%s" "xyz" | datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "write $file_name_existing_target"
 
 
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "cp --path-from $file_name_src --path-to $file_name_existing_target"
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "read $file_name_existing_target"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "cp --path-from $file_name_src --path-to $file_name_existing_target"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "read $file_name_existing_target"
 
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "cp --path-from $file_name_src --path-to $file_name_non_existing_target"
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "read $file_name_non_existing_target"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "cp --path-from $file_name_src --path-to $file_name_non_existing_target"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "read $file_name_non_existing_target"
 
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "remove $file_name_src"
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "remove $file_name_existing_target"
-    clickhouse-disks -C "$config" --disk "$disk_name" --save-logs --query "remove $file_name_non_existing_target"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "remove $file_name_src"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "remove $file_name_existing_target"
+    datastore-disks -C "$config" --disk "$disk_name" --save-logs --query "remove $file_name_non_existing_target"
 }
 
 test_copy "test_local_disk_metadata_local_object_storage"

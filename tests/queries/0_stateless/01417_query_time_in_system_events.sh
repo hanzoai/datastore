@@ -4,15 +4,15 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATA_BEFORE=`${CLICKHOUSE_CLIENT} --query="SELECT event,value FROM system.events WHERE event IN ('QueryTimeMicroseconds','SelectQueryTimeMicroseconds','InsertQueryTimeMicroseconds') FORMAT CSV"`
+DATA_BEFORE=`${DATASTORE_CLIENT} --query="SELECT event,value FROM system.events WHERE event IN ('QueryTimeMicroseconds','SelectQueryTimeMicroseconds','InsertQueryTimeMicroseconds') FORMAT CSV"`
 
-${CLICKHOUSE_CLIENT} --query="DROP TABLE IF EXISTS test"
-${CLICKHOUSE_CLIENT} --query="CREATE TABLE test (k UInt32) ENGINE=MergeTree ORDER BY k"
-${CLICKHOUSE_CLIENT} --query="INSERT INTO test (k) SELECT sleep(1)"
-${CLICKHOUSE_CLIENT} --query="SELECT sleep(1)" > /dev/null
-${CLICKHOUSE_CLIENT} --query="DROP TABLE IF EXISTS test"
+${DATASTORE_CLIENT} --query="DROP TABLE IF EXISTS test"
+${DATASTORE_CLIENT} --query="CREATE TABLE test (k UInt32) ENGINE=MergeTree ORDER BY k"
+${DATASTORE_CLIENT} --query="INSERT INTO test (k) SELECT sleep(1)"
+${DATASTORE_CLIENT} --query="SELECT sleep(1)" > /dev/null
+${DATASTORE_CLIENT} --query="DROP TABLE IF EXISTS test"
 
-DATA_AFTER=`${CLICKHOUSE_CLIENT} --query="SELECT event,value FROM system.events WHERE event IN ('QueryTimeMicroseconds','SelectQueryTimeMicroseconds','InsertQueryTimeMicroseconds') FORMAT CSV"`
+DATA_AFTER=`${DATASTORE_CLIENT} --query="SELECT event,value FROM system.events WHERE event IN ('QueryTimeMicroseconds','SelectQueryTimeMicroseconds','InsertQueryTimeMicroseconds') FORMAT CSV"`
 
 declare -A VALUES_BEFORE
 VALUES_BEFORE=(["\"QueryTimeMicroseconds\""]="0" ["\"SelectQueryTimeMicroseconds\""]="0" ["\"InsertQueryTimeMicroseconds\""]="0")

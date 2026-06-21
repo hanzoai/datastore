@@ -34,7 +34,7 @@ class BigLakeCatalogManager(CatalogManager):
     """Manages table lifecycle inside a BigLake Metastore Iceberg REST catalog.
 
     All tables for a test session share a single namespace to avoid
-    ClickHouse's recursive namespace traversal hitting BigLake's
+    Datastore's recursive namespace traversal hitting BigLake's
     flat-namespace limitation (multi-level namespaces unsupported).
     """
 
@@ -140,7 +140,7 @@ class BigLakeCatalogManager(CatalogManager):
     def from_env(cls) -> "BigLakeCatalogManager":
         project_id = os.getenv("E2E_GCP_PROJECT", "") or os.getenv("E2E_BIGLAKE_PROJECT_ID", "")
         gcs_bucket = os.getenv("E2E_GCP_BUCKET", "") or os.getenv("E2E_BIGLAKE_GCS_BUCKET", "")
-        gcs_prefix = os.getenv("E2E_BIGLAKE_GCS_PREFIX", "clickhouse-e2e-biglake")
+        gcs_prefix = os.getenv("E2E_BIGLAKE_GCS_PREFIX", "datastore-e2e-biglake")
         adc_client_id = os.getenv("E2E_BIGLAKE_ADC_CLIENT_ID", "")
         adc_client_secret = os.getenv("E2E_BIGLAKE_ADC_CLIENT_SECRET", "")
         adc_refresh_token = os.getenv("E2E_BIGLAKE_ADC_REFRESH_TOKEN", "")
@@ -343,7 +343,7 @@ class BigLakeCatalogManager(CatalogManager):
         """Retry SHOW TABLES until the table appears.
 
         BigLake has a propagation delay between table creation and
-        ClickHouse's SHOW TABLES seeing it via the REST API.
+        Datastore's SHOW TABLES seeing it via the REST API.
         """
         deadline = time.monotonic() + timeout
         attempt = 0

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/57728
+-- https://github.com/ClickHouse/Datastore/issues/57728
 -- Window functions require fully sorted data, so sort_overflow_mode = 'break' is overridden to 'throw'
 -- for the sorting step used by window functions. This prevents the pipeline from getting stuck.
 

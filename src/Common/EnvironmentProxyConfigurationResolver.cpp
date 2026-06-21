@@ -25,8 +25,8 @@ namespace
     const char * getProxyHost(DB::ProxyConfiguration::Protocol protocol)
     {
         /*
-         * getenv is safe to use here because ClickHouse code does not make any call to `setenv` or `putenv`
-         * aside from tests and a very early call during startup: https://github.com/ClickHouse/ClickHouse/blob/master/src/Daemon/BaseDaemon.cpp#L791
+         * getenv is safe to use here because Datastore code does not make any call to `setenv` or `putenv`
+         * aside from tests and a very early call during startup: https://github.com/ClickHouse/Datastore/blob/master/src/Daemon/BaseDaemon.cpp#L791
          * */
         switch (protocol)
         {

@@ -4,21 +4,21 @@ set -e
 if [ "$1" == "--help" ] || [ -z "$1" ]; then
     cat <<EOF >&2
 SELECT data from 'system.asynchronous_loader' table and render .svg graph of load jobs using 'dot' graphviz tool.
-USAGE: async_loader_graph CLICKHOUSE_CLIENT CLIENT_OPTIONS
+USAGE: async_loader_graph DATASTORE_CLIENT CLIENT_OPTIONS
 EXAMPLES:
-  $ async_loader_graph clickhouse-client > async_loader.svg
+  $ async_loader_graph datastore-client > async_loader.svg
 EOF
     exit 1
 fi
 
-CLICKHOUSE_CLIENT="$@"
+DATASTORE_CLIENT="$@"
 
 (
 
 echo 'digraph {'
 echo 'rankdir=LR;'
 
-$CLICKHOUSE_CLIENT --query='select job, job_id, status, is_blocked, is_ready, is_executing, pool, dependencies from system.asynchronous_loader FORMAT JSON' \
+$DATASTORE_CLIENT --query='select job, job_id, status, is_blocked, is_ready, is_executing, pool, dependencies from system.asynchronous_loader FORMAT JSON' \
     | jq -r '
         .data[]
             | { "FgLoad": "box", "BgLoad": "hexagon", "BgStartup": "ellipse" } as $shape

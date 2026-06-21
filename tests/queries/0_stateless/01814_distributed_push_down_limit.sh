@@ -7,24 +7,24 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-# -- NOTE: this test cannot use 'current_database = $CLICKHOUSE_DATABASE',
+# -- NOTE: this test cannot use 'current_database = $DATASTORE_DATABASE',
 # -- because it does not propagated via remote queries,
 # -- hence it uses query_id/initial_query_id.
 
 function setup()
 {
-    $CLICKHOUSE_CLIENT -m -q "
+    $DATASTORE_CLIENT -m -q "
         drop table if exists data_01814;
         drop table if exists dist_01814;
 
         create table data_01814 (key Int) Engine=MergeTree() order by key settings index_granularity=10 as select * from numbers(100);
-        create table dist_01814 as data_01814 engine=Distributed('test_cluster_two_shards', $CLICKHOUSE_DATABASE, data_01814, key);
+        create table dist_01814 as data_01814 engine=Distributed('test_cluster_two_shards', $DATASTORE_DATABASE, data_01814, key);
     "
 }
 
 function cleanup()
 {
-    $CLICKHOUSE_CLIENT -m -q "
+    $DATASTORE_CLIENT -m -q "
         drop table data_01814;
         drop table dist_01814;
     "
@@ -32,7 +32,7 @@ function cleanup()
 
 function make_query_id()
 {
-    echo "$(tr -cd '[:lower:]' < /dev/urandom | head -c10)-$CLICKHOUSE_DATABASE"
+    echo "$(tr -cd '[:lower:]' < /dev/urandom | head -c10)-$DATASTORE_DATABASE"
 }
 
 function test_distributed_push_down_limit_with_query_log()
@@ -65,9 +65,9 @@ function test_distributed_push_down_limit_with_query_log()
         "$@"
     )
 
-    $CLICKHOUSE_CLIENT "${settings_and_opts[@]}" -q "select * from $table group by key limit $offset, 10"
+    $DATASTORE_CLIENT "${settings_and_opts[@]}" -q "select * from $table group by key limit $offset, 10"
 
-    $CLICKHOUSE_CLIENT -m -q "
+    $DATASTORE_CLIENT -m -q "
         system flush logs query_log;
         select read_rows from system.query_log
             where
@@ -81,7 +81,7 @@ function test_distributed_push_down_limit_with_query_log()
 function test_distributed_push_down_limit_0()
 {
     local args=(
-        "remote('127.{2,3}', $CLICKHOUSE_DATABASE, data_01814)"
+        "remote('127.{2,3}', $DATASTORE_DATABASE, data_01814)"
         0 # offset
         --distributed_push_down_limit 0
     )
@@ -91,7 +91,7 @@ function test_distributed_push_down_limit_0()
 function test_distributed_push_down_limit_1()
 {
     local args=(
-        "remote('127.{2,3}', $CLICKHOUSE_DATABASE, data_01814, key)"
+        "remote('127.{2,3}', $DATASTORE_DATABASE, data_01814, key)"
         0 # offset
         --distributed_push_down_limit 1
         --optimize_skip_unused_shards 1
@@ -108,7 +108,7 @@ function test_distributed_push_down_limit_1_offset()
         --optimize_distributed_group_by_sharding_key 1
     )
 
-    $CLICKHOUSE_CLIENT "${settings_and_opts[@]}" -q "select * from remote('127.{2,3}', $CLICKHOUSE_DATABASE, data_01814, key) group by key order by key desc limit 5, 10"
+    $DATASTORE_CLIENT "${settings_and_opts[@]}" -q "select * from remote('127.{2,3}', $DATASTORE_DATABASE, data_01814, key) group by key order by key desc limit 5, 10"
 }
 
 function main()
@@ -124,7 +124,7 @@ function main()
     # retries, since the query may be canceled earlier due to LIMIT, and so
     # only one shard will be processed, and it will get not 40 but 20 rows:
     #
-    #     1.160920 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> executeQuery: (from [::ffff:127.0.0.1]:42778, initial_query_id: 66cf643c-b1b4-4f7e-942a-c4c3493029f6, using production parser) (comment: /usr/share/clickhouse-test/queries/0_stateless/01814_distributed_push_down_limit.sql) WITH CAST('test_31uut9', 'String') AS id_distributed_push_down_limit_1 SELECT key FROM test_31uut9.data_01814 GROUP BY key LIMIT 10
+    #     1.160920 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> executeQuery: (from [::ffff:127.0.0.1]:42778, initial_query_id: 66cf643c-b1b4-4f7e-942a-c4c3493029f6, using production parser) (comment: /usr/share/datastore-test/queries/0_stateless/01814_distributed_push_down_limit.sql) WITH CAST('test_31uut9', 'String') AS id_distributed_push_down_limit_1 SELECT key FROM test_31uut9.data_01814 GROUP BY key LIMIT 10
     #     1.214964 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Trace> ContextAccess (default): Access granted: SELECT(key) ON test_31uut9.data_01814
     #     1.216790 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> test_31uut9.data_01814 (b484ad2e-0591-4faf-8110-1dcbd7cdd0db) (SelectExecutor): Key condition: unknown
     #     1.227245 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> test_31uut9.data_01814 (b484ad2e-0591-4faf-8110-1dcbd7cdd0db) (SelectExecutor): Selected 1/1 parts by partition key, 1 parts by primary key, 10/11 marks by primary key, 10 marks to read from 1 ranges

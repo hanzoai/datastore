@@ -128,8 +128,8 @@ ENGINE = MergeTree
 ORDER BY (id)
 SETTINGS index_granularity = 1;
 
-INSERT INTO tab SELECT number, 'Hello ClickHouse' FROM numbers(1024);
-INSERT INTO tab SELECT number, 'Hello World, ClickHouse is fast!' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Hello Datastore' FROM numbers(1024);
+INSERT INTO tab SELECT number, 'Hello World, Datastore is fast!' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'Hallo xClickHouse' FROM numbers(1024);
 INSERT INTO tab SELECT number, 'ClickHousez rocks' FROM numbers(1024);
 
@@ -157,7 +157,7 @@ LIMIT 2, 3;
 SELECT '-- Text index for LIKE function should choose all 4 parts and 4096 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE message LIKE '%ClickHouse%'
+    SELECT count() FROM tab WHERE message LIKE '%Datastore%'
 ) WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
 
@@ -282,18 +282,18 @@ SET use_text_index_like_evaluation_by_dictionary_scan = 0;
 
 SELECT '-- without optimization';
 
-SELECT groupArray(id) FROM tab WHERE tag LIKE '%ClickHouse%';
+SELECT groupArray(id) FROM tab WHERE tag LIKE '%Datastore%';
 SELECT groupArray(id) FROM tab WHERE tag LIKE '%SQL%';
-SELECT groupArray(id) FROM tab WHERE tag NOT LIKE '%ClickHouse%';
+SELECT groupArray(id) FROM tab WHERE tag NOT LIKE '%Datastore%';
 SELECT groupArray(id) FROM tab WHERE tag LIKE '%nonexistent%';
 
 SELECT '-- with optimization';
 
 SET use_text_index_like_evaluation_by_dictionary_scan = 1;
 
-SELECT groupArray(id) FROM tab WHERE tag LIKE '%ClickHouse%';
+SELECT groupArray(id) FROM tab WHERE tag LIKE '%Datastore%';
 SELECT groupArray(id) FROM tab WHERE tag LIKE '%SQL%';
-SELECT groupArray(id) FROM tab WHERE tag NOT LIKE '%ClickHouse%';
+SELECT groupArray(id) FROM tab WHERE tag NOT LIKE '%Datastore%';
 SELECT groupArray(id) FROM tab WHERE tag LIKE '%nonexistent%';
 
 DROP TABLE tab;
@@ -336,7 +336,7 @@ LIMIT 2, 3;
 SELECT '-- Text index for LIKE function with array tokenizer should choose 2 parts and 2048 granules';
 SELECT trimLeft(explain) AS explain FROM (
     EXPLAIN indexes=1
-    SELECT count() FROM tab WHERE tag LIKE '%ClickHouse%'
+    SELECT count() FROM tab WHERE tag LIKE '%Datastore%'
 ) WHERE explain LIKE '%Description:%' OR explain LIKE '%Parts:%' OR explain LIKE '%Granules:%'
 LIMIT 2, 3;
 

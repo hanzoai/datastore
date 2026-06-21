@@ -7,7 +7,7 @@
            <name>string</name>
            <values>
                <value>materialize('Hello, world!')</value>
-               <value>materialize('This is a long string to test ClickHouse base64 functions impl..')</value>
+               <value>materialize('This is a long string to test Datastore base64 functions impl..')</value>
                <value>toString(number)</value>
            </values>
         </substitution>

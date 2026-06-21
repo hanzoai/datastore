@@ -50,7 +50,7 @@ def cleanup_after_test():
 def create_table(
     zero_copy_replication=False, storage_policy="s3_encrypted_policy_with_diff_keys"
 ):
-    engine = "ReplicatedMergeTree('/clickhouse/tables/encrypted_test/', '{replica}')"
+    engine = "ReplicatedMergeTree('/datastore/tables/encrypted_test/', '{replica}')"
 
     settings = f"storage_policy='{storage_policy}', allow_remote_fs_zero_copy_replication={int(zero_copy_replication)}"
 

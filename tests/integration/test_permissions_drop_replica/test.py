@@ -37,7 +37,7 @@ def fill_nodes(nodes, shard):
                 REVOKE ALL ON *.* FROM test_user_xnhds;
                 
                 CREATE TABLE test.test_table(date Date, id UInt32)
-                ENGINE = ReplicatedMergeTree('/clickhouse/tables/test/{shard}/replicated/test_table', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date)
+                ENGINE = ReplicatedMergeTree('/datastore/tables/test/{shard}/replicated/test_table', '{replica}') ORDER BY id PARTITION BY toYYYYMM(date)
                 SETTINGS database_replicated_allow_replicated_engine_arguments=2;""".format(
                 shard=shard, replica=node.name
             )
@@ -72,7 +72,7 @@ def test_drop_permissions(start_cluster):
         # check that the path from zk exists for the replica node2
 
         exists_before = check_exists(
-            zk, "/clickhouse/tables/test/1/replicated/test_table/replicas/node2"
+            zk, "/datastore/tables/test/1/replicated/test_table/replicas/node2"
         )
         assert exists_before != None
 
@@ -102,7 +102,7 @@ def test_drop_permissions(start_cluster):
 
         # check that the metadata for replica node2 was removed from keeper
         exists_after = check_exists(
-            zk, " /clickhouse/tables/test/1/replicated/test_table/replicas/node2"
+            zk, " /datastore/tables/test/1/replicated/test_table/replicas/node2"
         )
         assert exists_after == None
 

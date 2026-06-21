@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/65630
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/65630
 --
 -- A WHERE filter applied on top of a UNION ALL whose branches have a constant
 -- column alias and no explicit GROUP BY used to return one row per non-matching

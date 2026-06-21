@@ -1,6 +1,6 @@
 ---
 description: 'Overview of third-party tools, libraries and integrations available
-  for ClickHouse'
+  for Datastore'
 sidebar_position: 24
 slug: /interfaces/third-party/
 toc_folder_title: 'Third-Party'
@@ -8,7 +8,7 @@ title: 'Third-Party Interfaces'
 doc_type: 'landing-page'
 ---
 
-This is a collection of links to third-party tools that provide some sort of interface to ClickHouse. It can be either visual interface, command-line interface or an API:
+This is a collection of links to third-party tools that provide some sort of interface to Datastore. It can be either visual interface, command-line interface or an API:
 
 - [Client libraries](../../interfaces/third-party/client-libraries.md)
 - [Integrations](../../interfaces/third-party/integrations.md)
@@ -16,5 +16,5 @@ This is a collection of links to third-party tools that provide some sort of int
 - [Proxies](../../interfaces/third-party/proxy.md)
 
 :::note
-Generic tools that support common API like [ODBC](/interfaces/odbc) or [JDBC](/interfaces/jdbc) usually can work with ClickHouse as well, but are not listed here because there are way too many of them.
+Generic tools that support common API like [ODBC](/interfaces/odbc) or [JDBC](/interfaces/jdbc) usually can work with Datastore as well, but are not listed here because there are way too many of them.
 :::

@@ -35,7 +35,7 @@ node3 = cluster.add_instance(
 )
 
 create_table_sql_template = """
-    CREATE TABLE `clickhouse`.`{}` (
+    CREATE TABLE `datastore`.`{}` (
     `id` int(11) NOT NULL,
     `name` varchar(50) NOT NULL,
     `age` int  NOT NULL default 0,
@@ -45,7 +45,7 @@ create_table_sql_template = """
     """
 
 drop_table_sql_template = """
-    DROP TABLE IF EXISTS `clickhouse`.`{}`;
+    DROP TABLE IF EXISTS `datastore`.`{}`;
     """
 
 
@@ -78,11 +78,11 @@ def started_cluster():
         cluster.start()
 
         conn = get_mysql_conn(cluster, cluster.mysql8_ip)
-        create_mysql_db(conn, "clickhouse")
+        create_mysql_db(conn, "datastore")
 
         ## create mysql db and table
         conn1 = get_mysql_conn(cluster, cluster.mysql2_ip)
-        create_mysql_db(conn1, "clickhouse")
+        create_mysql_db(conn1, "datastore")
         yield cluster
 
     finally:
@@ -99,7 +99,7 @@ def test_many_connections(started_cluster):
 
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}');
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}');
 """
     )
 
@@ -128,7 +128,7 @@ def test_insert_select(started_cluster):
 
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}');
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}');
 """
     )
     node1.query(
@@ -152,7 +152,7 @@ def test_replace_select(started_cluster):
 
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}', 1);
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}', 1);
 """
     )
     node1.query(
@@ -181,7 +181,7 @@ def test_insert_on_duplicate_select(started_cluster):
 
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}', 0, 'update money = money + values(money)');
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}', 0, 'update money = money + values(money)');
 """
     )
     node1.query(
@@ -210,7 +210,7 @@ def test_where(started_cluster):
     create_mysql_table(conn, table_name)
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}');
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}');
 """
     )
     node1.query(
@@ -266,7 +266,7 @@ def test_table_function(started_cluster):
     drop_mysql_table(conn, "table_function")
     create_mysql_table(conn, "table_function")
     table_function = (
-        f"mysql('mysql80:3306', 'clickhouse', '{{}}', 'root', '{mysql_pass}')".format(
+        f"mysql('mysql80:3306', 'datastore', '{{}}', 'root', '{mysql_pass}')".format(
             "table_function"
         )
     )
@@ -312,10 +312,10 @@ def test_schema_inference(started_cluster):
 
     with conn.cursor() as cursor:
         cursor.execute(
-            "CREATE TABLE clickhouse.inference_table (id INT PRIMARY KEY, data BINARY(16) NOT NULL)"
+            "CREATE TABLE datastore.inference_table (id INT PRIMARY KEY, data BINARY(16) NOT NULL)"
         )
 
-    parameters = f"'mysql80:3306', 'clickhouse', 'inference_table', 'root', '{mysql_pass}'"
+    parameters = f"'mysql80:3306', 'datastore', 'inference_table', 'root', '{mysql_pass}'"
 
     node1.query(
         f"CREATE TABLE mysql_schema_inference_engine ENGINE=MySQL({parameters})"
@@ -338,15 +338,15 @@ def test_binary_type(started_cluster):
 
     with conn.cursor() as cursor:
         cursor.execute(
-            "CREATE TABLE clickhouse.binary_type (id INT PRIMARY KEY, data BINARY(16) NOT NULL)"
+            "CREATE TABLE datastore.binary_type (id INT PRIMARY KEY, data BINARY(16) NOT NULL)"
         )
     table_function = (
-        f"mysql('mysql80:3306', 'clickhouse', '{{}}', 'root', '{mysql_pass}')".format(
+        f"mysql('mysql80:3306', 'datastore', '{{}}', 'root', '{mysql_pass}')".format(
             "binary_type"
         )
     )
     node1.query(
-        "INSERT INTO {} VALUES (42, 'clickhouse')".format(
+        "INSERT INTO {} VALUES (42, 'datastore')".format(
             "TABLE FUNCTION " + table_function
         )
     )
@@ -366,7 +366,7 @@ def test_enum_type(started_cluster):
     create_mysql_table(conn, table_name)
     node1.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32, source Enum8('IP' = 1, 'URL' = 2)) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}', 1);
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32, source Enum8('IP' = 1, 'URL' = 2)) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}', 1);
 """
     )
     node1.query(
@@ -391,7 +391,7 @@ def test_external_settings(started_cluster):
     node3.query(f"DROP TABLE IF EXISTS {table_name}")
     node3.query(
         f"""
-CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}');
+CREATE TABLE {table_name}(id UInt32, name String, age UInt32, money UInt32) ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}');
 """
     )
     node3.query(
@@ -434,7 +434,7 @@ def test_settings_connection_wait_timeout(started_cluster):
             age UInt32,
             money UInt32
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')
+        ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')
         SETTINGS connection_wait_timeout={wait_timeout}, connection_pool_size=1
         """
     )
@@ -582,7 +582,7 @@ def test_mysql_in(started_cluster):
             age UInt32,
             money UInt32
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')
+        ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')
         """
     )
 
@@ -615,7 +615,7 @@ def test_mysql_null(started_cluster):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            CREATE TABLE `clickhouse`.`{}` (
+            CREATE TABLE `datastore`.`{}` (
             `id` int(11) NOT NULL,
             `money` int NULL default NULL,
             PRIMARY KEY (`id`)) ENGINE=InnoDB;
@@ -631,7 +631,7 @@ def test_mysql_null(started_cluster):
             id UInt32,
             money Nullable(UInt32)
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')
+        ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')
         """
     )
 
@@ -687,7 +687,7 @@ def test_settings(started_cluster):
             age UInt32,
             money UInt32
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')
+        ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')
         SETTINGS connection_wait_timeout={wait_timeout}, connect_timeout={connect_timeout}, read_write_timeout={rw_timeout}, connection_pool_size={connection_pool_size}
         """
     )
@@ -709,7 +709,7 @@ def test_settings(started_cluster):
     node1.query(
         f"""
         SELECT *
-            FROM mysql('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}',
+            FROM mysql('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}',
                        SETTINGS
                            connection_wait_timeout={wait_timeout},
                            connect_timeout={connect_timeout},
@@ -740,7 +740,7 @@ def test_settings(started_cluster):
     connect_timeout = 50123002
     node1.query(
         f"""
-        CREATE DATABASE mm ENGINE = MySQL('mysql80:3306', 'clickhouse', 'root', '{mysql_pass}')
+        CREATE DATABASE mm ENGINE = MySQL('mysql80:3306', 'datastore', 'root', '{mysql_pass}')
             SETTINGS
                 connection_wait_timeout={wait_timeout},
                 connect_timeout={connect_timeout},
@@ -768,39 +768,39 @@ def test_mysql_point(started_cluster):
     with conn.cursor() as cursor:
         cursor.execute(
             f"""
-            CREATE TABLE `clickhouse`.`{table_name}` (
+            CREATE TABLE `datastore`.`{table_name}` (
             `id` int NOT NULL,
             `point` Point NOT NULL,
             PRIMARY KEY (`id`)) ENGINE=InnoDB;
         """
         )
         cursor.execute(
-            f"INSERT INTO `clickhouse`.`{table_name}` SELECT 1, Point(15, 20)"
+            f"INSERT INTO `datastore`.`{table_name}` SELECT 1, Point(15, 20)"
         )
-        assert 1 == cursor.execute(f"SELECT count(*) FROM `clickhouse`.`{table_name}`")
+        assert 1 == cursor.execute(f"SELECT count(*) FROM `datastore`.`{table_name}`")
 
     conn.commit()
 
     result = node1.query(
-        f"DESCRIBE mysql('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')"
+        f"DESCRIBE mysql('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')"
     )
     assert result.strip() == "id\tInt32\t\t\t\t\t\npoint\tPoint"
 
     assert 1 == int(
         node1.query(
-            f"SELECT count() FROM mysql('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')"
+            f"SELECT count() FROM mysql('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')"
         )
     )
     assert (
         "(15,20)"
         == node1.query(
-            f"SELECT point FROM mysql('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')"
+            f"SELECT point FROM mysql('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')"
         ).strip()
     )
 
     node1.query("DROP TABLE IF EXISTS test")
     node1.query(
-        f"CREATE TABLE test (id Int32, point Point) Engine=MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')"
+        f"CREATE TABLE test (id Int32, point Point) Engine=MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')"
     )
     assert "(15,20)" == node1.query(f"SELECT point FROM test").strip()
 
@@ -813,19 +813,19 @@ def test_joins(started_cluster):
     drop_mysql_table(conn, "test_joins_mysql_users")
     with conn.cursor() as cursor:
         cursor.execute(
-            "CREATE TABLE clickhouse.test_joins_mysql_users (id INT NOT NULL, name varchar(50) NOT NULL, created TIMESTAMP, PRIMARY KEY (`id`)) ENGINE=InnoDB;"
+            "CREATE TABLE datastore.test_joins_mysql_users (id INT NOT NULL, name varchar(50) NOT NULL, created TIMESTAMP, PRIMARY KEY (`id`)) ENGINE=InnoDB;"
         )
         cursor.execute(
-            f"INSERT INTO clickhouse.test_joins_mysql_users VALUES (469722, 'user@example.com', '2019-08-30 07:55:01')"
+            f"INSERT INTO datastore.test_joins_mysql_users VALUES (469722, 'user@example.com', '2019-08-30 07:55:01')"
         )
 
     drop_mysql_table(conn, "test_joins_mysql_tickets")
     with conn.cursor() as cursor:
         cursor.execute(
-            "CREATE TABLE clickhouse.test_joins_mysql_tickets (id INT NOT NULL, subject varchar(50), created TIMESTAMP, creator INT NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;"
+            "CREATE TABLE datastore.test_joins_mysql_tickets (id INT NOT NULL, subject varchar(50), created TIMESTAMP, creator INT NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;"
         )
         cursor.execute(
-            f"INSERT INTO clickhouse.test_joins_mysql_tickets VALUES (281607, 'Feedback', '2024-06-25 12:09:41', 469722)"
+            f"INSERT INTO datastore.test_joins_mysql_tickets VALUES (281607, 'Feedback', '2024-06-25 12:09:41', 469722)"
         )
 
     conn.commit()
@@ -841,7 +841,7 @@ def test_joins(started_cluster):
             `Name` String,
             `Created` Nullable(DateTime)
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', 'test_joins_mysql_users', 'root', '{mysql_pass}');
+        ENGINE = MySQL('mysql80:3306', 'datastore', 'test_joins_mysql_users', 'root', '{mysql_pass}');
         """
     )
 
@@ -854,7 +854,7 @@ def test_joins(started_cluster):
             `Created` Nullable(DateTime),
             `Creator` Int32
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', 'test_joins_mysql_tickets', 'root', '{mysql_pass}');
+        ENGINE = MySQL('mysql80:3306', 'datastore', 'test_joins_mysql_tickets', 'root', '{mysql_pass}');
         """
     )
 
@@ -934,7 +934,7 @@ def test_mysql_reading_clone(started_cluster):
             age UInt32,
             money UInt32
         )
-        ENGINE = MySQL('mysql80:3306', 'clickhouse', '{table_name}', 'root', '{mysql_pass}')
+        ENGINE = MySQL('mysql80:3306', 'datastore', '{table_name}', 'root', '{mysql_pass}')
         """
     )
 

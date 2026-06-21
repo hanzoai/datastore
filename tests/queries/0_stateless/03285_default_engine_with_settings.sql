@@ -1,5 +1,5 @@
 -- Tags: memory-engine
--- https://github.com/ClickHouse/ClickHouse/issues/73099
+-- https://github.com/ClickHouse/Datastore/issues/73099
 
 DROP TABLE IF EXISTS example_table;
 DROP TABLE IF EXISTS example_table2;

@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/75247
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/75247
 -- GROUP BY with parallel_hash join on LowCardinality(String) and a 64-bit type
 -- should produce deterministic and correct results.
 

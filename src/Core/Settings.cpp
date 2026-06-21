@@ -28,7 +28,7 @@
 
 namespace
 {
-#if !CLICKHOUSE_CLOUD
+#if !DATASTORE_CLOUD
 constexpr UInt64 default_max_size_to_drop = 50000000000lu;
 constexpr UInt64 default_distributed_cache_connect_max_tries = 5lu;
 constexpr UInt64 default_distributed_cache_read_request_max_tries = 10lu;
@@ -81,7 +81,7 @@ namespace ErrorCodes
   *
   * A setting is "IMPORTANT" if it affects the results of queries and can't be ignored by older versions.
   * Tiers:
-  * EXPERIMENTAL: The feature is in active development stage. Mostly for developers or for ClickHouse enthusiasts.
+  * EXPERIMENTAL: The feature is in active development stage. Mostly for developers or for Datastore enthusiasts.
   * BETA: There are no known bugs problems in the functionality, but the outcome of using it together with other
   * features/components is unknown and correctness is not guaranteed.
   * PRODUCTION (Default): The feature is safe to use along with other features from the PRODUCTION tier.
@@ -90,9 +90,9 @@ namespace ErrorCodes
   * for tracking settings changes in different versions and for special `compatibility` settings to work correctly.
   *
   * The settings in this list are used to autogenerate the markdown documentation. You can find the script which
-  * generates the markdown from source here: https://github.com/ClickHouse/clickhouse-docs/blob/main/scripts/settings/autogenerate-settings.sh
+  * generates the markdown from source here: https://github.com/ClickHouse/datastore-docs/blob/main/scripts/settings/autogenerate-settings.sh
   *
-  * If a setting has an effect only in ClickHouse Cloud, then please include in the description: "Only has an effect in ClickHouse Cloud."
+  * If a setting has an effect only in Datastore Cloud, then please include in the description: "Only has an effect in Datastore Cloud."
   */
 
 // clang-format off
@@ -102,7 +102,7 @@ namespace ErrorCodes
 #define OBSOLETE_SETTINGS(DECLARE, DECLARE_WITH_ALIAS)
 #else
 #define COMMON_SETTINGS(DECLARE, DECLARE_WITH_ALIAS) \
-    DECLARE(Dialect, dialect, Dialect::clickhouse, R"(
+    DECLARE(Dialect, dialect, Dialect::datastore, R"(
 Which dialect will be used to parse query
 )", 0)\
     DECLARE(UInt64, min_compress_block_size, 65536, R"(
@@ -117,22 +117,22 @@ We are writing a UInt32-type column (4 bytes per value). When writing 8192 rows,
 We are writing a URL column with the String type (average size of 60 bytes per value). When writing 8192 rows, the average will be slightly less than 500 KB of data. Since this is more than 65,536, a compressed block will be formed for each mark. In this case, when reading data from the disk in the range of a single mark, extra data won't be decompressed.
 
 :::note
-This is an expert-level setting, and you shouldn't change it if you're just getting started with ClickHouse.
+This is an expert-level setting, and you shouldn't change it if you're just getting started with Datastore.
 :::
 )", 0) \
     DECLARE(UInt64, max_compress_block_size, 1048576, R"(
 The maximum size of blocks of uncompressed data before compressing for writing to a table. By default, 1,048,576 (1 MiB). Specifying a smaller block size generally leads to slightly reduced compression ratio, the compression and decompression speed increases slightly due to cache locality, and memory consumption is reduced.
 
 :::note
-This is an expert-level setting, and you shouldn't change it if you're just getting started with ClickHouse.
+This is an expert-level setting, and you shouldn't change it if you're just getting started with Datastore.
 :::
 
 Don't confuse blocks for compression (a chunk of memory consisting of bytes) with blocks for query processing (a set of rows from a table).
 )", 0) \
     DECLARE(NonZeroUInt64, max_block_size, DEFAULT_BLOCK_SIZE, R"(
-In ClickHouse, data is processed by blocks, which are sets of column parts. The internal processing cycles for a single block are efficient but there are noticeable costs when processing each block.
+In Datastore, data is processed by blocks, which are sets of column parts. The internal processing cycles for a single block are efficient but there are noticeable costs when processing each block.
 
-The `max_block_size` setting indicates the recommended maximum number of rows to include in a single block when loading data from tables. Blocks the size of `max_block_size` are not always loaded from the table: if ClickHouse determines that less data needs to be retrieved, a smaller block is processed.
+The `max_block_size` setting indicates the recommended maximum number of rows to include in a single block when loading data from tables. Blocks the size of `max_block_size` are not always loaded from the table: if Datastore determines that less data needs to be retrieved, a smaller block is processed.
 
 The block size should not be too small to avoid noticeable costs when processing each block. It should also not be too large to ensure that queries with a LIMIT clause execute quickly after processing the first block. When setting `max_block_size`, the goal should be to avoid consuming too much memory when extracting a large number of columns in multiple threads and to preserve at least some cache locality.
 )", 0) \
@@ -157,11 +157,11 @@ The maximum size of blocks (in a count of rows) to form for insertion into a tab
 
 This setting controls block formation in two contexts:
 
-1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, clickhouse-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
+1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, datastore-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
    - Both min_insert_block_size_rows AND min_insert_block_size_bytes are reached, OR
    - Either max_insert_block_size_rows OR max_insert_block_size_bytes is reached
 
-   Note: When using clickhouse-client or clickhouse-local to read from a file, the client itself parses the data and this setting applies on the client side.
+   Note: When using datastore-client or datastore-local to read from a file, the client itself parses the data and this setting applies on the client side.
 
 2. INSERT operations: During INSERT queries and when data flows through materialized views, this setting's behavior depends on `use_strict_insert_block_limits`:
 
@@ -188,11 +188,11 @@ The minimum size of blocks (in rows) to form for insertion into a table.
 
 This setting controls block formation in two contexts:
 
-1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, clickhouse-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
+1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, datastore-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
    - Both min_insert_block_size_rows AND min_insert_block_size_bytes are reached, OR
    - Either max_insert_block_size_rows OR max_insert_block_size_bytes is reached
 
-   Note: When using clickhouse-client or clickhouse-local to read from a file, the client itself parses the data and this setting applies on the client side.
+   Note: When using datastore-client or datastore-local to read from a file, the client itself parses the data and this setting applies on the client side.
 
 2. INSERT operations: During INSERT queries and when data flows through materialized views, this setting's behavior depends on `use_strict_insert_block_limits`:
 
@@ -314,12 +314,12 @@ For queries that are completed quickly because of a LIMIT, you can set a lower '
 For example, if the necessary number of entries are located in every block and max_threads = 8, then 8 blocks are retrieved, although it would have been enough to read just one.
 The smaller the `max_threads` value, the less memory is consumed.
 
-The `max_threads` setting by default matches the number of hardware threads (number of CPU cores) available to ClickHouse.
-As a special case, for x86 processors with less than 32 CPU cores and SMT (e.g. Intel HyperThreading), ClickHouse uses the number of logical cores (= 2 x physical core count) by default.
+The `max_threads` setting by default matches the number of hardware threads (number of CPU cores) available to Datastore.
+As a special case, for x86 processors with less than 32 CPU cores and SMT (e.g. Intel HyperThreading), Datastore uses the number of logical cores (= 2 x physical core count) by default.
 
 Without SMT (e.g. Intel HyperThreading), this corresponds to the number of CPU cores.
 
-For ClickHouse Cloud users, the default value will display as `auto(N)` where N matches the vCPU size of your service e.g. 2vCPU/8GiB, 4vCPU/16GiB etc.
+For Datastore Cloud users, the default value will display as `auto(N)` where N matches the vCPU size of your service e.g. 2vCPU/8GiB, 4vCPU/16GiB etc.
 See the settings tab in the Cloud console for a list of all service sizes.
 )", 0) \
     DECLARE(UInt64, max_threads_min_free_memory_per_thread, 1_GiB, R"(
@@ -373,7 +373,7 @@ The maximum number of bytes of a query string parsed by the SQL parser.
 Data in the VALUES clause of INSERT queries is processed by a separate stream parser (that consumes O(1) RAM) and not affected by this restriction.
 
 :::note
-`max_query_size` cannot be set within an SQL query (e.g., `SELECT now() SETTINGS max_query_size=10000`) because ClickHouse needs to allocate a buffer to parse the query, and this buffer size is determined by the `max_query_size` setting, which must be configured before the query is executed.
+`max_query_size` cannot be set within an SQL query (e.g., `SELECT now() SETTINGS max_query_size=10000`) because Datastore needs to allocate a buffer to parse the query, and this buffer size is determined by the `max_query_size` setting, which must be configured before the query is executed.
 :::
 )", 0) \
     DECLARE(UInt64, interactive_delay, 100000, R"(
@@ -704,7 +704,7 @@ so '?' acts as a wildcard in the path. When disabled (default), pre-signed URL q
 to avoid interpreting '?' as a wildcard.
 )", 0) \
     DECLARE(Bool, s3_disable_checksum, S3::DEFAULT_DISABLE_CHECKSUM, R"(
-Do not calculate a checksum when sending a file to S3. This speeds up writes by avoiding excessive processing passes on a file. It is mostly safe as the data of MergeTree tables is checksummed by ClickHouse anyway, and when S3 is accessed with HTTPS, the TLS layer already provides integrity while transferring through the network. While additional checksums on S3 give defense in depth.
+Do not calculate a checksum when sending a file to S3. This speeds up writes by avoiding excessive processing passes on a file. It is mostly safe as the data of MergeTree tables is checksummed by Datastore anyway, and when S3 is accessed with HTTPS, the TLS layer already provides integrity while transferring through the network. While additional checksums on S3 give defense in depth.
 )", 0) \
     DECLARE(UInt64, s3_request_timeout_ms, S3::DEFAULT_REQUEST_TIMEOUT_MS, R"(
 Idleness timeout for sending and receiving data to/from S3. Fail if a single TCP read or write call blocks for this long.
@@ -715,7 +715,7 @@ Connection timeout for host from s3 disks.
     DECLARE(Bool, enable_s3_requests_logging, false, R"(
 Enable very explicit logging of S3 requests. Makes sense for debug only.
 )", 0) \
-    DECLARE(String, s3queue_default_zookeeper_path, "/clickhouse/s3queue/", R"(
+    DECLARE(String, s3queue_default_zookeeper_path, "/datastore/s3queue/", R"(
 Default zookeeper path prefix for S3Queue engine
 )", 0) \
     DECLARE(Bool, s3queue_migrate_old_metadata_to_buckets, false, R"(
@@ -825,7 +825,7 @@ Possible values:
     DECLARE_WITH_ALIAS(Bool, distributed_foreground_insert, false, R"(
 Enables or disables synchronous data insertion into a [Distributed](/engines/table-engines/special/distributed) table.
 
-By default, when inserting data into a `Distributed` table, the ClickHouse server sends data to cluster nodes in background mode. When `distributed_foreground_insert=1`, the data is processed synchronously, and the `INSERT` operation succeeds only after all the data is saved on all shards (at least one replica for each shard if `internal_replication` is true).
+By default, when inserting data into a `Distributed` table, the Datastore server sends data to cluster nodes in background mode. When `distributed_foreground_insert=1`, the data is processed synchronously, and the `INSERT` operation succeeds only after all the data is saved on all shards (at least one replica for each shard if `internal_replication` is true).
 
 Possible values:
 
@@ -956,7 +956,7 @@ Execute ALTER TABLE MOVE ... TO [DISK|VOLUME] asynchronously
     DECLARE(LoadBalancing, load_balancing, LoadBalancing::RANDOM, R"(
 Specifies the algorithm of replicas selection that is used for distributed query processing.
 
-ClickHouse supports the following algorithms of choosing replicas:
+Datastore supports the following algorithms of choosing replicas:
 
 - [Random](#load_balancing-random) (by default)
 - [Nearest hostname](#load_balancing-nearest_hostname)
@@ -1001,13 +1001,13 @@ load_balancing = hostname_levenshtein_distance
 Just like `nearest_hostname`, but it compares hostname in a [levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) manner. For example:
 
 ```text
-example-clickhouse-0-0 ample-clickhouse-0-0
+example-datastore-0-0 ample-datastore-0-0
 1
 
-example-clickhouse-0-0 example-clickhouse-1-10
+example-datastore-0-0 example-datastore-1-10
 2
 
-example-clickhouse-0-0 example-clickhouse-12-0
+example-datastore-0-0 example-datastore-12-0
 3
 ```
 
@@ -1056,7 +1056,7 @@ See the section "WITH TOTALS modifier".
     DECLARE(Bool, allow_suspicious_low_cardinality_types, false, R"(
 Allows or restricts using [LowCardinality](../../sql-reference/data-types/lowcardinality.md) with data types with fixed size of 8 bytes or less: numeric data types and `FixedString(8_bytes_or_less)`.
 
-For small fixed values using of `LowCardinality` is usually inefficient, because ClickHouse stores a numeric index for each row. As a result:
+For small fixed values using of `LowCardinality` is usually inefficient, because Datastore stores a numeric index for each row. As a result:
 
 - Disk space usage can rise.
 - RAM consumption can be higher, depending on a dictionary size.
@@ -1186,7 +1186,7 @@ Result:
 Enables or disables supporting positional arguments in PROJECTION definitions. See also [enable_positional_arguments](#enable_positional_arguments) setting.
 
 :::note
-This is an expert-level setting, and you shouldn't change it if you're just getting started with ClickHouse.
+This is an expert-level setting, and you shouldn't change it if you're just getting started with Datastore.
 :::
 
 Possible values:
@@ -1225,7 +1225,7 @@ The table below shows the behavior of this setting for various date-time functio
 )", 0) \
     DECLARE(Bool, allow_nonconst_timezone_arguments, false, R"(
 Allow non-const timezone arguments in certain time-related functions like toTimeZone(), fromUnixTimestamp*(), snowflakeToDateTime*().
-This setting exists only for compatibility reasons. In ClickHouse, the time zone is a property of the data type, respectively of the column.
+This setting exists only for compatibility reasons. In Datastore, the time zone is a property of the data type, respectively of the column.
 Enabling this setting gives the wrong impression that different values within a column can have different timezones.
 Therefore, please do not enable this setting.
 )", 0) \
@@ -1254,7 +1254,7 @@ Columns for these keys are filled with either default value or `NULL` in corresp
 Possible values:
 
 - 0 — The default value for the aggregation key type is used to produce missing values.
-- 1 — ClickHouse executes `GROUP BY` the same way as the SQL standard says. The types of aggregation keys are converted to [Nullable](/sql-reference/data-types/nullable). Columns for corresponding aggregation keys are filled with [NULL](/sql-reference/syntax#null) for rows that didn't use it.
+- 1 — Datastore executes `GROUP BY` the same way as the SQL standard says. The types of aggregation keys are converted to [Nullable](/sql-reference/data-types/nullable). Columns for corresponding aggregation keys are filled with [NULL](/sql-reference/syntax#null) for rows that didn't use it.
 
 See also:
 
@@ -1266,9 +1266,9 @@ Enables or disables silently skipping of unavailable shards.
 
 Shard is considered unavailable if all its replicas are unavailable. A replica is unavailable in the following cases:
 
-- ClickHouse can't connect to replica for any reason.
+- Datastore can't connect to replica for any reason.
 
-    When connecting to a replica, ClickHouse performs several attempts. If all these attempts fail, the replica is considered unavailable.
+    When connecting to a replica, Datastore performs several attempts. If all these attempts fail, the replica is considered unavailable.
 
 - Replica can't be resolved through DNS.
 
@@ -1276,17 +1276,17 @@ Shard is considered unavailable if all its replicas are unavailable. A replica i
 
     - Replica's host has no DNS record. It can occur in systems with dynamic DNS, for example, [Kubernetes](https://kubernetes.io), where nodes can be unresolvable during downtime, and this is not an error.
 
-    - Configuration error. ClickHouse configuration file contains a wrong hostname.
+    - Configuration error. Datastore configuration file contains a wrong hostname.
 
 Possible values:
 
 - 1 — skipping enabled.
 
-    If a shard is unavailable, ClickHouse returns a result based on partial data and does not report node availability issues.
+    If a shard is unavailable, Datastore returns a result based on partial data and does not report node availability issues.
 
 - 0 — skipping disabled.
 
-    If a shard is unavailable, ClickHouse throws an exception.
+    If a shard is unavailable, Datastore throws an exception.
 )", 0) \
     \
     DECLARE(UInt64, max_skip_unavailable_shards_num, 0, R"(
@@ -1452,7 +1452,7 @@ Enables or disables query execution if [optimize_skip_unused_shards](#optimize_s
 
 Possible values:
 
-- 0 — Disabled. ClickHouse does not throw an exception.
+- 0 — Disabled. Datastore does not throw an exception.
 - 1 — Enabled. Query execution is disabled only if the table has a sharding key.
 - 2 — Enabled. Query execution is disabled regardless of whether a sharding key is defined for the table.
 )", 0) \
@@ -1497,53 +1497,53 @@ When disabled, `EXPLAIN` queries with `FORMAT Null` will produce no output (back
 When enabled, V1 serialization version of JSON and Dynamic types will be used in MergeTree instead of V2. Changing this setting takes affect only after server restart.
 )", 0) \
     DECLARE(UInt64, merge_tree_min_rows_for_concurrent_read, (20 * 8192), R"(
-If the number of rows to be read from a file of a [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) table exceeds `merge_tree_min_rows_for_concurrent_read` then ClickHouse tries to perform a concurrent reading from this file on several threads.
+If the number of rows to be read from a file of a [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) table exceeds `merge_tree_min_rows_for_concurrent_read` then Datastore tries to perform a concurrent reading from this file on several threads.
 
 Possible values:
 
 - Positive integer.
 )", 0) \
     DECLARE(UInt64, merge_tree_min_bytes_for_concurrent_read, (24 * 10 * 1024 * 1024), R"(
-If the number of bytes to read from one file of a [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md)-engine table exceeds `merge_tree_min_bytes_for_concurrent_read`, then ClickHouse tries to concurrently read from this file in several threads.
+If the number of bytes to read from one file of a [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md)-engine table exceeds `merge_tree_min_bytes_for_concurrent_read`, then Datastore tries to concurrently read from this file in several threads.
 
 Possible value:
 
 - Positive integer.
 )", 0) \
     DECLARE(UInt64, merge_tree_min_rows_for_seek, 0, R"(
-If the distance between two data blocks to be read in one file is less than `merge_tree_min_rows_for_seek` rows, then ClickHouse does not seek through the file but reads the data sequentially.
+If the distance between two data blocks to be read in one file is less than `merge_tree_min_rows_for_seek` rows, then Datastore does not seek through the file but reads the data sequentially.
 
 Possible values:
 
 - Any positive integer.
 )", 0) \
     DECLARE(UInt64, merge_tree_min_bytes_for_seek, 0, R"(
-If the distance between two data blocks to be read in one file is less than `merge_tree_min_bytes_for_seek` bytes, then ClickHouse sequentially reads a range of file that contains both blocks, thus avoiding extra seek.
+If the distance between two data blocks to be read in one file is less than `merge_tree_min_bytes_for_seek` bytes, then Datastore sequentially reads a range of file that contains both blocks, thus avoiding extra seek.
 
 Possible values:
 
 - Any positive integer.
 )", 0) \
     DECLARE(UInt64, merge_tree_coarse_index_granularity, 8, R"(
-When searching for data, ClickHouse checks the data marks in the index file. If ClickHouse finds that required keys are in some range, it divides this range into `merge_tree_coarse_index_granularity` subranges and searches the required keys there recursively.
+When searching for data, Datastore checks the data marks in the index file. If Datastore finds that required keys are in some range, it divides this range into `merge_tree_coarse_index_granularity` subranges and searches the required keys there recursively.
 
 Possible values:
 
 - Any positive even integer.
 )", 0) \
     DECLARE(UInt64, merge_tree_max_rows_to_use_cache, (128 * 8192), R"(
-If ClickHouse should read more than `merge_tree_max_rows_to_use_cache` rows in one query, it does not use the cache of uncompressed blocks.
+If Datastore should read more than `merge_tree_max_rows_to_use_cache` rows in one query, it does not use the cache of uncompressed blocks.
 
-The cache of uncompressed blocks stores data extracted for queries. ClickHouse uses this cache to speed up responses to repeated small queries. This setting protects the cache from trashing by queries that read a large amount of data. The [uncompressed_cache_size](/operations/server-configuration-parameters/settings#uncompressed_cache_size) server setting defines the size of the cache of uncompressed blocks.
+The cache of uncompressed blocks stores data extracted for queries. Datastore uses this cache to speed up responses to repeated small queries. This setting protects the cache from trashing by queries that read a large amount of data. The [uncompressed_cache_size](/operations/server-configuration-parameters/settings#uncompressed_cache_size) server setting defines the size of the cache of uncompressed blocks.
 
 Possible values:
 
 - Any positive integer.
 )", 0) \
     DECLARE(UInt64, merge_tree_max_bytes_to_use_cache, (192 * 10 * 1024 * 1024), R"(
-If ClickHouse should read more than `merge_tree_max_bytes_to_use_cache` bytes in one query, it does not use the cache of uncompressed blocks.
+If Datastore should read more than `merge_tree_max_bytes_to_use_cache` bytes in one query, it does not use the cache of uncompressed blocks.
 
-The cache of uncompressed blocks stores data extracted for queries. ClickHouse uses this cache to speed up responses to repeated small queries. This setting protects the cache from trashing by queries that read a large amount of data. The [uncompressed_cache_size](/operations/server-configuration-parameters/settings#uncompressed_cache_size) server setting defines the size of the cache of uncompressed blocks.
+The cache of uncompressed blocks stores data extracted for queries. Datastore uses this cache to speed up responses to repeated small queries. This setting protects the cache from trashing by queries that read a large amount of data. The [uncompressed_cache_size](/operations/server-configuration-parameters/settings#uncompressed_cache_size) server setting defines the size of the cache of uncompressed blocks.
 
 Possible values:
 
@@ -1561,7 +1561,7 @@ Improve FINAL queries by avoiding merges across different partitions.
 When enabled, during SELECT FINAL queries, parts from different partitions will not be merged together. Instead, merging will only occur within each partition separately. This can significantly improve query performance when working with partitioned tables.
 )", 0) \
     DECLARE(Bool, enable_automatic_decision_for_merging_across_partitions_for_final, true, R"(
-If set, ClickHouse will automatically enable this optimization when the partition key expression is deterministic and all columns used in the partition key expression are included in the primary key.
+If set, Datastore will automatically enable this optimization when the partition key expression is deterministic and all columns used in the partition key expression are included in the primary key.
 This automatic derivation ensures that rows with the same primary key values will always belong to the same partition, making it safe to avoid cross-partition merges.
 )", 0) \
     DECLARE(Bool, split_parts_ranges_into_intersecting_and_non_intersecting_final, true, R"(
@@ -1616,7 +1616,7 @@ Possible values:
 The maximum number of rows in MySQL batch insertion of the MySQL storage engine
 )", 0) \
     DECLARE(Bool, mysql_map_string_to_text_in_show_columns, true, R"(
-When enabled, [String](../../sql-reference/data-types/string.md) ClickHouse data type will be displayed as `TEXT` in [SHOW COLUMNS](../../sql-reference/statements/show.md/#show_columns).
+When enabled, [String](../../sql-reference/data-types/string.md) Datastore data type will be displayed as `TEXT` in [SHOW COLUMNS](../../sql-reference/statements/show.md/#show_columns).
 
 Has an effect only when the connection is made through the MySQL wire protocol.
 
@@ -1624,7 +1624,7 @@ Has an effect only when the connection is made through the MySQL wire protocol.
 - 1 - Use `TEXT`.
 )", 0) \
     DECLARE(Bool, mysql_map_fixed_string_to_text_in_show_columns, true, R"(
-When enabled, [FixedString](../../sql-reference/data-types/fixedstring.md) ClickHouse data type will be displayed as `TEXT` in [SHOW COLUMNS](../../sql-reference/statements/show.md/#show_columns).
+When enabled, [FixedString](../../sql-reference/data-types/fixedstring.md) Datastore data type will be displayed as `TEXT` in [SHOW COLUMNS](../../sql-reference/statements/show.md/#show_columns).
 
 Has an effect only when the connection is made through the MySQL wire protocol.
 
@@ -1642,7 +1642,7 @@ The minimum length of the expression `expr <> x1 AND ... expr <> xN` for optimiz
     DECLARE(UInt64, min_bytes_to_use_direct_io, 0, R"(
 The minimum data volume required for using direct I/O access to the storage disk.
 
-ClickHouse uses this setting when reading data from tables. If the total storage volume of all the data to be read exceeds `min_bytes_to_use_direct_io` bytes, then ClickHouse reads the data from the storage disk with the `O_DIRECT` option.
+Datastore uses this setting when reading data from tables. If the total storage volume of all the data to be read exceeds `min_bytes_to_use_direct_io` bytes, then Datastore reads the data from the storage disk with the `O_DIRECT` option.
 
 Possible values:
 
@@ -1666,7 +1666,7 @@ Disables query execution if the index can't be used by date.
 
 Works with tables in the MergeTree family.
 
-If `force_index_by_date=1`, ClickHouse checks whether the query has a date key condition that can be used for restricting data ranges. If there is no suitable condition, it throws an exception. However, it does not check whether the condition reduces the amount of data to read. For example, the condition `Date != ' 2000-01-01 '` is acceptable even when it matches all the data in the table (i.e., running the query requires a full scan). For more information about ranges of data in MergeTree tables, see [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md).
+If `force_index_by_date=1`, Datastore checks whether the query has a date key condition that can be used for restricting data ranges. If there is no suitable condition, it throws an exception. However, it does not check whether the condition reduces the amount of data to read. For example, the condition `Date != ' 2000-01-01 '` is acceptable even when it matches all the data in the table (i.e., running the query requires a full scan). For more information about ranges of data in MergeTree tables, see [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md).
 )", 0) \
     DECLARE(Bool, use_primary_key, true, R"(
 Use the primary key to prune granules during query execution for MergeTree tables.
@@ -1689,7 +1689,7 @@ Disables query execution if indexing by the primary key is not possible.
 
 Works with tables in the MergeTree family.
 
-If `force_primary_key=1`, ClickHouse checks to see if the query has a primary key condition that can be used for restricting data ranges. If there is no suitable condition, it throws an exception. However, it does not check whether the condition reduces the amount of data to read. For more information about data ranges in MergeTree tables, see [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md).
+If `force_primary_key=1`, Datastore checks to see if the query has a primary key condition that can be used for restricting data ranges. If there is no suitable condition, it throws an exception. However, it does not check whether the condition reduces the amount of data to read. For more information about data ranges in MergeTree tables, see [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md).
 )", 0) \
     DECLARE(Bool, use_skip_indexes, true, R"(
 Use data skipping indexes during query execution.
@@ -1978,7 +1978,7 @@ Priority of the query. 1 - the highest, higher value - lower priority; 0 - do no
     DECLARE(Bool, log_queries, true, R"(
 Setting up query logging.
 
-Queries sent to ClickHouse with this setup are logged according to the rules in the [query_log](../../operations/server-configuration-parameters/settings.md/#query_log) server configuration parameter.
+Queries sent to Datastore with this setup are logged according to the rules in the [query_log](../../operations/server-configuration-parameters/settings.md/#query_log) server configuration parameter.
 
 Example:
 
@@ -2047,7 +2047,7 @@ See also:
     DECLARE(DistributedProductMode, distributed_product_mode, DistributedProductMode::DENY, R"(
 Changes the behaviour of [distributed subqueries](../../sql-reference/operators/in.md).
 
-ClickHouse applies this setting when the query contains the product of distributed tables, i.e. when the query for a distributed table contains a non-GLOBAL subquery for the distributed table.
+Datastore applies this setting when the query contains the product of distributed tables, i.e. when the query for a distributed table contains a non-GLOBAL subquery for the distributed table.
 
 Restrictions:
 
@@ -2151,11 +2151,11 @@ Enables the quorum writes.
 
 Quorum writes
 
-`INSERT` succeeds only when ClickHouse manages to correctly write data to the `insert_quorum` of replicas during the `insert_quorum_timeout`. If for any reason the number of replicas with successful writes does not reach the `insert_quorum`, the write is considered failed and ClickHouse will delete the inserted block from all the replicas where data has already been written.
+`INSERT` succeeds only when Datastore manages to correctly write data to the `insert_quorum` of replicas during the `insert_quorum_timeout`. If for any reason the number of replicas with successful writes does not reach the `insert_quorum`, the write is considered failed and Datastore will delete the inserted block from all the replicas where data has already been written.
 
 When `insert_quorum_parallel` is disabled, all replicas in the quorum are consistent, i.e. they contain data from all previous `INSERT` queries (the `INSERT` sequence is linearized). When reading data written using `insert_quorum` and `insert_quorum_parallel` is disabled, you can turn on sequential consistency for `SELECT` queries using [select_sequential_consistency](#select_sequential_consistency).
 
-ClickHouse generates an exception:
+Datastore generates an exception:
 
 - If the number of available replicas at the time of the query is less than the `insert_quorum`.
 - When `insert_quorum_parallel` is disabled and an attempt to write data is made when the previous block has not yet been inserted in `insert_quorum` of replicas. This situation may occur if the user tries to perform another `INSERT` query to the same table before the previous one with `insert_quorum` is completed.
@@ -2167,7 +2167,7 @@ See also:
 - [select_sequential_consistency](#select_sequential_consistency)
 )", 0) \
     DECLARE(Milliseconds, insert_quorum_timeout, 600000, R"(
-Write to a quorum timeout in milliseconds. If the timeout has passed and no write has taken place yet, ClickHouse will generate an exception and the client must repeat the query to write the same block to the same or any other replica.
+Write to a quorum timeout in milliseconds. If the timeout has passed and no write has taken place yet, Datastore will generate an exception and the client must repeat the query to write the same block to the same or any other replica.
 
 See also:
 
@@ -2207,7 +2207,7 @@ Possible values:
 
 Usage
 
-When sequential consistency is enabled, ClickHouse allows the client to execute the `SELECT` query only for those replicas that contain data from all previous `INSERT` queries executed with `insert_quorum`. If the client refers to a partial replica, ClickHouse will generate an exception. The SELECT query will not include data that has not yet been written to the quorum of replicas.
+When sequential consistency is enabled, Datastore allows the client to execute the `SELECT` query only for those replicas that contain data from all previous `INSERT` queries executed with `insert_quorum`. If the client refers to a partial replica, Datastore will generate an exception. The SELECT query will not include data that has not yet been written to the quorum of replicas.
 
 When `insert_quorum_parallel` is enabled (the default), then `select_sequential_consistency` does not work. This is because parallel `INSERT` queries can be written to different sets of quorum replicas so there is no guarantee a single replica will have received all writes.
 
@@ -2276,7 +2276,7 @@ Possible values: Numbers from 1 to 9.
 )", 0) \
     \
     DECLARE(Bool, http_native_compression_disable_checksumming_on_decompress, false, R"(
-Enables or disables checksum verification when decompressing the HTTP POST data from the client. Used only for ClickHouse native compression format (not used with `gzip` or `deflate`).
+Enables or disables checksum verification when decompressing the HTTP POST data from the client. Used only for Datastore native compression format (not used with `gzip` or `deflate`).
 
 For more information, read the [HTTP interface description](/interfaces/http).
 
@@ -2340,7 +2340,7 @@ Possible values:
 )", 0) \
     \
     DECLARE(Bool, send_progress_in_http_headers, false, R"(
-Enables or disables `X-ClickHouse-Progress` HTTP response headers in `clickhouse-server` responses.
+Enables or disables `X-Datastore-Progress` HTTP response headers in `datastore-server` responses.
 
 For more information, read the [HTTP interface description](/interfaces/http).
 
@@ -2351,7 +2351,7 @@ Possible values:
 )", 0) \
     \
     DECLARE(UInt64, http_headers_progress_interval_ms, 100, R"(
-Do not send HTTP headers X-ClickHouse-Progress more frequently than at each specified interval.
+Do not send HTTP headers X-Datastore-Progress more frequently than at each specified interval.
 )", 0) \
     DECLARE(Bool, http_wait_end_of_query, false, R"(
 Enable HTTP response buffering on the server-side.
@@ -2370,7 +2370,7 @@ It makes sense to disable it if the server has millions of tiny tables that are 
 )", 0)    \
     \
     DECLARE(Bool, join_use_nulls, false, R"(
-Sets the type of [JOIN](../../sql-reference/statements/select/join.md) behaviour. When merging tables, empty cells may appear. ClickHouse fills them differently based on this setting.
+Sets the type of [JOIN](../../sql-reference/statements/select/join.md) behaviour. When merging tables, empty cells may appear. Datastore fills them differently based on this setting.
 
 Possible values:
 
@@ -2386,13 +2386,13 @@ Sets default strictness for [JOIN clauses](/sql-reference/statements/select/join
 
 Possible values:
 
-- `ALL` — If the right table has several matching rows, ClickHouse creates a [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) from matching rows. This is the normal `JOIN` behaviour from standard SQL.
+- `ALL` — If the right table has several matching rows, Datastore creates a [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) from matching rows. This is the normal `JOIN` behaviour from standard SQL.
 - `ANY` — If the right table has several matching rows, only the first one found is joined. If the right table has only one matching row, the results of `ANY` and `ALL` are the same.
 - `ASOF` — For joining sequences with an uncertain match.
-- `Empty string` — If `ALL` or `ANY` is not specified in the query, ClickHouse throws an exception.
+- `Empty string` — If `ALL` or `ANY` is not specified in the query, Datastore throws an exception.
 )", 0) \
     DECLARE(Bool, any_join_distinct_right_table_keys, false, R"(
-Enables legacy ClickHouse server behaviour in `ANY INNER|LEFT JOIN` operations.
+Enables legacy Datastore server behaviour in `ANY INNER|LEFT JOIN` operations.
 
 :::note
 Use this setting only for backward compatibility if your use cases depend on legacy `JOIN` behaviour.
@@ -2400,12 +2400,12 @@ Use this setting only for backward compatibility if your use cases depend on leg
 
 When the legacy behaviour is enabled:
 
-- Results of `t1 ANY LEFT JOIN t2` and `t2 ANY RIGHT JOIN t1` operations are not equal because ClickHouse uses the logic with many-to-one left-to-right table keys mapping.
+- Results of `t1 ANY LEFT JOIN t2` and `t2 ANY RIGHT JOIN t1` operations are not equal because Datastore uses the logic with many-to-one left-to-right table keys mapping.
 - Results of `ANY INNER JOIN` operations contain all rows from the left table like the `SEMI LEFT JOIN` operations do.
 
 When the legacy behaviour is disabled:
 
-- Results of `t1 ANY LEFT JOIN t2` and `t2 ANY RIGHT JOIN t1` operations are equal because ClickHouse uses the logic which provides one-to-many keys mapping in `ANY RIGHT JOIN` operations.
+- Results of `t1 ANY LEFT JOIN t2` and `t2 ANY RIGHT JOIN t1` operations are equal because Datastore uses the logic which provides one-to-many keys mapping in `ANY RIGHT JOIN` operations.
 - Results of `ANY INNER JOIN` operations contain one row per key from both the left and right tables.
 
 Possible values:
@@ -2476,7 +2476,7 @@ Used when performing `SELECT` from a distributed table that points to replicated
     DECLARE(Bool, fallback_to_stale_replicas_for_distributed_queries, true, R"(
 Forces a query to an out-of-date replica if updated data is not available. See [Replication](../../engines/table-engines/mergetree-family/replication.md).
 
-ClickHouse selects the most relevant from the outdated replicas of the table.
+Datastore selects the most relevant from the outdated replicas of the table.
 
 Used when performing `SELECT` from a distributed table that points to replicated tables.
 
@@ -2739,12 +2739,12 @@ If enabled, some of the perf events will be measured throughout queries' executi
 Comma separated list of perf metrics that will be measured throughout queries' execution. Empty means all events. See PerfEventInfo in sources for the available events.
 )", 0) \
     DECLARE(Float, opentelemetry_start_trace_probability, 0., R"(
-Sets the probability that the ClickHouse can start a trace for executed queries (if no parent [trace context](https://www.w3.org/TR/trace-context/) is supplied).
+Sets the probability that the Datastore can start a trace for executed queries (if no parent [trace context](https://www.w3.org/TR/trace-context/) is supplied).
 
 Possible values:
 
 - 0 — The trace for all executed queries is disabled (if no parent trace context is supplied).
-- Positive floating-point number in the range [0..1]. For example, if the setting value is `0,5`, ClickHouse can start a trace on average for half of the queries.
+- Positive floating-point number in the range [0..1]. For example, if the setting value is `0,5`, Datastore can start a trace on average for half of the queries.
 - 1 — The trace for all executed queries is enabled.
 )", 0) \
     DECLARE(FloatAuto, opentelemetry_start_keeper_trace_probability, Field("auto"), R"(
@@ -2763,7 +2763,7 @@ Collect OpenTelemetry spans for processors.
 Collect OpenTelemetry spans for workload preemptive CPU scheduling.
 )", 0) \
     DECLARE(Bool, prefer_column_name_to_alias, false, R"(
-Enables or disables using the original column names instead of aliases in query expressions and clauses. It especially matters when alias is the same as the column name, see [Expression Aliases](/sql-reference/syntax#notes-on-usage). Enable this setting to make aliases syntax rules in ClickHouse more compatible with most other database engines.
+Enables or disables using the original column names instead of aliases in query expressions and clauses. It especially matters when alias is the same as the column name, see [Expression Aliases](/sql-reference/syntax#notes-on-usage). Enable this setting to make aliases syntax rules in Datastore more compatible with most other database engines.
 
 Possible values:
 
@@ -3094,13 +3094,13 @@ The `max_execution_time` parameter can be a bit tricky to understand.
 It operates based on interpolation relative to the current query execution speed
 (this behaviour is controlled by [`timeout_before_checking_execution_speed`](/operations/settings/settings#timeout_before_checking_execution_speed)).
 
-ClickHouse will interrupt a query if the projected execution time exceeds the
+Datastore will interrupt a query if the projected execution time exceeds the
 specified `max_execution_time`. By default, the `timeout_before_checking_execution_speed`
-is set to 10 seconds. This means that after 10 seconds of query execution, ClickHouse
+is set to 10 seconds. This means that after 10 seconds of query execution, Datastore
 will begin estimating the total execution time. If, for example, `max_execution_time`
-is set to 3600 seconds (1 hour), ClickHouse will terminate the query if the estimated
+is set to 3600 seconds (1 hour), Datastore will terminate the query if the estimated
 time exceeds this 3600-second limit. If you set `timeout_before_checking_execution_speed`
-to 0, ClickHouse will use the clock time as the basis for `max_execution_time`.
+to 0, Datastore will use the clock time as the basis for `max_execution_time`.
 
 If query runtime exceeds the specified number of seconds, the behavior will be
 determined by the 'timeout_overflow_mode', which by default is set to `throw`.
@@ -3214,7 +3214,7 @@ approximately zero computing resources.
 )", 0) \
     \
     DECLARE(UInt64, max_sessions_for_user, 0, R"(
-Maximum number of simultaneous sessions per authenticated user to the ClickHouse server.
+Maximum number of simultaneous sessions per authenticated user to the Datastore server.
 
 Example:
 
@@ -3231,7 +3231,7 @@ Example:
     </unlimited_sessions_profile>
 </profiles>
 <users>
-    <!-- User Alice can connect to a ClickHouse server no more than once at a time. -->
+    <!-- User Alice can connect to a Datastore server no more than once at a time. -->
     <Alice>
         <profile>single_session_user</profile>
     </Alice>
@@ -3321,10 +3321,10 @@ source data ran out.
 )", 0) \
     \
     DECLARE(Bool, exact_rows_before_limit, false, R"(
-When enabled, ClickHouse will provide exact value for rows_before_limit_at_least statistic, but with the cost that the data before limit will have to be read completely
+When enabled, Datastore will provide exact value for rows_before_limit_at_least statistic, but with the cost that the data before limit will have to be read completely
 )", 0) \
     DECLARE(Bool, rows_before_aggregation, false, R"(
-When enabled, ClickHouse will provide exact value for rows_before_aggregation statistic, represents the number of rows read before aggregation
+When enabled, Datastore will provide exact value for rows_before_aggregation statistic, represents the number of rows read before aggregation
 )", 0) \
     DECLARE(UInt64, max_rows_in_join, 0, R"(
 Limits the number of rows in the hash table that is used when joining tables.
@@ -3332,9 +3332,9 @@ Limits the number of rows in the hash table that is used when joining tables.
 This settings applies to [SELECT ... JOIN](/sql-reference/statements/select/join)
 operations and the [Join](/engines/table-engines/special/join) table engine.
 
-If a query contains multiple joins, ClickHouse checks this setting for every intermediate result.
+If a query contains multiple joins, Datastore checks this setting for every intermediate result.
 
-ClickHouse can proceed with different actions when the limit is reached. Use the
+Datastore can proceed with different actions when the limit is reached. Use the
 [`join_overflow_mode`](/operations/settings/settings#join_overflow_mode) setting to choose the action.
 
 Possible values:
@@ -3348,9 +3348,9 @@ The maximum size in number of bytes of the hash table used when joining tables.
 This setting applies to [SELECT ... JOIN](/sql-reference/statements/select/join)
 operations and the [Join table engine](/engines/table-engines/special/join).
 
-If the query contains joins, ClickHouse checks this setting for every intermediate result.
+If the query contains joins, Datastore checks this setting for every intermediate result.
 
-ClickHouse can proceed with different actions when the limit is reached. Use
+Datastore can proceed with different actions when the limit is reached. Use
 the [join_overflow_mode](/operations/settings/settings#join_overflow_mode) settings to choose the action.
 
 Possible values:
@@ -3359,15 +3359,15 @@ Possible values:
 - 0 — Memory control is disabled.
 )", 0) \
     DECLARE(OverflowMode, join_overflow_mode, OverflowMode::THROW, R"(
-Defines what action ClickHouse performs when any of the following join limits is reached:
+Defines what action Datastore performs when any of the following join limits is reached:
 
 - [max_bytes_in_join](/operations/settings/settings#max_bytes_in_join)
 - [max_rows_in_join](/operations/settings/settings#max_rows_in_join)
 
 Possible values:
 
-- `THROW` — ClickHouse throws an exception and breaks operation.
-- `BREAK` — ClickHouse breaks operation and does not throw an exception.
+- `THROW` — Datastore throws an exception and breaks operation.
+- `BREAK` — Datastore breaks operation and does not throw an exception.
 
 Default value: `THROW`.
 
@@ -3427,7 +3427,7 @@ Possible values:
 
  The `RIGHT JOIN` and `FULL JOIN` are supported only with `ALL` strictness (`SEMI`, `ANTI`, `ANY`, and `ASOF` are not supported).
 
- When using the `partial_merge` algorithm, ClickHouse sorts the data and dumps it to the disk. The `partial_merge` algorithm in ClickHouse differs slightly from the classic realization. First, ClickHouse sorts the right table by joining keys in blocks and creates a min-max index for sorted blocks. Then it sorts parts of the left table by the `join key` and joins them over the right table. The min-max index is also used to skip unneeded right table blocks.
+ When using the `partial_merge` algorithm, Datastore sorts the data and dumps it to the disk. The `partial_merge` algorithm in Datastore differs slightly from the classic realization. First, Datastore sorts the right table by joining keys in blocks and creates a min-max index for sorted blocks. Then it sorts parts of the left table by the `join key` and joins them over the right table. The min-max index is also used to skip unneeded right table blocks.
 
 - direct
 
@@ -3448,7 +3448,7 @@ Possible values:
 
 - prefer_partial_merge
 
- ClickHouse always tries to use `partial_merge` join if possible, otherwise, it uses `hash`. *Deprecated*, same as `partial_merge,hash`.
+ Datastore always tries to use `partial_merge` join if possible, otherwise, it uses `hash`. *Deprecated*, same as `partial_merge,hash`.
 
 - default (deprecated)
 
@@ -3474,7 +3474,7 @@ If not 0 group left table blocks in bigger ones for left-side table in partial m
     DECLARE(UInt64, partial_merge_join_rows_in_right_blocks, 65536, R"(
 Limits sizes of right-hand join data blocks in partial merge join algorithm for [JOIN](../../sql-reference/statements/select/join.md) queries.
 
-ClickHouse server:
+Datastore server:
 
 1.  Splits right-hand join data into blocks with up to the specified number of rows.
 2.  Indexes each block with its minimum and maximum values.
@@ -3775,7 +3775,7 @@ Log query settings into the query_log and OpenTelemetry span log.
     DECLARE(Bool, log_query_threads, false, R"(
 Setting up query threads logging.
 
-Query threads log into the [system.query_thread_log](../../operations/system-tables/query_thread_log.md) table. This setting has effect only when [log_queries](#log_queries) is true. Queries' threads run by ClickHouse with this setup are logged according to the rules in the [query_thread_log](/operations/server-configuration-parameters/settings#query_thread_log) server configuration parameter.
+Query threads log into the [system.query_thread_log](../../operations/system-tables/query_thread_log.md) table. This setting has effect only when [log_queries](#log_queries) is true. Queries' threads run by Datastore with this setup are logged according to the rules in the [query_thread_log](/operations/server-configuration-parameters/settings#query_thread_log) server configuration parameter.
 
 Possible values:
 
@@ -3791,7 +3791,7 @@ log_query_threads=1
     DECLARE(Bool, log_query_views, true, R"(
 Setting up query views logging.
 
-When a query run by ClickHouse with this setting enabled has associated views (materialized or live views), they are logged in the [query_views_log](/operations/server-configuration-parameters/settings#query_views_log) server configuration parameter.
+When a query run by Datastore with this setting enabled has associated views (materialized or live views), they are logged in the [query_views_log](/operations/server-configuration-parameters/settings#query_views_log) server configuration parameter.
 
 Example:
 
@@ -3802,7 +3802,7 @@ log_query_views=1
     DECLARE(String, log_comment, "", R"(
 Specifies the value for the `log_comment` field of the [system.query_log](../system-tables/query_log.md) table and comment text for the server log.
 
-It can be used to improve the readability of server logs. Additionally, it helps to select queries related to the test from the `system.query_log` after running [clickhouse-test](../../development/tests.md).
+It can be used to improve the readability of server logs. Additionally, it helps to select queries related to the test from the `system.query_log` after running [datastore-test](../../development/tests.md).
 
 Possible values:
 
@@ -3847,7 +3847,7 @@ Use case-insensitive matching for a regexp_tree dictionary. Can be overridden in
 Allow '.' to match newline characters for a regexp_tree dictionary.
 )", 0) \
     DECLARE(Bool, dictionary_use_async_executor, false, R"(
-Execute a pipeline for reading dictionary source in several threads. It's supported only by dictionaries with local CLICKHOUSE source.
+Execute a pipeline for reading dictionary source in several threads. It's supported only by dictionaries with local DATASTORE source.
 )", 0) \
     DECLARE(LogsLevel, send_logs_level, LogsLevel::fatal, R"(
 Send server text logs with specified minimum level to client. Valid values: 'trace', 'debug', 'information', 'warning', 'error', 'fatal', 'none'
@@ -3872,7 +3872,7 @@ Consider the following queries:
 1.  `SELECT count() FROM test_table WHERE date = '2018-10-10'`
 2.  `SELECT count() FROM (SELECT * FROM test_table) WHERE date = '2018-10-10'`
 
-If `enable_optimize_predicate_expression = 1`, then the execution time of these queries is equal because ClickHouse applies `WHERE` to the subquery when processing it.
+If `enable_optimize_predicate_expression = 1`, then the execution time of these queries is equal because Datastore applies `WHERE` to the subquery when processing it.
 
 If `enable_optimize_predicate_expression = 0`, then the execution time of the second query is much longer because the `WHERE` clause applies to all the data after the subquery finishes.
 )", 0) \
@@ -3887,7 +3887,7 @@ Allows push predicate on AST level for distributed subqueries with enabled anlyz
 )", 0) \
     \
     DECLARE(UInt64, low_cardinality_max_dictionary_size, 8192, R"(
-Sets a maximum size in rows of a shared global dictionary for the [LowCardinality](../../sql-reference/data-types/lowcardinality.md) data type that can be written to a storage file system. This setting prevents issues with RAM in case of unlimited dictionary growth. All the data that can't be encoded due to maximum dictionary size limitation ClickHouse writes in an ordinary method.
+Sets a maximum size in rows of a shared global dictionary for the [LowCardinality](../../sql-reference/data-types/lowcardinality.md) data type that can be written to a storage file system. This setting prevents issues with RAM in case of unlimited dictionary growth. All the data that can't be encoded due to maximum dictionary size limitation Datastore writes in an ordinary method.
 
 Possible values:
 
@@ -3896,7 +3896,7 @@ Possible values:
     DECLARE(Bool, low_cardinality_use_single_dictionary_for_part, false, R"(
 Turns on or turns off using of single dictionary for the data part.
 
-By default, the ClickHouse server monitors the size of dictionaries and if a dictionary overflows then the server starts to write the next one. To prohibit creating several dictionaries set `low_cardinality_use_single_dictionary_for_part = 1`.
+By default, the Datastore server monitors the size of dictionaries and if a dictionary overflows then the server starts to write the next one. To prohibit creating several dictionaries set `low_cardinality_use_single_dictionary_for_part = 1`.
 
 Possible values:
 
@@ -3915,8 +3915,8 @@ Enables/disables preferable using the localhost replica when processing distribu
 
 Possible values:
 
-- 1 — ClickHouse always sends a query to the localhost replica if it exists.
-- 0 — ClickHouse uses the balancing strategy specified by the [load_balancing](#load_balancing) setting.
+- 1 — Datastore always sends a query to the localhost replica if it exists.
+- 0 — Datastore uses the balancing strategy specified by the [load_balancing](#load_balancing) setting.
 
 :::note
 Disable this setting if you use [max_parallel_replicas](#max_parallel_replicas) without [parallel_replicas_custom_key](#parallel_replicas_custom_key).
@@ -3989,7 +3989,7 @@ Minimal number of parts to read to run preliminary merge step during multithread
     DECLARE(Bool, low_cardinality_allow_in_native_format, true, R"(
 Allows or restricts using the [LowCardinality](../../sql-reference/data-types/lowcardinality.md) data type with the [Native](/interfaces/formats/Native) format.
 
-If usage of `LowCardinality` is restricted, ClickHouse server converts `LowCardinality`-columns to ordinary ones for `SELECT` queries, and convert ordinary columns to `LowCardinality`-columns for `INSERT` queries.
+If usage of `LowCardinality` is restricted, Datastore server converts `LowCardinality`-columns to ordinary ones for `SELECT` queries, and convert ordinary columns to `LowCardinality`-columns for `INSERT` queries.
 
 This setting is required mainly for third-party clients which do not support `LowCardinality` data type.
 
@@ -4182,9 +4182,9 @@ and an exception is thrown if the block contains too many partitions.
 
 **Details**
 
-When inserting data, ClickHouse calculates the number of partitions in the
+When inserting data, Datastore calculates the number of partitions in the
 inserted block. If the number of partitions is more than
-`max_partitions_per_insert_block`, ClickHouse either logs a warning or throws an
+`max_partitions_per_insert_block`, Datastore either logs a warning or throws an
 exception based on `throw_on_max_partitions_per_insert_block`. Exceptions have
 the following text:
 
@@ -4555,7 +4555,7 @@ Possible values:
 - false — Disallow.
 )", 0) \
     DECLARE(Bool, convert_query_to_cnf, false, R"(
-When set to `true`, a `SELECT` query will be converted to conjuctive normal form (CNF). There are scenarios where rewriting a query in CNF may execute faster (view this [Github issue](https://github.com/ClickHouse/ClickHouse/issues/11749) for an explanation).
+When set to `true`, a `SELECT` query will be converted to conjuctive normal form (CNF). There are scenarios where rewriting a query in CNF may execute faster (view this [Github issue](https://github.com/ClickHouse/Datastore/issues/11749) for an explanation).
 
 For example, notice how the following `SELECT` query is not modified (the default behavior):
 
@@ -4697,7 +4697,7 @@ Possible values:
       0 — Disabled.
       1 — Enabled.
 
-When enabled, ClickHouse performs deduplication of blocks in materialized views that depend on Replicated\* tables.
+When enabled, Datastore performs deduplication of blocks in materialized views that depend on Replicated\* tables.
 This setting is useful for ensuring that materialized views do not contain duplicate data when the insertion operation is being retried due to a failure.
 
 **See Also**
@@ -4862,7 +4862,7 @@ Only change this setting if you encounter a backward-incompatible bug.
     DECLARE(Seconds, lock_acquire_timeout, DBMS_DEFAULT_LOCK_ACQUIRE_TIMEOUT_SEC, R"(
 Defines how many seconds a locking request waits before failing.
 
-Locking timeout is used to protect from deadlocks while executing read/write operations with tables. When the timeout expires and the locking request fails, the ClickHouse server throws an exception "Locking attempt timed out! Possible deadlock avoided. Client should retry." with error code `DEADLOCK_AVOIDED`.
+Locking timeout is used to protect from deadlocks while executing read/write operations with tables. When the timeout expires and the locking request fails, the Datastore server throws an exception "Locking attempt timed out! Possible deadlock avoided. Client should retry." with error code `DEADLOCK_AVOIDED`.
 
 Possible values:
 
@@ -4959,8 +4959,8 @@ ALTER TABLE test ATTACH PARTITION ID '202101' SETTINGS alter_partition_verbose_r
 ALTER TABLE test FREEZE SETTINGS alter_partition_verbose_result = 1;
 
 ┌─command_type─┬─partition_id─┬─part_name────┬─backup_name─┬─backup_path───────────────────┬─part_backup_path────────────────────────────────────────────┐
-│ FREEZE ALL   │ 202101       │ 202101_7_7_0 │ 8           │ /var/lib/clickhouse/shadow/8/ │ /var/lib/clickhouse/shadow/8/data/default/test/202101_7_7_0 │
-│ FREEZE ALL   │ 202101       │ 202101_8_8_0 │ 8           │ /var/lib/clickhouse/shadow/8/ │ /var/lib/clickhouse/shadow/8/data/default/test/202101_8_8_0 │
+│ FREEZE ALL   │ 202101       │ 202101_7_7_0 │ 8           │ /var/lib/datastore/shadow/8/ │ /var/lib/datastore/shadow/8/data/default/test/202101_7_7_0 │
+│ FREEZE ALL   │ 202101       │ 202101_8_8_0 │ 8           │ /var/lib/datastore/shadow/8/ │ /var/lib/datastore/shadow/8/data/default/test/202101_8_8_0 │
 └──────────────┴──────────────┴──────────────┴─────────────┴───────────────────────────────┴─────────────────────────────────────────────────────────────┘
 ```
 )", 0) \
@@ -5013,7 +5013,7 @@ Possible values:
 - 1 — Enabled. All histograms are written, and every bucket boundary appears in `histogram`.
 )", 0) \
     DECLARE(MySQLDataTypesSupport, mysql_datatypes_support_level, "decimal,datetime64,date2Date32", R"(
-Defines how MySQL types are converted to corresponding ClickHouse types. A comma separated list in any combination of `decimal`, `datetime64`, `date2Date32` or `date2String`. All modern mappings (`decimal`, `datetime64`, `date2Date32`) are enabled by default.
+Defines how MySQL types are converted to corresponding Datastore types. A comma separated list in any combination of `decimal`, `datetime64`, `date2Date32` or `date2String`. All modern mappings (`decimal`, `datetime64`, `date2Date32`) are enabled by default.
 - `decimal`: convert `NUMERIC` and `DECIMAL` types to `Decimal` when precision allows it.
 - `datetime64`: convert `DATETIME` and `TIMESTAMP` types to `DateTime64` instead of `DateTime` when precision is not `0`.
 - `date2Date32`: convert `DATE` to `Date32` instead of `Date`. Takes precedence over `date2String`.
@@ -5312,7 +5312,7 @@ Possible values:
 - string: name of projection that used in a query
 )", 0) \
     DECLARE(String, preferred_optimize_projection_name, "", R"(
-If it is set to a non-empty string, ClickHouse will try to apply specified projection in query.
+If it is set to a non-empty string, Datastore will try to apply specified projection in query.
 
 
 Possible values:
@@ -5320,10 +5320,10 @@ Possible values:
 - string: name of preferred projection
 )", 0) \
     DECLARE(UInt64, max_projection_rows_to_use_projection_index, 1'000'000, R"(
-If the number of rows to read from the projection index is less than or equal to this threshold, ClickHouse will try to apply the projection index during query execution.
+If the number of rows to read from the projection index is less than or equal to this threshold, Datastore will try to apply the projection index during query execution.
 )", 0) \
     DECLARE(UInt64, min_table_rows_to_use_projection_index, 1'000'000, R"(
-If the estimated number of rows to read from the table is greater than or equal to this threshold, ClickHouse will try to use the projection index during query execution.
+If the estimated number of rows to read from the table is greater than or equal to this threshold, Datastore will try to use the projection index during query execution.
 )", 0) \
     DECLARE(Bool, async_socket_for_remote, true, R"(
 Enables asynchronous read from socket while executing remote query.
@@ -5655,7 +5655,7 @@ Rewrite arrayExists() functions to has() when logically equivalent. For example,
 Rewrite `tupleElement(dictGet('dict', ('a', 'b', 'c'), key), 2)` into `dictGet('dict', 'b', key)` to avoid fetching unnecessary dictionary attributes. Supports positional (`.1`, `.2`, ...) and named (`.b`) access, and also applies to `dictGetOrDefault` when the default argument is a constant tuple or a `tuple(...)` of constants.
 )", 0) \
     DECLARE(Bool, optimize_rewrite_like_perfect_affix, true, R"(
-Rewrite LIKE expressions with perfect prefix or suffix (e.g. `col LIKE 'ClickHouse%'`) to startsWith or endsWith functions (e.g. `startsWith(col, 'ClickHouse')`).
+Rewrite LIKE expressions with perfect prefix or suffix (e.g. `col LIKE 'Datastore%'`) to startsWith or endsWith functions (e.g. `startsWith(col, 'Datastore')`).
 )", 0) \
 DECLARE(Bool, execute_exists_as_scalar_subquery, true, R"(
 Execute non-correlated EXISTS subqueries as scalar subqueries. As for scalar subqueries, the cache is used, and the constant folding applies to the result.
@@ -5731,7 +5731,7 @@ For how many elements it is allowed to preallocate space in all hash tables in t
 Disable limit on kafka_num_consumers that depends on the number of available CPU cores.
 )", 0) \
     DECLARE(Bool, allow_experimental_kafka_offsets_storage_in_keeper, false, R"(
-Allow experimental feature to store Kafka related offsets in ClickHouse Keeper. When enabled a ClickHouse Keeper path and replica name can be specified to the Kafka table engine. As a result instead of the regular Kafka engine, a new type of storage engine will be used that stores the committed offsets primarily in ClickHouse Keeper
+Allow experimental feature to store Kafka related offsets in Datastore Keeper. When enabled a Datastore Keeper path and replica name can be specified to the Kafka table engine. As a result instead of the regular Kafka engine, a new type of storage engine will be used that stores the committed offsets primarily in Datastore Keeper
 )", EXPERIMENTAL) \
     DECLARE(Bool, enable_software_prefetch_in_aggregation, true, R"(
 Enable use of software prefetch in aggregation
@@ -5914,9 +5914,9 @@ Sets a mode for combining `SELECT` query results. The setting is only used when 
 
 Possible values:
 
-- `'DISTINCT'` — ClickHouse outputs rows as a result of combining queries removing duplicate rows.
-- `'ALL'` — ClickHouse outputs all rows as a result of combining queries including duplicate rows.
-- `''` — ClickHouse generates an exception when used with `UNION`.
+- `'DISTINCT'` — Datastore outputs rows as a result of combining queries removing duplicate rows.
+- `'ALL'` — Datastore outputs all rows as a result of combining queries including duplicate rows.
+- `''` — Datastore generates an exception when used with `UNION`.
 
 See examples in [UNION](../../sql-reference/statements/select/union.md).
 )", 0) \
@@ -6305,13 +6305,13 @@ Possible values:
 )", 0) \
     \
     DECLARE(LocalFSReadMethod, storage_file_read_method, LocalFSReadMethod::pread, R"(
-Method of reading data from storage file, one of: `read`, `pread`, `mmap`. The mmap method does not apply to clickhouse-server (it's intended for clickhouse-local).
+Method of reading data from storage file, one of: `read`, `pread`, `mmap`. The mmap method does not apply to datastore-server (it's intended for datastore-local).
 )", 0) \
     DECLARE(String, local_filesystem_read_method, "pread_threadpool", R"(
 Method of reading data from local filesystem, one of: read, pread, mmap, io_uring, pread_threadpool.
 
 The 'io_uring' method is experimental and does not work for Log, TinyLog, StripeLog, File, Set and Join, and other tables with append-able files in presence of concurrent reads and writes.
-If you read various articles about 'io_uring' on the Internet, don't be blinded by them. It is not a better method of reading files, unless the case of a large amount of small IO requests, which is not the case in ClickHouse. There are no reasons to enable 'io_uring'.
+If you read various articles about 'io_uring' on the Internet, don't be blinded by them. It is not a better method of reading files, unless the case of a large amount of small IO requests, which is not the case in Datastore. There are no reasons to enable 'io_uring'.
 )", 0) \
     DECLARE(String, remote_filesystem_read_method, "threadpool", R"(
 Method of reading data from remote filesystem, one of: read, threadpool.
@@ -6355,7 +6355,7 @@ Whether to use only prewhere columns size to determine reading task size.
 Hard lower limit on the task size (even when the number of granules is low and the number of available threads is high we won't allocate smaller tasks
 )", 0) \
     DECLARE(UInt64, merge_tree_compact_parts_min_granules_to_multibuffer_read, 16, R"(
-Only has an effect in ClickHouse Cloud. Number of granules in stripe of compact part of MergeTree tables to use multibuffer reader, which supports parallel reading and prefetch. In case of reading from remote fs using of multibuffer reader increases number of read request.
+Only has an effect in Datastore Cloud. Number of granules in stripe of compact part of MergeTree tables to use multibuffer reader, which supports parallel reading and prefetch. In case of reading from remote fs using of multibuffer reader increases number of read request.
 )", 0) \
     \
     DECLARE(Bool, send_table_structure_on_insert_with_inline_data, true, R"(
@@ -6526,7 +6526,7 @@ Maximum number of prefetches. Zero means unlimited. A setting `filesystem_prefet
 )", 0) \
     \
     DECLARE(Bool, allow_calculating_subcolumns_sizes_for_merge_tree_reading, true, R"(
-When enabled, ClickHouse will calculate the size of files required for each subcolumn reading for better task and block sizes calculation.
+When enabled, Datastore will calculate the size of files required for each subcolumn reading for better task and block sizes calculation.
 )", 0) \
 \
     DECLARE(UInt64, use_structure_from_insertion_table_in_table_functions, 2, R"(
@@ -6580,7 +6580,7 @@ Make GROUPING function to return 1 when argument is not used as an aggregation k
 Allow passing arguments to the `RANK` and `DENSE_RANK` window functions for backward compatibility.
 
 Per SQL standard, `RANK` and `DENSE_RANK` take zero arguments — they rank rows based on the
-`OVER (ORDER BY ...)` window only. In ClickHouse versions before 26.5, queries such as
+`OVER (ORDER BY ...)` window only. In Datastore versions before 26.5, queries such as
 `RANK(x) OVER (...)` silently accepted and ignored the argument, which led to user confusion
 (the visible argument suggested it influenced the ranking, but it did not).
 
@@ -6609,17 +6609,17 @@ Use schema from cache for URL with last modification time validation (for URLs w
 )", 0) \
     \
     DECLARE(String, compatibility, "", R"(
-The `compatibility` setting causes ClickHouse to use the default settings of a previous version of ClickHouse, where the previous version is provided as the setting.
+The `compatibility` setting causes Datastore to use the default settings of a previous version of Datastore, where the previous version is provided as the setting.
 
 If settings are set to non-default values, then those settings are honored (only settings that have not been modified are affected by the `compatibility` setting).
 
-This setting takes a ClickHouse version number as a string, like `22.3`, `22.8`. An empty value means that this setting is disabled.
+This setting takes a Datastore version number as a string, like `22.3`, `22.8`. An empty value means that this setting is disabled.
 
 Disabled by default.
 
 :::note
-In ClickHouse Cloud, the service-level default compatibility setting must be set by ClickHouse Cloud support. Please [open a case](https://clickhouse.cloud/support) to have it set.
-However, the compatibility setting can be overridden at the user, role, profile, query, or session level using standard ClickHouse setting mechanisms such as `SET compatibility = '22.3'` in a session or `SETTINGS compatibility = '22.3'` in a query.
+In Datastore Cloud, the service-level default compatibility setting must be set by Datastore Cloud support. Please [open a case](https://datastore.cloud/support) to have it set.
+However, the compatibility setting can be overridden at the user, role, profile, query, or session level using standard Datastore setting mechanisms such as `SET compatibility = '22.3'` in a session or `SETTINGS compatibility = '22.3'` in a query.
 :::
 )", 0) \
     \
@@ -6719,114 +6719,114 @@ If reading `sample.csv` is successful, file will be renamed to `processed_sample
     \
     /* CLOUD ONLY */ \
     DECLARE(Bool, read_through_distributed_cache, false, R"(
-Only has an effect in ClickHouse Cloud. Allow reading from distributed cache
+Only has an effect in Datastore Cloud. Allow reading from distributed cache
 )", 0) \
     DECLARE(Bool, write_through_distributed_cache, false, R"(
-Only has an effect in ClickHouse Cloud. Allow writing to distributed cache (writing to s3 will also be done by distributed cache)
+Only has an effect in Datastore Cloud. Allow writing to distributed cache (writing to s3 will also be done by distributed cache)
 )", 0) \
     DECLARE(Bool, distributed_cache_throw_on_error, false, R"(
-Only has an effect in ClickHouse Cloud. Rethrow exception happened during communication with distributed cache or exception received from distributed cache. Otherwise fallback to skipping distributed cache on error
+Only has an effect in Datastore Cloud. Rethrow exception happened during communication with distributed cache or exception received from distributed cache. Otherwise fallback to skipping distributed cache on error
 )", 0) \
     DECLARE(DistributedCacheLogMode, distributed_cache_log_mode, DistributedCacheLogMode::LOG_ON_ERROR, R"(
-Only has an effect in ClickHouse Cloud. Mode for writing to system.distributed_cache_log
+Only has an effect in Datastore Cloud. Mode for writing to system.distributed_cache_log
 )", 0) \
     DECLARE(Bool, distributed_cache_fetch_metrics_only_from_current_az, true, R"(
-Only has an effect in ClickHouse Cloud. Fetch metrics only from current availability zone in system.distributed_cache_metrics, system.distributed_cache_events
+Only has an effect in Datastore Cloud. Fetch metrics only from current availability zone in system.distributed_cache_metrics, system.distributed_cache_events
 )", 0) \
     DECLARE(UInt64, distributed_cache_connect_max_tries, default_distributed_cache_connect_max_tries, R"(
-Only has an effect in ClickHouse Cloud. Number of tries to connect to distributed cache if unsuccessful
+Only has an effect in Datastore Cloud. Number of tries to connect to distributed cache if unsuccessful
 )", 0) \
     DECLARE(UInt64, distributed_cache_read_request_max_tries, default_distributed_cache_read_request_max_tries, R"(
-Only has an effect in ClickHouse Cloud. Number of tries to do distributed cache read request if unsuccessful
+Only has an effect in Datastore Cloud. Number of tries to do distributed cache read request if unsuccessful
 )", 0) \
     DECLARE(UInt64, distributed_cache_write_request_max_tries, default_distributed_cache_write_request_max_tries, R"(
-Only has an effect in ClickHouse Cloud. Number of tries to do distributed cache write request if unsuccessful
+Only has an effect in Datastore Cloud. Number of tries to do distributed cache write request if unsuccessful
 )", 0) \
     DECLARE(UInt64, distributed_cache_receive_response_wait_milliseconds, 60000, R"(
-Only has an effect in ClickHouse Cloud. Wait time in milliseconds to receive data for request from distributed cache
+Only has an effect in Datastore Cloud. Wait time in milliseconds to receive data for request from distributed cache
 )", 0) \
     DECLARE(UInt64, distributed_cache_receive_timeout_milliseconds, 10000, R"(
-Only has an effect in ClickHouse Cloud. Wait time in milliseconds to receive any kind of response from distributed cache
+Only has an effect in Datastore Cloud. Wait time in milliseconds to receive any kind of response from distributed cache
 
 Cloud default value: `20000`.
 )", 0) \
     DECLARE(UInt64, distributed_cache_wait_connection_from_pool_milliseconds, 100, R"(
-Only has an effect in ClickHouse Cloud. Wait time in milliseconds to receive connection from connection pool if distributed_cache_pool_behaviour_on_limit is wait
+Only has an effect in Datastore Cloud. Wait time in milliseconds to receive connection from connection pool if distributed_cache_pool_behaviour_on_limit is wait
 )", 0) \
     DECLARE(Bool, distributed_cache_bypass_connection_pool, false, R"(
-Only has an effect in ClickHouse Cloud. Allow to bypass distributed cache connection pool
+Only has an effect in Datastore Cloud. Allow to bypass distributed cache connection pool
 )", 0) \
     DECLARE(DistributedCachePoolBehaviourOnLimit, distributed_cache_pool_behaviour_on_limit, DistributedCachePoolBehaviourOnLimit::WAIT, R"(
-Only has an effect in ClickHouse Cloud. Identifies behaviour of distributed cache connection on pool limit reached
+Only has an effect in Datastore Cloud. Identifies behaviour of distributed cache connection on pool limit reached
 )", 0) \
     DECLARE(UInt64, distributed_cache_alignment, 0, R"(
-Only has an effect in ClickHouse Cloud. A setting for testing purposes, do not change it
+Only has an effect in Datastore Cloud. A setting for testing purposes, do not change it
 )", 0) \
     DECLARE(UInt64, distributed_cache_max_unacked_inflight_packets, DistributedCache::MAX_UNACKED_INFLIGHT_PACKETS, R"(
-Only has an effect in ClickHouse Cloud. A maximum number of unacknowledged in-flight packets in a single distributed cache read request
+Only has an effect in Datastore Cloud. A maximum number of unacknowledged in-flight packets in a single distributed cache read request
 )", 0) \
     DECLARE(UInt64, distributed_cache_data_packet_ack_window, DistributedCache::ACK_DATA_PACKET_WINDOW, R"(
-Only has an effect in ClickHouse Cloud. A window for sending ACK for DataPacket sequence in a single distributed cache read request
+Only has an effect in Datastore Cloud. A window for sending ACK for DataPacket sequence in a single distributed cache read request
 )", 0) \
     DECLARE(Bool, distributed_cache_discard_connection_if_unread_data, true, R"(
-Only has an effect in ClickHouse Cloud. Discard connection if some data is unread.
+Only has an effect in Datastore Cloud. Discard connection if some data is unread.
 )", 0) \
     DECLARE(UInt64, distributed_cache_min_bytes_for_seek, 0, R"(
-Only has an effect in ClickHouse Cloud. Minimum number of bytes to do seek in distributed cache.
+Only has an effect in Datastore Cloud. Minimum number of bytes to do seek in distributed cache.
 )", 0) \
     DECLARE(UInt64, distributed_cache_credentials_refresh_period_seconds, default_distributed_cache_credentials_refresh_period_seconds, R"(
-Only has an effect in ClickHouse Cloud. A period of credentials refresh.
+Only has an effect in Datastore Cloud. A period of credentials refresh.
 )", 0) \
     DECLARE(Bool, distributed_cache_read_only_from_current_az, true, R"(
-Only has an effect in ClickHouse Cloud. Allow to read only from current availability zone. If disabled, will read from all cache servers in all availability zones.
+Only has an effect in Datastore Cloud. Allow to read only from current availability zone. If disabled, will read from all cache servers in all availability zones.
 )", 0) \
     DECLARE(UInt64, write_through_distributed_cache_buffer_size, 0, R"(
-Only has an effect in ClickHouse Cloud. Set buffer size for write-through distributed cache. If 0, will use buffer size which would have been used if there was not distributed cache.
+Only has an effect in Datastore Cloud. Set buffer size for write-through distributed cache. If 0, will use buffer size which would have been used if there was not distributed cache.
 )", 0) \
     DECLARE(Bool, table_engine_read_through_distributed_cache, false, R"(
-Only has an effect in ClickHouse Cloud. Allow reading from distributed cache via table engines / table functions (s3, azure, etc)
+Only has an effect in Datastore Cloud. Allow reading from distributed cache via table engines / table functions (s3, azure, etc)
 )", 0) \
     DECLARE(UInt64, distributed_cache_connect_backoff_min_ms, default_distributed_cache_connect_backoff_min_ms, R"(
-Only has an effect in ClickHouse Cloud. Minimum backoff milliseconds for distributed cache connection creation.
+Only has an effect in Datastore Cloud. Minimum backoff milliseconds for distributed cache connection creation.
 )", 0) \
     DECLARE(UInt64, distributed_cache_connect_backoff_max_ms, default_distributed_cache_connect_backoff_max_ms, R"(
-Only has an effect in ClickHouse Cloud. Maximum backoff milliseconds for distributed cache connection creation.
+Only has an effect in Datastore Cloud. Maximum backoff milliseconds for distributed cache connection creation.
 )", 0) \
     DECLARE(Bool, distributed_cache_prefer_bigger_buffer_size, false, R"(
-Only has an effect in ClickHouse Cloud. Same as filesystem_cache_prefer_bigger_buffer_size, but for distributed cache.
+Only has an effect in Datastore Cloud. Same as filesystem_cache_prefer_bigger_buffer_size, but for distributed cache.
 )", 0) \
     DECLARE(Bool, read_from_distributed_cache_if_exists_otherwise_bypass_cache, false, R"(
-Only has an effect in ClickHouse Cloud. Same as read_from_filesystem_cache_if_exists_otherwise_bypass_cache, but for distributed cache.
+Only has an effect in Datastore Cloud. Same as read_from_filesystem_cache_if_exists_otherwise_bypass_cache, but for distributed cache.
 )", 0) \
     DECLARE(UInt64, distributed_cache_connect_timeout_ms, default_distributed_cache_connect_timeout_ms, R"(
-Only has an effect in ClickHouse Cloud. Connection timeout when connecting to distributed cache server.
+Only has an effect in Datastore Cloud. Connection timeout when connecting to distributed cache server.
 )", 0) \
     DECLARE(UInt64, distributed_cache_receive_timeout_ms, default_distributed_cache_receive_timeout_ms, R"(
-Only has an effect in ClickHouse Cloud. Timeout for receiving data from distributed cache server, in milliseconds. If no bytes were received in this interval, the exception is thrown.
+Only has an effect in Datastore Cloud. Timeout for receiving data from distributed cache server, in milliseconds. If no bytes were received in this interval, the exception is thrown.
 )", 0) \
     DECLARE(UInt64, distributed_cache_send_timeout_ms, default_distributed_cache_send_timeout_ms, R"(
-Only has an effect in ClickHouse Cloud. Timeout for sending data to istributed cache server, in milliseconds. If a client needs to send some data but is not able to send any bytes in this interval, the exception is thrown.
+Only has an effect in Datastore Cloud. Timeout for sending data to istributed cache server, in milliseconds. If a client needs to send some data but is not able to send any bytes in this interval, the exception is thrown.
 )", 0) \
     DECLARE(UInt64, distributed_cache_tcp_keep_alive_timeout_ms, default_distributed_cache_tcp_keep_alive_timeout_ms, R"(
-Only has an effect in ClickHouse Cloud. The time in milliseconds the connection to distributed cache server needs to remain idle before TCP starts sending keepalive probes.
+Only has an effect in Datastore Cloud. The time in milliseconds the connection to distributed cache server needs to remain idle before TCP starts sending keepalive probes.
 )", 0) \
     DECLARE(Bool, distributed_cache_use_clients_cache_for_write, default_distributed_cache_use_clients_cache_for_write, R"(
-Only has an effect in ClickHouse Cloud. Use clients cache for write requests.
+Only has an effect in Datastore Cloud. Use clients cache for write requests.
 )", 0) \
     DECLARE(Bool, distributed_cache_use_clients_cache_for_read, default_distributed_cache_use_clients_cache_for_read, R"(
-Only has an effect in ClickHouse Cloud. Use clients cache for read requests.
+Only has an effect in Datastore Cloud. Use clients cache for read requests.
 )", 0) \
     DECLARE(String, distributed_cache_file_cache_name, "", R"(
-Only has an effect in ClickHouse Cloud. A setting used only for CI tests - filesystem cache name to use on distributed cache.
+Only has an effect in Datastore Cloud. A setting used only for CI tests - filesystem cache name to use on distributed cache.
 )", 0) \
     DECLARE(Bool, filesystem_cache_allow_background_download, true, R"(
 Allow filesystem cache to enqueue background downloads for data read from remote storage. Disable to keep downloads in the foreground for the current query/session.
 )", 0) \
     DECLARE(Bool, filesystem_cache_enable_background_download_for_metadata_files_in_packed_storage, true, R"(
-Only has an effect in ClickHouse Cloud. Wait time to lock cache for space reservation in filesystem cache
+Only has an effect in Datastore Cloud. Wait time to lock cache for space reservation in filesystem cache
 )", 0) \
     DECLARE(Bool, filesystem_cache_enable_background_download_during_fetch, true, R"(
-Only has an effect in ClickHouse Cloud. Wait time to lock cache for space reservation in filesystem cache
+Only has an effect in Datastore Cloud. Wait time to lock cache for space reservation in filesystem cache
 )", 0) \
     \
     DECLARE(Bool, parallelize_output_from_storages, true, R"(
@@ -6886,7 +6886,7 @@ Rewrite count distinct to subquery of group by
 Avoid repeated inverse dictionary lookup by doing faster lookups into a precomputed set of possible key values.
 )", 0) \
     DECLARE(Bool, throw_if_no_data_to_insert, true, R"(
-Allows or forbids empty INSERTs, enabled by default (throws an error on an empty insert). Only applies to INSERTs using [`clickhouse-client`](/interfaces/cli) or using the [gRPC interface](/interfaces/grpc).
+Allows or forbids empty INSERTs, enabled by default (throws an error on an empty insert). Only applies to INSERTs using [`datastore-client`](/interfaces/cli) or using the [gRPC interface](/interfaces/grpc).
 )", 0) \
     DECLARE(Bool, compatibility_ignore_auto_increment_in_create_table, false, R"(
 Ignore AUTO_INCREMENT keyword in column declaration if true, otherwise return error. It simplifies migration from MySQL
@@ -6907,7 +6907,7 @@ Initial backoff timeout for general keeper operations
 Max backoff timeout for general keeper operations
 )", 0) \
     DECLARE(UInt64, insert_keeper_max_retries, 20, R"(
-The setting sets the maximum number of retries for ClickHouse Keeper (or ZooKeeper) requests during insert into replicated MergeTree. Only Keeper requests which failed due to network error, Keeper session timeout, or request timeout are considered for retries.
+The setting sets the maximum number of retries for Datastore Keeper (or ZooKeeper) requests during insert into replicated MergeTree. Only Keeper requests which failed due to network error, Keeper session timeout, or request timeout are considered for retries.
 
 Possible values:
 
@@ -7114,10 +7114,10 @@ If enabled, server will ignore all DROP table queries with specified probability
 Traverse frozen data (shadow directory) in addition to actual table data when query system.remote_data_paths
 )", 0) \
     DECLARE(Bool, geo_distance_returns_float64_on_float64_arguments, true, R"(
-If all four arguments to `geoDistance`, `greatCircleDistance`, `greatCircleAngle` functions are Float64, return Float64 and use double precision for internal calculations. In previous ClickHouse versions, the functions always returned Float32.
+If all four arguments to `geoDistance`, `greatCircleDistance`, `greatCircleAngle` functions are Float64, return Float64 and use double precision for internal calculations. In previous Datastore versions, the functions always returned Float32.
 )", 0) \
     DECLARE(Bool, allow_get_client_http_header, false, R"(
-Allow to use the function `getClientHTTPHeader` which lets to obtain a value of an the current HTTP request's header. It is not enabled by default for security reasons, because some headers, such as `Cookie`, could contain sensitive info. Note that the `X-ClickHouse-*` and `Authentication` headers are always restricted and cannot be obtained with this function.
+Allow to use the function `getClientHTTPHeader` which lets to obtain a value of an the current HTTP request's header. It is not enabled by default for security reasons, because some headers, such as `Cookie`, could contain sensitive info. Note that the `X-Datastore-*` and `Authentication` headers are always restricted and cannot be obtained with this function.
 )", 0) \
     DECLARE(Bool, cast_string_to_dynamic_use_inference, false, R"(
 Use types inference during String to Dynamic conversion
@@ -7135,13 +7135,13 @@ Possible values:
 
 - `'best_effort'` — Enables extended parsing.
 
-    ClickHouse can parse the basic `YYYY-MM-DD HH:MM:SS` format and all [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time formats. For example, `'2018-06-08T01:02:03.000Z'`.
+    Datastore can parse the basic `YYYY-MM-DD HH:MM:SS` format and all [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time formats. For example, `'2018-06-08T01:02:03.000Z'`.
 
 - `'best_effort_us'` — Similar to `best_effort` (see the difference in [parseDateTimeBestEffortUS](../../sql-reference/functions/type-conversion-functions#parseDateTimeBestEffortUS)
 
 - `'basic'` — Use basic parser.
 
-    ClickHouse can parse only the basic `YYYY-MM-DD HH:MM:SS` or `YYYY-MM-DD` format. For example, `2019-08-20 10:18:56` or `2019-08-20`.
+    Datastore can parse only the basic `YYYY-MM-DD HH:MM:SS` or `YYYY-MM-DD` format. For example, `2019-08-20 10:18:56` or `2019-08-20`.
 
 See also:
 
@@ -7218,12 +7218,12 @@ Allows to set default `DEFINER` option while creating a view. [More about SQL se
 The default value is `CURRENT_USER`.
 )", 0) \
     DECLARE(UInt64, cache_warmer_threads, 4, R"(
-Only has an effect in ClickHouse Cloud. Number of background threads for speculatively downloading new data parts into the filesystem cache, when [cache_populated_by_fetch](merge-tree-settings.md/#cache_populated_by_fetch) is enabled. Zero to disable.
+Only has an effect in Datastore Cloud. Number of background threads for speculatively downloading new data parts into the filesystem cache, when [cache_populated_by_fetch](merge-tree-settings.md/#cache_populated_by_fetch) is enabled. Zero to disable.
 )", 0) \
     DECLARE(Bool, use_async_executor_for_materialized_views, false, R"(
 Use async and potentially multithreaded execution of materialized view query, can speedup views processing during INSERT, but also consume more memory.)", 0) \
     DECLARE(Int64, ignore_cold_parts_seconds, 0, R"(
-Only has an effect in ClickHouse Cloud. Exclude new data parts from SELECT queries until they're either pre-warmed (see [cache_populated_by_fetch](merge-tree-settings.md/#cache_populated_by_fetch)) or this many seconds old. Only for Replicated-/SharedMergeTree.
+Only has an effect in Datastore Cloud. Exclude new data parts from SELECT queries until they're either pre-warmed (see [cache_populated_by_fetch](merge-tree-settings.md/#cache_populated_by_fetch)) or this many seconds old. Only for Replicated-/SharedMergeTree.
 )", 0) \
     DECLARE(Bool, short_circuit_function_evaluation_for_nulls, true, R"(
 Optimizes evaluation of functions that return NULL when any argument is NULL. When the percentage of NULL values in the function's arguments exceeds the short_circuit_function_evaluation_for_nulls_threshold, the system skips evaluating the function row-by-row. Instead, it immediately returns NULL for all rows, avoiding unnecessary computation.
@@ -7233,7 +7233,7 @@ Ratio threshold of NULL values to execute functions with Nullable arguments only
 When the ratio of rows containing NULL values to the total number of rows exceeds this threshold, these rows containing NULL values will not be evaluated.
 )", 0) \
     DECLARE(Int64, prefer_warmed_unmerged_parts_seconds, 0, R"(
-Only has an effect in ClickHouse Cloud. If a merged part is less than this many seconds old and is not pre-warmed (see [cache_populated_by_fetch](merge-tree-settings.md/#cache_populated_by_fetch)), but all its source parts are available and pre-warmed, SELECT queries will read from those parts instead. Only for Replicated-/SharedMergeTree. Note that this only checks whether CacheWarmer processed the part; if the part was fetched into cache by something else, it'll still be considered cold until CacheWarmer gets to it; if it was warmed, then evicted from cache, it'll still be considered warm.
+Only has an effect in Datastore Cloud. If a merged part is less than this many seconds old and is not pre-warmed (see [cache_populated_by_fetch](merge-tree-settings.md/#cache_populated_by_fetch)), but all its source parts are available and pre-warmed, SELECT queries will read from those parts instead. Only for Replicated-/SharedMergeTree. Note that this only checks whether CacheWarmer processed the part; if the part was fetched into cache by something else, it'll still be considered cold until CacheWarmer gets to it; if it was warmed, then evicted from cache, it'll still be considered warm.
 )", 0) \
     DECLARE(Int64, iceberg_timestamp_ms, 0, R"(
 Query Iceberg table using the snapshot that was current at a specific timestamp.
@@ -7242,7 +7242,7 @@ Query Iceberg table using the snapshot that was current at a specific timestamp.
 Query Iceberg table using the specific snapshot id.
 )", 0) \
     DECLARE(Bool, allow_experimental_geo_types_in_iceberg, false, R"(
-Allow parsing Iceberg `geometry` and `geography` field types as ClickHouse `Geometry` (Variant) type.
+Allow parsing Iceberg `geometry` and `geography` field types as Datastore `Geometry` (Variant) type.
 )", 0) \
     DECLARE_WITH_ALIAS(Bool, show_remote_databases_in_system_tables, false, R"(
 Enables showing remote databases (data lake catalogs, MySQL, PostgreSQL) in system tables.
@@ -7381,7 +7381,7 @@ Cloud default value: `default`.
 If true, subquery for IN will be executed on every follower replica.
 )", 0) \
     DECLARE(Bool, parallel_replicas_for_non_replicated_merge_tree, false, R"(
-If true, ClickHouse will use parallel replicas algorithm also for non-replicated MergeTree tables
+If true, Datastore will use parallel replicas algorithm also for non-replicated MergeTree tables
 )", 0) \
     DECLARE(UInt64, parallel_replicas_min_number_of_rows_per_replica, 0, R"(
 Limit the number of replicas used in a query to (estimated rows to read / min_number_of_rows_per_replica). The max is still limited by 'max_parallel_replicas'
@@ -7545,7 +7545,7 @@ SELECT queries with LIMIT bigger than this setting cannot use vector similarity 
 The size of the dynamic candidate list when searching the vector similarity index, also known as 'ef_search'.
 )", 0) \
     DECLARE(Bool, vector_search_with_rescoring, false, R"(
-If ClickHouse performs rescoring for queries that use the vector similarity index.
+If Datastore performs rescoring for queries that use the vector similarity index.
 Without rescoring, the vector similarity index returns the rows containing the best matches directly.
 With rescoring, the rows are extrapolated to granule level and all rows in the granule are checked again.
 In most situations, rescoring helps only marginally with accuracy but it deteriorates performance of vector search queries significantly.
@@ -7561,12 +7561,12 @@ If a vector search query has a WHERE clause, this setting determines if it is ev
 Multiply the number of fetched nearest neighbors from the vector similarity index by this number. Only applied for post-filtering with other predicates or if setting 'vector_search_with_rescoring = 1'.
 )", 0, vector_search_postfilter_multiplier) \
     DECLARE(Bool, mongodb_throw_on_unsupported_query, true, R"(
-If enabled, MongoDB tables will return an error when a MongoDB query cannot be built. Otherwise, ClickHouse reads the full table and processes it locally. This option does not apply when 'allow_experimental_analyzer=0'.
+If enabled, MongoDB tables will return an error when a MongoDB query cannot be built. Otherwise, Datastore reads the full table and processes it locally. This option does not apply when 'allow_experimental_analyzer=0'.
 )", 0) \
     DECLARE(Bool, implicit_select, false, R"(
 Allow writing simple SELECT queries without the leading SELECT keyword, which makes it simple for calculator-style usage, e.g. `1 + 2` becomes a valid query.
 
-In `clickhouse-local` it is enabled by default and can be explicitly disabled.
+In `datastore-local` it is enabled by default and can be explicitly disabled.
 )", 0) \
     DECLARE(Bool, optimize_extract_common_expressions, true, R"(
 Allow extracting common expressions from disjunctions in WHERE, PREWHERE, ON, HAVING and QUALIFY expressions. A logical expression like `(A AND B) OR (A AND C)` can be rewritten to `A AND (B OR C)`, which might help to utilize:
@@ -7591,7 +7591,7 @@ Automatically synchronize set of data parts after MOVE|REPLACE|ATTACH partition 
     DECLARE(String, implicit_table_at_top_level, "", R"(
 If not empty, queries without FROM at the top level will read from this table instead of system.one.
 
-This is used in clickhouse-local for input data processing.
+This is used in datastore-local for input data processing.
 The setting could be set explicitly by a user but is not intended for this type of usage.
 
 Subqueries are not affected by this setting (neither scalar, FROM, or IN subqueries).
@@ -7631,7 +7631,7 @@ The limit on the number of series created by the `generateSerialID` function.
 As each series represents a node in Keeper, it is recommended to have no more than a couple of millions of them.
 )", 0) \
     DECLARE(Bool, use_hive_partitioning, true, R"(
-When enabled, ClickHouse will detect Hive-style partitioning in path (`/name=value/`) in file-like table engines [File](/sql-reference/table-functions/file#hive-style-partitioning)/[S3](/sql-reference/table-functions/s3#hive-style-partitioning)/[URL](/sql-reference/table-functions/url#hive-style-partitioning)/[HDFS](/sql-reference/table-functions/hdfs#hive-style-partitioning)/[AzureBlobStorage](/sql-reference/table-functions/azureBlobStorage#hive-style-partitioning) and will allow to use partition columns as virtual columns in the query. These virtual columns will have the same names as in the partitioned path, but starting with `_`.
+When enabled, Datastore will detect Hive-style partitioning in path (`/name=value/`) in file-like table engines [File](/sql-reference/table-functions/file#hive-style-partitioning)/[S3](/sql-reference/table-functions/s3#hive-style-partitioning)/[URL](/sql-reference/table-functions/url#hive-style-partitioning)/[HDFS](/sql-reference/table-functions/hdfs#hive-style-partitioning)/[AzureBlobStorage](/sql-reference/table-functions/azureBlobStorage#hive-style-partitioning) and will allow to use partition columns as virtual columns in the query. These virtual columns will have the same names as in the partitioned path, but starting with `_`.
 )", 0) \
     DECLARE(UInt64, parallel_hash_join_threshold, 100'000, R"(
 When hash-based join algorithm is applied, this threshold helps to decide between using `hash` and `parallel_hash` (only if estimation of the right table size is available).
@@ -7795,13 +7795,13 @@ Always ignore ON CLUSTER clause for DDL queries with replicated databases.
     DECLARE(UInt64, archive_adaptive_buffer_max_size_bytes, 8 * DBMS_DEFAULT_BUFFER_SIZE, R"(
 Limits the maximum size of the adaptive buffer used when writing to archive files (for example, tar archives)", 0) \
     DECLARE(UInt64, shared_merge_tree_sequential_consistency_initial_parts_update_backoff_ms, 50, R"(
-Initial backoff in milliseconds for parts update when using `select_sequential_consistency` with `SharedMergeTree`. Only available in ClickHouse Cloud.
+Initial backoff in milliseconds for parts update when using `select_sequential_consistency` with `SharedMergeTree`. Only available in Datastore Cloud.
 )", 0) \
     DECLARE(UInt64, shared_merge_tree_sequential_consistency_max_parts_update_backoff_ms, 1000, R"(
-Max backoff in milliseconds for parts update when using `select_sequential_consistency` with `SharedMergeTree`. Only available in ClickHouse Cloud.
+Max backoff in milliseconds for parts update when using `select_sequential_consistency` with `SharedMergeTree`. Only available in Datastore Cloud.
 )", 0) \
     DECLARE(UInt64, shared_merge_tree_sequential_consistency_parts_update_max_retries, 10, R"(
-Max retries for parts update when using `select_sequential_consistency` with `SharedMergeTree`. Only available in ClickHouse Cloud.
+Max retries for parts update when using `select_sequential_consistency` with `SharedMergeTree`. Only available in Datastore Cloud.
 )", 0) \
     DECLARE(UInt64, max_bytes_before_external_join, 0, R"(
 If set to a non-zero value and `join_algorithm` is `hash`, `parallel_hash`, `default`, or `auto`, the hash join will automatically be converted to grace hash join to enable spilling to disk when the right-side data exceeds this many bytes. When set to 0 (default), this absolute byte threshold is disabled, but automatic spilling may still occur via `max_bytes_ratio_before_external_join` (which defaults to `0.5`); set both to `0` to fully disable automatic spilling. It prevents read in order through join optimization.
@@ -7960,7 +7960,7 @@ Controls whether extracted subcolumns of type `Tuple(...)` can be typed as `Null
 This setting controls extracted subcolumn behavior only.
 It does not control whether `Nullable(Tuple(...))` columns can be created in tables; that is controlled by `allow_experimental_nullable_tuple_type`.
 
-ClickHouse uses the value for this setting loaded at server startup.
+Datastore uses the value for this setting loaded at server startup.
 Changes made with `SET` or query-level `SETTINGS` do not change extracted subcolumn behavior.
 To change extracted subcolumn behavior, update `allow_nullable_tuple_in_extracted_subcolumns` in startup profile configuration (for example, users.xml) and restart the server.
 )", 0) \
@@ -7979,7 +7979,7 @@ Enable Kusto Query Language (KQL) - an alternative to SQL.
 Enable PRQL - an alternative to SQL.
 )", EXPERIMENTAL) \
     DECLARE(Bool, allow_experimental_polyglot_dialect, false, R"(
-Enable polyglot SQL transpiler - transpiles SQL from 30+ dialects (MySQL, PostgreSQL, SQLite, Snowflake, DuckDB, etc.) into ClickHouse SQL.
+Enable polyglot SQL transpiler - transpiles SQL from 30+ dialects (MySQL, PostgreSQL, SQLite, Snowflake, DuckDB, etc.) into Datastore SQL.
 )", EXPERIMENTAL) \
     DECLARE(String, polyglot_dialect, "", R"(
 Source SQL dialect for the polyglot transpiler (e.g. 'sqlite', 'mysql', 'postgresql', 'snowflake', 'duckdb').
@@ -8478,7 +8478,7 @@ void SettingsImpl::applyCompatibilitySetting(const String & compatibility_value)
 
     ClickHouseVersion version(compatibility_value);
     const auto & settings_changes_history = getSettingsChangesHistory();
-    /// Iterate through ClickHouse version in descending order and apply reversed
+    /// Iterate through Datastore version in descending order and apply reversed
     /// changes for each version that is higher that version from compatibility setting
     for (auto it = settings_changes_history.rbegin(); it != settings_changes_history.rend(); ++it)
     {

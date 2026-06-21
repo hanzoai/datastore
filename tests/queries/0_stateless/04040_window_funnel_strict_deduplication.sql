@@ -1,5 +1,5 @@
 -- Verify windowFunnel with strict_deduplication returns correct max level.
--- See https://github.com/ClickHouse/ClickHouse/issues/37177
+-- See https://github.com/ClickHouse/Datastore/issues/37177
 
 DROP TABLE IF EXISTS test_windowfunnel_strict_dedup;
 

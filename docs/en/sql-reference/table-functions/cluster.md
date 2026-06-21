@@ -53,7 +53,7 @@ Using the `cluster` and `clusterAllReplicas` table functions are less efficient 
 The `cluster` and `clusterAllReplicas` table functions can be useful in the following cases:
 
 - Accessing a specific cluster for data comparison, debugging, and testing.
-- Queries to various ClickHouse clusters and replicas for research purposes.
+- Queries to various Datastore clusters and replicas for research purposes.
 - Infrequent distributed requests that are made manually.
 
 Connection settings like `host`, `port`, `user`, `password`, `compression`, `secure` are taken from `<remote_servers>` config section. See details in [Distributed engine](../../engines/table-engines/special/distributed.md).

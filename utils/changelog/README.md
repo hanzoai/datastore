@@ -12,7 +12,7 @@ python3 changelog.py -h
 
 Usage example:
 
-Note: The working directory is ClickHouse/utils/changelog
+Note: The working directory is Datastore/utils/changelog
 
 ```bash
 GITHUB_TOKEN="<your token>"

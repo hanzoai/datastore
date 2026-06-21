@@ -99,11 +99,11 @@ def get_run_command(
         f"--user {uid}:{gid} "
         f"--workdir=/fuzzers "
         f"--volume={fuzzers_path}:/fuzzers "
-        f"--volume={repo_path}/tests:/usr/share/clickhouse-test "
+        f"--volume={repo_path}/tests:/usr/share/datastore-test "
         f"--volume={result_path}:{RUNNER_OUTPUT} "
         "--security-opt seccomp=unconfined "  # required to issue io_uring sys-calls
         f"--cap-add=SYS_PTRACE {env_str} {additional_options_str} {image} "
-        "python3 /usr/share/clickhouse-test/fuzz/runner.py"
+        "python3 /usr/share/datastore-test/fuzz/runner.py"
     )
 
 
@@ -397,7 +397,7 @@ def main():
         run_by_hash_total = 0
 
     docker_image = DockerImage.get_docker_image(
-        "clickhouse/stateless-test"
+        "datastore/stateless-test"
     ).pull_image()
 
     is_master = info.pr_number == 0 and info.git_branch == "master"

@@ -10,8 +10,8 @@ from helpers.cluster import ClickHouseCluster, get_docker_compose_path, run_and_
 DOCKER_COMPOSE_PATH = get_docker_compose_path()
 
 INCREMENTAL_WRITER_JAR = "/opt/paimon/paimon-incremental-writer.jar"
-CLICKHOUSE_WORKDIR = "/var/lib/clickhouse"
-USER_FILES_PATH = f"{CLICKHOUSE_WORKDIR}/user_files"
+DATASTORE_WORKDIR = "/var/lib/datastore"
+USER_FILES_PATH = f"{DATASTORE_WORKDIR}/user_files"
 
 CH_TABLE_NAME = "paimon_inc_read"
 CH_TABLE_NAME_WITH_LIMIT = "paimon_inc_read_with_limit"
@@ -102,7 +102,7 @@ def _create_clickhouse_table_for_paimon_incremental_read(
         "ENGINE = PaimonLocal('{table_path}') "
         "SETTINGS "
         "paimon_incremental_read = 1, "
-        "paimon_keeper_path = '/clickhouse/tables/{{uuid}}', "
+        "paimon_keeper_path = '/datastore/tables/{{uuid}}', "
         "paimon_replica_name = '{{replica}}', "
         "paimon_metadata_refresh_interval_sec = {refresh_interval_sec}".format(
             table_name=table_name,

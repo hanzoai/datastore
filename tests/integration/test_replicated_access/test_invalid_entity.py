@@ -46,8 +46,8 @@ def test_server_fail_on_invalid_replicated_user(started_cluster):
 
     zk = cluster.get_kazoo_client("zoo1")
 
-    user_uuid = zk.get(f"/clickhouse/access/U/{user_name}")[0].decode("utf-8")
-    entity_path = f"/clickhouse/access/uuid/{user_uuid}"
+    user_uuid = zk.get(f"/datastore/access/U/{user_name}")[0].decode("utf-8")
+    entity_path = f"/datastore/access/uuid/{user_uuid}"
 
     original_data = zk.get(entity_path)[0].decode("utf-8")
     assert f"ATTACH USER {user_name}" in original_data

@@ -7,7 +7,7 @@
 # - uses it as session user
 # - apply role to the user
 #
-# https://github.com/ClickHouse/ClickHouse/issues/35714
+# https://github.com/ClickHouse/Datastore/issues/35714
 
 set -e
 
@@ -15,7 +15,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -m -q "
+$DATASTORE_CLIENT -m -q "
     DROP ROLE IF EXISTS test_role_02242;
     CREATE ROLE test_role_02242;
 "
@@ -25,7 +25,7 @@ function delete_user()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT -q "DROP USER IF EXISTS test_user_02242" ||:
+        $DATASTORE_CLIENT -q "DROP USER IF EXISTS test_user_02242" ||:
         sleep 0.$RANDOM;
     done
 }
@@ -35,8 +35,8 @@ function create_and_login_user()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT -q "CREATE USER IF NOT EXISTS test_user_02242" ||:
-        $CLICKHOUSE_CLIENT -u "test_user_02242" -q "SELECT COUNT(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user == 'test_user_02242'" > /dev/null ||:
+        $DATASTORE_CLIENT -q "CREATE USER IF NOT EXISTS test_user_02242" ||:
+        $DATASTORE_CLIENT -u "test_user_02242" -q "SELECT COUNT(*) FROM system.session_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND user == 'test_user_02242'" > /dev/null ||:
         sleep 0.$RANDOM;
     done
 }
@@ -46,7 +46,7 @@ function set_role()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT -q "SET DEFAULT ROLE test_role_02242 TO test_user_02242" ||:
+        $DATASTORE_CLIENT -q "SET DEFAULT ROLE test_role_02242 TO test_user_02242" ||:
         sleep 0.$RANDOM;
     done
 }
@@ -59,5 +59,5 @@ set_role 2> /dev/null &
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP ROLE IF EXISTS test_role_02242"
-$CLICKHOUSE_CLIENT -q "DROP USER IF EXISTS test_user_02242"
+$DATASTORE_CLIENT -q "DROP ROLE IF EXISTS test_role_02242"
+$DATASTORE_CLIENT -q "DROP USER IF EXISTS test_user_02242"

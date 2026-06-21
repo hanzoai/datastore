@@ -126,7 +126,7 @@ REGISTER_FUNCTION(StructureToCapnProtoSchema)
         FunctionDocumentation
         {
             .description=R"(
-Function that converts ClickHouse table structure to CapnProto format schema
+Function that converts Datastore table structure to CapnProto format schema
 )",
             .syntax = "structureToCapnProtoSchema(table_structure, message)",
             .examples{
@@ -145,20 +145,20 @@ Function that converts ClickHouse table structure to CapnProto format schema
 REGISTER_FUNCTION(StructureToProtobufSchema)
 {
     FunctionDocumentation::Description structureToProtobufSchema_description = R"(
-Converts a ClickHouse table structure to Protobuf format schema.
+Converts a Datastore table structure to Protobuf format schema.
 
-This function takes a ClickHouse table structure definition and converts it into a Protocol Buffers (Protobuf)
-schema definition in proto3 syntax. This is useful for generating Protobuf schemas that match your ClickHouse
+This function takes a Datastore table structure definition and converts it into a Protocol Buffers (Protobuf)
+schema definition in proto3 syntax. This is useful for generating Protobuf schemas that match your Datastore
 table structures for data interchange.
     )";
     FunctionDocumentation::Syntax structureToProtobufSchema_syntax = "structureToProtobufSchema(structure, message_name)";
     FunctionDocumentation::Arguments structureToProtobufSchema_arguments =
     {
-        {"structure", "ClickHouse table structure definition as a string (e.g., 'column1 Type1, column2 Type2').", {"String"}},
+        {"structure", "Datastore table structure definition as a string (e.g., 'column1 Type1, column2 Type2').", {"String"}},
         {"message_name", "Name for the Protobuf message type in the generated schema.", {"String"}}
     };
-    FunctionDocumentation::ReturnedValue structureToProtobufSchema_returned_value = {"Returns a Protobuf schema definition in proto3 syntax that corresponds to the input ClickHouse structure.", {"String"}};
-    FunctionDocumentation::Examples structureToProtobufSchema_examples = {{"Converting ClickHouse structure to Protobuf schema",
+    FunctionDocumentation::ReturnedValue structureToProtobufSchema_returned_value = {"Returns a Protobuf schema definition in proto3 syntax that corresponds to the input Datastore structure.", {"String"}};
+    FunctionDocumentation::Examples structureToProtobufSchema_examples = {{"Converting Datastore structure to Protobuf schema",
         R"(
 SELECT structureToProtobufSchema('s String, x UInt32', 'MessageName') FORMAT TSVRaw;
         )",

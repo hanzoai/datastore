@@ -1,7 +1,7 @@
 -- Tags: no-parallel-replicas
 -- no-parallel-replicas: Dictionary source tables are not available on parallel-replica workers.
 
--- https://github.com/ClickHouse/ClickHouse/issues/104511
+-- https://github.com/ClickHouse/Datastore/issues/104511
 -- dictGetOrDefault should not throw CANNOT_INSERT_NULL_IN_ORDINARY_COLUMN when
 -- the default argument is a Nullable expression and short-circuit evaluation is enabled.
 -- clearMaskedNullsBeforeCast handles: Nullable(T), Tuple(Nullable(T)),
@@ -26,7 +26,7 @@ CREATE DICTIONARY test_dict_nullable_default_single
     `a`  String DEFAULT ''
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_dict_nullable_default_src'))
+SOURCE(DATASTORE(TABLE 'test_dict_nullable_default_src'))
 LAYOUT(DIRECT());
 
 CREATE DICTIONARY test_dict_nullable_default_tuple
@@ -36,7 +36,7 @@ CREATE DICTIONARY test_dict_nullable_default_tuple
     `b`  UInt32 DEFAULT 0
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE 'test_dict_nullable_default_src'))
+SOURCE(DATASTORE(TABLE 'test_dict_nullable_default_src'))
 LAYOUT(HASHED())
 LIFETIME(0);
 

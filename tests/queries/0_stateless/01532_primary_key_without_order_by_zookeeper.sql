@@ -70,7 +70,7 @@ CREATE TABLE replicated_merge_tree_pk_sql
     value String,
     PRIMARY KEY (key)
 )
-ENGINE = ReplicatedReplacingMergeTree('/clickhouse/tables/{database}/01532_primary_key_without', 'r1');
+ENGINE = ReplicatedReplacingMergeTree('/datastore/tables/{database}/01532_primary_key_without', 'r1');
 
 SHOW CREATE TABLE replicated_merge_tree_pk_sql;
 

@@ -3,7 +3,7 @@ SET enable_vertical_final = 1;
 SET optimize_on_insert = 1;
 
 -- Test special columns handling in ReadFromMergeTree::removeUnusedColumns with FINAL and PREWHERE
--- Similar to https://github.com/ClickHouse/ClickHouse/issues/45804
+-- Similar to https://github.com/ClickHouse/Datastore/issues/45804
 
 -- Test 1: ReplacingMergeTree with version column
 DROP TABLE IF EXISTS test_replacing_mt;

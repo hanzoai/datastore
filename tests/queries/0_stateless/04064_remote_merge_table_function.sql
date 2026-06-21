@@ -1,6 +1,6 @@
 -- Tags: shard
 -- Test that remote() with nested merge() table function works with the analyzer.
--- https://github.com/ClickHouse/ClickHouse/issues/84672
+-- https://github.com/ClickHouse/Datastore/issues/84672
 
 DROP TABLE IF EXISTS test_t1;
 DROP TABLE IF EXISTS test_t2;

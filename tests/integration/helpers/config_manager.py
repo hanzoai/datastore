@@ -7,9 +7,9 @@ class ConfigManager:
     Can act as a context manager:
 
     with ConfigManager() as cm:
-        cm.add_main_config("configs/test_specific_config.xml") # copy "configs/test_specific_config.xml" to "/etc/clickhouse-server/config.d"
+        cm.add_main_config("configs/test_specific_config.xml") # copy "configs/test_specific_config.xml" to "/etc/datastore-server/config.d"
         ...
-        # "/etc/clickhouse-server/config.d/test_specific_config.xml" is removed automatically
+        # "/etc/datastore-server/config.d/test_specific_config.xml" is removed automatically
 
     """
 
@@ -46,7 +46,7 @@ class ConfigManager:
         for node in nodes_to_add_config:
             src_path = os.path.join(node.cluster.base_dir, local_path)
             dest_path = os.path.join(
-                "/etc/clickhouse-server", dest_dir, os.path.basename(local_path)
+                "/etc/datastore-server", dest_dir, os.path.basename(local_path)
             )
             # Function copy_file_to_container() is not atomic, so to add a configuration file atomically
             # first we create a temporary file and then we rename it.
@@ -58,7 +58,7 @@ class ConfigManager:
                 node.query("SYSTEM RELOAD CONFIG")
         for node in nodes_to_add_config:
             dest_path = os.path.join(
-                "/etc/clickhouse-server", dest_dir, os.path.basename(local_path)
+                "/etc/datastore-server", dest_dir, os.path.basename(local_path)
             )
             self.__added_configs.append((node, dest_path))
 

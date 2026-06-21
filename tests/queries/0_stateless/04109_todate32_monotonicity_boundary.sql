@@ -1,4 +1,4 @@
--- test for https://github.com/ClickHouse/ClickHouse/issues/101265
+-- test for https://github.com/ClickHouse/Datastore/issues/101265
 -- `ToDateMonotonicity` used `DATE_LUT_MAX_DAY_NUM` (65535) as the boundary for every
 -- template instantiation. For `toDate32` the correct boundary is `DATE_LUT_MAX_EXTEND_DAY_NUM` (120530)
 

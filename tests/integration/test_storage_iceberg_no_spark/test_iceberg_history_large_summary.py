@@ -10,7 +10,7 @@ from helpers.iceberg_utils import (
 
 
 def _metadata_dir(table_name):
-    return f"/var/lib/clickhouse/user_files/iceberg_data/default/{table_name}/metadata"
+    return f"/var/lib/datastore/user_files/iceberg_data/default/{table_name}/metadata"
 
 
 def _read_latest_metadata(instance, table_name):

@@ -12,8 +12,8 @@ function thread1()
     thread_id=$1
     local TIMELIMIT=$((SECONDS+$2))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        query_id="02497_$CLICKHOUSE_DATABASE-$RANDOM-$thread_id"
-        $CLICKHOUSE_CLIENT --query_id=$query_id --query "
+        query_id="02497_$DATASTORE_DATABASE-$RANDOM-$thread_id"
+        $DATASTORE_CLIENT --query_id=$query_id --query "
             SELECT count() FROM numbers_mt(100000) SETTINGS
                 trace_profile_events = 1,
                 query_profiler_real_time_period_ns = 10000000,
@@ -28,7 +28,7 @@ function thread2()
 {
     local TIMELIMIT=$((SECONDS+$1))
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-        $CLICKHOUSE_CLIENT -q "SYSTEM FLUSH LOGS trace_log"
+        $DATASTORE_CLIENT -q "SYSTEM FLUSH LOGS trace_log"
     done
 }
 
@@ -50,6 +50,6 @@ do
     # process list is cleaned after everything is sent to client
     # so this check can be run before process list is cleaned
     # to avoid spurious failures we retry the check couple of times
-    $CLICKHOUSE_CLIENT -q "SELECT count() FROM system.processes WHERE query_id LIKE '02497_$CLICKHOUSE_DATABASE%'" | rg '^0$' && break
+    $DATASTORE_CLIENT -q "SELECT count() FROM system.processes WHERE query_id LIKE '02497_$DATASTORE_DATABASE%'" | rg '^0$' && break
     sleep 1
 done

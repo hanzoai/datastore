@@ -10,21 +10,21 @@ CREATE TABLE test_table_join_1
 (
     id UInt32,
     value String
-) ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_table_join_1', 'r1') ORDER BY id SETTINGS index_granularity=1;
+) ENGINE = ReplicatedMergeTree('/datastore/{database}/test_table_join_1', 'r1') ORDER BY id SETTINGS index_granularity=1;
 
 DROP TABLE IF EXISTS test_table_join_2 SYNC;
 CREATE TABLE test_table_join_2
 (
     id UInt16,
     value String
-) ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_table_join_2', 'r1') ORDER BY id SETTINGS index_granularity=1;
+) ENGINE = ReplicatedMergeTree('/datastore/{database}/test_table_join_2', 'r1') ORDER BY id SETTINGS index_granularity=1;
 
 DROP TABLE IF EXISTS test_table_join_3 SYNC;
 CREATE TABLE test_table_join_3
 (
     id UInt64,
     value String
-) ENGINE = ReplicatedMergeTree('/clickhouse/{database}/test_table_join_3', 'r1') ORDER BY id SETTINGS index_granularity=1;
+) ENGINE = ReplicatedMergeTree('/datastore/{database}/test_table_join_3', 'r1') ORDER BY id SETTINGS index_granularity=1;
 
 INSERT INTO test_table_join_1 SELECT number, concat('t1_value_', number) from numbers(500);
 INSERT INTO test_table_join_1 SELECT number, concat('t1_value_', number) from numbers(500, 400);

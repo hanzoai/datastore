@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/ClickHouse/datastore-go/v2/lib/driver"
 )
 
 // ---------------------------------------------------------------------------

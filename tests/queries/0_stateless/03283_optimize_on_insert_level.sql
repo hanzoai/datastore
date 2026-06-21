@@ -24,7 +24,7 @@ SELECT name FROM system.parts WHERE database = currentDatabase() AND table = 't_
 DROP TABLE t_optimize_level;
 
 CREATE TABLE t_optimize_level (a UInt64, b UInt64)
-ENGINE = ReplicatedReplacingMergeTree('/clickhouse/tables/{database}/03283_optimize_on_insert_level', '1') ORDER BY a
+ENGINE = ReplicatedReplacingMergeTree('/datastore/tables/{database}/03283_optimize_on_insert_level', '1') ORDER BY a
 SETTINGS index_granularity = 1;
 
 SYSTEM STOP MERGES t_optimize_level;

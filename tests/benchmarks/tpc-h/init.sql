@@ -2,7 +2,7 @@
 --   Identifier         -> UInt32, covers the required >= 2,147,483,647 unique values
 --   Integer            -> Int32, covers the required -2,147,483,646 to 2,147,483,647 range
 --   Decimal            -> Decimal(12, 2), covers the required ±9,999,999,999.99 range
---   Fixed text, N      -> FixedString(N), because ClickHouse treats CHAR(N) as variable-length String
+--   Fixed text, N      -> FixedString(N), because Datastore treats CHAR(N) as variable-length String
 --   Variable text, N   -> String
 --   Date               -> Date
 

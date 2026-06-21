@@ -46,7 +46,7 @@ def instance_create_statement(
     params["table_engine"] = (
         "MergeTree()"
         if table_engine == "MergeTree"
-        else f"ReplicatedMergeTree('/clickhouse/tables/{{database}}/{table_name}', '1')"
+        else f"ReplicatedMergeTree('/datastore/tables/{{database}}/{table_name}', '1')"
     )
 
     deduplication_window_setting_name = (

@@ -24,15 +24,15 @@ roundtrip()
     local binary_file_path
     binary_file_path=$(mktemp "$CURDIR/04061_protobuf_cache_with_envelope.XXXXXX.binary")
 
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM squares_04061 ORDER BY number FORMAT $format SETTINGS format_schema = '$format_schema'" > "$binary_file_path"
-    $CLICKHOUSE_CLIENT --query "CREATE TABLE $table_name AS squares_04061"
-    $CLICKHOUSE_CLIENT --query "INSERT INTO $table_name SETTINGS format_schema = '$format_schema' FORMAT $format" < "$binary_file_path"
-    $CLICKHOUSE_CLIENT --query "SELECT * FROM $table_name ORDER BY number"
+    $DATASTORE_CLIENT --query "SELECT * FROM squares_04061 ORDER BY number FORMAT $format SETTINGS format_schema = '$format_schema'" > "$binary_file_path"
+    $DATASTORE_CLIENT --query "CREATE TABLE $table_name AS squares_04061"
+    $DATASTORE_CLIENT --query "INSERT INTO $table_name SETTINGS format_schema = '$format_schema' FORMAT $format" < "$binary_file_path"
+    $DATASTORE_CLIENT --query "SELECT * FROM $table_name ORDER BY number"
 
     rm "$binary_file_path"
 }
 
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE IF EXISTS squares_04061;
 CREATE TABLE squares_04061 (number UInt32, square UInt64) ENGINE = MergeTree ORDER BY tuple();
 INSERT INTO squares_04061 VALUES (2, 4), (0, 0), (3, 9);
@@ -47,7 +47,7 @@ roundtrip "ProtobufList schema 1:" ProtobufList "$FORMAT_SCHEMA_1" roundtrip3_04
 
 roundtrip "ProtobufList schema 2 after schema 1:" ProtobufList "$FORMAT_SCHEMA_2" roundtrip4_04061
 
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE squares_04061;
 DROP TABLE roundtrip1_04061;
 DROP TABLE roundtrip2_04061;

@@ -12,7 +12,7 @@ node2 = cluster.add_instance("node2", with_zookeeper=True)
 instance = node1
 q = node1.query
 
-path_to_data = "/var/lib/clickhouse/"
+path_to_data = "/var/lib/datastore/"
 
 
 @pytest.fixture(scope="module")

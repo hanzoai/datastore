@@ -6,12 +6,12 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 echo "
-<clickhouse>
+<datastore>
     <max_table_num_to_throw>1</max_table_num_to_throw>
-</clickhouse>
-" > $CLICKHOUSE_TEST_UNIQUE_NAME.xml
+</datastore>
+" > $DATASTORE_TEST_UNIQUE_NAME.xml
 
-$CLICKHOUSE_LOCAL --config $CLICKHOUSE_TEST_UNIQUE_NAME.xml -m -q "
+$DATASTORE_LOCAL --config $DATASTORE_TEST_UNIQUE_NAME.xml -m -q "
 CREATE TABLE test (x UInt32) ENGINE=Memory;
 
 SET enable_json_type = 1;
@@ -25,4 +25,4 @@ CREATE TABLE IF NOT EXISTS test2
                             kafka_format = 'JSONEachRow'; --{serverError TOO_MANY_TABLES}
 "
 
-rm $CLICKHOUSE_TEST_UNIQUE_NAME.xml
+rm $DATASTORE_TEST_UNIQUE_NAME.xml

@@ -39,13 +39,13 @@ Let's say we have a file `data.jsonl` with this content:
 
 :::tip
 Place `data.jsonl` in the `user_files_path` directory.  You can find this by looking
-in your ClickHouse configuration files. The default is:
+in your Datastore configuration files. The default is:
 ```sql
-<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+<user_files_path>/var/lib/datastore/user_files/</user_files_path>
 ```
 :::
 
-Open `clickhouse-client` and run the `DESCRIBE` query:
+Open `datastore-client` and run the `DESCRIBE` query:
 
 ```sql
 DESCRIBE file('data.jsonl') SETTINGS input_format_try_infer_integers=0;

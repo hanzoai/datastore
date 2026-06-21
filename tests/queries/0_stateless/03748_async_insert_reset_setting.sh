@@ -4,10 +4,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-SYNC_USER="${CLICKHOUSE_DATABASE}_sync_user"
-ASYNC_USER="${CLICKHOUSE_DATABASE}_async_user"
+SYNC_USER="${DATASTORE_DATABASE}_sync_user"
+ASYNC_USER="${DATASTORE_DATABASE}_async_user"
 
-${CLICKHOUSE_CLIENT} --multiquery <<EOF
+${DATASTORE_CLIENT} --multiquery <<EOF
 DROP TABLE IF EXISTS source_table, target_table, target_table_remote_sync, target_table_remote_async, async_insert_mv, sync_insert_mv;
 DROP USER IF EXISTS ${SYNC_USER}, ${ASYNC_USER};
 

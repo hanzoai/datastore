@@ -16,7 +16,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -122,19 +122,19 @@ check_incorrect_data() {
 }
 
 check_incorrect_data struct_short_b \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/struct_short_b.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/struct_short_b.arrow', Arrow)"
 
 check_incorrect_data map_value_short \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/map_value_short.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/map_value_short.arrow', Arrow)"
 
 check_incorrect_data list_struct_offset_child_zero \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_struct_offset_child_zero.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_struct_offset_child_zero.arrow', Arrow)"
 
 check_incorrect_data largelist_struct_offset_child_zero \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largelist_struct_offset_child_zero.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/largelist_struct_offset_child_zero.arrow', Arrow)"
 
 check_incorrect_data map_offset_key_zero \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/map_offset_key_zero.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/map_offset_key_zero.arrow', Arrow)"
 
 check_incorrect_data empty_struct_huge_nullcount \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/empty_struct_huge_nullcount.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/empty_struct_huge_nullcount.arrow', Arrow)"

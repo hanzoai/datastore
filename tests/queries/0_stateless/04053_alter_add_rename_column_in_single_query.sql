@@ -1,7 +1,7 @@
 -- Regression test: ALTER TABLE with ADD COLUMN followed by RENAME COLUMN in the
 -- same statement caused "Cannot find column" exception because ADD COLUMN was not
 -- applied to intermediate metadata when it didn't require a mutation stage.
--- https://github.com/ClickHouse/ClickHouse/issues/100328
+-- https://github.com/ClickHouse/Datastore/issues/100328
 
 CREATE TABLE t_100328 (v1 UInt32, v2 String, v3 Date) ENGINE = MergeTree() ORDER BY v1;
 INSERT INTO t_100328 VALUES (1, 'hello', '2024-01-01');

@@ -10,7 +10,7 @@ function wait_query_started()
     local query_id="$1"
     timeout=60
     start=$EPOCHSECONDS
-    while [[ $($CLICKHOUSE_CLIENT --query="SELECT count() FROM system.processes WHERE query_id='$query_id' SETTINGS use_query_cache=0") == 0 ]]; do
+    while [[ $($DATASTORE_CLIENT --query="SELECT count() FROM system.processes WHERE query_id='$query_id' SETTINGS use_query_cache=0") == 0 ]]; do
           if ((EPOCHSECONDS-start > timeout )); then
              echo "Timeout while waiting for query $query_id to start"
              exit 1
@@ -23,10 +23,10 @@ function wait_query_started()
 function kill_query()
 {
     local query_id="$1"
-    $CLICKHOUSE_CLIENT --query "KILL QUERY WHERE query_id='$query_id'" >/dev/null
+    $DATASTORE_CLIENT --query "KILL QUERY WHERE query_id='$query_id'" >/dev/null
     timeout=60
     start=$EPOCHSECONDS
-    while [[ $($CLICKHOUSE_CLIENT --query="SELECT count() FROM system.processes WHERE query_id='$query_id' SETTINGS use_query_cache=0") != 0 ]]; do
+    while [[ $($DATASTORE_CLIENT --query="SELECT count() FROM system.processes WHERE query_id='$query_id' SETTINGS use_query_cache=0") != 0 ]]; do
           if ((EPOCHSECONDS-start > timeout )); then
              echo "Timeout while waiting for query $query_id to cancel"
              exit 1
@@ -36,17 +36,17 @@ function kill_query()
 }
 
 
-sleep_query_id="sleep_query_id_02932_kill_query_sleep_${CLICKHOUSE_DATABASE}_$RANDOM"
+sleep_query_id="sleep_query_id_02932_kill_query_sleep_${DATASTORE_DATABASE}_$RANDOM"
 
 # This sleep query wants to sleep for 1000 seconds (which is too long).
 # We're going to cancel this query later.
 sleep_query="SELECT sleep(1000)"
 
-$CLICKHOUSE_CLIENT --query_id="$sleep_query_id" --function_sleep_max_microseconds_per_block="1000000000" --query "$sleep_query" >/dev/null 2>&1 &
+$DATASTORE_CLIENT --query_id="$sleep_query_id" --function_sleep_max_microseconds_per_block="1000000000" --query "$sleep_query" >/dev/null 2>&1 &
 wait_query_started "$sleep_query_id"
 
 echo "Cancelling query"
 kill_query "$sleep_query_id"
 
-$CLICKHOUSE_CLIENT --query "SYSTEM FLUSH LOGS query_log;"
-$CLICKHOUSE_CLIENT --query "SELECT exception FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id='$sleep_query_id' AND current_database = '$CLICKHOUSE_DATABASE'" | grep -oF "QUERY_WAS_CANCELLED"
+$DATASTORE_CLIENT --query "SYSTEM FLUSH LOGS query_log;"
+$DATASTORE_CLIENT --query "SELECT exception FROM system.query_log WHERE event_date >= yesterday() AND event_time >= now() - 600 AND query_id='$sleep_query_id' AND current_database = '$DATASTORE_DATABASE'" | grep -oF "QUERY_WAS_CANCELLED"

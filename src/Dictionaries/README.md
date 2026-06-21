@@ -7,7 +7,7 @@ This directory contains dictionary implementation - a feature that allows loadin
 The code handles:
 - Dictionary interfaces and base classes
 - Various dictionary implementations (hashed, cached, flat, etc.)
-- Dictionary sources (MySQL, PostgreSQL, HTTP, ClickHouse, etc.)
+- Dictionary sources (MySQL, PostgreSQL, HTTP, Datastore, etc.)
 - Loading and updating dictionary data
 - Dictionary configuration parsing
 

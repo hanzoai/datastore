@@ -67,7 +67,7 @@ def test_refreshable_mv_in_replicated_db(started_cluster, cleanup):
     for node in nodes:
         # (Use different znode path for each test because even `drop database ... sync` doesn't seem
         # to guarantee that a new database can be immediately created with the same znode path:
-        # https://github.com/ClickHouse/ClickHouse/issues/76418 )
+        # https://github.com/ClickHouse/Datastore/issues/76418 )
         node.query(
             f"create database re engine = Replicated('/test/re_{test_idx}', 'shard1', '{{replica}}');"
         )
@@ -177,7 +177,7 @@ def test_refreshable_mv_in_replicated_db(started_cluster, cleanup):
 
     # Locate coordination znodes.
     znode_exists_query = (
-        lambda uuid: f"select count() from system.zookeeper where path = '/clickhouse/tables/{uuid}' and name = 'shard1'"
+        lambda uuid: f"select count() from system.zookeeper where path = '/datastore/tables/{uuid}' and name = 'shard1'"
     )
     tables = []
     for row in node1.query(
@@ -204,7 +204,7 @@ def test_refreshable_mv_in_replicated_db(started_cluster, cleanup):
     for name, uuid, coordinated in tables:
         sync = randint(0, 1) == 0
         nodes[randint(0, 1)].query(f"drop table re.{name}{' sync' if sync else ''}")
-        # TODO: After https://github.com/ClickHouse/ClickHouse/issues/61065 is done (for MVs, not ReplicatedMergeTree), check the parent znode instead.
+        # TODO: After https://github.com/ClickHouse/Datastore/issues/61065 is done (for MVs, not ReplicatedMergeTree), check the parent znode instead.
         if sync:
             assert_eq_with_retry(nodes[randint(0, 1)], znode_exists_query(uuid), "0\n")
 
@@ -310,7 +310,7 @@ def test_refreshable_mv_in_read_only_node_no_ddl(started_cluster, cleanup):
     )
 
     reading_node.replace_in_config(
-        "/etc/clickhouse-server/users.d/users.xml", "<allow_ddl>1", "<allow_ddl>0"
+        "/etc/datastore-server/users.d/users.xml", "<allow_ddl>1", "<allow_ddl>0"
     )
     try:
         reading_node.query("SYSTEM RELOAD CONFIG")
@@ -351,7 +351,7 @@ def test_refreshable_mv_in_read_only_node_no_ddl(started_cluster, cleanup):
     finally:
         # for cleanup
         reading_node.replace_in_config(
-            "/etc/clickhouse-server/users.d/users.xml", "<allow_ddl>0", "<allow_ddl>1"
+            "/etc/datastore-server/users.d/users.xml", "<allow_ddl>0", "<allow_ddl>1"
         )
         reading_node.query("SYSTEM RELOAD CONFIG")
 
@@ -689,7 +689,7 @@ def test_replicated_db_startup_race(started_cluster, cleanup):
     # Drop a database before it's loaded.
     # We stall DatabaseReplicated::startupDatabaseAsync task and expect the server to become responsive without waiting for it.
     node1.replace_in_config(
-        "/etc/clickhouse-server/config.d/config.xml",
+        "/etc/datastore-server/config.d/config.xml",
         "<database_replicated_startup_pause>false</database_replicated_startup_pause>",
         "<database_replicated_startup_pause>true</database_replicated_startup_pause>",
     )
@@ -704,7 +704,7 @@ def test_replicated_db_startup_race(started_cluster, cleanup):
         assert err == ""
     finally:
         node1.replace_in_config(
-            "/etc/clickhouse-server/config.d/config.xml",
+            "/etc/datastore-server/config.d/config.xml",
             "<database_replicated_startup_pause>true</database_replicated_startup_pause>",
             "<database_replicated_startup_pause>false</database_replicated_startup_pause>",
         )
@@ -714,7 +714,7 @@ def test_replicated_db_startup_race(started_cluster, cleanup):
 def test_system_view_refreshes_on_not_running_replica(started_cluster):
     # Use a unique znode path / database name per invocation so that residual state
     # from previous test runs (orphaned RefreshTasks, stale Keeper znodes — see
-    # https://github.com/ClickHouse/ClickHouse/issues/76418 ) cannot leak in.
+    # https://github.com/ClickHouse/Datastore/issues/76418 ) cannot leak in.
     global test_idx
     test_idx += 1
     db_name = f"test_nrr_{test_idx}"

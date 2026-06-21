@@ -1,18 +1,18 @@
 ---
-description: 'Page describing automatic schema inference from input data in ClickHouse'
+description: 'Page describing automatic schema inference from input data in Datastore'
 sidebar_label: 'Schema inference'
 slug: /interfaces/schema-inference
 title: 'Automatic schema inference from input data'
 doc_type: 'reference'
 ---
 
-ClickHouse can automatically determine the structure of input data in almost all supported [Input formats](formats.md).
+Datastore can automatically determine the structure of input data in almost all supported [Input formats](formats.md).
 This document will describe when schema inference is used, how it works with different input formats and which settings
 can control it.
 
 ## Usage {#usage}
 
-Schema inference is used when ClickHouse needs to read the data in a specific data format and the structure is unknown.
+Schema inference is used when Datastore needs to read the data in a specific data format and the structure is unknown.
 
 ## Table functions [file](../sql-reference/table-functions/file.md), [s3](../sql-reference/table-functions/s3.md), [url](../sql-reference/table-functions/url.md), [hdfs](../sql-reference/table-functions/hdfs.md), [azureBlobStorage](../sql-reference/table-functions/azureBlobStorage.md). {#table-functions-file-s3-url-hdfs-azureblobstorage}
 
@@ -28,7 +28,7 @@ Let's say we have a file `hobbies.jsonl` in JSONEachRow format in the `user_file
 {"id" :  4, "age" :  47, "name" :  "Brayan", "hobbies" :  ["movies", "skydiving"]}
 ```
 
-ClickHouse can read this data without you specifying its structure:
+Datastore can read this data without you specifying its structure:
 ```sql
 SELECT * FROM file('hobbies.jsonl')
 ```
@@ -92,15 +92,15 @@ DESCRIBE TABLE hobbies
 └─────────┴─────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-## clickhouse-local {#clickhouse-local}
+## datastore-local {#datastore-local}
 
-`clickhouse-local` has an optional parameter `-S/--structure` with the structure of input data. If this parameter is not specified or set to `auto`, the structure will be inferred from the data.
+`datastore-local` has an optional parameter `-S/--structure` with the structure of input data. If this parameter is not specified or set to `auto`, the structure will be inferred from the data.
 
 **Example:**
 
-Let's use the file `hobbies.jsonl`. We can query the data from this file using `clickhouse-local`:
+Let's use the file `hobbies.jsonl`. We can query the data from this file using `datastore-local`:
 ```shell
-clickhouse-local --file='hobbies.jsonl' --table='hobbies' --query='DESCRIBE TABLE hobbies'
+datastore-local --file='hobbies.jsonl' --table='hobbies' --query='DESCRIBE TABLE hobbies'
 ```
 ```response
 id    Nullable(Int64)
@@ -109,7 +109,7 @@ name    Nullable(String)
 hobbies    Array(Nullable(String))
 ```
 ```shell
-clickhouse-local --file='hobbies.jsonl' --table='hobbies' --query='SELECT * FROM hobbies'
+datastore-local --file='hobbies.jsonl' --table='hobbies' --query='SELECT * FROM hobbies'
 ```
 ```response
 1    25    Josh    ['football','cooking','music']
@@ -129,7 +129,7 @@ There is a special setting [use_structure_from_insertion_table_in_table_function
 that controls this behaviour. It has 3 possible values:
 - 0 - table function will extract the structure from the data.
 - 1 - table function will use the structure from the insertion table.
-- 2 - ClickHouse will automatically determine if it's possible to use the structure from the insertion table or use schema inference. Default value.
+- 2 - Datastore will automatically determine if it's possible to use the structure from the insertion table or use schema inference. Default value.
 
 **Example 1:**
 
@@ -152,7 +152,7 @@ And insert data from the file `hobbies.jsonl`:
 INSERT INTO hobbies1 SELECT * FROM file(hobbies.jsonl)
 ```
 
-In this case, all columns from the file are inserted into the table without changes, so ClickHouse will use the structure from the insertion table instead of schema inference.
+In this case, all columns from the file are inserted into the table without changes, so Datastore will use the structure from the insertion table instead of schema inference.
 
 **Example 2:**
 
@@ -174,7 +174,7 @@ And insert data from the file `hobbies.jsonl`:
 INSERT INTO hobbies2 SELECT id, age, hobbies FROM file(hobbies.jsonl)
 ```
 
-In this case, all columns in the `SELECT` query are present in the table, so ClickHouse will use the structure from the insertion table.
+In this case, all columns in the `SELECT` query are present in the table, so Datastore will use the structure from the insertion table.
 Note that it will work only for input formats that support reading a subset of columns like JSONEachRow, TSKV, Parquet, etc. (so it won't work for example for TSV format).
 
 **Example 3:**
@@ -199,7 +199,7 @@ INSERT INTO hobbies3 SELECT id, age, hobbies FROM file(hobbies.jsonl)
 ```
 
 In this case, column `id` is used in the `SELECT` query, but the table doesn't have this column (it has a column with the name `identifier`),
-so ClickHouse cannot use the structure from the insertion table, and schema inference will be used.
+so Datastore cannot use the structure from the insertion table, and schema inference will be used.
 
 **Example 4:**
 
@@ -221,12 +221,12 @@ And insert data from the file `hobbies.jsonl`:
 INSERT INTO hobbies4 SELECT id, empty(hobbies) ? NULL : hobbies[1] FROM file(hobbies.jsonl)
 ```
 
-In this case, there are some operations performed on the column `hobbies` in the `SELECT` query to insert it into the table, so ClickHouse cannot use the structure from the insertion table, and schema inference will be used.
+In this case, there are some operations performed on the column `hobbies` in the `SELECT` query to insert it into the table, so Datastore cannot use the structure from the insertion table, and schema inference will be used.
 
 ## Schema inference cache {#schema-inference-cache}
 
 For most input formats schema inference reads some data to determine its structure and this process can take some time.
-To prevent inferring the same schema every time ClickHouse read the data from the same file, the inferred schema is cached and when accessing the same file again, ClickHouse will use the schema from the cache.
+To prevent inferring the same schema every time Datastore read the data from the same file, the inferred schema is cached and when accessing the same file again, Datastore will use the schema from the cache.
 
 There are special settings that control this cache:
 - `schema_inference_cache_max_elements_for_{file/s3/hdfs/url/azure}` - the maximum number of cached schemas for the corresponding table function. The default value is `4096`. These settings should be set in the server config.
@@ -381,14 +381,14 @@ SELECT count() FROM system.schema_inference_cache WHERE storage='S3'
 
 ## Text formats {#text-formats}
 
-For text formats, ClickHouse reads the data row by row, extracts column values according to the format,
+For text formats, Datastore reads the data row by row, extracts column values according to the format,
 and then uses some recursive parsers and heuristics to determine the type for each value. The maximum number of rows and bytes read from the data in schema inference
 is controlled by the settings `input_format_max_rows_to_read_for_schema_inference` (25000 by default) and `input_format_max_bytes_to_read_for_schema_inference` (32Mb by default).
 By default, all inferred types are [Nullable](../sql-reference/data-types/nullable.md), but you can change this by setting `schema_inference_make_columns_nullable` (see examples in the [settings](#settings-for-text-formats) section).
 
 ### JSON formats {#json-formats}
 
-In JSON formats ClickHouse parses values according to the JSON specification and then tries to find the most appropriate data type for them.
+In JSON formats Datastore parses values according to the JSON specification and then tries to find the most appropriate data type for them.
 
 Let's see how it works, what types can be inferred and what specific settings can be used in JSON formats.
 
@@ -433,7 +433,7 @@ DESC format(JSONEachRow, '{"arr" : [1, 2, 3], "nested_arrays" : [[1, 2, 3], [4, 
 └───────────────┴───────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If an array contains `null`, ClickHouse will use types from the other array elements:
+If an array contains `null`, Datastore will use types from the other array elements:
 ```sql
 DESC format(JSONEachRow, '{"arr" : [null, 42, null]}')
 ```
@@ -457,7 +457,7 @@ DESC format(JSONEachRow, '{"arr" : [42, "hello", [1, 2, 3]]}');
 
 Named tuples:
 
-When setting `input_format_json_try_infer_named_tuples_from_objects` is enabled, during schema inference ClickHouse will try to infer named Tuple from JSON objects.
+When setting `input_format_json_try_infer_named_tuples_from_objects` is enabled, during schema inference Datastore will try to infer named Tuple from JSON objects.
 The resulting named Tuple will contain all elements from all corresponding JSON objects from sample data.
 
 ```sql
@@ -524,7 +524,7 @@ DESC format(JSONEachRow, '{"value" : [[[42, 24], []], {"key1" : 42, "key2" : 24}
 └───────┴──────────────────────────────────────────────────────────────────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If ClickHouse cannot determine the type for some key, because the data contains only nulls/empty objects/empty arrays, type `String` will be used if setting `input_format_json_infer_incomplete_types_as_strings` is enabled or an exception will be thrown otherwise:
+If Datastore cannot determine the type for some key, because the data contains only nulls/empty objects/empty arrays, type `String` will be used if setting `input_format_json_infer_incomplete_types_as_strings` is enabled or an exception will be thrown otherwise:
 ```sql
 DESC format(JSONEachRow, '{"arr" : [null, null]}') SETTINGS input_format_json_infer_incomplete_types_as_strings = 1;
 ```
@@ -765,14 +765,14 @@ SELECT * FROM format(JSONEachRow, '{"obj" : {"a" : [1,2,3], "b" : "hello", "c" :
 
 ### CSV {#csv}
 
-In CSV format ClickHouse extracts column values from the row according to delimiters. ClickHouse expects all types except numbers and strings to be enclosed in double quotes. If the value is in double quotes, ClickHouse tries to parse
-the data inside quotes using the recursive parser and then tries to find the most appropriate data type for it. If the value is not in double quotes, ClickHouse tries to parse it as a number,
-and if the value is not a number, ClickHouse treats it as a string.
+In CSV format Datastore extracts column values from the row according to delimiters. Datastore expects all types except numbers and strings to be enclosed in double quotes. If the value is in double quotes, Datastore tries to parse
+the data inside quotes using the recursive parser and then tries to find the most appropriate data type for it. If the value is not in double quotes, Datastore tries to parse it as a number,
+and if the value is not a number, Datastore treats it as a string.
 
-If you don't want ClickHouse to try to determine complex types using some parsers and heuristics, you can disable setting `input_format_csv_use_best_effort_in_schema_inference`
-and ClickHouse will treat all columns as Strings.
+If you don't want Datastore to try to determine complex types using some parsers and heuristics, you can disable setting `input_format_csv_use_best_effort_in_schema_inference`
+and Datastore will treat all columns as Strings.
 
-If setting `input_format_csv_detect_header` is enabled, ClickHouse will try to detect the header with column names (and maybe types) while inferring schema. This setting is enabled by default.
+If setting `input_format_csv_detect_header` is enabled, Datastore will try to detect the header with column names (and maybe types) while inferring schema. This setting is enabled by default.
 
 **Examples:**
 
@@ -833,7 +833,7 @@ DESC format(CSV, $$"['Hello', 'world']","[['Abc', 'Def'], []]"$$)
 └──────┴────────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If an array contains null, ClickHouse will use types from the other array elements:
+If an array contains null, Datastore will use types from the other array elements:
 ```sql
 DESC format(CSV, '"[NULL, 42, NULL]"')
 ```
@@ -863,7 +863,7 @@ DESC format(CSV, $$"[{'key1' : [[42, 42], []], 'key2' : [[null], [42]]}]"$$)
 └──────┴───────────────────────────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If ClickHouse cannot determine the type inside quotes, because the data contains only nulls, ClickHouse will treat it as String:
+If Datastore cannot determine the type inside quotes, because the data contains only nulls, Datastore will treat it as String:
 ```sql
 DESC format(CSV, '"[NULL, NULL]"')
 ```
@@ -964,13 +964,13 @@ DESC format(CSV, '42,42.42');
 
 ### TSV/TSKV {#tsv-tskv}
 
-In TSV/TSKV formats ClickHouse extracts column value from the row according to tabular delimiters and then parses extracted value using
-the recursive parser to determine the most appropriate type. If the type cannot be determined, ClickHouse treats this value as String.
+In TSV/TSKV formats Datastore extracts column value from the row according to tabular delimiters and then parses extracted value using
+the recursive parser to determine the most appropriate type. If the type cannot be determined, Datastore treats this value as String.
 
-If you don't want ClickHouse to try to determine complex types using some parsers and heuristics, you can disable setting `input_format_tsv_use_best_effort_in_schema_inference`
-and ClickHouse will treat all columns as Strings.
+If you don't want Datastore to try to determine complex types using some parsers and heuristics, you can disable setting `input_format_tsv_use_best_effort_in_schema_inference`
+and Datastore will treat all columns as Strings.
 
-If setting `input_format_tsv_detect_header` is enabled, ClickHouse will try to detect the header with column names (and maybe types) while inferring schema. This setting is enabled by default.
+If setting `input_format_tsv_detect_header` is enabled, Datastore will try to detect the header with column names (and maybe types) while inferring schema. This setting is enabled by default.
 
 **Examples:**
 
@@ -1031,7 +1031,7 @@ DESC format(TSV, '[''Hello'', ''world'']    [[''Abc'', ''Def''], []]')
 └──────┴────────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If an array contains null, ClickHouse will use types from the other array elements:
+If an array contains null, Datastore will use types from the other array elements:
 ```sql
 DESC format(TSV, '[NULL, 42, NULL]')
 ```
@@ -1071,7 +1071,7 @@ DESC format(TSV, $$[{'key1' : [(42, 'Hello'), (24, NULL)], 'key2' : [(NULL, ',')
 └──────┴─────────────────────────────────────────────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If ClickHouse cannot determine the type, because the data contains only nulls, ClickHouse will treat it as String:
+If Datastore cannot determine the type, because the data contains only nulls, Datastore will treat it as String:
 ```sql
 DESC format(TSV, '[NULL, NULL]')
 ```
@@ -1151,7 +1151,7 @@ $$)
 
 ### Values {#values}
 
-In Values format ClickHouse extracts column value from the row and then parses it using
+In Values format Datastore extracts column value from the row and then parses it using
 the recursive parser similar to how literals are parsed.
 
 **Examples:**
@@ -1193,7 +1193,7 @@ DESC format(Values, '([1,2,3], [[1, 2], [], [3, 4]])')
 └──────┴───────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If an array contains null, ClickHouse will use types from the other array elements:
+If an array contains null, Datastore will use types from the other array elements:
 ```sql
 DESC format(Values, '([NULL, 42, NULL])')
 ```
@@ -1233,7 +1233,7 @@ DESC format(Values, $$([{'key1' : [(42, 'Hello'), (24, NULL)], 'key2' : [(NULL, 
 └──────┴─────────────────────────────────────────────────────────────────────┴──────────────┴────────────────────┴─────────┴──────────────────┴────────────────┘
 ```
 
-If ClickHouse cannot determine the type, because the data contains only nulls, an exception will be thrown:
+If Datastore cannot determine the type, because the data contains only nulls, an exception will be thrown:
 ```sql
 DESC format(Values, '([NULL, NULL])')
 ```
@@ -1259,10 +1259,10 @@ DESC format(TSV, '[1,2,3]    42.42    Hello World!')
 
 ### CustomSeparated {#custom-separated}
 
-In CustomSeparated format ClickHouse first extracts all column values from the row according to specified delimiters and then tries to infer
+In CustomSeparated format Datastore first extracts all column values from the row according to specified delimiters and then tries to infer
 the data type for each value according to escaping rule.
 
-If setting `input_format_custom_detect_header` is enabled, ClickHouse will try to detect the header with column names (and maybe types) while inferring schema. This setting is enabled by default.
+If setting `input_format_custom_detect_header` is enabled, Datastore will try to detect the header with column names (and maybe types) while inferring schema. This setting is enabled by default.
 
 **Example**
 
@@ -1320,7 +1320,7 @@ $$)
 
 ### Template {#template}
 
-In Template format ClickHouse first extracts all column values from the row according to the specified template and then tries to infer the
+In Template format Datastore first extracts all column values from the row according to the specified template and then tries to infer the
 data type for each value according to its escaping rule.
 
 **Example**
@@ -1361,7 +1361,7 @@ $$)
 
 ### Regexp {#regexp}
 
-Similar to Template, in Regexp format ClickHouse first extracts all column values from the row according to specified regular expression and then tries to infer
+Similar to Template, in Regexp format Datastore first extracts all column values from the row according to specified regular expression and then tries to infer
 data type for each value according to the specified escaping rule.
 
 **Example**
@@ -1499,9 +1499,9 @@ DESC format(JSONEachRow, $$
 This setting does not apply to the `JSON` data type.
 :::
 
-If enabled, ClickHouse will try to infer integers instead of floats in schema inference for text formats.
+If enabled, Datastore will try to infer integers instead of floats in schema inference for text formats.
 If all numbers in the column from sample data are integers, the result type will be `Int64`, if at least one number is float, the result type will be `Float64`.
-If the sample data contains only integers and at least one integer is positive and overflows `Int64`, ClickHouse will infer `UInt64`.
+If the sample data contains only integers and at least one integer is positive and overflows `Int64`, Datastore will infer `UInt64`.
 
 Enabled by default.
 
@@ -1556,7 +1556,7 @@ DESC format(JSONEachRow, $$
 
 #### input_format_try_infer_datetimes {#input-format-try-infer-datetimes}
 
-If enabled, ClickHouse will try to infer type `DateTime` or `DateTime64` from string fields in schema inference for text formats.
+If enabled, Datastore will try to infer type `DateTime` or `DateTime64` from string fields in schema inference for text formats.
 If all fields from a column in sample data were successfully parsed as datetimes, the result type will be `DateTime` or `DateTime64(9)` (if any datetime had fractional part),
 if at least one field was not parsed as datetime, the result type will be `String`.
 
@@ -1605,7 +1605,7 @@ DESC format(JSONEachRow, $$
 
 #### input_format_try_infer_datetimes_only_datetime64 {#input-format-try-infer-datetimes-only-datetime64}
 
-If enabled, ClickHouse will always infer `DateTime64(9)` when `input_format_try_infer_datetimes` is enabled even if datetime values don't contain fractional part.
+If enabled, Datastore will always infer `DateTime64(9)` when `input_format_try_infer_datetimes` is enabled even if datetime values don't contain fractional part.
 
 Disabled by default.
 
@@ -1631,7 +1631,7 @@ Note: Parsing datetimes during schema inference respect setting [date_time_input
 
 #### input_format_try_infer_dates {#input-format-try-infer-dates}
 
-If enabled, ClickHouse will try to infer type `Date` from string fields in schema inference for text formats.
+If enabled, Datastore will try to infer type `Date` from string fields in schema inference for text formats.
 If all fields from a column in sample data were successfully parsed as dates, the result type will be `Date`,
 if at least one field was not parsed as date, the result type will be `String`.
 
@@ -1677,7 +1677,7 @@ DESC format(JSONEachRow, $$
 
 #### input_format_try_infer_exponent_floats {#input-format-try-infer-exponent-floats}
 
-If enabled, ClickHouse will try to infer floats in exponential form for text formats (except JSON where numbers in exponential form are always inferred).
+If enabled, Datastore will try to infer floats in exponential form for text formats (except JSON where numbers in exponential form are always inferred).
 
 Disabled by default.
 
@@ -1701,13 +1701,13 @@ $$)
 
 Self-describing formats contain information about the structure of the data in the data itself,
 it can be some header with a description, a binary type tree, or some kind of table.
-To automatically infer a schema from files in such formats, ClickHouse reads a part of the data containing
-information about the types and converts it into a schema of the ClickHouse table.
+To automatically infer a schema from files in such formats, Datastore reads a part of the data containing
+information about the types and converts it into a schema of the Datastore table.
 
 ### Formats with -WithNamesAndTypes suffix {#formats-with-names-and-types}
 
-ClickHouse supports some text formats with the suffix -WithNamesAndTypes. This suffix means that the data contains two additional rows with column names and types before the actual data.
-While schema inference for such formats, ClickHouse reads the first two rows and extracts column names and types.
+Datastore supports some text formats with the suffix -WithNamesAndTypes. This suffix means that the data contains two additional rows with column names and types before the actual data.
+While schema inference for such formats, Datastore reads the first two rows and extracts column names and types.
 
 **Example**
 
@@ -1729,7 +1729,7 @@ $$)
 ### JSON formats with metadata {#json-with-metadata}
 
 Some JSON input formats ([JSON](/interfaces/formats/JSON), [JSONCompact](/interfaces/formats/JSONCompact), [JSONColumnsWithMetadata](/interfaces/formats/JSONColumnsWithMetadata)) contain metadata with column names and types.
-In schema inference for such formats, ClickHouse reads this metadata.
+In schema inference for such formats, Datastore reads this metadata.
 
 **Example**
 ```sql
@@ -1781,9 +1781,9 @@ $$)
 
 ### Avro {#avro}
 
-In Avro format ClickHouse reads its schema from the data and converts it to ClickHouse schema using the following type matches:
+In Avro format Datastore reads its schema from the data and converts it to Datastore schema using the following type matches:
 
-| Avro data type                     | ClickHouse data type                                                           |
+| Avro data type                     | Datastore data type                                                           |
 |------------------------------------|--------------------------------------------------------------------------------|
 | `boolean`                          | [Bool](../sql-reference/data-types/boolean.md)                                 |
 | `int`                              | [Int32](../sql-reference/data-types/int-uint.md)                               |
@@ -1806,9 +1806,9 @@ Other Avro types are not supported.
 
 ### Parquet {#parquet}
 
-In Parquet format ClickHouse reads its schema from the data and converts it to ClickHouse schema using the following type matches:
+In Parquet format Datastore reads its schema from the data and converts it to Datastore schema using the following type matches:
 
-| Parquet data type            | ClickHouse data type                                    |
+| Parquet data type            | Datastore data type                                    |
 |------------------------------|---------------------------------------------------------|
 | `BOOL`                       | [Bool](../sql-reference/data-types/boolean.md)          |
 | `UINT8`                      | [UInt8](../sql-reference/data-types/int-uint.md)        |
@@ -1834,9 +1834,9 @@ Other Parquet types are not supported.
 
 ### Arrow {#arrow}
 
-In Arrow format ClickHouse reads its schema from the data and converts it to ClickHouse schema using the following type matches:
+In Arrow format Datastore reads its schema from the data and converts it to Datastore schema using the following type matches:
 
-| Arrow data type                 | ClickHouse data type                                    |
+| Arrow data type                 | Datastore data type                                    |
 |---------------------------------|---------------------------------------------------------|
 | `BOOL`                          | [Bool](../sql-reference/data-types/boolean.md)          |
 | `UINT8`                         | [UInt8](../sql-reference/data-types/int-uint.md)        |
@@ -1862,9 +1862,9 @@ Other Arrow types are not supported.
 
 ### ORC {#orc}
 
-In ORC format ClickHouse reads its schema from the data and converts it to ClickHouse schema using the following type matches:
+In ORC format Datastore reads its schema from the data and converts it to Datastore schema using the following type matches:
 
-| ORC data type                        | ClickHouse data type                                    |
+| ORC data type                        | Datastore data type                                    |
 |--------------------------------------|---------------------------------------------------------|
 | `Boolean`                            | [Bool](../sql-reference/data-types/boolean.md)          |
 | `Tinyint`                            | [Int8](../sql-reference/data-types/int-uint.md)         |
@@ -1885,19 +1885,19 @@ Other ORC types are not supported.
 
 ### Native {#native}
 
-Native format is used inside ClickHouse and contains the schema in the data.
-In schema inference, ClickHouse reads the schema from the data without any transformations.
+Native format is used inside Datastore and contains the schema in the data.
+In schema inference, Datastore reads the schema from the data without any transformations.
 
 ## Formats with external schema {#formats-with-external-schema}
 
 Such formats require a schema describing the data in a separate file in a specific schema language.
-To automatically infer a schema from files in such formats, ClickHouse reads external schema from a separate file and transforms it to a ClickHouse table schema.
+To automatically infer a schema from files in such formats, Datastore reads external schema from a separate file and transforms it to a Datastore table schema.
 
 ### Protobuf {#protobuf}
 
-In schema inference for Protobuf format ClickHouse uses the following type matches:
+In schema inference for Protobuf format Datastore uses the following type matches:
 
-| Protobuf data type            | ClickHouse data type                              |
+| Protobuf data type            | Datastore data type                              |
 |-------------------------------|---------------------------------------------------|
 | `bool`                        | [UInt8](../sql-reference/data-types/int-uint.md)  |
 | `float`                       | [Float32](../sql-reference/data-types/float.md)   |
@@ -1913,9 +1913,9 @@ In schema inference for Protobuf format ClickHouse uses the following type match
 
 ### CapnProto {#capnproto}
 
-In schema inference for CapnProto format ClickHouse uses the following type matches:
+In schema inference for CapnProto format Datastore uses the following type matches:
 
-| CapnProto data type                | ClickHouse data type                                   |
+| CapnProto data type                | Datastore data type                                   |
 |------------------------------------|--------------------------------------------------------|
 | `Bool`                             | [UInt8](../sql-reference/data-types/int-uint.md)       |
 | `Int8`                             | [Int8](../sql-reference/data-types/int-uint.md)        |
@@ -1937,15 +1937,15 @@ In schema inference for CapnProto format ClickHouse uses the following type matc
 ## Strong-typed binary formats {#strong-typed-binary-formats}
 
 In such formats, each serialized value contains information about its type (and possibly about its name), but there is no information about the whole table.
-In schema inference for such formats, ClickHouse reads data row by row (up to `input_format_max_rows_to_read_for_schema_inference` rows or `input_format_max_bytes_to_read_for_schema_inference` bytes) and extracts
-the type (and possibly name) for each value from the data and then converts these types to ClickHouse types.
+In schema inference for such formats, Datastore reads data row by row (up to `input_format_max_rows_to_read_for_schema_inference` rows or `input_format_max_bytes_to_read_for_schema_inference` bytes) and extracts
+the type (and possibly name) for each value from the data and then converts these types to Datastore types.
 
 ### MsgPack {#msgpack}
 
 In MsgPack format there is no delimiter between rows, to use schema inference for this format you should specify the number of columns in the table
-using the setting `input_format_msgpack_number_of_columns`. ClickHouse uses the following type matches:
+using the setting `input_format_msgpack_number_of_columns`. Datastore uses the following type matches:
 
-| MessagePack data type (`INSERT`)                                   | ClickHouse data type                                      |
+| MessagePack data type (`INSERT`)                                   | Datastore data type                                      |
 |--------------------------------------------------------------------|-----------------------------------------------------------|
 | `int N`, `uint N`, `negative fixint`, `positive fixint`            | [Int64](../sql-reference/data-types/int-uint.md)          |
 | `bool`                                                             | [UInt8](../sql-reference/data-types/int-uint.md)          |
@@ -1962,10 +1962,10 @@ By default, all inferred types are inside `Nullable`, but it can be changed usin
 
 ### BSONEachRow {#bsoneachrow}
 
-In BSONEachRow each row of data is presented as a BSON document. In schema inference ClickHouse reads BSON documents one by one and extracts
-values, names, and types from the data and then transforms these types to ClickHouse types using the following type matches:
+In BSONEachRow each row of data is presented as a BSON document. In schema inference Datastore reads BSON documents one by one and extracts
+values, names, and types from the data and then transforms these types to Datastore types using the following type matches:
 
-| BSON Type                                                                                     | ClickHouse type                                                                                                             |
+| BSON Type                                                                                     | Datastore type                                                                                                             |
 |-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | `\x08` boolean                                                                                | [Bool](../sql-reference/data-types/boolean.md)                                                                              |
 | `\x10` int32                                                                                  | [Int32](../sql-reference/data-types/int-uint.md)                                                                            |
@@ -1986,7 +1986,7 @@ Data in such formats always have the same schema.
 
 ### LineAsString {#line-as-string}
 
-In this format, ClickHouse reads the whole line from the data into a single column with `String` data type. The inferred type for this format is always `String` and the column name is `line`.
+In this format, Datastore reads the whole line from the data into a single column with `String` data type. The inferred type for this format is always `String` and the column name is `line`.
 
 **Example**
 
@@ -2001,7 +2001,7 @@ DESC format(LineAsString, 'Hello\nworld!')
 
 ### JSONAsString {#json-as-string}
 
-In this format, ClickHouse reads the whole JSON object from the data into a single column with `String` data type. The inferred type for this format is always `String` and the column name is `json`.
+In this format, Datastore reads the whole JSON object from the data into a single column with `String` data type. The inferred type for this format is always `String` and the column name is `json`.
 
 **Example**
 
@@ -2016,7 +2016,7 @@ DESC format(JSONAsString, '{"x" : 42, "y" : "Hello, World!"}')
 
 ### JSONAsObject {#json-as-object}
 
-In this format, ClickHouse reads the whole JSON object from the data into a single column with `JSON` data type. Inferred type for this format is always `JSON` and the column name is `json`.
+In this format, Datastore reads the whole JSON object from the data into a single column with `JSON` data type. Inferred type for this format is always `JSON` and the column name is `json`.
 
 **Example**
 
@@ -2036,7 +2036,7 @@ The mode is controlled by the setting `schema_inference_mode`.
 
 ### Default mode {#default-schema-inference-mode}
 
-In default mode, ClickHouse assumes that all files have the same schema and tries to infer the schema by reading files one by one until it succeeds.
+In default mode, Datastore assumes that all files have the same schema and tries to infer the schema by reading files one by one until it succeeds.
 
 Example:
 
@@ -2076,12 +2076,12 @@ Let's try to use schema inference on these 3 files:
 ```
 
 As we can see, we don't have `field3` from file `data3.jsonl`.
-It happens because ClickHouse first tried to infer schema from file `data1.jsonl`, failed because of only nulls for field `field2`,
+It happens because Datastore first tried to infer schema from file `data1.jsonl`, failed because of only nulls for field `field2`,
 and then tried to infer schema from `data2.jsonl` and succeeded, so data from file `data3.jsonl` wasn't read.
 
 ### Union mode {#default-schema-inference-mode-1}
 
-In union mode, ClickHouse assumes that files can have different schemas, so it infer schemas of all files and then union them to the common schema.
+In union mode, Datastore assumes that files can have different schemas, so it infer schemas of all files and then union them to the common schema.
 
 Let's say we have 3 files `data1.jsonl`, `data2.jsonl` and `data3.jsonl` with the next content:
 
@@ -2123,12 +2123,12 @@ As we can see, we have all fields from all files.
 
 Note:
 - As some of the files may not contain some columns from the resulting schema, union mode is supported only for formats that support reading subset of columns (like JSONEachRow, Parquet, TSVWithNames, etc) and won't work for other formats (like CSV, TSV, JSONCompactEachRow, etc).
-- If ClickHouse cannot infer the schema from one of the files, the exception will be thrown.
+- If Datastore cannot infer the schema from one of the files, the exception will be thrown.
 - If you have a lot of files, reading schema from all of them can take a lot of time.
 
 ## Automatic format detection {#automatic-format-detection}
 
-If data format is not specified and cannot be determined by the file extension, ClickHouse will try to detect the file format by its content.
+If data format is not specified and cannot be determined by the file extension, Datastore will try to detect the file format by its content.
 
 **Examples:**
 
@@ -2165,5 +2165,5 @@ We can inspect and query this file without specifying format or structure:
 ```
 
 :::note
-ClickHouse can detect only some subset of formats and this detection takes some time, it's always better to specify the format explicitly.
+Datastore can detect only some subset of formats and this detection takes some time, it's always better to specify the format explicitly.
 :::

@@ -24,7 +24,7 @@ jobs:
     runs-on: [self-hosted, style-checker-aarch64]
     steps:
       - name: Check out repository code
-        uses: ClickHouse/checkout@v1
+        uses: Datastore/checkout@v1
         with:
           clear-repository: true
       - name: Debug Info
@@ -70,8 +70,8 @@ jobs:
             VERSION_MAJOR=${VERSION_MINOR%.*}
 
             for image_config in \
-              "clickhouse/clickhouse-server:docker/server/Dockerfile.distroless:docker/server" \
-              "clickhouse/clickhouse-keeper:docker/keeper/Dockerfile.distroless:docker/keeper"
+              "datastore/datastore-server:docker/server/Dockerfile.distroless:docker/server" \
+              "datastore/datastore-keeper:docker/keeper/Dockerfile.distroless:docker/keeper"
             do
               IMAGE_NAME=${image_config%%:*}
               rest=${image_config#*:}
@@ -86,8 +86,8 @@ jobs:
                 --sbom=true \
                 ${PUSH_FLAG:-$OUTPUT_FLAG} \
                 --label="build-url=${GITHUB_RUN_URL}" \
-                --label="com.clickhouse.build.githash=${SHA}" \
-                --label="com.clickhouse.build.version=${VERSION}-distroless" \
+                --label="com.datastore.build.githash=${SHA}" \
+                --label="com.datastore.build.version=${VERSION}-distroless" \
                 --tag="${IMAGE_NAME}:${VERSION}-distroless" \
                 --build-arg=VERSION="${VERSION}" \
                 --progress=plain \

@@ -7,15 +7,15 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT -nm -q "
+$DATASTORE_CLIENT -nm -q "
   drop table if exists data;
   create table data (key Int, value Int) engine=MergeTree() order by key settings add_minmax_index_for_numeric_columns=0;
   insert into data select *, *+1000000 from numbers(100000);
 "
 
-table_uuid="$($CLICKHOUSE_CLIENT -q "SELECT uuid FROM system.tables WHERE database = currentDatabase() AND table = 'data'")"
+table_uuid="$($DATASTORE_CLIENT -q "SELECT uuid FROM system.tables WHERE database = currentDatabase() AND table = 'data'")"
 
-$CLICKHOUSE_CLIENT -nm -q "
+$DATASTORE_CLIENT -nm -q "
   -- { echo }
   select * from mergeTreeAnalyzeIndexesUUID('$table_uuid');
   select * from mergeTreeAnalyzeIndexesUUID('$table_uuid');

@@ -31,7 +31,7 @@ namespace
 void setUpConfig(const std::string & file_name)
 {
     std::string content = R"(
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <console>true</console>
@@ -86,7 +86,7 @@ void setUpConfig(const std::string & file_name)
         </disks>
     </storage_configuration>
 
-</clickhouse>
+</datastore>
 )";
 
     if (fs::exists(file_name))

@@ -1,4 +1,4 @@
-# This is a standalone host tool with no ClickHouse dependencies.
+# This is a standalone host tool with no Datastore dependencies.
 # It must be compilable with the host compiler during cross-compilation.
 
 if (CMAKE_CROSSCOMPILING)

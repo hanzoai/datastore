@@ -4,9 +4,9 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-func_name="f1_${CLICKHOUSE_DATABASE}"
+func_name="f1_${DATASTORE_DATABASE}"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     SET enable_analyzer = 1;
     DROP FUNCTION IF EXISTS ${func_name};
     DROP TABLE IF EXISTS t1;

@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/55647
+-- https://github.com/ClickHouse/Datastore/issues/55647
 SET enable_analyzer=1;
 
 SELECT

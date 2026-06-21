@@ -7,7 +7,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-$CLICKHOUSE_CLIENT <<EOF
+$DATASTORE_CLIENT <<EOF
 DROP TABLE IF EXISTS src_a;
 DROP TABLE IF EXISTS src_b;
 
@@ -38,11 +38,11 @@ function insert_thread() {
         # trigger 50 concurrent inserts at a time
         for _ in {0..50}; do
             # ignore `Possible deadlock avoided. Client should retry`
-            ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -d "${INSERT[$RANDOM % 2]}" &>/dev/null &
+            ${DATASTORE_CURL} -sS "${DATASTORE_URL}" -d "${INSERT[$RANDOM % 2]}" &>/dev/null &
         done
         wait
 
-        is_done=$($CLICKHOUSE_CLIENT -q "SELECT countIf(case = 1) > 0 AND countIf(case = 2) > 0 FROM mv;")
+        is_done=$($DATASTORE_CLIENT -q "SELECT countIf(case = 1) > 0 AND countIf(case = 2) > 0 FROM mv;")
 
         if [ "$is_done" -eq "1" ]; then
             break
@@ -66,12 +66,12 @@ function alter_thread() {
     local TIMELIMIT=$((SECONDS+120))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --allow_experimental_alter_materialized_view_structure=1 -q "${ALTER[$i % 6]}"
+        $DATASTORE_CLIENT --allow_experimental_alter_materialized_view_structure=1 -q "${ALTER[$i % 6]}"
         ((i=i+1))
 
         sleep "0.0$RANDOM"
 
-        is_done=$($CLICKHOUSE_CLIENT -q "SELECT countIf(case = 1) > 0 AND countIf(case = 2) > 0 FROM mv;")
+        is_done=$($DATASTORE_CLIENT -q "SELECT countIf(case = 1) > 0 AND countIf(case = 2) > 0 FROM mv;")
 
         if [ "$is_done" -eq "1" ]; then
             break
@@ -84,9 +84,9 @@ alter_thread &
 
 wait
 
-$CLICKHOUSE_CLIENT -q "SELECT countIf(case = 1) > 0 AND countIf(case = 2) > 0 FROM mv LIMIT 1;"
-$CLICKHOUSE_CLIENT -q "SELECT 'inconsistencies', count() FROM mv WHERE test == 0;"
+$DATASTORE_CLIENT -q "SELECT countIf(case = 1) > 0 AND countIf(case = 2) > 0 FROM mv LIMIT 1;"
+$DATASTORE_CLIENT -q "SELECT 'inconsistencies', count() FROM mv WHERE test == 0;"
 
-$CLICKHOUSE_CLIENT -q "DROP VIEW mv"
-$CLICKHOUSE_CLIENT -q "DROP TABLE src_a"
-$CLICKHOUSE_CLIENT -q "DROP TABLE src_b"
+$DATASTORE_CLIENT -q "DROP VIEW mv"
+$DATASTORE_CLIENT -q "DROP TABLE src_a"
+$DATASTORE_CLIENT -q "DROP TABLE src_b"

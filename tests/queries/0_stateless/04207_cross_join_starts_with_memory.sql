@@ -1,4 +1,4 @@
--- Regression test for https://github.com/ClickHouse/ClickHouse/issues/12571
+-- Regression test for https://github.com/ClickHouse/Datastore/issues/12571
 -- `CROSS JOIN` with a non-equi filter (e.g. `startsWith`) used to materialize
 -- per-input-block output of size `left_block_rows * right_block_rows`, which
 -- for wide string columns blew up memory by 20x or more.

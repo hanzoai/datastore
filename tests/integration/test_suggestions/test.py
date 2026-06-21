@@ -4,7 +4,7 @@ import re
 import time
 
 from helpers.client import QueryRuntimeException
-from helpers.cluster import CLICKHOUSE_CI_MIN_TESTED_VERSION, ClickHouseCluster
+from helpers.cluster import DATASTORE_CI_MIN_TESTED_VERSION, ClickHouseCluster
 from helpers.uclient import client, prompt
 
 
@@ -34,7 +34,7 @@ system_completions_based_suggestions_server = cluster.add_instance(
 )
 system_tables_based_suggestions_server = cluster.add_instance(
     "backward",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="25.7",
     with_installed_binary=True,
     main_configs=["configs/macros.xml"],

@@ -28,7 +28,7 @@
 #include <Storages/MergeTree/MergeTreeData.h>
 #include <Storages/StorageMergeTree.h>
 #include <Storages/StorageReplicatedMergeTree.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Storages/StorageSharedMergeTree.h>
 #endif
 
@@ -207,17 +207,17 @@ void ServerAsynchronousMetrics::updateImpl(TimePoint update_time, TimePoint curr
         auto stat = getStatVFS(getContext()->getPath());
 
         new_values["FilesystemMainPathTotalBytes"] = { stat.f_blocks * stat.f_frsize,
-            "The size of the volume where the main ClickHouse path is mounted, in bytes." };
+            "The size of the volume where the main Datastore path is mounted, in bytes." };
         new_values["FilesystemMainPathAvailableBytes"] = { stat.f_bavail * stat.f_frsize,
-            "Available bytes on the volume where the main ClickHouse path is mounted." };
+            "Available bytes on the volume where the main Datastore path is mounted." };
         new_values["FilesystemMainPathUsedBytes"] = { (stat.f_blocks - stat.f_bavail) * stat.f_frsize,
-            "Used bytes on the volume where the main ClickHouse path is mounted." };
+            "Used bytes on the volume where the main Datastore path is mounted." };
         new_values["FilesystemMainPathTotalINodes"] = { stat.f_files,
-            "The total number of inodes on the volume where the main ClickHouse path is mounted. If it is less than 25 million, it indicates a misconfiguration." };
+            "The total number of inodes on the volume where the main Datastore path is mounted. If it is less than 25 million, it indicates a misconfiguration." };
         new_values["FilesystemMainPathAvailableINodes"] = { stat.f_favail,
-            "The number of available inodes on the volume where the main ClickHouse path is mounted. If it is close to zero, it indicates a misconfiguration, and you will get 'no space left on device' even when the disk is not full." };
+            "The number of available inodes on the volume where the main Datastore path is mounted. If it is close to zero, it indicates a misconfiguration, and you will get 'no space left on device' even when the disk is not full." };
         new_values["FilesystemMainPathUsedINodes"] = { stat.f_files - stat.f_favail,
-            "The number of used inodes on the volume where the main ClickHouse path is mounted. This value mostly corresponds to the number of files." };
+            "The number of used inodes on the volume where the main Datastore path is mounted. This value mostly corresponds to the number of files." };
     }
 
     {
@@ -225,17 +225,17 @@ void ServerAsynchronousMetrics::updateImpl(TimePoint update_time, TimePoint curr
         auto stat = getStatVFS(".");
 
         new_values["FilesystemLogsPathTotalBytes"] = { stat.f_blocks * stat.f_frsize,
-            "The size of the volume where ClickHouse logs path is mounted, in bytes. It's recommended to have at least 10 GB for logs." };
+            "The size of the volume where Datastore logs path is mounted, in bytes. It's recommended to have at least 10 GB for logs." };
         new_values["FilesystemLogsPathAvailableBytes"] = { stat.f_bavail * stat.f_frsize,
-            "Available bytes on the volume where ClickHouse logs path is mounted. If this value approaches zero, you should tune the log rotation in the configuration file." };
+            "Available bytes on the volume where Datastore logs path is mounted. If this value approaches zero, you should tune the log rotation in the configuration file." };
         new_values["FilesystemLogsPathUsedBytes"] = { (stat.f_blocks - stat.f_bavail) * stat.f_frsize,
-            "Used bytes on the volume where ClickHouse logs path is mounted." };
+            "Used bytes on the volume where Datastore logs path is mounted." };
         new_values["FilesystemLogsPathTotalINodes"] = { stat.f_files,
-            "The total number of inodes on the volume where ClickHouse logs path is mounted." };
+            "The total number of inodes on the volume where Datastore logs path is mounted." };
         new_values["FilesystemLogsPathAvailableINodes"] = { stat.f_favail,
-            "The number of available inodes on the volume where ClickHouse logs path is mounted." };
+            "The number of available inodes on the volume where Datastore logs path is mounted." };
         new_values["FilesystemLogsPathUsedINodes"] = { stat.f_files - stat.f_favail,
-            "The number of used inodes on the volume where ClickHouse logs path is mounted." };
+            "The number of used inodes on the volume where Datastore logs path is mounted." };
     }
 
 

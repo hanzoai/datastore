@@ -114,7 +114,7 @@ database:                              default
 table:                                 53r93yleapyears
 engine:                                MergeTree
 disk_name:                             default
-path:                                  /var/lib/clickhouse/data/default/53r93yleapyears/all_1_2_1/
+path:                                  /var/lib/datastore/data/default/53r93yleapyears/all_1_2_1/
 column:                                id
 type:                                  Int8
 column_position:                       1

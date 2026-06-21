@@ -69,8 +69,8 @@ class CIDBCluster:
                 return False
         if self.pwd and not self._auth:
             self._auth = {
-                "X-ClickHouse-User": self.user,
-                "X-ClickHouse-Key": self.pwd,
+                "X-Datastore-User": self.user,
+                "X-Datastore-Key": self.pwd,
             }
         params = {
             "query": f"SELECT 1",
@@ -254,6 +254,6 @@ class CIDBCluster:
 
 if __name__ == "__main__":
     CIDBCluster = CIDBCluster(
-        url="https://play.clickhouse.com?user=play", user="", pwd=""
+        url="https://play.datastore.com?user=play", user="", pwd=""
     )
     assert CIDBCluster.is_ready()

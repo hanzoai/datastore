@@ -35,8 +35,8 @@ Contains information about [dictionaries](../../sql-reference/statements/create/
 - `element_count` ([UInt64](/sql-reference/data-types/int-uint)) — Number of items stored in the dictionary.
 - `load_factor` ([Float64](/sql-reference/data-types/float)) — Percentage filled in the dictionary (for a hashed dictionary, the percentage filled in the hash table).
 - `source` ([String](/sql-reference/data-types/string)) — Text describing the data source for the dictionary.
-- `lifetime_min` ([UInt64](/sql-reference/data-types/int-uint)) — Minimum lifetime of the dictionary in memory, after which ClickHouse tries to reload the dictionary (if invalidate_query is set, then only if it has changed). Set in seconds.
-- `lifetime_max` ([UInt64](/sql-reference/data-types/int-uint)) — Maximum lifetime of the dictionary in memory, after which ClickHouse tries to reload the dictionary (if invalidate_query is set, then only if it has changed). Set in seconds.
+- `lifetime_min` ([UInt64](/sql-reference/data-types/int-uint)) — Minimum lifetime of the dictionary in memory, after which Datastore tries to reload the dictionary (if invalidate_query is set, then only if it has changed). Set in seconds.
+- `lifetime_max` ([UInt64](/sql-reference/data-types/int-uint)) — Maximum lifetime of the dictionary in memory, after which Datastore tries to reload the dictionary (if invalidate_query is set, then only if it has changed). Set in seconds.
 - `loading_start_time` ([DateTime](/sql-reference/data-types/datetime)) — Start time for loading the dictionary.
 - `last_successful_update_time` ([DateTime](/sql-reference/data-types/datetime)) — End time for loading or updating the dictionary. Helps to monitor some troubles with dictionary sources and investigate the causes.
 - `error_count` ([UInt64](/sql-reference/data-types/int-uint)) — Number of errors since last successful loading. Helps to monitor some troubles with dictionary sources and investigate the causes.
@@ -56,7 +56,7 @@ CREATE DICTIONARY dictionary_with_comment
     value String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() TABLE 'source_table'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() TABLE 'source_table'))
 LAYOUT(FLAT())
 LIFETIME(MIN 0 MAX 1000)
 COMMENT 'The temporary dictionary';

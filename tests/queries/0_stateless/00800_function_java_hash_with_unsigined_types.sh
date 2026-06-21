@@ -9,7 +9,7 @@ exception_pattern='DB::Exception:'
 
 function check()
 {
-  ${CLICKHOUSE_CLIENT} -q "$1" |& {
+  ${DATASTORE_CLIENT} -q "$1" |& {
       if [[ `grep -F  $exception_pattern  | wc -l` -gt 0 ]]
       then
         echo 'Not supported'

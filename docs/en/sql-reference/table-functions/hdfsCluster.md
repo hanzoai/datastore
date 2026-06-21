@@ -31,7 +31,7 @@ A table with the specified structure for reading data in the specified file.
 
 ## Examples {#examples}
 
-1.  Suppose that we have a ClickHouse cluster named `cluster_simple`, and several files with following URIs on HDFS:
+1.  Suppose that we have a Datastore cluster named `cluster_simple`, and several files with following URIs on HDFS:
 
 - 'hdfs://hdfs1:9000/some_dir/some_file_1'
 - 'hdfs://hdfs1:9000/some_dir/some_file_2'

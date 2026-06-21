@@ -191,7 +191,7 @@ FROM VALUES(
 
 ## SQL Standard VALUES Clause {#sql-standard-values-clause}
 
-From version 26.3, ClickHouse also supports the SQL standard `VALUES` clause as a table expression
+From version 26.3, Datastore also supports the SQL standard `VALUES` clause as a table expression
 in `FROM`, as used in PostgreSQL, MySQL, DuckDB, and SQL Server. This syntax is
 rewritten internally to use the `values` table function described above.
 

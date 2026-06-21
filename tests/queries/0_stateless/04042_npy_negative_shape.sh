@@ -18,10 +18,10 @@ header += b' ' * (pad_len - 1) + b'\n'
 header_len = struct.pack('<H', len(header))
 sys.stdout.buffer.write(magic + version + header_len + header)
 sys.stdout.buffer.write(struct.pack('<i', 42) * 4)
-" > "${CLICKHOUSE_TMP}/negative_shape.npy"
+" > "${DATASTORE_TMP}/negative_shape.npy"
 
 # Should fail with INCORRECT_DATA, not hang
-${CLICKHOUSE_LOCAL} --query "SELECT * FROM file('${CLICKHOUSE_TMP}/negative_shape.npy', 'Npy')" 2>&1 | grep -o 'INCORRECT_DATA'
+${DATASTORE_LOCAL} --query "SELECT * FROM file('${DATASTORE_TMP}/negative_shape.npy', 'Npy')" 2>&1 | grep -o 'INCORRECT_DATA'
 
 # Generate NPY file with negative shape in multi-dimensional: shape=(2, -3)
 python3 -c "
@@ -35,6 +35,6 @@ header += b' ' * (pad_len - 1) + b'\n'
 header_len = struct.pack('<H', len(header))
 sys.stdout.buffer.write(magic + version + header_len + header)
 sys.stdout.buffer.write(struct.pack('<i', 42) * 6)
-" > "${CLICKHOUSE_TMP}/negative_shape_multi.npy"
+" > "${DATASTORE_TMP}/negative_shape_multi.npy"
 
-${CLICKHOUSE_LOCAL} --query "SELECT * FROM file('${CLICKHOUSE_TMP}/negative_shape_multi.npy', 'Npy')" 2>&1 | grep -o 'INCORRECT_DATA'
+${DATASTORE_LOCAL} --query "SELECT * FROM file('${DATASTORE_TMP}/negative_shape_multi.npy', 'Npy')" 2>&1 | grep -o 'INCORRECT_DATA'

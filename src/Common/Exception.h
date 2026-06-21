@@ -227,7 +227,7 @@ public:
 
     void markAsLogged() { logged.store(true, std::memory_order_relaxed); }
 
-    /// Indicates if the error code triggers alerts in ClickHouse Cloud
+    /// Indicates if the error code triggers alerts in Datastore Cloud
     bool isErrorCodeImportant() const;
 
 private:

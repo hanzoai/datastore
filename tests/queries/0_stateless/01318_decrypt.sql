@@ -73,7 +73,7 @@ CREATE TABLE encryption_test
 ) Engine = Memory;
 
 INSERT INTO encryption_test (input)
-VALUES (''), ('text'), ('What Is ClickHouse? ClickHouse is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).');
+VALUES (''), ('text'), ('What Is Datastore? Datastore is a column-oriented database management system (DBMS) for online analytical processing of queries (OLAP).');
 
 
 SELECT 'MySQL-compatitable mode, with key folding, no length checks, etc.';

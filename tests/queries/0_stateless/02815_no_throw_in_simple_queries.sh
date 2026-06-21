@@ -4,22 +4,22 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-export CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION=1
+export DATASTORE_TERMINATE_ON_ANY_EXCEPTION=1
 
 # The environment variable works as expected:
-$CLICKHOUSE_LOCAL --query 'this is wrong' || echo "Failed"
+$DATASTORE_LOCAL --query 'this is wrong' || echo "Failed"
 # No exceptions are thrown in simple cases:
-$CLICKHOUSE_LOCAL --query "SELECT 1" || echo "Failed"
-$CLICKHOUSE_LOCAL --query "SHOW TABLES" || echo "Failed"
-$CLICKHOUSE_LOCAL --query "SELECT * FROM system.tables WHERE database = currentDatabase() FORMAT Null" || echo "Failed"
+$DATASTORE_LOCAL --query "SELECT 1" || echo "Failed"
+$DATASTORE_LOCAL --query "SHOW TABLES" || echo "Failed"
+$DATASTORE_LOCAL --query "SELECT * FROM system.tables WHERE database = currentDatabase() FORMAT Null" || echo "Failed"
 
 # The same for the client app:
-$CLICKHOUSE_CLIENT --query "SELECT 1" || echo "Failed"
-$CLICKHOUSE_CLIENT --query "SHOW TABLES" || echo "Failed"
-$CLICKHOUSE_CLIENT --query "SELECT * FROM system.tables WHERE database = currentDatabase() FORMAT Null" || echo "Failed"
+$DATASTORE_CLIENT --query "SELECT 1" || echo "Failed"
+$DATASTORE_CLIENT --query "SHOW TABLES" || echo "Failed"
+$DATASTORE_CLIENT --query "SELECT * FROM system.tables WHERE database = currentDatabase() FORMAT Null" || echo "Failed"
 
 # Multi queries are ok:
-$CLICKHOUSE_LOCAL "SELECT 1; SELECT 2;" || echo "Failed"
+$DATASTORE_LOCAL "SELECT 1; SELECT 2;" || echo "Failed"
 
 # It can run in interactive mode:
 function run()
@@ -31,7 +31,7 @@ log_user 0
 set timeout 60
 match_max 100000
 
-exp_internal -f $CLICKHOUSE_TMP/$(basename "${BASH_SOURCE[0]}").debuglog 0
+exp_internal -f $DATASTORE_TMP/$(basename "${BASH_SOURCE[0]}").debuglog 0
 expect_after {
     -i \$any_spawn_id eof { exp_continue }
     -i \$any_spawn_id timeout { exit 1 }
@@ -51,4 +51,4 @@ expect eof
 EOF
 }
 
-run "$CLICKHOUSE_LOCAL"
+run "$DATASTORE_LOCAL"

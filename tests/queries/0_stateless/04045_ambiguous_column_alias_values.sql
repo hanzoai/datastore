@@ -1,6 +1,6 @@
 SET enable_analyzer = 1;
 
--- https://github.com/ClickHouse/ClickHouse/issues/62566
+-- https://github.com/ClickHouse/Datastore/issues/62566
 SELECT
     *,
     'redefined' AS my_field

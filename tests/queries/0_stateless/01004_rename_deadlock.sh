@@ -7,17 +7,17 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test1";
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS test2";
-$CLICKHOUSE_CLIENT --query "CREATE TABLE test1 (x UInt8) ENGINE = MergeTree ORDER BY x";
-$CLICKHOUSE_CLIENT --query "CREATE TABLE test2 (x UInt8) ENGINE = MergeTree ORDER BY x";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test1";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS test2";
+$DATASTORE_CLIENT --query "CREATE TABLE test1 (x UInt8) ENGINE = MergeTree ORDER BY x";
+$DATASTORE_CLIENT --query "CREATE TABLE test2 (x UInt8) ENGINE = MergeTree ORDER BY x";
 
 function thread1()
 {
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "RENAME TABLE test1 TO test_tmp, test2 TO test1, test_tmp TO test2"
+        $DATASTORE_CLIENT --query "RENAME TABLE test1 TO test_tmp, test2 TO test1, test_tmp TO test2"
     done
 }
 
@@ -26,7 +26,7 @@ function thread2()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        $CLICKHOUSE_CLIENT --query "SELECT * FROM test1 UNION ALL SELECT * FROM test2" --format Null
+        $DATASTORE_CLIENT --query "SELECT * FROM test1 UNION ALL SELECT * FROM test2" --format Null
     done
 }
 
@@ -35,8 +35,8 @@ function thread3()
     local TIMELIMIT=$((SECONDS+TIMEOUT))
     while [ $SECONDS -lt "$TIMELIMIT" ]
     do
-        # NOTE: database = $CLICKHOUSE_DATABASE is unwanted
-        $CLICKHOUSE_CLIENT --query "SELECT * FROM system.tables" --format Null
+        # NOTE: database = $DATASTORE_DATABASE is unwanted
+        $DATASTORE_CLIENT --query "SELECT * FROM system.tables" --format Null
     done
 }
 
@@ -61,5 +61,5 @@ thread3 2> /dev/null &
 wait
 sleep 1
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE test1"
-$CLICKHOUSE_CLIENT -q "DROP TABLE test2"
+$DATASTORE_CLIENT -q "DROP TABLE test1"
+$DATASTORE_CLIENT -q "DROP TABLE test2"

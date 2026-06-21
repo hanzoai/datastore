@@ -25,7 +25,7 @@ Contains information about normal and aggregate functions.
 - `parameters` ([String](/sql-reference/data-types/string)) — The function parameters (only for aggregate function).
 - `returned_value` ([String](/sql-reference/data-types/string)) — What does the function return.
 - `examples` ([String](/sql-reference/data-types/string)) — Usage example.
-- `introduced_in` ([String](/sql-reference/data-types/string)) — ClickHouse version in which the function was first introduced.
+- `introduced_in` ([String](/sql-reference/data-types/string)) — Datastore version in which the function was first introduced.
 - `categories` ([String](/sql-reference/data-types/string)) — The category of the function.
 - `deterministic` ([Nullable(UInt8)](/sql-reference/data-types/int-uint)) — Whether the function returns the same result for the same arguments. `NULL` when unknown (e.g. aggregate or user-defined functions).
 - `higher_order` ([Nullable(UInt8)](/sql-reference/data-types/int-uint)) — Whether the function is higher-order — i.e. accepts at least one lambda expression as an argument (e.g. `arrayMap`, `arrayFilter`, `mapApply`). `NULL` when unknown.

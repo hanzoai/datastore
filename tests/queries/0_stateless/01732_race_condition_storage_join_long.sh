@@ -11,7 +11,7 @@ set -o pipefail
 echo "
 	DROP TABLE IF EXISTS storage_join_race;
 	CREATE TABLE storage_join_race (x UInt64, y UInt64) Engine = Join(ALL, FULL, x);
-" | $CLICKHOUSE_CLIENT
+" | $DATASTORE_CLIENT
 
 function read_thread_big()
 {
@@ -19,7 +19,7 @@ function read_thread_big()
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         echo "
             SELECT * FROM ( SELECT number AS x FROM numbers(100000) ) AS t1 ALL FULL JOIN storage_join_race USING (x) FORMAT Null;
-        " | $CLICKHOUSE_CLIENT
+        " | $DATASTORE_CLIENT
     done
 }
 
@@ -29,7 +29,7 @@ function read_thread_small()
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         echo "
             SELECT * FROM ( SELECT number AS x FROM numbers(10) ) AS t1 ALL FULL JOIN storage_join_race USING (x) FORMAT Null;
-        " | $CLICKHOUSE_CLIENT
+        " | $DATASTORE_CLIENT
     done
 }
 
@@ -39,7 +39,7 @@ function read_thread_select()
     while [ $SECONDS -lt "$TIMELIMIT" ]; do
         echo "
             SELECT * FROM storage_join_race FORMAT Null;
-        " | $CLICKHOUSE_CLIENT
+        " | $DATASTORE_CLIENT
     done
 }
 
@@ -54,8 +54,8 @@ echo "
     INSERT INTO storage_join_race
         SELECT number AS x, sleepEachRow(0.1) + number AS y FROM numbers ($TIMEOUT * 10)
         SETTINGS function_sleep_max_microseconds_per_block = 100000000, max_block_size = 10;
-" | $CLICKHOUSE_CLIENT
+" | $DATASTORE_CLIENT
 
 wait
 
-$CLICKHOUSE_CLIENT -q "DROP TABLE storage_join_race"
+$DATASTORE_CLIENT -q "DROP TABLE storage_join_race"

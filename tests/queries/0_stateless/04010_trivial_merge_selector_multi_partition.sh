@@ -19,7 +19,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # With the fix: parts_ranges[sorted_partition_indices[0]=1] = partition "1"
 # (10 parts) -> merge succeeds.
 
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
 DROP TABLE IF EXISTS test_trivial_multi_partition;
 
 CREATE TABLE test_trivial_multi_partition (x UInt64)
@@ -52,7 +52,7 @@ OPTIMIZE TABLE test_trivial_multi_partition;
 # With the bug the merge never happens and this loop hangs, catching the regression.
 while true
 do
-    result=$(${CLICKHOUSE_CLIENT} --query "
+    result=$(${DATASTORE_CLIENT} --query "
         SELECT count() FROM system.parts
         WHERE active
           AND table = 'test_trivial_multi_partition'
@@ -65,4 +65,4 @@ done
 
 echo "OK"
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE test_trivial_multi_partition;"
+${DATASTORE_CLIENT} --query "DROP TABLE test_trivial_multi_partition;"

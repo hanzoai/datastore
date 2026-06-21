@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
                 <type>local_blob_storage</type>
-                <path>/var/lib/clickhouse/local_disk_2/</path>
+                <path>/var/lib/datastore/local_disk_2/</path>
             </hdd_blob>
             <cache1>
                 <type>cache</type>
@@ -21,4 +21,4 @@
             </cache2>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

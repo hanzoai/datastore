@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/71382
+-- https://github.com/ClickHouse/Datastore/issues/71382
 -- This query used to crash in the old analyzer's RewriteArrayExistsFunctionVisitor.
 -- The old analyzer visitor has been removed; this test verifies no regression.
 DROP TABLE IF EXISTS rewrite;

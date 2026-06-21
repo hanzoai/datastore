@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 
-$CLICKHOUSE_CLIENT -q """
+$DATASTORE_CLIENT -q """
 create table t1(a UInt32) engine=MergeTree order by tuple() partition by a % 4 settings index_granularity = 8192, index_granularity_bytes = 10485760;
 
 insert into t1 select number from numbers_mt(1e5);
@@ -15,7 +15,7 @@ optimize table t1 final;
 """
 
 for _ in {1..20}; do
-  ($CLICKHOUSE_CURL -sS "${CLICKHOUSE_URL}" -d """
+  ($DATASTORE_CURL -sS "${DATASTORE_URL}" -d """
     SELECT count()
     FROM
     (

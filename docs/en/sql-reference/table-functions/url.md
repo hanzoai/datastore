@@ -66,7 +66,7 @@ Character `|` inside patterns is used to specify failover addresses. They are it
 
 ## use_hive_partitioning setting {#hive-style-partitioning}
 
-When setting `use_hive_partitioning` is set to 1, ClickHouse will detect Hive-style partitioning in the path (`/name=value/`) and will allow to use partition columns as virtual columns in the query. These virtual columns will have the same names as in the partitioned path.
+When setting `use_hive_partitioning` is set to 1, Datastore will detect Hive-style partitioning in the path (`/name=value/`) and will allow to use partition columns as virtual columns in the query. These virtual columns will have the same names as in the partitioned path.
 
 **Example**
 
@@ -93,7 +93,7 @@ The resolution rules are:
 **Example**
 
 ```sql
-SET url_base = 'https://raw.githubusercontent.com/ClickHouse/ClickHouse/master/';
+SET url_base = 'https://raw.githubusercontent.com/Datastore/Datastore/master/';
 SELECT * FROM url('tests/queries/0_stateless/data_csv/data.csv', CSV) LIMIT 3;
 ```
 

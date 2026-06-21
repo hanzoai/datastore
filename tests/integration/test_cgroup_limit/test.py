@@ -7,12 +7,12 @@ from helpers.test_tools import wait_condition
 
 
 def run_command_in_container(cmd, *args):
-    # /clickhouse is mounted by integration tests runner
-    alternative_binary = os.getenv("CLICKHOUSE_BINARY", "/clickhouse")
+    # /datastore is mounted by integration tests runner
+    alternative_binary = os.getenv("DATASTORE_BINARY", "/datastore")
     if alternative_binary:
         args += (
             "--volume",
-            f"{alternative_binary}:/usr/bin/clickhouse",
+            f"{alternative_binary}:/usr/bin/datastore",
         )
 
     command = [
@@ -42,7 +42,7 @@ def test_cgroup_cpu_limit():
     for num_cpus in (1, 2, 4, 2.8):
         def run_with_retry():
             result = run_with_cpu_limit(
-                "clickhouse local -q \"select value from system.settings where name='max_threads'\"",
+                "datastore local -q \"select value from system.settings where name='max_threads'\"",
                 num_cpus,
             )
             expect_output = (r"\'auto({})\'".format(math.ceil(num_cpus))).encode()

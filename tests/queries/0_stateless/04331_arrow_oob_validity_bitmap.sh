@@ -12,7 +12,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-TMP_DIR="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+TMP_DIR="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 mkdir -p "$TMP_DIR"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -129,13 +129,13 @@ check_incorrect_data() {
 }
 
 check_incorrect_data list_child_bitmap \
-    $CLICKHOUSE_LOCAL --query "SELECT sum(length(x)) FROM file('${TMP_DIR}/list_child_bitmap.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT sum(length(x)) FROM file('${TMP_DIR}/list_child_bitmap.arrow', Arrow)"
 
 check_incorrect_data struct_child_bitmap \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/struct_child_bitmap.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/struct_child_bitmap.arrow', Arrow)"
 
 check_incorrect_data int32_unknown_nullcount \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/int32_unknown_nullcount.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/int32_unknown_nullcount.arrow', Arrow)"
 
 check_incorrect_data list_unknown_nullcount \
-    $CLICKHOUSE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_unknown_nullcount.arrow', Arrow)"
+    $DATASTORE_LOCAL --query "SELECT * FROM file('${TMP_DIR}/list_unknown_nullcount.arrow', Arrow)"

@@ -4,7 +4,7 @@ SELECT
     a + 10 as c;
 
 
--- https://github.com/ClickHouse/ClickHouse/issues/5046
+-- https://github.com/ClickHouse/Datastore/issues/5046
 SELECT sum(c1) AS v
 FROM
     (

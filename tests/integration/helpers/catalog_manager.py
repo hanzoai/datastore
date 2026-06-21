@@ -110,7 +110,7 @@ class CatalogManager(ABC):
 
     @abstractmethod
     def create_catalog(self, node, database_name: str) -> None:
-        """Create a DataLakeCatalog database in ClickHouse."""
+        """Create a DataLakeCatalog database in Datastore."""
         ...
 
     @abstractmethod

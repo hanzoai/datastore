@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=none
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=none
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
@@ -47,4 +47,4 @@ EXPLAIN AST ALTER TABLE t UPDATE c = 1 WHERE 1;
 EXPLAIN AST ALTER TABLE t UPDATE c = 1 IN PARTITION 'p' WHERE 1;
 EXPLAIN AST ALTER TABLE t DELETE WHERE c = 1;
 EXPLAIN AST ALTER TABLE t DELETE IN PARTITION 'p' WHERE c = 1;" | \
-    $CLICKHOUSE_CLIENT --readonly 1 2>&1 | grep 'AlterCommand'
+    $DATASTORE_CLIENT --readonly 1 2>&1 | grep 'AlterCommand'

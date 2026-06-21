@@ -1,5 +1,5 @@
 ---
-description: 'This table contains warning messages about clickhouse server.'
+description: 'This table contains warning messages about datastore server.'
 keywords: [ 'system table', 'warnings' ]
 slug: /operations/system-tables/system_warnings
 title: 'system.warnings'
@@ -12,7 +12,7 @@ import SystemTableCloud from '@site/docs/_snippets/_system_table_cloud.md';
 
 ## Description {#description}
 
-This table shows warnings about the ClickHouse server.
+This table shows warnings about the Datastore server.
 Warnings of the same type are combined into a single warning.
 For example, if the number N of attached databases exceeds a configurable threshold T, a single entry containing the current value N is shown instead of N separate entries.
 If current value drops below the threshold, the entry is removed from the table.

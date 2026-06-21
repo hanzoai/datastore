@@ -1,6 +1,6 @@
 # Parser Memory Profiler
 
-A tool for profiling memory allocations in the ClickHouse SQL parser using jemalloc's heap profiling capabilities.
+A tool for profiling memory allocations in the Datastore SQL parser using jemalloc's heap profiling capabilities.
 
 ## Overview
 
@@ -28,10 +28,10 @@ The C++ profiler binary source is located at `src/Parsers/examples/parser_memory
 ### 1. Build the profiler binary
 
 ```bash
-cd /path/to/clickhouse
+cd /path/to/datastore
 mkdir -p build && cd build
 cmake ..
-ninja clickhouse-examples
+ninja datastore-examples
 ```
 
 ### 2. Install jeprof (from jemalloc)
@@ -108,12 +108,12 @@ Profile both versions and generate a comparison report:
 ```bash
 # Profile original version
 git checkout main
-cd build && ninja clickhouse-examples && cd ..
+cd build && ninja datastore-examples && cd ..
 ./run_profiler.sh -o results_before -b ../build
 
 # Profile optimized version
 git checkout my-optimization-branch
-cd build && ninja clickhouse-examples && cd ..
+cd build && ninja datastore-examples && cd ..
 ./run_profiler.sh -o results_after -b ../build
 
 # Generate comparison report
@@ -167,13 +167,13 @@ Shows side-by-side comparison:
 1. **parser_memory_profiler.cpp**:
    - Initializes jemalloc profiling via `mallctl()`
    - Takes a heap dump before parsing
-   - Parses the SQL query using ClickHouse's parser
+   - Parses the SQL query using Datastore's parser
    - Takes a heap dump after parsing
    - Reports memory statistics
 
 2. **run_profiler.sh**:
    - Iterates through queries in the input file
-   - Runs `clickhouse-examples parser_memory_profiler` with `MALLOC_CONF=prof:true,prof_active:true,lg_prof_sample:0`
+   - Runs `datastore-examples parser_memory_profiler` with `MALLOC_CONF=prof:true,prof_active:true,lg_prof_sample:0`
    - Uses `jeprof` to analyze heap profile diffs
    - Generates text reports, collapsed stacks, and SVGs
    - Collects everything into `results.json`
@@ -204,7 +204,7 @@ MALLOC_CONF=prof:true,prof_active:true,lg_prof_sample:0
 
 The jemalloc library must be built with profiling support. Check:
 ```bash
-./clickhouse-examples parser_memory_profiler <<< "SELECT 1"
+./datastore-examples parser_memory_profiler <<< "SELECT 1"
 ```
 
 If it shows "config.prof: no", jemalloc was built without `--enable-prof`.
@@ -246,4 +246,4 @@ Typical findings from parser memory profiling:
 
 ## License
 
-This tool is part of ClickHouse and is licensed under the Apache License 2.0.
+This tool is part of Datastore and is licensed under the Apache License 2.0.

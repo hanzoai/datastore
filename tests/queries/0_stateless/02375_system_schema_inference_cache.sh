@@ -4,10 +4,10 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-FILES_DIR=$CLICKHOUSE_TEST_UNIQUE_NAME
+FILES_DIR=$DATASTORE_TEST_UNIQUE_NAME
 mkdir $FILES_DIR
 
-$CLICKHOUSE_LOCAL -q "
+$DATASTORE_LOCAL -q "
 set input_format_json_try_infer_numbers_from_strings=1;
 insert into function file('$FILES_DIR/02374_data1.jsonl') select number as x, 'str' as s from numbers(10);
 insert into function file('$FILES_DIR/02374_data2.jsonl') select number as x, 'str' as s from numbers(10);

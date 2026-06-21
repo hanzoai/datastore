@@ -31,16 +31,16 @@ function wait_for_server # port, pid
 {
     for _ in {1..60}
     do
-        if clickhouse-client --port "$1" --query "select 1" || ! kill -0 "$2"
+        if datastore-client --port "$1" --query "select 1" || ! kill -0 "$2"
         then
             break
         fi
         sleep 1
     done
 
-    if ! clickhouse-client --port "$1" --query "select 1"
+    if ! datastore-client --port "$1" --query "select 1"
     then
-        echo "Cannot connect to ClickHouse server at $1"
+        echo "Cannot connect to Datastore server at $1"
         return 1
     fi
 
@@ -77,7 +77,7 @@ function configure
     cp -rv right/config left ||:
 
     # Start a temporary server to rename the tables
-    while pkill -f clickhouse-serv ; do echo . ; sleep 1 ; done
+    while pkill -f datastore-serv ; do echo . ; sleep 1 ; done
     echo all killed
 
     set -m # Spawn temporary in its own process groups
@@ -93,7 +93,7 @@ function configure
         --keeper_server.storage_path coordination0
         --tcp_port $LEFT_SERVER_PORT
     )
-    left/clickhouse-server "${setup_left_server_opts[@]}" &> setup-server-log.log &
+    left/datastore-server "${setup_left_server_opts[@]}" &> setup-server-log.log &
     left_pid=$!
     kill -0 $left_pid
     disown $left_pid
@@ -102,10 +102,10 @@ function configure
     wait_for_server $LEFT_SERVER_PORT $left_pid
     echo "Server for setup started"
 
-    clickhouse-client --port $LEFT_SERVER_PORT --query "create database test" ||:
-    clickhouse-client --port $LEFT_SERVER_PORT --query "rename table datasets.hits_v1 to test.hits" ||:
+    datastore-client --port $LEFT_SERVER_PORT --query "create database test" ||:
+    datastore-client --port $LEFT_SERVER_PORT --query "rename table datasets.hits_v1 to test.hits" ||:
 
-    while pkill -f clickhouse-serv ; do echo . ; sleep 1 ; done
+    while pkill -f datastore-serv ; do echo . ; sleep 1 ; done
     echo all killed
 
     # Make copies of the original db for both servers. Use hardlinks instead
@@ -136,7 +136,7 @@ function configure
 
 function restart
 {
-    while pkill -f clickhouse-serv ; do echo . ; sleep 1 ; done
+    while pkill -f datastore-serv ; do echo . ; sleep 1 ; done
     echo all killed
 
     set -m # Spawn servers in their own process groups
@@ -156,7 +156,7 @@ function restart
         --zookeeper.node.port $LEFT_SERVER_KEEPER_PORT
         --interserver_http_port $LEFT_SERVER_INTERSERVER_PORT
     )
-    left/clickhouse-server "${left_server_opts[@]}" &>> left-server-log.log &
+    left/datastore-server "${left_server_opts[@]}" &>> left-server-log.log &
     left_pid=$!
     kill -0 $left_pid
     disown $left_pid
@@ -176,7 +176,7 @@ function restart
         --zookeeper.node.port $RIGHT_SERVER_KEEPER_PORT
         --interserver_http_port $RIGHT_SERVER_INTERSERVER_PORT
     )
-    right/clickhouse-server "${right_server_opts[@]}" &>> right-server-log.log &
+    right/datastore-server "${right_server_opts[@]}" &>> right-server-log.log &
     right_pid=$!
     kill -0 $right_pid
     disown $right_pid
@@ -189,10 +189,10 @@ function restart
     wait_for_server $RIGHT_SERVER_PORT $right_pid
     echo right ok
 
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select * from system.tables where database NOT IN ('system', 'INFORMATION_SCHEMA', 'information_schema')"
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select * from system.build_options"
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select * from system.tables where database NOT IN ('system', 'INFORMATION_SCHEMA', 'information_schema')"
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select * from system.build_options"
+    datastore-client --port $LEFT_SERVER_PORT --query "select * from system.tables where database NOT IN ('system', 'INFORMATION_SCHEMA', 'information_schema')"
+    datastore-client --port $LEFT_SERVER_PORT --query "select * from system.build_options"
+    datastore-client --port $RIGHT_SERVER_PORT --query "select * from system.tables where database NOT IN ('system', 'INFORMATION_SCHEMA', 'information_schema')"
+    datastore-client --port $RIGHT_SERVER_PORT --query "select * from system.build_options"
 
     # Check again that both servers we started are running -- this is important
     # for running locally, when there might be some other servers started and we
@@ -318,9 +318,9 @@ function run_tests
     do
         echo "$current_test of $total_tests tests complete" > status.txt
         # Check that both servers are alive, and restart them if they die.
-        clickhouse-client --port $LEFT_SERVER_PORT --query "select 1 format Null" \
+        datastore-client --port $LEFT_SERVER_PORT --query "select 1 format Null" \
             || { echo $test_name >> left-server-died.log ; restart ; }
-        clickhouse-client --port $RIGHT_SERVER_PORT --query "select 1 format Null" \
+        datastore-client --port $RIGHT_SERVER_PORT --query "select 1 format Null" \
             || { echo $test_name >> right-server-died.log ; restart ; }
 
         test_name=$(basename "$test" ".xml")
@@ -374,7 +374,7 @@ function get_profiles_watchdog
 
     echo "The trace collection did not finish in time." >> profile-errors.log
 
-    for pid in $(pgrep -f clickhouse)
+    for pid in $(pgrep -f datastore)
     do
         sudo gdb -p "$pid" --batch --ex "info proc all" --ex "thread apply all bt" --ex quit &> "$pid.gdb.log" &
     done
@@ -382,7 +382,7 @@ function get_profiles_watchdog
 
     for _ in {1..10}
     do
-        if ! pkill -f clickhouse
+        if ! pkill -f datastore
         then
             break
         fi
@@ -393,29 +393,29 @@ function get_profiles_watchdog
 function get_profiles
 {
     # Collect the profiles
-    clickhouse-client --port $LEFT_SERVER_PORT --query "system flush logs" &
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "system flush logs" &
+    datastore-client --port $LEFT_SERVER_PORT --query "system flush logs" &
+    datastore-client --port $RIGHT_SERVER_PORT --query "system flush logs" &
 
     wait
 
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select * from system.query_log where type in ('QueryFinish', 'ExceptionWhileProcessing') format TSVWithNamesAndTypes" > left-query-log.tsv ||: &
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select * from system.trace_log format TSVWithNamesAndTypes" > left-trace-log.tsv ||: &
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select arrayJoin(trace) addr, concat(splitByChar('/', addressToLine(addr))[-1], '#', demangle(addressToSymbol(addr)) ) name from system.trace_log group by addr format TSVWithNamesAndTypes" > left-addresses.tsv ||: &
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select * from system.metric_log format TSVWithNamesAndTypes" > left-metric-log.tsv ||: &
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select * from system.asynchronous_metric_log format TSVWithNamesAndTypes" > left-async-metric-log.tsv ||: &
+    datastore-client --port $LEFT_SERVER_PORT --query "select * from system.query_log where type in ('QueryFinish', 'ExceptionWhileProcessing') format TSVWithNamesAndTypes" > left-query-log.tsv ||: &
+    datastore-client --port $LEFT_SERVER_PORT --query "select * from system.trace_log format TSVWithNamesAndTypes" > left-trace-log.tsv ||: &
+    datastore-client --port $LEFT_SERVER_PORT --query "select arrayJoin(trace) addr, concat(splitByChar('/', addressToLine(addr))[-1], '#', demangle(addressToSymbol(addr)) ) name from system.trace_log group by addr format TSVWithNamesAndTypes" > left-addresses.tsv ||: &
+    datastore-client --port $LEFT_SERVER_PORT --query "select * from system.metric_log format TSVWithNamesAndTypes" > left-metric-log.tsv ||: &
+    datastore-client --port $LEFT_SERVER_PORT --query "select * from system.asynchronous_metric_log format TSVWithNamesAndTypes" > left-async-metric-log.tsv ||: &
 
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select * from system.query_log where type in ('QueryFinish', 'ExceptionWhileProcessing') format TSVWithNamesAndTypes" > right-query-log.tsv ||: &
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select * from system.trace_log format TSVWithNamesAndTypes" > right-trace-log.tsv ||: &
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select arrayJoin(trace) addr, concat(splitByChar('/', addressToLine(addr))[-1], '#', demangle(addressToSymbol(addr)) ) name from system.trace_log group by addr format TSVWithNamesAndTypes" > right-addresses.tsv ||: &
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select * from system.metric_log format TSVWithNamesAndTypes" > right-metric-log.tsv ||: &
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select * from system.asynchronous_metric_log format TSVWithNamesAndTypes" > right-async-metric-log.tsv ||: &
+    datastore-client --port $RIGHT_SERVER_PORT --query "select * from system.query_log where type in ('QueryFinish', 'ExceptionWhileProcessing') format TSVWithNamesAndTypes" > right-query-log.tsv ||: &
+    datastore-client --port $RIGHT_SERVER_PORT --query "select * from system.trace_log format TSVWithNamesAndTypes" > right-trace-log.tsv ||: &
+    datastore-client --port $RIGHT_SERVER_PORT --query "select arrayJoin(trace) addr, concat(splitByChar('/', addressToLine(addr))[-1], '#', demangle(addressToSymbol(addr)) ) name from system.trace_log group by addr format TSVWithNamesAndTypes" > right-addresses.tsv ||: &
+    datastore-client --port $RIGHT_SERVER_PORT --query "select * from system.metric_log format TSVWithNamesAndTypes" > right-metric-log.tsv ||: &
+    datastore-client --port $RIGHT_SERVER_PORT --query "select * from system.asynchronous_metric_log format TSVWithNamesAndTypes" > right-async-metric-log.tsv ||: &
 
     wait
 
     # Just check that the servers are alive so that we return a proper exit code.
     # We don't consistently check the return codes of the above background jobs.
-    clickhouse-client --port $LEFT_SERVER_PORT --query "select 1"
-    clickhouse-client --port $RIGHT_SERVER_PORT --query "select 1"
+    datastore-client --port $LEFT_SERVER_PORT --query "select 1"
+    datastore-client --port $RIGHT_SERVER_PORT --query "select 1"
 }
 
 # Build and analyze randomization distribution for all queries.
@@ -441,7 +441,7 @@ do
 done
 
 # for each query run, prepare array of metrics from query log
-clickhouse-local --query "
+datastore-local --query "
 create view query_runs as select * from file('analyze/query-runs.tsv', TSV,
     'test text, query_index int, query_id text, version UInt8, time float');
 
@@ -564,7 +564,7 @@ do
     file="analyze/tmp/${prefix//	/_}.tsv"
     rg "^$prefix	" "analyze/query-run-metrics-for-stats.tsv" > "$file" &
     printf "%s\0\n" \
-        "clickhouse-local \
+        "datastore-local \
             --file \"$file\" \
             --structure 'test text, query text, run int, version UInt8, metrics Array(float)' \
             --query \"$(cat "$script_dir/eqmed.sql")\" \
@@ -596,12 +596,12 @@ unset IFS
 #   If the available memory falls below 2 * size, GNU parallel will suspend some of the running jobs.
 parallel -v --joblog analyze/parallel-log.txt --memsuspend 15G --null < analyze/commands.txt 2>> analyze/errors.log
 
-clickhouse-local --query "
+datastore-local --query "
 -- Join the metric names back to the metric statistics we've calculated, and make
 -- a denormalized table of them -- statistics for all metrics for all queries.
 -- The WITH, ARRAY JOIN and CROSS JOIN do not like each other:
---  https://github.com/ClickHouse/ClickHouse/issues/11868
---  https://github.com/ClickHouse/ClickHouse/issues/11757
+--  https://github.com/ClickHouse/Datastore/issues/11868
+--  https://github.com/ClickHouse/Datastore/issues/11757
 -- Because of this, we make a view with arrays first, and then apply all the
 -- array joins.
 create view query_metric_stat_arrays as
@@ -635,7 +635,7 @@ rm ./*.{rep,svg} test-times.tsv test-dump.tsv unstable.tsv unstable-query-ids.ts
 cat analyze/errors.log >> report/errors.log ||:
 cat profile-errors.log >> report/errors.log ||:
 
-clickhouse-local --query "
+datastore-local --query "
 create view query_display_names as select * from
     file('analyze/query-display-names.tsv', TSV,
         'test text, query_index int, query_display_name text')
@@ -853,7 +853,7 @@ create view test_times_view as
     ;
 
 -- WITH TOTALS doesn't work with INSERT SELECT, so we have to jump through these
--- hoops: https://github.com/ClickHouse/ClickHouse/issues/15227
+-- hoops: https://github.com/ClickHouse/Datastore/issues/15227
 create view test_times_view_total as
     select
         'Total' test,
@@ -935,7 +935,7 @@ create table all_query_metrics_tsv engine File(TSV, 'report/all-query-metrics.ts
 for version in {right,left}
 do
     rm -rf data
-    clickhouse-local --query "
+    datastore-local --query "
 create view query_profiles as
     with 0 as left, 1 as right
     select * from file('analyze/query-profiles.tsv', TSV,
@@ -1105,7 +1105,7 @@ function report_metrics
 rm -rf metrics ||:
 mkdir metrics
 
-clickhouse-local --query "
+datastore-local --query "
 create view right_async_metric_log as
     select * from file('right-async-metric-log.tsv', TSVWithNamesAndTypes)
     ;
@@ -1165,14 +1165,14 @@ function upload_results
     # Prepare info for the CI checks table.
     rm -f ci-checks.tsv
 
-    clickhouse-local --query "
+    datastore-local --query "
 create view queries as select * from file('report/queries.tsv', TSVWithNamesAndTypes);
 
 create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
     as select
         $PR_TO_TEST :: UInt32 AS pull_request_number,
         '$SHA_TO_TEST' :: LowCardinality(String) AS commit_sha,
-        '${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME:-Performance}' :: LowCardinality(String) AS check_name,
+        '${DATASTORE_PERFORMANCE_COMPARISON_CHECK_NAME:-Performance}' :: LowCardinality(String) AS check_name,
         '$(sed -n 's/.*<!--status: \(.*\)-->/\1/p' report.html)' :: LowCardinality(String) AS check_status,
         (($(date +%s) - $CHPC_CHECK_START_TIMESTAMP) * 1000) :: UInt64 AS check_duration_ms,
         fromUnixTimestamp($CHPC_CHECK_START_TIMESTAMP) check_start_time,
@@ -1181,8 +1181,8 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
         test_duration_ms :: UInt64 AS test_duration_ms,
         report_url,
         $PR_TO_TEST = 0
-            ? 'https://github.com/ClickHouse/ClickHouse/commit/$SHA_TO_TEST'
-            : 'https://github.com/ClickHouse/ClickHouse/pull/$PR_TO_TEST' pull_request_url,
+            ? 'https://github.com/ClickHouse/Datastore/commit/$SHA_TO_TEST'
+            : 'https://github.com/ClickHouse/Datastore/pull/$PR_TO_TEST' pull_request_url,
         '' commit_url,
         '' task_url,
         '' base_ref,
@@ -1193,7 +1193,7 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
         select '' test_name,
             '$(sed -n 's/.*<!--message: \(.*\)-->/\1/p' report.html)' test_status,
             0 test_duration_ms,
-            'https://s3.amazonaws.com/clickhouse-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/report.html#fail1' report_url
+            'https://s3.amazonaws.com/datastore-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${DATASTORE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/report.html#fail1' report_url
         union all
             select
                 test || ' #' || toString(query_index) || '::' || test_desc_.1 test_name,
@@ -1203,7 +1203,7 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
                     'success'
                 ) test_status,
                 test_desc_.2*1e3 test_duration_ms,
-                'https://s3.amazonaws.com/clickhouse-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/'
+                'https://s3.amazonaws.com/datastore-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${DATASTORE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/'
                     || multiIf(
                         changed_fail != 0 and diff > 0, 'report.html#changes-in-performance.',
                         unstable_fail != 0, 'report.html#unstable-queries.',
@@ -1248,8 +1248,8 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
 }
 
 # Check that local and client are in PATH
-clickhouse-local --version > /dev/null
-clickhouse-client --version > /dev/null
+datastore-local --version > /dev/null
+datastore-client --version > /dev/null
 
 case "$stage" in
 "")
@@ -1273,7 +1273,7 @@ case "$stage" in
     # Check for huge pages.
     cat /sys/kernel/mm/transparent_hugepage/enabled > thp-enabled.txt ||:
     cat /proc/meminfo > meminfo.txt ||:
-    for pid in $(pgrep -f clickhouse-server)
+    for pid in $(pgrep -f datastore-server)
     do
         cat "/proc/$pid/smaps" > "$pid-smaps.txt" ||:
     done
@@ -1304,7 +1304,7 @@ case "$stage" in
     env kill -- -$watchdog_pid
 
     # Stop the servers to free memory for the subsequent query analysis.
-    while pkill -f clickhouse-serv ; do echo . ; sleep 1 ; done
+    while pkill -f datastore-serv ; do echo . ; sleep 1 ; done
     echo Servers stopped.
     ;&
 "analyze_queries")

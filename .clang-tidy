@@ -1,4 +1,4 @@
-# To run clang-tidy from CMake, build ClickHouse with -DENABLE_CLANG_TIDY=1. To show all warnings, it is
+# To run clang-tidy from CMake, build Datastore with -DENABLE_CLANG_TIDY=1. To show all warnings, it is
 # recommended to pass "-k0" to Ninja.
 
 # Enable all checks + disable selected checks. Feel free to remove disabled checks from below list if
@@ -48,7 +48,7 @@ Checks: [
   '-clang-analyzer-cplusplus.NewDeleteLeaks', # false positives, slow
   '-clang-analyzer-unix.Malloc', # fixme, false positive in contrib somehow
 
-  '-cppcoreguidelines-*', # impractical in a codebase as large as ClickHouse, also slow
+  '-cppcoreguidelines-*', # impractical in a codebase as large as Datastore, also slow
 
   '-darwin-*',
 

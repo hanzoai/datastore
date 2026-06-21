@@ -30,7 +30,7 @@ CREATE TABLE test2
     column_with_codec String CODEC(ZSTD),
     column_with_alias String MATERIALIZED concat(str, 'a' AS a),
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/03224_invalid_alter/{database}/{table}', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/03224_invalid_alter/{database}/{table}', 'r1')
 ORDER BY tuple();
 
 ALTER TABLE test2 ADD COLUMN invalid_column String MATERIALIZED concat(str, 'b' AS a); -- { serverError MULTIPLE_EXPRESSIONS_FOR_ALIAS }
@@ -41,9 +41,9 @@ ALTER TABLE test2 ADD COLUMN valid_column_2 String MATERIALIZED concat(str, 'c' 
 INSERT INTO test2(str, column_with_codec) VALUES ('test2', 'test22');
 SELECT str, column_with_alias, valid_column_1, valid_column_2 FROM test2;
 
-DROP DATABASE {CLICKHOUSE_DATABASE:Identifier};
+DROP DATABASE {DATASTORE_DATABASE:Identifier};
 
-CREATE DATABASE {CLICKHOUSE_DATABASE:Identifier} ON CLUSTER test_shard_localhost ENGINE = Atomic;
+CREATE DATABASE {DATASTORE_DATABASE:Identifier} ON CLUSTER test_shard_localhost ENGINE = Atomic;
 
 CREATE TABLE test3 ON CLUSTER test_shard_localhost
 (
@@ -51,7 +51,7 @@ CREATE TABLE test3 ON CLUSTER test_shard_localhost
     column_with_codec String CODEC(ZSTD),
     column_with_alias String MATERIALIZED concat(str, 'a' AS a),
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/03224_invalid_alter/{database}_atomic/{table}', 'r1')
+ENGINE = ReplicatedMergeTree('/datastore/03224_invalid_alter/{database}_atomic/{table}', 'r1')
 ORDER BY tuple();
 
 ALTER TABLE test3 ON CLUSTER test_shard_localhost ADD COLUMN invalid_column String MATERIALIZED concat(str, 'b' AS a) FORMAT Null SETTINGS distributed_ddl_output_mode='throw'; -- { serverError MULTIPLE_EXPRESSIONS_FOR_ALIAS }
@@ -62,8 +62,8 @@ ALTER TABLE test3 ON CLUSTER test_shard_localhost ADD COLUMN valid_column_2 Stri
 INSERT INTO test3(str, column_with_codec) VALUES ('test3', 'test32');
 SELECT str, column_with_alias, valid_column_1, valid_column_2 FROM test3;
 
-DROP DATABASE {CLICKHOUSE_DATABASE:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE:Identifier} ENGINE = Replicated('/clickhouse/03224_invalid_alter/{database}_replicated', 'shard1', 'replica1') FORMAT Null;
+DROP DATABASE {DATASTORE_DATABASE:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE:Identifier} ENGINE = Replicated('/datastore/03224_invalid_alter/{database}_replicated', 'shard1', 'replica1') FORMAT Null;
 
 CREATE TABLE test4
 (

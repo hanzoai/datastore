@@ -29,7 +29,7 @@ def _is_zookeeper_node(n):
 
 
 def _node_has_ch_metrics(n):
-    """True if node can serve prom/ch_metrics (has ClickHouse). ZKBackedNode and Keeper nodes do."""
+    """True if node can serve prom/ch_metrics (has Datastore). ZKBackedNode and Keeper nodes do."""
     return callable(getattr(n, "query", None))
 
 
@@ -188,7 +188,7 @@ class MetricsSampler:
             except Exception as e:
                 print(f"[keeper][snapshot_stage] error getting container_stats for node {n.name}: {e}")
             
-            # prom/ch_metrics only from nodes that have ClickHouse (.query)
+            # prom/ch_metrics only from nodes that have Datastore (.query)
             if _node_has_ch_metrics(n):
                 try:
                     parsed = self._parse_prom(prom_metrics(n))
@@ -243,7 +243,7 @@ class MetricsSampler:
                 print(f"[keeper][_snapshot_node] error getting dirs for node {n.name}: {e}")
 
         def _sample_prom():
-            # Prometheus only from nodes that have ClickHouse (.query); same as snapshot_stage.
+            # Prometheus only from nodes that have Datastore (.query); same as snapshot_stage.
             if not _node_has_ch_metrics(n):
                 return
             # Sampling frequency: only every prom_every_n intervals (e.g. every 30s) to limit volume.

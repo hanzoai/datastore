@@ -1,9 +1,9 @@
-<clickhouse>
+<datastore>
     <openSSL>
         <server>
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
-            <dhParamsFile>/etc/clickhouse-server/config.d/dhparam.pem</dhParamsFile>
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
+            <dhParamsFile>/etc/datastore-server/config.d/dhparam.pem</dhParamsFile>
             <verificationMode>none</verificationMode>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
@@ -11,8 +11,8 @@
             <preferServerCiphers>true</preferServerCiphers>
         </server>
         <client>
-            <certificateFile>/etc/clickhouse-server/config.d/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/config.d/server.key</privateKeyFile>
+            <certificateFile>/etc/datastore-server/config.d/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/config.d/server.key</privateKeyFile>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
             <disableProtocols>sslv2,sslv3</disableProtocols>
@@ -23,4 +23,4 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>

@@ -15,7 +15,7 @@ doc_type: 'reference'
 
 ## Description {#description}
 
-The `Native` format is ClickHouse's most efficient format because it is truly "columnar" 
+The `Native` format is Datastore's most efficient format because it is truly "columnar" 
 in that it does not convert columns to rows.  
 
 In this format data is written and read by [blocks](/development/architecture#block) in a binary format. 
@@ -24,7 +24,7 @@ For each block, the number of rows, number of columns, column names and types, a
 This is the format used in the native interface for interaction between servers, for using the command-line client, and for C++ clients.
 
 :::tip
-You can use this format to quickly generate dumps that can only be read by the ClickHouse DBMS.
+You can use this format to quickly generate dumps that can only be read by the Datastore DBMS.
 It might not be practical to work with this format yourself.
 :::
 
@@ -49,7 +49,7 @@ The following query returns two columns, `number` and `str`, with three rows:
 curl -XPOST "http://localhost:8123?default_format=Native" --data-binary "SELECT number, toString(number) AS str FROM system.numbers LIMIT 3" > out.bin
 ```
 
-The output data fits into a single ClickHouse block, and it will look like this:
+The output data fits into a single Datastore block, and it will look like this:
 
 ```js
 const data = new Uint8Array([
@@ -85,7 +85,7 @@ const data = new Uint8Array([
 
 ### Multiple blocks {#multiple-blocks}
 
-However, in many cases, the data will not fit into a single block, and ClickHouse will send the data as multiple blocks.
+However, in many cases, the data will not fit into a single block, and Datastore will send the data as multiple blocks.
 Consider the following query that fetches two rows with reduced block size to force splitting the data as one row per block:
 
 ```bash

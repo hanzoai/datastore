@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/93026
+-- https://github.com/ClickHouse/Datastore/issues/93026
 SELECT hex(groupConcatMerge(',', 10)(state))
 FROM
 (

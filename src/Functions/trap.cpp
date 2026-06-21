@@ -33,7 +33,7 @@ namespace ErrorCodes
 }
 
 
-/// Various illegal actions to test diagnostic features of ClickHouse itself. Should not be enabled in production builds.
+/// Various illegal actions to test diagnostic features of Datastore itself. Should not be enabled in production builds.
 class FunctionTrap : public IFunction, private WithContext
 {
 public:

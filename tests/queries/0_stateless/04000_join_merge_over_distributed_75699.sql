@@ -1,6 +1,6 @@
 -- Tags: distributed
 
--- https://github.com/ClickHouse/ClickHouse/issues/75699
+-- https://github.com/ClickHouse/Datastore/issues/75699
 -- Logical error "Column ... query tree node does not have valid source node"
 -- when joining a Merge table (that wraps a Distributed table) with another table.
 

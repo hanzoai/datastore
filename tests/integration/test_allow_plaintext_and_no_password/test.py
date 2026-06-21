@@ -30,5 +30,5 @@ def test(start_cluster):
 
     assert node.grep_in_log(
         substring="User is not allowed to Create users",
-        filename="clickhouse-server.err.log",
+        filename="datastore-server.err.log",
     ) == ""

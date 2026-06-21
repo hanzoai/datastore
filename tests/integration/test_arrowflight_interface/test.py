@@ -14,7 +14,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DOCKER_COMPOSE_PATH = get_docker_compose_path()
 
 # Overrides the hostname checked by TLS, see certs/server-ext.cnf
-SSL_HOST = "integration-tests.clickhouse.com"
+SSL_HOST = "integration-tests.datastore.com"
 
 cluster = ClickHouseCluster(__file__)
 node = cluster.add_instance(

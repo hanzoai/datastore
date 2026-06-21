@@ -6,7 +6,7 @@ INSERT INTO d_src VALUES (0, 0, 'n');
 
 CREATE DICTIONARY d (id UInt32, country_id UInt8, name String)
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(HOST 'localhost' PORT tcpPort() USER 'default' DB currentDatabase() table 'd_src'))
+SOURCE(DATASTORE(HOST 'localhost' PORT tcpPort() USER 'default' DB currentDatabase() table 'd_src'))
 LIFETIME(MIN 1 MAX 1)
 LAYOUT(HASHED());
 

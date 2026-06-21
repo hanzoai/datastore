@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster_remove_replica1>
             <shard>
@@ -22,4 +22,4 @@
             </shard>
         </test_cluster_remove_replica2>
     </remote_servers>
-</clickhouse>
+</datastore>

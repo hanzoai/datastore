@@ -16,7 +16,7 @@
 # `ColumnTuple::create` guard.
 #
 # This `.sh` form runs the bug-triggering queries inside
-# `clickhouse-local` subprocesses so the abort on master HEAD stays
+# `datastore-local` subprocesses so the abort on master HEAD stays
 # contained. The bugfix-validation framework needs an output-diff
 # `FAIL` on master HEAD (which it then inverts to `OK`); a server-side
 # abort inside the parent server is classified as `ERROR` /
@@ -28,7 +28,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-# Prints `OK` if `clickhouse-local` exited cleanly with
+# Prints `OK` if `datastore-local` exited cleanly with
 # `ILLEGAL_TYPE_OF_ARGUMENT` (Code 43) — the PR-fix behavior.
 # Prints `BUG` for any other outcome: SIGABRT under
 # `abort_on_logical_error`, an unrelated error, or an unexpected
@@ -36,7 +36,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 check_query()
 {
     local out
-    out=$($CLICKHOUSE_LOCAL --send_logs_level=fatal "$@" 2>&1 < /dev/null)
+    out=$($DATASTORE_LOCAL --send_logs_level=fatal "$@" 2>&1 < /dev/null)
     local rc=$?
     if [[ $rc -eq 43 ]] || echo "$out" | grep -q "ILLEGAL_TYPE_OF_ARGUMENT"
     then

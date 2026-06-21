@@ -13,7 +13,7 @@ CREATE DICTIONARY inverse_dict_lookup_remote_shards
   f  Int64
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(QUERY 'SELECT 1 id, 2 f'))
+SOURCE(DATASTORE(QUERY 'SELECT 1 id, 2 f'))
 LAYOUT(flat())
 LIFETIME(0);
 
@@ -37,7 +37,7 @@ CREATE DICTIONARY inverse_dict_lookup_remote_shards_composite_key
   f  Int64
 )
 PRIMARY KEY k1, k2
-SOURCE(CLICKHOUSE(QUERY 'SELECT toInt64(1) k1, toUInt32(1) k2, toInt64(2) f'))
+SOURCE(DATASTORE(QUERY 'SELECT toInt64(1) k1, toUInt32(1) k2, toInt64(2) f'))
 LAYOUT(hashed())
 LIFETIME(0);
 

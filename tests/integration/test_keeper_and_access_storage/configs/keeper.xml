@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
-        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
-        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <log_storage_path>/var/lib/datastore/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
         <coordination_settings>
             <operation_timeout_ms>5000</operation_timeout_ms>
             <raft_logs_level>trace</raft_logs_level>
@@ -23,7 +23,7 @@
 
     <user_directories>
         <replicated>
-            <zookeeper_path>/clickhouse/access</zookeeper_path>
+            <zookeeper_path>/datastore/access</zookeeper_path>
         </replicated>
     </user_directories>
 
@@ -33,4 +33,4 @@
             <port>9181</port>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>

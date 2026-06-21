@@ -65,7 +65,7 @@ namespace
     {
         throw Exception(
             ErrorCodes::CAPN_PROTO_BAD_CAST,
-            "Cannot convert ClickHouse column \"{}\" with type {} to CapnProto type {}",
+            "Cannot convert Datastore column \"{}\" with type {} to CapnProto type {}",
             name,
             type->getName(),
             getCapnProtoFullTypeName(capnp_type));
@@ -277,10 +277,10 @@ namespace
                 for (auto enumerant : enumerants)
                     capn_enum_values.insert(enumerant.getOrdinal());
 
-                /// Check if ClickHouse values is a superset of CapnProto values.
+                /// Check if Datastore values is a superset of CapnProto values.
                 ch_enum_is_superset = true;
                 /// In CapnProto Enum fields are numbered sequentially starting from zero.
-                /// Check if max CapnProto value exceeds max ClickHouse value.
+                /// Check if max CapnProto value exceeds max Datastore value.
                 constexpr auto max_value = std::is_same_v<EnumType, Int8> ? INT8_MAX : INT16_MAX;
                 if (enumerants.size() > max_value)
                 {
@@ -298,7 +298,7 @@ namespace
                     }
                 }
 
-                /// Check if CapnProto values is a superset of ClickHouse values.
+                /// Check if CapnProto values is a superset of Datastore values.
                 capnp_enum_is_superset = true;
                 for (auto ch_value : ch_enum_values)
                 {
@@ -326,7 +326,7 @@ namespace
                     capnp_name_to_value[to_lower ? boost::algorithm::to_lower_copy(capnp_name) : capnp_name] = enumerant.getOrdinal();
                 }
 
-                /// Check if ClickHouse names is a superset of CapnProto names.
+                /// Check if Datastore names is a superset of CapnProto names.
                 ch_enum_is_superset = true;
                 for (auto & [capnp_name, capnp_value] : capnp_name_to_value)
                 {
@@ -339,7 +339,7 @@ namespace
                     capnp_to_ch_values[capnp_value] = it->second;
                 }
 
-                /// Check if CapnProto names is a superset of ClickHouse names.
+                /// Check if CapnProto names is a superset of Datastore names.
                 capnp_enum_is_superset = true;
 
                 for (auto & [ch_name, ch_value] : ch_name_to_value)
@@ -379,14 +379,14 @@ namespace
         UInt16 getValue(const ColumnPtr & column, size_t row_num)
         {
             if (!capnp_enum_is_superset)
-                throw Exception(ErrorCodes::CAPN_PROTO_BAD_CAST, "Cannot convert ClickHouse enum to CapnProto enum: CapnProto enum values/names is not a superset of ClickHouse enum values/names");
+                throw Exception(ErrorCodes::CAPN_PROTO_BAD_CAST, "Cannot convert Datastore enum to CapnProto enum: CapnProto enum values/names is not a superset of Datastore enum values/names");
 
             EnumType enum_value = assert_cast<const ColumnVector<EnumType> &>(*column).getElement(row_num);
             if (enum_comparing_mode == FormatSettings::CapnProtoEnumComparingMode::BY_VALUES)
                 return static_cast<UInt16>(enum_value);
             auto it = ch_to_capnp_values.find(enum_value);
             if (it == ch_to_capnp_values.end())
-                throw Exception(ErrorCodes::INCORRECT_DATA, "Unexpected value {} in ClickHouse enum", enum_value);
+                throw Exception(ErrorCodes::INCORRECT_DATA, "Unexpected value {} in Datastore enum", enum_value);
 
             return it->second;
         }
@@ -394,7 +394,7 @@ namespace
         void insertValue(IColumn & column, UInt16 capnp_enum_value)
         {
             if (!ch_enum_is_superset)
-                throw Exception(ErrorCodes::CAPN_PROTO_BAD_CAST, "Cannot convert CapnProto enum to ClickHouse enum: ClickHouse enum values/names is not a superset of CapnProto enum values/names");
+                throw Exception(ErrorCodes::CAPN_PROTO_BAD_CAST, "Cannot convert CapnProto enum to Datastore enum: Datastore enum values/names is not a superset of CapnProto enum values/names");
 
             if (enum_comparing_mode == FormatSettings::CapnProtoEnumComparingMode::BY_VALUES)
             {
@@ -816,7 +816,7 @@ namespace
                 if (data.back() == 0)
                     return Reader(data.data(), data.size());
 
-                /// In TEXT type data should be null-terminated, but ClickHouse FixedString data could not be.
+                /// In TEXT type data should be null-terminated, but Datastore FixedString data could not be.
                 /// To make data null-terminated we should copy it to temporary String object and use it in capnp::Text::Reader.
                 /// Note that capnp::Text::Reader works only with pointer to the data and it's size, so we should
                 /// guarantee that new String object life time is longer than capnp::Text::Reader life time.
@@ -1150,7 +1150,7 @@ namespace
             if (checkIfStructContainsUnnamedUnion(struct_schema))
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\" with type {} to CapnProto Struct with unnamed union {}",
+                    "Cannot convert Datastore column \"{}\" with type {} to CapnProto Struct with unnamed union {}",
                     column_name,
                     data_type->getName(),
                     getCapnProtoFullTypeName(capnp_type));
@@ -1158,7 +1158,7 @@ namespace
             if (struct_schema.getFields().size() != 1)
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\": Map type can be represented as a Struct with one list field, got struct: {}",
+                    "Cannot convert Datastore column \"{}\": Map type can be represented as a Struct with one list field, got struct: {}",
                     column_name,
                     getCapnProtoFullTypeName(capnp_type));
 
@@ -1166,7 +1166,7 @@ namespace
             if (!field_type.isList())
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\": Map type can be represented as a Struct with one list field, got field: {}",
+                    "Cannot convert Datastore column \"{}\": Map type can be represented as a Struct with one list field, got field: {}",
                     column_name,
                     getCapnProtoFullTypeName(field_type));
 
@@ -1174,7 +1174,7 @@ namespace
             if (!list_element_type.isStruct())
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\": Field of struct that represents Map should be a list of structs, got list of {}",
+                    "Cannot convert Datastore column \"{}\": Field of struct that represents Map should be a list of structs, got list of {}",
                     column_name,
                     getCapnProtoFullTypeName(list_element_type));
 
@@ -1182,14 +1182,14 @@ namespace
             if (checkIfStructContainsUnnamedUnion(key_value_struct))
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\": struct that represents Map entries is unnamed union: {}",
+                    "Cannot convert Datastore column \"{}\": struct that represents Map entries is unnamed union: {}",
                     column_name,
                     getCapnProtoFullTypeName(list_element_type));
 
             if (key_value_struct.getFields().size() != 2)
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\": struct that represents Map entries should contain only 2 fields, got struct {}",
+                    "Cannot convert Datastore column \"{}\": struct that represents Map entries should contain only 2 fields, got struct {}",
                     column_name,
                     getCapnProtoFullTypeName(list_element_type));
 
@@ -1268,7 +1268,7 @@ namespace
             if (checkIfStructIsNamedUnion(struct_schema) || checkIfStructContainsUnnamedUnion(struct_schema))
                 throw Exception(
                     ErrorCodes::CAPN_PROTO_BAD_CAST,
-                    "Cannot convert ClickHouse column \"{}\" with type {} to CapnProto named union/struct with unnamed union {}",
+                    "Cannot convert Datastore column \"{}\" with type {} to CapnProto named union/struct with unnamed union {}",
                     column_name,
                     data_type->getName(),
                     getCapnProtoFullTypeName(capnp_type));
@@ -1283,7 +1283,7 @@ namespace
                 if (nested_types.size() != structure_fields.size())
                     throw Exception(
                         ErrorCodes::CAPN_PROTO_BAD_CAST,
-                        "Cannot convert ClickHouse column \"{}\" with type {} to CapnProto type {}: Tuple and Struct have different sizes {} != {}",
+                        "Cannot convert Datastore column \"{}\" with type {} to CapnProto type {}: Tuple and Struct have different sizes {} != {}",
                         column_name,
                         data_type->getName(),
                         getCapnProtoFullTypeName(capnp_type),

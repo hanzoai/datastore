@@ -33,7 +33,7 @@ The following is a comparison of the `RawBLOB` and [RowBinary](./RowBinary/RowBi
 `RowBinary`:
 - String fields are represented as length in varint format (unsigned [LEB128] (https://en.wikipedia.org/wiki/LEB128)), followed by the bytes of the string.
 
-When empty data is passed to the `RawBLOB` input, ClickHouse throws an exception:
+When empty data is passed to the `RawBLOB` input, Datastore throws an exception:
 
 ```text
 Code: 108. DB::Exception: No data to insert
@@ -42,9 +42,9 @@ Code: 108. DB::Exception: No data to insert
 ## Example usage {#example-usage}
 
 ```bash title="Query"
-$ clickhouse-client --query "CREATE TABLE {some_table} (a String) ENGINE = Memory;"
-$ cat {filename} | clickhouse-client --query="INSERT INTO {some_table} FORMAT RawBLOB"
-$ clickhouse-client --query "SELECT * FROM {some_table} FORMAT RawBLOB" | md5sum
+$ datastore-client --query "CREATE TABLE {some_table} (a String) ENGINE = Memory;"
+$ cat {filename} | datastore-client --query="INSERT INTO {some_table} FORMAT RawBLOB"
+$ datastore-client --query "SELECT * FROM {some_table} FORMAT RawBLOB" | md5sum
 ```
 
 ```text title="Response"

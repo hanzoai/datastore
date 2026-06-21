@@ -3,23 +3,23 @@
 # no-fasttest: It's a bit demanding
 
 # Creation of a database with Ordinary engine emits a warning.
-CLICKHOUSE_CLIENT_SERVER_LOGS_LEVEL=fatal
+DATASTORE_CLIENT_SERVER_LOGS_LEVEL=fatal
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-## tests with real clickhouse restart would be a bit to heavy,
-## to ensure the table will not reappear back clickhouse-local is enough.
+## tests with real datastore restart would be a bit to heavy,
+## to ensure the table will not reappear back datastore-local is enough.
 
-WORKING_FOLDER_01600="${CLICKHOUSE_TMP}/${CLICKHOUSE_TEST_UNIQUE_NAME}"
+WORKING_FOLDER_01600="${DATASTORE_TMP}/${DATASTORE_TEST_UNIQUE_NAME}"
 rm -rf "${WORKING_FOLDER_01600}"
 mkdir -p "${WORKING_FOLDER_01600}"
 
 clickhouse_local() {
     local query="$1"
     shift
-    ${CLICKHOUSE_LOCAL} --allow_deprecated_database_ordinary=1 --query "$query" "$@" --path="${WORKING_FOLDER_01600}"
+    ${DATASTORE_LOCAL} --allow_deprecated_database_ordinary=1 --query "$query" "$@" --path="${WORKING_FOLDER_01600}"
 }
 
 test_detach_attach_sequence() {
@@ -28,10 +28,10 @@ test_detach_attach_sequence() {
     echo "##################"
 
     echo "${db}.${table} 1"
-    # normal DETACH - while process is running (clickhouse-local here, same for server) table is detached.
+    # normal DETACH - while process is running (datastore-local here, same for server) table is detached.
     clickhouse_local "DETACH TABLE ${db}.${table}; SELECT if( count() = 0, '>table detached!', '>Fail') FROM system.tables WHERE database='${db}' AND name='${table}';"
 
-    # but once we restart the precess (either clickhouse-local either clickhouse server) the table is back.
+    # but once we restart the precess (either datastore-local either datastore server) the table is back.
     echo "${db}.${table} 2"
     clickhouse_local "SELECT if(name='${table}', '>Table is back after restart', '>fail') FROM system.tables WHERE database='${db}' AND name='${table}'; SELECT count() FROM ${db}.${table};"
 

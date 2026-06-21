@@ -12,7 +12,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # $2 - query
 function execute_query()
 {
-  ${CLICKHOUSE_CLIENT} --opentelemetry_start_trace_probability=1 --query_id $1 -q "
+  ${DATASTORE_CLIENT} --opentelemetry_start_trace_probability=1 --query_id $1 -q "
       ${2}
   "
 }
@@ -21,43 +21,43 @@ function execute_query()
 # so we only to check the db.statement only
 function check_query_span_query_only()
 {
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "
     SYSTEM FLUSH LOGS opentelemetry_span_log;
     SELECT attribute['db.statement']       as query
     FROM system.opentelemetry_span_log
     WHERE finish_date                      >= yesterday()
     AND   operation_name                   = 'query'
-    AND   attribute['clickhouse.query_id'] = '${1}'
+    AND   attribute['datastore.query_id'] = '${1}'
     Format JSONEachRow
     ;"
 }
 
 function check_query_span()
 {
-${CLICKHOUSE_CLIENT} -q "
+${DATASTORE_CLIENT} -q "
     SYSTEM FLUSH LOGS opentelemetry_span_log;
     SELECT attribute['db.statement']             as query,
-           attribute['clickhouse.read_rows']     as read_rows,
-           attribute['clickhouse.written_rows']  as written_rows
+           attribute['datastore.read_rows']     as read_rows,
+           attribute['datastore.written_rows']  as written_rows
     FROM system.opentelemetry_span_log
     WHERE finish_date                      >= yesterday()
     AND   operation_name                   = 'query'
-    AND   attribute['clickhouse.query_id'] = '${1}'
+    AND   attribute['datastore.query_id'] = '${1}'
     Format JSONEachRow
     ;"
 }
 
 function check_query_settings()
 {
-result=$(${CLICKHOUSE_CLIENT} -q "
+result=$(${DATASTORE_CLIENT} -q "
     SYSTEM FLUSH LOGS opentelemetry_span_log;
-    SELECT attribute['clickhouse.setting.min_compress_block_size'],
-           attribute['clickhouse.setting.max_block_size'],
-           attribute['clickhouse.setting.max_execution_time']
+    SELECT attribute['datastore.setting.min_compress_block_size'],
+           attribute['datastore.setting.max_block_size'],
+           attribute['datastore.setting.max_execution_time']
     FROM system.opentelemetry_span_log
     WHERE finish_date                      >= yesterday()
     AND   operation_name                   = 'query'
-    AND   attribute['clickhouse.query_id'] = '${1}'
+    AND   attribute['datastore.query_id'] = '${1}'
     FORMAT JSONEachRow;
   ")
 
@@ -84,18 +84,18 @@ function check_tcp_attributes()
   local result
   local client_version="not found"
 
-  result=$(${CLICKHOUSE_CLIENT} -q "
+  result=$(${DATASTORE_CLIENT} -q "
       SYSTEM FLUSH LOGS opentelemetry_span_log;
       SELECT attribute['client.version']
       FROM system.opentelemetry_span_log
       WHERE finish_date >= yesterday()
       AND operation_name = 'query'
-      AND attribute['clickhouse.query_id'] = '${query_id}'
+      AND attribute['datastore.query_id'] = '${query_id}'
       FORMAT JSONEachRow;
     ")
 
   if [[ -z "$result" ]]; then
-    echo "Error: No result returned from ClickHouse server"
+    echo "Error: No result returned from Datastore server"
     return 1
   fi
   
@@ -108,7 +108,7 @@ function check_tcp_attributes()
 
 function execute_query_HTTP()
 {
-    ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}&database=${CLICKHOUSE_DATABASE}&query_id=$1" -d "$2"
+    ${DATASTORE_CURL} -sS "${DATASTORE_URL}&database=${DATASTORE_DATABASE}&query_id=$1" -d "$2"
 }
 
 function check_http_attributes()
@@ -119,7 +119,7 @@ function check_http_attributes()
   local agent="not found"
   local method="not found"
   
-  result=$(${CLICKHOUSE_CLIENT} -q "
+  result=$(${DATASTORE_CLIENT} -q "
       SYSTEM FLUSH LOGS opentelemetry_span_log;
       SELECT attribute['http.referer'],
              attribute['http.user.agent'],
@@ -127,12 +127,12 @@ function check_http_attributes()
       FROM system.opentelemetry_span_log
       WHERE finish_date >= yesterday()
       AND operation_name = 'query'
-      AND attribute['clickhouse.query_id'] = '${query_id}'
+      AND attribute['datastore.query_id'] = '${query_id}'
       FORMAT JSONEachRow;
     ")
 
   if [[ -z "$result" ]]; then
-    echo "Error: No result returned from ClickHouse server"
+    echo "Error: No result returned from Datastore server"
     return 1
   fi
   
@@ -154,51 +154,51 @@ function check_http_attributes()
 #
 # Set up
 #
-${CLICKHOUSE_CLIENT} -q "
-DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.opentelemetry_test;
-CREATE TABLE ${CLICKHOUSE_DATABASE}.opentelemetry_test (id UInt64) Engine=MergeTree Order By id;
+${DATASTORE_CLIENT} -q "
+DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.opentelemetry_test;
+CREATE TABLE ${DATASTORE_DATABASE}.opentelemetry_test (id UInt64) Engine=MergeTree Order By id;
 "
 
 # test 1, a query that has special path in the code
 # Format Null is used to make sure no output is generated so that it won't pollute the reference file
-query_id=$(${CLICKHOUSE_CLIENT} -q "select generateUUIDv4()");
+query_id=$(${DATASTORE_CLIENT} -q "select generateUUIDv4()");
 execute_query $query_id 'show processlist format Null'
 check_query_span_query_only "$query_id"
 
 # test 2, a normal show command
-query_id=$(${CLICKHOUSE_CLIENT} -q "select generateUUIDv4()");
+query_id=$(${DATASTORE_CLIENT} -q "select generateUUIDv4()");
 execute_query $query_id 'show databases format Null'
 check_query_span_query_only "$query_id"
 
 # test 3, a normal insert query on local table
-query_id=$(${CLICKHOUSE_CLIENT} -q "select generateUUIDv4()");
+query_id=$(${DATASTORE_CLIENT} -q "select generateUUIDv4()");
 execute_query $query_id 'insert into opentelemetry_test values(1)(2)(3)'
 check_query_span "$query_id"
 
 # test 4, a normal select query
-query_id=$(${CLICKHOUSE_CLIENT} -q "select generateUUIDv4()");
+query_id=$(${DATASTORE_CLIENT} -q "select generateUUIDv4()");
 execute_query $query_id 'select * from opentelemetry_test format Null'
 check_query_span $query_id
 
 # Test 5: A normal select query with a setting
-query_id=$(${CLICKHOUSE_CLIENT} -q "SELECT generateUUIDv4() SETTINGS max_execution_time=3600")
+query_id=$(${DATASTORE_CLIENT} -q "SELECT generateUUIDv4() SETTINGS max_execution_time=3600")
 execute_query "$query_id" 'SELECT * FROM opentelemetry_test FORMAT Null'
 check_query_span "$query_id"
 check_query_settings "$query_id" "max_execution_time"
 
 # Test 6: Executes a TCP SELECT query and checks for http attributes in OpenTelemetry spans.
-query_id=$(${CLICKHOUSE_CLIENT} -q "select generateUUIDv4()")
+query_id=$(${DATASTORE_CLIENT} -q "select generateUUIDv4()")
 execute_query $query_id 'select * from opentelemetry_test format Null'
 check_tcp_attributes $query_id
 
 # Test 7: Executes a TCP SELECT query and checks for http attributes in OpenTelemetry spans.
-query_id=$(${CLICKHOUSE_CLIENT} -q "select generateUUIDv4()")
+query_id=$(${DATASTORE_CLIENT} -q "select generateUUIDv4()")
 execute_query "$query_id" 'set opentelemetry_start_trace_probability=1'
 execute_query_HTTP "$query_id" 'select * from opentelemetry_test FORMAT Null'
 check_http_attributes "$query_id"
 #
 # Tear down
 #
-${CLICKHOUSE_CLIENT} -q "
-DROP TABLE IF EXISTS ${CLICKHOUSE_DATABASE}.opentelemetry_test;
+${DATASTORE_CLIENT} -q "
+DROP TABLE IF EXISTS ${DATASTORE_DATABASE}.opentelemetry_test;
 "

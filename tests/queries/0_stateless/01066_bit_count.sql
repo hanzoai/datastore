@@ -14,6 +14,6 @@ SELECT x, bitCount(x), hex(reinterpretAsString(x)) FROM VALUES ('x Float64', (1)
 
 SELECT toFixedString('Hello, world!!!!', 16) AS x, bitCount(x);
 
-SELECT length(replaceAll(bin('clickhouse cloud'), '0', ''));
-SELECT bitCount('clickhouse cloud');
-SELECT length(replaceAll(bin('clickhouse cloud'), '0', '')) = bitCount('clickhouse cloud');
+SELECT length(replaceAll(bin('datastore cloud'), '0', ''));
+SELECT bitCount('datastore cloud');
+SELECT length(replaceAll(bin('datastore cloud'), '0', '')) = bitCount('datastore cloud');

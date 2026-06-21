@@ -11,19 +11,19 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_CLIENT} --query "
-    CREATE TABLE test_s3_${CLICKHOUSE_DATABASE} (x UInt64, y String)
+${DATASTORE_CLIENT} --query "
+    CREATE TABLE test_s3_${DATASTORE_DATABASE} (x UInt64, y String)
     ENGINE = S3('http://localhost:19999/dummy.parquet', Parquet);
 "
 
 # The pipeline should contain 'Resize 1 → 4' between the source and
 # the processing transforms, proving the single source output is
 # distributed across max_threads workers.
-${CLICKHOUSE_CLIENT} --query "
+${DATASTORE_CLIENT} --query "
     EXPLAIN PIPELINE
-    SELECT count(), sum(x) FROM test_s3_${CLICKHOUSE_DATABASE}
+    SELECT count(), sum(x) FROM test_s3_${DATASTORE_DATABASE}
     GROUP BY y
     SETTINGS max_threads = 4;
 " | grep -o 'Resize 1 → 4'
 
-${CLICKHOUSE_CLIENT} --query "DROP TABLE test_s3_${CLICKHOUSE_DATABASE};"
+${DATASTORE_CLIENT} --query "DROP TABLE test_s3_${DATASTORE_DATABASE};"

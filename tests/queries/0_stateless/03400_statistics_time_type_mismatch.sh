@@ -2,13 +2,13 @@
 # Regression test for assert_cast exception when ALTER TABLE MODIFY COLUMN changes
 # a column with STATISTICS from Int16 to Time. The statistics data_type was not
 # updated, causing assert_cast failure during INSERT when building statistics.
-# https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=96985&sha=4578478336752478268ac55674d83f21af468856&name_0=PR&name_1=BuzzHouse%20%28arm_asan%29
+# https://s3.amazonaws.com/datastore-test-reports/json.html?PR=96985&sha=4578478336752478268ac55674d83f21af468856&name_0=PR&name_1=BuzzHouse%20%28arm_asan%29
 
 CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-$CLICKHOUSE_LOCAL --multiquery "
+$DATASTORE_LOCAL --multiquery "
 SET allow_statistics = 1;
 SET materialize_statistics_on_insert = 1;
 

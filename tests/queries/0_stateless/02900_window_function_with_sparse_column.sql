@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/55843
+-- https://github.com/ClickHouse/Datastore/issues/55843
 -- These tests pass without the fix when either of
 --   - optimize_read_in_window_order = 0 and optimize_read_in_order = 0
 --   - ratio_of_defaults_for_sparse_serialization = 1

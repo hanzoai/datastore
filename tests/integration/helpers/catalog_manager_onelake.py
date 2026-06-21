@@ -38,7 +38,7 @@ class OneLakeCatalogManager(CatalogManager):
     Creates native Iceberg tables on OneLake DFS via PyIceberg's
     ``SqlCatalog`` with ``adlfs`` IO, so metadata contains correct
     ``abfss://`` paths.  Fabric automatically exposes them through
-    an Iceberg REST API, which is what ClickHouse reads.
+    an Iceberg REST API, which is what Datastore reads.
     """
 
     def __init__(self, config: OneLakeConfig):

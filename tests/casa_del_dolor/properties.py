@@ -777,9 +777,9 @@ def add_single_disk(
             )
         elif object_storage_type == "local":
             path_xml = ET.SubElement(next_disk, "path")
-            path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            path_xml.text = f"/var/lib/datastore/disk{i}/"
             allowed_path_xml = ET.SubElement(backups_element, "allowed_path")
-            allowed_path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            allowed_path_xml.text = f"/var/lib/datastore/disk{i}/"
 
         # Add a endpoint_subpath
         if metadata_type == "plain_rewritable" and random.randint(1, 100) <= 70:
@@ -823,9 +823,9 @@ def add_single_disk(
         disk_xml.text = f"disk{prev_disk}"
         if disk_type == "cache" or random.randint(1, 2) == 1:
             path_xml = ET.SubElement(next_disk, "path")
-            path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            path_xml.text = f"/var/lib/datastore/disk{i}/"
             allowed_path_xml = ET.SubElement(backups_element, "allowed_path")
-            allowed_path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            allowed_path_xml.text = f"/var/lib/datastore/disk{i}/"
 
         if disk_type == "cache":
             max_size_xml = ET.SubElement(next_disk, "max_size")
@@ -970,9 +970,9 @@ class DiskPropertiesGroup(PropertiesGroup):
                     apply_properties_recursively(next_policy_xml, policy_properties)
 
         allowed_path_xml1 = ET.SubElement(backups_element, "allowed_path")
-        allowed_path_xml1.text = "/var/lib/clickhouse/"
+        allowed_path_xml1.text = "/var/lib/datastore/"
         allowed_path_xml2 = ET.SubElement(backups_element, "allowed_path")
-        allowed_path_xml2.text = "/var/lib/clickhouse/user_files/"
+        allowed_path_xml2.text = "/var/lib/datastore/user_files/"
         if random.randint(1, 100) <= 70:
             apply_properties_recursively(backups_element, backup_properties)
 
@@ -1001,7 +1001,7 @@ class DiskPropertiesGroup(PropertiesGroup):
             #    )
             else:
                 tmp_path_xml = ET.SubElement(top_root, "tmp_path")
-                tmp_path_xml.text = "/var/lib/clickhouse/tmp/"
+                tmp_path_xml.text = "/var/lib/datastore/tmp/"
         # Set disk for SMTs
         if top_root.find("shared_merge_tree") is None and len(created_keeper_disks) > 0:
             smt_element = ET.SubElement(top_root, "shared_merge_tree")
@@ -1019,14 +1019,14 @@ class DiskPropertiesGroup(PropertiesGroup):
         # Add custom_local_disks_base_directory
         if top_root.find("custom_local_disks_base_directory") is None:
             clddb_element = ET.SubElement(top_root, "custom_local_disks_base_directory")
-            clddb_element.text = "/var/lib/clickhouse/disks/"
+            clddb_element.text = "/var/lib/datastore/disks/"
 
 
 def add_single_cache(i: int, next_cache: ET.Element):
     max_size_xml = ET.SubElement(next_cache, "max_size")
     max_size_xml.text = file_size_value(100, 4, 5)()
     path_xml = ET.SubElement(next_cache, "path")
-    path_xml.text = f"/var/lib/clickhouse/fcache{i}/"
+    path_xml.text = f"/var/lib/datastore/fcache{i}/"
 
     # Add random settings
     if random.randint(1, 100) <= 70:
@@ -1087,9 +1087,9 @@ class DistributedDDLPropertiesGroup(PropertiesGroup):
         is_private_binary: bool,
     ):
         path_xml = ET.SubElement(property_element, "path")
-        path_xml.text = "/clickhouse/task_queue/ddl"
+        path_xml.text = "/datastore/task_queue/ddl"
         replicas_path_xml = ET.SubElement(property_element, "replicas_path")
-        replicas_path_xml.text = "/clickhouse/task_queue/replicas"
+        replicas_path_xml.text = "/datastore/task_queue/replicas"
         apply_properties_recursively(property_element, distributed_properties, 0)
 
 
@@ -1230,16 +1230,16 @@ def add_ssl_settings(next_ssl: ET.Element):
     certificate_xml = ET.SubElement(next_ssl, "certificateFile")
     private_key_xml = ET.SubElement(next_ssl, "privateKeyFile")
     if random.randint(1, 2) == 1:
-        certificate_xml.text = "/etc/clickhouse-server/config.d/server.crt"
-        private_key_xml.text = "/etc/clickhouse-server/config.d/server.key"
+        certificate_xml.text = "/etc/datastore-server/config.d/server.crt"
+        private_key_xml.text = "/etc/datastore-server/config.d/server.key"
     else:
-        certificate_xml.text = "/etc/clickhouse-server/config.d/server-cert.pem"
-        private_key_xml.text = "/etc/clickhouse-server/config.d/server-key.pem"
+        certificate_xml.text = "/etc/datastore-server/config.d/server-cert.pem"
+        private_key_xml.text = "/etc/datastore-server/config.d/server-key.pem"
         ca_config_xml = ET.SubElement(next_ssl, "caConfig")
-        ca_config_xml.text = "/etc/clickhouse-server/config.d/ca-cert.pem"
+        ca_config_xml.text = "/etc/datastore-server/config.d/ca-cert.pem"
     if random.randint(1, 2) == 1:
         dh_params_xml = ET.SubElement(next_ssl, "dhParamsFile")
-        dh_params_xml.text = "/etc/clickhouse-server/config.d/dhparam.pem"
+        dh_params_xml.text = "/etc/datastore-server/config.d/dhparam.pem"
 
     if random.randint(1, 2) == 1:
         verification_xml = ET.SubElement(next_ssl, "verificationMode")
@@ -1277,8 +1277,8 @@ def modify_server_settings(
     # Parse the existing XML file
     tree = ET.parse(input_config_path)
     root = tree.getroot()
-    if root.tag != "clickhouse":
-        raise Exception("<clickhouse> element not found")
+    if root.tag != "datastore":
+        raise Exception("<datastore> element not found")
 
     if root.find("tcp_port_secure") is None:
         modified = True
@@ -1492,7 +1492,7 @@ def modify_server_settings(
         distributed_ddl_xml = root.find("distributed_ddl")
         if distributed_ddl_xml is not None and distributed_ddl_xml.find("path") is None:
             path_xml = ET.SubElement(distributed_ddl_xml, "path")
-            path_xml.text = "/clickhouse/task_queue/ddl"
+            path_xml.text = "/datastore/task_queue/ddl"
         # Make sure `zookeeper_path` in transaction_log is set
         transaction_log_xml = root.find("transaction_log")
         if (
@@ -1500,7 +1500,7 @@ def modify_server_settings(
             and transaction_log_xml.find("zookeeper_path") is None
         ):
             zookeeper_path_xml = ET.SubElement(transaction_log_xml, "zookeeper_path")
-            zookeeper_path_xml.text = "/clickhouse/txn"
+            zookeeper_path_xml.text = "/datastore/txn"
 
     # Get number of clusters if generated, to be used in `users.xml` if needed
     remote_servers = root.find("remote_servers")
@@ -1529,8 +1529,8 @@ def modify_user_settings(
     # Parse the existing XML file
     tree = ET.parse(input_config_path)
     root = tree.getroot()
-    if root.tag != "clickhouse":
-        raise Exception("<clickhouse> element not found")
+    if root.tag != "datastore":
+        raise Exception("<datastore> element not found")
 
     if number_clusters > 0:
         modified = True
@@ -1566,15 +1566,15 @@ def modify_user_settings(
 
 
 KEEPER_PROPERTIES_TEMPLATE = """
-<clickhouse>
+<datastore>
     <listen_try>true</listen_try>
     <listen_host>::</listen_host>
     <listen_host>0.0.0.0</listen_host>
 
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-keeper/clickhouse-keeper.log</log>
-        <errorlog>/var/log/clickhouse-keeper/clickhouse-keeper.err.log</errorlog>
+        <log>/var/log/datastore-keeper/datastore-keeper.log</log>
+        <errorlog>/var/log/datastore-keeper/datastore-keeper.err.log</errorlog>
     </logger>
 
     <placement>
@@ -1604,7 +1604,7 @@ KEEPER_PROPERTIES_TEMPLATE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 keeper_settings = {

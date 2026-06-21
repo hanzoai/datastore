@@ -1,4 +1,4 @@
-<!-- https://github.com/ClickHouse/ClickHouse/issues/37900 -->
+<!-- https://github.com/ClickHouse/Datastore/issues/37900 -->
 <test>
     <settings>
         <parallel_view_processing>1</parallel_view_processing>

@@ -9,18 +9,18 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -ue
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS src";
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS dst";
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS mv";
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS tmp";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS src";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS dst";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS mv";
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS tmp";
 
-$CLICKHOUSE_CLIENT --query "CREATE TABLE src (n Int32, m Int32, CONSTRAINT c CHECK xxHash32(n+m) % 8 != 0) ENGINE=MergeTree ORDER BY n PARTITION BY 0 < n SETTINGS old_parts_lifetime=0";
-$CLICKHOUSE_CLIENT --query "CREATE TABLE dst (nm Int32, CONSTRAINT c CHECK xxHash32(nm) % 8 != 0) ENGINE=MergeTree ORDER BY nm SETTINGS old_parts_lifetime=0";
-$CLICKHOUSE_CLIENT --query "CREATE MATERIALIZED VIEW mv TO dst (nm Int32) AS SELECT n*m AS nm FROM src";
+$DATASTORE_CLIENT --query "CREATE TABLE src (n Int32, m Int32, CONSTRAINT c CHECK xxHash32(n+m) % 8 != 0) ENGINE=MergeTree ORDER BY n PARTITION BY 0 < n SETTINGS old_parts_lifetime=0";
+$DATASTORE_CLIENT --query "CREATE TABLE dst (nm Int32, CONSTRAINT c CHECK xxHash32(nm) % 8 != 0) ENGINE=MergeTree ORDER BY nm SETTINGS old_parts_lifetime=0";
+$DATASTORE_CLIENT --query "CREATE MATERIALIZED VIEW mv TO dst (nm Int32) AS SELECT n*m AS nm FROM src";
 
-$CLICKHOUSE_CLIENT --query "CREATE TABLE tmp (x UInt32, nm Int32) ENGINE=MergeTree ORDER BY (x, nm) SETTINGS old_parts_lifetime=0"
+$DATASTORE_CLIENT --query "CREATE TABLE tmp (x UInt32, nm Int32) ENGINE=MergeTree ORDER BY (x, nm) SETTINGS old_parts_lifetime=0"
 
-$CLICKHOUSE_CLIENT --query "INSERT INTO src VALUES (0, 0)"
+$DATASTORE_CLIENT --query "INSERT INTO src VALUES (0, 0)"
 
 is_pid_exist()
 {
@@ -68,7 +68,7 @@ function insert_commit_action()
     local tag=$1; shift
 
     # some transactions will fail due to constraint
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         INSERT INTO src VALUES /* ($i, $tag) */ ($i, $tag);
         SELECT throwIf((SELECT sum(nm) FROM mv) != $(($i * $tag))) /* ($i, $tag) */ FORMAT Null;
@@ -86,7 +86,7 @@ function insert_rollback_action()
     local i=$1; shift
     local tag=$1; shift
 
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         INSERT INTO src VALUES /* (42, $tag) */ (42, $tag);
         SELECT throwIf((SELECT count() FROM src WHERE n=42 AND m=$tag) != 1) FORMAT Null;
@@ -115,7 +115,7 @@ function optimize_action()
         action="ROLLBACK"
     fi
 
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
             $optimize_query;
         $action;
@@ -129,7 +129,7 @@ function select_action()
 {
     set -e
 
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         SELECT throwIf((SELECT (sum(n), count() % 2) FROM src) != (0, 1)) FORMAT Null;
         SELECT throwIf((SELECT (sum(nm), count() % 2) FROM mv) != (0, 1)) FORMAT Null;
@@ -143,7 +143,7 @@ function select_insert_action()
 {
     set -e
 
-    $CLICKHOUSE_CLIENT --query "
+    $DATASTORE_CLIENT --query "
         BEGIN TRANSACTION;
         SELECT throwIf((SELECT count() FROM tmp) != 0) FORMAT Null;
         INSERT INTO tmp SELECT 1, n*m FROM src;
@@ -204,7 +204,7 @@ wait $PID_8 || echo "second select_insert_action has failed with status $?" 2>&1
 
 wait_for_queries_to_finish $WAIT_FINISH
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     BEGIN TRANSACTION;
         SELECT throwIf((SELECT (sum(n), count() % 2) FROM src) != (0, 1)) FORMAT Null;
         SELECT throwIf((SELECT (sum(nm), count() % 2) FROM mv) != (0, 1)) FORMAT Null;
@@ -214,7 +214,7 @@ $CLICKHOUSE_CLIENT --query "
     COMMIT;
 "
 
-$CLICKHOUSE_CLIENT --query  "
+$DATASTORE_CLIENT --query  "
     SELECT throwIf((SELECT (sum(n), count() % 2) FROM src) != (0, 1)) FORMAT Null;
     SELECT throwIf((SELECT (sum(nm), count() % 2) FROM mv) != (0, 1)) FORMAT Null;
     SELECT throwIf((SELECT (sum(nm), count() % 2) FROM dst) != (0, 1)) FORMAT Null;
@@ -222,7 +222,7 @@ $CLICKHOUSE_CLIENT --query  "
     SELECT throwIf((SELECT arraySort(groupArray(nm)) FROM mv) != (SELECT arraySort(groupArray(n*m)) FROM src)) FORMAT Null;
 "
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE src";
-$CLICKHOUSE_CLIENT --query "DROP TABLE dst";
-$CLICKHOUSE_CLIENT --query "DROP TABLE mv";
-$CLICKHOUSE_CLIENT --query "DROP TABLE tmp";
+$DATASTORE_CLIENT --query "DROP TABLE src";
+$DATASTORE_CLIENT --query "DROP TABLE dst";
+$DATASTORE_CLIENT --query "DROP TABLE mv";
+$DATASTORE_CLIENT --query "DROP TABLE tmp";

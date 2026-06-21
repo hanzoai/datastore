@@ -10,11 +10,11 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 . "$CURDIR"/transactions.lib
 
-TABLE="${CLICKHOUSE_DATABASE}.test_backup_txn_partition"
-BACKUP_NAME="${CLICKHOUSE_DATABASE}_backup_txn_$$"
+TABLE="${DATASTORE_DATABASE}.test_backup_txn_partition"
+BACKUP_NAME="${DATASTORE_DATABASE}_backup_txn_$$"
 
 # old_parts_lifetime=3600 prevents Outdated parts from being cleaned up during the test.
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 DROP TABLE IF EXISTS ${TABLE};
 CREATE TABLE ${TABLE} (id UInt64)
 ENGINE = MergeTree()
@@ -23,11 +23,11 @@ ORDER BY id
 SETTINGS old_parts_lifetime=3600;"
 
 # Insert rows into partition 0.
-$CLICKHOUSE_CLIENT -q "INSERT INTO ${TABLE} VALUES (0), (2)"
+$DATASTORE_CLIENT -q "INSERT INTO ${TABLE} VALUES (0), (2)"
 
 # Rewrite the part in partition 0 BEFORE the transaction starts (OPTIMIZE FINAL rewrites
 # even a single part). After this, partition 0 has one Active part and one Outdated original.
-$CLICKHOUSE_CLIENT -q "OPTIMIZE TABLE ${TABLE} PARTITION 0 FINAL"
+$DATASTORE_CLIENT -q "OPTIMIZE TABLE ${TABLE} PARTITION 0 FINAL"
 
 # Begin transaction — snapshot T1 is captured after the merge is committed.
 tx 1 "BEGIN TRANSACTION" | grep -v '^$' ||:
@@ -49,6 +49,6 @@ tx 1 "RESTORE TABLE ${TABLE} AS ${TABLE}_restored FROM Memory('${BACKUP_NAME}') 
 tx 1 "SELECT count() FROM ${TABLE}_restored" | cut -f2-
 
 # Cleanup
-$CLICKHOUSE_CLIENT -q "
+$DATASTORE_CLIENT -q "
 DROP TABLE IF EXISTS ${TABLE};
 DROP TABLE IF EXISTS ${TABLE}_restored;"

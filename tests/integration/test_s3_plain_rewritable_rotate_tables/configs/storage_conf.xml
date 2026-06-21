@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3_plain_rewritable>
@@ -48,4 +48,4 @@
             </encrypted>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

@@ -22,7 +22,7 @@ To start logging:
 
 The flushing period of data is set in `flush_interval_milliseconds` parameter of the [query_views_log](../../operations/server-configuration-parameters/settings.md#query_views_log) server settings section. To force flushing, use the [SYSTEM FLUSH LOGS](/sql-reference/statements/system#flush-logs) query.
 
-ClickHouse does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
+Datastore does not delete data from the table automatically. See [Introduction](/operations/system-tables/overview#system-tables-introduction) for more details.
 
 You can use the [log_queries_probability](/operations/settings/settings#log_queries_probability)) setting to reduce the number of queries, registered in the `query_views_log` table.
 
@@ -66,7 +66,7 @@ SELECT * FROM system.query_views_log LIMIT 1 \G;
 ```text title="Response"
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 event_date:              2021-06-22
 event_time:              2021-06-22 13:23:07
 event_time_microseconds: 2021-06-22 13:23:07.738221

@@ -168,7 +168,7 @@ std::string getStats();
 ///
 /// On construction, the thread's previous preferred arena is captured and restored on destruction.
 /// Use this around tightly-bounded blocks of allocations whose lifetime differs from typical
-/// query-processing work; do not hold across calls that allocate ClickHouse data structures
+/// query-processing work; do not hold across calls that allocate Datastore data structures
 /// unrelated to the target subsystem.
 ///
 /// No-op when `arena_idx == 0` or when jemalloc is not compiled in.

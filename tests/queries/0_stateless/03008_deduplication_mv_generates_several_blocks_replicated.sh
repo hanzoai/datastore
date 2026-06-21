@@ -37,7 +37,7 @@ for insert_method in "InsertSelect" "InsertValues"; do
                         fi
                         echo "$THIS_RUN"
 
-                        $CLICKHOUSE_CLIENT --max_insert_block_size 1  -mq "
+                        $DATASTORE_CLIENT --max_insert_block_size 1  -mq "
                             $(python3 $CURDIR/03008_deduplication.python mv_generates_several_blocks \
                                 --insert-method $insert_method \
                                 --table-engine $ENGINE \

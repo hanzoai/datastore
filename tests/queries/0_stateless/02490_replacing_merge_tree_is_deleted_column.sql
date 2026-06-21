@@ -80,7 +80,7 @@ select * from test order by uid;
 DROP TABLE IF EXISTS testCleanupR1;
 
 CREATE TABLE testCleanupR1 (uid String, version UInt32, is_deleted UInt8)
-    ENGINE = ReplicatedReplacingMergeTree('/clickhouse/{database}/tables/test_cleanup/', 'r1', version, is_deleted)
+    ENGINE = ReplicatedReplacingMergeTree('/datastore/{database}/tables/test_cleanup/', 'r1', version, is_deleted)
     ORDER BY uid settings allow_experimental_replacing_merge_with_cleanup=1;
 
 
@@ -100,7 +100,7 @@ SELECT * FROM testCleanupR1 order by uid;
 DROP TABLE IF EXISTS testSettingsR1;
 
 CREATE TABLE testSettingsR1 (col1 String, version UInt32, is_deleted UInt8)
-    ENGINE = ReplicatedReplacingMergeTree('/clickhouse/{database}/tables/test_setting/', 'r1', version, is_deleted)
+    ENGINE = ReplicatedReplacingMergeTree('/datastore/{database}/tables/test_setting/', 'r1', version, is_deleted)
     ORDER BY col1
     SETTINGS clean_deleted_rows = 'Always', allow_experimental_replacing_merge_with_cleanup=1;
 
@@ -133,7 +133,7 @@ OPTIMIZE TABLE test FINAL CLEANUP; -- { serverError SUPPORT_IS_DISABLED }
 select 'no cleanup 2', * from test order by uid;
 DROP TABLE test;
 
-CREATE TABLE test (uid String, version UInt32, is_deleted UInt8) ENGINE = ReplicatedReplacingMergeTree('/clickhouse/{database}/tables/no_cleanup/', 'r1', version, is_deleted) Order by (uid);
+CREATE TABLE test (uid String, version UInt32, is_deleted UInt8) ENGINE = ReplicatedReplacingMergeTree('/datastore/{database}/tables/no_cleanup/', 'r1', version, is_deleted) Order by (uid);
 INSERT INTO test (*) VALUES ('d1', 1, 0), ('d2', 1, 0), ('d6', 1, 0), ('d4', 1, 0), ('d6', 2, 1), ('d3', 1, 0), ('d1', 2, 1), ('d5', 1, 0), ('d4', 2, 1), ('d1', 3, 0), ('d1', 4, 1), ('d4', 3, 0), ('d1', 5, 0);
 select 'no cleanup 3', * from test FINAL order by uid;
 OPTIMIZE TABLE test FINAL CLEANUP; -- { serverError SUPPORT_IS_DISABLED }

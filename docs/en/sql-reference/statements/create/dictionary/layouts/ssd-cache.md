@@ -21,7 +21,7 @@ The dictionary key has the [UInt64](/sql-reference/data-types/int-uint.md) type.
 
 ```sql
 LAYOUT(SSD_CACHE(BLOCK_SIZE 4096 FILE_SIZE 16777216 READ_BUFFER_SIZE 1048576
-    PATH '/var/lib/clickhouse/user_files/test_dict'))
+    PATH '/var/lib/datastore/user_files/test_dict'))
 ```
 
 </TabItem>
@@ -39,7 +39,7 @@ LAYOUT(SSD_CACHE(BLOCK_SIZE 4096 FILE_SIZE 16777216 READ_BUFFER_SIZE 1048576
         <!-- Size of RAM buffer in bytes for aggregating elements before flushing to SSD. -->
         <write_buffer_size>1048576</write_buffer_size>
         <!-- Path where cache file will be stored. -->
-        <path>/var/lib/clickhouse/user_files/test_dict</path>
+        <path>/var/lib/datastore/user_files/test_dict</path>
     </ssd_cache>
 </layout>
 ```

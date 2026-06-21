@@ -33,7 +33,7 @@ def query_from_one_node_to_another(client_node, server_node, query):
         [
             "bash",
             "-c",
-            "/usr/bin/clickhouse client --host {} --query {!r}".format(
+            "/usr/bin/datastore client --host {} --query {!r}".format(
                 server_node.hostname, query
             ),
         ]

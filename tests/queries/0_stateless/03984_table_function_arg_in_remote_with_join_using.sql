@@ -1,7 +1,7 @@
 -- Regression test: TABLE_FUNCTION node as argument of remote() must not cause
 -- LOGICAL_ERROR when the same table expression is re-resolved during
 -- analyzer_compatibility_join_using_top_level_identifier handling.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=b053840ef38b3b36bc7fb44fa6d5fb129571b2cd&name_0=MasterCI&name_1=BuzzHouse+%28amd_ubsan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=b053840ef38b3b36bc7fb44fa6d5fb129571b2cd&name_0=MasterCI&name_1=BuzzHouse+%28amd_ubsan%29
 
 SET enable_analyzer = 1;
 SET analyzer_compatibility_join_using_top_level_identifier = 1;

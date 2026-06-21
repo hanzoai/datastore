@@ -33,5 +33,5 @@ iif_test | project name, category = iif(value > 15, 'high', 'low');
 iif_test | project name, doubled = iif(value < 20, value * 2, value);
 iif_test | where iif(value > 10, true, false) | project name, value;
 
-set dialect = 'clickhouse';
+set dialect = 'datastore';
 DROP TABLE IF EXISTS iif_test;

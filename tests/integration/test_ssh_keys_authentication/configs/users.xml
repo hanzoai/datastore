@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <john>
             <ssh_keys>
@@ -25,4 +25,4 @@
             </ssh_keys>
         </lucy>
     </users>
-</clickhouse>
+</datastore>

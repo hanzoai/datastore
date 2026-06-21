@@ -5,7 +5,7 @@ CREATE DICTIONARY 03148_dictionary (
     name String
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(
+SOURCE(DATASTORE(
     QUERY 'select 0 as id, ''name0'' as name'
 ))
 LIFETIME(MIN 1 MAX 10)

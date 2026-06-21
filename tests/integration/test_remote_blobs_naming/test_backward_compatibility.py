@@ -16,7 +16,7 @@ def cluster():
     cluster.add_instance(
         "oldest_node",
         with_installed_binary=True,
-        image="clickhouse/clickhouse-server",
+        image="datastore/datastore-server",
         tag="23.11.5.29",
         main_configs=[
             "configs/old_node.xml",
@@ -32,7 +32,7 @@ def cluster():
     cluster.add_instance(
         "old_node",
         with_installed_binary=True,
-        image="clickhouse/clickhouse-server",
+        image="datastore/datastore-server",
         tag="25.8.4.13",
         main_configs=[
             "configs/old_node.xml",
@@ -262,7 +262,7 @@ def test_replicated_merge_tree(cluster, test_case):
     node_old = cluster.instances["old_node"]
     node_new = cluster.instances["new_node"]
 
-    zk_table_path = f"/clickhouse/tables/test_replicated_merge_tree_{storage_policy}{'_zero_copy' if zero_copy else ''}"
+    zk_table_path = f"/datastore/tables/test_replicated_merge_tree_{storage_policy}{'_zero_copy' if zero_copy else ''}"
     create_table_statement = f"""
                 CREATE TABLE test_replicated_merge_tree (
                     id Int64,
@@ -376,7 +376,7 @@ def test_replicated_merge_tree(cluster, test_case):
                     f"""
                     SELECT name
                     FROM system.zookeeper
-                    WHERE path='/clickhouse/zero_copy/zero_copy_s3/{table_shared_uuid}/{part}'
+                    WHERE path='/datastore/zero_copy/zero_copy_s3/{table_shared_uuid}/{part}'
                     ORDER BY ALL
                     """
                 )
@@ -390,7 +390,7 @@ def test_replicated_merge_tree(cluster, test_case):
                         f"""
                         SELECT name
                         FROM system.zookeeper
-                        WHERE path='/clickhouse/zero_copy/zero_copy_s3/{table_shared_uuid}/{part}/{blob}'
+                        WHERE path='/datastore/zero_copy/zero_copy_s3/{table_shared_uuid}/{part}/{blob}'
                         ORDER BY ALL
                         """
                     )

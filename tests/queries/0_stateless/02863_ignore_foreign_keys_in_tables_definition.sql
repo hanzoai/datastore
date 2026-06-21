@@ -1,4 +1,4 @@
--- https://github.com/ClickHouse/ClickHouse/issues/53380
+-- https://github.com/ClickHouse/Datastore/issues/53380
 
 
 drop table if exists parent;

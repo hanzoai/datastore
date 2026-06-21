@@ -194,7 +194,7 @@ kafka_topic_old	old_t
     k.kafka_check_result(result, True)
 
     members = k.describe_consumer_group(kafka_cluster, k.KAFKA_CONSUMER_GROUP_OLD)
-    assert members[0]["client_id"] == f"ClickHouse-instance-test-{kafka_table}"
+    assert members[0]["client_id"] == f"Datastore-instance-test-{kafka_table}"
     # text_desc = kafka_cluster.exec_in_container(kafka_cluster.get_container_id('kafka1'),"kafka-consumer-groups --bootstrap-server localhost:9092 --describe --members --group old --verbose"))
 
 
@@ -519,7 +519,7 @@ def test_kafka_consumer_hang2(kafka_cluster):
     # consumer, try to poll some data
     instance.query(f"SELECT * FROM test.{kafka_table}_2")
 
-    # echo 'SELECT * FROM test.{kafka_table}; SELECT * FROM test.{kafka_table}2; DROP TABLE test.{kafka_table};' | clickhouse client -mn &
+    # echo 'SELECT * FROM test.{kafka_table}; SELECT * FROM test.{kafka_table}2; DROP TABLE test.{kafka_table};' | datastore client -mn &
     #    kafka_cluster.open_bash_shell('instance')
 
     # first consumer has pending rebalance callback unprocessed (no poll after select)
@@ -747,7 +747,7 @@ def test_kafka_string_field_on_first_position_in_protobuf(kafka_cluster):
     suffix = k.random_string(6)
     kafka_table = f"kafka_{suffix}"
 
-    # https://github.com/ClickHouse/ClickHouse/issues/12615
+    # https://github.com/ClickHouse/Datastore/issues/12615
     k.kafka_produce_protobuf_social(
         kafka_cluster, "string_field_on_first_position_in_protobuf", 0, 20
     )
@@ -864,7 +864,7 @@ def test_kafka_protobuf_no_delimiter(kafka_cluster):
 
 def test_kafka_protobuflist(kafka_cluster):
     """Test ProtobufList format with Kafka engine.
-    https://github.com/ClickHouse/ClickHouse/issues/78746
+    https://github.com/ClickHouse/Datastore/issues/78746
     """
     suffix = k.random_string(6)
     kafka_table = f"kafka_{suffix}"
@@ -1328,7 +1328,7 @@ def test_kafka_flush_on_big_message(kafka_cluster, create_query_generator):
 
         assert (
             int(result) == kafka_messages * batch_messages
-        ), "ClickHouse lost some messages: {}".format(result)
+        ), "Datastore lost some messages: {}".format(result)
 
 
 def test_kafka_virtual_columns(kafka_cluster):
@@ -1529,7 +1529,7 @@ def test_kafka_produce_consume(kafka_cluster, create_query_generator):
 
         assert (
             int(result) == expected_row_count
-        ), "ClickHouse lost some messages: {}".format(result)
+        ), "Datastore lost some messages: {}".format(result)
 
 
 @pytest.mark.parametrize(
@@ -1742,8 +1742,8 @@ def test_kafka_virtual_columns2(kafka_cluster, create_query_generator, log_line)
 
             members = k.describe_consumer_group(kafka_cluster, consumer_group)
             # pprint.pprint(members)
-            # members[0]['client_id'] = 'ClickHouse-instance-test-kafka-0'
-            # members[1]['client_id'] = 'ClickHouse-instance-test-kafka-1'
+            # members[0]['client_id'] = 'Datastore-instance-test-kafka-0'
+            # members[1]['client_id'] = 'Datastore-instance-test-kafka-1'
 
             result = instance.query(
                 f"SELECT * FROM test.{kafka_table}_view ORDER BY value", ignore_error=True
@@ -2418,7 +2418,7 @@ def test_kafka_no_holes_when_write_suffix_failed(kafka_cluster, create_query_gen
             {create_query};
 
             CREATE TABLE test.{kafka_table}_view (key UInt64, value String)
-                ENGINE = ReplicatedMergeTree('/clickhouse/kafkatest/tables/{topic_name}', 'node1')
+                ENGINE = ReplicatedMergeTree('/datastore/kafkatest/tables/{topic_name}', 'node1')
                 ORDER BY key;
         """)
 
@@ -2944,7 +2944,7 @@ def test_kafka_predefined_configuration(kafka_cluster):
     k.kafka_check_result(result, True)
 
 
-# https://github.com/ClickHouse/ClickHouse/issues/26643
+# https://github.com/ClickHouse/Datastore/issues/26643
 @pytest.mark.parametrize(
     "create_query_generator",
     [k.generate_old_create_table_query, k.generate_new_create_table_query],

@@ -31,7 +31,7 @@ def test_invalid_settings():
             cluster.instances_dir,
             "node_invalid_settings",
             "logs",
-            "clickhouse-server.err.log",
+            "datastore-server.err.log",
         )
         with open(error_logs_file, "r") as f:
             logs = f.read()

@@ -15,7 +15,7 @@ LARGE_TABLE_NAME_LENGTH = 211
 cluster = ClickHouseCluster(__file__)
 old_node = cluster.add_instance(
     "old_node",
-    image="clickhouse/clickhouse-server",
+    image="datastore/datastore-server",
     tag="24.9.2.42",
     with_zookeeper=True,
     with_installed_binary=True,

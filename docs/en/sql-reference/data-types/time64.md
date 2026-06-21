@@ -1,5 +1,5 @@
 ---
-description: 'Documentation for the Time64 data type in ClickHouse, which stores
+description: 'Documentation for the Time64 data type in Datastore, which stores
   the time range with sub-second precision'
 slug: /sql-reference/data-types/time64
 sidebar_position: 17

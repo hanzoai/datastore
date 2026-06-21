@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <s3>
         <!-- Endpoint for test 04070_s3_disk_settings_override.
              Sets a large max_single_part_upload_size. The disk config sets a small value.
@@ -15,4 +15,4 @@
             <max_single_part_upload_size>104857600</max_single_part_upload_size>
         </test_04093>
     </s3>
-</clickhouse>
+</datastore>

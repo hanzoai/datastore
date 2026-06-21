@@ -629,7 +629,7 @@ AuthResult AccessControl::authenticate(const Credentials & credentials, const Po
         message << credentials.getUserName() << ": Authentication failed: password is incorrect, or there is no user with such name";
 
         /// Better exception message for usability.
-        /// It is typical when users install ClickHouse, type some password and instantly forget it.
+        /// It is typical when users install Datastore, type some password and instantly forget it.
         if (credentials.getUserName().empty() || credentials.getUserName() == "default")
         {
             if (credentials.allowInteractiveBasicAuthenticationInTheBrowser())
@@ -637,13 +637,13 @@ AuthResult AccessControl::authenticate(const Credentials & credentials, const Po
 
             message << R"(
 
-If you use ClickHouse Cloud, the password can be reset at https://clickhouse.cloud/
+If you use Datastore Cloud, the password can be reset at https://datastore.cloud/
 on the settings page for the corresponding service.
 
-If you have installed ClickHouse and forgot password you can reset it in the configuration file.
-The password for default user is typically located at /etc/clickhouse-server/users.d/default-password.xml
+If you have installed Datastore and forgot password you can reset it in the configuration file.
+The password for default user is typically located at /etc/datastore-server/users.d/default-password.xml
 and deleting this file will reset the password.
-See also /etc/clickhouse-server/users.xml on the server where ClickHouse is installed.
+See also /etc/datastore-server/users.xml on the server where Datastore is installed.
 
 )";
         }

@@ -1,10 +1,10 @@
--- https://github.com/ClickHouse/ClickHouse/issues/23194
+-- https://github.com/ClickHouse/Datastore/issues/23194
 -- This test add query-templates for fuzzer
 SET enable_analyzer = 1;
 
-DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE:Identifier};
-CREATE DATABASE {CLICKHOUSE_DATABASE:Identifier};
-USE {CLICKHOUSE_DATABASE:Identifier};
+DROP DATABASE IF EXISTS {DATASTORE_DATABASE:Identifier};
+CREATE DATABASE {DATASTORE_DATABASE:Identifier};
+USE {DATASTORE_DATABASE:Identifier};
 
 CREATE TABLE table (
     column UInt64,
@@ -20,11 +20,11 @@ CREATE TABLE table (
 SELECT t.column FROM table AS t;
 
 USE default;
-SELECT column FROM {CLICKHOUSE_DATABASE:Identifier}.table;
-USE {CLICKHOUSE_DATABASE:Identifier};
+SELECT column FROM {DATASTORE_DATABASE:Identifier}.table;
+USE {DATASTORE_DATABASE:Identifier};
 
 
-SELECT {CLICKHOUSE_DATABASE:Identifier}.table.column FROM table;
+SELECT {DATASTORE_DATABASE:Identifier}.table.column FROM table;
 
 --
 

@@ -10,20 +10,20 @@ baseline file.
 Requirements
 
 - Docker (the integration test starts containers).
-- A fresh ``clickhouse`` binary, e.g. ``ninja -C build clickhouse`` on an up-to-date tree.
+- A fresh ``datastore`` binary, e.g. ``ninja -C build datastore`` on an up-to-date tree.
 
 Example
 
 .. code-block:: bash
 
-   export CLICKHOUSE_TESTS_SERVER_BIN_PATH="$PWD/build/programs/clickhouse"
+   export DATASTORE_TESTS_SERVER_BIN_PATH="$PWD/build/programs/datastore"
    ./tests/integration/test_prometheus_protocols/update_compliance_baseline.py \\
        --capture-log /tmp/promql_compliance_refresh.log
 
 Or pass the binary explicitly::
 
    ./tests/integration/test_prometheus_protocols/update_compliance_baseline.py \\
-       --binary "$PWD/build/programs/clickhouse" --dry-run
+       --binary "$PWD/build/programs/datastore" --dry-run
 
 By default writes JSON to ``ci/tmp/promql_compliance_baseline_export.json`` (override
 with ``--output``). ``--dry-run`` prints JSON to stdout only.
@@ -68,16 +68,16 @@ def _resolve_binary(path: str | None) -> Path:
         if not p.is_file():
             sys.exit(f"ERROR: binary not found: {p}")
         return p
-    env = os.environ.get("CLICKHOUSE_TESTS_SERVER_BIN_PATH", "").strip()
+    env = os.environ.get("DATASTORE_TESTS_SERVER_BIN_PATH", "").strip()
     if env:
         p = Path(env).resolve()
         if p.is_file():
             return p
-    cand = _REPO_ROOT / "build" / "programs" / "clickhouse"
+    cand = _REPO_ROOT / "build" / "programs" / "datastore"
     if cand.is_file():
         return cand.resolve()
     sys.exit(
-        "ERROR: set --binary or CLICKHOUSE_TESTS_SERVER_BIN_PATH to a clickhouse executable, "
+        "ERROR: set --binary or DATASTORE_TESTS_SERVER_BIN_PATH to a datastore executable, "
         f"or build {cand}"
     )
 
@@ -86,7 +86,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--binary",
-        help="Path to clickhouse server binary (default: env or build/programs/clickhouse)",
+        help="Path to datastore server binary (default: env or build/programs/datastore)",
     )
     parser.add_argument(
         "--output",
@@ -121,8 +121,8 @@ def main() -> None:
 
     env = os.environ.copy()
     env["COMPLIANCE_RESULT_FILE"] = str(result_path)
-    env["CLICKHOUSE_TESTS_SERVER_BIN_PATH"] = str(binary)
-    env["CLICKHOUSE_TESTS_BASE_CONFIG_DIR"] = str(_REPO_ROOT / "programs" / "server")
+    env["DATASTORE_TESTS_SERVER_BIN_PATH"] = str(binary)
+    env["DATASTORE_TESTS_BASE_CONFIG_DIR"] = str(_REPO_ROOT / "programs" / "server")
     env.setdefault("PYTEST_TIMEOUT", os.environ.get("PYTEST_TIMEOUT", "3600"))
 
     cmd = [
@@ -135,7 +135,7 @@ def main() -> None:
     ]
     print(f"Running (cwd={_TESTS_INTEGRATION}): {' '.join(cmd)}", flush=True)
     print(f"COMPLIANCE_RESULT_FILE={result_path}", flush=True)
-    print(f"CLICKHOUSE_TESTS_SERVER_BIN_PATH={binary}", flush=True)
+    print(f"DATASTORE_TESTS_SERVER_BIN_PATH={binary}", flush=True)
 
     log_fp = None
     try:

@@ -68,7 +68,7 @@ If a list of columns does not include all existing columns, the rest of the colu
 - The values calculated from the `DEFAULT` expressions specified in the table definition.
 - Zeros and empty strings, if `DEFAULT` expressions are not defined.
 
-Data can be passed to the INSERT in any [format](/sql-reference/formats) supported by ClickHouse. The format must be specified explicitly in the query:
+Data can be passed to the INSERT in any [format](/sql-reference/formats) supported by Datastore. The format must be specified explicitly in the query:
 
 ```sql
 INSERT INTO [db.]table [(c1, c2, c3)] FORMAT format_name data_set
@@ -80,7 +80,7 @@ For example, the following query format is identical to the basic version of `IN
 INSERT INTO [db.]table [(c1, c2, c3)] FORMAT Values (v11, v12, v13), (v21, v22, v23), ...
 ```
 
-ClickHouse removes all spaces and one line feed (if there is one) before the data. When forming a query, we recommend putting the data on a new line after the query operators which is important if the data begins with spaces.
+Datastore removes all spaces and one line feed (if there is one) before the data. When forming a query, we recommend putting the data on a new line after the query operators which is important if the data begins with spaces.
 
 Example:
 
@@ -90,7 +90,7 @@ INSERT INTO t FORMAT TabSeparated
 22  Qwerty
 ```
 
-You can insert data separately from the query by using the [command-line client](/operations/utilities/clickhouse-local) or the [HTTP interface](/interfaces/http).
+You can insert data separately from the query by using the [command-line client](/operations/utilities/datastore-local) or the [HTTP interface](/interfaces/http).
 
 :::note
 If you want to specify `SETTINGS` for `INSERT` query then you have to do it _before_ the `FORMAT` clause since everything after `FORMAT format_name` is treated as data. For example:
@@ -106,7 +106,7 @@ If a table has [constraints](../../sql-reference/statements/create/table.md#cons
 
 ## Data Type Validation {#data-type-validation}
 
-ClickHouse validates allowed data types (controlled by settings like `enable_time_time64_type`, `allow_suspicious_low_cardinality_types`, `allow_suspicious_fixed_string_types`, etc.) only during table creation (`CREATE TABLE`) and schema modification (`ALTER TABLE`), not during `INSERT`.
+Datastore validates allowed data types (controlled by settings like `enable_time_time64_type`, `allow_suspicious_low_cardinality_types`, `allow_suspicious_fixed_string_types`, etc.) only during table creation (`CREATE TABLE`) and schema modification (`ALTER TABLE`), not during `INSERT`.
 
 This means that if a table with a disallowed data type already exists, data can be inserted into it even when the corresponding setting is disabled on the server. This is by design — once a table is created, inserts should not be blocked by settings that control type creation.
 
@@ -181,7 +181,7 @@ Use the syntax above to insert data from a file, or files, stored on the **clien
 
 Compressed files are supported. The compression type is detected by the extension of the file name. Or it can be explicitly specified in a `COMPRESSION` clause. Supported types are: `'none'`, `'gzip'`, `'deflate'`, `'br'`, `'xz'`, `'zstd'`, `'lz4'`, `'bz2'`.
 
-This functionality is available in the [command-line client](../../interfaces/client.md) and [clickhouse-local](../../operations/utilities/clickhouse-local.md).
+This functionality is available in the [command-line client](../../interfaces/client.md) and [datastore-local](../../operations/utilities/datastore-local.md).
 
 **Examples**
 
@@ -191,9 +191,9 @@ Execute the following queries using [command-line client](../../interfaces/clien
 
 ```bash title="Query"
 echo 1,A > input.csv ; echo 2,B >> input.csv
-clickhouse-client --query="CREATE TABLE table_from_file (id UInt32, text String) ENGINE=MergeTree() ORDER BY id;"
-clickhouse-client --query="INSERT INTO table_from_file FROM INFILE 'input.csv' FORMAT CSV;"
-clickhouse-client --query="SELECT * FROM table_from_file FORMAT PrettyCompact;"
+datastore-client --query="CREATE TABLE table_from_file (id UInt32, text String) ENGINE=MergeTree() ORDER BY id;"
+datastore-client --query="INSERT INTO table_from_file FROM INFILE 'input.csv' FORMAT CSV;"
+datastore-client --query="SELECT * FROM table_from_file FORMAT PrettyCompact;"
 ```
 
 ```text title="Response"
@@ -209,9 +209,9 @@ This example is very similar to the previous one but inserts are performed from 
 
 ```bash
 echo 1,A > input_1.csv ; echo 2,B > input_2.csv
-clickhouse-client --query="CREATE TABLE infile_globs (id UInt32, text String) ENGINE=MergeTree() ORDER BY id;"
-clickhouse-client --query="INSERT INTO infile_globs FROM INFILE 'input_*.csv' FORMAT CSV;"
-clickhouse-client --query="SELECT * FROM infile_globs FORMAT PrettyCompact;"
+datastore-client --query="CREATE TABLE infile_globs (id UInt32, text String) ENGINE=MergeTree() ORDER BY id;"
+datastore-client --query="INSERT INTO infile_globs FROM INFILE 'input_*.csv' FORMAT CSV;"
+datastore-client --query="SELECT * FROM infile_globs FORMAT PrettyCompact;"
 ```
 
 :::tip
@@ -251,9 +251,9 @@ SELECT * FROM simple_table;
 └─────┴───────────────────────┘
 ```
 
-## Inserting into ClickHouse Cloud {#inserting-into-clickhouse-cloud}
+## Inserting into Datastore Cloud {#inserting-into-datastore-cloud}
 
-By default, services on ClickHouse Cloud provide multiple replicas for high availability. When you connect to a service, a connection is established to one of these replicas.
+By default, services on Datastore Cloud provide multiple replicas for high availability. When you connect to a service, a connection is established to one of these replicas.
 
 After an `INSERT` succeeds, data is written to the underlying storage. However, it may take some time for replicas to receive these updates. Therefore, if you use a different connection that executes a `SELECT` query on one of these other replicas, the updated data may not yet be reflected.
 
@@ -263,20 +263,20 @@ It is possible to use the `select_sequential_consistency` to force the replica t
 SELECT .... SETTINGS select_sequential_consistency = 1;
 ```
 
-Note that using `select_sequential_consistency` will increase the load on ClickHouse Keeper (used by ClickHouse Cloud internally) and may result in slower performance depending on the load on the service. We recommend against enabling this setting unless necessary. The recommended approach is to execute read/writes in the same session or to use a client driver that uses the native protocol (and thus supports sticky connections).
+Note that using `select_sequential_consistency` will increase the load on Datastore Keeper (used by Datastore Cloud internally) and may result in slower performance depending on the load on the service. We recommend against enabling this setting unless necessary. The recommended approach is to execute read/writes in the same session or to use a client driver that uses the native protocol (and thus supports sticky connections).
 
 ## Inserting into a replicated setup {#inserting-into-a-replicated-setup}
 
-In a replicated setup, data will be visible on other replicas after it has been replicated. Data begins being replicated (downloaded on other replicas) immediately after an `INSERT`. This differs from ClickHouse Cloud, where data is immediately written to shared storage and replicas subscribe to metadata changes.
+In a replicated setup, data will be visible on other replicas after it has been replicated. Data begins being replicated (downloaded on other replicas) immediately after an `INSERT`. This differs from Datastore Cloud, where data is immediately written to shared storage and replicas subscribe to metadata changes.
 
-Note that for replicated setups, `INSERTs` can sometimes take a considerable amount of time (in the order of one second) as it requires committing to ClickHouse Keeper for distributed consensus. Using S3 for storage also adds additional latency.
+Note that for replicated setups, `INSERTs` can sometimes take a considerable amount of time (in the order of one second) as it requires committing to Datastore Keeper for distributed consensus. Using S3 for storage also adds additional latency.
 
 ## Performance Considerations {#performance-considerations}
 
 `INSERT` sorts the input data by primary key and splits them into partitions by a partition key. If you insert data into several partitions at once, it can significantly reduce the performance of the `INSERT` query. To avoid this:
 
 - Add data in fairly large batches, such as 100,000 rows at a time.
-- Group data by a partition key before uploading it to ClickHouse.
+- Group data by a partition key before uploading it to Datastore.
 
 Performance will not decrease if:
 
@@ -291,7 +291,7 @@ Using `async_insert` or the [`Buffer` table engine](/engines/table-engines/speci
 
 ### Large or long-running inserts {#large-or-long-running-inserts}
 
-When you are inserting large amounts of data, ClickHouse will optimize write performance through a process called "squashing". Small blocks of inserted data in memory are merged and squashed into larger blocks before being written to disk. Squashing reduces the overhead associated with each write operation. In this process, inserted data will be available to query after ClickHouse completes writing each [`max_insert_block_size`](/operations/settings/settings#max_insert_block_size) rows.
+When you are inserting large amounts of data, Datastore will optimize write performance through a process called "squashing". Small blocks of inserted data in memory are merged and squashed into larger blocks before being written to disk. Squashing reduces the overhead associated with each write operation. In this process, inserted data will be available to query after Datastore completes writing each [`max_insert_block_size`](/operations/settings/settings#max_insert_block_size) rows.
 
 **See Also**
 

@@ -1,5 +1,5 @@
 ---
-description: 'Guide for building ClickHouse from source on macOS systems'
+description: 'Guide for building Datastore from source on macOS systems'
 sidebar_label: 'Build on macOS for macOS'
 sidebar_position: 15
 slug: /development/build-osx
@@ -8,11 +8,11 @@ keywords: ['MacOS', 'Mac', 'build']
 doc_type: 'guide'
 ---
 
-:::info This build guide is for contributors modifying ClickHouse itself.
-If you are not changing ClickHouse source code, you can install pre-built ClickHouse as described in [Quick Start](https://clickhouse.com/docs/get-started/quick-start).
+:::info This build guide is for contributors modifying Datastore itself.
+If you are not changing Datastore source code, you can install pre-built Datastore as described in [Quick Start](https://datastore.com/docs/get-started/quick-start).
 :::
 
-ClickHouse can be compiled on macOS x86_64 (Intel) and arm64 (Apple Silicon) using on macOS 10.15 (Catalina) or higher.
+Datastore can be compiled on macOS x86_64 (Intel) and arm64 (Apple Silicon) using on macOS 10.15 (Catalina) or higher.
 
 As compiler, only Clang from homebrew is supported.
 
@@ -34,17 +34,17 @@ Apple uses a case-insensitive file system by default. While this usually does no
 For serious development on macOS, make sure that the source code is stored on a case-sensitive disk volume, e.g. see [these instructions](https://brianboyko.medium.com/a-case-sensitive-src-folder-for-mac-programmers-176cc82a3830).
 :::
 
-## Build ClickHouse {#build-clickhouse}
+## Build Datastore {#build-datastore}
 
 To build you must use Homebrew's Clang compiler:
 
 ```bash
-cd ClickHouse
+cd Datastore
 mkdir build
 export PATH=$(brew --prefix llvm)/bin:$PATH
 cmake -S . -B build
 cmake --build build
-# The resulting binary will be created at: build/programs/clickhouse
+# The resulting binary will be created at: build/programs/datastore
 ```
 
 :::note
@@ -54,7 +54,7 @@ to use llvm-ar by setting flag `-DCMAKE_AR=/opt/homebrew/opt/llvm/bin/llvm-ar`.
 
 ## Caveats {#caveats}
 
-If you intend to run `clickhouse-server`, make sure to increase the system's `maxfiles` variable.
+If you intend to run `datastore-server`, make sure to increase the system's `maxfiles` variable.
 
 :::note
 You'll need to use sudo.

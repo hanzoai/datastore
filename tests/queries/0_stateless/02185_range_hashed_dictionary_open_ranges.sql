@@ -22,7 +22,7 @@ CREATE DICTIONARY 02185_range_dictionary
     value String DEFAULT 'DefaultValue'
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02185_range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02185_range_dictionary_source_table'))
 LAYOUT(RANGE_HASHED(convert_null_range_bound_to_open 1))
 RANGE(MIN start MAX end)
 LIFETIME(0);
@@ -46,7 +46,7 @@ CREATE DICTIONARY 02185_range_dictionary
     value String DEFAULT 'DefaultValue'
 )
 PRIMARY KEY id
-SOURCE(CLICKHOUSE(TABLE '02185_range_dictionary_source_table'))
+SOURCE(DATASTORE(TABLE '02185_range_dictionary_source_table'))
 LAYOUT(RANGE_HASHED(convert_null_range_bound_to_open 0))
 RANGE(MIN start MAX end)
 LIFETIME(0);

@@ -80,7 +80,7 @@ For Replicated tables, the comment can be different on different replicas.
 Modifying the comment applies to a single replica.
 
 The feature is available since version 23.9. It does not work in previous 
-ClickHouse versions.
+Datastore versions.
 
 ## Related content {#related-content}
 

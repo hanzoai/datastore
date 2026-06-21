@@ -9,12 +9,12 @@ node = cluster.add_instance(
     "node", with_zookeeper=False, main_configs=["configs/log.xml"]
 )
 
-config = """<clickhouse>
+config = """<datastore>
     <logger>
         <level>debug</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <log>/var/log/datastore-server/datastore-server.log</log>
     </logger>
-</clickhouse>"""
+</datastore>"""
 
 
 @pytest.fixture(scope="module")
@@ -29,7 +29,7 @@ def start_cluster():
 
 def get_log(node):
     return node.exec_in_container(
-        ["bash", "-c", "cat /var/log/clickhouse-server/clickhouse-server.log"]
+        ["bash", "-c", "cat /var/log/datastore-server/datastore-server.log"]
     )
 
 
@@ -53,10 +53,10 @@ def test_log_levels_update(start_cluster):
 
     check_it_will_work_slowly(node, log)
 
-    node.replace_config("/etc/clickhouse-server/config.d/log.xml", config)
+    node.replace_config("/etc/datastore-server/config.d/log.xml", config)
     node.query("SYSTEM RELOAD CONFIG;")
     node.exec_in_container(
-        ["bash", "-c", "> /var/log/clickhouse-server/clickhouse-server.log"]
+        ["bash", "-c", "> /var/log/datastore-server/datastore-server.log"]
     )
 
     for _ in range(5):

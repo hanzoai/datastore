@@ -8,30 +8,30 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Pin date_time_input_format to 'basic' so JSON path inference matches the
 # pre-existing reference (best_effort would infer DateTime64 from ISO date strings).
-CLICKHOUSE_CLIENT="${CLICKHOUSE_CLIENT} --date_time_input_format=basic"
+DATASTORE_CLIENT="${DATASTORE_CLIENT} --date_time_input_format=basic"
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2"
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_string"
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_from_string"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_string"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_from_string"
 
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE ghdata_2 (data JSON(max_dynamic_paths=100)) ENGINE = MergeTree ORDER BY tuple() SETTINGS index_granularity = 100, index_granularity_bytes = '1Mi'"
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE ghdata_2_string (data String) ENGINE = MergeTree ORDER BY tuple() SETTINGS index_granularity = 100, index_granularity_bytes = '1Mi'"
-${CLICKHOUSE_CLIENT} -q "CREATE TABLE ghdata_2_from_string (data JSON(max_dynamic_paths=100)) ENGINE = MergeTree ORDER BY tuple() SETTINGS index_granularity = 100, index_granularity_bytes = '1Mi'"
+${DATASTORE_CLIENT} -q "CREATE TABLE ghdata_2 (data JSON(max_dynamic_paths=100)) ENGINE = MergeTree ORDER BY tuple() SETTINGS index_granularity = 100, index_granularity_bytes = '1Mi'"
+${DATASTORE_CLIENT} -q "CREATE TABLE ghdata_2_string (data String) ENGINE = MergeTree ORDER BY tuple() SETTINGS index_granularity = 100, index_granularity_bytes = '1Mi'"
+${DATASTORE_CLIENT} -q "CREATE TABLE ghdata_2_from_string (data JSON(max_dynamic_paths=100)) ENGINE = MergeTree ORDER BY tuple() SETTINGS index_granularity = 100, index_granularity_bytes = '1Mi'"
 
-${CLICKHOUSE_CLIENT} -q "SYSTEM STOP MERGES ghdata_2"
-${CLICKHOUSE_CLIENT} -q "SYSTEM STOP MERGES ghdata_2_from_string"
+${DATASTORE_CLIENT} -q "SYSTEM STOP MERGES ghdata_2"
+${DATASTORE_CLIENT} -q "SYSTEM STOP MERGES ghdata_2_from_string"
 
-cat $CUR_DIR/data_json/ghdata_sample.json | ${CLICKHOUSE_CLIENT} --max_insert_block_size 100 --min_insert_block_size_rows 100 --min_insert_block_size_bytes 100Mi -q "INSERT INTO ghdata_2 FORMAT JSONAsObject"
-cat $CUR_DIR/data_json/ghdata_sample.json | ${CLICKHOUSE_CLIENT} --max_insert_block_size 100 --min_insert_block_size_rows 100 --min_insert_block_size_bytes 100Mi -q "INSERT INTO ghdata_2_string FORMAT JSONAsString"
+cat $CUR_DIR/data_json/ghdata_sample.json | ${DATASTORE_CLIENT} --max_insert_block_size 100 --min_insert_block_size_rows 100 --min_insert_block_size_bytes 100Mi -q "INSERT INTO ghdata_2 FORMAT JSONAsObject"
+cat $CUR_DIR/data_json/ghdata_sample.json | ${DATASTORE_CLIENT} --max_insert_block_size 100 --min_insert_block_size_rows 100 --min_insert_block_size_bytes 100Mi -q "INSERT INTO ghdata_2_string FORMAT JSONAsString"
 
-${CLICKHOUSE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_insert_block_size 100 --min_insert_block_size_rows 100 --min_insert_block_size_bytes 100Mi -q "INSERT INTO ghdata_2_from_string SELECT data FROM ghdata_2_string"
+${DATASTORE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_insert_block_size 100 --min_insert_block_size_rows 100 --min_insert_block_size_bytes 100Mi -q "INSERT INTO ghdata_2_from_string SELECT data FROM ghdata_2_string"
 
-${CLICKHOUSE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT count(), sum(cityHash64(toString(data))) FROM ghdata_2_from_string"
-${CLICKHOUSE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT count(), sum(cityHash64(toString(data))) FROM ghdata_2"
+${DATASTORE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT count(), sum(cityHash64(toString(data))) FROM ghdata_2_from_string"
+${DATASTORE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT count(), sum(cityHash64(toString(data))) FROM ghdata_2"
 
-${CLICKHOUSE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT arrayJoin(distinctJSONPaths(data)) AS path FROM ghdata_2_from_string ORDER BY path"
-${CLICKHOUSE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT arrayJoin(distinctJSONPaths(data)) AS path FROM ghdata_2 ORDER BY path"
+${DATASTORE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT arrayJoin(distinctJSONPaths(data)) AS path FROM ghdata_2_from_string ORDER BY path"
+${DATASTORE_CLIENT} --merge_tree_min_rows_for_concurrent_read 1 --merge_tree_min_bytes_for_concurrent_read 1 --max_block_size 100 -q "SELECT arrayJoin(distinctJSONPaths(data)) AS path FROM ghdata_2 ORDER BY path"
 
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2"
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_string"
-${CLICKHOUSE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_from_string"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_string"
+${DATASTORE_CLIENT} -q "DROP TABLE IF EXISTS ghdata_2_from_string"

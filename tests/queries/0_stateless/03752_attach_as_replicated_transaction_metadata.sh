@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # test1: insert with transaction and mutation without transaction
-${CLICKHOUSE_CLIENT} -n -q "
+${DATASTORE_CLIENT} -n -q "
     CREATE TABLE t0 (c0 Int) ENGINE = MergeTree() PRIMARY KEY tuple();
     INSERT INTO TABLE t0 (c0) SELECT c0 FROM generateRandom('c0 Int', 4647429777703185695, 69, 4) LIMIT 86;
 
@@ -27,7 +27,7 @@ ${CLICKHOUSE_CLIENT} -n -q "
 "
 
 # test2: background merge with transaction and mutation without transaction
-${CLICKHOUSE_CLIENT} -n -q "
+${DATASTORE_CLIENT} -n -q "
     CREATE TABLE t0 (c0 Int) ENGINE = MergeTree() PRIMARY KEY tuple();
     INSERT INTO TABLE t0 (c0) SELECT c0 FROM generateRandom('c0 Int', 4647429777703185695, 69, 4) LIMIT 86;
 
@@ -70,7 +70,7 @@ ${CLICKHOUSE_CLIENT} -n -q "
 "
 
 # test3: mutation withtransaction after ATTACH TO NOT REPLICATED
-${CLICKHOUSE_CLIENT} -n -q "
+${DATASTORE_CLIENT} -n -q "
     CREATE TABLE t0 (c0 Int) ENGINE = MergeTree() PRIMARY KEY tuple();
     INSERT INTO TABLE t0 (c0) SELECT c0 FROM generateRandom('c0 Int', 4647429777703185695, 69, 4) LIMIT 86;
 

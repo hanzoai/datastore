@@ -39,27 +39,27 @@ namespace ErrorCodes
 
 const std::map<std::string, CloudJWTProvider::AuthEndpoints> CloudJWTProvider::managed_service_endpoints = {
     {
-        ".clickhouse-dev.com",
+        ".datastore-dev.com",
         {
-            "https://auth.control-plane.clickhouse-dev.com",
+            "https://auth.control-plane.datastore-dev.com",
             "dKv0XkTAw7rghGiAa5sjPFYGQUVtjzuz",
-            "https://console-api-internal.clickhouse-dev.com"
+            "https://console-api-internal.datastore-dev.com"
         }
     },
     {
-        ".clickhouse-staging.com",
+        ".datastore-staging.com",
         {
-            "https://auth.control-plane.clickhouse-staging.com",
+            "https://auth.control-plane.datastore-staging.com",
             "rpEkizLMmAU95MP4JL8ERefbVXtUQSFs",
-            "https://console-api-internal.clickhouse-staging.com"
+            "https://console-api-internal.datastore-staging.com"
         }
     },
     {
-        ".clickhouse.cloud",
+        ".datastore.cloud",
         {
-            "https://auth.clickhouse.cloud",
+            "https://auth.datastore.cloud",
             "9Wf1YpSocOg5sp7GOcCjtrt6DWRAJ19S",
-            "https://console-api-internal.clickhouse.cloud"
+            "https://console-api-internal.datastore.cloud"
         }
     }
 };
@@ -97,7 +97,7 @@ std::string CloudJWTProvider::getJWT()
     Poco::Timestamp now;
     Poco::Timestamp expiration_buffer = 30 * Poco::Timespan::SECONDS;
 
-    // If we have a valid ClickHouse JWT, return it.
+    // If we have a valid Datastore JWT, return it.
     if (!clickhouse_jwt.empty() && now < clickhouse_jwt_expires_at - expiration_buffer)
         return clickhouse_jwt;
 
@@ -107,14 +107,14 @@ std::string CloudJWTProvider::getJWT()
         refreshIdPAccessToken();
     }
 
-    // If we have a valid IDP access token, attempt to exchange it for a ClickHouse JWT.
+    // If we have a valid IDP access token, attempt to exchange it for a Datastore JWT.
     if (!idp_access_token.empty() && now < idp_access_token_expires_at - expiration_buffer)
     {
         exchangeIdPTokenForClickHouseJWT(false);
         return clickhouse_jwt;
     }
 
-    // If we don't have a valid ClickHouse JWT, attempt to login and exchange the IDP token for a ClickHouse JWT.
+    // If we don't have a valid Datastore JWT, attempt to login and exchange the IDP token for a Datastore JWT.
     deviceCodeLogin();
     exchangeIdPTokenForClickHouseJWT(true);
     return clickhouse_jwt;
@@ -132,7 +132,7 @@ void CloudJWTProvider::exchangeIdPTokenForClickHouseJWT(bool show_messages)
     if (!endpoints)
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
-            "Cannot determine token exchange endpoint from hostname {}. Please provide a ClickHouse Cloud hostname.",
+            "Cannot determine token exchange endpoint from hostname {}. Please provide a Datastore Cloud hostname.",
             host_str);
 
     Poco::URI exchange_url = Poco::URI(endpoints->api_host + "/.api/auth/tokenExchange");
@@ -172,7 +172,7 @@ void CloudJWTProvider::exchangeIdPTokenForClickHouseJWT(bool show_messages)
     clickhouse_jwt_expires_at = Poco::Timestamp::fromEpochTime(jwt::decode(clickhouse_jwt).get_payload_claim("exp").as_integer());
 
     if (show_messages)
-        output_stream << "Authenticated with ClickHouse Cloud.\n" << std::endl;
+        output_stream << "Authenticated with Datastore Cloud.\n" << std::endl;
 }
 
 }

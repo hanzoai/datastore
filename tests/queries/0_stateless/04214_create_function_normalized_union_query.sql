@@ -24,7 +24,7 @@
 -- normalized union queries (no `INTERSECT` / `EXCEPT` modes can be present
 -- after normalization, so there is nothing for the matcher to do).
 --
--- See https://github.com/ClickHouse/ClickHouse/issues/103969
+-- See https://github.com/ClickHouse/Datastore/issues/103969
 
 DROP FUNCTION IF EXISTS test_04214_repro;
 DROP FUNCTION IF EXISTS test_04214_recursive;

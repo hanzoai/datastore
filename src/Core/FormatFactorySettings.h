@@ -60,7 +60,7 @@ When reading Array from CSV, expect that its elements were serialized in nested 
     DECLARE(Bool, input_format_skip_unknown_fields, true, R"(
 Enables or disables skipping insertion of extra data.
 
-When writing data, ClickHouse throws an exception if input data contain columns that do not exist in the target table. If skipping is enabled, ClickHouse does not insert extra data and does not throw an exception.
+When writing data, Datastore throws an exception if input data contain columns that do not exist in the target table. If skipping is enabled, Datastore does not insert extra data and does not throw an exception.
 
 Supported formats:
 
@@ -193,7 +193,7 @@ When reading Parquet files, skip whole row groups based on the WHERE/PREWHERE ex
 When reading Parquet files, skip whole row groups based on the WHERE expressions and bloom filter in the Parquet metadata.
 )", 0) \
     DECLARE(Bool, input_format_parquet_enable_json_parsing, true, R"(
-When reading Parquet files, parse JSON columns as ClickHouse JSON Column.
+When reading Parquet files, parse JSON columns as Datastore JSON Column.
 )", 0) \
     DECLARE(UInt64, input_format_parquet_memory_low_watermark, 2ul << 20, R"(
 Schedule prefetches more aggressively if memory usage is below than threshold. Potentially useful e.g. if there are many small bloom filters to read over network.
@@ -211,12 +211,12 @@ Minor tweak to how pages are read from parquet file when no page filtering is us
 Verify page checksums when reading parquet files.
 )", 0) \
     DECLARE(Bool, input_format_parquet_local_time_as_utc, true, R"(
-Determines the data type used by schema inference for Parquet timestamps with isAdjustedToUTC=false. If true: DateTime64(..., 'UTC'), if false: DateTime64(...). Neither behavior is fully correct as ClickHouse doesn't have a data type for local wall-clock time. Counterintuitively, 'true' is probably the less incorrect option, because formatting the 'UTC' timestamp as String will produce representation of the correct local time.
+Determines the data type used by schema inference for Parquet timestamps with isAdjustedToUTC=false. If true: DateTime64(..., 'UTC'), if false: DateTime64(...). Neither behavior is fully correct as Datastore doesn't have a data type for local wall-clock time. Counterintuitively, 'true' is probably the less incorrect option, because formatting the 'UTC' timestamp as String will produce representation of the correct local time.
 )", 0) \
     DECLARE(Bool, input_format_allow_seeks, true, R"(
 Allow seeks (or range reads) while reading ORC, Parquet, and Arrow input formats.
 When enabled and the source supports it (e.g. local file, S3, HTTP with range support and known size),
-ClickHouse can read only the needed byte ranges and use less memory.
+Datastore can read only the needed byte ranges and use less memory.
 When disabled, or when the source does not support seeks (e.g. no file size, or stream not seekable),
 some readers may fall back to loading the full file into memory.
 Enabled by default.
@@ -276,7 +276,7 @@ The maximum amount of data in bytes to read for automatic schema inference.
 Use some tweaks and heuristics to infer schema in CSV format
 )", 0) \
     DECLARE(Bool, input_format_csv_try_infer_numbers_from_strings, false, R"(
-If enabled, during schema inference ClickHouse will try to infer numbers from string fields.
+If enabled, during schema inference Datastore will try to infer numbers from string fields.
 It can be useful if CSV data contains quoted UInt64 numbers.
 
 Disabled by default.
@@ -391,7 +391,7 @@ Allow parsing bools as strings in JSON input formats.
 Enabled by default.
 )", 0) \
     DECLARE(Bool, input_format_json_try_infer_numbers_from_strings, false, R"(
-If enabled, during schema inference ClickHouse will try to infer numbers from string fields.
+If enabled, during schema inference Datastore will try to infer numbers from string fields.
 It can be useful if JSON data contains quoted UInt64 numbers.
 
 Disabled by default.
@@ -449,7 +449,7 @@ Result:
 Enabled by default.
 )", 0) \
     DECLARE(Bool, input_format_json_try_infer_named_tuples_from_objects, true, R"(
-If enabled, during schema inference ClickHouse will try to infer named Tuple from JSON objects.
+If enabled, during schema inference Datastore will try to infer named Tuple from JSON objects.
 The resulting named Tuple will contain all elements from all corresponding JSON objects from sample data.
 
 Example:
@@ -470,7 +470,7 @@ Result:
 Enabled by default.
 )", 0) \
 DECLARE(Bool, input_format_json_infer_array_of_dynamic_from_array_of_different_types, true, R"(
-If enabled, during schema inference ClickHouse will use Array(Dynamic) type for JSON arrays with values of different data types.
+If enabled, during schema inference Datastore will use Array(Dynamic) type for JSON arrays with values of different data types.
 
 Example:
 
@@ -552,7 +552,7 @@ Enabled by default.
 Ignore unnecessary fields and not parse them. Enabling this may not throw exceptions on json strings of invalid format or with duplicated fields
 )", 0) \
     DECLARE(Bool, input_format_try_infer_variants, false, R"(
-If enabled, ClickHouse will try to infer type [`Variant`](../../sql-reference/data-types/variant.md) in schema inference for text formats when there is more than one possible type for column/array elements.
+If enabled, Datastore will try to infer type [`Variant`](../../sql-reference/data-types/variant.md) in schema inference for text formats when there is more than one possible type for column/array elements.
 
 Possible values:
 
@@ -597,17 +597,17 @@ The maximum number of dynamic subcolumns that can be created in every column dur
 It allows to control the number of dynamic subcolumns during parsing regardless of dynamic parameters specified in the data type.
 )", 0) \
     DECLARE(Bool, input_format_try_infer_integers, true, R"(
-If enabled, ClickHouse will try to infer integers instead of floats in schema inference for text formats. If all numbers in the column from input data are integers, the result type will be `Int64`, if at least one number is float, the result type will be `Float64`.
+If enabled, Datastore will try to infer integers instead of floats in schema inference for text formats. If all numbers in the column from input data are integers, the result type will be `Int64`, if at least one number is float, the result type will be `Float64`.
 
 Enabled by default.
 )", 0) \
     DECLARE(Bool, input_format_try_infer_dates, true, R"(
-If enabled, ClickHouse will try to infer type `Date` from string fields in schema inference for text formats. If all fields from a column in input data were successfully parsed as dates, the result type will be `Date`, if at least one field was not parsed as date, the result type will be `String`.
+If enabled, Datastore will try to infer type `Date` from string fields in schema inference for text formats. If all fields from a column in input data were successfully parsed as dates, the result type will be `Date`, if at least one field was not parsed as date, the result type will be `String`.
 
 Enabled by default.
 )", 0) \
     DECLARE(Bool, input_format_try_infer_datetimes, true, R"(
-If enabled, ClickHouse will try to infer type `DateTime64` from string fields in schema inference for text formats. If all fields from a column in input data were successfully parsed as datetimes, the result type will be `DateTime64`, if at least one field was not parsed as datetime, the result type will be `String`.
+If enabled, Datastore will try to infer type `DateTime64` from string fields in schema inference for text formats. If all fields from a column in input data were successfully parsed as datetimes, the result type will be `DateTime64`, if at least one field was not parsed as datetime, the result type will be `String`.
 
 Enabled by default.
 )", 0) \
@@ -691,13 +691,13 @@ Possible values:
 
 - `'best_effort'` — Enables extended parsing.
 
-    ClickHouse can parse the basic `YYYY-MM-DD HH:MM:SS` format and all [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time formats. For example, `'2018-06-08T01:02:03.000Z'`.
+    Datastore can parse the basic `YYYY-MM-DD HH:MM:SS` format and all [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time formats. For example, `'2018-06-08T01:02:03.000Z'`.
 
 - `'best_effort_us'` — Similar to `best_effort` (see the difference in [parseDateTimeBestEffortUS](../../sql-reference/functions/type-conversion-functions#parseDateTimeBestEffortUS)
 
 - `'basic'` — Use basic parser.
 
-    ClickHouse can parse only the basic `YYYY-MM-DD HH:MM:SS` or `YYYY-MM-DD` format. For example, `2019-08-20 10:18:56` or `2019-08-20`.
+    Datastore can parse only the basic `YYYY-MM-DD HH:MM:SS` or `YYYY-MM-DD` format. For example, `2019-08-20 10:18:56` or `2019-08-20`.
 
 See also:
 
@@ -711,15 +711,15 @@ Possible values:
 
 - `simple` - Simple output format.
 
-    ClickHouse output date and time `YYYY-MM-DD hh:mm:ss` format. For example, `2019-08-20 10:18:56`. The calculation is performed according to the data type's time zone (if present) or server time zone.
+    Datastore output date and time `YYYY-MM-DD hh:mm:ss` format. For example, `2019-08-20 10:18:56`. The calculation is performed according to the data type's time zone (if present) or server time zone.
 
 - `iso` - ISO output format.
 
-    ClickHouse output date and time in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) `YYYY-MM-DDThh:mm:ssZ` format. For example, `2019-08-20T10:18:56Z`. Note that output is in UTC (`Z` means UTC).
+    Datastore output date and time in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) `YYYY-MM-DDThh:mm:ssZ` format. For example, `2019-08-20T10:18:56Z`. Note that output is in UTC (`Z` means UTC).
 
 - `unix_timestamp` - Unix timestamp output format.
 
-    ClickHouse output date and time in [Unix timestamp](https://en.wikipedia.org/wiki/Unix_time) format. For example `1566285536`.
+    Datastore output date and time in [Unix timestamp](https://en.wikipedia.org/wiki/Unix_time) format. For example `1566285536`.
 
 See also:
 
@@ -733,11 +733,11 @@ Possible values:
 
 -   `kusto` - KQL-style output format.
 
-    ClickHouse outputs intervals in [KQL format](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-timespan-format-strings#the-constant-c-format-specifier). For example, `toIntervalDay(2)` would be formatted as `2.00:00:00`. Please note that for interval types of varying length (ie. `IntervalMonth` and `IntervalYear`) the average number of seconds per interval is taken into account.
+    Datastore outputs intervals in [KQL format](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-timespan-format-strings#the-constant-c-format-specifier). For example, `toIntervalDay(2)` would be formatted as `2.00:00:00`. Please note that for interval types of varying length (ie. `IntervalMonth` and `IntervalYear`) the average number of seconds per interval is taken into account.
 
 -   `numeric` - Numeric output format.
 
-    ClickHouse outputs intervals as their underlying numeric representation. For example, `toIntervalDay(2)` would be formatted as `2`.
+    Datastore outputs intervals as their underlying numeric representation. For example, `toIntervalDay(2)` would be formatted as `2`.
 
 See also:
 
@@ -973,8 +973,8 @@ Enables the ability to output all rows as a JSON array in the [JSONEachRow](/int
 
 Possible values:
 
-- 1 — ClickHouse outputs all rows as an array, each row in the `JSONEachRow` format.
-- 0 — ClickHouse outputs each row separately in the `JSONEachRow` format.
+- 1 — Datastore outputs all rows as an array, each row in the `JSONEachRow` format.
+- 0 — Datastore outputs each row separately in the `JSONEachRow` format.
 
 **Example of a query with the enabled setting**
 
@@ -1246,9 +1246,9 @@ The default value is 0.
 
 Always pair it with `input_format_allow_errors_ratio`.
 
-If an error occurred while reading rows but the error counter is still less than `input_format_allow_errors_num`, ClickHouse ignores the row and moves on to the next one.
+If an error occurred while reading rows but the error counter is still less than `input_format_allow_errors_num`, Datastore ignores the row and moves on to the next one.
 
-If both `input_format_allow_errors_num` and `input_format_allow_errors_ratio` are exceeded, ClickHouse throws an exception.
+If both `input_format_allow_errors_num` and `input_format_allow_errors_ratio` are exceeded, Datastore throws an exception.
 )", 0) \
     DECLARE(Float, input_format_allow_errors_ratio, 0, R"(
 Sets the maximum percentage of errors allowed when reading from text formats (CSV, TSV, etc.).
@@ -1258,9 +1258,9 @@ The default value is 0.
 
 Always pair it with `input_format_allow_errors_num`.
 
-If an error occurred while reading rows but the error counter is still less than `input_format_allow_errors_ratio`, ClickHouse ignores the row and moves on to the next one.
+If an error occurred while reading rows but the error counter is still less than `input_format_allow_errors_ratio`, Datastore ignores the row and moves on to the next one.
 
-If both `input_format_allow_errors_num` and `input_format_allow_errors_ratio` are exceeded, ClickHouse throws an exception.
+If both `input_format_allow_errors_num` and `input_format_allow_errors_ratio` are exceeded, Datastore throws an exception.
 )", 0) \
     DECLARE(String, input_format_record_errors_file_path, "", R"(
 Path of the file used to record errors while reading text formats (CSV, TSV).
@@ -1380,7 +1380,7 @@ The fallback to Vertical format (see `output_format_pretty_fallback_to_vertical`
     DECLARE(Bool, insert_distributed_one_random_shard, false, R"(
 Enables or disables random shard insertion into a [Distributed](/engines/table-engines/special/distributed) table when there is no distributed key.
 
-By default, when inserting data into a `Distributed` table with more than one shard, the ClickHouse server will reject any insertion request if there is no distributed key. When `insert_distributed_one_random_shard = 1`, insertions are allowed and data is forwarded randomly among all shards.
+By default, when inserting data into a `Distributed` table with more than one shard, the Datastore server will reject any insertion request if there is no distributed key. When `insert_distributed_one_random_shard = 1`, insertions are allowed and data is forwarded randomly among all shards.
 
 Possible values:
 
@@ -1433,7 +1433,7 @@ The time zone name for ORC writer, the default ORC writer's time zone is GMT.
 )", 0) \
     \
     DECLARE(CapnProtoEnumComparingMode, format_capn_proto_enum_comparising_mode, FormatSettings::CapnProtoEnumComparingMode::BY_VALUES, R"(
-How to map ClickHouse Enum and CapnProto Enum
+How to map Datastore Enum and CapnProto Enum
 )", 0) \
     \
     DECLARE(Bool, format_capn_proto_use_autogenerated_schema, true, R"(
@@ -1453,7 +1453,7 @@ The path to the file where the automatically generated schema will be saved in [
 Name of the table in MySQL dump from which to read data
 )", 0) \
     DECLARE(Bool, input_format_mysql_dump_map_column_names, true, R"(
-Match columns from table in MySQL dump and columns from ClickHouse table by names
+Match columns from table in MySQL dump and columns from Datastore table by names
 )", 0) \
     \
     DECLARE(UInt64, output_format_sql_insert_max_batch_size, DEFAULT_BLOCK_SIZE, R"(
@@ -1522,7 +1522,7 @@ Set the quoting rule for identifiers in SHOW CREATE query
 Set the quoting style for identifiers in SHOW CREATE query
 )", 0) \
     DECLARE(UInt64, input_format_max_block_size_bytes, 0, R"(
-Limits the size of the blocks formed during data parsing in input formats in bytes. Used in row based input formats when block is formed on ClickHouse side.
+Limits the size of the blocks formed during data parsing in input formats in bytes. Used in row based input formats when block is formed on Datastore side.
 0 means no limit in bytes.
 )", 0) \
     DECLARE(UInt64, input_format_max_block_wait_ms, 0, R"(
@@ -1536,14 +1536,14 @@ This option only works if `input_format_connection_handling` is enabled. Setting
 For streaming inserts, you must also set `min_insert_block_size_rows=0` and `min_insert_block_size_bytes=0`. Otherwise, parsed blocks may still be accumulated in memory by the block squashing stage until those thresholds are reached, preventing timely inserts.
 :::
 
-**Example: streaming Wikipedia recent changes into ClickHouse**
+**Example: streaming Wikipedia recent changes into Datastore**
 
 ```bash
-clickhouse-client --query 'CREATE TABLE wikipedia_edits (data JSON)'
+datastore-client --query 'CREATE TABLE wikipedia_edits (data JSON)'
 
 curl -sS --globoff -H 'Accept: application/json' --no-buffer \
   'https://stream.wikimedia.org/v2/stream/recentchange' \
-  | clickhouse-client \
+  | datastore-client \
       --query 'INSERT INTO wikipedia_edits FORMAT JSONAsObject' \
       --input_format_max_block_wait_ms 1000 \
       --input_format_connection_handling 1 \

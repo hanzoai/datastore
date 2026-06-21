@@ -228,7 +228,7 @@ def test_kafka_rebalance(kafka_cluster, create_query_generator, log_line):
         create_query_generator
     )
     table_name_prefix = "kafka_consumer"
-    keeper_path = f"/clickhouse/{{database}}/{table_name_prefix}"
+    keeper_path = f"/datastore/{{database}}/{table_name_prefix}"
     with k.kafka_topic(admin_client, topic_name, num_partitions=11):
         cancel = threading.Event()
 

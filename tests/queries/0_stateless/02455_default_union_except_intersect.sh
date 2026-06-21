@@ -6,7 +6,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 set -e
 
-format="$CLICKHOUSE_FORMAT"
+format="$DATASTORE_FORMAT"
 
 echo "SELECT 1 UNION SELECT 1" | $format
 echo "SELECT 2 EXCEPT SELECT 2" | $format

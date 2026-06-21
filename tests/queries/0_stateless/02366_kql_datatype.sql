@@ -69,7 +69,7 @@ print dynamic(1);
 print dynamic(timespan(1d));
 print dynamic([1,2,3]);
 -- CAST AS Array cannot be performed between same-dimensional array types
--- for nested arrays to Dynamic (passes under `clickhouse-local`).
+-- for nested arrays to Dynamic (passes under `datastore-local`).
 print dynamic([[1], [2], [3]]); -- { serverError TYPE_MISMATCH }
 print dynamic(['a', "b", 'c']);
 print '-- cast functions'

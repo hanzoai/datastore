@@ -5,7 +5,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CURDIR"/../shell_config.sh
 
 # Prepare data
-unique_name=${CLICKHOUSE_TEST_UNIQUE_NAME}
+unique_name=${DATASTORE_TEST_UNIQUE_NAME}
 tmp_dir=${USER_FILES_PATH}/${unique_name}
 mkdir -p $tmp_dir
 rm -rf ${tmp_dir:?}/*
@@ -31,7 +31,7 @@ cp ${tmp_dir}/tmp.csv ${tmp_dir}/tmp6.csv
 ### Checking that renaming works
 
 # simple select
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="processed_%f%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp1.csv')"
+${DATASTORE_CLIENT} --rename-files-after-processing="processed_%f%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp1.csv')"
 if [ -e "${tmp_dir}/processed_tmp1.csv" ]; then
   echo "processed_tmp1.csv"
 fi
@@ -40,7 +40,7 @@ if [ ! -e "${tmp_dir}/tmp1.csv" ]; then
 fi
 
 # select with multiple file() calls
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="processed_%f%e" --multiline -q  """
+${DATASTORE_CLIENT} --rename-files-after-processing="processed_%f%e" --multiline -q  """
 SELECT
     sum(a.id) as aid,
     sum(b.id) as bid
@@ -56,7 +56,7 @@ if [ ! -e "${tmp_dir}/tmp2.csv" ]; then
 fi
 
 # rename multiple files
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="processed_%f%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp3*.csv')"
+${DATASTORE_CLIENT} --rename-files-after-processing="processed_%f%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp3*.csv')"
 if [ -e "${tmp_dir}/processed_tmp3_1.csv" ]; then
     echo "processed_tmp3_1.csv"
 fi
@@ -71,7 +71,7 @@ if [ ! -e "${tmp_dir}/tmp3_2.csv" ]; then
 fi
 
 # check timestamp placeholder
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="processed_%f_%t.csv" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp4.csv')"
+${DATASTORE_CLIENT} --rename-files-after-processing="processed_%f_%t.csv" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp4.csv')"
 # ls ${tmp_dir} | grep -E "^processed_tmp4_[0-9]+\.csv$" > /dev/null && echo "OK"
 rg="processed_tmp4_[0-9]+\.csv"
 for x in "${tmp_dir}"/processed*; do
@@ -84,14 +84,14 @@ done
 ### Checking errors
 
 # cannot overwrite an existing file
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="tmp.csv" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
+${DATASTORE_CLIENT} --rename-files-after-processing="tmp.csv" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
     2>&1| grep "already exists" > /dev/null && echo "OK"
 if [ -e "${tmp_dir}/tmp5.csv" ]; then
     echo "tmp5.csv"
 fi
 
 # сannot move file outside user_files
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="../../%f%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
+${DATASTORE_CLIENT} --rename-files-after-processing="../../%f%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
     2>&1| grep "is not inside" > /dev/null && echo "OK"
 if [ -e "${tmp_dir}/tmp5.csv" ]; then
     echo "tmp5.csv"
@@ -100,21 +100,21 @@ fi
 # check invalid placeholders
 
 # unknown type of placeholder (%k)
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="processed_%f_%k" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
+${DATASTORE_CLIENT} --rename-files-after-processing="processed_%f_%k" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
     2>&1| grep "Allowed placeholders only" > /dev/null && echo "OK"
 if [ -e "${tmp_dir}/tmp5.csv" ]; then
     echo "tmp5.csv"
 fi
 
 # dd number of consecutive percentage signs after replace valid placeholders
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="processed_%f_%%%%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
+${DATASTORE_CLIENT} --rename-files-after-processing="processed_%f_%%%%e" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp5.csv')" \
     2>&1| grep "Odd number of consecutive percentage signs" > /dev/null && echo "OK"
 if [ -e "${tmp_dir}/tmp5.csv" ]; then
     echo "tmp5.csv"
 fi
 
 # check full file name placeholder
-${CLICKHOUSE_CLIENT} --rename-files-after-processing="%a.processed" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp6.csv')"
+${DATASTORE_CLIENT} --rename-files-after-processing="%a.processed" -q "SELECT COUNT(*) FROM file('${unique_name}/tmp6.csv')"
 if [ -e "${tmp_dir}/tmp6.csv.processed" ]; then
   echo "tmp6.csv.processed"
 fi

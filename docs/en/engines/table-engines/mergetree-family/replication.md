@@ -1,5 +1,5 @@
 ---
-description: 'Overview of data replication with the Replicated* family of table engines in ClickHouse'
+description: 'Overview of data replication with the Replicated* family of table engines in Datastore'
 sidebar_label: 'Replicated*'
 sidebar_position: 20
 slug: /engines/table-engines/mergetree-family/replication
@@ -8,11 +8,11 @@ doc_type: 'reference'
 ---
 
 :::note
-In ClickHouse Cloud replication is managed for you. Please create your tables without adding arguments.  For example, in the text below you would replace:
+In Datastore Cloud replication is managed for you. Please create your tables without adding arguments.  For example, in the text below you would replace:
 
 ```sql
 ENGINE = ReplicatedMergeTree(
-    '/clickhouse/tables/{shard}/table_name',
+    '/datastore/tables/{shard}/table_name',
     '{replica}'
 )
 ```
@@ -47,15 +47,15 @@ Compressed data for `INSERT` and `ALTER` queries is replicated (for more informa
 - The `DROP TABLE` query deletes the replica located on the server where the query is run.
 - The `RENAME` query renames the table on one of the replicas. In other words, replicated tables can have different names on different replicas.
 
-ClickHouse uses [ClickHouse Keeper](/guides/sre/keeper/index.md) for storing replicas meta information. It is possible to use ZooKeeper version 3.4.5 or newer, but ClickHouse Keeper is recommended.
+Datastore uses [Datastore Keeper](/guides/sre/keeper/index.md) for storing replicas meta information. It is possible to use ZooKeeper version 3.4.5 or newer, but Datastore Keeper is recommended.
 
 To use replication, set parameters in the [zookeeper](/operations/server-configuration-parameters/settings#zookeeper) server configuration section.
 
 :::note
-Don't neglect the security setting. ClickHouse supports the `digest` [ACL scheme](https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#sc_ZooKeeperAccessControl) of the ZooKeeper security subsystem.
+Don't neglect the security setting. Datastore supports the `digest` [ACL scheme](https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#sc_ZooKeeperAccessControl) of the ZooKeeper security subsystem.
 :::
 
-Example of setting the addresses of the ClickHouse Keeper cluster:
+Example of setting the addresses of the Datastore Keeper cluster:
 
 ```xml
 <zookeeper>
@@ -74,7 +74,7 @@ Example of setting the addresses of the ClickHouse Keeper cluster:
 </zookeeper>
 ```
 
-ClickHouse also supports storing replicas meta information in an auxiliary ZooKeeper cluster. Do this by providing the ZooKeeper cluster name and path as engine arguments.
+Datastore also supports storing replicas meta information in an auxiliary ZooKeeper cluster. Do this by providing the ZooKeeper cluster name and path as engine arguments.
 In other words, it supports storing the metadata of different tables in different ZooKeeper clusters.
 
 Example of setting the addresses of the auxiliary ZooKeeper cluster:
@@ -114,9 +114,9 @@ You can specify any existing ZooKeeper cluster and the system will use a directo
 
 If ZooKeeper is not set in the config file, you can't create replicated tables, and any existing replicated tables will be read-only.
 
-ZooKeeper is not used in `SELECT` queries because replication does not affect the performance of `SELECT` and queries run just as fast as they do for non-replicated tables. When querying distributed replicated tables, ClickHouse behavior is controlled by the settings [max_replica_delay_for_distributed_queries](/operations/settings/settings.md/#max_replica_delay_for_distributed_queries) and [fallback_to_stale_replicas_for_distributed_queries](/operations/settings/settings.md/#fallback_to_stale_replicas_for_distributed_queries).
+ZooKeeper is not used in `SELECT` queries because replication does not affect the performance of `SELECT` and queries run just as fast as they do for non-replicated tables. When querying distributed replicated tables, Datastore behavior is controlled by the settings [max_replica_delay_for_distributed_queries](/operations/settings/settings.md/#max_replica_delay_for_distributed_queries) and [fallback_to_stale_replicas_for_distributed_queries](/operations/settings/settings.md/#fallback_to_stale_replicas_for_distributed_queries).
 
-For each `INSERT` query, approximately ten entries are added to ZooKeeper through several transactions. (To be more precise, this is for each inserted block of data; an INSERT query contains one block or one block per `max_insert_block_size = 1048576` rows.) This leads to slightly longer latencies for `INSERT` compared to non-replicated tables. But if you follow the recommendations to insert data in batches of no more than one `INSERT` per second, it does not create any problems. The entire ClickHouse cluster used for coordinating one ZooKeeper cluster has a total of several hundred `INSERTs` per second. The throughput on data inserts (the number of rows per second) is just as high as for non-replicated data.
+For each `INSERT` query, approximately ten entries are added to ZooKeeper through several transactions. (To be more precise, this is for each inserted block of data; an INSERT query contains one block or one block per `max_insert_block_size = 1048576` rows.) This leads to slightly longer latencies for `INSERT` compared to non-replicated tables. But if you follow the recommendations to insert data in batches of no more than one `INSERT` per second, it does not create any problems. The entire Datastore cluster used for coordinating one ZooKeeper cluster has a total of several hundred `INSERTs` per second. The throughput on data inserts (the number of rows per second) is just as high as for non-replicated data.
 
 For very large clusters, you can use different ZooKeeper clusters for different shards. However, from our experience this has not proven necessary based on production clusters with approximately 300 servers.
 
@@ -139,7 +139,7 @@ The system monitors data synchronicity on replicas and is able to recover after 
 ## Creating replicated tables {#creating-replicated-tables}
 
 :::note
-In ClickHouse Cloud, replication is handled automatically.
+In Datastore Cloud, replication is handled automatically.
 
 Create tables using [`MergeTree`](/engines/table-engines/mergetree-family/mergetree) without replication arguments. The system internally rewrites [`MergeTree`](/engines/table-engines/mergetree-family/mergetree) to [`SharedMergeTree`](/cloud/reference/shared-merge-tree) for replication and data distribution.
 
@@ -151,8 +151,8 @@ Avoid using `ReplicatedMergeTree` or specifying replication parameters, as repli
 
 | Parameter       | Description                                                                  |
 |-----------------|------------------------------------------------------------------------------|
-| `zoo_path`      | The path to the table in ClickHouse Keeper.                                  |
-| `replica_name`  | The replica name in ClickHouse Keeper.                                       |
+| `zoo_path`      | The path to the table in Datastore Keeper.                                  |
+| `replica_name`  | The replica name in Datastore Keeper.                                       |
 | `other_parameters` | Parameters of an engine used for creating the replicated version, for example, version in `ReplacingMergeTree`. |
 
 Example:
@@ -165,7 +165,7 @@ CREATE TABLE table_name
     UserID UInt32,
     ver UInt16
 )
-ENGINE = ReplicatedReplacingMergeTree('/clickhouse/tables/{layer}-{shard}/table_name', '{replica}', ver)
+ENGINE = ReplicatedReplacingMergeTree('/datastore/tables/{layer}-{shard}/table_name', '{replica}', ver)
 PARTITION BY toYYYYMM(EventDate)
 ORDER BY (CounterID, EventDate, intHash32(UserID))
 SAMPLE BY intHash32(UserID);
@@ -181,7 +181,7 @@ CREATE TABLE table_name
     EventDate DateTime,
     CounterID UInt32,
     UserID UInt32
-) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/table_name', '{replica}', EventDate, intHash32(UserID), (CounterID, EventDate, intHash32(UserID), EventTime), 8192);
+) ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/table_name', '{replica}', EventDate, intHash32(UserID), (CounterID, EventDate, intHash32(UserID), EventTime), 8192);
 ```
 
 </details>
@@ -197,18 +197,18 @@ Example:
 </macros>
 ```
 
-The path to the table in ClickHouse Keeper should be unique for each replicated table. Tables on different shards should have different paths.
+The path to the table in Datastore Keeper should be unique for each replicated table. Tables on different shards should have different paths.
 In this case, the path consists of the following parts:
 
-`/clickhouse/tables/` is the common prefix. We recommend using exactly this one.
+`/datastore/tables/` is the common prefix. We recommend using exactly this one.
 
 `{shard}` will be expanded to the shard identifier.
 
-`table_name` is the name of the node for the table in ClickHouse Keeper. It is a good idea to make it the same as the table name. It is defined explicitly, because in contrast to the table name, it does not change after a RENAME query.
+`table_name` is the name of the node for the table in Datastore Keeper. It is a good idea to make it the same as the table name. It is defined explicitly, because in contrast to the table name, it does not change after a RENAME query.
 *HINT*: you could add a database name in front of `table_name` as well. E.g. `db_name.table_name`
 
-The two built-in substitutions `{database}` and `{table}` can be used, they expand into the table name and the database name respectively (unless these macros are defined in the `macros` section). So the zookeeper path can be specified as `'/clickhouse/tables/{shard}/{database}/{table}'`.
-Be careful with table renames when using these built-in substitutions. The path in ClickHouse Keeper cannot be changed, and when the table is renamed, the macros will expand into a different path, the table will refer to a path that does not exist in ClickHouse Keeper, and will go into read-only mode.
+The two built-in substitutions `{database}` and `{table}` can be used, they expand into the table name and the database name respectively (unless these macros are defined in the `macros` section). So the zookeeper path can be specified as `'/datastore/tables/{shard}/{database}/{table}'`.
+Be careful with table renames when using these built-in substitutions. The path in Datastore Keeper cannot be changed, and when the table is renamed, the macros will expand into a different path, the table will refer to a path that does not exist in Datastore Keeper, and will go into read-only mode.
 
 The replica name identifies different replicas of the same table. You can use the server name for this, as in the example. The name only needs to be unique within each shard.
 
@@ -219,7 +219,7 @@ When working with large clusters, we recommend using substitutions because they 
 You can specify default arguments for `Replicated` table engine in the server configuration file. For instance:
 
 ```xml
-<default_replica_path>/clickhouse/tables/{shard}/{database}/{table}</default_replica_path>
+<default_replica_path>/datastore/tables/{shard}/{database}/{table}</default_replica_path>
 <default_replica_name>{replica}</default_replica_name>
 ```
 
@@ -237,7 +237,7 @@ It is equivalent to:
 ```sql
 CREATE TABLE table_name (
     x UInt32
-) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/{database}/table_name', '{replica}')
+) ENGINE = ReplicatedMergeTree('/datastore/tables/{shard}/{database}/table_name', '{replica}')
 ORDER BY x;
 ```
 
@@ -249,24 +249,24 @@ To delete a replica, run `DROP TABLE`. However, only one replica is deleted – 
 
 ## Recovery after failures {#recovery-after-failures}
 
-If ClickHouse Keeper is unavailable when a server starts, replicated tables switch to read-only mode. The system periodically attempts to connect to ClickHouse Keeper.
+If Datastore Keeper is unavailable when a server starts, replicated tables switch to read-only mode. The system periodically attempts to connect to Datastore Keeper.
 
-If ClickHouse Keeper is unavailable during an `INSERT`, or an error occurs when interacting with ClickHouse Keeper, an exception is thrown.
+If Datastore Keeper is unavailable during an `INSERT`, or an error occurs when interacting with Datastore Keeper, an exception is thrown.
 
-After connecting to ClickHouse Keeper, the system checks whether the set of data in the local file system matches the expected set of data (ClickHouse Keeper stores this information). If there are minor inconsistencies, the system resolves them by syncing data with the replicas.
+After connecting to Datastore Keeper, the system checks whether the set of data in the local file system matches the expected set of data (Datastore Keeper stores this information). If there are minor inconsistencies, the system resolves them by syncing data with the replicas.
 
-If the system detects broken data parts (with the wrong size of files) or unrecognized parts (parts written to the file system but not recorded in ClickHouse Keeper), it moves them to the `detached` subdirectory (they are not deleted). Any missing parts are copied from the replicas.
+If the system detects broken data parts (with the wrong size of files) or unrecognized parts (parts written to the file system but not recorded in Datastore Keeper), it moves them to the `detached` subdirectory (they are not deleted). Any missing parts are copied from the replicas.
 
-Note that ClickHouse does not perform any destructive actions such as automatically deleting a large amount of data.
+Note that Datastore does not perform any destructive actions such as automatically deleting a large amount of data.
 
-When the server starts (or establishes a new session with ClickHouse Keeper), it only checks the quantity and sizes of all files. If the file sizes match but bytes have been changed somewhere in the middle, this is not detected immediately, but only when attempting to read the data for a `SELECT` query. The query throws an exception about a non-matching checksum or size of a compressed block. In this case, data parts are added to the verification queue and copied from the replicas if necessary.
+When the server starts (or establishes a new session with Datastore Keeper), it only checks the quantity and sizes of all files. If the file sizes match but bytes have been changed somewhere in the middle, this is not detected immediately, but only when attempting to read the data for a `SELECT` query. The query throws an exception about a non-matching checksum or size of a compressed block. In this case, data parts are added to the verification queue and copied from the replicas if necessary.
 
 If the local set of data differs too much from the expected one, a safety mechanism is triggered. The server enters this in the log and refuses to launch. The reason for this is that this case may indicate a configuration error, such as if a replica on a shard was accidentally configured like a replica on a different shard. However, the thresholds for this mechanism are set fairly low, and this situation might occur during normal failure recovery. In this case, data is restored semi-automatically - by "pushing a button".
 
-To start recovery, create the node `/path_to_table/replica_name/flags/force_restore_data` in ClickHouse Keeper with any content, or run the command to restore all replicated tables:
+To start recovery, create the node `/path_to_table/replica_name/flags/force_restore_data` in Datastore Keeper with any content, or run the command to restore all replicated tables:
 
 ```bash
-sudo -u clickhouse touch /var/lib/clickhouse/flags/force_restore_data
+sudo -u datastore touch /var/lib/datastore/flags/force_restore_data
 ```
 
 Then restart the server. On start, the server deletes these flags and starts recovery.
@@ -275,14 +275,14 @@ Then restart the server. On start, the server deletes these flags and starts rec
 
 If all data and metadata disappeared from one of the servers, follow these steps for recovery:
 
-1.  Install ClickHouse on the server. Define substitutions correctly in the config file that contains the shard identifier and replicas, if you use them.
-2.  If you had unreplicated tables that must be manually duplicated on the servers, copy their data from a replica (in the directory `/var/lib/clickhouse/data/db_name/table_name/`).
-3.  Copy table definitions located in `/var/lib/clickhouse/metadata/` from a replica. If a shard or replica identifier is defined explicitly in the table definitions, correct it so that it corresponds to this replica. (Alternatively, start the server and make all the `ATTACH TABLE` queries that should have been in the .sql files in `/var/lib/clickhouse/metadata/`.)
-4.  To start recovery, create the ClickHouse Keeper node `/path_to_table/replica_name/flags/force_restore_data` with any content, or run the command to restore all replicated tables: `sudo -u clickhouse touch /var/lib/clickhouse/flags/force_restore_data`
+1.  Install Datastore on the server. Define substitutions correctly in the config file that contains the shard identifier and replicas, if you use them.
+2.  If you had unreplicated tables that must be manually duplicated on the servers, copy their data from a replica (in the directory `/var/lib/datastore/data/db_name/table_name/`).
+3.  Copy table definitions located in `/var/lib/datastore/metadata/` from a replica. If a shard or replica identifier is defined explicitly in the table definitions, correct it so that it corresponds to this replica. (Alternatively, start the server and make all the `ATTACH TABLE` queries that should have been in the .sql files in `/var/lib/datastore/metadata/`.)
+4.  To start recovery, create the Datastore Keeper node `/path_to_table/replica_name/flags/force_restore_data` with any content, or run the command to restore all replicated tables: `sudo -u datastore touch /var/lib/datastore/flags/force_restore_data`
 
 Then start the server (restart, if it is already running). Data will be downloaded from replicas.
 
-An alternative recovery option is to delete information about the lost replica from ClickHouse Keeper (`/path_to_table/replica_name`), then create the replica again as described in "[Creating replicated tables](#creating-replicated-tables)".
+An alternative recovery option is to delete information about the lost replica from Datastore Keeper (`/path_to_table/replica_name`), then create the replica again as described in "[Creating replicated tables](#creating-replicated-tables)".
 
 There is no restriction on network bandwidth during recovery. Keep this in mind if you are restoring many replicas at once.
 
@@ -315,7 +315,7 @@ There is also a manual way to do this.
 If the data differs on various replicas, first sync it, or delete this data on all the replicas except one.
 
 Rename the existing MergeTree table, then create a `ReplicatedMergeTree` table with the old name.
-Move the data from the old table to the `detached` subdirectory inside the directory with the new table data (`/var/lib/clickhouse/data/db_name/table_name/`).
+Move the data from the old table to the `detached` subdirectory inside the directory with the new table data (`/var/lib/datastore/data/db_name/table_name/`).
 Then run `ALTER TABLE ATTACH PARTITION` on one of the replicas to add these data parts to the working set.
 
 ## Converting from ReplicatedMergeTree to MergeTree {#converting-from-replicatedmergetree-to-mergetree}
@@ -326,14 +326,14 @@ Another way to do this involves server restart. Create a MergeTree table with a 
 
 If you want to get rid of a `ReplicatedMergeTree` table without launching the server:
 
-- Delete the corresponding `.sql` file in the metadata directory (`/var/lib/clickhouse/metadata/`).
-- Delete the corresponding path in ClickHouse Keeper (`/path_to_table/replica_name`).
+- Delete the corresponding `.sql` file in the metadata directory (`/var/lib/datastore/metadata/`).
+- Delete the corresponding path in Datastore Keeper (`/path_to_table/replica_name`).
 
 After this, you can launch the server, create a `MergeTree` table, move the data to its directory, and then restart the server.
 
-## Recovery when metadata in the ClickHouse Keeper cluster is lost or damaged {#recovery-when-metadata-in-the-zookeeper-cluster-is-lost-or-damaged}
+## Recovery when metadata in the Datastore Keeper cluster is lost or damaged {#recovery-when-metadata-in-the-zookeeper-cluster-is-lost-or-damaged}
 
-If the data in ClickHouse Keeper was lost or damaged, you can save data by moving it to an unreplicated table as described above.
+If the data in Datastore Keeper was lost or damaged, you can save data by moving it to an unreplicated table as described above.
 
 **See Also**
 

@@ -33,7 +33,7 @@ CREATE DICTIONARY test_sparse_dictionary_load_factor
     key UInt64,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table))
+SOURCE(DATASTORE(TABLE test_table))
 LAYOUT(SPARSE_HASHED(MAX_LOAD_FACTOR 0.90))
 LIFETIME(0);
 SHOW CREATE test_sparse_dictionary_load_factor;
@@ -48,7 +48,7 @@ CREATE DICTIONARY test_dictionary_load_factor
     key UInt64,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table))
+SOURCE(DATASTORE(TABLE test_table))
 LAYOUT(HASHED(MAX_LOAD_FACTOR 0.90))
 LIFETIME(0);
 SHOW CREATE test_dictionary_load_factor;
@@ -63,7 +63,7 @@ CREATE DICTIONARY test_dictionary_load_factor_nullable
     key UInt64,
     value Nullable(UInt16)
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table_nullable))
+SOURCE(DATASTORE(TABLE test_table_nullable))
 LAYOUT(HASHED(MAX_LOAD_FACTOR 0.90))
 LIFETIME(0);
 SHOW CREATE test_dictionary_load_factor_nullable;
@@ -79,7 +79,7 @@ CREATE DICTIONARY test_complex_dictionary_load_factor
     key_2 UInt64,
     value UInt16
 ) PRIMARY KEY key_1, key_2
-SOURCE(CLICKHOUSE(TABLE test_table_complex))
+SOURCE(DATASTORE(TABLE test_table_complex))
 LAYOUT(COMPLEX_KEY_HASHED(MAX_LOAD_FACTOR 0.90))
 LIFETIME(0);
 SYSTEM RELOAD DICTIONARY test_complex_dictionary_load_factor;
@@ -94,7 +94,7 @@ CREATE DICTIONARY test_dictionary_load_factor_string
     key String,
     value UInt16
 ) PRIMARY KEY key
-SOURCE(CLICKHOUSE(TABLE test_table_string))
+SOURCE(DATASTORE(TABLE test_table_string))
 LAYOUT(HASHED(MAX_LOAD_FACTOR 1))
 LIFETIME(0);
 -- should because of MAX_LOAD_FACTOR is 1 (maximum allowed value is 0.99)

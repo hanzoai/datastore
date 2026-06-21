@@ -1,5 +1,5 @@
 """
-Test for GitHub issue https://github.com/ClickHouse/ClickHouse/issues/44070:
+Test for GitHub issue https://github.com/ClickHouse/Datastore/issues/44070:
 When one replica is down and another executes CREATE TABLE ... ON CLUSTER followed by ALTER TABLE ADD COLUMN ... ON CLUSTER, 
 the offline replica fails to create the table when it comes back up. The DDLWorker processes the CREATE TABLE with the original columns, 
 but ZooKeeper already has the altered schema (with the extra column). This causes an INCOMPATIBLE_COLUMNS exception,
@@ -81,7 +81,7 @@ def test_create_then_alter_with_offline_replica(started_cluster):
     on the offline replica when it comes back up.
     """
     table_name = "test_issue_44070"
-    zk_path = "/clickhouse/tables/{shard}/test_issue_44070"
+    zk_path = "/datastore/tables/{shard}/test_issue_44070"
     expected_columns = "ID\nx01\nx02\ntime"
     columns_query = (
         f"SELECT name FROM system.columns "

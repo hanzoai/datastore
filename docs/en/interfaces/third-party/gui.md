@@ -1,5 +1,5 @@
 ---
-description: 'List of third-party GUI tools and applications for working with ClickHouse'
+description: 'List of third-party GUI tools and applications for working with Datastore'
 sidebar_label: 'Visual Interfaces'
 sidebar_position: 28
 slug: /interfaces/third-party/gui
@@ -11,7 +11,7 @@ doc_type: 'reference'
 
 ### agx {#agx}
 
-[agx](https://github.com/agnosticeng/agx) is a desktop application built with Tauri and SvelteKit that provides a modern interface for exploring and querying data using ClickHouse's embedded database engine (chdb).
+[agx](https://github.com/agnosticeng/agx) is a desktop application built with Tauri and SvelteKit that provides a modern interface for exploring and querying data using Datastore's embedded database engine (chdb).
 
 - Leverage ch-db when running the native application.
 - Can connect to a Clickhouse instance when running the web instance.
@@ -20,22 +20,22 @@ doc_type: 'reference'
 
 ### ch-ui {#ch-ui}
 
-[ch-ui](https://github.com/caioricciuti/ch-ui) is a simple React.js app interface for ClickHouse databases designed for executing queries and visualizing data. Built with React and the ClickHouse client for web, it offers a sleek and user-friendly UI for easy database interactions.
+[ch-ui](https://github.com/caioricciuti/ch-ui) is a simple React.js app interface for Datastore databases designed for executing queries and visualizing data. Built with React and the Datastore client for web, it offers a sleek and user-friendly UI for easy database interactions.
 
 Features:
 
-- ClickHouse Integration: Easily manage connections and execute queries.
+- Datastore Integration: Easily manage connections and execute queries.
 - Responsive Tab Management: Dynamically handle multiple tabs, such as query and table tabs.
 - Performance Optimizations: Utilizes Indexed DB for efficient caching and state management.
 - Local Data Storage: All data is stored locally in the browser, ensuring no data is sent anywhere else.
 
 ### ChartDB {#chartdb}
 
-[ChartDB](https://chartdb.io) is a free and open-source tool for visualizing and designing database schemas, including ClickHouse, with a single query. Built with React, it provides a seamless and user-friendly experience, requiring no database credentials or signup to get started.
+[ChartDB](https://chartdb.io) is a free and open-source tool for visualizing and designing database schemas, including Datastore, with a single query. Built with React, it provides a seamless and user-friendly experience, requiring no database credentials or signup to get started.
 
 Features:
 
-- Schema Visualization: Instantly import and visualize your ClickHouse schema, including ER diagrams with materialized views and standard views, showing references to tables.
+- Schema Visualization: Instantly import and visualize your Datastore schema, including ER diagrams with materialized views and standard views, showing references to tables.
 - AI-Powered DDL Export: Generate DDL scripts effortlessly for better schema management and documentation.
 - Multi-SQL Dialect Support: Compatible with a range of SQL dialects, making it versatile for various database environments.
 - No Signup or Credentials Needed: All functionality is accessible directly in the browser, keeping it frictionless and secure.
@@ -44,29 +44,29 @@ Features:
 
 ### DataStoria {#datastoria}
 
-[DataStoria](https://github.com/FrankChen021/datastoria) is an AI-powered web console application that manages multiple ClickHouse clusters in one place.
+[DataStoria](https://github.com/FrankChen021/datastoria) is an AI-powered web console application that manages multiple Datastore clusters in one place.
 
 Features:
 
 - **AI-Powered Intelligence**: Use natural language to explore data, optimize and fix SQL queries, and visualize your data.
-- **Official ClickHouse Agent Skills Integration**: Leverage [official best practices](https://github.com/ClickHouse/agent-skills) to ask AI for database optimizations and suggestions.
+- **Official Datastore Agent Skills Integration**: Leverage [official best practices](https://github.com/ClickHouse/agent-skills) to ask AI for database optimizations and suggestions.
 - **Smart Error Diagnostics**: Pinpoint syntax errors instantly with precise line and column highlighting, and get AI-powered fix suggestions with one click.
 - **System Table Inspection**: Dive deep into `system.query_log`, `system.query_views_log`, `system.zookeeper`, `system.ddl_distributed_queue`, `system.part_log`, and `system.processes` with a powerful visualization dashboard and filters to quickly understand your cluster.
 - **One-Click Explain**: Instantly understand query execution plans with visual AST and pipeline views.
 - **Dependency Graph**: Visualize table relationships and trace data flows through Materialized Views, Distributed tables, and external systems.
 - **Cluster Monitoring**: Monitor all nodes with real-time metrics, merge operations, replication status, query performance, and more.
-- **Privacy & Security**: All SQL queries run directly from your browser to your ClickHouse server, ensuring complete privacy.
+- **Privacy & Security**: All SQL queries run directly from your browser to your Datastore server, ensuring complete privacy.
 
 [DataStoria documentation](https://docs.datastoria.app).
 
 ### DataPup {#datapup}
 
-[DataPup](https://github.com/DataPupOrg/DataPup) is a modern, AI-assisted, cross-platform database client with native ClickHouse support.
+[DataPup](https://github.com/DataPupOrg/DataPup) is a modern, AI-assisted, cross-platform database client with native Datastore support.
 
 Features:
 
 - AI-powered SQL query assistance with intelligent suggestions
-- Native ClickHouse connection support with secure credential handling
+- Native Datastore connection support with secure credential handling
 - Beautiful, accessible interface with multiple themes (Light, Dark, and colorful variants)
 - Advanced query result filtering and exploration
 - Cross-platform support (macOS, Windows, Linux)
@@ -75,28 +75,28 @@ Features:
 
 ### Dory {#dory}
 
-[Dory](https://github.com/dorylab/dory) AI-native SQL workspace with first-class ClickHouse support, AI built-in.
+[Dory](https://github.com/dorylab/dory) AI-native SQL workspace with first-class Datastore support, AI built-in.
 
 Features:
 
 - AI Copilot for SQL generation, explanation, and debugging
-- Manage and query multiple ClickHouse clusters from a unified workspace
+- Manage and query multiple Datastore clusters from a unified workspace
 - Schema-aware SQL autocomplete and multi-tab query workspace
 - Interactive query result exploration with filtering and visualization
 - AI-powered table summaries for understanding datasets
-- Direct ClickHouse connections with SSH tunnel support
+- Direct Datastore connections with SSH tunnel support
 - Modern developer-friendly interface with light, dark, and theme support
 - Cross-platform desktop app (macOS, Windows, Linux), and Docker support
 - Open-source and MIT licensed
 
-### ClickHouse Schema Flow Visualizer {#clickhouse-schemaflow-visualizer}
+### Datastore Schema Flow Visualizer {#datastore-schemaflow-visualizer}
 
-[ClickHouse Schema Flow Visualizer](https://github.com/FulgerX2007/clickhouse-schemaflow-visualizer) is an open-source web application for visualizing ClickHouse table relationships.
-It connects to a ClickHouse instance, parses `system.tables` metadata (engine types, dependencies, materialized view SELECTs), and renders interactive table-level data-flow diagrams alongside column-level relationships with the transformation expression labelled on every edge. Diagrams are laid out with Dagre and rendered as plain inline SVG — no client-side diagramming runtime is loaded.
+[Datastore Schema Flow Visualizer](https://github.com/FulgerX2007/datastore-schemaflow-visualizer) is an open-source web application for visualizing Datastore table relationships.
+It connects to a Datastore instance, parses `system.tables` metadata (engine types, dependencies, materialized view SELECTs), and renders interactive table-level data-flow diagrams alongside column-level relationships with the transformation expression labelled on every edge. Diagrams are laid out with Dagre and rendered as plain inline SVG — no client-side diagramming runtime is loaded.
 
 Features:
 
-- Browse ClickHouse databases and tables with an intuitive sidebar
+- Browse Datastore databases and tables with an intuitive sidebar
 - Data Flow view: table-level upstream sources and downstream materialized views
 - Relationships view: column-level mapping with the parsed transformation expression on each edge (e.g. `toStartOfHour(scheduled_departure)`, `avgState(delay_minutes)`)
 - Engine-aware icons and colour coding for `MergeTree`, `Replicated*`, `Distributed`, `MaterializedView`, and `Dictionary`
@@ -104,17 +104,17 @@ Features:
 - Live sidebar filter and a `Ctrl+K` / `⌘K` command palette to jump to any table, column, or engine
 - Optional metadata overlay showing row counts and on-disk size per table
 - Export the current diagram as a self-contained HTML file
-- TLS connection to ClickHouse, with optional skip-verify and custom CA / client certificates
+- TLS connection to Datastore, with optional skip-verify and custom CA / client certificates
 
-[ClickHouse Schema Flow Visualizer - source code](https://github.com/FulgerX2007/clickhouse-schemaflow-visualizer)
+[Datastore Schema Flow Visualizer - source code](https://github.com/FulgerX2007/datastore-schemaflow-visualizer)
 
 ### Tabix {#tabix}
 
-Web interface for ClickHouse in the [Tabix](https://github.com/tabixio/tabix) project.
+Web interface for Datastore in the [Tabix](https://github.com/tabixio/tabix) project.
 
 Features:
 
-- Works with ClickHouse directly from the browser without the need to install additional software.
+- Works with Datastore directly from the browser without the need to install additional software.
 - Query editor with syntax highlighting.
 - Auto-completion of commands.
 - Tools for graphical analysis of query execution.
@@ -146,7 +146,7 @@ The following features are planned for development:
 
 ### LightHouse {#lighthouse}
 
-[LightHouse](https://github.com/VKCOM/lighthouse) is a lightweight web interface for ClickHouse.
+[LightHouse](https://github.com/VKCOM/lighthouse) is a lightweight web interface for Datastore.
 
 Features:
 
@@ -158,7 +158,7 @@ Features:
 
 [Redash](https://github.com/getredash/redash) is a platform for data visualization.
 
-Supports for multiple data sources including ClickHouse, Redash can join results of queries from different data sources into one final dataset.
+Supports for multiple data sources including Datastore, Redash can join results of queries from different data sources into one final dataset.
 
 Features:
 
@@ -168,15 +168,15 @@ Features:
 
 ### Grafana {#grafana}
 
-[Grafana](https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/) is a platform for monitoring and visualization.
+[Grafana](https://grafana.com/grafana/plugins/grafana-datastore-datasource/) is a platform for monitoring and visualization.
 
 "Grafana allows you to query, visualize, alert on and understand your metrics no matter where they are stored. Create, explore, and share dashboards with your team and foster a data-driven culture. Trusted and loved by the community" &mdash; grafana.com.
 
-ClickHouse data source plugin provides support for ClickHouse as a backend database.
+Datastore data source plugin provides support for Datastore as a backend database.
 
 ### qryn {#qryn}
 
-[qryn](https://metrico.in) is a polyglot, high-performance observability stack for ClickHouse _(formerly cLoki)_ with native Grafana integrations allowing users to ingest and analyze logs, metrics and telemetry traces from any agent supporting Loki/LogQL, Prometheus/PromQL, OTLP/Tempo, Elastic, InfluxDB and many more.
+[qryn](https://metrico.in) is a polyglot, high-performance observability stack for Datastore _(formerly cLoki)_ with native Grafana integrations allowing users to ingest and analyze logs, metrics and telemetry traces from any agent supporting Loki/LogQL, Prometheus/PromQL, OTLP/Tempo, Elastic, InfluxDB and many more.
 
 Features:
 
@@ -188,7 +188,7 @@ Features:
 
 ### DBeaver {#dbeaver}
 
-[DBeaver](https://dbeaver.io/) - universal desktop database client with ClickHouse support.
+[DBeaver](https://dbeaver.io/) - universal desktop database client with Datastore support.
 
 Features:
 
@@ -199,9 +199,9 @@ Features:
 
 By default, DBeaver does not connect using a session (the CLI for example does). If you require session support (for example to set settings for your session), edit the driver connection properties and set `session_id` to a random string (it uses the http connection under the hood). Then you can use any setting from the query window.
 
-### clickhouse-cli {#clickhouse-cli}
+### datastore-cli {#datastore-cli}
 
-[clickhouse-cli](https://github.com/hatarist/clickhouse-cli) is an alternative command-line client for ClickHouse, written in Python 3.
+[datastore-cli](https://github.com/hatarist/datastore-cli) is an alternative command-line client for Datastore, written in Python 3.
 
 Features:
 
@@ -210,29 +210,29 @@ Features:
 - Pager support for the data output.
 - Custom PostgreSQL-like commands.
 
-### clickhouse-flamegraph {#clickhouse-flamegraph}
+### datastore-flamegraph {#datastore-flamegraph}
 
-[clickhouse-flamegraph](https://github.com/Slach/clickhouse-flamegraph) is a specialized tool to visualize the `system.trace_log` as [flamegraph](http://www.brendangregg.com/flamegraphs.html).
+[datastore-flamegraph](https://github.com/Slach/datastore-flamegraph) is a specialized tool to visualize the `system.trace_log` as [flamegraph](http://www.brendangregg.com/flamegraphs.html).
 
-### clickhouse-plantuml {#clickhouse-plantuml}
+### datastore-plantuml {#datastore-plantuml}
 
-[cickhouse-plantuml](https://pypi.org/project/clickhouse-plantuml/) is a script to generate [PlantUML](https://plantuml.com/) diagram of tables' schemes.
+[cickhouse-plantuml](https://pypi.org/project/datastore-plantuml/) is a script to generate [PlantUML](https://plantuml.com/) diagram of tables' schemes.
 
-### ClickHouse table graph {#clickhouse-table-graph}
+### Datastore table graph {#datastore-table-graph}
 
-[ClickHouse table graph](https://github.com/mbaksheev/clickhouse-table-graph) is a simple CLI tool for visualizing dependencies between ClickHouse tables. This tool retrieves connections between tables from `system.tables` table and builds dependencies flowchart in [mermaid](https://mermaid.js.org/syntax/flowchart.html) format.  With this tool you can easily visualize table dependencies and understand the data flow in your ClickHouse database. Thanks to mermaid, the resulting flowchart looks attractive and can be easily added to your markdown documentation.
+[Datastore table graph](https://github.com/mbaksheev/datastore-table-graph) is a simple CLI tool for visualizing dependencies between Datastore tables. This tool retrieves connections between tables from `system.tables` table and builds dependencies flowchart in [mermaid](https://mermaid.js.org/syntax/flowchart.html) format.  With this tool you can easily visualize table dependencies and understand the data flow in your Datastore database. Thanks to mermaid, the resulting flowchart looks attractive and can be easily added to your markdown documentation.
 
-### xeus-clickhouse {#xeus-clickhouse}
+### xeus-datastore {#xeus-datastore}
 
-[xeus-clickhouse](https://github.com/wangfenjin/xeus-clickhouse) is a Jupyter kernal for ClickHouse, which supports query CH data using SQL in Jupyter.
+[xeus-datastore](https://github.com/wangfenjin/xeus-datastore) is a Jupyter kernal for Datastore, which supports query CH data using SQL in Jupyter.
 
 ### MindsDB Studio {#mindsdb}
 
-[MindsDB](https://mindsdb.com/) is an open-source AI layer for databases including ClickHouse that allows you to effortlessly develop, train and deploy state-of-the-art machine learning models. MindsDB Studio(GUI) allows you to train new models from database, interpret predictions made by the model, identify potential data biases, and evaluate and visualize model accuracy using the Explainable AI function to adapt and tune your Machine Learning models faster.
+[MindsDB](https://mindsdb.com/) is an open-source AI layer for databases including Datastore that allows you to effortlessly develop, train and deploy state-of-the-art machine learning models. MindsDB Studio(GUI) allows you to train new models from database, interpret predictions made by the model, identify potential data biases, and evaluate and visualize model accuracy using the Explainable AI function to adapt and tune your Machine Learning models faster.
 
 ### DBM {#dbm}
 
-[DBM](https://github.com/devlive-community/dbm) DBM is a visual management tool for ClickHouse!
+[DBM](https://github.com/devlive-community/dbm) DBM is a visual management tool for Datastore!
 
 Features:
 
@@ -248,7 +248,7 @@ Features:
 
 ### Bytebase {#bytebase}
 
-[Bytebase](https://bytebase.com) is a web-based, open source schema change and version control tool for teams. It supports various databases including ClickHouse.
+[Bytebase](https://bytebase.com) is a web-based, open source schema change and version control tool for teams. It supports various databases including Datastore.
 
 Features:
 
@@ -260,13 +260,13 @@ Features:
 - Backup and restore.
 - RBAC.
 
-### Zeppelin-Interpreter-for-ClickHouse {#zeppelin-interpreter-for-clickhouse}
+### Zeppelin-Interpreter-for-Datastore {#zeppelin-interpreter-for-datastore}
 
-[Zeppelin-Interpreter-for-ClickHouse](https://github.com/SiderZhang/Zeppelin-Interpreter-for-ClickHouse) is a [Zeppelin](https://zeppelin.apache.org) interpreter for ClickHouse. Compared with the JDBC interpreter, it can provide better timeout control for long-running queries.
+[Zeppelin-Interpreter-for-Datastore](https://github.com/SiderZhang/Zeppelin-Interpreter-for-Datastore) is a [Zeppelin](https://zeppelin.apache.org) interpreter for Datastore. Compared with the JDBC interpreter, it can provide better timeout control for long-running queries.
 
 ### ClickCat {#clickcat}
 
-[ClickCat](https://github.com/clickcat-project/ClickCat) is a friendly user interface that lets you search, explore and visualize your ClickHouse Data.
+[ClickCat](https://github.com/clickcat-project/ClickCat) is a friendly user interface that lets you search, explore and visualize your Datastore Data.
 
 Features:
 
@@ -286,24 +286,24 @@ Features:
 - Supports alarm configuration
 - Support permission granularity to library and table permission configuration
 
-### ClickHouse-Mate {#clickmate}
+### Datastore-Mate {#clickmate}
 
-[ClickHouse-Mate](https://github.com/metrico/clickhouse-mate) is an angular web client + user interface to search and explore data in ClickHouse.
+[Datastore-Mate](https://github.com/metrico/datastore-mate) is an angular web client + user interface to search and explore data in Datastore.
 
 Features:
 
-- ClickHouse SQL Query autocompletion
+- Datastore SQL Query autocompletion
 - Fast Database and Table tree navigation
 - Advanced result Filtering and Sorting
-- Inline ClickHouse SQL documentation
+- Inline Datastore SQL documentation
 - Query Presets and History
 - 100% browser based, no server/backend
 
-The client is available for instant usage through github pages: https://metrico.github.io/clickhouse-mate/
+The client is available for instant usage through github pages: https://metrico.github.io/datastore-mate/
 
 ### Uptrace {#uptrace}
 
-[Uptrace](https://github.com/uptrace/uptrace) is an APM tool that provides distributed tracing and metrics powered by OpenTelemetry and ClickHouse.
+[Uptrace](https://github.com/uptrace/uptrace) is an APM tool that provides distributed tracing and metrics powered by OpenTelemetry and Datastore.
 
 Features:
 
@@ -314,9 +314,9 @@ Features:
 - Pre-built metrics dashboards.
 - Multiple users/projects via YAML config.
 
-### clickhouse-monitoring {#clickhouse-monitoring}
+### datastore-monitoring {#datastore-monitoring}
 
-[clickhouse-monitoring](https://github.com/duyet/clickhouse-monitoring) is a simple Next.js dashboard that relies on `system.*` tables to help monitor and provide an overview of your ClickHouse cluster.
+[datastore-monitoring](https://github.com/duyet/datastore-monitoring) is a simple Next.js dashboard that relies on `system.*` tables to help monitor and provide an overview of your Datastore cluster.
 
 Features:
 
@@ -328,17 +328,17 @@ Features:
 
 ### CKibana {#ckibana}
 
-[CKibana](https://github.com/TongchengOpenSource/ckibana) is a lightweight service that allows you to effortlessly search, explore, and visualize ClickHouse data using the native Kibana UI.
+[CKibana](https://github.com/TongchengOpenSource/ckibana) is a lightweight service that allows you to effortlessly search, explore, and visualize Datastore data using the native Kibana UI.
 
 Features:
 
-- Translates chart requests from the native Kibana UI into ClickHouse query syntax.
+- Translates chart requests from the native Kibana UI into Datastore query syntax.
 - Supports advanced features such as sampling and caching to enhance query performance.
-- Minimizes the learning cost for users after migrating from ElasticSearch to ClickHouse.
+- Minimizes the learning cost for users after migrating from ElasticSearch to Datastore.
 
 ### Telescope {#telescope}
 
-[Telescope](https://iamtelescope.net/) is a modern web interface for exploring logs stored in ClickHouse. It provides a user-friendly UI for querying, visualizing, and managing log data with fine-grained access control.
+[Telescope](https://iamtelescope.net/) is a modern web interface for exploring logs stored in Datastore. It provides a user-friendly UI for querying, visualizing, and managing log data with fine-grained access control.
 
 Features:
 
@@ -348,26 +348,26 @@ Features:
 - Optional raw SQL `WHERE` query support for advanced filtering (with permission checks).
 - Saved Views: persist and share custom UI configurations for queries and layout.
 - Role-based access control (RBAC) and GitHub authentication integration.
-- No extra agents or components required on the ClickHouse side.
+- No extra agents or components required on the Datastore side.
 
 [Telescope Source Code](https://github.com/iamtelescope/telescope) · [Live Demo](https://demo.iamtelescope.net)
 
 ### ClickLens {#clicklens}
 
-[ClickLens](https://ntk148v.github.io/clicklens/) is a modern, powerful, and user-friendly web interface for managing and monitoring ClickHouse databases. It provides a comprehensive suite of tools for developers, analysts, and administrators to interact with their ClickHouse clusters efficiently. ClickHouse is an incredible analytical database, but managing it via CLI or basic tools can be challenging. ClickLens bridges the gap by offering:
+[ClickLens](https://ntk148v.github.io/clicklens/) is a modern, powerful, and user-friendly web interface for managing and monitoring Datastore databases. It provides a comprehensive suite of tools for developers, analysts, and administrators to interact with their Datastore clusters efficiently. Datastore is an incredible analytical database, but managing it via CLI or basic tools can be challenging. ClickLens bridges the gap by offering:
 
 - Discover - Flexible, Kibana-like data exploration for any table
 - SQL Console - Write, execute, and analyze queries with syntax highlighting and streaming results
 - Real-time Monitoring - Keep an eye on your cluster's health, query performance, and resource usage
 - Schema Explorer - Navigate databases, tables, columns, parts, and more
 - Access Control - Manage users and roles directly from the UI
-- Native RBAC - Your UI permissions are derived directly from your ClickHouse grants
+- Native RBAC - Your UI permissions are derived directly from your Datastore grants
 
 [ClickLens Source Code](https://github.com/ntk148v/clicklens)
 
 ### CHouse UI {#chouse-ui}
 
-[CHouse UI](https://chouse-ui.com) is an open-source ClickHouse web interface built specifically for **teams** and **secure data access**. Unlike traditional clients that require direct database credentials, CHouse UI implements a powerful **Role-Based Access Control (RBAC)** layer, allowing administrators to grant granular permissions without exposing underlying secrets.
+[CHouse UI](https://chouse-ui.com) is an open-source Datastore web interface built specifically for **teams** and **secure data access**. Unlike traditional clients that require direct database credentials, CHouse UI implements a powerful **Role-Based Access Control (RBAC)** layer, allowing administrators to grant granular permissions without exposing underlying secrets.
 
 Key differentiators include:
 
@@ -378,12 +378,12 @@ Key differentiators include:
 
 [CHouse UI Source Code](https://github.com/daun-gatal/chouse-ui)
 
-### clickhouse-flow {#clickhouse-flow}
-[clickhouse-flow](https://github.com/MikeAmputer/clickhouse-flow) is an open-source tool for visualizing data flows and dependencies between ClickHouse tables, views, and materialized views.
+### datastore-flow {#datastore-flow}
+[datastore-flow](https://github.com/MikeAmputer/datastore-flow) is an open-source tool for visualizing data flows and dependencies between Datastore tables, views, and materialized views.
 
 Features:
 
-- Automatically builds a schema graph from ClickHouse metadata.
+- Automatically builds a schema graph from Datastore metadata.
 - Visualizes data flows through materialized views.
 - Interactive UI for exploring schema structure.
 - Export diagrams as PDF or SVG for documentation and sharing.
@@ -393,13 +393,13 @@ Features:
 
 ### DataGrip {#datagrip}
 
-[DataGrip](https://www.jetbrains.com/datagrip/) is a database IDE from JetBrains with dedicated support for ClickHouse. It is also embedded in other IntelliJ-based tools: PyCharm, IntelliJ IDEA, GoLand, PhpStorm and others.
+[DataGrip](https://www.jetbrains.com/datagrip/) is a database IDE from JetBrains with dedicated support for Datastore. It is also embedded in other IntelliJ-based tools: PyCharm, IntelliJ IDEA, GoLand, PhpStorm and others.
 
 Features:
 
 - Very fast code completion.
-- ClickHouse syntax highlighting.
-- Support for features specific to ClickHouse, for example, nested columns, table engines.
+- Datastore syntax highlighting.
+- Support for features specific to Datastore, for example, nested columns, table engines.
 - Data Editor.
 - Refactorings.
 - Search and Navigation.
@@ -412,13 +412,13 @@ Features:
 
 - Wide range of available visualizations, from simple bar charts to complex dashboards.
 - Dashboards could be made publicly available.
-- Support for multiple data sources including ClickHouse.
-- Storage for materialized data based on ClickHouse.
+- Support for multiple data sources including Datastore.
+- Storage for materialized data based on Datastore.
 
 DataLens is [available for free](https://cloud.yandex.com/docs/datalens/pricing) for low-load projects, even for commercial use.
 
 - [DataLens documentation](https://cloud.yandex.com/docs/datalens/).
-- [Tutorial](https://cloud.yandex.com/docs/solutions/datalens/data-from-ch-visualization) on visualizing data from a ClickHouse database.
+- [Tutorial](https://cloud.yandex.com/docs/solutions/datalens/data-from-ch-visualization) on visualizing data from a Datastore database.
 
 ### Holistics Software {#holistics-software}
 
@@ -434,7 +434,7 @@ Features:
 
 ### Looker {#looker}
 
-[Looker](https://looker.com) is a data platform and business intelligence tool with support for 50+ database dialects including ClickHouse. Looker is available as a SaaS platform and self-hosted. Users can use Looker via the browser to explore data, build visualizations and dashboards, schedule reports, and share their insights with colleagues. Looker provides a rich set of tools to embed these features in other applications, and an API
+[Looker](https://looker.com) is a data platform and business intelligence tool with support for 50+ database dialects including Datastore. Looker is available as a SaaS platform and self-hosted. Users can use Looker via the browser to explore data, build visualizations and dashboards, schedule reports, and share their insights with colleagues. Looker provides a rich set of tools to embed these features in other applications, and an API
 to integrate data with other applications.
 
 Features:
@@ -443,7 +443,7 @@ Features:
     [Data Modeling](https://looker.com/platform/data-modeling) to support report writers and end-users.
 - Powerful workflow integration via Looker's [Data Actions](https://looker.com/platform/actions).
 
-[How to configure ClickHouse in Looker.](https://docs.looker.com/setup-and-management/database-config/clickhouse)
+[How to configure Datastore in Looker.](https://docs.looker.com/setup-and-management/database-config/datastore)
 
 ### SeekTable {#seektable}
 
@@ -453,22 +453,22 @@ Features:
 
 - Business users-friendly reports builder.
 - Powerful report parameters for SQL filtering and report-specific query customizations.
-- Can connect to ClickHouse both with a native TCP/IP endpoint and a HTTP(S) interface (2 different drivers).
-- It is possible to use all power of ClickHouse SQL dialect in dimensions/measures definitions.
+- Can connect to Datastore both with a native TCP/IP endpoint and a HTTP(S) interface (2 different drivers).
+- It is possible to use all power of Datastore SQL dialect in dimensions/measures definitions.
 - [Web API](https://www.seektable.com/help/web-api-integration) for automated reports generation.
 - Supports reports development flow with account data [backup/restore](https://www.seektable.com/help/self-hosted-backup-restore); data models (cubes) / reports configuration is a human-readable XML and can be stored under version control system.
 
 SeekTable is [free](https://www.seektable.com/help/cloud-pricing) for personal/individual usage.
 
-[How to configure ClickHouse connection in SeekTable.](https://www.seektable.com/help/clickhouse-pivot-table)
+[How to configure Datastore connection in SeekTable.](https://www.seektable.com/help/datastore-pivot-table)
 
 ### Chadmin {#chadmin}
 
-[Chadmin](https://github.com/bun4uk/chadmin) is a simple UI where you can visualize your currently running queries on your ClickHouse cluster and info about them and kill them if you want.
+[Chadmin](https://github.com/bun4uk/chadmin) is a simple UI where you can visualize your currently running queries on your Datastore cluster and info about them and kill them if you want.
 
 ### TABLUM.IO {#tablum_io}
 
-[TABLUM.IO](https://tablum.io/) — an online query and analytics tool for ETL and visualization. It allows connecting to ClickHouse, query data via a versatile SQL console as well as to load data from static files and 3rd party services. TABLUM.IO can visualize data results as charts and tables.
+[TABLUM.IO](https://tablum.io/) — an online query and analytics tool for ETL and visualization. It allows connecting to Datastore, query data via a versatile SQL console as well as to load data from static files and 3rd party services. TABLUM.IO can visualize data results as charts and tables.
 
 Features:
 - ETL: data loading from popular databases, local and remote files, API invocations.
@@ -488,7 +488,7 @@ Learn more about the product at [TABLUM.IO](https://tablum.io/)
 
 ### CKMAN {#ckman}
 
-[CKMAN](https://www.github.com/housepower/ckman) is a tool for managing and monitoring ClickHouse clusters!
+[CKMAN](https://www.github.com/housepower/ckman) is a tool for managing and monitoring Datastore clusters!
 
 Features:
 
@@ -503,15 +503,15 @@ Features:
 
 ### 1bench {#1bench}
 
-[1bench](https://1bench.dev) is a native desktop GUI for multiple databases with first-class ClickHouse support — spanning server overview, schema management, vector search, and large result-set browsing.
+[1bench](https://1bench.dev) is a native desktop GUI for multiple databases with first-class Datastore support — spanning server overview, schema management, vector search, and large result-set browsing.
 
 Features:
 
 - Server overview on connect — version, uptime, running queries, active merges, parts and storage sizes, replica status, clusters and nodes at a glance.
 - Visual query builder (column pickers, filters, sort, limit) alongside a Monaco SQL editor with syntax highlighting and query history per connection.
 - Visual `CREATE TABLE` wizard supporting `MergeTree` variants, `ORDER BY`, `PARTITION BY`, `SETTINGS`, and `Nullable()` auto-wrapping.
-- Native ClickHouse type handling — `Nullable`, `Array`, `LowCardinality`, nested objects.
+- Native Datastore type handling — `Nullable`, `Array`, `LowCardinality`, nested objects.
 - Vector search support — `Array(Float32)` embedding columns rendered as compact vector cells, 2D embedding visualization, and Find Similar via `cosineDistance`.
-- Inline data editing in result tables with batched save, plus CSV/JSON/SQL export and import using ClickHouse's native formats.
+- Inline data editing in result tables with batched save, plus CSV/JSON/SQL export and import using Datastore's native formats.
 - Connection options: HTTP/HTTPS, SSH tunnel for private clusters behind a firewall, optional read-only mode for safe production browsing.
-- Works with ClickHouse Cloud and self-hosted.
+- Works with Datastore Cloud and self-hosted.

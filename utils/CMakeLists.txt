@@ -2,7 +2,7 @@ if (USE_CLANG_TIDY)
     set (CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_PATH}")
 endif ()
 
-if (ENABLE_CLICKHOUSE_SELF_EXTRACTING)
+if (ENABLE_DATASTORE_SELF_EXTRACTING)
     add_subdirectory (self-extracting-executable)
 endif ()
 

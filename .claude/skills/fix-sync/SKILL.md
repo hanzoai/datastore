@@ -1,6 +1,6 @@
 ---
 name: fix-sync
-description: Fix the "CH Inc sync" job in a pull request by resolving conflicts in the corresponding clickhouse-private sync PR.
+description: Fix the "CH Inc sync" job in a pull request by resolving conflicts in the corresponding datastore-private sync PR.
 argument-hint: <pr-number-or-url>
 disable-model-invocation: false
 allowed-tools: Task, Bash(gh:*), Bash(cd:*), Bash(git:*), Bash(ls:*), Bash(pwd:*), Bash(mktemp:*), Read, Grep, Glob, AskUserQuestion
@@ -8,29 +8,29 @@ allowed-tools: Task, Bash(gh:*), Bash(cd:*), Bash(git:*), Bash(ls:*), Bash(pwd:*
 
 # Fix CH Inc Sync Skill
 
-Fix the "CH Inc sync" CI job for a ClickHouse pull request by resolving merge conflicts in the corresponding `clickhouse-private` sync PR.
+Fix the "CH Inc sync" CI job for a Datastore pull request by resolving merge conflicts in the corresponding `datastore-private` sync PR.
 
 ## Arguments
 
-- `$0` (required): PR number or full GitHub URL of the public ClickHouse PR (e.g., `96005` or `https://github.com/ClickHouse/ClickHouse/pull/96005`)
+- `$0` (required): PR number or full GitHub URL of the public Datastore PR (e.g., `96005` or `https://github.com/ClickHouse/Datastore/pull/96005`)
 
 ## Overview
 
-When a PR is opened in `ClickHouse/ClickHouse`, a sync PR is automatically created in `ClickHouse/clickhouse-private` on a branch named `sync-upstream/pr/<PR_NUMBER>`. If this sync PR has merge conflicts, the "CH Inc sync" check stays pending. This skill resolves those conflicts.
+When a PR is opened in `Datastore/Datastore`, a sync PR is automatically created in `Datastore/datastore-private` on a branch named `sync-upstream/pr/<PR_NUMBER>`. If this sync PR has merge conflicts, the "CH Inc sync" check stays pending. This skill resolves those conflicts.
 
 ## Process
 
 ### 1. Parse the PR number
 
 - Extract the PR number from `$ARGUMENTS`
-- If a full URL is provided (e.g., `https://github.com/ClickHouse/ClickHouse/pull/96005`), extract the number from the URL
+- If a full URL is provided (e.g., `https://github.com/ClickHouse/Datastore/pull/96005`), extract the number from the URL
 - If no argument is provided, use `AskUserQuestion` to ask for the PR number
 
 ### 2. Find the sync PR
 
 - Search for the corresponding sync PR in the private repository:
   ```bash
-  gh pr list --repo ClickHouse/clickhouse-private --head sync-upstream/pr/<PR_NUMBER> --json number,url,state,mergeable,mergeStateStatus,headRefName
+  gh pr list --repo Datastore/datastore-private --head sync-upstream/pr/<PR_NUMBER> --json number,url,state,mergeable,mergeStateStatus,headRefName
   ```
 - If no sync PR is found, report this to the user and stop
 - If the sync PR is not conflicting (mergeable is not `CONFLICTING`), report that no action is needed and stop
@@ -38,10 +38,10 @@ When a PR is opened in `ClickHouse/ClickHouse`, a sync PR is automatically creat
 
 ### 3. Locate the private repository
 
-- Look for the `clickhouse-private` repository in common locations relative to the current working directory:
+- Look for the `datastore-private` repository in common locations relative to the current working directory:
   - `../ClickHouse_private`
-  - `../clickhouse-private`
-  - Check if the directory exists and contains a git repository with `ClickHouse/clickhouse-private` as a remote
+  - `../datastore-private`
+  - Check if the directory exists and contains a git repository with `Datastore/datastore-private` as a remote
 - If not found, use `AskUserQuestion` to ask the user for the path
 - Store the path for use in subsequent steps
 
@@ -101,7 +101,7 @@ If submodule update fails, report the error but continue.
 ### 7. Build verification (optional)
 
 Use `AskUserQuestion` to ask the user:
-- "Do you want to build ClickHouse in the private repository to verify the merge?"
+- "Do you want to build Datastore in the private repository to verify the merge?"
   - Option 1: "Yes, build" - Run ninja in the private repo build directory
   - Option 2: "No, skip build" - Skip building and proceed to push
 
@@ -117,7 +117,7 @@ cd <private_repo_path> && git push origin sync-upstream/pr/<PR_NUMBER>
 
 After pushing:
 ```bash
-gh pr view <SYNC_PR_NUMBER> --repo ClickHouse/clickhouse-private --json mergeable,mergeStateStatus
+gh pr view <SYNC_PR_NUMBER> --repo Datastore/datastore-private --json mergeable,mergeStateStatus
 ```
 
 Report the result:
@@ -129,7 +129,7 @@ Provide the sync PR URL for the user to check.
 ## Examples
 
 - `/fix-sync 96005` - Fix sync for PR #96005
-- `/fix-sync https://github.com/ClickHouse/ClickHouse/pull/96005` - Fix sync using full URL
+- `/fix-sync https://github.com/ClickHouse/Datastore/pull/96005` - Fix sync using full URL
 
 ## Notes
 

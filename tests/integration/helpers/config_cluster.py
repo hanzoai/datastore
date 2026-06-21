@@ -21,7 +21,7 @@ mongo_pass = "ClickHouse_MongoDB_P@ssw0rd"
 
 # ODBC CREDENTIALS
 odbc_mysql_uid = "root"
-odbc_mysql_db = "clickhouse"
+odbc_mysql_db = "datastore"
 
 odbc_psql_db = "postgres"
 odbc_psql_user = "postgres"
@@ -31,7 +31,7 @@ kafka_sasl_user = "admin"
 kafka_sasl_pass = "ClickHouse_Kafka_P@ssw0rd"
 
 # NATS CREDENTIALS
-nats_user = "clickhouse"
+nats_user = "datastore"
 nats_pass = "ClickHouse_NATS_P@ssw0rd"
 
 # ARROWFLIGHT CREDENTIALS

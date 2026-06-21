@@ -702,7 +702,7 @@ namespace DB
         if ((indexes_int32_type && dict_size > INT32_MAX) || (indexes_uint32_type && dict_size > UINT32_MAX) || (indexes_int64_type && dict_size > INT64_MAX))
             throw Exception(
                 ErrorCodes::ILLEGAL_COLUMN,
-                "Cannot convert ClickHouse LowCardinality column to Arrow Dictionary column:"
+                "Cannot convert Datastore LowCardinality column to Arrow Dictionary column:"
                 " resulting dictionary size exceeds the max value of index type {}", dict_indexes_arrow_type->name());
     }
 
@@ -802,7 +802,7 @@ namespace DB
         }
         else
         {
-            /// In ClickHouse blocks with same header can contain LowCardinality columns with
+            /// In Datastore blocks with same header can contain LowCardinality columns with
             /// different dictionaries.
             /// Arrow supports only single dictionary for all batches, but it allows to extend
             /// dictionary if previous dictionary is a prefix of a new one.
@@ -1341,7 +1341,7 @@ namespace DB
     {
         switch (indexes_column->getDataType())
         {
-            /// In ClickHouse blocks with same header can contain LowCardinality columns with
+            /// In Datastore blocks with same header can contain LowCardinality columns with
             /// different dictionaries.
             /// Arrow supports only single dictionary for all batches, but it allows to extend
             /// dictionary if previous dictionary is a prefix of a new one.

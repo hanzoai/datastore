@@ -73,7 +73,7 @@ SELECT * FROM system.part_log LIMIT 1 FORMAT Vertical;
 ```text
 Row 1:
 ──────
-hostname:                clickhouse.eu-central1.internal
+hostname:                datastore.eu-central1.internal
 query_id:
 event_type:              MergeParts
 merge_reason:            RegularMerge

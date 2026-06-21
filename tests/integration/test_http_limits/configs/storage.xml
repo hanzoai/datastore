@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -7,7 +7,7 @@
                 <access_key_id>minio</access_key_id>
                 <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>
                 <s3_max_single_part_upload_size>33554432</s3_max_single_part_upload_size>
-                <metadata_path>/var/lib/clickhouse/disks/custom_path</metadata_path>
+                <metadata_path>/var/lib/datastore/disks/custom_path</metadata_path>
             </s3>
             <hdd_disk>
                 <type>local</type>
@@ -43,4 +43,4 @@
     <merge_tree>
         <storage_policy>hdd</storage_policy>
     </merge_tree>
-</clickhouse>
+</datastore>

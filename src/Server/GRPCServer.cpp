@@ -59,12 +59,12 @@
 #include <grpc++/server_builder.h>
 
 
-using GRPCService = clickhouse::grpc::ClickHouse::AsyncService;
-using GRPCQueryInfo = clickhouse::grpc::QueryInfo;
-using GRPCResult = clickhouse::grpc::Result;
-using GRPCException = clickhouse::grpc::Exception;
-using GRPCProgress = clickhouse::grpc::Progress;
-using GRPCObsoleteTransportCompression = clickhouse::grpc::ObsoleteTransportCompression;
+using GRPCService = datastore::grpc::Datastore::AsyncService;
+using GRPCQueryInfo = datastore::grpc::QueryInfo;
+using GRPCResult = datastore::grpc::Result;
+using GRPCException = datastore::grpc::Exception;
+using GRPCProgress = datastore::grpc::Progress;
+using GRPCObsoleteTransportCompression = datastore::grpc::ObsoleteTransportCompression;
 
 namespace DB
 {
@@ -100,7 +100,7 @@ namespace ErrorCodes
 
 namespace
 {
-    /// Make grpc to pass logging messages to ClickHouse logging system.
+    /// Make grpc to pass logging messages to Datastore logging system.
     class GrpcLogSink : public absl::LogSink
     {
     public:
@@ -195,7 +195,7 @@ namespace
             }
             return grpc::SslServerCredentials(options);
 #else
-            throw DB::Exception(DB::ErrorCodes::SUPPORT_IS_DISABLED, "Can't use SSL in grpc, because ClickHouse was built without SSL library");
+            throw DB::Exception(DB::ErrorCodes::SUPPORT_IS_DISABLED, "Can't use SSL in grpc, because Datastore was built without SSL library");
 #endif
         }
         return grpc::InsecureServerCredentials();
@@ -1664,15 +1664,15 @@ namespace
         if (!logs_queue)
             return;
 
-        static_assert(::clickhouse::grpc::LOG_NONE        == 0);
-        static_assert(::clickhouse::grpc::LOG_FATAL       == static_cast<int>(Poco::Message::PRIO_FATAL));
-        static_assert(::clickhouse::grpc::LOG_CRITICAL    == static_cast<int>(Poco::Message::PRIO_CRITICAL));
-        static_assert(::clickhouse::grpc::LOG_ERROR       == static_cast<int>(Poco::Message::PRIO_ERROR));
-        static_assert(::clickhouse::grpc::LOG_WARNING     == static_cast<int>(Poco::Message::PRIO_WARNING));
-        static_assert(::clickhouse::grpc::LOG_NOTICE      == static_cast<int>(Poco::Message::PRIO_NOTICE));
-        static_assert(::clickhouse::grpc::LOG_INFORMATION == static_cast<int>(Poco::Message::PRIO_INFORMATION));
-        static_assert(::clickhouse::grpc::LOG_DEBUG       == static_cast<int>(Poco::Message::PRIO_DEBUG));
-        static_assert(::clickhouse::grpc::LOG_TRACE       == static_cast<int>(Poco::Message::PRIO_TRACE));
+        static_assert(::datastore::grpc::LOG_NONE        == 0);
+        static_assert(::datastore::grpc::LOG_FATAL       == static_cast<int>(Poco::Message::PRIO_FATAL));
+        static_assert(::datastore::grpc::LOG_CRITICAL    == static_cast<int>(Poco::Message::PRIO_CRITICAL));
+        static_assert(::datastore::grpc::LOG_ERROR       == static_cast<int>(Poco::Message::PRIO_ERROR));
+        static_assert(::datastore::grpc::LOG_WARNING     == static_cast<int>(Poco::Message::PRIO_WARNING));
+        static_assert(::datastore::grpc::LOG_NOTICE      == static_cast<int>(Poco::Message::PRIO_NOTICE));
+        static_assert(::datastore::grpc::LOG_INFORMATION == static_cast<int>(Poco::Message::PRIO_INFORMATION));
+        static_assert(::datastore::grpc::LOG_DEBUG       == static_cast<int>(Poco::Message::PRIO_DEBUG));
+        static_assert(::datastore::grpc::LOG_TRACE       == static_cast<int>(Poco::Message::PRIO_TRACE));
 
         MutableColumns columns;
         while (logs_queue->tryPop(columns))
@@ -1697,7 +1697,7 @@ namespace
                 std::string_view query_id = column_query_id.getDataAt(row);
                 log_entry.set_query_id(query_id.data(), query_id.size());
                 log_entry.set_thread_id(column_thread_id.getElement(row));
-                log_entry.set_level(static_cast<::clickhouse::grpc::LogsLevel>(column_level.getElement(row)));
+                log_entry.set_level(static_cast<::datastore::grpc::LogsLevel>(column_level.getElement(row)));
                 std::string_view source = column_source.getDataAt(row);
                 log_entry.set_source(source.data(), source.size());
                 std::string_view text = column_text.getDataAt(row);

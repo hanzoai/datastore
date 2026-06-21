@@ -12,7 +12,7 @@ CREATE TABLE t_lwd_proj
     id UInt64,
     value String
 )
-ENGINE = ReplicatedReplacingMergeTree('/clickhouse/{database}/tables/test_cleanup/', '1')
+ENGINE = ReplicatedReplacingMergeTree('/datastore/{database}/tables/test_cleanup/', '1')
 PARTITION BY toYYYYMM(dt)
 ORDER BY (id, dt);
 

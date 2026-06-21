@@ -41,16 +41,16 @@ def test_drop_after_fetch(started_cluster):
         SETTINGS
             storage_policy = 's3',
             allow_remote_fs_zero_copy_replication=1,
-            remote_fs_zero_copy_zookeeper_path = '/clickhouse/zero_copy/{shard}'
+            remote_fs_zero_copy_zookeeper_path = '/datastore/zero_copy/{shard}'
         """
     )
 
     macros = get_macros()
 
-    shard = node.query("SELECT name FROM system.zookeeper WHERE path='/clickhouse/zero_copy/'").strip()
+    shard = node.query("SELECT name FROM system.zookeeper WHERE path='/datastore/zero_copy/'").strip()
     assert shard == macros["shard"]
 
-    out = node.query(f"SELECT name FROM system.zookeeper WHERE path='/clickhouse/zero_copy/{shard}'").strip()
+    out = node.query(f"SELECT name FROM system.zookeeper WHERE path='/datastore/zero_copy/{shard}'").strip()
     assert out == "zero_copy_s3"
 
 

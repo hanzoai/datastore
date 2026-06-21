@@ -62,14 +62,14 @@ def check_table(table):
         f"SELECT arrayElement(data_paths, 1) FROM system.tables WHERE database='default' AND name='{table}'"
     ).strip()
 
-    # break one part, and check that clickhouse will be alive
+    # break one part, and check that datastore will be alive
     break_part(data_path, "0_1_1_0")
     rows -= per_part_rows
     detach_table(table)
     attach_table(table)
     assert get_count(table) == rows
 
-    # break two parts, and check that clickhouse will not start
+    # break two parts, and check that datastore will not start
     break_part(data_path, "1_2_2_0")
     break_part(data_path, "2_3_3_0")
     rows -= per_part_rows * 2

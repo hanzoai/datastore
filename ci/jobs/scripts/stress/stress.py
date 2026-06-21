@@ -40,7 +40,7 @@ class RandomQueryKiller:
         try:
             # Get a random query_id, excluding our own queries and system queries
             result = check_output(
-                "clickhouse client -q \""
+                "datastore client -q \""
                 "SELECT query_id FROM system.processes "
                 "WHERE query NOT LIKE '%system.processes%' "
                 "AND query NOT LIKE '%KILL QUERY%' "
@@ -53,7 +53,7 @@ class RandomQueryKiller:
             if query_id:
                 logging.info("Killing random query: %s", query_id)
                 call(
-                    f"clickhouse client -q \"KILL QUERY WHERE query_id = '{query_id}' ASYNC\" 2>/dev/null",
+                    f"datastore client -q \"KILL QUERY WHERE query_id = '{query_id}' ASYNC\" 2>/dev/null",
                     shell=True,
                     timeout=5,
                 )
@@ -62,11 +62,11 @@ class RandomQueryKiller:
             logging.debug("Random query killer got exception (expected): %s", e)
 
     def _kill_random_client(self) -> None:
-        """Kill a random clickhouse-client process."""
+        """Kill a random datastore-client process."""
         try:
-            # Get list of clickhouse-test child processes (clickhouse client)
+            # Get list of datastore-test child processes (datastore client)
             result = check_output(
-                "pgrep -f 'clickhouse-client|clickhouse client' 2>/dev/null || true",
+                "pgrep -f 'datastore-client|datastore client' 2>/dev/null || true",
                 shell=True,
                 timeout=5,
             )
@@ -182,7 +182,7 @@ def get_options(i: int, upgrade_check: bool, encrypted_storage: bool) -> str:
         client_options.append("group_by_use_nulls=1")
 
     # TODO: Enable implicit_transaction back after the issue with `assertHasValidVersionMetadata` will be fixed:
-    # https://play.clickhouse.com/play?user=play&run=1#U0VMRUNUIGNoZWNrX3N0YXJ0X3RpbWUsIGNoZWNrX25hbWUsIHRlc3RfbmFtZSwgcmVwb3J0X3VybApGUk9NIGNoZWNrcwpXSEVSRSAxCiAgICBBTkQgY2hlY2tfc3RhcnRfdGltZSA+PSBub3coKSAtIElOVEVSVkFMIDEwIERBWQogICAgQU5EIChoZWFkX3JlZiA9ICdtYXN0ZXInIEFORCBzdGFydHNXaXRoKGhlYWRfcmVwbywgJ0NsaWNrSG91c2UvJykpCiAgICBBTkQgdGVzdF9zdGF0dXMgIT0gJ1NLSVBQRUQnCiAgICBBTkQgKHRlc3Rfc3RhdHVzIExJS0UgJ0YlJyBPUiB0ZXN0X3N0YXR1cyBMSUtFICdFJScpCiAgICBBTkQgY2hlY2tfc3RhdHVzICE9ICdzdWNjZXNzJwogICAgQU5EIGNoZWNrX25hbWUgTk9UIExJS0UgJ2xpYkZ1enplciUnCiAgICBBTkQgY2hlY2tfbmFtZSAhPSAnQ2xpY2tIb3VzZSBLZWVwZXIgSmVwc2VuJwogICAgQU5EIHRlc3RfbmFtZSBMSUtFICclYXNzZXJ0SGFzVmFsaWRWZXJzaW9uTWV0YWRhdGElJwpPUkRFUiBCWSBjaGVja19zdGFydF90aW1lIERFU0M=
+    # https://play.datastore.com/play?user=play&run=1#U0VMRUNUIGNoZWNrX3N0YXJ0X3RpbWUsIGNoZWNrX25hbWUsIHRlc3RfbmFtZSwgcmVwb3J0X3VybApGUk9NIGNoZWNrcwpXSEVSRSAxCiAgICBBTkQgY2hlY2tfc3RhcnRfdGltZSA+PSBub3coKSAtIElOVEVSVkFMIDEwIERBWQogICAgQU5EIChoZWFkX3JlZiA9ICdtYXN0ZXInIEFORCBzdGFydHNXaXRoKGhlYWRfcmVwbywgJ0NsaWNrSG91c2UvJykpCiAgICBBTkQgdGVzdF9zdGF0dXMgIT0gJ1NLSVBQRUQnCiAgICBBTkQgKHRlc3Rfc3RhdHVzIExJS0UgJ0YlJyBPUiB0ZXN0X3N0YXR1cyBMSUtFICdFJScpCiAgICBBTkQgY2hlY2tfc3RhdHVzICE9ICdzdWNjZXNzJwogICAgQU5EIGNoZWNrX25hbWUgTk9UIExJS0UgJ2xpYkZ1enplciUnCiAgICBBTkQgY2hlY2tfbmFtZSAhPSAnQ2xpY2tIb3VzZSBLZWVwZXIgSmVwc2VuJwogICAgQU5EIHRlc3RfbmFtZSBMSUtFICclYXNzZXJ0SGFzVmFsaWRWZXJzaW9uTWV0YWRhdGElJwpPUkRFUiBCWSBjaGVja19zdGFydF90aW1lIERFU0M=
 
     if random.random() < 0.1:
         client_options.append("optimize_trivial_approximate_count_query=1")
@@ -382,7 +382,7 @@ def execute_bash(full_command, timeout=120):
 
 def make_query_command(query: str) -> str:
     return (
-        f'clickhouse client -q "{query}" --max_untracked_memory=1Gi '
+        f'datastore client -q "{query}" --max_untracked_memory=1Gi '
         "--memory_profiler_step=1Gi --max_memory_usage_for_user=0 --max_memory_usage_in_client=1000000000 "
         "--enable-progress-table-toggle=0"
     )
@@ -391,8 +391,8 @@ def make_query_command(query: str) -> str:
 def prepare_for_hung_check(drop_databases: bool) -> bool:
     # FIXME this function should not exist, but...
 
-    # We attach gdb to clickhouse-server before running tests
-    # to print stacktraces of all crashes even if clickhouse cannot print it for some reason.
+    # We attach gdb to datastore-server before running tests
+    # to print stacktraces of all crashes even if datastore cannot print it for some reason.
     # However, it obstructs checking for hung queries.
     logging.info("Will terminate gdb (if any)")
     call_with_retry("kill -TERM $(pidof gdb)")
@@ -403,15 +403,15 @@ def prepare_for_hung_check(drop_databases: bool) -> bool:
     # Ensure that process exists
     if (
         call(
-            "kill -0 $(cat /var/run/clickhouse-server/clickhouse-server.pid)",
+            "kill -0 $(cat /var/run/datastore-server/datastore-server.pid)",
             shell=True,
         )
         != 0
     ):
-        raise ServerDied("clickhouse-server process does not exist")
+        raise ServerDied("datastore-server process does not exist")
     # Sometimes there is a message `Child process was stopped by signal 19` in logs after stopping gdb
     call_with_retry(
-        "kill -CONT $(cat /var/run/clickhouse-server/clickhouse-server.pid) && clickhouse client -q 'SELECT 1 FORMAT Null'"
+        "kill -CONT $(cat /var/run/datastore-server/datastore-server.pid) && datastore client -q 'SELECT 1 FORMAT Null'"
     )
 
     # ThreadFuzzer significantly slows down server and causes false-positive hung check failures
@@ -507,10 +507,10 @@ def prepare_for_hung_check(drop_databases: bool) -> bool:
             break
         time.sleep(1)
 
-    # Even if all clickhouse-test processes are finished, there are probably some sh scripts,
+    # Even if all datastore-test processes are finished, there are probably some sh scripts,
     # which still run some new queries. Let's ignore them.
     try:
-        query = 'clickhouse client -q "SELECT count() FROM system.processes where elapsed > 300" '
+        query = 'datastore client -q "SELECT count() FROM system.processes where elapsed > 300" '
         output = (
             check_output(query, shell=True, stderr=STDOUT, timeout=30)
             .decode("utf-8")
@@ -525,12 +525,12 @@ def prepare_for_hung_check(drop_databases: bool) -> bool:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="ClickHouse script for running stresstest"
+        description="Datastore script for running stresstest"
     )
-    parser.add_argument("--test-cmd", default="/usr/bin/clickhouse-test")
+    parser.add_argument("--test-cmd", default="/usr/bin/datastore-test")
     parser.add_argument("--skip-func-tests", default="")
     parser.add_argument(
-        "--server-log-folder", default="/var/log/clickhouse-server", type=Path
+        "--server-log-folder", default="/var/log/datastore-server", type=Path
     )
     parser.add_argument("--output-folder", type=Path)
     parser.add_argument("--global-time-limit", type=int, default=1800)
@@ -701,7 +701,7 @@ def main():
                     results.write(hung_check_status)
                 # Keep hung_check.log on disk so the CI artifact upload picks
                 # it up. Without it, deadlock investigations have no evidence
-                # to work with — see ClickHouse/ClickHouse#100941.
+                # to work with — see Datastore/Datastore#100941.
             else:
                 logging.info("No queries hung")
 

@@ -7,13 +7,13 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 on_exit() {
-    $CLICKHOUSE_CLIENT --query "SYSTEM DISABLE FAILPOINT storage_merge_tree_background_schedule_merge_fail;"
+    $DATASTORE_CLIENT --query "SYSTEM DISABLE FAILPOINT storage_merge_tree_background_schedule_merge_fail;"
 }
 
 trap on_exit EXIT
 
 # Prepare
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS m;
 
     CREATE TABLE m (
@@ -31,7 +31,7 @@ $CLICKHOUSE_CLIENT --query "
 "
 
 function parts_count() {
-    $CLICKHOUSE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 'm';"
+    $DATASTORE_CLIENT --query "SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = 'm';"
 }
 
 # Wait up to 60 seconds until count = 1
@@ -52,8 +52,8 @@ else
     echo "FAIL: parts count never reached 1 within 60 seconds"
 fi
 
-$CLICKHOUSE_CLIENT --query "DROP TABLE IF EXISTS m;"
+$DATASTORE_CLIENT --query "DROP TABLE IF EXISTS m;"
 
-$CLICKHOUSE_CLIENT --query "
+$DATASTORE_CLIENT --query "
     DROP TABLE IF EXISTS m;
 "

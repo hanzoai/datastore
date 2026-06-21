@@ -5,8 +5,8 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-DATA_FILE=$CLICKHOUSE_TEST_UNIQUE_NAME-data
-SCHEMA_FILE=$CLICKHOUSE_TEST_UNIQUE_NAME-schema
+DATA_FILE=$DATASTORE_TEST_UNIQUE_NAME-data
+SCHEMA_FILE=$DATASTORE_TEST_UNIQUE_NAME-schema
 
 function test_structure()
 {
@@ -14,11 +14,11 @@ function test_structure()
     ext=$2
     structure=$3
 
-    $CLICKHOUSE_LOCAL -q "select structureTo${format}Schema('$structure') format TSVRaw" > $SCHEMA_FILE.$ext
+    $DATASTORE_LOCAL -q "select structureTo${format}Schema('$structure') format TSVRaw" > $SCHEMA_FILE.$ext
     tail -n +2 $SCHEMA_FILE.$ext
 
-    $CLICKHOUSE_LOCAL -q "select * from generateRandom('$structure', 42) limit 10 format $format settings format_schema='$SCHEMA_FILE:Message', format_capn_proto_enum_comparising_mode='by_names'" > $DATA_FILE
-    $CLICKHOUSE_LOCAL -q "select * from file('$DATA_FILE', $format, '$structure') format Null settings format_schema='$SCHEMA_FILE:Message', format_capn_proto_enum_comparising_mode='by_names'"
+    $DATASTORE_LOCAL -q "select * from generateRandom('$structure', 42) limit 10 format $format settings format_schema='$SCHEMA_FILE:Message', format_capn_proto_enum_comparising_mode='by_names'" > $DATA_FILE
+    $DATASTORE_LOCAL -q "select * from file('$DATA_FILE', $format, '$structure') format Null settings format_schema='$SCHEMA_FILE:Message', format_capn_proto_enum_comparising_mode='by_names'"
 
 }
 
@@ -70,16 +70,16 @@ function test_format()
     test_structure $format $ext "$complex"
 
     echo "Read/write with no schema"
-    $CLICKHOUSE_LOCAL -q "select * from numbers(10) format $format" > $DATA_FILE
-    $CLICKHOUSE_LOCAL -q "select * from file('$DATA_FILE', $format, 'number UInt64')"
+    $DATASTORE_LOCAL -q "select * from numbers(10) format $format" > $DATA_FILE
+    $DATASTORE_LOCAL -q "select * from file('$DATA_FILE', $format, 'number UInt64')"
 
     echo "Output schema"
-    $CLICKHOUSE_LOCAL -q "select * from numbers(10) format $format settings output_format_schema='$SCHEMA_FILE.$ext'" > $DATA_FILE
+    $DATASTORE_LOCAL -q "select * from numbers(10) format $format settings output_format_schema='$SCHEMA_FILE.$ext'" > $DATA_FILE
     tail -n +2 $SCHEMA_FILE.$ext
 
     echo "Bad output schema path"
-    $CLICKHOUSE_CLIENT -q "insert into function file('$DATA_FILE', $format) select * from numbers(10) settings output_format_schema='/tmp/schema.$ext'" 2>&1 | grep "BAD_ARGUMENTS" -c
-    $CLICKHOUSE_CLIENT -q "insert into function file('$DATA_FILE', $format) select * from numbers(10) settings output_format_schema='../../schema.$ext'" 2>&1 | grep "BAD_ARGUMENTS" -c
+    $DATASTORE_CLIENT -q "insert into function file('$DATA_FILE', $format) select * from numbers(10) settings output_format_schema='/tmp/schema.$ext'" 2>&1 | grep "BAD_ARGUMENTS" -c
+    $DATASTORE_CLIENT -q "insert into function file('$DATA_FILE', $format) select * from numbers(10) settings output_format_schema='../../schema.$ext'" 2>&1 | grep "BAD_ARGUMENTS" -c
 }
 
 test_format CapnProto capnp

@@ -4,4 +4,4 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CURDIR"/../shell_config.sh
 
-${CLICKHOUSE_FORMAT} --query "SELECT explain FROM (EXPLAIN AST SELECT * FROM system.numbers)"
+${DATASTORE_FORMAT} --query "SELECT explain FROM (EXPLAIN AST SELECT * FROM system.numbers)"

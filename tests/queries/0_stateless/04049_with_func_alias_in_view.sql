@@ -1,5 +1,5 @@
 -- Test: WITH function-expression alias used in IN inside CREATE VIEW
--- https://github.com/ClickHouse/ClickHouse/issues/99308
+-- https://github.com/ClickHouse/Datastore/issues/99308
 
 DROP TABLE IF EXISTS test_table;
 DROP VIEW IF EXISTS test_view;

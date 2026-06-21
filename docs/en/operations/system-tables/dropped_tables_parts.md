@@ -25,9 +25,9 @@ The schema of this table is the same as [system.parts](./parts.md)
 
   * Definitions:
     - `partition_id` - identifies the partition key
-    - `minimum_block_number` - identifies the minimum block number in the part. ClickHouse always merges continuous blocks
+    - `minimum_block_number` - identifies the minimum block number in the part. Datastore always merges continuous blocks
     - `maximum_block_number` - identifies the maximum block number in the part
-    - `level` - incremented by one with each additional merge on the part. A level of 0 indicates this is a new part that has not been merged. It is important to remember that all parts in ClickHouse are always immutable
+    - `level` - incremented by one with each additional merge on the part. A level of 0 indicates this is a new part that has not been merged. It is important to remember that all parts in Datastore are always immutable
     - `data_version` - optional value, incremented when a part is mutated (again, mutated data is always only written to a new part, since parts are immutable)
 - `uuid` ([UUID](/sql-reference/data-types/uuid)) — The UUID of data part.
 - `part_type` ([String](/sql-reference/data-types/string)) — The data part storing format. Possible values: `Wide` — each column is stored in a separate file, `Compact` — all columns are stored in one file. Data storing format is controlled by the `min_bytes_for_wide_part` and `min_rows_for_wide_part` settings of the MergeTree table.
