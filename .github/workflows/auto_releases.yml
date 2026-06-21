@@ -8,7 +8,7 @@ concurrency:
 
 on:
   schedule:
-    - cron: '45 11 * * *'
+    - cron: '45 11 * * 2,4'
   workflow_dispatch:
     inputs:
       dry-run:
@@ -27,13 +27,13 @@ jobs:
       - name: Set envs
         run: |
           cat >> "$GITHUB_ENV" << 'EOF'
-          ROBOT_CLICKHOUSE_SSH_KEY<<RCSK
-          ${{secrets.ROBOT_CLICKHOUSE_SSH_KEY}}
+          ROBOT_HANZO_SSH_KEY<<RCSK
+          ${{secrets.ROBOT_HANZO_SSH_KEY}}
           RCSK
           EOF
           echo "DRY_RUN=true" >> "$GITHUB_ENV"
       - name: Check out repository code
-        uses: ClickHouse/checkout@v1
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # full history needed
       - name: Debug Info
@@ -66,8 +66,6 @@ jobs:
   Releases:
     needs: AutoReleaseInfo
     strategy:
-      # Without this, a failure on one release branch cancels the queued matrix entries for the others.
-      fail-fast: false
       matrix:
         release_params: ${{ fromJson(needs.AutoReleaseInfo.outputs.data).releases }}
       max-parallel: 1
@@ -78,7 +76,7 @@ jobs:
       type: patch
       dry-run: ${{ fromJson(needs.AutoReleaseInfo.outputs.dry_run) }}
     secrets:
-      ROBOT_CLICKHOUSE_COMMIT_TOKEN: ${{ secrets.ROBOT_CLICKHOUSE_COMMIT_TOKEN }}
+      ROBOT_HANZO_COMMIT_TOKEN: ${{ secrets.ROBOT_HANZO_COMMIT_TOKEN }}
 
   CleanUp:
     needs: [Releases]
@@ -94,7 +92,7 @@ jobs:
 #    if: ${{ !cancelled() }}
 #    steps:
 #      - name: Check out repository code
-#        uses: ClickHouse/checkout@v1
+#        uses: actions/checkout@v4
 #      - name: Post
 #        run: |
 #          cd "$GITHUB_WORKSPACE/tests/ci"

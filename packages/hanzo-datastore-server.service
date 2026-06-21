@@ -1,0 +1,28 @@
+[Unit]
+Description=Hanzo Datastore Server (analytics database for big data)
+Requires=network-online.target
+After=time-sync.target network-online.target
+Wants=time-sync.target
+
+[Service]
+Type=notify
+
+# NOTE: we leave watchdog process enabled to be able to see OOM/SIGKILL traces in server log files.
+# If you wish to disable the watchdog and rely on systemd logs just add "Environment=HANZO_WATCHDOG_ENABLE=0" line.
+User=hanzo-datastore
+Group=hanzo-datastore
+Restart=always
+RestartSec=30
+TimeoutStopSec=infinity
+Environment=HANZO_WATCHDOG_NO_FORWARD=1
+TimeoutStartSec=0
+RuntimeDirectory=%p
+ExecStart=/usr/bin/hanzo-datastore-server --config=/etc/hanzo-datastore-server/config.xml --pid-file=%t/%p/%p.pid
+EnvironmentFile=-/etc/default/%p
+LimitCORE=infinity
+LimitNOFILE=500000
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_IPC_LOCK CAP_SYS_NICE CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_IPC_LOCK CAP_SYS_NICE CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
