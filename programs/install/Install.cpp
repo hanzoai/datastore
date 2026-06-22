@@ -89,15 +89,15 @@ namespace ErrorCodes
 
 #if defined(OS_DARWIN)
 /// Until createUser() and createGroup() are implemented, only sudo-less installations are supported/default for macOS.
-static constexpr auto DEFAULT_CLICKHOUSE_SERVER_USER = "";
-static constexpr auto DEFAULT_CLICKHOUSE_SERVER_GROUP = "";
-static constexpr auto DEFAULT_CLICKHOUSE_BRIDGE_USER = "";
-static constexpr auto DEFAULT_CLICKHOUSE_BRIDGE_GROUP = "";
+static constexpr auto DEFAULT_DATASTORE_SERVER_USER = "";
+static constexpr auto DEFAULT_DATASTORE_SERVER_GROUP = "";
+static constexpr auto DEFAULT_DATASTORE_BRIDGE_USER = "";
+static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "";
 #else
-static constexpr auto DEFAULT_CLICKHOUSE_SERVER_USER = "clickhouse";
-static constexpr auto DEFAULT_CLICKHOUSE_SERVER_GROUP = "clickhouse";
-static constexpr auto DEFAULT_CLICKHOUSE_BRIDGE_USER = "clickhouse-bridge";
-static constexpr auto DEFAULT_CLICKHOUSE_BRIDGE_GROUP = "clickhouse-bridge";
+static constexpr auto DEFAULT_DATASTORE_SERVER_USER = "clickhouse";
+static constexpr auto DEFAULT_DATASTORE_SERVER_GROUP = "clickhouse";
+static constexpr auto DEFAULT_DATASTORE_BRIDGE_USER = "clickhouse-bridge";
+static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "clickhouse-bridge";
 #endif
 
 using namespace DB;
@@ -234,8 +234,8 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
             ("log-path", po::value<std::string>()->default_value("var/log/clickhouse-server"), "where to create log directory")
             ("data-path", po::value<std::string>()->default_value("var/lib/clickhouse"), "directory for data")
             ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
-            ("user", po::value<std::string>()->default_value(DEFAULT_CLICKHOUSE_SERVER_USER), "clickhouse user to create")
-            ("group", po::value<std::string>()->default_value(DEFAULT_CLICKHOUSE_SERVER_GROUP), "clickhouse group to create")
+            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user to create")
+            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group to create")
             ("noninteractive,y", "run non-interactively")
             ("link", "create symlink to the binary instead of copying to binary-path")
         ;
@@ -793,13 +793,13 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
 
         if (fs::exists(odbc_bridge_path) || fs::exists(library_bridge_path))
         {
-            createGroup(DEFAULT_CLICKHOUSE_BRIDGE_GROUP);
-            createUser(DEFAULT_CLICKHOUSE_BRIDGE_USER, DEFAULT_CLICKHOUSE_BRIDGE_GROUP);
+            createGroup(DEFAULT_DATASTORE_BRIDGE_GROUP);
+            createUser(DEFAULT_DATASTORE_BRIDGE_USER, DEFAULT_DATASTORE_BRIDGE_GROUP);
 
             if (fs::exists(odbc_bridge_path))
-                changeOwnership(odbc_bridge_path, DEFAULT_CLICKHOUSE_BRIDGE_USER, DEFAULT_CLICKHOUSE_BRIDGE_GROUP);
+                changeOwnership(odbc_bridge_path, DEFAULT_DATASTORE_BRIDGE_USER, DEFAULT_DATASTORE_BRIDGE_GROUP);
             if (fs::exists(library_bridge_path))
-                changeOwnership(library_bridge_path, DEFAULT_CLICKHOUSE_BRIDGE_USER, DEFAULT_CLICKHOUSE_BRIDGE_GROUP);
+                changeOwnership(library_bridge_path, DEFAULT_DATASTORE_BRIDGE_USER, DEFAULT_DATASTORE_BRIDGE_GROUP);
         }
 
         bool stdin_is_a_tty = isatty(STDIN_FILENO);
@@ -963,11 +963,11 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
             maybe_binary_path = " --binary-path " + options["binary-path"].as<std::string>();
 
         std::string maybe_user;
-        if (options.contains("user") && !options["user"].defaulted() && user != DEFAULT_CLICKHOUSE_SERVER_USER)
+        if (options.contains("user") && !options["user"].defaulted() && user != DEFAULT_DATASTORE_SERVER_USER)
             maybe_user = " --user " + user;
 
         std::string maybe_group;
-        if (options.contains("group") && !options["group"].defaulted() && group != DEFAULT_CLICKHOUSE_SERVER_GROUP)
+        if (options.contains("group") && !options["group"].defaulted() && group != DEFAULT_DATASTORE_SERVER_GROUP)
             maybe_group = " --group " + group;
 
         std::string start_options = maybe_prefix + maybe_pid_path + maybe_config_path + maybe_binary_path + maybe_user + maybe_group;
@@ -1259,8 +1259,8 @@ int mainEntryClickHouseStart(int argc, char ** argv)
 #endif
             ("config-path", po::value<std::string>()->default_value("etc/clickhouse-server"), "directory with configs")
             ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
-            ("user", po::value<std::string>()->default_value(DEFAULT_CLICKHOUSE_SERVER_USER), "clickhouse user")
-            ("group", po::value<std::string>()->default_value(DEFAULT_CLICKHOUSE_SERVER_GROUP), "clickhouse group")
+            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user")
+            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group")
             ("no-sudo", po::bool_switch(), "use clickhouse su instead of sudo (useful when running in a Docker container)")
             ("max-tries", po::value<unsigned>()->default_value(60), "Max number of tries for waiting the server (with 1 second delay)")
         ;
@@ -1396,8 +1396,8 @@ int mainEntryClickHouseRestart(int argc, char ** argv)
 #endif
             ("config-path", po::value<std::string>()->default_value("etc/clickhouse-server"), "directory with configs")
             ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
-            ("user", po::value<std::string>()->default_value(DEFAULT_CLICKHOUSE_SERVER_USER), "clickhouse user")
-            ("group", po::value<std::string>()->default_value(DEFAULT_CLICKHOUSE_SERVER_GROUP), "clickhouse group")
+            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user")
+            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group")
             ("no-sudo", po::bool_switch(), "use clickhouse su instead of sudo (useful when running in a Docker container)")
             ("force", po::value<bool>()->default_value(false), "Stop with KILL signal instead of TERM")
             ("do-not-kill", po::bool_switch(), "Do not send KILL even if TERM did not help")
