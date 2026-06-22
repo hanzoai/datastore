@@ -620,6 +620,11 @@ if (TARGET ch_contrib::capnp)
     target_link_libraries(dbms PRIVATE ch_contrib::capnp)
 endif ()
 
+# ZAP native transport (codec + rpc + kj) — the gRPC replacement.
+if (TARGET ch_contrib::zap)
+    target_link_libraries(dbms PRIVATE ch_contrib::zap)
+endif ()
+
 if (TARGET ch_contrib::parquet)
     target_link_libraries(dbms PRIVATE ch_contrib::parquet)
 endif ()

@@ -54,6 +54,7 @@ bool ServerType::shouldStart(Type server_type, const std::string & server_custom
             case Type::HTTPS:
             case Type::MYSQL:
             case Type::GRPC:
+            case Type::ZAP:
             case Type::POSTGRESQL:
             case Type::PROMETHEUS:
             case Type::INTERSERVER_HTTP:

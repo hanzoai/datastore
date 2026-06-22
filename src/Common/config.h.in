@@ -39,6 +39,7 @@
 #cmakedefine01 USE_LIBURING
 #cmakedefine01 USE_AVRO
 #cmakedefine01 USE_CAPNP
+#cmakedefine01 USE_ZAP
 #cmakedefine01 USE_PARQUET
 #cmakedefine01 USE_ORC
 #cmakedefine01 USE_ARROW
