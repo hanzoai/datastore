@@ -1955,7 +1955,7 @@ namespace ErrorCodes
     DECLARE(Bool, allow_remote_fs_zero_copy_replication, false, R"(
     Don't use this setting in production, because it is not ready.
     )", EXPERIMENTAL) \
-    DECLARE(String, remote_fs_zero_copy_zookeeper_path, "/clickhouse/zero_copy", R"(
+    DECLARE(String, remote_fs_zero_copy_zookeeper_path, "/datastore/zero_copy", R"(
     ZooKeeper path for zero-copy table-independent info.
     )", EXPERIMENTAL) \
     DECLARE(Bool, remote_fs_zero_copy_path_compatible_mode, false, R"(

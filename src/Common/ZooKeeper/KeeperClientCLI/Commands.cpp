@@ -636,10 +636,10 @@ bool DeleteStaleBackups::parse(IParser::Pos & /* pos */, boost::intrusive_ptr<AS
 void DeleteStaleBackups::execute(const ASTKeeperQuery * /* query */, KeeperClientBase * client) const
 {
     client->askConfirmation(
-        "You are going to delete all inactive backups in /clickhouse/backups.",
+        "You are going to delete all inactive backups in /datastore/backups.",
         [client]
         {
-            fs::path backup_root = "/clickhouse/backups";
+            fs::path backup_root = "/datastore/backups";
             auto backups = client->zookeeper->getChildren(backup_root);
             std::sort(backups.begin(), backups.end());
 

@@ -114,7 +114,7 @@ namespace fs = std::filesystem;
 using namespace std::literals;
 
 #if USE_FUZZING_MODE
-int clickhouseMain(int argc_, char ** argv_);
+int datastoreMain(int argc_, char ** argv_);
 #endif
 
 namespace DB
@@ -3944,7 +3944,7 @@ fs::path ClientBase::getHistoryFilePath()
         return history_file_from_env;
 
     /// Client query history was stored in ~/.datastore-client-history
-    /// before moving to $XDG_STATE_HOME/clickhouse/client-query-history.
+    /// before moving to $XDG_STATE_HOME/datastore/client-query-history.
     /// We'll pick up the old file and use it if it is already present.
     auto * home_path = getenv("HOME"); // NOLINT(concurrency-mt-unsafe)
     if (home_path)

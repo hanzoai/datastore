@@ -779,7 +779,7 @@ static std::unordered_map<String, CHSetting> paimonSettings = {
      CHSetting(
          [](RandomGenerator & rg, FuzzConfig &)
          {
-             static const DB::Strings choices = {"'/clickhouse/paimon/{database}/{table}'", "'/clickhouse/paimon/{uuid}'"};
+             static const DB::Strings choices = {"'/datastore/paimon/{database}/{table}'", "'/datastore/paimon/{uuid}'"};
              return rg.pickRandomly(choices);
          },
          {},
@@ -1019,7 +1019,7 @@ void loadFuzzerTableSettings(const FuzzConfig & fc)
                     String key;
                     for (size_t i = 0; i < alg.hex_len / 16; i++)
                         key += fmt::format("{:016x}", rg.randomInt<uint64_t>(0, std::numeric_limits<uint64_t>::max()));
-                    return "disk(type = encrypted, disk = '" + enc_it->name + "', path = '/var/lib/clickhouse/disks/encrypted_"
+                    return "disk(type = encrypted, disk = '" + enc_it->name + "', path = '/var/lib/datastore/disks/encrypted_"
                         + enc_it->name + "/', algorithm = " + alg.algo + ", key_hex = " + key + ")";
                 }
                 /// Inline cache disk wrapping a non-cached local disk
@@ -1029,7 +1029,7 @@ void loadFuzzerTableSettings(const FuzzConfig & fc)
                     [&](const DiskInfo & d) { return !d.is_cached && d.type == "Local" && d.name != di.name; });
                 if (!di.is_cached && cache_it != fc.disks.end() && rg.nextSmallNumber() < 3)
                 {
-                    String res = "disk(type = cache, disk = '" + cache_it->name + "', path = '/var/lib/clickhouse/disks/inline_cache_"
+                    String res = "disk(type = cache, disk = '" + cache_it->name + "', path = '/var/lib/datastore/disks/inline_cache_"
                         + cache_it->name + "/'";
                     res += ", max_size = '"
                         + std::to_string(rg.thresholdGenerator<uint64_t>(

@@ -193,7 +193,7 @@ DB::Chunk TableChanges::next()
 
     DB::ArrowColumnToCHColumn arrow_conv(
         header, format_name, format_settings,
-        /* parquet_columns_to_clickhouse */std::nullopt,
+        /* parquet_columns_to_datastore */std::nullopt,
         /* datastore_columns_to_parquet */std::nullopt,
         format_settings.parquet.allow_missing_columns,
         format_settings.null_as_default,

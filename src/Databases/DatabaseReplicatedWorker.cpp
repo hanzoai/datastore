@@ -440,7 +440,7 @@ String DatabaseReplicatedDDLWorker::tryEnqueueAndExecuteEntry(DDLLogEntry & entr
     /// but it requires more complex logic around /try node.
 
     OpenTelemetry::SpanHolder span(__FUNCTION__);
-    span.addAttribute("clickhouse.cluster", database->getDatabaseName());
+    span.addAttribute("datastore.cluster", database->getDatabaseName());
     entry.tracing_context = OpenTelemetry::CurrentContext();
 
     auto zookeeper = getZooKeeperFromContext();

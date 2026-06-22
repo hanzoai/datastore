@@ -30,9 +30,9 @@ Converts an ASCII string to lowercase.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT lower('CLICKHOUSE')",
+        "SELECT lower('DATASTORE')",
         R"(
-┌─lower('CLICKHOUSE')─┐
+┌─lower('DATASTORE')─┐
 │ datastore          │
 └─────────────────────┘
         )"

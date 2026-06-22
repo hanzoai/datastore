@@ -1674,7 +1674,7 @@ static ColumnWithTypeAndName readColumnFromArrowColumn(
     std::optional<GeoColumnMetadata> geo_metadata,
     const ReadColumnFromArrowColumnSettings & settings,
     const std::shared_ptr<arrow::Field> & arrow_field,
-    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse,
+    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore,
     const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet);
 
 static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
@@ -1688,7 +1688,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
     std::optional<GeoColumnMetadata> geo_metadata,
     const ReadColumnFromArrowColumnSettings & settings,
     const std::shared_ptr<arrow::Field> & arrow_field,
-    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse,
+    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore,
     const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet)
 {
     switch (arrow_column->type()->id())
@@ -1781,7 +1781,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                 geo_metadata,
                 settings,
                 storage_field,
-                parquet_columns_to_clickhouse,
+                parquet_columns_to_datastore,
                 datastore_columns_to_parquet);
         }
         case arrow::Type::FIXED_SIZE_BINARY:
@@ -1886,7 +1886,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                 geo_metadata,
                 settings,
                 arrow_field,
-                parquet_columns_to_clickhouse,
+                parquet_columns_to_datastore,
                 datastore_columns_to_parquet);
             if (!nested_column.column)
                 return {};
@@ -1998,7 +1998,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                 geo_metadata,
                 settings,
                 arrow_field,
-                parquet_columns_to_clickhouse,
+                parquet_columns_to_datastore,
                 datastore_columns_to_parquet);
             if (!nested_column.column)
                 return {};
@@ -2117,7 +2117,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                         nested_type_hint = tuple_type_hint->getElement(i);
                 }
 
-                if (parquet_columns_to_clickhouse)
+                if (parquet_columns_to_datastore)
                 {
                     chassert(datastore_columns_to_parquet);
 
@@ -2125,11 +2125,11 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                     /// For example, if the column name is "a" and the field name in the structure is "b", the full name will be "a.b".
                     auto full_name = datastore_columns_to_parquet->at(full_column_name);
                     full_name += "." + field_name;
-                    if (auto it = parquet_columns_to_clickhouse->find(full_name); it != parquet_columns_to_clickhouse->end())
+                    if (auto it = parquet_columns_to_datastore->find(full_name); it != parquet_columns_to_datastore->end())
                     {
                         field_name = it->second;
                         size_t pos = field_name.rfind('.');
-                        /// Get the Clickhouse field as the last element of the name.
+                        /// Get the Datastore field as the last element of the name.
                         /// For example, if we converted parquet "a.b" to datastore "c.d", the resulting field name would be "d".
                         if (pos != std::string::npos)
                             field_name = field_name.substr(pos + 1);
@@ -2147,7 +2147,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                     geo_metadata,
                     settings,
                     arrow_field,
-                    parquet_columns_to_clickhouse,
+                    parquet_columns_to_datastore,
                     datastore_columns_to_parquet);
                 if (!column_with_type_and_name.column)
                     return {};
@@ -2214,7 +2214,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                     geo_metadata,
                     settings,
                     arrow_field,
-                    parquet_columns_to_clickhouse,
+                    parquet_columns_to_datastore,
                     datastore_columns_to_parquet);
 
                 if (!dict_column.column)
@@ -2332,7 +2332,7 @@ static ColumnWithTypeAndName readColumnFromArrowColumn(
     std::optional<GeoColumnMetadata> geo_metadata,
     const ReadColumnFromArrowColumnSettings & settings,
     const std::shared_ptr<arrow::Field> & arrow_field,
-    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse,
+    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore,
     const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet)
 {
     /// Validate each chunk up front, before anything reads the declared length:
@@ -2370,7 +2370,7 @@ static ColumnWithTypeAndName readColumnFromArrowColumn(
             geo_metadata,
             settings,
             arrow_field,
-            parquet_columns_to_clickhouse,
+            parquet_columns_to_datastore,
             datastore_columns_to_parquet);
 
         if (!nested_column.column)
@@ -2393,7 +2393,7 @@ static ColumnWithTypeAndName readColumnFromArrowColumn(
         geo_metadata,
         settings,
         arrow_field,
-        parquet_columns_to_clickhouse,
+        parquet_columns_to_datastore,
         datastore_columns_to_parquet);
 }
 
@@ -2492,7 +2492,7 @@ Block ArrowColumnToCHColumn::arrowSchemaToCHHeader(
     bool case_insensitive_matching,
     bool allow_geoparquet_parser,
     bool enable_json_parsing,
-    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse,
+    const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore,
     const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet)
 {
     ReadColumnFromArrowColumnSettings settings
@@ -2532,7 +2532,7 @@ Block ArrowColumnToCHColumn::arrowSchemaToCHHeader(
             geo_columns.contains(field->name()) ? std::optional(geo_columns[field->name()]) : std::nullopt,
             settings,
             field,
-            parquet_columns_to_clickhouse,
+            parquet_columns_to_datastore,
             datastore_columns_to_parquet);
 
         if (sample_column.column)
@@ -2565,7 +2565,7 @@ ArrowColumnToCHColumn::ArrowColumnToCHColumn(
     , case_insensitive_matching(case_insensitive_matching_)
     , is_stream(is_stream_)
     , enable_json_parsing(enable_json_parsing_)
-    , parquet_columns_to_clickhouse(parquet_columns_to_datastore_)
+    , parquet_columns_to_datastore(parquet_columns_to_datastore_)
     , datastore_columns_to_parquet(datastore_columns_to_parquet_)
 {
 }
@@ -2593,16 +2593,16 @@ Chunk ArrowColumnToCHColumn::arrowTableToCHChunk(
 
         auto arrow_field = table->schema()->GetFieldByName(column_name);
 
-        if (parquet_columns_to_clickhouse)
+        if (parquet_columns_to_datastore)
         {
-            auto column_name_it = parquet_columns_to_clickhouse->find(column_name);
-            if (column_name_it == parquet_columns_to_clickhouse->end())
+            auto column_name_it = parquet_columns_to_datastore->find(column_name);
+            if (column_name_it == parquet_columns_to_datastore->end())
             {
                 throw Exception(
                     ErrorCodes::LOGICAL_ERROR,
                     "Column '{}' is not present in input data. Column name mapping has {} columns",
                     column_name,
-                    parquet_columns_to_clickhouse->size());
+                    parquet_columns_to_datastore->size());
             }
             column_name = column_name_it->second;
         }
@@ -2688,7 +2688,7 @@ Chunk ArrowColumnToCHColumn::arrowColumnsToCHChunk(
                             geo_columns.contains(header_column.name) ? std::optional(geo_columns[header_column.name]) : std::nullopt,
                             settings,
                             arrow_column.field,
-                            parquet_columns_to_clickhouse,
+                            parquet_columns_to_datastore,
                             datastore_columns_to_parquet)
                     };
 
@@ -2733,7 +2733,7 @@ Chunk ArrowColumnToCHColumn::arrowColumnsToCHChunk(
                 geo_columns.contains(header_column.name) ? std::optional(geo_columns[header_column.name]) : std::nullopt,
                 settings,
                 arrow_column.field,
-                parquet_columns_to_clickhouse,
+                parquet_columns_to_datastore,
                 datastore_columns_to_parquet);
         }
 

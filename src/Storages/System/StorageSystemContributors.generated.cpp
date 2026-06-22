@@ -2315,7 +2315,7 @@ const char * auto_contributors[] {
     "robot-ch-test-poll2",
     "robot-ch-test-poll3",
     "robot-ch-test-poll4",
-    "robot-clickhouse",
+    "robot-datastore",
     "robot-datastore-ci-1",
     "robot-datastore-ci-2",
     "robot-metrika-test",

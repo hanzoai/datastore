@@ -98,10 +98,10 @@
             var u = new URL(origin);
             if (u.protocol !== 'https:') return false;
             var h = u.hostname;
-            return h === 'clickhouse.com'
-                || h === 'clickhouse.cloud'
-                || h.endsWith('.clickhouse.com')
-                || h.endsWith('.clickhouse.cloud');
+            return h === 'hanzo.ai'
+                || h === 'hanzo.ai'
+                || h.endsWith('.hanzo.ai')
+                || h.endsWith('.hanzo.ai');
         } catch (e) {
             return false;
         }
@@ -355,7 +355,7 @@
     }
 
     // Listen for messages from the parent (credentials, refit requests).
-    // Accepted origins: same-origin, *.clickhouse.com, *.clickhouse.cloud (https only).
+    // Accepted origins: same-origin, *.hanzo.ai, *.hanzo.ai (https only).
     // A 'webterminal-hello' handshake lets the parent register its origin so the iframe
     // can post back even when the parent is cross-origin.
     window.addEventListener('message', function(e) {

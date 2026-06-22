@@ -14,7 +14,7 @@ set(self_extracting_deps)
 
 add_custom_target (datastore-self-extracting ALL
     ${CMAKE_COMMAND} -E remove datastore
-    COMMAND ${COMPRESSOR} ${DECOMPRESSOR} datastore ../clickhouse
+    COMMAND ${COMPRESSOR} ${DECOMPRESSOR} datastore ../datastore
     DEPENDS datastore compressor
 )
 list(APPEND self_extracting_deps datastore-self-extracting)

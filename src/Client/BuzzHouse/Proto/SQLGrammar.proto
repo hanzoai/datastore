@@ -3897,7 +3897,7 @@ message DictionaryColumn {
 
 message DictionarySourceDetails {
     enum DictionarySourceType {
-        CLICKHOUSE = 1;
+        DATASTORE = 1;
         MYSQL = 2;
         POSTGRESQL = 3;
         MONGODB = 4;

@@ -232,7 +232,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
 #endif
             ("config-path", po::value<std::string>()->default_value("etc/datastore-server"), "where to install configs")
             ("log-path", po::value<std::string>()->default_value("var/log/datastore-server"), "where to create log directory")
-            ("data-path", po::value<std::string>()->default_value("var/lib/clickhouse"), "directory for data")
+            ("data-path", po::value<std::string>()->default_value("var/lib/datastore"), "directory for data")
             ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
             ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "datastore user to create")
             ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "datastore group to create")
@@ -288,8 +288,8 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
         fs::path bin_dir = prefix / options["binary-path"].as<std::string>();
 
         fs::path main_bin_path = bin_dir / "datastore";
-        fs::path main_bin_tmp_path = bin_dir / "clickhouse.new";
-        fs::path main_bin_old_path = bin_dir / "clickhouse.old";
+        fs::path main_bin_tmp_path = bin_dir / "datastore.new";
+        fs::path main_bin_old_path = bin_dir / "datastore.old";
 
         size_t binary_size = fs::file_size(binary_self_path);
 
@@ -410,7 +410,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 catch (const Exception & e)
                 {
                     if (e.code() == ErrorCodes::CANNOT_OPEN_FILE && geteuid() != 0)
-                        std::cerr << "Install must be run as root: " << formatWithSudo("./clickhouse install") << '\n';
+                        std::cerr << "Install must be run as root: " << formatWithSudo("./datastore install") << '\n';
                     throw;
                 }
 
@@ -785,7 +785,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
         /// Other users in datastore group are allowed to read and even delete logs.
         fs::permissions(log_path, fs::perms::owner_all | fs::perms::group_all, fs::perm_options::replace);
 
-        /// Data directory is not accessible to anyone except clickhouse.
+        /// Data directory is not accessible to anyone except datastore.
         fs::permissions(data_path, fs::perms::owner_all, fs::perm_options::replace);
 
         fs::path odbc_bridge_path = bin_dir / "datastore-odbc-bridge";
@@ -1071,7 +1071,7 @@ namespace
                 /// sudo respects limits in /etc/security/limits.conf e.g. open files,
                 /// that's why we are using it instead of the 'datastore su' tool.
                 /// by default, sudo resets all the ENV variables, but we should preserve
-                /// the values /etc/default/clickhouse in /etc/init.d/clickhouse file
+                /// the values /etc/default/datastore in /etc/init.d/datastore file
                 if (!group.empty())
                     command = fmt::format("sudo --preserve-env -u {} -g {} {}", shellQuote(user), shellQuote(group), command);
                 else

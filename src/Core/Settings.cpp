@@ -715,7 +715,7 @@ Connection timeout for host from s3 disks.
     DECLARE(Bool, enable_s3_requests_logging, false, R"(
 Enable very explicit logging of S3 requests. Makes sense for debug only.
 )", 0) \
-    DECLARE(String, s3queue_default_zookeeper_path, "/clickhouse/s3queue/", R"(
+    DECLARE(String, s3queue_default_zookeeper_path, "/datastore/s3queue/", R"(
 Default zookeeper path prefix for S3Queue engine
 )", 0) \
     DECLARE(Bool, s3queue_migrate_old_metadata_to_buckets, false, R"(
@@ -1001,13 +1001,13 @@ load_balancing = hostname_levenshtein_distance
 Just like `nearest_hostname`, but it compares hostname in a [levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) manner. For example:
 
 ```text
-example-clickhouse-0-0 ample-clickhouse-0-0
+example-datastore-0-0 ample-datastore-0-0
 1
 
-example-clickhouse-0-0 example-clickhouse-1-10
+example-datastore-0-0 example-datastore-1-10
 2
 
-example-clickhouse-0-0 example-clickhouse-12-0
+example-datastore-0-0 example-datastore-12-0
 3
 ```
 
@@ -3847,7 +3847,7 @@ Use case-insensitive matching for a regexp_tree dictionary. Can be overridden in
 Allow '.' to match newline characters for a regexp_tree dictionary.
 )", 0) \
     DECLARE(Bool, dictionary_use_async_executor, false, R"(
-Execute a pipeline for reading dictionary source in several threads. It's supported only by dictionaries with local CLICKHOUSE source.
+Execute a pipeline for reading dictionary source in several threads. It's supported only by dictionaries with local DATASTORE source.
 )", 0) \
     DECLARE(LogsLevel, send_logs_level, LogsLevel::fatal, R"(
 Send server text logs with specified minimum level to client. Valid values: 'trace', 'debug', 'information', 'warning', 'error', 'fatal', 'none'
@@ -4959,8 +4959,8 @@ ALTER TABLE test ATTACH PARTITION ID '202101' SETTINGS alter_partition_verbose_r
 ALTER TABLE test FREEZE SETTINGS alter_partition_verbose_result = 1;
 
 ┌─command_type─┬─partition_id─┬─part_name────┬─backup_name─┬─backup_path───────────────────┬─part_backup_path────────────────────────────────────────────┐
-│ FREEZE ALL   │ 202101       │ 202101_7_7_0 │ 8           │ /var/lib/clickhouse/shadow/8/ │ /var/lib/clickhouse/shadow/8/data/default/test/202101_7_7_0 │
-│ FREEZE ALL   │ 202101       │ 202101_8_8_0 │ 8           │ /var/lib/clickhouse/shadow/8/ │ /var/lib/clickhouse/shadow/8/data/default/test/202101_8_8_0 │
+│ FREEZE ALL   │ 202101       │ 202101_7_7_0 │ 8           │ /var/lib/datastore/shadow/8/ │ /var/lib/datastore/shadow/8/data/default/test/202101_7_7_0 │
+│ FREEZE ALL   │ 202101       │ 202101_8_8_0 │ 8           │ /var/lib/datastore/shadow/8/ │ /var/lib/datastore/shadow/8/data/default/test/202101_8_8_0 │
 └──────────────┴──────────────┴──────────────┴─────────────┴───────────────────────────────┴─────────────────────────────────────────────────────────────┘
 ```
 )", 0) \
@@ -6618,7 +6618,7 @@ This setting takes a Datastore version number as a string, like `22.3`, `22.8`. 
 Disabled by default.
 
 :::note
-In Datastore Cloud, the service-level default compatibility setting must be set by Datastore Cloud support. Please [open a case](https://clickhouse.cloud/support) to have it set.
+In Datastore Cloud, the service-level default compatibility setting must be set by Datastore Cloud support. Please [open a case](https://hanzo.ai/support) to have it set.
 However, the compatibility setting can be overridden at the user, role, profile, query, or session level using standard Datastore setting mechanisms such as `SET compatibility = '22.3'` in a session or `SETTINGS compatibility = '22.3'` in a query.
 :::
 )", 0) \
