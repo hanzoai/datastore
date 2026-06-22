@@ -21,9 +21,6 @@ static void addSettingsChanges(
     auto [_, inserted] = settings_changes_history.emplace(DatastoreVersion(version), std::move(changes));
     if (!inserted)
         throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", DatastoreVersion(version).toString()};
-    auto [_, inserted] = settings_changes_history.emplace(DatastoreVersion(version), std::move(changes));
-    if (!inserted)
-        throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", DatastoreVersion(version).toString()};
 }
 
 const VersionToSettingsChangesMap & getSettingsChangesHistory()
@@ -539,7 +536,6 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"enable_time_time64_type", false, false, "New settings. Allows to use a new experimental Time and Time64 data types."},
             {"optimize_use_projection_filtering", false, true, "New setting"},
             {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as Datastore JSON Column."},
-            {"input_format_parquet_enable_json_parsing", false, true, "When reading Parquet files, parse JSON columns as Datastore JSON Column."},
             {"use_skip_indexes_if_final", 0, 1, "Change in default value of setting"},
             {"use_skip_indexes_if_final_exact_mode", 0, 1, "Change in default value of setting"},
             {"allow_experimental_time_series_aggregate_functions", false, false, "New setting to enable experimental timeSeries* aggregate functions."},
@@ -611,7 +607,6 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"low_priority_query_wait_time_ms", 1000, 1000, "New setting."},
             {"allow_experimental_correlated_subqueries", false, false, "Added new setting to allow correlated subqueries execution."},
             {"serialize_query_plan", false, false, "NewSetting"},
-            {"allow_experimental_shared_set_join", 0, 1, "A setting for Datastore Cloud to enable SharedSet and SharedJoin"},
             {"allow_experimental_shared_set_join", 0, 1, "A setting for Datastore Cloud to enable SharedSet and SharedJoin"},
             {"allow_special_bool_values_inside_variant", true, false, "Don't allow special bool values during Variant type parsing"},
             {"cast_string_to_variant_use_inference", true, true, "New setting to enable/disable types inference during CAST from String to Variant"},
@@ -863,7 +858,6 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"input_format_json_max_depth", 1000000, 1000, "It was unlimited in previous versions, but that was unsafe."},
             {"merge_tree_min_bytes_per_task_for_remote_reading", 4194304, 2097152, "Value is unified with `filesystem_prefetch_min_bytes_for_single_read_task`"},
             {"use_hive_partitioning", false, false, "Allows to use hive partitioning for File, URL, S3, AzureBlobStorage and HDFS engines."},
-            {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in Datastore Keeper"},
             {"allow_experimental_kafka_offsets_storage_in_keeper", false, false, "Allow the usage of experimental Kafka storage engine that stores the committed offsets in Datastore Keeper"},
             {"allow_archive_path_syntax", true, true, "Added new setting to allow disabling archive path syntax."},
             {"query_cache_tag", "", "", "New setting for labeling query cache settings."},
@@ -1185,7 +1179,6 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
         addSettingsChanges(settings_changes_history, "22.4",
         {
             {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because Datastore interpret SETTINGS as some values, which is misleading"}
-            {"allow_settings_after_format_in_insert", true, false, "Do not allow SETTINGS after FORMAT for INSERT queries because Datastore interpret SETTINGS as some values, which is misleading"}
         });
         addSettingsChanges(settings_changes_history, "22.3",
         {
@@ -1276,6 +1269,7 @@ const VersionToSettingsChangesMap & getMergeTreeSettingsChangesHistory()
         {
             {"shared_merge_tree_replica_set_max_lifetime_seconds", 300, 300, "New setting"},
             {"table_readonly", false, false, "New setting to mark table as read-only, preventing inserts and modifications"},
+        });
         addSettingsChanges(merge_tree_settings_changes_history, "26.5",
         {
             {"part_minmax_index_columns", "partition_key_only", "partition_key_only", "New setting."},
