@@ -19,8 +19,8 @@ logger:
     # - trace
     # [1]: https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/Logger.h#L105-L114
     level: trace
-    log: /var/log/clickhouse-server/clickhouse-server.log
-    errorlog: /var/log/clickhouse-server/clickhouse-server.err.log
+    log: /var/log/datastore-server/clickhouse-server.log
+    errorlog: /var/log/datastore-server/clickhouse-server.err.log
     # Rotation policy
     # See https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/FileChannel.h#L54-L85
     size: 1000M
@@ -177,15 +177,15 @@ grpc:
 openSSL:
     server:
         # Used for https server AND secure tcp port
-        # openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt
-        # certificateFile: /etc/clickhouse-server/server.crt
-        # privateKeyFile: /etc/clickhouse-server/server.key
+        # openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/datastore-server/server.key -out /etc/datastore-server/server.crt
+        # certificateFile: /etc/datastore-server/server.crt
+        # privateKeyFile: /etc/datastore-server/server.key
 
         # dhparams are optional. You can delete the dhParamsFile: element.
         # To generate dhparams, use the following command:
-        # openssl dhparam -out /etc/clickhouse-server/dhparam.pem 4096
+        # openssl dhparam -out /etc/datastore-server/dhparam.pem 4096
         # Only file format with BEGIN DH PARAMETERS is supported.
-        dhParamsFile: /etc/clickhouse-server/dhparam.pem
+        dhParamsFile: /etc/datastore-server/dhparam.pem
         verificationMode: none
         loadDefaultCAFile: true
         cacheSessions: true
@@ -297,10 +297,10 @@ uncompressed_cache_size: 8589934592
 #     max_entry_size_in_rows: 30000000
 
 # Path to data directory, with trailing slash.
-path: /var/lib/clickhouse/
+path: /var/lib/datastore/
 
 # Path to temporary data for processing hard queries.
-tmp_path: /var/lib/clickhouse/tmp/
+tmp_path: /var/lib/datastore/tmp/
 
 # Policy from the <storage_configuration> for the temporary files.
 # If not set <tmp_path> is used, otherwise <tmp_path> is ignored.
@@ -313,7 +313,7 @@ tmp_path: /var/lib/clickhouse/tmp/
 # tmp_policy: tmp
 
 # Directory with user provided files that are accessible by 'file' table function.
-user_files_path: /var/lib/clickhouse/user_files/
+user_files_path: /var/lib/datastore/user_files/
 
 # LDAP server definitions.
 ldap_servers: ''
@@ -408,7 +408,7 @@ user_directories:
         path: users.yaml
     local_directory:
         # Path to folder where users created by SQL commands are stored.
-        path: /var/lib/clickhouse/access/
+        path: /var/lib/datastore/access/
 
 #   # To add an LDAP server as a remote user directory of users that are not defined locally, define a single 'ldap' section
 #   # with the following parameters:
@@ -792,7 +792,7 @@ crash_log:
     partition_by: ''
     flush_interval_milliseconds: 1000
 
-# top_level_domains_path: /var/lib/clickhouse/top_level_domains/
+# top_level_domains_path: /var/lib/datastore/top_level_domains/
 # Custom TLD lists.
 # Format: name: /path/to/file
 
@@ -877,7 +877,7 @@ graphite_rollup_example:
 
 # Directory in <clickhouse-path> containing schema files for various input formats.
 # The directory will be created if it doesn't exist.
-format_schema_path: /var/lib/clickhouse/format_schemas/
+format_schema_path: /var/lib/datastore/format_schemas/
 
 # Default query masking rules, matching lines would be replaced with something else in the logs
 # (both text logs and system.query_log).

@@ -39,8 +39,8 @@
              It is useful for debugging shutdown issues -->
         <!-- <shutdown_console_log_level>trace</shutdown_console_log_level> -->
 
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/clickhouse-server.log</log>
+        <errorlog>/var/log/datastore-server/clickhouse-server.err.log</errorlog>
         <!-- Rotation policy
              See https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/FileChannel.h#L54-L85
           -->
@@ -361,15 +361,15 @@
     -->
     <openSSL>
         <server> <!-- Used for https server AND secure tcp port -->
-            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt -->
-            <!-- <certificateFile>/etc/clickhouse-server/server.crt</certificateFile>
-            <privateKeyFile>/etc/clickhouse-server/server.key</privateKeyFile> -->
+            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/datastore-server/server.key -out /etc/datastore-server/server.crt -->
+            <!-- <certificateFile>/etc/datastore-server/server.crt</certificateFile>
+            <privateKeyFile>/etc/datastore-server/server.key</privateKeyFile> -->
             <!-- dhparams are optional. You can delete the <dhParamsFile> element.
                  To generate dhparams, use the following command:
-                  openssl dhparam -out /etc/clickhouse-server/dhparam.pem 4096
+                  openssl dhparam -out /etc/datastore-server/dhparam.pem 4096
                  Only file format with BEGIN DH PARAMETERS is supported.
               -->
-            <!-- <dhParamsFile>/etc/clickhouse-server/dhparam.pem</dhParamsFile>-->
+            <!-- <dhParamsFile>/etc/datastore-server/dhparam.pem</dhParamsFile>-->
             <verificationMode>none</verificationMode>
             <loadDefaultCAFile>true</loadDefaultCAFile>
             <cacheSessions>true</cacheSessions>
@@ -546,12 +546,12 @@
     -->
 
     <!-- Cache path for custom (created from SQL) cached disks -->
-    <custom_cached_disks_base_directory>/var/lib/clickhouse/caches/</custom_cached_disks_base_directory>
+    <custom_cached_disks_base_directory>/var/lib/datastore/caches/</custom_cached_disks_base_directory>
 
     <validate_tcp_client_information>false</validate_tcp_client_information>
 
     <!-- Path to data directory, with trailing slash. -->
-    <path>/var/lib/clickhouse/</path>
+    <path>/var/lib/datastore/</path>
 
     <!-- Multi-disk configuration example: -->
     <!--
@@ -576,7 +576,7 @@
                 <container_name>container</container_name>
                 <account_name>account</account_name>
                 <account_key>pass123</account_key>
-                <metadata_path>/var/lib/clickhouse/disks/blob_storage_disk/</metadata_path>
+                <metadata_path>/var/lib/datastore/disks/blob_storage_disk/</metadata_path>
                 <skip_access_check>false</skip_access_check>
             </blob_storage_disk>
         </disks>
@@ -611,7 +611,7 @@
 
     <!-- Path to temporary data for processing heavy queries. -->
     <!-- NOTE: all files with `tmp` prefix will be removed at server startup -->
-    <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+    <tmp_path>/var/lib/datastore/tmp/</tmp_path>
 
     <!-- Enable AuthType plaintext_password and no_password for ACL (1 = allow, 0 = forbid). -->
     <allow_plaintext_password>1</allow_plaintext_password>
@@ -666,7 +666,7 @@
     <!-- <tmp_policy>tmp</tmp_policy> -->
 
     <!-- Directory with user provided files that are accessible by 'file' table function. -->
-    <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+    <user_files_path>/var/lib/datastore/user_files/</user_files_path>
 
     <!-- LDAP server definitions. -->
     <ldap_servers>
@@ -766,7 +766,7 @@
         </users_xml>
         <local_directory>
             <!-- Path to folder where users created by SQL commands are stored. -->
-            <path>/var/lib/clickhouse/access/</path>
+            <path>/var/lib/datastore/access/</path>
         </local_directory>
 
         <!-- To add an LDAP server as a remote user directory of users that are not defined locally, define a single 'ldap' section
@@ -1551,7 +1551,7 @@
     </dashboards>
     -->
 
-    <!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+    <!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
     <!-- Custom TLD lists.
          Format: <name>/path/to/file</name>
 
@@ -1784,7 +1784,7 @@
     <!-- Directory in <clickhouse-path> containing schema files for various input formats.
          The directory will be created if it doesn't exist.
       -->
-    <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
+    <format_schema_path>/var/lib/datastore/format_schemas/</format_schema_path>
 
     <!-- Directory containing the proto files for the well-known Protobuf types.
       -->
