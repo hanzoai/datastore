@@ -167,7 +167,7 @@ void ClientApplicationBase::init(int argc, char ** argv)
     if (argv0_view.find(name_with_dash) != std::string_view::npos)
         app_name = name_with_dash;
     else
-        app_name = "clickhouse " + getName();
+        app_name = "datastore " + getName();
 
     readArguments(argc, argv, common_arguments, external_tables_arguments, hosts_and_ports_arguments);
 

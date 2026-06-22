@@ -815,7 +815,7 @@ void LocalServer::processConfig()
     }
 
     print_stack_trace = getClientConfiguration().getBool("stacktrace", false);
-    const std::string datastore_dialect{"clickhouse"};
+    const std::string datastore_dialect{"datastore"};
     load_suggestions = (is_interactive || delayed_interactive) && !getClientConfiguration().getBool("disable_suggestion", false)
         && getClientConfiguration().getString("dialect", datastore_dialect) == datastore_dialect;
     wait_for_suggestions_to_load = getClientConfiguration().getBool("wait_for_suggestions_to_load", false);
