@@ -1,15 +1,15 @@
 #!/bin/sh
 set -e
 
-PROGRAM=hanzo-datastore-keeper
-KEEPER_USER=${KEEPER_USER:-hanzo-datastore}
-KEEPER_GROUP=${KEEPER_GROUP:-hanzo-datastore}
-KEEPER_CONFDIR=${KEEPER_CONFDIR:-/etc/hanzo-datastore-keeper}
-KEEPER_DATADIR=${KEEPER_DATADIR:-/var/lib/hanzo-datastore}
-KEEPER_LOGDIR=${KEEPER_LOGDIR:-/var/log/hanzo-datastore-keeper}
+PROGRAM=datastore-keeper
+KEEPER_USER=${KEEPER_USER:-datastore}
+KEEPER_GROUP=${KEEPER_GROUP:-datastore}
+KEEPER_CONFDIR=${KEEPER_CONFDIR:-/etc/datastore-keeper}
+KEEPER_DATADIR=${KEEPER_DATADIR:-/var/lib/datastore}
+KEEPER_LOGDIR=${KEEPER_LOGDIR:-/var/log/datastore-keeper}
 
 [ -f /usr/share/debconf/confmodule ] && . /usr/share/debconf/confmodule
-[ -f /etc/default/hanzo-datastore-keeper ] && . /etc/default/hanzo-datastore-keeper
+[ -f /etc/default/datastore-keeper ] && . /etc/default/datastore-keeper
 
 if [ ! -f "/etc/debian_version" ]; then
     not_deb_os=1
@@ -26,17 +26,17 @@ if [ "$1" = configure ] || [ -n "$not_deb_os" ]; then
             "${KEEPER_USER}"
     fi
 
-    if [ -x "/bin/systemctl" ] && [ -f /lib/systemd/system/hanzo-datastore-keeper.service ] && [ -d /run/systemd/system ]; then
-        if [ -x "/etc/init.d/hanzo-datastore-keeper" ] && [ -x "/usr/sbin/update-rc.d" ]; then
-            /usr/sbin/update-rc.d hanzo-datastore-keeper remove
+    if [ -x "/bin/systemctl" ] && [ -f /lib/systemd/system/datastore-keeper.service ] && [ -d /run/systemd/system ]; then
+        if [ -x "/etc/init.d/datastore-keeper" ] && [ -x "/usr/sbin/update-rc.d" ]; then
+            /usr/sbin/update-rc.d datastore-keeper remove
         fi
 
         /bin/systemctl daemon-reload
-        /bin/systemctl enable hanzo-datastore-keeper
+        /bin/systemctl enable datastore-keeper
     else
-        if [ -x "/etc/init.d/hanzo-datastore-keeper" ]; then
+        if [ -x "/etc/init.d/datastore-keeper" ]; then
             if [ -x "/usr/sbin/update-rc.d" ]; then
-                /usr/sbin/update-rc.d hanzo-datastore-keeper defaults 19 19 >/dev/null || exit $?
+                /usr/sbin/update-rc.d datastore-keeper defaults 19 19 >/dev/null || exit $?
             else
                 echo # Other OS
             fi

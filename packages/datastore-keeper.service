@@ -6,12 +6,12 @@ Wants=time-sync.target
 
 [Service]
 Type=simple
-User=hanzo-datastore
-Group=hanzo-datastore
+User=datastore
+Group=datastore
 Restart=always
 RestartSec=30
 RuntimeDirectory=%p
-ExecStart=/usr/bin/hanzo-datastore-keeper --config=/etc/hanzo-datastore-keeper/keeper_config.xml --pid-file=%t/%p/%p.pid
+ExecStart=/usr/bin/datastore-keeper --config=/etc/datastore-keeper/keeper_config.xml --pid-file=%t/%p/%p.pid
 EnvironmentFile=-/etc/default/%p
 LimitCORE=infinity
 LimitNOFILE=500000

@@ -2,7 +2,7 @@ from praktika import Workflow
 
 from ci.defs.defs import ARTIFACTS, BASE_BRANCH, DOCKERS, SECRETS, Jobs
 
-S3_BUILDS_BUCKET = "hanzo-datastore-builds"
+S3_BUILDS_BUCKET = "datastore-builds"
 
 workflow = Workflow.Config(
     name="PRNEW",

@@ -9,7 +9,7 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 ## Stack
 
 - **Server**: C++ (the ClickHouse codebase under `programs/`, `src/`, `base/`)
-- **Build**: CMake → `hanzo-datastore` binary
+- **Build**: CMake → `datastore` binary
 
 ## Ports
 
@@ -26,7 +26,7 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 datastore/
 ├── programs/, src/, base/, contrib/  ← upstream ClickHouse C++
 ├── hanzo/                             ← Hanzo overlay: compose, config.xml, schema.sql
-├── packages/, pkg/                    ← RPM/deb packaging (hanzo-datastore-*.yaml)
+├── packages/, pkg/                    ← RPM/deb packaging (datastore-*.yaml)
 ├── docker/server/                     ← Hanzo image build (Dockerfile.ubuntu, white-labeled)
 └── ci/                                ← upstream + Hanzo CI (Praktika)
 ```
@@ -59,7 +59,7 @@ watch areas for merge conflicts.
 
 ## Phase 1 — Single Binary (Embedded Coordination)
 
-`hanzo-datastore` ships exactly one server binary. The standalone `clickhouse-keeper`/`datastore-keeper` entry-point is no longer a default build target. Coordination still works — it runs **in-process** inside `hanzo-datastore-server` whenever `<keeper_server>` is present in the runtime config.
+`datastore` ships exactly one server binary. The standalone `clickhouse-keeper`/`datastore-keeper` entry-point is no longer a default build target. Coordination still works — it runs **in-process** inside `datastore-server` whenever `<keeper_server>` is present in the runtime config.
 
 ### What changed
 
@@ -67,7 +67,7 @@ watch areas for merge conflicts.
   - `ENABLE_DATASTORE_KEEPER` (was `${ENABLE_DATASTORE_ALL}`) — drops the standalone keeper entry-point and the `datastore-keeper` symlink from the multipurpose binary.
   - `ENABLE_DATASTORE_KEEPER_CONVERTER` (was `${ENABLE_DATASTORE_ALL}`) — drops the ZooKeeper→Keeper snapshot converter tool.
   - `ENABLE_DATASTORE_KEEPER_CLIENT` (was `${ENABLE_DATASTORE_ALL}`) — drops the standalone keeper CLI client.
-- `docker/server/Dockerfile.ubuntu` — `PACKAGES` installs only `hanzo-datastore-{client,server,common-static}`; the keeper package is not installed. The standalone "Docker keeper image" CI job (which built `docker/keeper/`) was retired — coordination is embedded.
+- `docker/server/Dockerfile.ubuntu` — `PACKAGES` installs only `datastore-{client,server,common-static}`; the keeper package is not installed. The standalone "Docker keeper image" CI job (which built `docker/keeper/`) was retired — coordination is embedded.
 - `BUILD_STANDALONE_KEEPER` already defaulted `OFF` upstream; left untouched.
 
 ### What did NOT change (and why)
@@ -79,7 +79,7 @@ watch areas for merge conflicts.
 
 ### Packaging
 
-`packages/hanzo-datastore-keeper.yaml` only ships content when `BUILD_STANDALONE_KEEPER=ON` (which we don't set). `packages/hanzo-datastore-server.yaml` is unchanged and now provides the *only* binary. The hanzo-datastore-keeper deb/rpm package can be deprecated after one release cycle — leave the spec in tree until then for upstream-sync stability.
+`packages/datastore-keeper.yaml` only ships content when `BUILD_STANDALONE_KEEPER=ON` (which we don't set). `packages/datastore-server.yaml` is unchanged and now provides the *only* binary. The datastore-keeper deb/rpm package can be deprecated after one release cycle — leave the spec in tree until then for upstream-sync stability.
 
 ### `programs/install/Install.cpp:440-441`
 

@@ -29,8 +29,8 @@
     <!-- Logging -->
     <logger>
         <level>information</level>
-        <log>/var/log/hanzo-datastore-server/hanzo-datastore-server.log</log>
-        <errorlog>/var/log/hanzo-datastore-server/hanzo-datastore-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <size>1000M</size>
         <count>10</count>
     </logger>

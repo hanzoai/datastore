@@ -1,25 +1,25 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          hanzo-datastore-server
+# Provides:          datastore-server
 # Required-Start:    $network
 # Required-Stop:     $network
 # Should-Start:      $time
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: hanzo-datastore-server daemon
+# Short-Description: datastore-server daemon
 ### END INIT INFO
 
-HANZO_USER=hanzo-datastore
-HANZO_GROUP=${HANZO_USER}
+DATASTORE_USER=datastore
+DATASTORE_GROUP=${DATASTORE_USER}
 SHELL=/bin/bash
-PROGRAM=hanzo-datastore-server
-HANZO_GENERIC_PROGRAM=hanzo-datastore
-HANZO_PROGRAM_ENV=""
-EXTRACT_FROM_CONFIG=${HANZO_GENERIC_PROGRAM}-extract-from-config
-HANZO_CONFDIR=/etc/hanzo-datastore-server
-HANZO_LOGDIR=/var/log/hanzo-datastore-server
-HANZO_LOGDIR_USER=root
-HANZO_DATADIR=/var/lib/hanzo-datastore
+PROGRAM=datastore-server
+DATASTORE_GENERIC_PROGRAM=datastore
+DATASTORE_PROGRAM_ENV=""
+EXTRACT_FROM_CONFIG=${DATASTORE_GENERIC_PROGRAM}-extract-from-config
+DATASTORE_CONFDIR=/etc/datastore-server
+DATASTORE_LOGDIR=/var/log/datastore-server
+DATASTORE_LOGDIR_USER=root
+DATASTORE_DATADIR=/var/lib/datastore
 if [ -d "/var/lock" ]; then
     LOCALSTATEDIR=/var/lock
 else
@@ -30,17 +30,17 @@ if [ ! -d "$LOCALSTATEDIR" ]; then
     mkdir -p "$LOCALSTATEDIR"
 fi
 
-HANZO_BINDIR=/usr/bin
-HANZO_CRONFILE=/etc/cron.d/hanzo-datastore-server
-HANZO_CONFIG=$HANZO_CONFDIR/config.xml
+DATASTORE_BINDIR=/usr/bin
+DATASTORE_CRONFILE=/etc/cron.d/datastore-server
+DATASTORE_CONFIG=$DATASTORE_CONFDIR/config.xml
 LOCKFILE=$LOCALSTATEDIR/$PROGRAM
-HANZO_PIDDIR=/var/run/$PROGRAM
-HANZO_PIDFILE="$HANZO_PIDDIR/$PROGRAM.pid"
+DATASTORE_PIDDIR=/var/run/$PROGRAM
+DATASTORE_PIDFILE="$DATASTORE_PIDDIR/$PROGRAM.pid"
 
 command -v flock >/dev/null && FLOCK=flock
 
 set -a
-test -f /etc/default/hanzo-datastore-server && . /etc/default/hanzo-datastore-server
+test -f /etc/default/datastore-server && . /etc/default/datastore-server
 set +a
 
 die()
@@ -51,34 +51,34 @@ die()
 
 check_config()
 {
-    if [ -x "$HANZO_BINDIR/$EXTRACT_FROM_CONFIG" ]; then
-        su -s $SHELL ${HANZO_USER} -c "$HANZO_BINDIR/$EXTRACT_FROM_CONFIG --config-file=\"$HANZO_CONFIG\" --key=path" >/dev/null || die "Configuration file ${HANZO_CONFIG} doesn't parse successfully. Won't restart server. You may use forcerestart if you are sure.";
+    if [ -x "$DATASTORE_BINDIR/$EXTRACT_FROM_CONFIG" ]; then
+        su -s $SHELL ${DATASTORE_USER} -c "$DATASTORE_BINDIR/$EXTRACT_FROM_CONFIG --config-file=\"$DATASTORE_CONFIG\" --key=path" >/dev/null || die "Configuration file ${DATASTORE_CONFIG} doesn't parse successfully. Won't restart server. You may use forcerestart if you are sure.";
     fi
 }
 
 initdb()
 {
-    ${HANZO_GENERIC_PROGRAM} install --user "${HANZO_USER}" --pid-path "${HANZO_PIDDIR}" --config-path "${HANZO_CONFDIR}" --binary-path "${HANZO_BINDIR}"
+    ${DATASTORE_GENERIC_PROGRAM} install --user "${DATASTORE_USER}" --pid-path "${DATASTORE_PIDDIR}" --config-path "${DATASTORE_CONFDIR}" --binary-path "${DATASTORE_BINDIR}"
 }
 
 start()
 {
-    ${HANZO_GENERIC_PROGRAM} start --user "${HANZO_USER}" --pid-path "${HANZO_PIDDIR}" --config-path "${HANZO_CONFDIR}" --binary-path "${HANZO_BINDIR}"
+    ${DATASTORE_GENERIC_PROGRAM} start --user "${DATASTORE_USER}" --pid-path "${DATASTORE_PIDDIR}" --config-path "${DATASTORE_CONFDIR}" --binary-path "${DATASTORE_BINDIR}"
 }
 
 stop()
 {
-    ${HANZO_GENERIC_PROGRAM} stop --pid-path "${HANZO_PIDDIR}"
+    ${DATASTORE_GENERIC_PROGRAM} stop --pid-path "${DATASTORE_PIDDIR}"
 }
 
 restart()
 {
-    ${HANZO_GENERIC_PROGRAM} restart --user "${HANZO_USER}" --pid-path "${HANZO_PIDDIR}" --config-path "${HANZO_CONFDIR}" --binary-path "${HANZO_BINDIR}"
+    ${DATASTORE_GENERIC_PROGRAM} restart --user "${DATASTORE_USER}" --pid-path "${DATASTORE_PIDDIR}" --config-path "${DATASTORE_CONFDIR}" --binary-path "${DATASTORE_BINDIR}"
 }
 
 forcestop()
 {
-    ${HANZO_GENERIC_PROGRAM} stop --force --pid-path "${HANZO_PIDDIR}"
+    ${DATASTORE_GENERIC_PROGRAM} stop --force --pid-path "${DATASTORE_PIDDIR}"
 }
 
 service_or_func()
@@ -89,7 +89,7 @@ service_or_func()
     fi
 
     if [ -x "/bin/systemctl" ] && [ -d /run/systemd/system ]; then
-        if [ -f /etc/systemd/system/hanzo-datastore-server.service ] || [ -f /lib/systemd/system/hanzo-datastore-server.service ]; then
+        if [ -f /etc/systemd/system/datastore-server.service ] || [ -f /lib/systemd/system/datastore-server.service ]; then
             systemctl $1 $PROGRAM
             return
         fi
@@ -106,13 +106,13 @@ forcerestart()
 
 use_cron()
 {
-    if [ -x "/bin/systemctl" ] && [ -f /etc/systemd/system/hanzo-datastore-server.service ] && [ -d /run/systemd/system ]; then
+    if [ -x "/bin/systemctl" ] && [ -f /etc/systemd/system/datastore-server.service ] && [ -d /run/systemd/system ]; then
         return 1
     fi
-    if [ ! -f "$HANZO_CRONFILE" ]; then
+    if [ ! -f "$DATASTORE_CRONFILE" ]; then
         return 1
     fi
-    if [ -z "$HANZO_CRONFILE" ]; then
+    if [ -z "$DATASTORE_CRONFILE" ]; then
         return 2
     fi
     return 0
@@ -120,18 +120,18 @@ use_cron()
 
 enable_cron()
 {
-    use_cron && sed -i 's/^#*//' "$HANZO_CRONFILE"
+    use_cron && sed -i 's/^#*//' "$DATASTORE_CRONFILE"
 }
 
 disable_cron()
 {
-    use_cron && sed -i 's/^#*/#/' "$HANZO_CRONFILE"
+    use_cron && sed -i 's/^#*/#/' "$DATASTORE_CRONFILE"
 }
 
 is_cron_disabled()
 {
     use_cron || return 0
-    grep -q -E '^#' "$HANZO_CRONFILE";
+    grep -q -E '^#' "$DATASTORE_CRONFILE";
 }
 
 main()
@@ -190,7 +190,7 @@ main()
 
 status()
 {
-    ${HANZO_GENERIC_PROGRAM} status --pid-path "${HANZO_PIDDIR}"
+    ${DATASTORE_GENERIC_PROGRAM} status --pid-path "${DATASTORE_PIDDIR}"
 }
 
 case "$1" in
