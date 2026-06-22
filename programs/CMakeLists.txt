@@ -62,7 +62,7 @@ endif()
 configure_file (config_tools.h.in ${CONFIG_INCLUDE_PATH}/config_tools.h)
 
 macro(datastore_target_link_split_lib target name)
-    target_link_libraries(${target} PRIVATE datastore--lib)
+    target_link_libraries(${target} PRIVATE datastore-${name}-lib)
 endmacro()
 
 macro(datastore_program_add_library name)
@@ -74,17 +74,17 @@ macro(datastore_program_add_library name)
     set(DATASTORE_${name_uc}_LINK ${DATASTORE_${name_uc}_LINK} PARENT_SCOPE)
     set(DATASTORE_${name_uc}_INCLUDE ${DATASTORE_${name_uc}_INCLUDE} PARENT_SCOPE)
 
-    add_library(datastore--lib ${DATASTORE_${name_uc}_SOURCES})
+    add_library(datastore-${name}-lib ${DATASTORE_${name_uc}_SOURCES})
 
     set(_link ${DATASTORE_${name_uc}_LINK}) # can't use ${} in if()
     if(_link)
-        target_link_libraries(datastore--lib PRIVATE ${DATASTORE_${name_uc}_LINK})
+        target_link_libraries(datastore-${name}-lib PRIVATE ${DATASTORE_${name_uc}_LINK})
     endif()
 
-    target_include_directories (datastore--lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories (datastore-${name}-lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     set(_include ${DATASTORE_${name_uc}_INCLUDE}) # can't use ${} in if()
     if (_include)
-        target_include_directories(datastore--lib ${DATASTORE_${name_uc}_INCLUDE})
+        target_include_directories(datastore-${name}-lib ${DATASTORE_${name_uc}_INCLUDE})
     endif()
 endmacro()
 
