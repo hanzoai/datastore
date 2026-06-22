@@ -189,7 +189,7 @@ namespace
                 return;
 
             auto config = getDictionaryConfigurationFromAST(create_query->as<ASTCreateQuery &>(), global_context);
-            auto info = getInfoIfClickHouseDictionarySource(config, global_context);
+            auto info = getInfoIfDatastoreDictionarySource(config, global_context);
 
             /// We consider only dependencies on local tables.
             if (!info || !info->is_local)

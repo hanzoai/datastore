@@ -75,7 +75,7 @@ public:
     BackupOperationInfo getInfo(const BackupOperationID & id) const;
     std::vector<BackupOperationInfo> getAllInfos() const;
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     void unlockSnapshot(ASTPtr unlock_query, ContextPtr context);
 #endif
 
@@ -110,7 +110,7 @@ private:
 
     BackupPtr openBackupForReading(const BackupInfo & backup_info, const RestoreSettings & restore_settings, const ContextPtr & context) const;
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     BackupMutablePtr openBackupForUnlockSnapshot(const BackupInfo & backup_info, const ContextPtr & context) const;
 #endif
 

@@ -9,7 +9,7 @@
 #include <Storages/System/StorageSystemClusters.h>
 #include <Databases/DatabaseReplicated.h>
 #include <Common/ZooKeeper/ZooKeeperCommon.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -75,7 +75,7 @@ void StorageSystemClusters::fillData(MutableColumns & res_columns, ContextPtr co
         }
     }
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (SharedDatabaseCatalog::initialized())
     {
         auto cluster_name = SharedDatabaseCatalog::instance().getClusterName();

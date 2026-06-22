@@ -6,7 +6,7 @@
 #include <boost/program_options.hpp>
 
 
-int mainEntryClickHouseZooKeeperRemoveByList(int argc, char ** argv)
+int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv)
 try
 {
     boost::program_options::options_description desc("Allowed options");

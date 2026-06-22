@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ClickHouseRevision
+namespace DatastoreRevision
 {
     unsigned getVersionRevision();
     unsigned getVersionInteger();

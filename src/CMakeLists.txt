@@ -60,7 +60,7 @@ add_subdirectory (Compression)
 add_subdirectory (Server)
 add_subdirectory (Coordination)
 
-if (ENABLE_CLICKHOUSE_DISTRIBUTED_CACHE)
+if (ENABLE_DATASTORE_DISTRIBUTED_CACHE)
     message(STATUS "Datastore distributed cache is enabled, will build with it")
     add_subdirectory (DistributedCache)
 else()
@@ -97,24 +97,24 @@ if (OMIT_HEAVY_DEBUG_SYMBOLS)
         PROPERTIES COMPILE_FLAGS -g1)
 endif()
 
-add_headers_and_sources(clickhouse_common_io Common)
-add_headers_and_sources(clickhouse_common_io Common/Crypto)
-add_headers_and_sources(clickhouse_common_io Common/JSONParsers)
-add_headers_and_sources(clickhouse_common_io Common/HashTable)
-add_headers_and_sources(clickhouse_common_io Common/Scheduler)
-add_headers_and_sources(clickhouse_common_io Common/Scheduler/Nodes)
-add_headers_and_sources(clickhouse_common_io IO)
-add_headers_and_sources(clickhouse_common_io IO/Archives)
-add_headers_and_sources(clickhouse_common_io IO/Protobuf)
-add_headers_and_sources(clickhouse_common_io IO/S3)
-add_headers_and_sources(clickhouse_common_io IO/AzureBlobStorage)
-add_headers_and_sources(clickhouse_common_io Disks/DiskObjectStorage/ObjectStorages/AzureBlobStorage)
-list (REMOVE_ITEM clickhouse_common_io_sources Common/malloc.cpp Common/AllocationInterceptors.cpp)
-list (REMOVE_ITEM clickhouse_common_io_sources Common/ExceptionExt.cpp)
+add_headers_and_sources(datastore_common_io Common)
+add_headers_and_sources(datastore_common_io Common/Crypto)
+add_headers_and_sources(datastore_common_io Common/JSONParsers)
+add_headers_and_sources(datastore_common_io Common/HashTable)
+add_headers_and_sources(datastore_common_io Common/Scheduler)
+add_headers_and_sources(datastore_common_io Common/Scheduler/Nodes)
+add_headers_and_sources(datastore_common_io IO)
+add_headers_and_sources(datastore_common_io IO/Archives)
+add_headers_and_sources(datastore_common_io IO/Protobuf)
+add_headers_and_sources(datastore_common_io IO/S3)
+add_headers_and_sources(datastore_common_io IO/AzureBlobStorage)
+add_headers_and_sources(datastore_common_io Disks/DiskObjectStorage/ObjectStorages/AzureBlobStorage)
+list (REMOVE_ITEM datastore_common_io_sources Common/malloc.cpp Common/AllocationInterceptors.cpp)
+list (REMOVE_ITEM datastore_common_io_sources Common/ExceptionExt.cpp)
 
 
-add_headers_and_sources(clickhouse_compression Compression)
-add_library(clickhouse_compression ${clickhouse_compression_headers} ${clickhouse_compression_sources})
+add_headers_and_sources(datastore_compression Compression)
+add_library(datastore_compression ${datastore_compression_headers} ${datastore_compression_sources})
 
 add_headers_and_sources(dbms Disks/IO)
 add_headers_and_sources(dbms Disks/DiskObjectStorage)
@@ -212,19 +212,19 @@ else()
     message(STATUS "StorageFileLog is only supported on Linux")
 endif ()
 
-list(APPEND clickhouse_common_io_sources ${CONFIG_INCLUDE_PATH}/config_version.cpp)
+list(APPEND datastore_common_io_sources ${CONFIG_INCLUDE_PATH}/config_version.cpp)
 
 if (NOT ENABLE_SSL)
-    list (REMOVE_ITEM clickhouse_common_io_sources Common/OpenSSLHelpers.cpp)
-    list (REMOVE_ITEM clickhouse_common_io_headers Common/OpenSSLHelpers.h)
+    list (REMOVE_ITEM datastore_common_io_sources Common/OpenSSLHelpers.cpp)
+    list (REMOVE_ITEM datastore_common_io_headers Common/OpenSSLHelpers.h)
 endif ()
 
-add_library(clickhouse_common_io ${clickhouse_common_io_headers} ${clickhouse_common_io_sources})
+add_library(datastore_common_io ${datastore_common_io_headers} ${datastore_common_io_sources})
 
-if (ENABLE_CLICKHOUSE_DISTRIBUTED_CACHE)
-    target_compile_definitions(clickhouse_common_io PUBLIC ENABLE_DISTRIBUTED_CACHE=1)
+if (ENABLE_DATASTORE_DISTRIBUTED_CACHE)
+    target_compile_definitions(datastore_common_io PUBLIC ENABLE_DISTRIBUTED_CACHE=1)
 else()
-    target_compile_definitions(clickhouse_common_io PUBLIC ENABLE_DISTRIBUTED_CACHE=0)
+    target_compile_definitions(datastore_common_io PUBLIC ENABLE_DISTRIBUTED_CACHE=0)
 endif()
 
 # Settings dumpToMap is too slow with MSAN
@@ -248,28 +248,28 @@ if (SANITIZE STREQUAL "address,undefined")
         PROPERTIES COMPILE_FLAGS "-fno-sanitize=pointer-overflow")
 endif ()
 
-add_library (clickhouse_malloc OBJECT Common/malloc.cpp)
+add_library (datastore_malloc OBJECT Common/malloc.cpp)
 set_source_files_properties(Common/malloc.cpp PROPERTIES COMPILE_FLAGS "-fno-builtin")
 if (TARGET ch_contrib::jemalloc)
-    target_link_libraries (clickhouse_malloc PRIVATE ch_contrib::jemalloc clickhouse_common_io)
+    target_link_libraries (datastore_malloc PRIVATE ch_contrib::jemalloc datastore_common_io)
 endif()
 
-add_library (clickhouse_new_delete STATIC Common/AllocationInterceptors.cpp)
-target_link_libraries (clickhouse_new_delete PRIVATE clickhouse_common_io)
+add_library (datastore_new_delete STATIC Common/AllocationInterceptors.cpp)
+target_link_libraries (datastore_new_delete PRIVATE datastore_common_io)
 if (TARGET ch_contrib::jemalloc)
-    target_link_libraries (clickhouse_new_delete PRIVATE ch_contrib::jemalloc)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::jemalloc)
-    target_link_libraries (clickhouse_storages_system PRIVATE ch_contrib::jemalloc)
+    target_link_libraries (datastore_new_delete PRIVATE ch_contrib::jemalloc)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::jemalloc)
+    target_link_libraries (datastore_storages_system PRIVATE ch_contrib::jemalloc)
 endif()
 
 if (TARGET ch_contrib::azure_sdk)
-    target_link_libraries(clickhouse_storages_system PRIVATE ch_contrib::azure_sdk)
+    target_link_libraries(datastore_storages_system PRIVATE ch_contrib::azure_sdk)
 endif()
 
-target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::sparsehash)
-target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::stringzilla)
+target_link_libraries (datastore_common_io PUBLIC ch_contrib::sparsehash)
+target_link_libraries (datastore_common_io PRIVATE ch_contrib::stringzilla)
 if (TARGET ch_contrib::consistent_hashing)
-    target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::consistent_hashing)
+    target_link_libraries (datastore_common_io PRIVATE ch_contrib::consistent_hashing)
 endif()
 
 add_subdirectory(Access/Common)
@@ -280,69 +280,69 @@ macro(add_object_library name common_path)
     add_headers_and_sources(dbms ${common_path})
 endmacro()
 
-add_object_library(clickhouse_access Access)
+add_object_library(datastore_access Access)
 if (TARGET ch_contrib::ssh)
-    add_object_library(clickhouse_access_ssh Access/SSH)
+    add_object_library(datastore_access_ssh Access/SSH)
 endif()
-add_object_library(clickhouse_backups Backups)
+add_object_library(datastore_backups Backups)
 
-add_object_library(clickhouse_core Core)
+add_object_library(datastore_core Core)
 list (APPEND dbms_sources Common/ExceptionExt.cpp)
 
-add_object_library(clickhouse_core_mysql Core/MySQL)
-add_object_library(clickhouse_querypipeline QueryPipeline)
-add_object_library(clickhouse_datatypes DataTypes)
-add_object_library(clickhouse_datatypes_serializations DataTypes/Serializations)
-add_object_library(clickhouse_databases Databases)
-add_object_library(clickhouse_databases_mysql Databases/MySQL)
-add_object_library(clickhouse_disks Disks)
-add_object_library(clickhouse_analyzer Analyzer)
-add_object_library(clickhouse_analyzer_passes Analyzer/Passes)
-add_object_library(clickhouse_analyzer_passes Analyzer/Resolve)
-add_object_library(clickhouse_planner Planner)
-add_object_library(clickhouse_interpreters Interpreters)
-add_object_library(clickhouse_interpreters_cache Interpreters/Cache)
-add_object_library(clickhouse_interpreters_filecache Interpreters/FileCache)
-add_object_library(clickhouse_interpreters_hash_join Interpreters/HashJoin)
-add_object_library(clickhouse_interpreters_access Interpreters/Access)
-add_object_library(clickhouse_interpreters_mysql Interpreters/MySQL)
-add_object_library(clickhouse_interpreters_clusterproxy Interpreters/ClusterProxy)
-add_object_library(clickhouse_interpreters_jit Interpreters/JIT)
-add_object_library(clickhouse_interpreters_wasm Interpreters/WebAssembly)
-add_object_library(clickhouse_interpreters_merge_tree_transaction Interpreters/MergeTreeTransaction)
-add_object_library(clickhouse_columns Columns)
-add_object_library(clickhouse_storages Storages)
-add_object_library(clickhouse_storages_mysql Storages/MySQL)
-add_object_library(clickhouse_storages_distributed Storages/Distributed)
-add_object_library(clickhouse_storages_mergetree Storages/MergeTree)
-add_object_library(clickhouse_storages_mergetree_unique_key Storages/MergeTree/UniqueKey)
-add_object_library(clickhouse_storages_mergetree_compaction Storages/MergeTree/Compaction)
-add_object_library(clickhouse_storages_mergetree_compaction_merge_predicates Storages/MergeTree/Compaction/MergePredicates)
-add_object_library(clickhouse_storages_mergetree_compaction_merge_selectors Storages/MergeTree/Compaction/MergeSelectors)
-add_object_library(clickhouse_storages_mergetree_compaction_parts_collectors Storages/MergeTree/Compaction/PartsCollectors)
-add_object_library(clickhouse_storages_mergetree_compaction_parts_finders Storages/MergeTree/Compaction/PartsFinders)
-add_object_library(clickhouse_storages_mergetree_patch_parts Storages/MergeTree/PatchParts)
-add_object_library(clickhouse_storages_mergetree_projection_index Storages/MergeTree/ProjectionIndex)
-add_object_library(clickhouse_storages_statistics Storages/Statistics)
-add_object_library(clickhouse_storages_windowview Storages/WindowView)
-add_object_library(clickhouse_storages_s3queue Storages/ObjectStorageQueue)
-add_object_library(clickhouse_storages_materializedview Storages/MaterializedView)
-add_object_library(clickhouse_storages_time_series Storages/TimeSeries)
-add_object_library(clickhouse_storages_time_series_prometheus_query_to_sql Storages/TimeSeries/PrometheusQueryToSQL)
-add_object_library(clickhouse_storages_arrowflight Storages/ArrowFlight)
-add_object_library(clickhouse_client Client)
+add_object_library(datastore_core_mysql Core/MySQL)
+add_object_library(datastore_querypipeline QueryPipeline)
+add_object_library(datastore_datatypes DataTypes)
+add_object_library(datastore_datatypes_serializations DataTypes/Serializations)
+add_object_library(datastore_databases Databases)
+add_object_library(datastore_databases_mysql Databases/MySQL)
+add_object_library(datastore_disks Disks)
+add_object_library(datastore_analyzer Analyzer)
+add_object_library(datastore_analyzer_passes Analyzer/Passes)
+add_object_library(datastore_analyzer_passes Analyzer/Resolve)
+add_object_library(datastore_planner Planner)
+add_object_library(datastore_interpreters Interpreters)
+add_object_library(datastore_interpreters_cache Interpreters/Cache)
+add_object_library(datastore_interpreters_filecache Interpreters/FileCache)
+add_object_library(datastore_interpreters_hash_join Interpreters/HashJoin)
+add_object_library(datastore_interpreters_access Interpreters/Access)
+add_object_library(datastore_interpreters_mysql Interpreters/MySQL)
+add_object_library(datastore_interpreters_clusterproxy Interpreters/ClusterProxy)
+add_object_library(datastore_interpreters_jit Interpreters/JIT)
+add_object_library(datastore_interpreters_wasm Interpreters/WebAssembly)
+add_object_library(datastore_interpreters_merge_tree_transaction Interpreters/MergeTreeTransaction)
+add_object_library(datastore_columns Columns)
+add_object_library(datastore_storages Storages)
+add_object_library(datastore_storages_mysql Storages/MySQL)
+add_object_library(datastore_storages_distributed Storages/Distributed)
+add_object_library(datastore_storages_mergetree Storages/MergeTree)
+add_object_library(datastore_storages_mergetree_unique_key Storages/MergeTree/UniqueKey)
+add_object_library(datastore_storages_mergetree_compaction Storages/MergeTree/Compaction)
+add_object_library(datastore_storages_mergetree_compaction_merge_predicates Storages/MergeTree/Compaction/MergePredicates)
+add_object_library(datastore_storages_mergetree_compaction_merge_selectors Storages/MergeTree/Compaction/MergeSelectors)
+add_object_library(datastore_storages_mergetree_compaction_parts_collectors Storages/MergeTree/Compaction/PartsCollectors)
+add_object_library(datastore_storages_mergetree_compaction_parts_finders Storages/MergeTree/Compaction/PartsFinders)
+add_object_library(datastore_storages_mergetree_patch_parts Storages/MergeTree/PatchParts)
+add_object_library(datastore_storages_mergetree_projection_index Storages/MergeTree/ProjectionIndex)
+add_object_library(datastore_storages_statistics Storages/Statistics)
+add_object_library(datastore_storages_windowview Storages/WindowView)
+add_object_library(datastore_storages_s3queue Storages/ObjectStorageQueue)
+add_object_library(datastore_storages_materializedview Storages/MaterializedView)
+add_object_library(datastore_storages_time_series Storages/TimeSeries)
+add_object_library(datastore_storages_time_series_prometheus_query_to_sql Storages/TimeSeries/PrometheusQueryToSQL)
+add_object_library(datastore_storages_arrowflight Storages/ArrowFlight)
+add_object_library(datastore_client Client)
 # Always compile this file with the highest possible level of optimizations, even in Debug builds.
 # https://github.com/Datastore/Datastore/issues/65745
 set_source_files_properties(Client/ClientApplicationBaseParser.cpp PROPERTIES COMPILE_FLAGS "-O3")
-add_object_library(clickhouse_bridge BridgeHelper)
+add_object_library(datastore_bridge BridgeHelper)
 
-if (ENABLE_CLICKHOUSE_DISTRIBUTED_CACHE)
-    add_object_library(clickhouse_distributed_cache DistributedCache)
-    add_object_library(clickhouse_server_distributed_cache Server/DistributedCache)
+if (ENABLE_DATASTORE_DISTRIBUTED_CACHE)
+    add_object_library(datastore_distributed_cache DistributedCache)
+    add_object_library(datastore_server_distributed_cache Server/DistributedCache)
 endif()
 
-add_object_library(clickhouse_server Server)
-add_object_library(clickhouse_server_http Server/HTTP)
+add_object_library(datastore_server Server)
+add_object_library(datastore_server_http Server/HTTP)
 
 # Track dependencies for #embed directives so that changes to embedded files trigger recompilation.
 set_source_files_properties(Server/WebUIRequestHandler.cpp PROPERTIES OBJECT_DEPENDS
@@ -392,29 +392,29 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Storages/System/information_schema/character_sets.sq
 ${CMAKE_CURRENT_SOURCE_DIR}/Storages/System/information_schema/collations.sql")
 
 if (ENABLE_SSL)
-    add_object_library(clickhouse_server_acme Server/ACME)
+    add_object_library(datastore_server_acme Server/ACME)
 endif()
 if (TARGET ch_contrib::ssh)
-    add_object_library(clickhouse_server_ssh Server/SSH)
+    add_object_library(datastore_server_ssh Server/SSH)
 endif()
 if (TARGET ch_contrib::arrow_flight)
-    add_object_library(clickhouse_server_arrowflight Server/ArrowFlight)
+    add_object_library(datastore_server_arrowflight Server/ArrowFlight)
 endif()
-add_object_library(clickhouse_server_embedded_client Server/ClientEmbedded)
-add_object_library(clickhouse_formats Formats)
-add_object_library(clickhouse_processors Processors)
-add_object_library(clickhouse_processors_executors Processors/Executors)
-add_object_library(clickhouse_processors_formats Processors/Formats)
-add_object_library(clickhouse_processors_formats_impl Processors/Formats/Impl)
-add_object_library(clickhouse_processors_transforms Processors/Transforms)
-add_object_library(clickhouse_processors_sources Processors/Sources)
-add_object_library(clickhouse_processors_sinks Processors/Sinks)
-add_object_library(clickhouse_processors_merges Processors/Merges)
-add_object_library(clickhouse_processors_ttl Processors/TTL)
-add_object_library(clickhouse_processors_merges_algorithms Processors/Merges/Algorithms)
-add_object_library(clickhouse_processors_queryplan Processors/QueryPlan)
-add_object_library(clickhouse_processors_queryplan_optimizations Processors/QueryPlan/Optimizations)
-add_object_library(clickhouse_user_defined_functions Functions/UserDefined)
+add_object_library(datastore_server_embedded_client Server/ClientEmbedded)
+add_object_library(datastore_formats Formats)
+add_object_library(datastore_processors Processors)
+add_object_library(datastore_processors_executors Processors/Executors)
+add_object_library(datastore_processors_formats Processors/Formats)
+add_object_library(datastore_processors_formats_impl Processors/Formats/Impl)
+add_object_library(datastore_processors_transforms Processors/Transforms)
+add_object_library(datastore_processors_sources Processors/Sources)
+add_object_library(datastore_processors_sinks Processors/Sinks)
+add_object_library(datastore_processors_merges Processors/Merges)
+add_object_library(datastore_processors_ttl Processors/TTL)
+add_object_library(datastore_processors_merges_algorithms Processors/Merges/Algorithms)
+add_object_library(datastore_processors_queryplan Processors/QueryPlan)
+add_object_library(datastore_processors_queryplan_optimizations Processors/QueryPlan/Optimizations)
+add_object_library(datastore_user_defined_functions Functions/UserDefined)
 
 # Libcxx hardening means out-of-bounds checks which causes noticeable degradations for some workflows.
 # TUs where libcxx hardening needs to be disabled are specified here.
@@ -426,11 +426,11 @@ set_property(SOURCE
     PROPERTY COMPILE_FLAGS "-U_LIBCPP_HARDENING_MODE -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_NONE")
 
 if (USE_PARQUET)
-    add_object_library(clickhouse_processors_formats_impl_parquet Processors/Formats/Impl/Parquet)
+    add_object_library(datastore_processors_formats_impl_parquet Processors/Formats/Impl/Parquet)
 endif()
 
 if (TARGET ch_contrib::nuraft)
-    add_object_library(clickhouse_coordination Coordination)
+    add_object_library(datastore_coordination Coordination)
 endif()
 
 add_library (dbms STATIC ${dbms_headers} ${dbms_sources})
@@ -441,12 +441,12 @@ if (TARGET ch_contrib::jemalloc)
     target_link_libraries (dbms PRIVATE ch_contrib::jemalloc)
 endif()
 
-target_include_directories (dbms PUBLIC "${ClickHouse_SOURCE_DIR}/src" "${ClickHouse_BINARY_DIR}/src")
-target_include_directories (clickhouse_common_io PUBLIC "${ClickHouse_SOURCE_DIR}/src" "${ClickHouse_BINARY_DIR}/src")
+target_include_directories (dbms PUBLIC "${Datastore_SOURCE_DIR}/src" "${Datastore_BINARY_DIR}/src")
+target_include_directories (datastore_common_io PUBLIC "${Datastore_SOURCE_DIR}/src" "${Datastore_BINARY_DIR}/src")
 
 if (TARGET ch_contrib::llvm)
     target_link_libraries (dbms PUBLIC ch_contrib::llvm)
-    target_link_libraries (clickhouse_compression PUBLIC ch_contrib::llvm)
+    target_link_libraries (datastore_compression PUBLIC ch_contrib::llvm)
 endif ()
 
 # Otherwise it will slow down stack traces printing too much.
@@ -460,7 +460,7 @@ if ("${CMAKE_BUILD_TYPE_UC}" STREQUAL "DEBUG")
             PROPERTIES COMPILE_FLAGS "-O2 ${WITHOUT_COVERAGE_FLAGS}")
 endif()
 
-target_link_libraries (clickhouse_common_io
+target_link_libraries (datastore_common_io
         PRIVATE
             widechar_width
             ${LINK_LIBRARIES_ONLY_ON_X86_64}
@@ -472,19 +472,19 @@ target_link_libraries (clickhouse_common_io
 )
 
 
-target_link_libraries (clickhouse_compression
+target_link_libraries (datastore_compression
         PUBLIC
             pcg_random
-            clickhouse_parsers
+            datastore_parsers
         PRIVATE
             ch_contrib::lz4
             ch_contrib::roaring
 )
 if (TARGET ch_contrib::fastpfor)
-    target_link_libraries (clickhouse_compression PRIVATE ch_contrib::fastpfor)
+    target_link_libraries (datastore_compression PRIVATE ch_contrib::fastpfor)
 endif()
 
-target_link_libraries(clickhouse_common_io
+target_link_libraries(datastore_common_io
         PUBLIC
             boost::program_options
             boost::system
@@ -497,29 +497,29 @@ target_link_libraries(clickhouse_common_io
 )
 
 if (TARGET ch_contrib::libfiu)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::libfiu)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::libfiu)
 endif()
 
 if (TARGET ch_contrib::cpuid)
-    target_link_libraries(clickhouse_common_io PRIVATE ch_contrib::cpuid)
+    target_link_libraries(datastore_common_io PRIVATE ch_contrib::cpuid)
 endif()
 
 if (TARGET ch_contrib::crc32-vpmsum)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::crc32-vpmsum)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::crc32-vpmsum)
  endif()
 
 if (TARGET ch_contrib::jwt-cpp)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::jwt-cpp)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::jwt-cpp)
 endif()
 
 if (TARGET ch_contrib::ssh)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::ssh)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::ssh)
 endif()
 
 target_link_libraries(dbms PUBLIC ch_contrib::abseil_swiss_tables)
-target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::abseil_swiss_tables)
+target_link_libraries (datastore_common_io PUBLIC ch_contrib::abseil_swiss_tables)
 
-# Make dbms depend on roaring instead of clickhouse_common_io so that roaring itself can depend on clickhouse_common_io
+# Make dbms depend on roaring instead of datastore_common_io so that roaring itself can depend on datastore_common_io
 # That way we we can redirect malloc/free functions avoiding circular dependencies
 target_link_libraries(dbms PUBLIC ch_contrib::roaring)
 if (TARGET ch_contrib::fastpfor)
@@ -540,12 +540,12 @@ endif()
 
 if (TARGET ch_contrib::krb5)
     target_link_libraries(dbms PRIVATE ch_contrib::krb5)
-    target_link_libraries(clickhouse_compression PRIVATE ch_contrib::krb5)
+    target_link_libraries(datastore_compression PRIVATE ch_contrib::krb5)
 endif()
 
 if (TARGET ch_contrib::nuraft)
     target_link_libraries(dbms PUBLIC ch_contrib::nuraft)
-    target_link_libraries(clickhouse_compression PUBLIC ch_contrib::nuraft)
+    target_link_libraries(datastore_compression PUBLIC ch_contrib::nuraft)
 endif()
 
 target_link_libraries(
@@ -553,22 +553,22 @@ target_link_libraries(
     PRIVATE
         boost::filesystem
         boost::program_options
-        clickhouse_common_config
-        clickhouse_common_zookeeper_base
-        clickhouse_common_zookeeper
-        clickhouse_dictionaries_embedded
-        clickhouse_parsers
+        datastore_common_config
+        datastore_common_zookeeper_base
+        datastore_common_zookeeper
+        datastore_dictionaries_embedded
+        datastore_parsers
         ch_contrib::lz4
         Poco::JSON
     PUBLIC
         boost::system
-        clickhouse_compression
-        clickhouse_common_io
+        datastore_compression
+        datastore_common_io
         Poco::Redis
 )
 
 if (TARGET ch_contrib::jwt-cpp)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::jwt-cpp)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::jwt-cpp)
 endif()
 
 if (TARGET ch_contrib::mongocxx)
@@ -593,7 +593,7 @@ target_link_libraries(
         boost::heap
         boost::iostreams)
 
-target_link_libraries(clickhouse_common_io PUBLIC
+target_link_libraries(datastore_common_io PUBLIC
     ch_contrib::miniselect
     ch_contrib::pdqsort)
 target_link_libraries(dbms PUBLIC
@@ -606,11 +606,11 @@ if (TARGET ch_contrib::simdcomp)
     target_link_libraries (dbms PRIVATE ch_contrib::simdcomp)
 endif()
 
-target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::zstd)
-target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::xz)
+target_link_libraries(datastore_common_io PUBLIC ch_contrib::zstd)
+target_link_libraries(datastore_common_io PUBLIC ch_contrib::xz)
 
 if (TARGET ch_contrib::pocketfft)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::pocketfft)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::pocketfft)
 endif ()
 
 if (TARGET ch_contrib::icu)
@@ -630,11 +630,11 @@ if (TARGET ch_contrib::avrocpp)
 endif ()
 
 set_source_files_properties(Common/CaresPTRResolver.cpp PROPERTIES COMPILE_FLAGS -Wno-reserved-identifier)
-target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::c-ares)
+target_link_libraries (datastore_common_io PRIVATE ch_contrib::c-ares)
 
 if (TARGET OpenSSL::Crypto)
     target_link_libraries(dbms PRIVATE OpenSSL::Crypto)
-    target_link_libraries (clickhouse_common_io PRIVATE OpenSSL::Crypto)
+    target_link_libraries (datastore_common_io PRIVATE OpenSSL::Crypto)
 endif ()
 
 if (ENABLE_CLIENT_AI AND TARGET ch_contrib::ai-sdk-cpp)
@@ -643,17 +643,17 @@ endif()
 
 if (TARGET ch_contrib::ldap)
     target_link_libraries(dbms PRIVATE ch_contrib::ldap ch_contrib::lber)
-    target_link_libraries (clickhouse_compression PRIVATE ch_contrib::ldap ch_contrib::lber)
+    target_link_libraries (datastore_compression PRIVATE ch_contrib::ldap ch_contrib::lber)
 endif ()
 target_link_libraries(dbms PUBLIC ch_contrib::sparsehash)
 
 if (TARGET ch_contrib::protobuf)
     target_link_libraries(dbms PRIVATE ch_contrib::protobuf)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::protobuf)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::protobuf)
 endif ()
 
-if (TARGET clickhouse_grpc_protos)
-    target_link_libraries(dbms PUBLIC clickhouse_grpc_protos)
+if (TARGET datastore_grpc_protos)
+    target_link_libraries(dbms PUBLIC datastore_grpc_protos)
 endif()
 
 if (TARGET ch_contrib::hdfs)
@@ -666,11 +666,11 @@ endif()
 
 
 if (TARGET ch_contrib::aws_s3)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::aws_s3)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::aws_s3)
 endif()
 
 if (TARGET ch_contrib::azure_sdk)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::azure_sdk)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::azure_sdk)
     target_link_libraries(dbms PRIVATE ch_contrib::azure_sdk)
 endif()
 
@@ -683,11 +683,11 @@ if (TARGET ch_contrib::vectorscan)
 endif()
 
 if (TARGET ch_contrib::brotli)
-    target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::brotli)
+    target_link_libraries (datastore_common_io PRIVATE ch_contrib::brotli)
 endif()
 
 if (TARGET ch_contrib::snappy)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::snappy)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::snappy)
 endif()
 
 if (TARGET ch_contrib::amqp_cpp)
@@ -699,19 +699,19 @@ if (TARGET ch_contrib::sqlite)
 endif()
 
 if (TARGET ch_contrib::bcrypt)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::bcrypt)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::bcrypt)
 endif()
 
 if (TARGET ch_contrib::msgpack)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::msgpack)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::msgpack)
 endif()
 
 if (TARGET ch_contrib::liburing)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::liburing)
-    target_include_directories (clickhouse_common_io SYSTEM BEFORE PUBLIC ${LIBURING_COMPAT_INCLUDE_DIR} ${LIBURING_INCLUDE_DIR})
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::liburing)
+    target_include_directories (datastore_common_io SYSTEM BEFORE PUBLIC ${LIBURING_COMPAT_INCLUDE_DIR} ${LIBURING_INCLUDE_DIR})
 endif()
 
-target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::fast_float)
+target_link_libraries (datastore_common_io PUBLIC ch_contrib::fast_float)
 
 if (USE_ORC)
     target_link_libraries(dbms PUBLIC ${ORC_LIBRARIES})
@@ -730,9 +730,9 @@ if (TARGET ch_contrib::datasketches)
     target_link_libraries(dbms PUBLIC ch_contrib::datasketches)
 endif ()
 
-target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::lz4)
+target_link_libraries (datastore_common_io PRIVATE ch_contrib::lz4)
 
-target_link_libraries(clickhouse_common_io PUBLIC boost::context)
+target_link_libraries(datastore_common_io PUBLIC boost::context)
 target_link_libraries(dbms PUBLIC boost::context)
 
 if (TARGET ch_contrib::stemmer)
@@ -749,19 +749,19 @@ if (TARGET ch_contrib::ulid)
 endif()
 
 if (TARGET ch_contrib::bzip2)
-    target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::bzip2)
+    target_link_libraries (datastore_common_io PRIVATE ch_contrib::bzip2)
 endif()
 
 if (TARGET ch_contrib::libarchive)
-    target_link_libraries (clickhouse_common_io PUBLIC ch_contrib::libarchive)
+    target_link_libraries (datastore_common_io PUBLIC ch_contrib::libarchive)
 endif()
 
 if (TARGET ch_contrib::minizip)
-    target_link_libraries (clickhouse_common_io PRIVATE ch_contrib::minizip)
+    target_link_libraries (datastore_common_io PRIVATE ch_contrib::minizip)
 endif ()
 
 if (TARGET ch_contrib::simdjson)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::simdjson)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::simdjson)
     target_link_libraries(dbms PRIVATE ch_contrib::simdjson)
 endif()
 
@@ -794,7 +794,7 @@ if (TARGET ch_rust::delta_kernel_rs)
     # only if there were no such symbols before.
     #
     # Without it some symbols for lz4/zstd can be used from crates instead of our contrib.
-    target_link_libraries(clickhouse_common_io PRIVATE ch_rust::delta_kernel_rs)
+    target_link_libraries(datastore_common_io PRIVATE ch_rust::delta_kernel_rs)
     target_link_libraries(dbms PRIVATE ch_rust::delta_kernel_rs)
 endif ()
 
@@ -807,7 +807,7 @@ if (TARGET ch_contrib::arrow_flight)
 endif()
 
 if (ENABLE_BUZZHOUSE)
-    target_link_libraries(dbms PRIVATE clickhouse_buzzhouse_proto)
+    target_link_libraries(dbms PRIVATE datastore_buzzhouse_proto)
 endif()
 
 if (TARGET ch_contrib::wasmedge)
@@ -816,7 +816,7 @@ endif()
 
 if (TARGET ch_rust::wasmtime)
     # FIXME: same as for ch_rust::delta_kernel_rs above
-    target_link_libraries(clickhouse_common_io PRIVATE ch_rust::wasmtime)
+    target_link_libraries(datastore_common_io PRIVATE ch_rust::wasmtime)
     target_link_libraries(dbms PRIVATE ch_rust::wasmtime)
 endif()
 
@@ -827,8 +827,8 @@ if (ENABLE_TESTS)
     endmacro()
 
     # attach all dbms gtest sources
-    grep_gtest_sources("${ClickHouse_SOURCE_DIR}/src" dbms_gtest_sources)
-    clickhouse_add_executable(unit_tests_dbms ${dbms_gtest_sources})
+    grep_gtest_sources("${Datastore_SOURCE_DIR}/src" dbms_gtest_sources)
+    datastore_add_executable(unit_tests_dbms ${dbms_gtest_sources})
 
     # gtest framework has substandard code
     target_compile_options(unit_tests_dbms PRIVATE
@@ -838,14 +838,14 @@ if (ENABLE_TESTS)
     target_link_libraries(unit_tests_dbms PRIVATE
         ch_contrib::gmock_all
         ch_contrib::gtest
-        clickhouse_functions
-        clickhouse_aggregate_functions
-        clickhouse_parsers
-        clickhouse_storages_system
+        datastore_functions
+        datastore_aggregate_functions
+        datastore_parsers
+        datastore_storages_system
         dbms
-        clickhouse_common_zookeeper_base
-        clickhouse_common_config
-        clickhouse_common_zookeeper)
+        datastore_common_zookeeper_base
+        datastore_common_config
+        datastore_common_zookeeper)
 
     if (TARGET ch_contrib::simdjson)
         target_link_libraries(unit_tests_dbms PRIVATE ch_contrib::simdjson)
@@ -873,5 +873,5 @@ if (ENABLE_TESTS)
 endif ()
 
 if (TARGET ch_contrib::jwt-cpp)
-    add_object_library(clickhouse_client_jwt Client/jwt)
+    add_object_library(datastore_client_jwt Client/jwt)
 endif()

@@ -5,7 +5,7 @@
 #include <cerrno>
 
 #include <Common/logger_useful.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/LocalDateTime.h>
 #include <Common/ErrnoException.h>
 #include <base/errnoToString.h>
@@ -39,7 +39,7 @@ StatusFile::FillFunction StatusFile::write_full_info = [](WriteBuffer & out)
 {
     out << "PID: " << getpid() << "\n"
         << "Started at: " << LocalDateTime(time(nullptr)) << "\n"
-        << "Revision: " << ClickHouseRevision::getVersionRevision() << "\n";
+        << "Revision: " << DatastoreRevision::getVersionRevision() << "\n";
 };
 
 

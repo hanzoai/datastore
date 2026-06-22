@@ -39,7 +39,7 @@ if (SANITIZE)
             # compilers or CPU. We use in hash functions like SipHash and many other places in our codebase.
             # This flag is needed only because fuzzers are run inside oss-fuzz infrastructure
             # and they have a bunch of flags not halt the program if UIO happend and even to silence that warnings.
-            # But for unknown reason that flags don't work with ClickHouse or we don't understand how to properly use them,
+            # But for unknown reason that flags don't work with Datastore or we don't understand how to properly use them,
             # that's why we often receive reports about UIO. The simplest way to avoid this is just  set this flag here.
             set(UBSAN_FLAGS "${UBSAN_FLAGS} -fno-sanitize=unsigned-integer-overflow")
         endif()
@@ -69,13 +69,13 @@ option(WITH_COVERAGE "Instrumentation for code coverage with default implementat
 option(WITH_COVERAGE_DEPTH "Shadow call-stack depth tracking via -finstrument-functions-after-inlining (requires WITH_COVERAGE)" OFF)
 
 option(WITH_COVERAGE_XRAY
-    "Use XRay instrumentation for exact call-depth tracking (requires WITH_COVERAGE and ENABLE_XRAY). Builds with -DCLICKHOUSE_XRAY_INSTRUMENT_COVERAGE=1. XRay maps runtime function text addresses to LLVM profile records, solving the PIE FunctionPointer=0 limitation."
+    "Use XRay instrumentation for exact call-depth tracking (requires WITH_COVERAGE and ENABLE_XRAY). Builds with -DDATASTORE_XRAY_INSTRUMENT_COVERAGE=1. XRay maps runtime function text addresses to LLVM profile records, solving the PIE FunctionPointer=0 limitation."
     OFF)
 
 if (WITH_COVERAGE)
     message (STATUS "Enabled instrumentation for code coverage")
 
-    # But the actual coverage will be enabled on per-library basis: for ClickHouse code, but not for 3rd-party.
+    # But the actual coverage will be enabled on per-library basis: for Datastore code, but not for 3rd-party.
     set (COVERAGE_FLAGS -fprofile-instr-generate -fcoverage-mapping)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 
@@ -102,8 +102,8 @@ if (WITH_COVERAGE)
 
     if (WITH_COVERAGE_XRAY)
         message (STATUS "Enabled XRay-based exact call-depth tracking for coverage")
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCLICKHOUSE_XRAY_INSTRUMENT_COVERAGE=1")
-        set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -DCLICKHOUSE_XRAY_INSTRUMENT_COVERAGE=1")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDATASTORE_XRAY_INSTRUMENT_COVERAGE=1")
+        set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -DDATASTORE_XRAY_INSTRUMENT_COVERAGE=1")
     endif()
 
     set (WITHOUT_COVERAGE_FLAGS "-fno-profile-instr-generate -fno-coverage-mapping")
@@ -121,4 +121,4 @@ endif()
 # The compiler searches -isystem paths before its implicit resource directory, so putting our
 # bundled path here ensures it takes precedence without disrupting #include_next chains (which
 # libcxx relies on to reach the compiler's own stddef.h, stdarg.h, etc.).
-include_directories (SYSTEM "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/compiler-rt/include")
+include_directories (SYSTEM "${Datastore_SOURCE_DIR}/contrib/llvm-project/compiler-rt/include")

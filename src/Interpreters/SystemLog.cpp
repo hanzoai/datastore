@@ -62,7 +62,7 @@
 #include <Storages/MergeTree/MergeTreeSettings.h>
 #include <Interpreters/SystemLogDefaultFlushPolicy.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/DistributedCacheLog.h>
 #include <Interpreters/DistributedCacheServerLog.h>
 #endif
@@ -312,7 +312,7 @@ SystemLogs::SystemLogs(ContextPtr global_context, const Poco::Util::AbstractConf
     member = createSystemLog<log_type>(global_context, "system", #member, config, #member, descr); \
 
     LIST_OF_ALL_SYSTEM_LOGS(CREATE_PUBLIC_MEMBERS)
-    #if CLICKHOUSE_CLOUD
+    #if DATASTORE_CLOUD
         LIST_OF_CLOUD_SYSTEM_LOGS(CREATE_PUBLIC_MEMBERS)
     #endif
 #undef CREATE_PUBLIC_MEMBERS
@@ -396,7 +396,7 @@ std::vector<ISystemLog *> SystemLogs::getAllLogs() const
 
     std::vector<ISystemLog *> result = {
         LIST_OF_ALL_SYSTEM_LOGS(GET_RAW_POINTERS)
-        #if CLICKHOUSE_CLOUD
+        #if DATASTORE_CLOUD
             LIST_OF_CLOUD_SYSTEM_LOGS(GET_RAW_POINTERS)
         #endif
     };
@@ -415,7 +415,7 @@ bool hasAnySystemLogConfigured(const Poco::Util::AbstractConfiguration & config)
         return true;
 
     LIST_OF_ALL_SYSTEM_LOGS(CHECK_HAS_SYSTEM_LOG)
-    #if CLICKHOUSE_CLOUD
+    #if DATASTORE_CLOUD
         LIST_OF_CLOUD_SYSTEM_LOGS(CHECK_HAS_SYSTEM_LOG)
     #endif
 #undef CHECK_HAS_SYSTEM_LOG
@@ -473,7 +473,7 @@ void SystemLogs::flushImpl(const std::vector<std::pair<String, String>> & names,
         std::unordered_map<String, ISystemLog *> logs_map
         {
             LIST_OF_ALL_SYSTEM_LOGS(GET_MAP_VALUES)
-            #if CLICKHOUSE_CLOUD
+            #if DATASTORE_CLOUD
                 LIST_OF_CLOUD_SYSTEM_LOGS(GET_MAP_VALUES)
             #endif
         };
@@ -967,7 +967,7 @@ ASTPtr SystemLog<LogElement>::getCreateTableQuery()
 
 #define INSTANTIATE_SYSTEM_LOG(ELEMENT) template class SystemLog<ELEMENT>;
 SYSTEM_LOG_ELEMENTS(INSTANTIATE_SYSTEM_LOG)
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 SYSTEM_LOG_ELEMENTS_CLOUD(INSTANTIATE_SYSTEM_LOG)
 #endif
 

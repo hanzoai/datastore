@@ -278,7 +278,7 @@ protected:
     Stopwatch stopwatch{CLOCK_MONOTONIC_COARSE};
     UInt64 last_performance_counters_update_time = 0;
 
-    /// This is helpful for cut linking dependencies for clickhouse_common_io
+    /// This is helpful for cut linking dependencies for datastore_common_io
     using Deleter = std::function<void()>;
     Deleter deleter;
 

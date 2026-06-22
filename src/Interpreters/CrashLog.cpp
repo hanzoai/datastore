@@ -7,7 +7,7 @@
 #include <DataTypes/DataTypesNumber.h>
 #include <Interpreters/CrashLog.h>
 #include <base/getFQDNOrHostName.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DateLUTImpl.h>
 #include <Common/StackTrace.h>
 #include <Common/Stopwatch.h>
@@ -78,7 +78,7 @@ void CrashLogElement::appendToBlock(MutableColumns & columns) const
     columns[i++]->insertData(signal_description.data(), signal_description.size());
     columns[i++]->insert(current_exception_trace_full);
     columns[i++]->insert(VERSION_FULL);
-    columns[i++]->insert(ClickHouseRevision::getVersionRevision());
+    columns[i++]->insert(DatastoreRevision::getVersionRevision());
 
     String build_id_hex;
 #if defined(__ELF__) && !defined(OS_FREEBSD)

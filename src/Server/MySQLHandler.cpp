@@ -145,12 +145,12 @@ static String showTableStatusReplacementQuery(const String & query)
     return query;
 }
 
-static std::optional<String> setSettingReplacementQuery(const String & query, const String & mysql_setting, const String & clickhouse_setting)
+static std::optional<String> setSettingReplacementQuery(const String & query, const String & mysql_setting, const String & datastore_setting)
 {
     const String prefix = "SET " + mysql_setting;
     // if (query.length() >= prefix.length() && boost::iequals(std::string_view(prefix), std::string_view(query.data(), 3)))
     if (checkShouldReplaceQuery(query, prefix))
-        return "SET " + clickhouse_setting + String(query.data() + prefix.length());
+        return "SET " + datastore_setting + String(query.data() + prefix.length());
     return std::nullopt;
 }
 
@@ -506,9 +506,9 @@ void MySQLHandler::comQuery(ReadBuffer & payload, bool binary_protocol)
         // Settings replacements
         if (!should_replace)
         {
-            for (auto const & [mysql_setting, clickhouse_setting] : settings_replacements)
+            for (auto const & [mysql_setting, datastore_setting] : settings_replacements)
             {
-                const auto replacement_query_opt = setSettingReplacementQuery(query, mysql_setting, clickhouse_setting);
+                const auto replacement_query_opt = setSettingReplacementQuery(query, mysql_setting, datastore_setting);
                 if (replacement_query_opt.has_value())
                 {
                     should_replace = true;

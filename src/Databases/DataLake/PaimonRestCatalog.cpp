@@ -510,7 +510,7 @@ bool PaimonRestCatalog::tryGetTableMetadata(const String & database_name, const 
             DB::NamesAndTypesList names_types_list;
             for (const auto & field : table_schema.fields)
             {
-                names_types_list.emplace_back(field.name, field.type.clickhouse_data_type);
+                names_types_list.emplace_back(field.name, field.type.datastore_data_type);
             }
             result.setSchema(names_types_list);
         }

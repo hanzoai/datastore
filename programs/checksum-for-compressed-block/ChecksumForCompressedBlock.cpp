@@ -34,7 +34,7 @@ std::string flipBit(std::string s, size_t pos)
 }
 
 
-int mainEntryClickHouseChecksumForCompressedBlock(int, char **)
+int mainEntryDatastoreChecksumForCompressedBlock(int, char **)
 {
     using namespace DB;
     ReadBufferFromFileDescriptor in(STDIN_FILENO);

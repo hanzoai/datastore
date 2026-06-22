@@ -3667,8 +3667,8 @@ async function tokenize(query) {
     let memory_offset = 0;
 
     /// Allocate memory for the lexer object
-    const lexer = new Uint8Array(buffer, memory_offset, exports.clickhouse_lexer_size);
-    memory_offset += exports.clickhouse_lexer_size;
+    const lexer = new Uint8Array(buffer, memory_offset, exports.datastore_lexer_size);
+    memory_offset += exports.datastore_lexer_size;
 
     /// Allocate the query
     const bytes = new TextEncoder().encode(query);
@@ -3679,7 +3679,7 @@ async function tokenize(query) {
     const query_end = memory_offset;
 
     /// Initialize the lexer
-    exports.clickhouse_lexer_create(lexer, query_begin, query_end, 65536);
+    exports.datastore_lexer_create(lexer, query_begin, query_end, 65536);
 
     /// Allocate the out ptrs
     const token_begin = memory_offset;
@@ -3690,8 +3690,8 @@ async function tokenize(query) {
     let result = [];
 
     while (true) {
-        const token_type = exports.clickhouse_lexer_next_token(lexer, token_begin, token_end);
-        if (exports.clickhouse_lexer_token_is_error(token_type) || exports.clickhouse_lexer_token_is_end(token_type)) {
+        const token_type = exports.datastore_lexer_next_token(lexer, token_begin, token_end);
+        if (exports.datastore_lexer_token_is_error(token_type) || exports.datastore_lexer_token_is_end(token_type)) {
             break;
         }
 
@@ -3702,7 +3702,7 @@ async function tokenize(query) {
         const token_bytes = new Uint8Array(buffer, begin, end - begin);
         let token = new TextDecoder().decode(token_bytes);
 
-        result.push({type: token_type, significant: exports.clickhouse_lexer_token_is_significant(token_type), token: token});
+        result.push({type: token_type, significant: exports.datastore_lexer_token_is_significant(token_type), token: token});
     }
 
     return result;

@@ -30,7 +30,7 @@
 #include <Common/PoolId.h>
 #include <Common/MemoryTracker.h>
 #include <Common/MemoryWorker.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DNSResolver.h>
 #include <Common/CgroupsMemoryUsageObserver.h>
 #include <Common/CurrentMetrics.h>
@@ -487,7 +487,7 @@ namespace ProfileEvents
 
 namespace fs = std::filesystem;
 
-int mainEntryClickHouseServer(int argc, char ** argv)
+int mainEntryDatastoreServer(int argc, char ** argv)
 {
     DB::Server app;
 
@@ -1238,7 +1238,7 @@ try
                     /// Get the memory area with (current) code segment.
                     /// It's better to lock only the code segment instead of calling "mlockall",
                     /// because otherwise debug info will be also locked in memory, and it can be huge.
-                    auto [addr, len] = getMappedArea(reinterpret_cast<void *>(mainEntryClickHouseServer));
+                    auto [addr, len] = getMappedArea(reinterpret_cast<void *>(mainEntryDatastoreServer));
 
                     LOG_TRACE(log, "Will do mlock to prevent executable memory from being paged out. It may take a few seconds.");
                     if (0 != mlock(addr, len))
@@ -1358,8 +1358,8 @@ try
 
     QueryPlanStepRegistry::registerPlanSteps();
 
-    CurrentMetrics::set(CurrentMetrics::Revision, ClickHouseRevision::getVersionRevision());
-    CurrentMetrics::set(CurrentMetrics::VersionInteger, ClickHouseRevision::getVersionInteger());
+    CurrentMetrics::set(CurrentMetrics::Revision, DatastoreRevision::getVersionRevision());
+    CurrentMetrics::set(CurrentMetrics::VersionInteger, DatastoreRevision::getVersionInteger());
 
     /** Context contains all that query execution is dependent:
       *  settings, available functions, data types, aggregate functions, databases, ...

@@ -709,10 +709,10 @@ getDictionaryConfigurationFromAST(const ASTCreateQuery & query, ContextPtr conte
     return conf;
 }
 
-std::optional<ClickHouseDictionarySourceInfo>
-getInfoIfClickHouseDictionarySource(DictionaryConfigurationPtr & config, ContextPtr global_context)
+std::optional<DatastoreDictionarySourceInfo>
+getInfoIfDatastoreDictionarySource(DictionaryConfigurationPtr & config, ContextPtr global_context)
 {
-    ClickHouseDictionarySourceInfo info;
+    DatastoreDictionarySourceInfo info;
 
     bool secure = config->getBool("dictionary.source.clickhouse.secure", false);
     UInt16 default_port = secure ? global_context->getTCPPortSecure().value_or(0) : global_context->getTCPPort();

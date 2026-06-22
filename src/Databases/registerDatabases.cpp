@@ -13,7 +13,7 @@ void registerDatabaseDictionary(DatabaseFactory & factory);
 void registerDatabaseMemory(DatabaseFactory & factory);
 void registerDatabaseFilesystem(DatabaseFactory & factory);
 void registerDatabaseReplicated(DatabaseFactory & factory);
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 void registerDatabaseShared(DatabaseFactory & factory);
 #endif
 
@@ -54,7 +54,7 @@ void registerDatabases()
     registerDatabaseMemory(factory);
     registerDatabaseFilesystem(factory);
     registerDatabaseReplicated(factory);
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     registerDatabaseShared(factory);
 #endif
 

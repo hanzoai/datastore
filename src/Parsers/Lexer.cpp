@@ -591,14 +591,14 @@ const char * getErrorTokenDescription(TokenType type)
 extern "C"
 {
 
-size_t clickhouse_lexer_size = sizeof(Lexer);
+size_t datastore_lexer_size = sizeof(Lexer);
 
-void clickhouse_lexer_create(void * ptr, const char * begin, const char * end, size_t max_query_size)
+void datastore_lexer_create(void * ptr, const char * begin, const char * end, size_t max_query_size)
 {
     new(ptr) Lexer(begin, end, max_query_size);
 }
 
-unsigned char clickhouse_lexer_next_token(void * ptr, const char ** out_token_begin, const char ** out_token_end)
+unsigned char datastore_lexer_next_token(void * ptr, const char ** out_token_begin, const char ** out_token_end)
 {
     Token res = reinterpret_cast<Lexer *>(ptr)->nextToken();
     *out_token_begin = res.begin;
@@ -606,17 +606,17 @@ unsigned char clickhouse_lexer_next_token(void * ptr, const char ** out_token_be
     return static_cast<unsigned char>(res.type);
 }
 
-int clickhouse_lexer_token_is_significant(unsigned char token)
+int datastore_lexer_token_is_significant(unsigned char token)
 {
     return token != static_cast<unsigned char>(TokenType::Whitespace) && token != static_cast<unsigned char>(TokenType::Comment);
 }
 
-int clickhouse_lexer_token_is_error(unsigned char token)
+int datastore_lexer_token_is_error(unsigned char token)
 {
     return token > static_cast<unsigned char>(TokenType::EndOfStream);
 }
 
-int clickhouse_lexer_token_is_end(unsigned char token)
+int datastore_lexer_token_is_end(unsigned char token)
 {
     return token == static_cast<unsigned char>(TokenType::EndOfStream);
 }

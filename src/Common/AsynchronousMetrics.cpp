@@ -481,13 +481,13 @@ template <typename Value>
 std::optional<Value> saveJemallocMetricImpl(
     AsynchronousMetricValues & values,
     const std::string & jemalloc_full_name,
-    const std::string & clickhouse_full_name)
+    const std::string & datastore_full_name)
 {
     Value value{};
     if (!Jemalloc::tryGetValue(jemalloc_full_name.c_str(), value))
         return std::nullopt;
 
-    values[clickhouse_full_name] = AsynchronousMetricValue(value, "An internal metric of the low-level memory allocator (jemalloc). See https://jemalloc.net/jemalloc.3.html");
+    values[datastore_full_name] = AsynchronousMetricValue(value, "An internal metric of the low-level memory allocator (jemalloc). See https://jemalloc.net/jemalloc.3.html");
     return value;
 }
 

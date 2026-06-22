@@ -1,5 +1,5 @@
-set (CURRENT_DIR_IN_SOURCES "${ClickHouse_SOURCE_DIR}/src/Parsers/fuzzers/codegen_fuzzer")
-set (CURRENT_DIR_IN_BINARY "${ClickHouse_BINARY_DIR}/src/Parsers/fuzzers/codegen_fuzzer")
+set (CURRENT_DIR_IN_SOURCES "${Datastore_SOURCE_DIR}/src/Parsers/fuzzers/codegen_fuzzer")
+set (CURRENT_DIR_IN_BINARY "${Datastore_BINARY_DIR}/src/Parsers/fuzzers/codegen_fuzzer")
 
 # Copy scripts and template file to build directory to generate .proto and .cpp file from them
 configure_file(
@@ -20,7 +20,7 @@ configure_file(
 add_custom_command(
     OUTPUT
         "${CURRENT_DIR_IN_BINARY}/clickhouse.g"
-    COMMAND ./update.sh "${ClickHouse_SOURCE_DIR}/tests/fuzz/all.dict"
+    COMMAND ./update.sh "${Datastore_SOURCE_DIR}/tests/fuzz/all.dict"
 )
 
 add_custom_command(
@@ -37,7 +37,7 @@ set(FUZZER_SRCS codegen_select_fuzzer.cpp "${CURRENT_DIR_IN_BINARY}/out.cpp" ${P
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-clickhouse_add_executable(codegen_select_fuzzer ${FUZZER_SRCS})
+datastore_add_executable(codegen_select_fuzzer ${FUZZER_SRCS})
 
 set_source_files_properties("${PROTO_SRCS}" "out.cpp" PROPERTIES COMPILE_FLAGS "-Wno-reserved-identifier -Wno-extra-semi-stmt -Wno-used-but-marked-unused -Wno-unreachable-code-return -Wno-nullability-extension")
 
@@ -47,4 +47,4 @@ target_compile_options (codegen_select_fuzzer PRIVATE -Wno-newline-eof)
 target_link_libraries(protoc ch_contrib::fuzzer)
 
 target_include_directories(codegen_select_fuzzer SYSTEM BEFORE PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
-target_link_libraries(codegen_select_fuzzer PRIVATE ch_contrib::protobuf_mutator ch_contrib::protoc clickhouse_functions dbms)
+target_link_libraries(codegen_select_fuzzer PRIVATE ch_contrib::protobuf_mutator ch_contrib::protoc datastore_functions dbms)

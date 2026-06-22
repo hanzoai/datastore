@@ -143,7 +143,7 @@ interserver_http_port: 9009
 # For 'Connection: keep-alive' in HTTP 1.1
 keep_alive_timeout: 10
 
-# gRPC protocol (see src/Server/grpc_protos/clickhouse_grpc.proto for the API)
+# gRPC protocol (see src/Server/grpc_protos/datastore_grpc.proto for the API)
 # grpc_port: 9100
 grpc:
     enable_ssl: false
@@ -450,7 +450,7 @@ user_directories:
 #   #         scope: subtree
 #   #         search_filter: '(&amp;(objectClass=groupOfNames)(member={bind_dn}))'
 #   #         attribute: cn
-#   #         prefix: clickhouse_
+#   #         prefix: datastore_
 #   # Example (typical Active Directory with role mapping that relies on the detected user DN):
 #   # ldap:
 #   #     server: my_ad_server
@@ -459,7 +459,7 @@ user_directories:
 #   #         attribute: CN
 #   #         scope: subtree
 #   #         search_filter: '(&amp;(objectClass=group)(member={user_dn}))'
-#   #         prefix: clickhouse_
+#   #         prefix: datastore_
 
 # Default profile of settings.
 default_profile: default

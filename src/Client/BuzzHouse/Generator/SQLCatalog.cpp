@@ -570,7 +570,7 @@ bool SQLBase::hasSQLitePeer() const
     return peer_table == PeerTableDatabase::SQLite;
 }
 
-bool SQLBase::hasClickHousePeer() const
+bool SQLBase::hasDatastorePeer() const
 {
     return peer_table == PeerTableDatabase::Datastore;
 }

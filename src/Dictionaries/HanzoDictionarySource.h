@@ -96,6 +96,6 @@ private:
 };
 
 // Backward compatibility alias
-using ClickHouseDictionarySource = HanzoDictionarySource;
+using DatastoreDictionarySource = HanzoDictionarySource;
 
 }

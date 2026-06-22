@@ -31,29 +31,29 @@ void ColumnMapper::setStorageColumnEncoding(std::unordered_map<String, Int64> &&
     chassert(storage_encoding.empty());
     storage_encoding = std::move(storage_encoding_);
     for (const auto & [column_name, field_id] : storage_encoding)
-        if (!field_id_to_clickhouse_name.emplace(field_id, column_name).second)
+        if (!field_id_to_datastore_name.emplace(field_id, column_name).second)
             throw Exception(ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION, "Duplicate field id {}", field_id);
 }
 
 std::pair<std::unordered_map<String, String>, std::unordered_map<String, String>> ColumnMapper::makeMapping(
     const std::unordered_map<Int64, String> & format_encoding)
 {
-    std::unordered_map<String, String> clickhouse_to_parquet_names;
+    std::unordered_map<String, String> datastore_to_parquet_names;
     std::unordered_map<String, String> parquet_names_to_clickhouse;
     for (const auto & [column_name, field_id] : storage_encoding)
     {
         if (auto it = format_encoding.find(field_id); it != format_encoding.end())
         {
-            clickhouse_to_parquet_names[column_name] = it->second;
+            datastore_to_parquet_names[column_name] = it->second;
             parquet_names_to_clickhouse[it->second] = column_name;
         }
         else
         {
-            clickhouse_to_parquet_names[column_name] = column_name;
+            datastore_to_parquet_names[column_name] = column_name;
             parquet_names_to_clickhouse[column_name] = column_name;
         }
     }
-    return {clickhouse_to_parquet_names, parquet_names_to_clickhouse};
+    return {datastore_to_parquet_names, parquet_names_to_clickhouse};
 }
 
 FormatFilterInfo::FormatFilterInfo(

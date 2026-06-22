@@ -223,7 +223,7 @@ bool Client::processWithASTFuzzer(std::string_view full_query)
     BuzzHouse::PerformanceResult res1;
     BuzzHouse::PerformanceResult res2;
     const bool can_compare = fuzz_config && (fuzz_config->measure_performance || fuzz_config->compare_success_results)
-        && external_integrations && external_integrations->hasClickHouseExtraServerConnection();
+        && external_integrations && external_integrations->hasDatastoreExtraServerConnection();
     const bool try_measure_performance_in_loop
         = can_compare && fuzz_config->measure_performance && (orig_ast->as<ASTSelectQuery>() || orig_ast->as<ASTSelectWithUnionQuery>());
     auto insert_into = make_intrusive<ASTInsertQuery>();
@@ -645,7 +645,7 @@ bool Client::buzzHouse()
             }
             else if (startsWith(full_query, health_check_cmd))
             {
-                fuzz_config->validateClickHouseHealth();
+                fuzz_config->validateDatastoreHealth();
             }
             else
             {
@@ -934,16 +934,16 @@ bool Client::buzzHouse()
                              = ((!external_integrations->hasMySQLConnection() && !external_integrations->hasPostgreSQLConnection()
                                  && !external_integrations->hasSQLiteConnection())
                                 || rg.nextBool())
-                                 && gen.collectionHas<BuzzHouse::SQLTable>(gen.attached_tables_for_clickhouse_table_peer_oracle)
-                             ? BuzzHouse::PeerQuery::ClickHouseOnly
+                                 && gen.collectionHas<BuzzHouse::SQLTable>(gen.attached_tables_for_datastore_table_peer_oracle)
+                             ? BuzzHouse::PeerQuery::DatastoreOnly
                              : BuzzHouse::PeerQuery::AllPeers;
-                         const bool clickhouse_only = nquery == BuzzHouse::PeerQuery::ClickHouseOnly;
+                         const bool datastore_only = nquery == BuzzHouse::PeerQuery::DatastoreOnly;
 
                          sq2.Clear();
                          qo.generateOracleSelectQuery(rg, nquery, gen, sq1);
                          qo.replaceQueryWithTablePeers(rg, sq1, gen, peer_queries, sq2);
 
-                         if (clickhouse_only)
+                         if (datastore_only)
                          {
                              external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::Datastore);
                          }
@@ -967,7 +967,7 @@ bool Client::buzzHouse()
                          full_query2.resize(0);
                          BuzzHouse::SQLQueryToString(full_query2, sq2);
                          fuzz_config->outf << full_query2 << std::endl;
-                         if (clickhouse_only)
+                         if (datastore_only)
                          {
                              err_res = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, full_query2);
                          }
@@ -1096,7 +1096,7 @@ bool Client::buzzHouse()
                      [&]()
                      {
                          fuzz_config->outf << health_check_cmd << std::endl;
-                         fuzz_config->validateClickHouseHealth();
+                         fuzz_config->validateDatastoreHealth();
                      }},
                     {910,
                      [&]()

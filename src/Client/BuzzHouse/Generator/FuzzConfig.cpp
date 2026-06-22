@@ -441,7 +441,7 @@ FuzzConfig::FuzzConfig(DB::ClientBase * c, const String & path)
         {"random_limited_values", [&](const JSONObjectType & value) { random_limited_values = value.getBool(); }},
         {"truncate_output", [&](const JSONObjectType & value) { truncate_output = value.getBool(); }},
         {"allow_transactions", [&](const JSONObjectType & value) { allow_transactions = value.getBool(); }},
-        {"clickhouse", [&](const JSONObjectType & value) { clickhouse_server = loadServerCredentials(value, "clickhouse", 9004, 9005); }},
+        {"clickhouse", [&](const JSONObjectType & value) { datastore_server = loadServerCredentials(value, "clickhouse", 9004, 9005); }},
         {"mysql", [&](const JSONObjectType & value) { mysql_server = loadServerCredentials(value, "mysql", 3306, 3306); }},
         {"postgresql", [&](const JSONObjectType & value) { postgresql_server = loadServerCredentials(value, "postgresql", 5432); }},
         {"sqlite", [&](const JSONObjectType & value) { sqlite_server = loadServerCredentials(value, "sqlite", 0); }},
@@ -895,7 +895,7 @@ String FuzzConfig::tableGetRandomProjection(const uint64_t rand_val, const Strin
     return tableGetRandomSystemName(rand_val, "projections", database, table);
 }
 
-void FuzzConfig::validateClickHouseHealth()
+void FuzzConfig::validateDatastoreHealth()
 {
     if (processServerQuery(
             false,

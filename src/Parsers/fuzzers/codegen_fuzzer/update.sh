@@ -26,5 +26,5 @@ _main() {
 
 _main "$@"
 
-# Sample run: ./update.sh ${CLICKHOUSE_SOURCE_DIR}/tests/fuzz/all.dict
+# Sample run: ./update.sh ${DATASTORE_SOURCE_DIR}/tests/fuzz/all.dict
 # then run `python ./gen.py clickhouse.g out.cpp out.proto` to generate new files with tokens. Rebuild fuzzer

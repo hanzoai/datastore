@@ -5,7 +5,7 @@
 #include <Dictionaries/IDictionarySource.h>
 #include <Common/ThreadGroupSwitcher.h>
 #include <Dictionaries/DictionaryHelpers.h>
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionarySource.h>
 #include <Dictionaries/DictionaryPipelineExecutor.h>
 #include <Dictionaries/HierarchyDictionariesUtils.h>

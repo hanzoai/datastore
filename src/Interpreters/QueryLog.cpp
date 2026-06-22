@@ -23,7 +23,7 @@
 #include <Interpreters/MergeTreeTransaction/VersionMetadata.h>
 #include <Interpreters/ProfileEventsExt.h>
 #include <base/getFQDNOrHostName.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DateLUTImpl.h>
 #include <Common/IPv6ToBinary.h>
 #include <Common/ProfileEvents.h>
@@ -244,7 +244,7 @@ void QueryLogElement::appendToBlock(MutableColumns & columns) const
 
     appendClientInfo(client_info, columns, i);
 
-    typeid_cast<ColumnUInt32 &>(*columns[i++]).getData().push_back(ClickHouseRevision::getVersionRevision());
+    typeid_cast<ColumnUInt32 &>(*columns[i++]).getData().push_back(DatastoreRevision::getVersionRevision());
 
     typeid_cast<ColumnString &>(*columns[i++]).insertData(log_comment.data(), log_comment.size());
 

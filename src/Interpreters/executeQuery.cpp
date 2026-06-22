@@ -70,7 +70,7 @@
 #include <QueryPipeline/printPipeline.h>
 #include <IO/Progress.h>
 #include <Parsers/ASTIdentifier_fwd.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Common/Licensing/LicenseChecker.h>
 #endif
 #include <Core/ServerSettings.h>

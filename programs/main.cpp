@@ -77,26 +77,26 @@ const char * __ubsan_default_options()
 #endif
 
 /// Universal executable for various clickhouse applications
-int mainEntryClickHouseBenchmark(int argc, char ** argv);
-int mainEntryClickHouseCheckMarks(int argc, char ** argv);
-int mainEntryClickHouseChecksumForCompressedBlock(int, char **);
-int mainEntryClickHouseClient(int argc, char ** argv);
-int mainEntryClickHouseCompressor(int argc, char ** argv);
-int mainEntryClickHouseDisks(int argc, char ** argv);
-int mainEntryClickHouseExtractFromConfig(int argc, char ** argv);
-int mainEntryClickHouseFormat(int argc, char ** argv);
-int mainEntryClickHouseFstDumpTree(int argc, char ** argv);
-int mainEntryClickHouseGitImport(int argc, char ** argv);
-int mainEntryClickHouseLocal(int argc, char ** argv);
-int mainEntryClickHouseObfuscator(int argc, char ** argv);
-int mainEntryClickHouseSU(int argc, char ** argv);
-int mainEntryClickHouseDockerInit(int argc, char ** argv);
-int mainEntryClickHouseServer(int argc, char ** argv);
-int mainEntryClickHouseStaticFilesDiskUploader(int argc, char ** argv);
-int mainEntryClickHouseZooKeeperDumpTree(int argc, char ** argv);
-int mainEntryClickHouseZooKeeperRemoveByList(int argc, char ** argv);
+int mainEntryDatastoreBenchmark(int argc, char ** argv);
+int mainEntryDatastoreCheckMarks(int argc, char ** argv);
+int mainEntryDatastoreChecksumForCompressedBlock(int, char **);
+int mainEntryDatastoreClient(int argc, char ** argv);
+int mainEntryDatastoreCompressor(int argc, char ** argv);
+int mainEntryDatastoreDisks(int argc, char ** argv);
+int mainEntryDatastoreExtractFromConfig(int argc, char ** argv);
+int mainEntryDatastoreFormat(int argc, char ** argv);
+int mainEntryDatastoreFstDumpTree(int argc, char ** argv);
+int mainEntryDatastoreGitImport(int argc, char ** argv);
+int mainEntryDatastoreLocal(int argc, char ** argv);
+int mainEntryDatastoreObfuscator(int argc, char ** argv);
+int mainEntryDatastoreSU(int argc, char ** argv);
+int mainEntryDatastoreDockerInit(int argc, char ** argv);
+int mainEntryDatastoreServer(int argc, char ** argv);
+int mainEntryDatastoreStaticFilesDiskUploader(int argc, char ** argv);
+int mainEntryDatastoreZooKeeperDumpTree(int argc, char ** argv);
+int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv);
 
-int mainEntryClickHouseHashBinary(int argc, char ** argv)
+int mainEntryDatastoreHashBinary(int argc, char ** argv)
 {
     if (argc > 1 && (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))
     {
@@ -111,48 +111,48 @@ int mainEntryClickHouseHashBinary(int argc, char ** argv)
     return 0;
 }
 
-#if ENABLE_CLICKHOUSE_KEEPER
-int mainEntryClickHouseKeeper(int argc, char ** argv);
+#if ENABLE_DATASTORE_KEEPER
+int mainEntryDatastoreKeeper(int argc, char ** argv);
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CONVERTER
-int mainEntryClickHouseKeeperConverter(int argc, char ** argv);
+#if ENABLE_DATASTORE_KEEPER_CONVERTER
+int mainEntryDatastoreKeeperConverter(int argc, char ** argv);
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
-int mainEntryClickHouseKeeperClient(int argc, char ** argv);
+#if ENABLE_DATASTORE_KEEPER_CLIENT
+int mainEntryDatastoreKeeperClient(int argc, char ** argv);
 #endif
 #if USE_RAPIDJSON && USE_NURAFT
-int mainEntryClickHouseKeeperBench(int argc, char ** argv);
+int mainEntryDatastoreKeeperBench(int argc, char ** argv);
 #endif
 #if USE_NURAFT
-int mainEntryClickHouseKeeperDataDumper(int argc, char ** argv);
-int mainEntryClickHouseKeeperUtils(int argc, char ** argv);
+int mainEntryDatastoreKeeperDataDumper(int argc, char ** argv);
+int mainEntryDatastoreKeeperUtils(int argc, char ** argv);
 #endif
 
 #if USE_CHDIG
 extern "C" int chdig_main(int argc, char ** argv);
-int mainEntryClickHouseChdig(int argc, char ** argv)
+int mainEntryDatastoreChdig(int argc, char ** argv)
 {
     return chdig_main(argc, argv);
 }
 #endif
 
 // install
-int mainEntryClickHouseInstall(int argc, char ** argv);
-int mainEntryClickHouseStart(int argc, char ** argv);
-int mainEntryClickHouseStop(int argc, char ** argv);
-int mainEntryClickHouseStatus(int argc, char ** argv);
-int mainEntryClickHouseRestart(int argc, char ** argv);
+int mainEntryDatastoreInstall(int argc, char ** argv);
+int mainEntryDatastoreStart(int argc, char ** argv);
+int mainEntryDatastoreStop(int argc, char ** argv);
+int mainEntryDatastoreStatus(int argc, char ** argv);
+int mainEntryDatastoreRestart(int argc, char ** argv);
 
 /// Private-only programs
-#if CLICKHOUSE_CLOUD
-int mainEntryClickHouseSharedCatalogUtil(int argc, char ** argv);
+#if DATASTORE_CLOUD
+int mainEntryDatastoreSharedCatalogUtil(int argc, char ** argv);
 #if ENABLE_DISTRIBUTED_CACHE
-int mainEntryClickHouseDistributedCache(int argc, char ** argv);
+int mainEntryDatastoreDistributedCache(int argc, char ** argv);
 #endif
-int mainEntryClickHouseSharedMergeTreeGarbageCleaner(int argc, char ** argv);
-int mainEntryClickHouseClearZooKeeperLocks(int argc, char ** argv);
-int mainEntryClickHousePackedIO(int argc, char ** argv);
-int mainEntryClickHouseMangler(int argc, char ** argv);
+int mainEntryDatastoreSharedMergeTreeGarbageCleaner(int argc, char ** argv);
+int mainEntryDatastoreClearZooKeeperLocks(int argc, char ** argv);
+int mainEntryDatastorePackedIO(int argc, char ** argv);
+int mainEntryDatastoreMangler(int argc, char ** argv);
 #endif
 
 namespace
@@ -160,7 +160,7 @@ namespace
 
 using MainFunc = int (*)(int, char**);
 
-/// Forward declaration, since clickhouse_applications is defined after this function.
+/// Forward declaration, since datastore_applications is defined after this function.
 void printHelp(std::ostream & out);
 
 int mainEntryHelp(int, char **)
@@ -179,66 +179,66 @@ int printHelpOnError(int, char **)
 /// This list has a "priority" - e.g. we need to disambiguate clickhouse --format being
 /// either clickouse-format or clickhouse-{local, client} --format.
 /// Currently we will prefer the latter option.
-std::pair<std::string_view, MainFunc> clickhouse_applications[] =
+std::pair<std::string_view, MainFunc> datastore_applications[] =
 {
-    {"local", mainEntryClickHouseLocal},
-    {"client", mainEntryClickHouseClient},
+    {"local", mainEntryDatastoreLocal},
+    {"client", mainEntryDatastoreClient},
 #if USE_CHDIG
-    {"chdig", mainEntryClickHouseChdig},
-    {"dig", mainEntryClickHouseChdig},
+    {"chdig", mainEntryDatastoreChdig},
+    {"dig", mainEntryDatastoreChdig},
 #endif
-    {"benchmark", mainEntryClickHouseBenchmark},
-    {"server", mainEntryClickHouseServer},
-    {"extract-from-config", mainEntryClickHouseExtractFromConfig},
-    {"compressor", mainEntryClickHouseCompressor},
-    {"format", mainEntryClickHouseFormat},
-    {"obfuscator", mainEntryClickHouseObfuscator},
-    {"git-import", mainEntryClickHouseGitImport},
-    {"static-files-disk-uploader", mainEntryClickHouseStaticFilesDiskUploader},
-    {"su", mainEntryClickHouseSU},
-    {"docker-init", mainEntryClickHouseDockerInit},
-    {"hash-binary", mainEntryClickHouseHashBinary},
-    {"disks", mainEntryClickHouseDisks},
-    {"check-marks", mainEntryClickHouseCheckMarks},
-    {"checksum-for-compressed-block", mainEntryClickHouseChecksumForCompressedBlock},
-    {"zookeeper-dump-tree", mainEntryClickHouseZooKeeperDumpTree},
-    {"zookeeper-remove-by-list", mainEntryClickHouseZooKeeperRemoveByList},
+    {"benchmark", mainEntryDatastoreBenchmark},
+    {"server", mainEntryDatastoreServer},
+    {"extract-from-config", mainEntryDatastoreExtractFromConfig},
+    {"compressor", mainEntryDatastoreCompressor},
+    {"format", mainEntryDatastoreFormat},
+    {"obfuscator", mainEntryDatastoreObfuscator},
+    {"git-import", mainEntryDatastoreGitImport},
+    {"static-files-disk-uploader", mainEntryDatastoreStaticFilesDiskUploader},
+    {"su", mainEntryDatastoreSU},
+    {"docker-init", mainEntryDatastoreDockerInit},
+    {"hash-binary", mainEntryDatastoreHashBinary},
+    {"disks", mainEntryDatastoreDisks},
+    {"check-marks", mainEntryDatastoreCheckMarks},
+    {"checksum-for-compressed-block", mainEntryDatastoreChecksumForCompressedBlock},
+    {"zookeeper-dump-tree", mainEntryDatastoreZooKeeperDumpTree},
+    {"zookeeper-remove-by-list", mainEntryDatastoreZooKeeperRemoveByList},
 
     // keeper
-#if ENABLE_CLICKHOUSE_KEEPER
-    {"keeper", mainEntryClickHouseKeeper},
+#if ENABLE_DATASTORE_KEEPER
+    {"keeper", mainEntryDatastoreKeeper},
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CONVERTER
-    {"keeper-converter", mainEntryClickHouseKeeperConverter},
+#if ENABLE_DATASTORE_KEEPER_CONVERTER
+    {"keeper-converter", mainEntryDatastoreKeeperConverter},
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
-    {"keeper-client", mainEntryClickHouseKeeperClient},
+#if ENABLE_DATASTORE_KEEPER_CLIENT
+    {"keeper-client", mainEntryDatastoreKeeperClient},
 #endif
 #if USE_RAPIDJSON && USE_NURAFT
-    {"keeper-bench", mainEntryClickHouseKeeperBench},
+    {"keeper-bench", mainEntryDatastoreKeeperBench},
 #endif
 #if USE_NURAFT
-    {"keeper-data-dumper", mainEntryClickHouseKeeperDataDumper},
-    {"keeper-utils", mainEntryClickHouseKeeperUtils},
+    {"keeper-data-dumper", mainEntryDatastoreKeeperDataDumper},
+    {"keeper-utils", mainEntryDatastoreKeeperUtils},
 #endif
     // install
-    {"install", mainEntryClickHouseInstall},
-    {"start", mainEntryClickHouseStart},
-    {"stop", mainEntryClickHouseStop},
-    {"status", mainEntryClickHouseStatus},
-    {"restart", mainEntryClickHouseRestart},
+    {"install", mainEntryDatastoreInstall},
+    {"start", mainEntryDatastoreStart},
+    {"stop", mainEntryDatastoreStop},
+    {"status", mainEntryDatastoreStatus},
+    {"restart", mainEntryDatastoreRestart},
     // help
     {"help", mainEntryHelp},
 
 /// Private-only programs
-#if CLICKHOUSE_CLOUD
-    {"shared-merge-tree-garbage-cleaner", mainEntryClickHouseSharedMergeTreeGarbageCleaner},
-    {"clear-zookeeper-locks", mainEntryClickHouseClearZooKeeperLocks},
-    {"shared-catalog-util", mainEntryClickHouseSharedCatalogUtil},
-    {"packed-io", mainEntryClickHousePackedIO},
-    {"mangler", mainEntryClickHouseMangler},
+#if DATASTORE_CLOUD
+    {"shared-merge-tree-garbage-cleaner", mainEntryDatastoreSharedMergeTreeGarbageCleaner},
+    {"clear-zookeeper-locks", mainEntryDatastoreClearZooKeeperLocks},
+    {"shared-catalog-util", mainEntryDatastoreSharedCatalogUtil},
+    {"packed-io", mainEntryDatastorePackedIO},
+    {"mangler", mainEntryDatastoreMangler},
 #if ENABLE_DISTRIBUTED_CACHE
-    {"distributed-cache", mainEntryClickHouseDistributedCache}
+    {"distributed-cache", mainEntryDatastoreDistributedCache}
 #endif
 #endif
 };
@@ -246,12 +246,12 @@ std::pair<std::string_view, MainFunc> clickhouse_applications[] =
 void printHelp(std::ostream & out)
 {
     out << "Use one of the following commands:" << std::endl;
-    for (const auto & application : clickhouse_applications)
+    for (const auto & application : datastore_applications)
         out << "clickhouse " << application.first << " [args] " << std::endl;
 }
 
 /// Add an item here to register a new short name
-std::pair<std::string_view, std::string_view> clickhouse_short_names[] =
+std::pair<std::string_view, std::string_view> datastore_short_names[] =
 {
     {"chl", "local"},
     {"chc", "client"},
@@ -264,7 +264,7 @@ std::pair<std::string_view, std::string_view> clickhouse_short_names[] =
 
 bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
 {
-    for (const auto & [alias, name] : clickhouse_short_names)
+    for (const auto & [alias, name] : datastore_short_names)
         if (app_suffix == name
             && !argv.empty() && (alias == argv[0] || endsWith(argv[0], "/" + std::string(alias))))
             return true;
@@ -389,7 +389,7 @@ int main(int argc_, char ** argv_)
 
     /// This is used for testing. For example,
     /// clickhouse-local should be able to run a simple query without throw/catch.
-    if (getenv("CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
+    if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 
     /// Reset new handler to default (that throws std::bad_alloc)
@@ -401,7 +401,7 @@ int main(int argc_, char ** argv_)
     /// Print a basic help if nothing was matched
     MainFunc main_func = printHelpOnError;
 
-    for (auto & application : clickhouse_applications)
+    for (auto & application : datastore_applications)
     {
         if (isClickhouseApp(application.first, argv))
         {
@@ -432,7 +432,7 @@ int main(int argc_, char ** argv_)
                 || (i + 1 < num_args && argv[i] == std::string_view("--port")) || startsWith(argv[i], "--port=")
                 || startsWith(argv[i], "-h"))
             {
-                main_func = mainEntryClickHouseClient;
+                main_func = mainEntryDatastoreClient;
                 break;
             }
         }
@@ -454,7 +454,7 @@ int main(int argc_, char ** argv_)
         && (argv.size() == 1 || argv[1][0] == '-' || std::string_view(argv[1]).contains(' ')
             || std::filesystem::is_regular_file(std::filesystem::path{argv[1]}, ec)))
     {
-        main_func = mainEntryClickHouseLocal;
+        main_func = mainEntryDatastoreLocal;
     }
 
     /// If the argument looks like a file path but doesn't exist, provide a helpful error

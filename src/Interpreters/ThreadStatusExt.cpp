@@ -33,7 +33,7 @@
 #endif
 
 
-/// Implement some methods of ThreadStatus and CurrentThread here to avoid extra linking dependencies in clickhouse_common_io
+/// Implement some methods of ThreadStatus and CurrentThread here to avoid extra linking dependencies in datastore_common_io
 /// TODO It doesn't make sense.
 
 namespace DB

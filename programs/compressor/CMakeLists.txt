@@ -1,12 +1,12 @@
 # Also in utils
 
-set (CLICKHOUSE_COMPRESSOR_SOURCES Compressor.cpp)
+set (DATASTORE_COMPRESSOR_SOURCES Compressor.cpp)
 
-set (CLICKHOUSE_COMPRESSOR_LINK
+set (DATASTORE_COMPRESSOR_LINK
     PRIVATE
         boost::program_options
-        clickhouse_parsers
+        datastore_parsers
         dbms
 )
 
-clickhouse_program_add(compressor)
+datastore_program_add(compressor)

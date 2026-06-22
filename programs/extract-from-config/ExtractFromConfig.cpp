@@ -145,7 +145,7 @@ static std::vector<std::string> extractFromConfig(const std::string & config_pat
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseExtractFromConfig(int argc, char ** argv)
+int mainEntryDatastoreExtractFromConfig(int argc, char ** argv)
 {
     bool print_stacktrace = false;
     bool process_zk_includes = false;

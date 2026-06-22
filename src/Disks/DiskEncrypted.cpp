@@ -13,7 +13,7 @@
 #include <boost/algorithm/hex.hpp>
 #include <Common/quoteString.h>
 #include <Common/typeid_cast.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Core/KMS.h>
 #endif
 
@@ -81,7 +81,7 @@ namespace
                 if (config.has(key_id_path))
                     key_id = config.getUInt64(key_id_path);
             }
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
             else if ((config_key == "key_aws") || config_key.starts_with("key_aws[") || (config_key == "key_gcp") || config_key.starts_with("key_gcp[") ||
                      (config_key == "key_azure") || config_key.starts_with("key_azure["))
             {

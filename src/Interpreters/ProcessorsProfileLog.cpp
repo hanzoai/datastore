@@ -14,7 +14,7 @@
 #include <Processors/Port.h>
 #include <QueryPipeline/printPipeline.h>
 #include <base/getFQDNOrHostName.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DateLUTImpl.h>
 #include <Common/logger_useful.h>
 

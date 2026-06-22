@@ -29,13 +29,13 @@ namespace ErrorCodes
     extern const int USER_SESSION_LIMIT_EXCEEDED;
 }
 
-static constexpr const UInt64 CLICKHOUSE_SERVER_MIN_MAJOR_VERSION_WITH_SYSTEM_COMPLETIONS = 25;
-static constexpr const UInt64 CLICKHOUSE_SERVER_MIN_MINOR_VERSION_WITH_SYSTEM_COMPLETIONS = 8;
+static constexpr const UInt64 DATASTORE_SERVER_MIN_MAJOR_VERSION_WITH_SYSTEM_COMPLETIONS = 25;
+static constexpr const UInt64 DATASTORE_SERVER_MIN_MINOR_VERSION_WITH_SYSTEM_COMPLETIONS = 8;
 
 static String getLoadSuggestionQueryUsingSystemTables(Int32 suggestion_limit, bool basic_suggestion, UInt64 server_revision)
 {
     /// NOTE: Once you will update the completion list,
-    /// do not forget to update 01676_clickhouse_client_autocomplete.sh
+    /// do not forget to update 01676_datastore_client_autocomplete.sh
     String query;
 
     auto add_subquery = [&](std::string_view select, std::string_view result_column_name)
@@ -96,7 +96,7 @@ static String getLoadSuggestionQueryUsingSystemTables(Int32 suggestion_limit, bo
 static String getLoadSuggestionQueryUsingSystemCompletionsTable(Int32 suggestion_limit, bool basic_suggestion, UInt64 server_revision)
 {
     /// NOTE: Once you will update the completion list,
-    /// do not forget to update 01676_clickhouse_client_autocomplete.sh
+    /// do not forget to update 01676_datastore_client_autocomplete.sh
     /// TODO: Use belongs column for better contextual suggestions
     String unlimited_contexts = fmt::format(
         "('function', 'table engine', 'format', 'table function', 'data type', 'merge tree setting', 'setting', 'aggregate function combinator pair'{}{})",
@@ -138,7 +138,7 @@ static String getLoadSuggestionQuery(IServerConnection & connection, Int32 sugge
     UInt64 server_patch_version = 0;
     UInt64 server_revision = 0;
     connection.getServerVersion(timeouts, server_name, server_major_version, server_minor_version, server_patch_version, server_revision);
-    if (server_major_version > CLICKHOUSE_SERVER_MIN_MAJOR_VERSION_WITH_SYSTEM_COMPLETIONS || (server_major_version == CLICKHOUSE_SERVER_MIN_MAJOR_VERSION_WITH_SYSTEM_COMPLETIONS && server_minor_version >= CLICKHOUSE_SERVER_MIN_MINOR_VERSION_WITH_SYSTEM_COMPLETIONS))
+    if (server_major_version > DATASTORE_SERVER_MIN_MAJOR_VERSION_WITH_SYSTEM_COMPLETIONS || (server_major_version == DATASTORE_SERVER_MIN_MAJOR_VERSION_WITH_SYSTEM_COMPLETIONS && server_minor_version >= DATASTORE_SERVER_MIN_MINOR_VERSION_WITH_SYSTEM_COMPLETIONS))
         return getLoadSuggestionQueryUsingSystemCompletionsTable(suggestion_limit, basic_suggestion, server_revision);
 
     return getLoadSuggestionQueryUsingSystemTables(suggestion_limit, basic_suggestion, server_revision);

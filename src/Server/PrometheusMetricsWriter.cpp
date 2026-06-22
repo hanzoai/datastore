@@ -70,12 +70,12 @@ void convertHelpToSingleLine(std::string & help)
     std::replace(help.begin(), help.end(), '\n', ' ');
 }
 
-constexpr auto profile_events_prefix = "ClickHouseProfileEvents_";
-constexpr auto current_metrics_prefix = "ClickHouseMetrics_";
-constexpr auto asynchronous_metrics_prefix = "ClickHouseAsyncMetrics_";
-constexpr auto error_metrics_prefix = "ClickHouseErrorMetric_";
-constexpr auto histogram_prefix = "ClickHouseHistogramMetrics_";
-constexpr auto dimensional_metrics_prefix = "ClickHouseDimensionalMetrics_";
+constexpr auto profile_events_prefix = "DatastoreProfileEvents_";
+constexpr auto current_metrics_prefix = "DatastoreMetrics_";
+constexpr auto asynchronous_metrics_prefix = "DatastoreAsyncMetrics_";
+constexpr auto error_metrics_prefix = "DatastoreErrorMetric_";
+constexpr auto histogram_prefix = "DatastoreHistogramMetrics_";
+constexpr auto dimensional_metrics_prefix = "DatastoreDimensionalMetrics_";
 
 void writeEvent(DB::WriteBuffer & wb, ProfileEvents::Event event)
 {
@@ -315,7 +315,7 @@ void PrometheusMetricsWriter::writeDimensionalMetrics(WriteBuffer & wb) const
 
 void PrometheusMetricsWriter::writeInfo(WriteBuffer & wb) const
 {
-    std::string key{"ClickHouse_Info"};
+    std::string key{"Datastore_Info"};
 
     writeOutLine(wb, "# HELP", key, "Datastore server information");
     writeOutLine(wb, "# TYPE", key, "gauge");

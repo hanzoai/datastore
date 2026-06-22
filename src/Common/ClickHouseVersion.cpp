@@ -1,4 +1,4 @@
-#include <Common/ClickHouseVersion.h>
+#include <Common/DatastoreVersion.h>
 
 #include <IO/ReadBufferFromString.h>
 #include <IO/ReadHelpers.h>
@@ -15,7 +15,7 @@ namespace ErrorCodes
     extern const int BAD_ARGUMENTS;
 }
 
-ClickHouseVersion::ClickHouseVersion(std::string_view version)
+DatastoreVersion::DatastoreVersion(std::string_view version)
 {
     Strings split;
     boost::split(split, version, [](char c){ return c == '.'; });
@@ -33,7 +33,7 @@ ClickHouseVersion::ClickHouseVersion(std::string_view version)
     }
 }
 
-String ClickHouseVersion::toString() const
+String DatastoreVersion::toString() const
 {
     return fmt::format("{}", fmt::join(components, "."));
 }

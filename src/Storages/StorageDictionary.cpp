@@ -17,7 +17,7 @@
 #include <Dictionaries/getDictionaryConfigurationFromAST.h>
 #include <IO/WriteHelpers.h>
 #include <Parsers/ASTCreateQuery.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Dictionaries/SystemDictionaryUUIDs.h>
 #endif
 #include <Storages/AlterCommands.h>
@@ -159,7 +159,7 @@ StorageDictionary::StorageDictionary(
         Location::SameDatabaseAndNameAsDictionary,
         context_)
 {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (table_id.database_name == "system")
         SystemDictionaryUUIDs::instance().add(table_id.uuid);
 #endif
@@ -171,7 +171,7 @@ StorageDictionary::StorageDictionary(
 
 StorageDictionary::~StorageDictionary()
 {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (getStorageID().database_name == "system")
         SystemDictionaryUUIDs::instance().remove(getStorageID().uuid);
 #endif

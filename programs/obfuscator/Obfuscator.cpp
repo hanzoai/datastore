@@ -1209,7 +1209,7 @@ public:
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseObfuscator(int argc, char ** argv)
+int mainEntryDatastoreObfuscator(int argc, char ** argv)
 try
 {
     using namespace DB;

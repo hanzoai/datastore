@@ -212,7 +212,7 @@ void Client::initialize(Poco::Util::Application & self)
     if (home_path_cstr)
         home_path = home_path_cstr;
 
-    const char * env_host = getenv("CLICKHOUSE_HOST"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_host = getenv("DATASTORE_HOST"); // NOLINT(concurrency-mt-unsafe)
 
     std::optional<std::string> config_path;
     if (config().has("config-file"))
@@ -308,11 +308,11 @@ void Client::initialize(Poco::Util::Application & self)
       * may be statically allocated, and can be modified by a subsequent call to getenv(), putenv(3), setenv(3), or unsetenv(3).
       */
 
-    const char * env_user = getenv("CLICKHOUSE_USER"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_user = getenv("DATASTORE_USER"); // NOLINT(concurrency-mt-unsafe)
     if (env_user && !config().has("user"))
         config().setString("user", env_user);
 
-    const char * env_password = getenv("CLICKHOUSE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_password = getenv("DATASTORE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
     if (env_password && !config().has("password"))
         config().setString("password", env_password);
 
@@ -600,7 +600,7 @@ void Client::connect()
     {
         output_stream << "Connected to " << server_name << " server version " << server_version << "." << std::endl << std::endl;
 
-#if not CLICKHOUSE_CLOUD
+#if not DATASTORE_CLOUD
         if (!config().has("no-server-client-version-message"))
         {
             auto client_version_tuple = std::make_tuple(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -1360,7 +1360,7 @@ void Client::readArguments(
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseClient(int argc, char ** argv)
+int mainEntryDatastoreClient(int argc, char ** argv)
 {
     DB::MainThreadStatus::getInstance();
 

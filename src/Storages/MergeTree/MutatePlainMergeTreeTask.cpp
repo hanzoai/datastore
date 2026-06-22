@@ -115,7 +115,7 @@ bool MutatePlainMergeTreeTask::executeStep()
 
                 new_part = mutate_task->getFuture().get();
                 auto & data_part_storage = new_part->getDataPartStorage();
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
                 data_part_storage.setPreferredFileOrder(new_part->getPreferredFileOrder());
 #endif
                 if (data_part_storage.hasActiveTransaction())

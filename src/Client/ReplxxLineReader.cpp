@@ -552,7 +552,7 @@ void ReplxxLineReader::openEditor(bool format_query)
         if (format_query)
             query = formatQuery(std::move(query));
 
-        TemporaryFile editor_file("clickhouse_client_editor_XXXXXX.sql");
+        TemporaryFile editor_file("datastore_client_editor_XXXXXX.sql");
         editor_file.write(query);
         editor_file.close();
 

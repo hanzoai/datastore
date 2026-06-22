@@ -396,7 +396,7 @@ bool MergeFromLogEntryTask::finalize(ReplicatedMergeMutateTaskBase::PartLogWrite
     auto cached_marks = merge_task->releaseCachedMarks();
     auto cached_index_marks = merge_task->releaseCachedIndexMarks();
     projections_merge_time = merge_task->grabProjectionsMergeTime();
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     part->is_prewarmed = true;
 #endif
 

@@ -211,7 +211,7 @@ void IcebergSchemaProcessor::addIcebergTableSchema(Poco::JSON::Object::Ptr schem
     current_schema_id = schema_id;
     if (iceberg_table_schemas_by_ids.contains(schema_id))
     {
-        chassert(clickhouse_table_schemas_by_ids.contains(schema_id));
+        chassert(datastore_table_schemas_by_ids.contains(schema_id));
         std::unordered_map<String, String> type_mapping;
         if (allow_geo_parser)
         {
@@ -224,7 +224,7 @@ void IcebergSchemaProcessor::addIcebergTableSchema(Poco::JSON::Object::Ptr schem
     {
         iceberg_table_schemas_by_ids[schema_id] = schema_ptr;
         auto fields = schema_ptr->get(f_fields).extract<Poco::JSON::Array::Ptr>();
-        auto clickhouse_schema = std::make_shared<NamesAndTypesList>();
+        auto datastore_schema = std::make_shared<NamesAndTypesList>();
         String current_full_name{};
         for (size_t i = 0; i != fields->size(); ++i)
         {
@@ -233,11 +233,11 @@ void IcebergSchemaProcessor::addIcebergTableSchema(Poco::JSON::Object::Ptr schem
             bool required = field->getValue<bool>(f_required);
             current_full_name = name;
             auto type = getFieldType(field, f_type, required, current_full_name, true);
-            clickhouse_schema->push_back(NameAndTypePair{name, type});
-            clickhouse_types_by_source_ids[{schema_id, field->getValue<Int32>(f_id)}] = NameAndTypePair{current_full_name, type};
-            clickhouse_ids_by_source_names[{schema_id, current_full_name}] = field->getValue<Int32>(f_id);
+            datastore_schema->push_back(NameAndTypePair{name, type});
+            datastore_types_by_source_ids[{schema_id, field->getValue<Int32>(f_id)}] = NameAndTypePair{current_full_name, type};
+            datastore_ids_by_source_names[{schema_id, current_full_name}] = field->getValue<Int32>(f_id);
         }
-        clickhouse_table_schemas_by_ids[schema_id] = clickhouse_schema;
+        datastore_table_schemas_by_ids[schema_id] = datastore_schema;
     }
     current_schema_id = std::nullopt;
 }
@@ -246,8 +246,8 @@ NameAndTypePair IcebergSchemaProcessor::getFieldCharacteristics(Int32 schema_ver
 {
     SharedLockGuard lock(mutex);
 
-    auto it = clickhouse_types_by_source_ids.find({schema_version, source_id});
-    if (it == clickhouse_types_by_source_ids.end())
+    auto it = datastore_types_by_source_ids.find({schema_version, source_id});
+    if (it == datastore_types_by_source_ids.end())
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "Field with source id {} in schema version {} is unknown", source_id, schema_version);
     return it->second;
 }
@@ -256,8 +256,8 @@ std::optional<NameAndTypePair> IcebergSchemaProcessor::tryGetFieldCharacteristic
 {
     SharedLockGuard lock(mutex);
 
-    auto it = clickhouse_types_by_source_ids.find({schema_version, source_id});
-    if (it == clickhouse_types_by_source_ids.end())
+    auto it = datastore_types_by_source_ids.find({schema_version, source_id});
+    if (it == datastore_types_by_source_ids.end())
         return {};
     return it->second;
 }
@@ -266,8 +266,8 @@ std::optional<Int32> IcebergSchemaProcessor::tryGetColumnIDByName(Int32 schema_i
 {
     SharedLockGuard lock(mutex);
 
-    auto it = clickhouse_ids_by_source_names.find({schema_id, name});
-    if (it == clickhouse_ids_by_source_names.end())
+    auto it = datastore_ids_by_source_names.find({schema_id, name});
+    if (it == datastore_ids_by_source_names.end())
         return {};
     return it->second;
 }
@@ -279,8 +279,8 @@ NamesAndTypesList IcebergSchemaProcessor::tryGetFieldsCharacteristics(Int32 sche
     NamesAndTypesList fields;
     for (const auto & source_id : source_ids)
     {
-        auto it = clickhouse_types_by_source_ids.find({schema_id, source_id});
-        if (it != clickhouse_types_by_source_ids.end())
+        auto it = datastore_types_by_source_ids.find({schema_id, source_id});
+        if (it != datastore_types_by_source_ids.end())
             fields.push_back(it->second);
     }
     return fields;
@@ -382,10 +382,10 @@ IcebergSchemaProcessor::getComplexTypeFromObject(const Poco::JSON::Object::Ptr &
                 (current_full_name += ".").append(element_names.back());
                 scope_guard guard([&] { current_full_name.resize(current_full_name.size() - element_names.back().size() - 1); });
                 element_types.push_back(getFieldType(field, f_type, required, current_full_name, true));
-                TSA_SUPPRESS_WARNING_FOR_WRITE(clickhouse_types_by_source_ids)
+                TSA_SUPPRESS_WARNING_FOR_WRITE(datastore_types_by_source_ids)
                 [{schema_id, field->getValue<Int32>(f_id)}] = NameAndTypePair{current_full_name, element_types.back()};
 
-                TSA_SUPPRESS_WARNING_FOR_WRITE(clickhouse_ids_by_source_names)
+                TSA_SUPPRESS_WARNING_FOR_WRITE(datastore_ids_by_source_names)
                 [{schema_id, current_full_name}] = field->getValue<Int32>(f_id);
             }
             else
@@ -603,8 +603,8 @@ std::shared_ptr<NamesAndTypesList> IcebergSchemaProcessor::getClickhouseTableSch
 {
     SharedLockGuard lock(mutex);
 
-    auto it = clickhouse_table_schemas_by_ids.find(id);
-    if (it == clickhouse_table_schemas_by_ids.end())
+    auto it = datastore_table_schemas_by_ids.find(id);
+    if (it == datastore_table_schemas_by_ids.end())
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "Schema with id {} is unknown", id);
     return it->second;
 }
@@ -613,7 +613,7 @@ bool IcebergSchemaProcessor::hasClickhouseTableSchemaById(Int32 id) const
 {
     SharedLockGuard lock(mutex);
 
-    return clickhouse_table_schemas_by_ids.contains(id);
+    return datastore_table_schemas_by_ids.contains(id);
 }
 
 std::unordered_map<String, Int64> IcebergSchemaProcessor::traverseSchema(Poco::JSON::Array::Ptr schema)

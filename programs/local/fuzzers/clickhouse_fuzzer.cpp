@@ -60,7 +60,7 @@ const char * __ubsan_default_options()
 #pragma clang diagnostic pop
 #endif
 
-int mainEntryClickHouseLocal(int argc, char ** argv);
+int mainEntryDatastoreLocal(int argc, char ** argv);
 
 namespace
 {
@@ -132,14 +132,14 @@ int clickhouseMain(int argc_, char ** argv_)
 
     /// This is used for testing. For example,
     /// clickhouse-local should be able to run a simple query without throw/catch.
-    if (getenv("CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
+    if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 
     /// Reset new handler to default (that throws std::bad_alloc)
     /// It is needed because LLVM library clobbers it.
     std::set_new_handler(nullptr);
 
-    int exit_code = mainEntryClickHouseLocal(argc_, argv_);
+    int exit_code = mainEntryDatastoreLocal(argc_, argv_);
 
     return exit_code;
 }
@@ -174,7 +174,7 @@ pthread_t runner_thread_id{};
 struct sigaction original_sigalrm_action{};
 
 String clickhouse{"clickhouse"};
-std::vector<char *> clickhouse_args{clickhouse.data()};
+std::vector<char *> datastore_args{clickhouse.data()};
 
 /// Signal-safe stderr print helper.
 void signalSafeWrite(const char * msg)
@@ -259,7 +259,7 @@ int LLVMFuzzerInitialize(const int *argc, char ***argv)
     bool ignore = false;
     for (int i = 1; i < *argc; ++i)
         if (ignore)
-            clickhouse_args.push_back((*argv)[i]);
+            datastore_args.push_back((*argv)[i]);
         else
             if (std::string_view arg{(*argv)[i]}; arg.substr(0, arg.find('=')) == "-ignore_remaining_args")
                 ignore = true;
@@ -267,7 +267,7 @@ int LLVMFuzzerInitialize(const int *argc, char ***argv)
     {
         // Start clickhouse local
         std::unique_lock lock(mutex);
-        runner = std::thread(clickhouseMain, clickhouse_args.size(), clickhouse_args.data());
+        runner = std::thread(clickhouseMain, datastore_args.size(), datastore_args.data());
         runner_thread_id = runner->native_handle();
         if (!cv.wait_for(lock, std::chrono::seconds(30), []{ return state == FuzzerState::WAITING_FOR_INPUT; }))
             abort();

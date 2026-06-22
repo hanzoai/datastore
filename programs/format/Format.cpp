@@ -68,7 +68,7 @@ namespace
 
 extern const char * auto_time_zones[];
 
-int mainEntryClickHouseFormat(int argc, char ** argv)
+int mainEntryDatastoreFormat(int argc, char ** argv)
 {
     using namespace DB;
 

@@ -74,7 +74,7 @@ public:
     static std::optional<std::reference_wrapper<BaseDaemon>> tryGetInstance() { return tryGetInstance<BaseDaemon>(); }
 
     /// Graphite metric name has components separated by dots.
-    /// We used to have the following format: root_path.hostname_clickhouse_com.key
+    /// We used to have the following format: root_path.hostname_datastore_com.key
     /// root_path - one_min by default
     /// key - something that makes sense. Examples: "meminfo.cached" or "meminfo.free", "meminfo.total".
     template <class T>

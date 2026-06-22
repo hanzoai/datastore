@@ -54,7 +54,7 @@ static void checkByCompressedReadBuffer(const std::string & mrk_path, const std:
 }
 
 
-int mainEntryClickHouseCheckMarks(int argc, char ** argv)
+int mainEntryDatastoreCheckMarks(int argc, char ** argv)
 {
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()

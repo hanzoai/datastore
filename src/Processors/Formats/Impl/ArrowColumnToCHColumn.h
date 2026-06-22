@@ -25,8 +25,8 @@ public:
         const Block & header_,
         const std::string & format_name_,
         const FormatSettings & format_settings_,
-        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse_,
-        const std::optional<std::unordered_map<String, String>> & clickhouse_columns_to_parquet_,
+        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore_,
+        const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet_,
         bool allow_missing_columns_,
         bool null_as_default_,
         FormatSettings::DateTimeOverflowBehavior date_time_overflow_behavior_,
@@ -60,7 +60,7 @@ public:
         bool allow_geoparquet_parser = true,
         bool enable_json_parsing = true,
         const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse = std::nullopt,
-        const std::optional<std::unordered_map<String, String>> & clickhouse_columns_to_parquet = std::nullopt);
+        const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet = std::nullopt);
 
     struct DictionaryInfo
     {
@@ -103,7 +103,7 @@ private:
     std::unordered_map<std::string, DictionaryInfo> dictionary_infos;
 
     std::optional<std::unordered_map<String, String>> parquet_columns_to_clickhouse;
-    std::optional<std::unordered_map<String, String>> clickhouse_columns_to_parquet;
+    std::optional<std::unordered_map<String, String>> datastore_columns_to_parquet;
 };
 
 }

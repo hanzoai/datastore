@@ -2,7 +2,7 @@
 
 #include <Core/Field.h>
 
-#include <Common/ClickHouseVersion.h>
+#include <Common/DatastoreVersion.h>
 
 #include <map>
 #include <vector>
@@ -23,7 +23,7 @@ namespace SettingsChangesHistory
     using SettingsChanges = std::vector<SettingChange>;
 }
 
-using VersionToSettingsChangesMap = std::map<ClickHouseVersion, SettingsChangesHistory::SettingsChanges>;
+using VersionToSettingsChangesMap = std::map<DatastoreVersion, SettingsChangesHistory::SettingsChanges>;
 
 const VersionToSettingsChangesMap & getSettingsChangesHistory();
 const VersionToSettingsChangesMap & getMergeTreeSettingsChangesHistory();

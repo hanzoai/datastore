@@ -206,7 +206,7 @@ static std::string formatWithSudo(std::string command, bool needed = true)
 }
 
 
-int mainEntryClickHouseInstall(int argc, char ** argv)
+int mainEntryDatastoreInstall(int argc, char ** argv)
 {
     try
     {
@@ -976,7 +976,7 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
         if (fs::exists(pid_file))
         {
             fmt::print(
-                "\nClickHouse has been successfully installed.\n"
+                "\nDatastore has been successfully installed.\n"
                 "\nRestart clickhouse-server with:\n"
                 " {}{}\n"
                 "\nStart clickhouse-client with:\n"
@@ -988,7 +988,7 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
         else
         {
             fmt::print(
-                "\nClickHouse has been successfully installed.\n"
+                "\nDatastore has been successfully installed.\n"
                 "\nStart clickhouse-server with:\n"
                 " {}{}\n"
                 "\nStart clickhouse-client with:\n"
@@ -1243,7 +1243,7 @@ namespace
 }
 
 
-int mainEntryClickHouseStart(int argc, char ** argv)
+int mainEntryDatastoreStart(int argc, char ** argv)
 {
     try
     {
@@ -1304,7 +1304,7 @@ int mainEntryClickHouseStart(int argc, char ** argv)
 }
 
 
-int mainEntryClickHouseStop(int argc, char ** argv)
+int mainEntryDatastoreStop(int argc, char ** argv)
 {
     try
     {
@@ -1344,7 +1344,7 @@ int mainEntryClickHouseStop(int argc, char ** argv)
 }
 
 
-int mainEntryClickHouseStatus(int argc, char ** argv)
+int mainEntryDatastoreStatus(int argc, char ** argv)
 {
     try
     {
@@ -1380,7 +1380,7 @@ int mainEntryClickHouseStatus(int argc, char ** argv)
 }
 
 
-int mainEntryClickHouseRestart(int argc, char ** argv)
+int mainEntryDatastoreRestart(int argc, char ** argv)
 {
     try
     {
@@ -1418,7 +1418,7 @@ int mainEntryClickHouseRestart(int argc, char ** argv)
 
         std::string user = options["user"].as<std::string>();
         std::string group = options["group"].as<std::string>();
-        /// See the comment in `mainEntryClickHouseStart`: only apply `--group`
+        /// See the comment in `mainEntryDatastoreStart`: only apply `--group`
         /// when the user explicitly provided it.
         if (options["group"].defaulted())
             group.clear();

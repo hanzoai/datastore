@@ -1,7 +1,7 @@
 #include <Storages/System/StorageSystemTables.h>
 
 #include <Access/ContextAccess.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Backups/BackupsHelper.h>
 #endif
 #include <Columns/ColumnString.h>

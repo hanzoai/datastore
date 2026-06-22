@@ -129,7 +129,7 @@ extern "C" int LLVMFuzzerInitialize(const int * argc, char *** argv)
     context->setSettings(settings);
 
     /// Initialize temporary storage for processing queries
-    context->setTemporaryStoragePath((fs::temp_directory_path() / "clickhouse_fuzzer_tmp" / "").string(), 0);
+    context->setTemporaryStoragePath((fs::temp_directory_path() / "datastore_fuzzer_tmp" / "").string(), 0);
 
     MainThreadStatus::getInstance();
 

@@ -45,7 +45,7 @@ struct ClusterConnectionParameters
 {
     const String & username;
     const String & password;
-    UInt16 clickhouse_port;
+    UInt16 datastore_port;
     bool treat_local_as_remote;
     bool treat_local_port_as_remote;
     bool secure = false;
@@ -70,7 +70,7 @@ public:
     /// Construct a cluster by the names of shards and replicas.
     /// Local are treated as well as remote ones if treat_local_as_remote is true.
     /// Local are also treated as remote if treat_local_port_as_remote is set and the local address includes a port
-    /// 'clickhouse_port' - port that this server instance listen for queries.
+    /// 'datastore_port' - port that this server instance listen for queries.
     /// This parameter is needed only to check that some address is local (points to ourself).
     ///
     /// Used for remote() function.
@@ -186,7 +186,7 @@ public:
         bool operator==(const Address & other) const { return tuple() == other.tuple(); }
 
     private:
-        bool isLocal(UInt16 clickhouse_port) const;
+        bool isLocal(UInt16 datastore_port) const;
     };
 
     using Addresses = std::vector<Address>;

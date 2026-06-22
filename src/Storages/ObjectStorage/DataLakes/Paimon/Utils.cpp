@@ -109,7 +109,7 @@ DB::Row getPartitionFields(const String & partition_string, const PaimonTableSch
     Paimon::BinaryRow partition(partition_string);
     auto get_partition_value = [&partition](Int32 i, Paimon::DataType & data_type) -> Field
     {
-        if (data_type.clickhouse_data_type->isNullable() && partition.isNullAt(i))
+        if (data_type.datastore_data_type->isNullable() && partition.isNullAt(i))
         {
             return Null();
         }
@@ -124,23 +124,23 @@ DB::Row getPartitionFields(const String & partition_string, const PaimonTableSch
             }
             case RootDataType::DECIMAL: {
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal32 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal32 *>(removeNullable(data_type.datastore_data_type).get()))
                     return DecimalField<Decimal32>(
                         partition.getDecimal<Int32>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal64 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal64 *>(removeNullable(data_type.datastore_data_type).get()))
                     return DecimalField<Decimal64>(
                         partition.getDecimal<Int64>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal128 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal128 *>(removeNullable(data_type.datastore_data_type).get()))
                     return DecimalField<Decimal128>(
                         partition.getDecimal<Int128>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal256 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal256 *>(removeNullable(data_type.datastore_data_type).get()))
                     return DecimalField<Decimal256>(
                         partition.getDecimal<Int256>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 else
-                    throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unknown type {}", data_type.clickhouse_data_type->getName());
+                    throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unknown type {}", data_type.datastore_data_type->getName());
             }
             case RootDataType::TINYINT:
                 return Field(partition.getByte(i));
@@ -158,7 +158,7 @@ DB::Row getPartitionFields(const String & partition_string, const PaimonTableSch
                 return Field(partition.getDouble(i));
             case RootDataType::TIMESTAMP_WITHOUT_TIME_ZONE:
             case RootDataType::TIMESTAMP_WITH_LOCAL_TIME_ZONE: {
-                const auto * type = typeid_cast<const DataTypeDateTime64 *>(removeNullable(data_type.clickhouse_data_type).get());
+                const auto * type = typeid_cast<const DataTypeDateTime64 *>(removeNullable(data_type.datastore_data_type).get());
                 LOG_TEST(
                     &Poco::Logger::get("getPartitionString"), "getPrecision: {}, getScale: {}", type->getPrecision(), type->getScale());
                 return DecimalField<DateTime64>(partition.getTimestamp(i, type->getScale()), 3);
@@ -190,7 +190,7 @@ String getPartitionString(Paimon::BinaryRow & partition, const PaimonTableSchema
 {
     auto get_partition_value = [&partition, &partition_default_name](Int32 i, Paimon::DataType & data_type) -> String
     {
-        if (data_type.clickhouse_data_type->isNullable() && partition.isNullAt(i))
+        if (data_type.datastore_data_type->isNullable() && partition.isNullAt(i))
         {
             /// TODO: support customer default partition name
             return partition_default_name;
@@ -206,23 +206,23 @@ String getPartitionString(Paimon::BinaryRow & partition, const PaimonTableSchema
             }
             case RootDataType::DECIMAL: {
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal32 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal32 *>(removeNullable(data_type.datastore_data_type).get()))
                     return formatDecimal(
                         partition.getDecimal<Int32>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal64 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal64 *>(removeNullable(data_type.datastore_data_type).get()))
                     return formatDecimal(
                         partition.getDecimal<Int64>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal128 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal128 *>(removeNullable(data_type.datastore_data_type).get()))
                     return formatDecimal(
                         partition.getDecimal<Int128>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 if (const auto * decimal_type
-                    = typeid_cast<const DataTypeDecimal256 *>(removeNullable(data_type.clickhouse_data_type).get()))
+                    = typeid_cast<const DataTypeDecimal256 *>(removeNullable(data_type.datastore_data_type).get()))
                     return formatDecimal(
                         partition.getDecimal<Int256>(i, decimal_type->getPrecision(), decimal_type->getScale()), decimal_type->getScale());
                 else
-                    throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unknown type {}", data_type.clickhouse_data_type->getName());
+                    throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unknown type {}", data_type.datastore_data_type->getName());
             }
             case RootDataType::TINYINT:
                 return formatQuoted(partition.getByte(i));
@@ -240,7 +240,7 @@ String getPartitionString(Paimon::BinaryRow & partition, const PaimonTableSchema
                 return formatFloat(partition.getDouble(i));
             case RootDataType::TIMESTAMP_WITHOUT_TIME_ZONE:
             case RootDataType::TIMESTAMP_WITH_LOCAL_TIME_ZONE: {
-                const auto * type = typeid_cast<const DataTypeDateTime64 *>(removeNullable(data_type.clickhouse_data_type).get());
+                const auto * type = typeid_cast<const DataTypeDateTime64 *>(removeNullable(data_type.datastore_data_type).get());
                 LOG_TEST(
                     &Poco::Logger::get("getPartitionString"), "getPrecision: {}, getScale: {}", type->getPrecision(), type->getScale());
                 return formatDateTime(partition.getTimestamp(i, type->getScale()), 3, type->getTimeZone());

@@ -34,7 +34,7 @@ public:
     bool hasSchema(Int64 schema_id) const;
 
     /// Get Datastore column definitions for a schema.
-    std::shared_ptr<NamesAndTypesList> getClickHouseSchema(Int64 schema_id);
+    std::shared_ptr<NamesAndTypesList> getDatastoreSchema(Int64 schema_id);
 
     /// Register the relationship between snapshot and schema.
     void registerSnapshotSchema(Int64 snapshot_id, Int64 schema_id);
@@ -53,7 +53,7 @@ public:
 
 private:
     /// Convert PaimonTableSchema to Datastore NamesAndTypesList.
-    static std::shared_ptr<NamesAndTypesList> convertToClickHouseSchema(const PaimonTableSchemaPtr & schema);
+    static std::shared_ptr<NamesAndTypesList> convertToDatastoreSchema(const PaimonTableSchemaPtr & schema);
 
     mutable SharedMutex mutex;
 
@@ -61,7 +61,7 @@ private:
     std::unordered_map<Int64, PaimonTableSchemaPtr> schemas_by_id TSA_GUARDED_BY(mutex);
 
     /// schema_id -> Datastore NamesAndTypesList (cached conversion result)
-    std::unordered_map<Int64, std::shared_ptr<NamesAndTypesList>> clickhouse_schemas_by_id TSA_GUARDED_BY(mutex);
+    std::unordered_map<Int64, std::shared_ptr<NamesAndTypesList>> datastore_schemas_by_id TSA_GUARDED_BY(mutex);
 
     /// snapshot_id -> schema_id
     std::unordered_map<Int64, Int64> schema_id_by_snapshot TSA_GUARDED_BY(mutex);

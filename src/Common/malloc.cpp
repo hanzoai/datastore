@@ -15,7 +15,7 @@
 /// and delegate to jemalloc via je_* prefixed functions.
 ///
 /// This replaces the previous --wrap linker approach with direct symbol
-/// interposition: malloc.cpp compiles to a dedicated object (clickhouse_malloc.o)
+/// interposition: malloc.cpp compiles to a dedicated object (datastore_malloc.o)
 /// that appears before libjemalloc.a in the link order.
 ///
 /// jemalloc with je_ prefix does not export valloc/memalign/pvalloc,

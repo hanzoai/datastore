@@ -98,8 +98,8 @@ std::string CloudJWTProvider::getJWT()
     Poco::Timestamp expiration_buffer = 30 * Poco::Timespan::SECONDS;
 
     // If we have a valid Datastore JWT, return it.
-    if (!clickhouse_jwt.empty() && now < clickhouse_jwt_expires_at - expiration_buffer)
-        return clickhouse_jwt;
+    if (!datastore_jwt.empty() && now < datastore_jwt_expires_at - expiration_buffer)
+        return datastore_jwt;
 
     // If we have a valid IDP refresh token, attempt to refresh the IDP access token if expired.
     if (!idp_refresh_token.empty() && now >= idp_access_token_expires_at - expiration_buffer)
@@ -110,14 +110,14 @@ std::string CloudJWTProvider::getJWT()
     // If we have a valid IDP access token, attempt to exchange it for a Datastore JWT.
     if (!idp_access_token.empty() && now < idp_access_token_expires_at - expiration_buffer)
     {
-        exchangeIdPTokenForClickHouseJWT(false);
-        return clickhouse_jwt;
+        exchangeIdPTokenForDatastoreJWT(false);
+        return datastore_jwt;
     }
 
     // If we don't have a valid Datastore JWT, attempt to login and exchange the IDP token for a Datastore JWT.
     deviceCodeLogin();
-    exchangeIdPTokenForClickHouseJWT(true);
-    return clickhouse_jwt;
+    exchangeIdPTokenForDatastoreJWT(true);
+    return datastore_jwt;
 }
 
 std::string CloudJWTProvider::getAudience() const
@@ -125,7 +125,7 @@ std::string CloudJWTProvider::getAudience() const
     return "token-exchange";
 }
 
-void CloudJWTProvider::exchangeIdPTokenForClickHouseJWT(bool show_messages)
+void CloudJWTProvider::exchangeIdPTokenForDatastoreJWT(bool show_messages)
 {
     const auto * endpoints = getAuthEndpoints(host_str);
 
@@ -168,8 +168,8 @@ void CloudJWTProvider::exchangeIdPTokenForClickHouseJWT(bool show_messages)
     Poco::StreamCopier::copyToString(rs, response_body);
 
     Poco::JSON::Object::Ptr object = Poco::JSON::Parser().parse(response_body).extract<Poco::JSON::Object::Ptr>();
-    clickhouse_jwt = object->getValue<std::string>("token");
-    clickhouse_jwt_expires_at = Poco::Timestamp::fromEpochTime(jwt::decode(clickhouse_jwt).get_payload_claim("exp").as_integer());
+    datastore_jwt = object->getValue<std::string>("token");
+    datastore_jwt_expires_at = Poco::Timestamp::fromEpochTime(jwt::decode(datastore_jwt).get_payload_claim("exp").as_integer());
 
     if (show_messages)
         output_stream << "Authenticated with Datastore Cloud.\n" << std::endl;

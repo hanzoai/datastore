@@ -2,7 +2,7 @@
 #
 # CMake's stock `generate_export_header` runs `try_compile` checks for hidden visibility
 # and the `__attribute__((__deprecated__))` attribute. Build-time CMake checks are
-# forbidden in ClickHouse (see `cmake/block_build_time_checks.cmake`); the compiler is
+# forbidden in Datastore (see `cmake/block_build_time_checks.cmake`); the compiler is
 # fixed (Clang, see `cmake/tools.cmake`), and both features are statically known to be
 # supported, so we emit the export header directly.
 #
@@ -16,7 +16,7 @@
 #   CUSTOM_CONTENT_FROM_VARIABLE name of a variable whose contents are appended to the file
 #   INCLUDE_GUARD_NAME           override the include-guard macro name
 
-function (clickhouse_generate_export_header TARGET_LIBRARY)
+function (datastore_generate_export_header TARGET_LIBRARY)
     set (oneValueArgs
         BASE_NAME
         EXPORT_MACRO_NAME

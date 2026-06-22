@@ -1,10 +1,10 @@
 add_subdirectory(divide)
 
-include("${ClickHouse_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
-add_headers_and_sources(clickhouse_functions .)
-add_headers_and_sources(clickhouse_functions AI)
+include("${Datastore_SOURCE_DIR}/cmake/dbms_glob_sources.cmake")
+add_headers_and_sources(datastore_functions .)
+add_headers_and_sources(datastore_functions AI)
 
-# These files are moved from clickhouse_functions into dbms to make dbms self-contained (not depend on clickhouse_functions)
+# These files are moved from datastore_functions into dbms to make dbms self-contained (not depend on datastore_functions)
 # This allows less dependency and linker work (specially important when building many example executables)
 set(DBMS_FUNCTIONS
     IFunction.cpp # IFunctionOverloadResolver::getLambdaArgumentTypes, IExecutableFunction::execute... (Many AST visitors, analyzer passes, some storages...)
@@ -56,8 +56,8 @@ set(DBMS_FUNCTIONS
     extractTimeZoneFromFunctionArguments.cpp # extractTimeZoneFromFunctionArguments (DateTimeTransforms.h, FunctionsConversion.cpp)
     generateSnowflakeID.cpp
 )
-extract_into_parent_list(clickhouse_functions_sources dbms_sources ${DBMS_FUNCTIONS})
-extract_into_parent_list(clickhouse_functions_headers dbms_headers
+extract_into_parent_list(datastore_functions_sources dbms_sources ${DBMS_FUNCTIONS})
+extract_into_parent_list(datastore_functions_headers dbms_headers
     IFunction.h
     FunctionFactory.h
     FunctionHelpers.h
@@ -66,20 +66,20 @@ extract_into_parent_list(clickhouse_functions_headers dbms_headers
     CastOverloadResolver.h
 )
 
-add_library(clickhouse_functions_obj OBJECT ${clickhouse_functions_headers} ${clickhouse_functions_sources})
+add_library(datastore_functions_obj OBJECT ${datastore_functions_headers} ${datastore_functions_sources})
 if (OMIT_HEAVY_DEBUG_SYMBOLS)
-    target_compile_options(clickhouse_functions_obj PRIVATE "-g1")
+    target_compile_options(datastore_functions_obj PRIVATE "-g1")
 endif()
 
-list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:clickhouse_functions_obj>)
+list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:datastore_functions_obj>)
 
 list (APPEND PUBLIC_LIBS
         ch_contrib::wyhash
         ch_contrib::cityhash
         ch_contrib::farmhash
-        clickhouse_dictionaries
-        clickhouse_dictionaries_embedded
-        clickhouse_parsers
+        datastore_dictionaries
+        datastore_dictionaries_embedded
+        datastore_parsers
         ch_contrib::consistent_hashing
         common
         dbms
@@ -157,27 +157,27 @@ if (TARGET ch_contrib::crc32-vpmsum)
 endif()
 
 add_subdirectory(GatherUtils)
-list (APPEND PRIVATE_LIBS clickhouse_functions_gatherutils)
+list (APPEND PRIVATE_LIBS datastore_functions_gatherutils)
 
 add_subdirectory(URL)
-list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:clickhouse_functions_url>)
+list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:datastore_functions_url>)
 
 add_subdirectory(array)
-list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:clickhouse_functions_array>)
+list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:datastore_functions_array>)
 
 add_subdirectory(Kusto)
-list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:clickhouse_functions_kusto>)
+list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:datastore_functions_kusto>)
 
 add_subdirectory(TimeSeries)
-list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:clickhouse_functions_time_series>)
+list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:datastore_functions_time_series>)
 
 if (TARGET ch_contrib::datasketches)
     add_subdirectory(UniqTheta)
-    list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:clickhouse_functions_uniqtheta>)
+    list (APPEND OBJECT_LIBS $<TARGET_OBJECTS:datastore_functions_uniqtheta>)
 endif()
 
 add_subdirectory(JSONPath)
-list (APPEND PRIVATE_LIBS clickhouse_functions_jsonpath)
+list (APPEND PRIVATE_LIBS datastore_functions_jsonpath)
 
 add_subdirectory(keyvaluepair)
 
@@ -211,9 +211,9 @@ endif ()
 set(dbms_sources "${dbms_sources}" PARENT_SCOPE)
 set(dbms_headers "${dbms_headers}" PARENT_SCOPE)
 
-target_link_libraries(clickhouse_functions_obj PUBLIC ${PUBLIC_LIBS} PRIVATE ${PRIVATE_LIBS})
+target_link_libraries(datastore_functions_obj PUBLIC ${PUBLIC_LIBS} PRIVATE ${PRIVATE_LIBS})
 
 # Used to forward the linking information to the final binaries such as clickhouse / unit_tests_dbms,
 # since such information are lost after we convert to OBJECT target
-add_library(clickhouse_functions INTERFACE)
-target_link_libraries(clickhouse_functions INTERFACE ${OBJECT_LIBS} ${PUBLIC_LIBS} ${PRIVATE_LIBS})
+add_library(datastore_functions INTERFACE)
+target_link_libraries(datastore_functions INTERFACE ${OBJECT_LIBS} ${PUBLIC_LIBS} ${PRIVATE_LIBS})

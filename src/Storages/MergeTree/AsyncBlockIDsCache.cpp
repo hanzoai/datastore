@@ -1,7 +1,7 @@
 #include <Storages/MergeTree/AsyncBlockIDsCache.h>
 #include <Storages/MergeTree/MergeTreeSettings.h>
 #include <Storages/StorageReplicatedMergeTree.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Storages/StorageSharedMergeTree.h>
 #endif
 #include <Common/CurrentMetrics.h>
@@ -150,7 +150,7 @@ std::vector<DeduplicationHash> AsyncBlockIDsCache<TStorage>::detectConflicts(con
 }
 
 template class AsyncBlockIDsCache<StorageReplicatedMergeTree>;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 template class AsyncBlockIDsCache<StorageSharedMergeTree>;
 #endif
 

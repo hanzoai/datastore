@@ -341,7 +341,7 @@ static DatabasePtr createMemoryDatabaseIfNotExists(ContextPtr context, const Str
     return system_database;
 }
 
-static DatabasePtr createClickHouseLocalDatabaseOverlay(const String & name_, ContextPtr context)
+static DatabasePtr createDatastoreLocalDatabaseOverlay(const String & name_, ContextPtr context)
 {
     auto overlay = std::make_shared<DatabaseOverlay>(name_, context);
 
@@ -815,9 +815,9 @@ void LocalServer::processConfig()
     }
 
     print_stack_trace = getClientConfiguration().getBool("stacktrace", false);
-    const std::string clickhouse_dialect{"clickhouse"};
+    const std::string datastore_dialect{"clickhouse"};
     load_suggestions = (is_interactive || delayed_interactive) && !getClientConfiguration().getBool("disable_suggestion", false)
-        && getClientConfiguration().getString("dialect", clickhouse_dialect) == clickhouse_dialect;
+        && getClientConfiguration().getString("dialect", datastore_dialect) == datastore_dialect;
     wait_for_suggestions_to_load = getClientConfiguration().getBool("wait_for_suggestions_to_load", false);
 
     auto logging = (getClientConfiguration().has("logger.console")
@@ -1109,7 +1109,7 @@ void LocalServer::processConfig()
     std::string server_default_database = server_settings[ServerSetting::default_database];
     if (!server_default_database.empty())
     {
-        DatabasePtr database = createClickHouseLocalDatabaseOverlay(server_default_database, global_context);
+        DatabasePtr database = createDatastoreLocalDatabaseOverlay(server_default_database, global_context);
         if (UUID uuid = database->getUUID(); uuid != UUIDHelpers::Nil)
             DatabaseCatalog::instance().addUUIDMapping(uuid);
         DatabaseCatalog::instance().attachDatabase(server_default_database, database);
@@ -1367,7 +1367,7 @@ void LocalServer::readArguments(int argc, char ** argv, Arguments & common_argum
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-int mainEntryClickHouseLocal(int argc, char ** argv)
+int mainEntryDatastoreLocal(int argc, char ** argv)
 {
     DB::MainThreadStatus::getInstance();
 

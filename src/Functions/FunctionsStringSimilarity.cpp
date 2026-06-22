@@ -568,9 +568,9 @@ For case-insensitive search or/and in UTF8 format use functions [`ngramDistanceC
     FunctionDocumentation::Examples examples_ngram_distance = {
     {
         "Calculate 4-gram distance",
-        "SELECT ngramDistance('Datastore', 'ClickHouses')",
+        "SELECT ngramDistance('Datastore', 'Datastores')",
         R"(
-┌─ngramDistance('Datastore', 'ClickHouses')─┐
+┌─ngramDistance('Datastore', 'Datastores')─┐
 │                                        0.1 │
 └────────────────────────────────────────────┘
         )"

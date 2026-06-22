@@ -80,7 +80,7 @@ struct DataType
 {
     RootDataType root_type;
     String raw_type;
-    DataTypePtr clickhouse_data_type;
+    DataTypePtr datastore_data_type;
     static DataType parse(const Poco::JSON::Object::Ptr & json_object, const String & key)
     {
         DataType type;
@@ -163,57 +163,57 @@ struct DataType
             if (real_type == "BOOLEAN")
             {
                 type.root_type = RootDataType::BOOLEAN;
-                type.clickhouse_data_type = std::make_shared<DataTypeInt8>();
+                type.datastore_data_type = std::make_shared<DataTypeInt8>();
             }
             else if (real_type == "STRING" || real_type.starts_with("VARCHAR"))
             {
                 type.root_type = RootDataType::VARCHAR;
-                type.clickhouse_data_type = std::make_shared<DataTypeString>();
+                type.datastore_data_type = std::make_shared<DataTypeString>();
             }
             else if (real_type == "BYTES" || real_type.starts_with("VARBINARY"))
             {
                 type.root_type = RootDataType::VARBINARY;
-                type.clickhouse_data_type = std::make_shared<DataTypeString>();
+                type.datastore_data_type = std::make_shared<DataTypeString>();
             }
             else if (real_type == "TINYINT")
             {
                 type.root_type = RootDataType::TINYINT;
-                type.clickhouse_data_type = std::make_shared<DataTypeInt8>();
+                type.datastore_data_type = std::make_shared<DataTypeInt8>();
             }
             else if (real_type == "SMALLINT")
             {
                 type.root_type = RootDataType::SMALLINT;
-                type.clickhouse_data_type = std::make_shared<DataTypeInt16>();
+                type.datastore_data_type = std::make_shared<DataTypeInt16>();
             }
             else if (real_type == "INT")
             {
                 type.root_type = RootDataType::INTEGER;
-                type.clickhouse_data_type = std::make_shared<DataTypeInt32>();
+                type.datastore_data_type = std::make_shared<DataTypeInt32>();
             }
             else if (real_type == "BIGINT")
             {
                 type.root_type = RootDataType::BIGINT;
-                type.clickhouse_data_type = std::make_shared<DataTypeInt64>();
+                type.datastore_data_type = std::make_shared<DataTypeInt64>();
             }
             else if (real_type == "FLOAT")
             {
                 type.root_type = RootDataType::FLOAT;
-                type.clickhouse_data_type = std::make_shared<DataTypeFloat32>();
+                type.datastore_data_type = std::make_shared<DataTypeFloat32>();
             }
             else if (real_type == "DOUBLE")
             {
                 type.root_type = RootDataType::DOUBLE;
-                type.clickhouse_data_type = std::make_shared<DataTypeFloat64>();
+                type.datastore_data_type = std::make_shared<DataTypeFloat64>();
             }
             else if (real_type == "DATE")
             {
                 type.root_type = RootDataType::DATE;
-                type.clickhouse_data_type = std::make_shared<DataTypeDate>();
+                type.datastore_data_type = std::make_shared<DataTypeDate>();
             }
             else if (real_type.starts_with("TIME") && !real_type.starts_with("TIMESTAMP"))
             {
                 type.root_type = RootDataType::TIME_WITHOUT_TIME_ZONE;
-                type.clickhouse_data_type = std::make_shared<DataTypeInt64>();
+                type.datastore_data_type = std::make_shared<DataTypeInt64>();
             }
             else if (real_type.starts_with("TIMESTAMP"))
             {
@@ -221,19 +221,19 @@ struct DataType
                                                                        : RootDataType::TIMESTAMP_WITHOUT_TIME_ZONE;
                 size_t p = has_precision(type.raw_type) ? parse_precision(type.raw_type)[0] : 6;
                 String time_zone_string = type.root_type == RootDataType::TIMESTAMP_WITHOUT_TIME_ZONE ? "UTC" : "";
-                type.clickhouse_data_type = std::make_shared<DataTypeDateTime64>(p, time_zone_string);
+                type.datastore_data_type = std::make_shared<DataTypeDateTime64>(p, time_zone_string);
             }
             else if (real_type.starts_with("CHAR"))
             {
                 size_t n = has_precision(type.raw_type) ? parse_precision(type.raw_type)[0] : 1;
-                type.clickhouse_data_type = std::make_shared<DataTypeFixedString>(n);
+                type.datastore_data_type = std::make_shared<DataTypeFixedString>(n);
                 type.root_type = RootDataType::CHAR;
             }
             else if (real_type.starts_with("BINARY"))
             {
                 type.root_type = RootDataType::BINARY;
                 size_t n = has_precision(real_type) ? parse_precision(real_type)[0] : 1;
-                type.clickhouse_data_type = std::make_shared<DataTypeFixedString>(n);
+                type.datastore_data_type = std::make_shared<DataTypeFixedString>(n);
             }
             else if (real_type.starts_with("DECIMAL"))
             {
@@ -245,7 +245,7 @@ struct DataType
                 type.root_type = RootDataType::DECIMAL;
                 auto precision = static_cast<Int32>(n[0]);
                 auto scale = static_cast<Int32>(n[1]);
-                type.clickhouse_data_type = createDecimal<DataTypeDecimal>(precision, scale);
+                type.datastore_data_type = createDecimal<DataTypeDecimal>(precision, scale);
             }
             else
             {
@@ -253,7 +253,7 @@ struct DataType
             }
             if (nullable)
             {
-                type.clickhouse_data_type = std::make_shared<DataTypeNullable>(type.clickhouse_data_type);
+                type.datastore_data_type = std::make_shared<DataTypeNullable>(type.datastore_data_type);
             }
             return type;
         }
@@ -269,10 +269,10 @@ struct DataType
             {
                 type.root_type = RootDataType::ARRAY;
                 auto nested_type = parse(inner_json_object, "element");
-                type.clickhouse_data_type = std::make_shared<DataTypeArray>(nested_type.clickhouse_data_type);
+                type.datastore_data_type = std::make_shared<DataTypeArray>(nested_type.datastore_data_type);
                 if (nullable)
                 {
-                    type.clickhouse_data_type = std::make_shared<DataTypeNullable>(type.clickhouse_data_type);
+                    type.datastore_data_type = std::make_shared<DataTypeNullable>(type.datastore_data_type);
                 }
             }
             else if (real_type == "MAP")
@@ -280,10 +280,10 @@ struct DataType
                 type.root_type = RootDataType::MAP;
                 auto key_type = parse(inner_json_object, "key");
                 auto value_type = parse(inner_json_object, "value");
-                type.clickhouse_data_type = std::make_shared<DataTypeMap>(key_type.clickhouse_data_type, value_type.clickhouse_data_type);
+                type.datastore_data_type = std::make_shared<DataTypeMap>(key_type.datastore_data_type, value_type.datastore_data_type);
                 if (nullable)
                 {
-                    type.clickhouse_data_type = std::make_shared<DataTypeNullable>(type.clickhouse_data_type);
+                    type.datastore_data_type = std::make_shared<DataTypeNullable>(type.datastore_data_type);
                 }
             }
             else

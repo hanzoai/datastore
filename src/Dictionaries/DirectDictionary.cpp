@@ -7,7 +7,7 @@
 #include <Interpreters/Context.h>
 #include <Functions/FunctionHelpers.h>
 
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionaryFactory.h>
 #include <Dictionaries/DictionarySourceHelpers.h>
 #include <Dictionaries/HierarchyDictionariesUtils.h>
@@ -437,10 +437,10 @@ Pipe DirectDictionary<dictionary_key_type>::read(const Names & /* column_names *
 template <DictionaryKeyType dictionary_key_type>
 void DirectDictionary<dictionary_key_type>::applySettings(const Settings & settings)
 {
-    if (const auto * clickhouse_source = dynamic_cast<const ClickHouseDictionarySource *>(source_ptr.get()))
+    if (const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get()))
     {
         /// Only applicable for CLICKHOUSE dictionary source.
-        use_async_executor = settings[Setting::dictionary_use_async_executor] && clickhouse_source->isLocal();
+        use_async_executor = settings[Setting::dictionary_use_async_executor] && datastore_source->isLocal();
     }
 }
 

@@ -1,11 +1,11 @@
-set (CLICKHOUSE_CHECK_MARKS_SOURCES CheckMarks.cpp)
+set (DATASTORE_CHECK_MARKS_SOURCES CheckMarks.cpp)
 
-set (CLICKHOUSE_CHECK_MARKS_LINK
+set (DATASTORE_CHECK_MARKS_LINK
     PRIVATE
         boost::program_options
-        clickhouse_aggregate_functions
-        clickhouse_common_config
+        datastore_aggregate_functions
+        datastore_common_config
         dbms
 )
 
-clickhouse_program_add(check-marks)
+datastore_program_add(check-marks)

@@ -86,7 +86,7 @@ string(APPEND bsoncxx_export_header_custom_content [[
 
 ]]
 )
-clickhouse_generate_export_header(_bsoncxx
+datastore_generate_export_header(_bsoncxx
         BASE_NAME BSONCXX_ABI
         EXPORT_MACRO_NAME BSONCXX_ABI_EXPORT
         DEPRECATED_MACRO_NAME BSONCXX_DEPRECATED
@@ -261,7 +261,7 @@ string(APPEND mongocxx_export_header_custom_content [[
 
 ]]
 )
-clickhouse_generate_export_header(_mongocxx
+datastore_generate_export_header(_mongocxx
         BASE_NAME MONGOCXX_ABI
         EXPORT_MACRO_NAME MONGOCXX_ABI_EXPORT
         DEPRECATED_MACRO_NAME MONGOCXX_DEPRECATED

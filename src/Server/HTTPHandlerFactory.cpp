@@ -10,7 +10,7 @@
 #include <Server/StaticRequestHandler.h>
 #include <Server/WebUIRequestHandler.h>
 #include <Server/WebTerminalRequestHandler.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Server/CloudReadinessHandler.h>
 #endif
 
@@ -265,7 +265,7 @@ static inline auto createHandlersFactoryFromConfig(
                 main_handler_factory->addHandler(std::move(handler));
             }
 #endif
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
             else if (handler_type == "cloud")
             {
                 main_handler_factory->addHandler(createCloudHandlerFactory(server, config, prefix + "." + key));
@@ -318,7 +318,7 @@ HTTPRequestHandlerFactoryPtr createHandlerFactory(IServer & server, const Poco::
         return createPrometheusHandlerFactory(server, config, async_metrics, name);
     if (name == "KeeperPrometheusHandler-factory")
         return createKeeperPrometheusHandlerFactory(server, config, async_metrics, name);
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (name == "CloudHandler-factory")
         return createCloudMainHandlerFactory(server, config, name);
 #endif

@@ -9551,8 +9551,8 @@ PartitionCommandsResultInfo MergeTreeData::freezePartitionsByMatcher(
 {
     auto settings = getSettings();
 
-    String clickhouse_path = fs::canonical(local_context->getPath());
-    String default_shadow_path = fs::path(clickhouse_path) / "shadow/";
+    String datastore_path = fs::canonical(local_context->getPath());
+    String default_shadow_path = fs::path(datastore_path) / "shadow/";
     fs::create_directories(default_shadow_path);
     auto increment = Increment(fs::path(default_shadow_path) / "increment.txt").get(true);
 

@@ -32,7 +32,7 @@ The main interfaces to understand are:
 
     Sources are implemented in files like:
 
-    - `ClickHouseDictionarySource.h`
+    - `DatastoreDictionarySource.h`
     - `MySQLDictionarySource.h`
     - `PostgreSQLDictionarySource.h`
     - `HTTPDictionarySource.h`

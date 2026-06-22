@@ -1,13 +1,13 @@
-set (CLICKHOUSE_FORMAT_SOURCES Format.cpp)
+set (DATASTORE_FORMAT_SOURCES Format.cpp)
 
-set (CLICKHOUSE_FORMAT_LINK
+set (DATASTORE_FORMAT_LINK
     PRIVATE
         boost::program_options
-        clickhouse_common_io
-        clickhouse_parsers
-        clickhouse_functions
-        clickhouse_aggregate_functions
-        clickhouse_table_functions
+        datastore_common_io
+        datastore_parsers
+        datastore_functions
+        datastore_aggregate_functions
+        datastore_table_functions
 )
 
-clickhouse_program_add(format)
+datastore_program_add(format)

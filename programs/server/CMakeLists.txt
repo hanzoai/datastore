@@ -1,37 +1,37 @@
-set(CLICKHOUSE_SERVER_SOURCES
+set(DATASTORE_SERVER_SOURCES
     MetricsTransmitter.cpp
     Server.cpp
 )
 
-set (CLICKHOUSE_SERVER_LINK
+set (DATASTORE_SERVER_LINK
     PRIVATE
-        clickhouse_aggregate_functions
-        clickhouse_common_config
-        clickhouse_common_io
-        clickhouse_common_zookeeper_base
-        clickhouse_common_zookeeper
-        clickhouse_functions
-        clickhouse_parsers
-        clickhouse_storages_system
-        clickhouse_table_functions
+        datastore_aggregate_functions
+        datastore_common_config
+        datastore_common_io
+        datastore_common_zookeeper_base
+        datastore_common_zookeeper
+        datastore_functions
+        datastore_parsers
+        datastore_storages_system
+        datastore_table_functions
 
     PUBLIC
         daemon
 )
 if (TARGET ch_contrib::jemalloc)
-    list(APPEND CLICKHOUSE_SERVER_LINK PRIVATE ch_contrib::jemalloc)
+    list(APPEND DATASTORE_SERVER_LINK PRIVATE ch_contrib::jemalloc)
 endif()
 if (TARGET ch_contrib::azure_sdk)
-    list(APPEND CLICKHOUSE_SERVER_LINK PRIVATE ch_contrib::azure_sdk)
+    list(APPEND DATASTORE_SERVER_LINK PRIVATE ch_contrib::azure_sdk)
 endif()
 
 # Track dependencies for #embed directives so that changes to embedded files trigger recompilation.
 set_source_files_properties(Server.cpp PROPERTIES OBJECT_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/embedded.xml")
 
-clickhouse_program_add(server)
+datastore_program_add(server)
 
-install(FILES config.xml users.xml DESTINATION "${CLICKHOUSE_ETC_DIR}/datastore-server" COMPONENT clickhouse)
+install(FILES config.xml users.xml DESTINATION "${DATASTORE_ETC_DIR}/datastore-server" COMPONENT clickhouse)
 
 if (ENABLE_FUZZING)
     add_subdirectory(fuzzers)

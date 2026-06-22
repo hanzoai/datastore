@@ -920,7 +920,7 @@ void StatementGenerator::generateFuncCall(RandomGenerator & rg, const bool allow
         /// Function
         SQLFuncName * sfn = func_call->mutable_func();
 
-        if (!this->functions.empty() && this->peer_query != PeerQuery::ClickHouseOnly
+        if (!this->functions.empty() && this->peer_query != PeerQuery::DatastoreOnly
             && (this->allow_not_deterministic || collectionHas<SQLFunction>(StatementGenerator::funcDeterministicLambda))
             && rg.nextSmallNumber() < 3)
         {

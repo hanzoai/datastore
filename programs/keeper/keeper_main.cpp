@@ -25,12 +25,12 @@
 #include <base/scope_guard.h>
 
 
-int mainEntryClickHouseKeeper(int argc, char ** argv);
-#if ENABLE_CLICKHOUSE_KEEPER_CONVERTER
-int mainEntryClickHouseKeeperConverter(int argc, char ** argv);
+int mainEntryDatastoreKeeper(int argc, char ** argv);
+#if ENABLE_DATASTORE_KEEPER_CONVERTER
+int mainEntryDatastoreKeeperConverter(int argc, char ** argv);
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
-int mainEntryClickHouseKeeperClient(int argc, char ** argv);
+#if ENABLE_DATASTORE_KEEPER_CLIENT
+int mainEntryDatastoreKeeperClient(int argc, char ** argv);
 #endif
 
 namespace
@@ -39,17 +39,17 @@ namespace
 using MainFunc = int (*)(int, char**);
 
 /// Add an item here to register new application
-std::pair<std::string_view, MainFunc> clickhouse_applications[] =
+std::pair<std::string_view, MainFunc> datastore_applications[] =
 {
     // keeper
-    {"keeper", mainEntryClickHouseKeeper},
-#if ENABLE_CLICKHOUSE_KEEPER_CONVERTER
-    {"converter", mainEntryClickHouseKeeperConverter},
-    {"keeper-converter", mainEntryClickHouseKeeperConverter},
+    {"keeper", mainEntryDatastoreKeeper},
+#if ENABLE_DATASTORE_KEEPER_CONVERTER
+    {"converter", mainEntryDatastoreKeeperConverter},
+    {"keeper-converter", mainEntryDatastoreKeeperConverter},
 #endif
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
-    {"client", mainEntryClickHouseKeeperClient},
-    {"keeper-client", mainEntryClickHouseKeeperClient},
+#if ENABLE_DATASTORE_KEEPER_CLIENT
+    {"client", mainEntryDatastoreKeeperClient},
+    {"keeper-client", mainEntryDatastoreKeeperClient},
 #endif
 
 };
@@ -57,7 +57,7 @@ std::pair<std::string_view, MainFunc> clickhouse_applications[] =
 int printHelp(int, char **)
 {
     std::cerr << "Use one of the following commands:" << std::endl;
-    for (auto & application : clickhouse_applications)
+    for (auto & application : datastore_applications)
         std::cerr << "clickhouse " << application.first << " [args] " << std::endl;
     return -1;
 }
@@ -184,7 +184,7 @@ int main(int argc_, char ** argv_)
 
     /// This is used for testing. For example,
     /// clickhouse-local should be able to run a simple query without throw/catch.
-    if (getenv("CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
+    if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 
     /// Reset new handler to default (that throws std::bad_alloc)
@@ -194,7 +194,7 @@ int main(int argc_, char ** argv_)
     std::vector<char *> argv(argv_, argv_ + argc_);
 
     /// Print a basic help if nothing was matched
-    MainFunc main_func = mainEntryClickHouseKeeper;
+    MainFunc main_func = mainEntryDatastoreKeeper;
 
     if (isClickhouseApp("help", argv))
     {
@@ -202,7 +202,7 @@ int main(int argc_, char ** argv_)
     }
     else
     {
-        for (auto & application : clickhouse_applications)
+        for (auto & application : datastore_applications)
         {
             if (isClickhouseApp(application.first, argv))
             {
