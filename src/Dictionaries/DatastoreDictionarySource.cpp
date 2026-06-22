@@ -334,7 +334,7 @@ void registerDictionarySourceDatastore(DictionarySourceFactory & factory)
         return std::make_unique<DatastoreDictionarySource>(dict_struct, *configuration, sample_block, context);
     };
 
-    factory.registerSource("clickhouse", create_table_source);
+    factory.registerSource("datastore", create_table_source);
 }
 
 }

@@ -58,7 +58,7 @@ int printHelp(int, char **)
 {
     std::cerr << "Use one of the following commands:" << std::endl;
     for (auto & application : datastore_applications)
-        std::cerr << "clickhouse " << application.first << " [args] " << std::endl;
+        std::cerr << "datastore " << application.first << " [args] " << std::endl;
     return -1;
 }
 

@@ -247,7 +247,7 @@ void printHelp(std::ostream & out)
 {
     out << "Use one of the following commands:" << std::endl;
     for (const auto & application : datastore_applications)
-        out << "clickhouse " << application.first << " [args] " << std::endl;
+        out << "datastore " << application.first << " [args] " << std::endl;
 }
 
 /// Add an item here to register a new short name
@@ -465,7 +465,7 @@ int main(int argc_, char ** argv_)
     ///     Use one of the following commands: ...
     /// We detect file-like arguments by the presence of `/` (path separator)
     /// or `.` (file extension), which distinguishes them from mistyped subcommand
-    /// names like "clickhouse sever" where the generic help is appropriate.
+    /// names like "datastore sever" where the generic help is appropriate.
     if (main_func == printHelpOnError && argv.size() >= 2)
     {
         std::string_view arg(argv[1]);
