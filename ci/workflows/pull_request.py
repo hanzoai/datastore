@@ -112,9 +112,6 @@ workflow = Workflow.Config(
         JobConfigs.docker_server.set_run_after(
             FUNCTIONAL_TESTS_PARALLEL_BLOCKING_JOB_NAMES
         ),
-        JobConfigs.docker_keeper.set_run_after(
-            FUNCTIONAL_TESTS_PARALLEL_BLOCKING_JOB_NAMES
-        ),
         *[
             job.set_run_after(FUNCTIONAL_TESTS_PARALLEL_BLOCKING_JOB_NAMES)
             for job in JobConfigs.install_check_jobs

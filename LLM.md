@@ -26,9 +26,9 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 datastore/
 ├── programs/, src/, base/, contrib/  ← upstream ClickHouse C++
 ├── hanzo/                             ← Hanzo overlay: compose, config.xml, schema.sql
-├── packages/, pkg/                    ← RPM/deb packaging
-├── docker/, Dockerfile          ← Hanzo image build
-└── ci/                                ← upstream + Hanzo CI
+├── packages/, pkg/                    ← RPM/deb packaging (hanzo-datastore-*.yaml)
+├── docker/server/                     ← Hanzo image build (Dockerfile.ubuntu, white-labeled)
+└── ci/                                ← upstream + Hanzo CI (Praktika)
 ```
 
 ## Build
@@ -37,8 +37,9 @@ datastore/
 # Local dev (compose):
 cd hanzo && docker compose up
 
-# CI: hanzoai/.github/.github/workflows/docker-build.yml@main
-# pushes to ghcr.io/hanzoai/datastore (multi-arch)
+# CI: the release/master workflows run the "Docker server image" job
+# (ci/jobs/docker_server.py) — it builds docker/server/Dockerfile.ubuntu from the
+# source-built datastore debs and pushes ghcr.io/hanzoai/datastore (multi-arch).
 ```
 
 ## Upstream Sync
@@ -51,10 +52,10 @@ markers intact and the draft PR is labelled `upstream-sync,conflict`.
 
 There is exactly one upstream sync workflow. Do not add a second.
 
-The Hanzo overlay (`hanzo/`, `Dockerfile`) is kept disjoint from upstream
-paths to minimize collisions, so most syncs land clean. Watch areas for
-conflicts: `docker/`, `programs/server/config.xml`, and top-level
-`CMakeLists.txt`.
+Net-new product files live under `hanzo/` (disjoint from upstream, so most syncs
+land clean). White-labeling that edits upstream files in place — `docker/server/`,
+`packages/`, `programs/server/config.xml`, top-level `CMakeLists.txt` — are the
+watch areas for merge conflicts.
 
 ## Phase 1 — Single Binary (Embedded Coordination)
 
@@ -66,7 +67,7 @@ conflicts: `docker/`, `programs/server/config.xml`, and top-level
   - `ENABLE_DATASTORE_KEEPER` (was `${ENABLE_DATASTORE_ALL}`) — drops the standalone keeper entry-point and the `datastore-keeper` symlink from the multipurpose binary.
   - `ENABLE_DATASTORE_KEEPER_CONVERTER` (was `${ENABLE_DATASTORE_ALL}`) — drops the ZooKeeper→Keeper snapshot converter tool.
   - `ENABLE_DATASTORE_KEEPER_CLIENT` (was `${ENABLE_DATASTORE_ALL}`) — drops the standalone keeper CLI client.
-- `Dockerfile` — removed the `datastore-keeper` and `hanzo-datastore-keeper` symlink lines.
+- `docker/server/Dockerfile.ubuntu` — `PACKAGES` installs only `hanzo-datastore-{client,server,common-static}`; the keeper package is not installed. The standalone "Docker keeper image" CI job (which built `docker/keeper/`) was retired — coordination is embedded.
 - `BUILD_STANDALONE_KEEPER` already defaulted `OFF` upstream; left untouched.
 
 ### What did NOT change (and why)

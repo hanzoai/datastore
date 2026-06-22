@@ -353,7 +353,6 @@ class JobNames:
     DOCS_MINTLIFY = "Docs check (Mintlify)"
     CLICKBENCH = "ClickBench"
     DOCKER_SERVER = "Docker server image"
-    DOCKER_KEEPER = "Docker keeper image"
     SQL_TEST = "SQLTest"
     SQL_LOGIC_TEST = "SQLLogic test"
     SQLANCER = "SQLancer"

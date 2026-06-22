@@ -1400,21 +1400,6 @@ class JobConfigs:
             include_paths=[
                 "./ci/jobs/docker_server.py",
                 "./docker/server",
-                "./docker/keeper",
-            ],
-        ),
-        requires=["Build (amd_release)", "Build (arm_release)"],
-        post_hooks=["python3 ./ci/jobs/scripts/job_hooks/docker_clean_up_hook.py"],
-    )
-    docker_keeper = Job.Config(
-        name=JobNames.DOCKER_KEEPER,
-        runs_on=RunnerLabels.STYLE_CHECK_AMD,
-        command="python3 ./ci/jobs/docker_server.py --tag-type head --allow-build-reuse",
-        digest_config=Job.CacheDigestConfig(
-            include_paths=[
-                "./ci/jobs/docker_server.py",
-                "./docker/server",
-                "./docker/keeper",
             ],
         ),
         requires=["Build (amd_release)", "Build (arm_release)"],
