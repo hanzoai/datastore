@@ -122,6 +122,9 @@
 #include <Server/ProtocolServerAdapter.h>
 #include <Server/ProxyV1HandlerFactory.h>
 #include <Server/TLSHandlerFactory.h>
+#if USE_ZAP
+#include <Server/ZapServer.h>
+#endif
 #include <Server/KeeperHTTPHandlerFactory.h>
 #include <Interpreters/AsynchronousInsertQueue.h>
 
@@ -3744,6 +3747,23 @@ void Server::createServers(
                         httpContext(), createHandlerFactory(*this, config, async_metrics, handler_name), server_pool, socket, http_params, nullptr, ProfileEvents::InterfacePrometheusReceiveBytes, ProfileEvents::InterfacePrometheusSendBytes));
             });
         }
+
+#if USE_ZAP
+        if (server_type.shouldStart(ServerType::Type::ZAP))
+        {
+            /// ZAP native query transport (zero-copy, promise pipelining) — the gRPC replacement.
+            port_name = "zap_port";
+            createServer(config, listen_host, port_name, listen_try, start_servers, servers, [&](UInt16 port) -> ProtocolServerAdapter
+            {
+                auto zap_address = makeSocketAddress(listen_host, port, &logger());
+                return ProtocolServerAdapter(
+                    listen_host,
+                    port_name,
+                    "ZAP native transport: zap://" + zap_address.toString(),
+                    std::make_unique<ZapServer>(*this, zap_address));
+            });
+        }
+#endif
     }
 }
 

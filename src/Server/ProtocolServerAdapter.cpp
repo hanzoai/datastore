@@ -5,6 +5,10 @@
 #include <Server/IGRPCServer.h>
 #endif
 
+#if USE_ZAP
+#include <Server/ZapServer.h>
+#endif
+
 
 namespace DB
 {
@@ -74,6 +78,45 @@ ProtocolServerAdapter::ProtocolServerAdapter(
     , port_name(port_name_)
     , description(description_)
     , impl(std::make_unique<GRPCServerAdapterImpl>(std::move(grpc_server_)))
+    , supports_runtime_reconfiguration(supports_runtime_reconfiguration_)
+{
+}
+#endif
+
+#if USE_ZAP
+class ProtocolServerAdapter::ZapServerAdapterImpl : public Impl
+{
+public:
+    explicit ZapServerAdapterImpl(std::unique_ptr<ZapServer> zap_server_) : zap_server(std::move(zap_server_)) {}
+    ~ZapServerAdapterImpl() override = default;
+
+    void start() override { zap_server->start(); }
+    void stop() override
+    {
+        is_stopping = true;
+        zap_server->stop();
+    }
+    bool isStopping() const override { return is_stopping; }
+    UInt16 portNumber() const override { return zap_server->portNumber(); }
+    size_t currentConnections() const override { return zap_server->currentConnections(); }
+    size_t currentThreads() const override { return zap_server->currentThreads(); }
+    size_t refusedConnections() const override { return 0; }
+
+private:
+    std::unique_ptr<ZapServer> zap_server;
+    bool is_stopping = false;
+};
+
+ProtocolServerAdapter::ProtocolServerAdapter(
+    const std::string & listen_host_,
+    const char * port_name_,
+    const std::string & description_,
+    std::unique_ptr<ZapServer> zap_server_,
+    bool supports_runtime_reconfiguration_)
+    : listen_host(listen_host_)
+    , port_name(port_name_)
+    , description(description_)
+    , impl(std::make_unique<ZapServerAdapterImpl>(std::move(zap_server_)))
     , supports_runtime_reconfiguration(supports_runtime_reconfiguration_)
 {
 }

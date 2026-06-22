@@ -11,6 +11,7 @@ namespace DB
 {
 
 class IGRPCServer;
+class ZapServer;
 class TCPServer;
 
 /// Provides an unified interface to access a protocol implementing server
@@ -34,6 +35,14 @@ public:
         const char * port_name_,
         const std::string & description_,
         std::unique_ptr<IGRPCServer> grpc_server_,
+        bool supports_runtime_reconfiguration_ = true);
+#endif
+#if USE_ZAP
+    ProtocolServerAdapter(
+        const std::string & listen_host_,
+        const char * port_name_,
+        const std::string & description_,
+        std::unique_ptr<ZapServer> zap_server_,
         bool supports_runtime_reconfiguration_ = true);
 #endif
 
@@ -79,6 +88,7 @@ private:
     };
     class TCPServerAdapterImpl;
     class GRPCServerAdapterImpl;
+    class ZapServerAdapterImpl;
 
     std::string listen_host;
     std::string port_name;

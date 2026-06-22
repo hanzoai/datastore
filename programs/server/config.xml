@@ -326,8 +326,9 @@
     <!-- Enable stacktrace in default http handler. -->
     <!-- <enable_http_stacktrace/>true<enable_http_stacktrace>-->
 
-    <!-- gRPC protocol removed. Datastore's native RPC transport is zap (Cap'n Proto / KJ);
-         the HTTP (8123) and native TCP (9000) protocols remain. -->
+    <!-- ZAP native transport (zero-copy, promise pipelining) — the gRPC replacement.
+         Uncomment to listen; the HTTP (8123) and native TCP (9000) protocols are unaffected. -->
+    <!-- <zap_port>9999</zap_port> -->
 
 
     <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/Datastore-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71
