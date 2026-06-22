@@ -111,7 +111,7 @@ private:
     bool doCreateTable(ASTCreateQuery & create, const TableProperties & properties, DDLGuardPtr & ddl_guard, LoadingStrictnessLevel mode);
     BlockIO doCreateOrReplaceTable(ASTCreateQuery & create, const InterpreterCreateQuery::TableProperties & properties, LoadingStrictnessLevel mode);
     BlockIO doCreateOrReplaceTemporaryTable(ASTCreateQuery & create, const InterpreterCreateQuery::TableProperties & properties, LoadingStrictnessLevel mode);
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// Converts the "*MergeTree" table engine to "Replicated*MergeTree" or "Shared*MergeTree" if the corresponding settings are enabled.
     void convertTableEngineForCloud(ASTStorage & table_engine, TableProperties & properties) const;
 #endif
@@ -132,7 +132,7 @@ private:
     static void clearTransactionMetadata(const String & table_data_path, ContextPtr local_context);
 
     void throwIfTooManyEntities(ASTCreateQuery & create) const;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     static bool allowPreserveEngine(ASTStorage & storage, ContextPtr context_);
 #endif
 

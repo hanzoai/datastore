@@ -1,6 +1,6 @@
 #include <Keeper.h>
 
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/ZooKeeper/ZooKeeperNodeCache.h>
 #include <Common/formatReadable.h>
 #include <Common/getMultipleKeysFromConfig.h>
@@ -70,7 +70,7 @@ constexpr unsigned char keeper_resource_embedded_xml[] =
 
 extern const char * GIT_HASH;
 
-int mainEntryClickHouseKeeper(int argc, char ** argv)
+int mainEntryDatastoreKeeper(int argc, char ** argv)
 {
     DB::Keeper app;
 
@@ -163,7 +163,7 @@ int Keeper::run()
         Poco::Util::HelpFormatter help_formatter(Keeper::options());
         std::string app_name = (commandName() == "clickhouse-keeper") ? "clickhouse-keeper" : "clickhouse keeper";
         auto header_str = fmt::format("{0} [OPTION] [-- [ARG]...]\n"
-#if ENABLE_CLICKHOUSE_KEEPER_CLIENT
+#if ENABLE_DATASTORE_KEEPER_CLIENT
                                       "{0} client [OPTION]\n"
 #endif
                                       "positional arguments can be used to rewrite config.xml properties, for example, --http_port=8010",
@@ -732,7 +732,7 @@ void Keeper::logRevision() const
     LOG_INFO(getLogger("Application"),
         "Starting Datastore Keeper {} (revision: {}, git hash: {}, build id: {}), PID {}",
         VERSION_STRING,
-        ClickHouseRevision::getVersionRevision(),
+        DatastoreRevision::getVersionRevision(),
         GIT_HASH,
         build_id.empty() ? "<unknown>" : build_id,
         getpid());

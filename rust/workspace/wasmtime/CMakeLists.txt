@@ -14,8 +14,8 @@ if (OS_FREEBSD OR NO_ARMV81_OR_HIGHER OR ARCH_S390X)
     return()
 endif()
 
-set (WASMTIME_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/wasmtime")
-set (WASMTIME_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/wasmtime")
+set (WASMTIME_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/wasmtime")
+set (WASMTIME_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/wasmtime")
 
 add_library(_ch_wasmtime INTERFACE)
 
@@ -46,7 +46,7 @@ target_include_directories(_ch_wasmtime SYSTEM INTERFACE ${WASMTIME_HEADER_DST})
 configure_file("${WASMTIME_HEADER_SRC}/wasmtime/conf.h.in" "${WASMTIME_HEADER_DST}/wasmtime/conf.h" NEWLINE_STYLE CRLF)
 file(COPY "${WASMTIME_HEADER_SRC}/" DESTINATION "${WASMTIME_HEADER_DST}" FILES_MATCHING REGEX "\\.hh?$")
 
-clickhouse_config_crate_flags(_ch_rust_wasmtime)
+datastore_config_crate_flags(_ch_rust_wasmtime)
 
 target_link_libraries(_ch_wasmtime INTERFACE _ch_rust_wasmtime)
 

@@ -7,4 +7,4 @@ namespace HanzoRevision
 }
 
 // Backward compatibility alias
-namespace ClickHouseRevision = HanzoRevision;
+namespace DatastoreRevision = HanzoRevision;

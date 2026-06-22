@@ -60,7 +60,7 @@ public:
         /// Identify ourselves to ssh clients, similar to how OpenSSH prepends its
         /// own name to the "SSH-2.0-" prefix (e.g. "SSH-2.0-OpenSSH_8.9p1"). Use
         /// underscore because RFC 4253 forbids spaces and '-' in this field.
-        ssh_bind.setBanner(std::string("ClickHouse_") + VERSION_STRING);
+        ssh_bind.setBanner(std::string("Datastore_") + VERSION_STRING);
 
         String prefix = "ssh_server.";
         auto rsa_key = config.getString(prefix + "host_rsa_key", "");

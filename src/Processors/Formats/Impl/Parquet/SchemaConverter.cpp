@@ -142,7 +142,7 @@ std::string_view SchemaConverter::useColumnMapperIfNeeded(const parq::SchemaElem
 {
     if (!column_mapper)
         return element.name;
-    const auto & map = column_mapper->getFieldIdToClickHouseName();
+    const auto & map = column_mapper->getFieldIdToDatastoreName();
     if (!element.__isset.field_id)
     {
         /// Does iceberg require that parquet files have field ids?
@@ -579,7 +579,7 @@ bool SchemaConverter::processSubtreeArrayInner(TraversalNode & node)
         const auto & elem_schema = file_metadata.schema.at(schema_idx);
         if (elem_schema.__isset.field_id)
         {
-            const auto & field_id_map = column_mapper->getFieldIdToClickHouseName();
+            const auto & field_id_map = column_mapper->getFieldIdToDatastoreName();
             if (auto it = field_id_map.find(elem_schema.field_id); it != field_id_map.end())
                 subnode.name = std::string(it->second);
         }

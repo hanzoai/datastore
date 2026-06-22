@@ -1,1 +1,1 @@
-extern int mainEntryClickHouseBenchmark(int argc, char ** argv);
+extern int mainEntryDatastoreBenchmark(int argc, char ** argv);

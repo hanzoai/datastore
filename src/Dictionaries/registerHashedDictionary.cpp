@@ -2,7 +2,7 @@
 #include <Dictionaries/HashedDictionary.h>
 #include <Dictionaries/DictionaryFactory.h>
 #include <Dictionaries/DictionarySourceHelpers.h>
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Interpreters/Context.h>
 
 namespace DB
@@ -72,8 +72,8 @@ void registerDictionaryHashed(DictionaryFactory & factory)
         ContextMutablePtr context = copyContextAndApplySettingsFromDictionaryConfig(global_context, config, config_prefix);
         const auto & settings = context->getSettingsRef();
 
-        const auto * clickhouse_source = dynamic_cast<const ClickHouseDictionarySource *>(source_ptr.get());
-        bool use_async_executor = clickhouse_source && clickhouse_source->isLocal() && settings[Setting::dictionary_use_async_executor];
+        const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get());
+        bool use_async_executor = datastore_source && datastore_source->isLocal() && settings[Setting::dictionary_use_async_executor];
 
         HashedDictionaryConfiguration configuration{
             static_cast<UInt64>(shards),

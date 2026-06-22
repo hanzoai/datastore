@@ -47,7 +47,7 @@ namespace Paimon
             if (column_idx_it == table_schema.fields_by_name_indexes.end())
                 throw DB::Exception(DB::ErrorCodes::BAD_ARGUMENTS, "Not found partition column in schema: {}", column_name);
             auto column = table_schema.fields[column_idx_it->second];
-            names_and_types.emplace_back(column_name, removeNullable(column.type.clickhouse_data_type));
+            names_and_types.emplace_back(column_name, removeNullable(column.type.datastore_data_type));
         }
         return DB::ColumnsDescription(names_and_types);
     }

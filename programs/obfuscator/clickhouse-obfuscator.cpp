@@ -1,1 +1,1 @@
-int mainEntryClickHouseObfuscator(int argc, char ** argv);
+int mainEntryDatastoreObfuscator(int argc, char ** argv);

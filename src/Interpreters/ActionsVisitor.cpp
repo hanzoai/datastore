@@ -32,7 +32,7 @@
 #include <Columns/ColumnSet.h>
 
 #include <Storages/StorageSet.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Storages/StorageSharedSetJoin.h>
 #endif
 
@@ -1272,7 +1272,7 @@ FutureSetPtr ActionsMatcher::makeSet(const ASTFunction & node, Data & data, bool
             {
                 if (auto set = data.prepared_sets->findStorage(set_key))
                     return set;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
                 if (StorageSharedSet * storage_shared_set = dynamic_cast<StorageSharedSet *>(table.get()))
                     return data.prepared_sets->addFromStorage(set_key, right_in_operand, storage_shared_set->getSet(data.getContext()), table_id);
 #endif

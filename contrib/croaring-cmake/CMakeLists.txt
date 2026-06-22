@@ -36,6 +36,6 @@ target_include_directories(_roaring PRIVATE "${LIBRARY_DIR}/include/roaring")
 target_include_directories(_roaring SYSTEM BEFORE PUBLIC "${LIBRARY_DIR}/include")
 target_include_directories(_roaring SYSTEM BEFORE PUBLIC "${LIBRARY_DIR}/cpp")
 
-target_link_libraries(_roaring PUBLIC clickhouse_common_io)
+target_link_libraries(_roaring PUBLIC datastore_common_io)
 
 add_library(ch_contrib::roaring ALIAS _roaring)

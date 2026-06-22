@@ -233,7 +233,7 @@ void IDisk::checkAccess()
     DB::UUID server_uuid = DB::ServerUUID::get();
     if (server_uuid == DB::UUIDHelpers::Nil)
         throw Exception(ErrorCodes::LOGICAL_ERROR, "Server UUID is not initialized");
-    const String path = fmt::format("clickhouse_access_check_{}", toString(server_uuid));
+    const String path = fmt::format("datastore_access_check_{}", toString(server_uuid));
 
     checkAccessImpl(path);
 }
@@ -306,7 +306,7 @@ bool IDisk::isCaseInsensitive()
         return is_case_insensitive;
 
     std::unique_lock lock(case_sensitivity_check_mutex);
-    const String path = fmt::format("clickhouse_case_sensitivity_check_{}", toString(DB::UUIDHelpers::generateV4()));
+    const String path = fmt::format("datastore_case_sensitivity_check_{}", toString(DB::UUIDHelpers::generateV4()));
     try
     {
         createFile(path);

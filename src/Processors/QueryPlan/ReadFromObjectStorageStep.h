@@ -39,7 +39,7 @@ public:
 
     void initializePipeline(QueryPipelineBuilder & pipeline, const BuildQueryPipelineSettings &) override;
     QueryPlanStepPtr clone() const override;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// In distributed query plan, this step will be executed in a distributed manner - shards will be read in parallel.
     void setDistributedRead(size_t bucket_count);
     Strings getShardsForDistributedRead() const;
@@ -68,7 +68,7 @@ private:
     size_t num_streams;
     const size_t max_num_streams;
     const bool distributed_processing;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// This is set when this step is part of a distributed query plan and it will be executed in a distributed manner.
     /// "bucket_id" task parameter will be used to determine what part of the data to read.
     size_t distributed_read_bucket_count = 0;

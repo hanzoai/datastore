@@ -306,10 +306,10 @@ void ExternalDictionariesLoader::reloadAllTriedToLoadInOrder() const
     for (const auto & info : dict_infos)
     {
         DictionaryConfigurationPtr config_copy = info.config;
-        std::optional<ClickHouseDictionarySourceInfo> source_info;
+        std::optional<DatastoreDictionarySourceInfo> source_info;
         try
         {
-            source_info = getInfoIfClickHouseDictionarySource(config_copy, getContext());
+            source_info = getInfoIfDatastoreDictionarySource(config_copy, getContext());
         }
         catch (...)
         {

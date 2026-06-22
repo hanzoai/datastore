@@ -756,7 +756,7 @@ ProjectionNames QueryAnalyzer::resolveFunction(QueryTreeNodePtr & node, Identifi
       *
       * The transformation is gated by `isHigherOrderFunction`, a non-throwing capability
       * check. This avoids relying on `getLambdaArgumentTypes` to throw on non-higher-order
-      * functions, which would terminate the process under `CLICKHOUSE_TERMINATE_ON_ANY_EXCEPTION`
+      * functions, which would terminate the process under `DATASTORE_TERMINATE_ON_ANY_EXCEPTION`
       * even though the exception is caught (the exception constructor itself terminates).
       *
       * The lambda arity is taken from the inner function:

@@ -21,9 +21,9 @@ static void addSettingsChanges(
     auto [_, inserted] = settings_changes_history.emplace(DatastoreVersion(version), std::move(changes));
     if (!inserted)
         throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", DatastoreVersion(version).toString()};
-    auto [_, inserted] = settings_changes_history.emplace(ClickHouseVersion(version), std::move(changes));
+    auto [_, inserted] = settings_changes_history.emplace(DatastoreVersion(version), std::move(changes));
     if (!inserted)
-        throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", ClickHouseVersion(version).toString()};
+        throw Exception{ErrorCodes::LOGICAL_ERROR, "Detected duplicate version '{}'", DatastoreVersion(version).toString()};
 }
 
 const VersionToSettingsChangesMap & getSettingsChangesHistory()

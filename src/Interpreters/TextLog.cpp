@@ -1,7 +1,7 @@
 #include <base/getFQDNOrHostName.h>
 #include <Interpreters/TextLog.h>
 
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DateLUTImpl.h>
 #include <DataTypes/DataTypeDate.h>
 #include <DataTypes/DataTypeDateTime.h>
@@ -85,7 +85,7 @@ void TextLogElement::appendToBlock(MutableColumns & columns) const
     columns[i++]->insert(logger_name);
     columns[i++]->insert(message);
 
-    columns[i++]->insert(ClickHouseRevision::getVersionRevision());
+    columns[i++]->insert(DatastoreRevision::getVersionRevision());
 
     columns[i++]->insert(source_file);
     columns[i++]->insert(source_line);

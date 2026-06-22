@@ -38,7 +38,7 @@
 #include <Common/ErrnoException.h>
 #include <Common/Jemalloc.h>
 #include <Common/getMultipleKeysFromConfig.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/Config/ConfigProcessor.h>
 #include <Common/SymbolIndex.h>
 #include <Common/getExecutablePath.h>
@@ -489,7 +489,7 @@ void BaseDaemon::initializeTerminationAndSignalProcessing()
 void BaseDaemon::logRevision() const
 {
     logger().information("Starting " + std::string{VERSION_FULL}
-        + " (revision: " + std::to_string(ClickHouseRevision::getVersionRevision())
+        + " (revision: " + std::to_string(DatastoreRevision::getVersionRevision())
         + ", git hash: " + std::string(GIT_HASH)
         + ", build id: " + (build_id.empty() ? "<unknown>" : build_id) + ")"
         + ", PID " + std::to_string(getpid()));

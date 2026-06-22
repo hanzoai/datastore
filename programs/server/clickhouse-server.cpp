@@ -1,1 +1,1 @@
-int mainEntryClickHouseServer(int argc, char ** argv);
+int mainEntryDatastoreServer(int argc, char ** argv);

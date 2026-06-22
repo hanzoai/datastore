@@ -21,6 +21,6 @@ private:
 };
 
 // Backward compatibility alias
-using ClickHouseVersion = HanzoVersion;
+using DatastoreVersion = HanzoVersion;
 
 }

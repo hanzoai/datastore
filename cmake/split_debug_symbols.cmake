@@ -1,6 +1,6 @@
 # Generates a separate file with debug symbols while stripping it from the main binary.
 # This is needed for Debian packages.
-macro(clickhouse_split_debug_symbols)
+macro(datastore_split_debug_symbols)
    set(oneValueArgs TARGET DESTINATION_DIR BINARY_PATH)
 
    cmake_parse_arguments(STRIP "" "${oneValueArgs}" "" ${ARGN})
@@ -37,7 +37,7 @@ macro(clickhouse_split_debug_symbols)
 endmacro()
 
 
-macro(clickhouse_make_empty_debug_info_for_nfpm)
+macro(datastore_make_empty_debug_info_for_nfpm)
    set(oneValueArgs TARGET BINARY DESTINATION_DIR)
    cmake_parse_arguments(EMPTY_DEBUG "" "${oneValueArgs}" "" ${ARGN})
 

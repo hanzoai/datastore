@@ -4,7 +4,7 @@
 #include <Databases/DatabaseFactory.h>
 #include <Databases/DatabaseReplicated.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Databases/DatabaseShared.h>
 #endif
 

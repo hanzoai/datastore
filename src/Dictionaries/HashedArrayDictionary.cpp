@@ -11,7 +11,7 @@
 #include <Functions/FunctionHelpers.h>
 #include <Interpreters/Context.h>
 
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionarySource.h>
 #include <Dictionaries/DictionarySourceHelpers.h>
 #include <Dictionaries/DictionaryPipelineExecutor.h>
@@ -1269,8 +1269,8 @@ void registerDictionaryArrayHashed(DictionaryFactory & factory)
         ContextMutablePtr context = copyContextAndApplySettingsFromDictionaryConfig(global_context, config, config_prefix);
         const auto & settings = context->getSettingsRef();
 
-        const auto * clickhouse_source = dynamic_cast<const ClickHouseDictionarySource *>(source_ptr.get());
-        configuration.use_async_executor = clickhouse_source && clickhouse_source->isLocal() && settings[Setting::dictionary_use_async_executor];
+        const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get());
+        configuration.use_async_executor = datastore_source && datastore_source->isLocal() && settings[Setting::dictionary_use_async_executor];
 
         if (settings[Setting::max_execution_time].totalSeconds() > 0)
             configuration.load_timeout = std::chrono::seconds(settings[Setting::max_execution_time].totalSeconds());

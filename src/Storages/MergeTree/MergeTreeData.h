@@ -1003,7 +1003,7 @@ public:
     }
 
     /** Create local backup (snapshot) for parts with specified prefix.
-      * Backup is created in directory clickhouse_dir/shadow/i/, where i - incremental number,
+      * Backup is created in directory datastore_dir/shadow/i/, where i - incremental number,
       *  or if 'with_name' is specified - backup is created in directory with specified name.
       */
     PartitionCommandsResultInfo freezePartition(

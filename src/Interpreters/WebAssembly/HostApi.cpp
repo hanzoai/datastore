@@ -138,10 +138,10 @@ WasmHostFunction makeHostFunction(std::string_view function_name, ReturnType (*h
 WasmHostFunction getHostFunction(std::string_view function_name)
 {
     static const std::array exported_functions{
-        makeHostFunction("clickhouse_server_version", wasmExportServerVer),
-        makeHostFunction("clickhouse_throw", wasmExportThrow),
-        makeHostFunction("clickhouse_log", wasmExportLog),
-        makeHostFunction("clickhouse_random", wasmExportRandom),
+        makeHostFunction("datastore_server_version", wasmExportServerVer),
+        makeHostFunction("datastore_throw", wasmExportThrow),
+        makeHostFunction("datastore_log", wasmExportLog),
+        makeHostFunction("datastore_random", wasmExportRandom),
     };
 
     for (const auto & function : exported_functions)

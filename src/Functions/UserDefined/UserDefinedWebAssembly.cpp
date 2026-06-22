@@ -278,8 +278,8 @@ static_assert(alignof(WasmBuffer) == 4, "WasmBuffer alignment must be 4 bytes");
 class WasmMemoryManagerV01 final : public WasmMemoryManager
 {
 public:
-    constexpr static std::string_view allocate_function_name = "clickhouse_create_buffer";
-    constexpr static std::string_view deallocate_function_name = "clickhouse_destroy_buffer";
+    constexpr static std::string_view allocate_function_name = "datastore_create_buffer";
+    constexpr static std::string_view deallocate_function_name = "datastore_destroy_buffer";
 
     static WasmFunctionDeclaration allocateFunctionDeclaration() { return {"", allocate_function_name, {WasmValKind::I32}, WasmValKind::I32}; }
     static WasmFunctionDeclaration deallocateFunctionDeclaration() { return {"", deallocate_function_name, {WasmValKind::I32}, std::nullopt}; }

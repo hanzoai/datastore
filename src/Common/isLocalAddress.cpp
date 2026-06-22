@@ -117,9 +117,9 @@ bool isLocalAddress(const Poco::Net::IPAddress & address)
 }
 
 
-bool isLocalAddress(const Poco::Net::SocketAddress & address, UInt16 clickhouse_port)
+bool isLocalAddress(const Poco::Net::SocketAddress & address, UInt16 datastore_port)
 {
-    return clickhouse_port == address.port() && isLocalAddress(address.host());
+    return datastore_port == address.port() && isLocalAddress(address.host());
 }
 
 size_t getHostNamePrefixDistance(const std::string & local_hostname, const std::string & host)

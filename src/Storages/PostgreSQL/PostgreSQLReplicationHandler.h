@@ -24,8 +24,8 @@ public:
     PostgreSQLReplicationHandler(
             const String & postgres_database_,
             const String & postgres_table_,
-            const String & clickhouse_database_,
-            const String & clickhouse_uuid_,
+            const String & datastore_database_,
+            const String & datastore_uuid_,
             const postgres::ConnectionInfo & connection_info_,
             ContextPtr context_,
             bool is_attach_,

@@ -31,7 +31,7 @@ PaimonTableSchemaPtr PaimonSchemaProcessor::addSchema(const Poco::JSON::Object::
         if (!(*it->second == *schema))
         {
             it->second = schema;
-            clickhouse_schemas_by_id.erase(schema_id);
+            datastore_schemas_by_id.erase(schema_id);
         }
     }
     return it->second;
@@ -68,12 +68,12 @@ bool PaimonSchemaProcessor::hasSchema(Int64 schema_id) const
     return schemas_by_id.contains(schema_id);
 }
 
-std::shared_ptr<NamesAndTypesList> PaimonSchemaProcessor::getClickHouseSchema(Int64 schema_id)
+std::shared_ptr<NamesAndTypesList> PaimonSchemaProcessor::getDatastoreSchema(Int64 schema_id)
 {
     {
         SharedLockGuard lock(mutex);
-        auto cache_it = clickhouse_schemas_by_id.find(schema_id);
-        if (cache_it != clickhouse_schemas_by_id.end())
+        auto cache_it = datastore_schemas_by_id.find(schema_id);
+        if (cache_it != datastore_schemas_by_id.end())
             return cache_it->second;
 
         auto schema_it = schemas_by_id.find(schema_id);
@@ -84,16 +84,16 @@ std::shared_ptr<NamesAndTypesList> PaimonSchemaProcessor::getClickHouseSchema(In
     /// Need to convert and cache
     std::lock_guard lock(mutex);
 
-    auto cache_it = clickhouse_schemas_by_id.find(schema_id);
-    if (cache_it != clickhouse_schemas_by_id.end())
+    auto cache_it = datastore_schemas_by_id.find(schema_id);
+    if (cache_it != datastore_schemas_by_id.end())
         return cache_it->second;
 
     auto schema_it = schemas_by_id.find(schema_id);
     if (schema_it == schemas_by_id.end())
         throw Exception(ErrorCodes::LOGICAL_ERROR, "Schema with id {} not found", schema_id);
 
-    auto ch_schema = convertToClickHouseSchema(schema_it->second);
-    clickhouse_schemas_by_id[schema_id] = ch_schema;
+    auto ch_schema = convertToDatastoreSchema(schema_it->second);
+    datastore_schemas_by_id[schema_id] = ch_schema;
     return ch_schema;
 }
 
@@ -139,7 +139,7 @@ std::unordered_map<String, String> PaimonSchemaProcessor::getOptions(Int64 schem
     return it->second->options;
 }
 
-std::shared_ptr<NamesAndTypesList> PaimonSchemaProcessor::convertToClickHouseSchema(const PaimonTableSchemaPtr & schema)
+std::shared_ptr<NamesAndTypesList> PaimonSchemaProcessor::convertToDatastoreSchema(const PaimonTableSchemaPtr & schema)
 {
     auto result = std::make_shared<NamesAndTypesList>();
     if (!schema)
@@ -147,7 +147,7 @@ std::shared_ptr<NamesAndTypesList> PaimonSchemaProcessor::convertToClickHouseSch
 
     for (const auto & field : schema->fields)
     {
-        result->emplace_back(field.name, field.type.clickhouse_data_type);
+        result->emplace_back(field.name, field.type.datastore_data_type);
     }
     return result;
 }

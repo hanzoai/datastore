@@ -179,7 +179,7 @@ public:
             std::string default_host;
             if (connection_arguments.hosts.has_value())
                 default_host = connection_arguments.hosts->front();
-            else if (const char * env_host = getenv("CLICKHOUSE_HOST")) // NOLINT(concurrency-mt-unsafe)
+            else if (const char * env_host = getenv("DATASTORE_HOST")) // NOLINT(concurrency-mt-unsafe)
                 default_host = env_host;
             else
                 default_host = "localhost";
@@ -405,19 +405,19 @@ private:
         std::optional<std::string> env_host_str;
         std::optional<std::string> env_quota_key_str;
 
-        const char * env_user = getenv("CLICKHOUSE_USER"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_user = getenv("DATASTORE_USER"); // NOLINT(concurrency-mt-unsafe)
         if (env_user != nullptr)
             env_user_str.emplace(std::string(env_user));
 
-        const char * env_password = getenv("CLICKHOUSE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_password = getenv("DATASTORE_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
         if (env_password != nullptr)
             env_password_str.emplace(std::string(env_password));
 
-        const char * env_host = getenv("CLICKHOUSE_HOST"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_host = getenv("DATASTORE_HOST"); // NOLINT(concurrency-mt-unsafe)
         if (env_host != nullptr)
             env_host_str.emplace(std::string(env_host));
 
-        const char * env_quota_key = getenv("CLICKHOUSE_QUOTA_KEY"); // NOLINT(concurrency-mt-unsafe)
+        const char * env_quota_key = getenv("DATASTORE_QUOTA_KEY"); // NOLINT(concurrency-mt-unsafe)
         if (env_quota_key != nullptr)
             env_quota_key_str.emplace(std::string(env_quota_key));
 
@@ -892,7 +892,7 @@ public:
 }
 
 
-int mainEntryClickHouseBenchmark(int argc, char ** argv)
+int mainEntryDatastoreBenchmark(int argc, char ** argv)
 {
     using namespace DB;
     bool print_stacktrace = false;

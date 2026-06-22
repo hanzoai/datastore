@@ -784,7 +784,7 @@
                         <scope>subtree</scope>
                         <search_filter>(&amp;(objectClass=groupOfNames)(member={bind_dn}))</search_filter>
                         <attribute>cn</attribute>
-                        <prefix>clickhouse_</prefix>
+                        <prefix>datastore_</prefix>
                     </role_mapping>
                 </ldap>
              Example (typical Active Directory with role mapping that relies on the detected user DN):
@@ -795,7 +795,7 @@
                         <attribute>CN</attribute>
                         <scope>subtree</scope>
                         <search_filter>(&amp;(objectClass=group)(member={user_dn}))</search_filter>
-                        <prefix>clickhouse_</prefix>
+                        <prefix>datastore_</prefix>
                     </role_mapping>
                 </ldap>
         -->

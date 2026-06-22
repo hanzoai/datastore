@@ -1,16 +1,16 @@
-[[ -v $_CLICKHOUSE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/clickhouse-bootstrap"
+[[ -v $_DATASTORE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/clickhouse-bootstrap"
 
-function _clickhouse_get_utils()
+function _datastore_get_utils()
 {
     local cmd=$1 && shift
     "$cmd" help |& awk '/^clickhouse.*args/ { print $2 }'
 }
 
-function _complete_for_clickhouse_entrypoint_bin()
+function _complete_for_datastore_entrypoint_bin()
 {
     local cur prev cword words
-    eval local cmd="$( _clickhouse_quote "$1" )"
-    _clickhouse_bin_exist "$cmd" || return 0
+    eval local cmd="$( _datastore_quote "$1" )"
+    _datastore_bin_exist "$cmd" || return 0
 
     COMPREPLY=()
     _get_comp_words_by_ref cur prev cword words
@@ -18,17 +18,17 @@ function _complete_for_clickhouse_entrypoint_bin()
     local util="$cur"
     # complete utils, until it will be finished
     if [[ $cword -lt 2 ]]; then
-        COMPREPLY=( $(compgen -W "$(_clickhouse_get_utils "$cmd")" -- "$cur") )
+        COMPREPLY=( $(compgen -W "$(_datastore_get_utils "$cmd")" -- "$cur") )
         return
     fi
     util="${words[1]}"
 
-    if _complete_for_clickhouse_generic_bin_impl "$prev"; then
-        COMPREPLY=( $(compgen -W "$(_clickhouse_get_options "$cmd" "$util")" -- "$cur") )
+    if _complete_for_datastore_generic_bin_impl "$prev"; then
+        COMPREPLY=( $(compgen -W "$(_datastore_get_options "$cmd" "$util")" -- "$cur") )
     fi
 
     return 0
 }
 
-_complete_clickhouse_generic clickhouse _complete_for_clickhouse_entrypoint_bin
-_complete_clickhouse_generic ch _complete_for_clickhouse_entrypoint_bin
+_complete_datastore_generic clickhouse _complete_for_datastore_entrypoint_bin
+_complete_datastore_generic ch _complete_for_datastore_entrypoint_bin

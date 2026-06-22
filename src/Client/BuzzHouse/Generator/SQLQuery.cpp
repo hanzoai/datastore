@@ -519,17 +519,17 @@ void StatementGenerator::setTableFunction(RandomGenerator & rg, const TableFunct
             setRandomShardKey(rg, std::make_optional<SQLTable>(t), cdf->mutable_sharding_key());
         }
     }
-    else if (usage == TableFunctionUsage::RemoteCall || (usage == TableFunctionUsage::PeerTable && t.hasClickHousePeer()))
+    else if (usage == TableFunctionUsage::RemoteCall || (usage == TableFunctionUsage::PeerTable && t.hasDatastorePeer()))
     {
         RemoteFunc * rfunc = tfunc->mutable_remote();
-        const bool isPeer = usage == TableFunctionUsage::PeerTable && t.hasClickHousePeer();
+        const bool isPeer = usage == TableFunctionUsage::PeerTable && t.hasDatastorePeer();
         const RemoteFunc_RName fname = (isPeer || rg.nextSmallNumber() < 8) ? RemoteFunc::remote : RemoteFunc::remoteSecure;
 
         rfunc->set_rname(fname);
         t.setName(rfunc->mutable_tof()->mutable_est(), true);
         if (isPeer)
         {
-            const ServerCredentials & sc = fc.clickhouse_server.value();
+            const ServerCredentials & sc = fc.datastore_server.value();
 
             if (!sc.named_collection.empty())
             {
@@ -569,7 +569,7 @@ auto StatementGenerator::getQueryTableLambda()
             /* When comparing query success results, don't use tables from other RDBMS, SQL is very undefined */
             && (this->allow_engine_udf || !tt.isAnotherRelationalDatabaseEngine())
             /* When a query is going to be compared against another Datastore server, make sure all tables exist in that server */
-            && (this->peer_query != PeerQuery::ClickHouseOnly || tt.hasClickHousePeer())
+            && (this->peer_query != PeerQuery::DatastoreOnly || tt.hasDatastorePeer())
             /* Don't use tables backing not deterministic views in query oracles */
             && (tt.is_deterministic || this->allow_not_deterministic)
             /* Don't use tables with Dolor integration when async requests can insert between oracle queries */
@@ -765,7 +765,7 @@ StatementGenerator::FromSourceInfo StatementGenerator::joinedTableOrFunction(
     /// queryMask[static_cast<size_t>(QueryOp::DerivatedTable)] = true;
     queryMask[static_cast<size_t>(QueryOp::CTE)] = !under_remote && !this->ctes.empty();
     queryMask[static_cast<size_t>(QueryOp::Table)] = has_table;
-    queryMask[static_cast<size_t>(QueryOp::View)] = this->peer_query != PeerQuery::ClickHouseOnly && has_view;
+    queryMask[static_cast<size_t>(QueryOp::View)] = this->peer_query != PeerQuery::DatastoreOnly && has_view;
     queryMask[static_cast<size_t>(QueryOp::RemoteUDF)] = !under_remote && this->allow_engine_udf && can_recurse;
     /// queryMask[static_cast<size_t>(QueryOp::NumbersUDF)] = true;
     queryMask[static_cast<size_t>(QueryOp::SystemTable)] = this->allow_not_deterministic && !systemTables.empty();
@@ -774,7 +774,7 @@ StatementGenerator::FromSourceInfo StatementGenerator::joinedTableOrFunction(
     queryMask[static_cast<size_t>(QueryOp::LoopUDF)] = fc.allow_infinite_tables && this->allow_engine_udf && can_recurse;
     /// queryMask[static_cast<size_t>(QueryOp::ValuesUDF)] = true;
     queryMask[static_cast<size_t>(QueryOp::RandomDataUDF)] = this->allow_engine_udf;
-    queryMask[static_cast<size_t>(QueryOp::Dictionary)] = this->peer_query != PeerQuery::ClickHouseOnly && has_dictionary;
+    queryMask[static_cast<size_t>(QueryOp::Dictionary)] = this->peer_query != PeerQuery::DatastoreOnly && has_dictionary;
     queryMask[static_cast<size_t>(QueryOp::URLEncodedTable)] = this->allow_engine_udf && has_table;
     queryMask[static_cast<size_t>(QueryOp::TableEngineUDF)] = has_replaceable_table && this->allow_engine_udf;
     queryMask[static_cast<size_t>(QueryOp::RandomTableUDF)] = this->allow_not_deterministic && this->allow_engine_udf;

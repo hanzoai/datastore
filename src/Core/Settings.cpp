@@ -28,7 +28,7 @@
 
 namespace
 {
-#if !CLICKHOUSE_CLOUD
+#if !DATASTORE_CLOUD
 constexpr UInt64 default_max_size_to_drop = 50000000000lu;
 constexpr UInt64 default_distributed_cache_connect_max_tries = 5lu;
 constexpr UInt64 default_distributed_cache_read_request_max_tries = 10lu;
@@ -3587,10 +3587,10 @@ By default, the amount is not restricted (`max_memory_usage_for_user = 0`).
 
 Also see the description of [`max_memory_usage`](/operations/settings/settings#max_memory_usage).
 
-For example if you want to set `max_memory_usage_for_user` to 1000 bytes for a user named `clickhouse_read`, you can use the statement
+For example if you want to set `max_memory_usage_for_user` to 1000 bytes for a user named `datastore_read`, you can use the statement
 
 ```sql
-ALTER USER clickhouse_read SETTINGS max_memory_usage_for_user = 1000;
+ALTER USER datastore_read SETTINGS max_memory_usage_for_user = 1000;
 ```
 
 You can verify it worked by logging out of your client, logging back in, then use the `getSetting` function:
@@ -8476,7 +8476,7 @@ void SettingsImpl::applyCompatibilitySetting(const String & compatibility_value)
     if (compatibility_value.empty())
         return;
 
-    ClickHouseVersion version(compatibility_value);
+    DatastoreVersion version(compatibility_value);
     const auto & settings_changes_history = getSettingsChangesHistory();
     /// Iterate through Datastore version in descending order and apply reversed
     /// changes for each version that is higher that version from compatibility setting

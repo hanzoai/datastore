@@ -69,7 +69,7 @@
     #include <Processors/Transforms/CheckSortedTransform.h>
 #endif
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     #include <Interpreters/FileCache/FileCacheFactory.h>
     #include <Disks/DiskObjectStorage/DiskObjectStorage.h>
     #include <Storages/MergeTree/DataPartStorageOnDiskPacked.h>

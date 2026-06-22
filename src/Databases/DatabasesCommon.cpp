@@ -27,7 +27,7 @@
 #include <Common/quoteString.h>
 #include <Common/typeid_cast.h>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -358,7 +358,7 @@ void DatabaseWithAltersOnDiskBase::alterDatabaseComment(const AlterCommand & com
 
     try
     {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         bool managed_by_shared_catalog = SharedDatabaseCatalog::initialized() && SharedDatabaseCatalog::isDatabaseEngineSupported(getEngineName());
         if (managed_by_shared_catalog && !SharedDatabaseCatalog::isInitialQuery(query_context))
             return;
@@ -366,7 +366,7 @@ void DatabaseWithAltersOnDiskBase::alterDatabaseComment(const AlterCommand & com
         const ASTPtr create_query = getCreateDatabaseQueryImpl();
         if (!create_query)
             throw Exception(ErrorCodes::THERE_IS_NO_QUERY, "Unable to show the create query of database {}", backQuoteIfNeed(database_name));
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         if (managed_by_shared_catalog)
         {
 
