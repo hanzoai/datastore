@@ -111,7 +111,7 @@ Pipe YTsaurusSourceFactory::createPipe(
 
     if (source_options.settings[YTsaurusSetting::check_table_schema] && !client->checkSchemaCompatibility(cypress_path, sample_block, reason, source_options.check_types_allow_nullable))
     {
-        throw Exception(ErrorCodes::INCORRECT_DATA, "ClickHouse table schema doesn't match with yt table. Reason: {}", reason);
+        throw Exception(ErrorCodes::INCORRECT_DATA, "Datastore table schema doesn't match with yt table. Reason: {}", reason);
     }
     auto yt_node_type = client->getNodeType(cypress_path);
     if (yt_node_type == YTsaurusNodeType::STATIC_TABLE)

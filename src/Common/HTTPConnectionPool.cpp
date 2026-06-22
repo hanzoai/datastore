@@ -958,7 +958,7 @@ createConnectionPool(ConnectionGroup::Ptr group, std::string host, UInt16 port, 
             group, std::move(host), port, secure, std::move(proxy_configuration));
 #else
         throw Exception(
-            ErrorCodes::SUPPORT_IS_DISABLED, "HTTPS support is disabled, because ClickHouse was built without SSL library");
+            ErrorCodes::SUPPORT_IS_DISABLED, "HTTPS support is disabled, because Datastore was built without SSL library");
 #endif
     }
     else

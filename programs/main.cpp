@@ -101,7 +101,7 @@ int mainEntryClickHouseHashBinary(int argc, char ** argv)
     if (argc > 1 && (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))
     {
         std::cout << "Usage: clickhouse hash-binary\n"
-                     "Prints hash of ClickHouse binary.\n"
+                     "Prints hash of Datastore binary.\n"
                      "  -h, --help   Print this message\n"
                      "Result is intentionally without newline. So you can run:\n"
                      "objcopy --add-section .clickhouse.hash=<(./clickhouse hash-binary) clickhouse\n\n"
@@ -293,7 +293,7 @@ bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
     return false;
 }
 
-/// Don't allow dlopen in the main ClickHouse binary, because it is harmful and insecure.
+/// Don't allow dlopen in the main Datastore binary, because it is harmful and insecure.
 /// We don't use it. But it can be used by some libraries for implementation of "plugins".
 /// We absolutely discourage the ancient technique of loading
 /// 3rd-party uncontrolled dangerous libraries into the process address space,
@@ -321,7 +321,7 @@ extern "C"
 
     const char * dlerror()
     {
-        return "ClickHouse does not allow dynamic library loading";
+        return "Datastore does not allow dynamic library loading";
     }
 }
 #endif

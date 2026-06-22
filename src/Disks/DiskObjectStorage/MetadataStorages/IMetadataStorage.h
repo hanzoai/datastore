@@ -239,7 +239,7 @@ public:
     virtual void startup() {}
     virtual void shutdown()
     {
-        /// This method is overridden for specific metadata implementations in ClickHouse Cloud.
+        /// This method is overridden for specific metadata implementations in Datastore Cloud.
     }
 
     /// If the state can be changed under the hood and become outdated in memory, perform a reload if necessary,

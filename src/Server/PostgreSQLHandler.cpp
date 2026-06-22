@@ -228,7 +228,7 @@ void PostgreSQLHandler::run()
                         PostgreSQLProtocol::Messaging::ErrorOrNoticeResponse(
                             PostgreSQLProtocol::Messaging::ErrorOrNoticeResponse::ERROR,
                             "0A000",
-                            "ClickHouse doesn't support extended query mechanism"),
+                            "Datastore doesn't support extended query mechanism"),
                         true);
                     LOG_ERROR(log, "Client tried to access via extended query protocol");
                     message_transport->dropMessage();

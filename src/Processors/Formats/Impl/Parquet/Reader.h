@@ -128,11 +128,11 @@ struct Reader
     /// All compound types reduce to this structure. E.g. Map is an array of 2-tuples, and array of
     /// tuples is a groups of parallel Array columns.
     ///
-    /// ClickHouse doesn't support Nullable non-primitive columns, so we turn NULL arrays into
+    /// Datastore doesn't support Nullable non-primitive columns, so we turn NULL arrays into
     /// empty arrays at decoding time. This transformation can be done just by modifying
     /// repetition/definition levels.
     ///
-    /// For each primitive parquet column, we produce a primitive ClickHouse column (possibly Nullable)
+    /// For each primitive parquet column, we produce a primitive Datastore column (possibly Nullable)
     /// and offsets for each Array level. After decoding all primitive columns, we bundle them into
     /// compound columns as needed.
     struct LevelInfo

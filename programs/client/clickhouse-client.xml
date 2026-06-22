@@ -27,7 +27,7 @@
         You can also use colored prompt, like in [1].
           [1]: https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
-        But note, that ClickHouse does not use readline anymore, instead it uses
+        But note, that Datastore does not use readline anymore, instead it uses
         replxx. This means that you don't need the following:
         - RL_PROMPT_START_IGNORE (\001)
         - RL_PROMPT_END_IGNORE   (\002)

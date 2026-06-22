@@ -231,7 +231,7 @@ bool ReplicatedMergeTreeRestartingThread::tryStartup()
         {
             throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
                 "It seems you have upgraded from a version earlier than 20.4 straight to one later than 24.10. "
-                "ClickHouse does not support upgrades that span more than a year. "
+                "Datastore does not support upgrades that span more than a year. "
                 "Please update gradually (through intermediate versions).");
         }
 

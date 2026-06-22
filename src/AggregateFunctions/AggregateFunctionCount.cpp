@@ -257,13 +257,13 @@ void registerAggregateFunctionCount(AggregateFunctionFactory & factory)
     FunctionDocumentation::Description description = R"(
 Counts the number of rows or not-NULL values.
 
-ClickHouse supports the following syntaxes for `count`:
+Datastore supports the following syntaxes for `count`:
 - `count(expr)` or `COUNT(DISTINCT expr)`.
-- `count()` or `COUNT(*)`. The `count()` syntax is ClickHouse-specific.
+- `count()` or `COUNT(*)`. The `count()` syntax is Datastore-specific.
 
 **Details**
 
-ClickHouse supports the `COUNT(DISTINCT ...)` syntax.
+Datastore supports the `COUNT(DISTINCT ...)` syntax.
 The behavior of this construction depends on the [`count_distinct_implementation`](../../../operations/settings/settings.md#count_distinct_implementation) setting.
 It defines which of the [uniq*](/sql-reference/aggregate-functions/reference/uniq) functions is used to perform the operation.
 The default is the [uniqExact](/sql-reference/aggregate-functions/reference/uniqexact) function.

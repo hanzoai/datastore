@@ -1256,7 +1256,7 @@ try
                 LOG_INFO(
                     log,
                     "It looks like the process has no CAP_IPC_LOCK capability, binary mlock will be disabled."
-                    " It could happen due to incorrect ClickHouse package installation."
+                    " It could happen due to incorrect Datastore package installation."
                     " You could resolve the problem manually with 'sudo setcap cap_ipc_lock=+ep {}'."
                     " Note that it will not work on 'nosuid' mounted filesystems.",
                     executable_path.empty() ? "/usr/bin/clickhouse" : executable_path);
@@ -1337,7 +1337,7 @@ try
     if (auto total_numa_memory = getNumaNodesTotalMemory(); total_numa_memory.has_value())
     {
         LOG_INFO(
-            log, "ClickHouse is bound to a subset of NUMA nodes. Total memory of all available nodes: {}", ReadableSize(*total_numa_memory));
+            log, "Datastore is bound to a subset of NUMA nodes. Total memory of all available nodes: {}", ReadableSize(*total_numa_memory));
     }
 
 #if USE_AWS_S3
@@ -2405,7 +2405,7 @@ try
 
             /// Reload the number of threads for global pools.
             /// Note: If you specified it in the top level config (not it config of default profile)
-            /// then ClickHouse will use it exactly.
+            /// then Datastore will use it exactly.
             /// This is done for backward compatibility.
             if (global_context->areBackgroundExecutorsInitialized())
             {
@@ -2731,7 +2731,7 @@ try
             });
         }
 #else
-        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "ClickHouse server built without NuRaft library. Cannot use internal coordination.");
+        throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "Datastore server built without NuRaft library. Cannot use internal coordination.");
 #endif
 
     }
@@ -2761,7 +2761,7 @@ try
     /// 2. We then start this server a few lines below. While handling the first request, it will access (read) certs.
     /// 3. A little further down, we reload certificates before starting the rest of the servers.
     /// 4. `CertificateReloader` will set its custom `cert_cb` to the default context if it is not initialized yet (see `CertificateReloader::init()`).
-    /// 5. Items (2) and (4) are not synchronized, so there might be a data race for example (see https://github.com/ClickHouse/ClickHouse/issues/85412).
+    /// 5. Items (2) and (4) are not synchronized, so there might be a data race for example (see https://github.com/Datastore/Datastore/issues/85412).
     CertificateReloader::instance().tryLoad(config());
     CertificateReloader::instance().tryLoadClient(config());
 #endif
@@ -3010,7 +3010,7 @@ try
     {
         LOG_INFO(log, "It looks like this system does not have procfs mounted at /proc location."
             " 'taskstats' performance statistics will be disabled."
-            " It could happen due to incorrect ClickHouse package installation.");
+            " It could happen due to incorrect Datastore package installation.");
     }
     else
     {
@@ -3020,7 +3020,7 @@ try
     if (!hasLinuxCapability(CAP_SYS_NICE))
     {
         LOG_INFO(log, "It looks like the process has no CAP_SYS_NICE capability, the setting 'os_thread_priority' will have no effect."
-            " It could happen due to incorrect ClickHouse package installation."
+            " It could happen due to incorrect Datastore package installation."
             " You could resolve the problem manually with 'sudo setcap cap_sys_nice=+ep {}'."
             " Note that it will not work on 'nosuid' mounted filesystems.",
             executable_path);
@@ -3648,7 +3648,7 @@ void Server::createServers(
                             connection_filter));
 #else
                 UNUSED(port);
-                throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH protocol is disabled because ClickHouse has been built without libssh or is running on a non-Linux platform");
+                throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH protocol is disabled because Datastore has been built without libssh or is running on a non-Linux platform");
 #endif
                 });
         }

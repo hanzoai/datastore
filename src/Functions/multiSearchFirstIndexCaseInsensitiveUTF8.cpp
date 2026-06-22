@@ -36,7 +36,7 @@ REGISTER_FUNCTION(MultiSearchFirstIndexCaseInsensitiveUTF8)
     {
     {
         "Usage example",
-        "SELECT multiSearchFirstIndexCaseInsensitiveUTF8('ClickHouse Database', ['CLICK', 'data', 'server']);",
+        "SELECT multiSearchFirstIndexCaseInsensitiveUTF8('Datastore Database', ['CLICK', 'data', 'server']);",
         R"(
 ┌─multiSearchF⋯ 'server'])─┐
 │                        1 │

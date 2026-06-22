@@ -131,7 +131,7 @@ public:
 
     void forceRecovery();
 
-    /// Put request to ClickHouse Keeper
+    /// Put request to Datastore Keeper
     bool putRequest(const Coordination::ZooKeeperRequestPtr & request, int64_t session_id, bool use_xid_64);
 
     /// Get new session ID

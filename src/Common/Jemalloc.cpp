@@ -49,7 +49,7 @@ void checkProfilingEnabled()
     if (!active)
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
-            "ClickHouse was started without enabling profiling for jemalloc. To use jemalloc's profiler, following env variable should be "
+            "Datastore was started without enabling profiling for jemalloc. To use jemalloc's profiler, following env variable should be "
             "set: MALLOC_CONF=background_thread:true,prof:true");
 }
 

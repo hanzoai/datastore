@@ -43,8 +43,8 @@ namespace ErrorCodes
     DECLARE(StreamingHandleErrorMode, kafka_handle_error_mode, StreamingHandleErrorMode::DEFAULT, "How to handle errors for Kafka engine. Possible values: default (throw an exception after kafka_skip_broken_messages broken messages), stream (save broken messages and errors in virtual columns _raw_message, _error), dead_letter_queue (error related data will be saved in system.dead_letter).", 0) \
     DECLARE(Bool, kafka_commit_on_select, false, "Commit messages when select query is made", 0) \
     DECLARE(UInt64, kafka_max_rows_per_message, 1, "The maximum number of rows produced in one kafka message for row-based formats.", 0) \
-    DECLARE(String, kafka_keeper_path, "", "The path to the table in ClickHouse Keeper", 0) \
-    DECLARE(String, kafka_replica_name, "", "The replica name in ClickHouse Keeper", 0) \
+    DECLARE(String, kafka_keeper_path, "", "The path to the table in Datastore Keeper", 0) \
+    DECLARE(String, kafka_replica_name, "", "The replica name in Datastore Keeper", 0) \
     DECLARE(String, kafka_security_protocol, "", "Protocol used to communicate with brokers.", 0) \
     DECLARE(String, kafka_sasl_mechanism, "", "SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512, OAUTHBEARER.", 0) \
     DECLARE(String, kafka_sasl_username, "", "SASL username for use with the PLAIN and SASL-SCRAM-.. mechanisms", 0) \

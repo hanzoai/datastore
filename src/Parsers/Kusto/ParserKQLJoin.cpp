@@ -42,7 +42,7 @@ bool ParserKQLJoin::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
         ++pos;
     }
 
-    /// Map KQL join kind to ClickHouse join type.
+    /// Map KQL join kind to Datastore join type.
     /// Reject unsupported `kind=...` values rather than silently treating them as `INNER`,
     /// which would mask typos and unsupported kinds with semantically different results.
     String ch_join_type;
@@ -135,13 +135,13 @@ bool ParserKQLJoin::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
     /// Build join conditions - handle simple column name joins
     /// In KQL "on col" means "on left.col = right.col"
     /// In KQL "on col1, col2" means "on left.col1 = right.col1 AND left.col2 = right.col2"
-    /// We add suffix "1" for the right table columns (ClickHouse join convention)
+    /// We add suffix "1" for the right table columns (Datastore join convention)
     String sql_on;
     if (on_conditions.find("==") == String::npos && on_conditions.find('=') == String::npos)
     {
         /// Simple column name(s) - KQL convention: on col means left.col = right.col
         /// Handle comma-separated keys: on a, b -> a = a1 AND b = b1
-        /// ClickHouse renames duplicate columns with suffix "1" in joins
+        /// Datastore renames duplicate columns with suffix "1" in joins
         std::vector<String> keys;
         {
             String current;

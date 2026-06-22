@@ -23,7 +23,7 @@ Checks whether a string ends with the provided suffix.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT endsWith('ClickHouse', 'House');",
+        "SELECT endsWith('Datastore', 'House');",
         R"(
 ┌─endsWith('Cl⋯', 'House')─┐
 │                        1 │
@@ -52,7 +52,7 @@ Checks whether a string ends with the provided case-insensitive suffix.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT endsWithCaseInsensitive('ClickHouse', 'HOUSE');",
+        "SELECT endsWithCaseInsensitive('Datastore', 'HOUSE');",
         R"(
 ┌─endsWithCaseInsensitive('Cl⋯', 'HOUSE')─┐
 │                                       1 │

@@ -232,7 +232,7 @@ ASTPtr BackupSettings::Util::clusterHostIDsToAST(const std::vector<Strings> & cl
         return nullptr;
 
     /// Build as ASTLiteral(Array{Array{String, ...}, ...}) so that FieldVisitorToString
-    /// always formats it with [...] syntax, which is compatible with all ClickHouse versions.
+    /// always formats it with [...] syntax, which is compatible with all Datastore versions.
     /// Using ASTFunction("array") with operator syntax would trigger the all-literals formatting
     /// path and produce array(...) syntax that older versions cannot parse.
     Array shards_array;

@@ -11,7 +11,7 @@
 namespace DB
 {
 
-/// JWT Provider for the ClickHouse managed service flow, which involves a token swap.
+/// JWT Provider for the Datastore managed service flow, which involves a token swap.
 class CloudJWTProvider : public JWTProvider
 {
 public:

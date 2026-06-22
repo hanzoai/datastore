@@ -833,7 +833,7 @@ void StatementGenerator::generateTableKey(
             if (b.teng != SummingMergeTree && rg.nextSmallNumber() < 3)
             {
                 /// Use a single expression for the entire table
-                /// See https://github.com/ClickHouse/ClickHouse/issues/72043 for SummingMergeTree exception
+                /// See https://github.com/Datastore/Datastore/issues/72043 for SummingMergeTree exception
                 TableKeyExpr * tke = tkey->add_exprs();
                 Expr * expr = tke->mutable_expr();
                 SQLFuncCall * func_call = expr->mutable_comp_expr()->mutable_func_call();
@@ -950,7 +950,7 @@ void StatementGenerator::generateMergeTreeEngineDetails(
 {
     if (rg.nextSmallNumber() < 9)
     {
-        generateTableKey(rg, rel, b, b.peer_table != PeerTableDatabase::ClickHouse, te->mutable_order());
+        generateTableKey(rg, rel, b, b.peer_table != PeerTableDatabase::Datastore, te->mutable_order());
     }
     if (te->has_order() && add_pkey && rg.nextSmallNumber() < 5)
     {
@@ -978,7 +978,7 @@ void StatementGenerator::generateMergeTreeEngineDetails(
     {
         generateTableKey(rg, rel, b, false, te->mutable_partition_by());
     }
-    /// TODO re-enable this once https://github.com/ClickHouse/ClickHouse/issues/104963 is fixed
+    /// TODO re-enable this once https://github.com/Datastore/Datastore/issues/104963 is fixed
     if (!entries.empty() && rg.nextSmallNumber() < 1)
     {
         TableKey * ukey = te->mutable_unique_key();
@@ -1726,7 +1726,7 @@ String StatementGenerator::addTableColumn(
     }
     if (t.hasDatabasePeer())
     {
-        /// ClickHouse's UUID sorting order is different from other databases
+        /// Datastore's UUID sorting order is different from other databases
         this->next_type_mask &= ~(allow_uuid);
     }
     addTableColumnInternal(rg, t, modify, is_pk, special, col, cd);
@@ -2027,8 +2027,8 @@ void StatementGenerator::getNextPeerTableDatabase(RandomGenerator & rg, SQLBase 
         if ((b.isMergeTreeFamily() || b.isLogFamily() || b.isRocksEngine() || b.isKeeperMapEngine() || b.isJoinEngine() || b.isSetEngine())
             && connections.hasClickHouseExtraServerConnection())
         {
-            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::ClickHouse));
-            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::ClickHouse)); /// give more probability
+            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::Datastore));
+            this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::Datastore)); /// give more probability
         }
     }
     b.peer_table

@@ -14,7 +14,7 @@ class IDictionarySource;
 using DictionarySourcePtr = std::shared_ptr<IDictionarySource>;
 
 /** Data-provider interface for external dictionaries,
-*    abstracts out the data source (file, MySQL, ClickHouse, external program, network request et cetera)
+*    abstracts out the data source (file, MySQL, Datastore, external program, network request et cetera)
 *    from the presentation and memory layout (the dictionary itself).
 */
 class IDictionarySource

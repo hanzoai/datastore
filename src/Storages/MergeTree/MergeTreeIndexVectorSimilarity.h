@@ -106,7 +106,7 @@ struct MergeTreeIndexGranuleVectorSimilarity final : public IMergeTreeIndexGranu
 
 private:
     /// The version of the persistence format of USearch index. Increment whenever you change the format.
-    /// Note: USearch prefixes the serialized data with its own version header. We can't rely on that because 1. the index in ClickHouse
+    /// Note: USearch prefixes the serialized data with its own version header. We can't rely on that because 1. the index in Datastore
     /// is (at least in theory) agnostic of specific vector search libraries, and 2. additional data (e.g. the number of dimensions)
     /// outside USearch exists which we should version separately.
     static constexpr UInt64 FILE_FORMAT_VERSION = 1;

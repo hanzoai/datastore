@@ -56,7 +56,7 @@ struct Settings;
   * For identifier node resolve process must replace it with concrete non identifier node. This part is most complex because
   * for identifier resolution scopes and identifier lookup context play important part.
   *
-  * ClickHouse SQL support lexical scoping for identifier resolution. Scope can be defined by query node or by expression node.
+  * Datastore SQL support lexical scoping for identifier resolution. Scope can be defined by query node or by expression node.
   * Expression nodes that can define scope are lambdas and table ALIAS columns.
   *
   * Identifier lookup context can be expression, function, table.

@@ -97,7 +97,7 @@ UserDefinedWebAssemblyFunction::UserDefinedWebAssemblyFunction(
 {
 }
 
-/// Maps ClickHouse numeric types to their WASM storage type.
+/// Maps Datastore numeric types to their WASM storage type.
 /// Small integer types (Int8, UInt8, Int16, UInt16) are widened to uint32_t (i32).
 /// All other supported types map 1:1 via NativeToWasmType.
 template <typename T>

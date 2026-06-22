@@ -180,7 +180,7 @@ public:
     /// Get name of database engine.
     virtual String getEngineName() const = 0;
 
-    /// Database engines that do not own ClickHouse table metadata cannot contain arbitrary ClickHouse table engines:
+    /// Database engines that do not own Datastore table metadata cannot contain arbitrary Datastore table engines:
     /// - *MergeTree
     /// - Distributed
     /// - RocksDB
@@ -192,7 +192,7 @@ public:
     /// Such databases are hidden from system.tables / system.columns / system.completions
     /// unless `show_remote_databases_in_system_tables` is enabled.
     /// This is distinct from `isExternal()` (which classifies whether the engine supports
-    /// ClickHouse internal table types).
+    /// Datastore internal table types).
     virtual bool isRemoteDatabase() const { return false; }
 
     /// Load a set of existing tables.

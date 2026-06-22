@@ -524,7 +524,7 @@ struct FormatSettings
     } orc{};
 
     /// For capnProto format we should determine how to
-    /// compare ClickHouse Enum and Enum from schema.
+    /// compare Datastore Enum and Enum from schema.
     enum class CapnProtoEnumComparingMode : uint8_t
     {
         BY_NAMES, // Names in enums should be the same, values can be different.

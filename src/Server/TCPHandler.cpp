@@ -190,16 +190,16 @@ namespace
 {
 // This function corrects the wrong client_name from the old client.
 // Old clients 28.7 and some intermediate versions of 28.7 were sending different ClientInfo.client_name
-// "ClickHouse client" was sent with the hello message.
-// "ClickHouse" or "ClickHouse " was sent with the query message.
+// "Datastore client" was sent with the hello message.
+// "Datastore" or "Datastore " was sent with the query message.
 void correctQueryClientInfo(const ClientInfo & session_client_info, ClientInfo & client_info)
 {
     if (VersionNumber(client_info.client_version_major, client_info.client_version_minor, client_info.client_version_patch)
             <= VersionNumber(23, 8, 1)
-        && session_client_info.client_name == "ClickHouse client"
-        && (client_info.client_name == "ClickHouse" || client_info.client_name == "ClickHouse "))
+        && session_client_info.client_name == "Datastore client"
+        && (client_info.client_name == "Datastore" || client_info.client_name == "Datastore "))
     {
-        client_info.client_name = "ClickHouse client";
+        client_info.client_name = "Datastore client";
     }
 }
 
@@ -213,9 +213,9 @@ void validateClientInfo(const ClientInfo & session_client_info, const ClientInfo
     // HTTP handler sends client_info with HTTP interface and HTTP data by TCP protocol in Protocol::Client::Query message.
     //
     // Example 2: select * from <distributed_table>  --host shard_1 // distributed table has 2 shards: shard_1, shard_2
-    // shard_1 receives a message with 'ClickHouse client' client_name
-    // shard_1 initiates TCP connection with shard_2 with 'ClickHouse server' client_name.
-    // shard_1 sends 'ClickHouse client' client_name in Protocol::Client::Query message to shard_2.
+    // shard_1 receives a message with 'Datastore client' client_name
+    // shard_1 initiates TCP connection with shard_2 with 'Datastore server' client_name.
+    // shard_1 sends 'Datastore client' client_name in Protocol::Client::Query message to shard_2.
     if (client_info.query_kind == ClientInfo::QueryKind::SECONDARY_QUERY)
         return;
 
@@ -2404,7 +2404,7 @@ void TCPHandler::processQuery(std::shared_ptr<QueryState> & state)
         is_interserver_authenticated = true;
 #else
         auto exception = Exception(ErrorCodes::AUTHENTICATION_FAILED,
-            "Inter-server secret support is disabled, because ClickHouse was built without SSL library");
+            "Inter-server secret support is disabled, because Datastore was built without SSL library");
         session->onAuthenticationFailure(/* user_name */ std::nullopt, socket().peerAddress(), exception);
         throw exception; /// NOLINT
 #endif

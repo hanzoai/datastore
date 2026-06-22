@@ -5,13 +5,13 @@
 namespace DB
 {
 
-/// Transpiles a SQL query from a foreign dialect to ClickHouse SQL using the
-/// polyglot-sql library and then parses the result with the standard ClickHouse
+/// Transpiles a SQL query from a foreign dialect to Datastore SQL using the
+/// polyglot-sql library and then parses the result with the standard Datastore
 /// parser.
 ///
 /// The entire remaining input (from the current position to `raw_end`) is
 /// passed to polyglot as an opaque string — it is NOT tokenized by the
-/// ClickHouse Lexer, because foreign dialects may contain syntax the Lexer
+/// Datastore Lexer, because foreign dialects may contain syntax the Lexer
 /// does not understand.  Polyglot handles statement splitting internally.
 class ParserPolyglotQuery final : public IParserBase
 {

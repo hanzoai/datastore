@@ -71,7 +71,7 @@ namespace
     {
         std::string_view ch_function_name;
         /// If set, PromQL arguments from this index onward are passed as a single Array(String) literal
-        /// to the underlying ClickHouse function (used for `label_join`'s variadic src_tags).
+        /// to the underlying Datastore function (used for `label_join`'s variadic src_tags).
         size_t array_argument_index = static_cast<size_t>(-1);
     };
 

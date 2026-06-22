@@ -115,11 +115,11 @@ OneTimePasswordSecret::OneTimePasswordSecret(const String & key_, OneTimePasswor
 
 String getOneTimePasswordSecretLink(const OneTimePasswordSecret & secret)
 {
-    constexpr auto issuer_name = "ClickHouse";
+    constexpr auto issuer_name = "Datastore";
     if (secret.params == OneTimePasswordParams{})
-        return fmt::format("otpauth://totp/ClickHouse?issuer={}&secret={}", issuer_name, secret.key);
+        return fmt::format("otpauth://totp/Datastore?issuer={}&secret={}", issuer_name, secret.key);
 
-    return fmt::format("otpauth://totp/ClickHouse?issuer={}&secret={}&digits={}&period={}&algorithm={}",
+    return fmt::format("otpauth://totp/Datastore?issuer={}&secret={}&digits={}&period={}&algorithm={}",
         issuer_name, secret.key, secret.params.num_digits, secret.params.period, toString(secret.params.algorithm));
 }
 
@@ -140,7 +140,7 @@ String getOneTimePassword(const String & secret [[ maybe_unused ]], const OneTim
             static_cast<std::underlying_type_t<cotp_error_t>>(error));
     return String(result.get(), strlen(result.get()));
 #else
-    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "One-time password support is disabled, because ClickHouse was built without openssl library");
+    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "One-time password support is disabled, because Datastore was built without openssl library");
 #endif
 }
 

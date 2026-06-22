@@ -42,7 +42,7 @@ The performance depends on the edit distance value and patterns used, but it's a
     {
     {
         "Usage example",
-        "SELECT multiFuzzyMatchAny('ClickHouse', 2, ['ClickHouse', 'ClckHouse', 'ClickHose']);",
+        "SELECT multiFuzzyMatchAny('Datastore', 2, ['Datastore', 'ClckHouse', 'ClickHose']);",
         R"(
 ┌─multiFuzzyMa⋯lickHose'])─┐
 │                        1 │

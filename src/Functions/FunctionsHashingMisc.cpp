@@ -192,9 +192,9 @@ It uses the CityHash algorithm for string parameters and implementation-specific
 The function uses the CityHash combinator to get the final results.
 
 :::info
-Google changed the algorithm of CityHash after it was added to ClickHouse.
-In other words, ClickHouse's cityHash64 and Google's upstream CityHash now produce different results.
-ClickHouse cityHash64 corresponds to CityHash v1.0.2.
+Google changed the algorithm of CityHash after it was added to Datastore.
+In other words, Datastore's cityHash64 and Google's upstream CityHash now produce different results.
+Datastore cityHash64 corresponds to CityHash v1.0.2.
 :::
 
 :::note
@@ -406,7 +406,7 @@ Use it only when this algorithm is already in use in another system and you need
 
 :::note
 Java only supports calculating the hash of signed integers,
-so if you want to calculate a hash of unsigned integers you must cast them to the proper signed ClickHouse types.
+so if you want to calculate a hash of unsigned integers you must cast them to the proper signed Datastore types.
 :::
 )";
     FunctionDocumentation::Syntax javaHash_syntax = "javaHash(arg)";
@@ -552,7 +552,7 @@ For the 32-bit version see [`xxHash32`](#xxHash32)
     FunctionDocumentation::Syntax xxh3_syntax = "xxh3(expr)";
     FunctionDocumentation::Arguments xxh3_argument = {{"expr", "A list of expressions of any data type.", {"Any"}}};
     FunctionDocumentation::ReturnedValue xxh3_returned_value = {"Returns the computed 64-bit `xxh3` hash value", {"UInt64"}};
-    FunctionDocumentation::Examples xxh3_example = {{"Usage example", "SELECT xxh3('ClickHouse')", "18009318874338624809"}};
+    FunctionDocumentation::Examples xxh3_example = {{"Usage example", "SELECT xxh3('Datastore')", "18009318874338624809"}};
     FunctionDocumentation::IntroducedIn xxh3_introduced_in = {22, 12};
     FunctionDocumentation::Category xxh3_category = FunctionDocumentation::Category::Hash;
     FunctionDocumentation xxh3_documentation = {xxh3_description, xxh3_syntax, xxh3_argument, {}, xxh3_returned_value, xxh3_example, xxh3_introduced_in, xxh3_category};
@@ -563,7 +563,7 @@ For the 32-bit version see [`xxHash32`](#xxHash32)
     FunctionDocumentation::Arguments xxh3_128_argument = {{"expr", "A list of expressions of any data type.", {"Any"}}};
     FunctionDocumentation::ReturnedValue xxh3_128_returned_value = {"Returns the computed 128-bit `xxh3` hash value", {"UInt128"}};
     FunctionDocumentation::Examples xxh3_128_example
-        = {{"Usage example", "SELECT hex(xxh3_128('ClickHouse'))", "3A038784C52804B4DBA43A038784C528"}};
+        = {{"Usage example", "SELECT hex(xxh3_128('Datastore'))", "3A038784C52804B4DBA43A038784C528"}};
     FunctionDocumentation::Category xxh3_128_category = FunctionDocumentation::Category::Hash;
     FunctionDocumentation::IntroducedIn xxh3_128_introduced_in = {26, 2};
     FunctionDocumentation xxh3_128_documentation = {xxh3_128_description, xxh3_128_syntax, xxh3_128_argument, {}, xxh3_128_returned_value, xxh3_128_example, xxh3_128_introduced_in, xxh3_128_category};
@@ -573,7 +573,7 @@ For the 32-bit version see [`xxHash32`](#xxHash32)
     FunctionDocumentation::Syntax wyHash64_syntax = "wyHash64(arg)";
     FunctionDocumentation::Arguments wyHash64_argument = {{"arg", "String argument for which to compute the hash.", {"String"}}};
     FunctionDocumentation::ReturnedValue wyHash64_returned_value = {"Returns the computed 64-bit hash value", {"UInt64"}};
-    FunctionDocumentation::Examples wyHash64_example = {{"Usage example", "SELECT wyHash64('ClickHouse') AS Hash;", "12336419557878201794"}};
+    FunctionDocumentation::Examples wyHash64_example = {{"Usage example", "SELECT wyHash64('Datastore') AS Hash;", "12336419557878201794"}};
     FunctionDocumentation::IntroducedIn wyHash64_introduced_in = {22, 7};
     FunctionDocumentation::Category wyHash64_category = FunctionDocumentation::Category::Hash;
     FunctionDocumentation wyHash64_documentation = {wyHash64_description, wyHash64_syntax, wyHash64_argument, {}, wyHash64_returned_value, wyHash64_example, wyHash64_introduced_in, wyHash64_category};

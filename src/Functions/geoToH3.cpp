@@ -167,7 +167,7 @@ REGISTER_FUNCTION(GeoToH3)
 Returns [H3](https://h3geo.org/docs/core-library/h3Indexing/) point index for the given latitude, longitude, and resolution.
 
 :::note
-In ClickHouse v25.4 or older, `geoToH3()` arguments are in the order `(lon, lat)`. As per ClickHouse v25.5, the input values are ordered `(lat, lon)`.
+In Datastore v25.4 or older, `geoToH3()` arguments are in the order `(lon, lat)`. As per Datastore v25.5, the input values are ordered `(lat, lon)`.
 The previous behavior can be restored using setting `geotoh3_argument_order = 'lon_lat'`.
     )";
     FunctionDocumentation::Syntax syntax = "geoToH3(lat, lon, resolution)";

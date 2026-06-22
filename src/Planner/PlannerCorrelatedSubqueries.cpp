@@ -625,9 +625,9 @@ void addStepForResultRenaming(
  * Original research paper "Unnesting Arbitrary Queries": https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf
  * See also a follow-up paper, "Improving Unnesting of Complex Queries": https://dl.gi.de/items/b9df4765-d1b0-4267-a77c-4ce4ab0ee62d
  *
- * NOTE: ClickHouse does not explicitly build SQL query into relational algebra expression.
+ * NOTE: Datastore does not explicitly build SQL query into relational algebra expression.
  * Instead, it produces a query plan where almost every step has an analog from relational algebra.
- * This function implements a decorrelation algorithm using the ClickHouse query plan.
+ * This function implements a decorrelation algorithm using the Datastore query plan.
  *
  * TODO: Support decorrelation of all kinds of query plan steps.
  */

@@ -390,13 +390,13 @@ bool Client::processWithASTFuzzer(std::string_view full_query)
         {
             measure_performance &= external_integrations->getPerformanceMetricsForLastQuery(BuzzHouse::PeerTableDatabase::None, res1);
             /// Replicate settings, so both servers have same configuration
-            external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::ClickHouse);
+            external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::Datastore);
         }
         if (can_compare)
         {
             /// Always run query on peer server
             fmt::print(stdout, "Running query on peer server\n");
-            peer_success &= !external_integrations->performQuery(BuzzHouse::PeerTableDatabase::ClickHouse, query_to_execute);
+            peer_success &= !external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, query_to_execute);
         }
         if (can_compare && fuzz_config->compare_success_results && peer_success != !have_error)
         {
@@ -405,7 +405,7 @@ bool Client::processWithASTFuzzer(std::string_view full_query)
         if (measure_performance)
         {
             measure_performance
-                &= peer_success && external_integrations->getPerformanceMetricsForLastQuery(BuzzHouse::PeerTableDatabase::ClickHouse, res2);
+                &= peer_success && external_integrations->getPerformanceMetricsForLastQuery(BuzzHouse::PeerTableDatabase::Datastore, res2);
             if (measure_performance)
             {
                 fuzz_config->comparePerformanceResults("AST fuzzer", res1, res2);
@@ -482,7 +482,7 @@ bool Client::processWithASTFuzzer(std::string_view full_query)
 #if USE_BUZZHOUSE
         if (can_compare)
         {
-            const auto u = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::ClickHouse, query_to_execute);
+            const auto u = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, query_to_execute);
             UNUSED(u);
         }
 #endif
@@ -945,7 +945,7 @@ bool Client::buzzHouse()
 
                          if (clickhouse_only)
                          {
-                             external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::ClickHouse);
+                             external_integrations->replicateSettings(BuzzHouse::PeerTableDatabase::Datastore);
                          }
                          qo.truncatePeerTables(gen);
                          for (const auto & entry : peer_queries)
@@ -969,7 +969,7 @@ bool Client::buzzHouse()
                          fuzz_config->outf << full_query2 << std::endl;
                          if (clickhouse_only)
                          {
-                             err_res = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::ClickHouse, full_query2);
+                             err_res = external_integrations->performQuery(BuzzHouse::PeerTableDatabase::Datastore, full_query2);
                          }
                          else
                          {

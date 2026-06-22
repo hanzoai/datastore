@@ -1483,7 +1483,7 @@ void QueryOracle::optimizePeerTables(const StatementGenerator & gen)
         /// Lastly optimize tables
         const auto & ntable = gen.tables.at(entry);
 
-        other_steps_success &= gen.connections.optimizeTableForOracle(PeerTableDatabase::ClickHouse, ntable);
+        other_steps_success &= gen.connections.optimizeTableForOracle(PeerTableDatabase::Datastore, ntable);
         if (measure_performance)
         {
             other_steps_success &= gen.connections.optimizeTableForOracle(PeerTableDatabase::None, ntable);
@@ -1661,7 +1661,7 @@ void QueryOracle::processSecondOracleQueryResult(const int errcode, ExternalInte
         {
             if (measure_performance)
             {
-                if (ei.getPerformanceMetricsForLastQuery(PeerTableDatabase::ClickHouse, this->res2))
+                if (ei.getPerformanceMetricsForLastQuery(PeerTableDatabase::Datastore, this->res2))
                 {
                     fc.comparePerformanceResults(oracle_name, this->res1, this->res2);
                 }

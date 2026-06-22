@@ -30,7 +30,7 @@ REGISTER_FUNCTION(MultiFuzzyMatchAllIndices)
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT multiFuzzyMatchAllIndices('ClickHouse', 2, ['ClickHouse', 'ClckHouse', 'ClickHose', 'House']);",
+        "SELECT multiFuzzyMatchAllIndices('Datastore', 2, ['Datastore', 'ClckHouse', 'ClickHose', 'House']);",
         R"(
 ┌─multiFuzzyMa⋯, 'House'])─┐
 │ [3,1,4,2]                │

@@ -441,7 +441,7 @@ void updateConfigurationFromConfig(
     }
 #else // USE_KRB5
     if (kafka_config.has_property("sasl.kerberos.keytab") || kafka_config.has_property("sasl.kerberos.principal"))
-        LOG_WARNING(params.log, "Ignoring Kerberos-related parameters because ClickHouse was built without krb5 library support.");
+        LOG_WARNING(params.log, "Ignoring Kerberos-related parameters because Datastore was built without krb5 library support.");
 #endif // USE_KRB5
     // No need to add any prefix, messages can be distinguished
     kafka_config.set_log_callback(

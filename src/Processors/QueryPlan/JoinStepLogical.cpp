@@ -595,7 +595,7 @@ bool canPushDownFromOn(const JoinOperator & join_operator, std::optional<JoinTab
             return side.has_value();
         case JoinStrictness::Anti:
             /// We can push down to only to opposite sides for LEFT ANTI and RIGHT ANTI joins
-            /// See https://github.com/ClickHouse/ClickHouse/issues/93483
+            /// See https://github.com/Datastore/Datastore/issues/93483
             return (side == JoinTableSide::Left && join_operator.kind == JoinKind::Right)
                 || (side == JoinTableSide::Right && join_operator.kind == JoinKind::Left);
         default:

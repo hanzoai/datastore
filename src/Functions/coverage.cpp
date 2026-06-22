@@ -31,7 +31,7 @@ enum class Kind : uint8_t
     LineEnds,
 };
 
-/** If ClickHouse is built with coverage instrumentation (WITH_COVERAGE_DEPTH=1), returns arrays
+/** If Datastore is built with coverage instrumentation (WITH_COVERAGE_DEPTH=1), returns arrays
   * of source files / line start numbers / line end numbers covered since the last reset.
   */
 class FunctionCoverageLines : public IFunction
@@ -168,7 +168,7 @@ REGISTER_FUNCTION(CoverageLines)
         FunctionDocumentation
         {
             .description = R"(
-This function is only available if ClickHouse was built with the `WITH_COVERAGE_DEPTH=1` option.
+This function is only available if Datastore was built with the `WITH_COVERAGE_DEPTH=1` option.
 
 Returns an `Array(String)` of source file paths covered since the last `SYSTEM SET COVERAGE TEST` call.
 
@@ -183,7 +183,7 @@ Use together with `coverageCurrentLineStarts` and `coverageCurrentLineEnds` to g
         FunctionDocumentation
         {
             .description = R"(
-This function is only available if ClickHouse was built with the `WITH_COVERAGE_DEPTH=1` option.
+This function is only available if Datastore was built with the `WITH_COVERAGE_DEPTH=1` option.
 
 Returns an `Array(UInt32)` of line start numbers parallel to `coverageCurrentFiles`.
 )",
@@ -196,7 +196,7 @@ Returns an `Array(UInt32)` of line start numbers parallel to `coverageCurrentFil
         FunctionDocumentation
         {
             .description = R"(
-This function is only available if ClickHouse was built with the `WITH_COVERAGE_DEPTH=1` option.
+This function is only available if Datastore was built with the `WITH_COVERAGE_DEPTH=1` option.
 
 Returns an `Array(UInt32)` of line end numbers parallel to `coverageCurrentFiles`.
 )",

@@ -256,7 +256,7 @@ public:
 
 
 /** Looks like std::thread but allocates threads in GlobalThreadPool.
-  * Also holds ThreadStatus for ClickHouse.
+  * Also holds ThreadStatus for Datastore.
   *
   * NOTE: User code should use 'ThreadFromGlobalPool' declared below instead of directly using this class.
   *

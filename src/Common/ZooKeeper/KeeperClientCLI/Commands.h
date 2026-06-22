@@ -164,7 +164,7 @@ class DeleteStaleBackups : public IKeeperClientCommand
 
     String getHelpMessage() const override
     {
-        return "{} -- Deletes ClickHouse nodes used for backups that are now inactive";
+        return "{} -- Deletes Datastore nodes used for backups that are now inactive";
     }
 };
 

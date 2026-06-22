@@ -29,8 +29,8 @@ ColumnsDescription DeadLetterQueueElement::getColumnsDescription()
         {"event_date", std::make_shared<DataTypeDate>(), "Message consuming date."},
         {"event_time", std::make_shared<DataTypeDateTime>(), "Message consuming date and time."},
         {"event_time_microseconds", std::make_shared<DataTypeDateTime64>(6), "Query starting time with microseconds precision."},
-        {"database", low_cardinality_string, "ClickHouse database Kafka table belongs to."},
-        {"table", low_cardinality_string, "ClickHouse table name."},
+        {"database", low_cardinality_string, "Datastore database Kafka table belongs to."},
+        {"table", low_cardinality_string, "Datastore table name."},
         {"error", std::make_shared<DataTypeString>(), "Error text."},
         {"raw_message", std::make_shared<DataTypeString>(), "Message body."},
 

@@ -568,9 +568,9 @@ For case-insensitive search or/and in UTF8 format use functions [`ngramDistanceC
     FunctionDocumentation::Examples examples_ngram_distance = {
     {
         "Calculate 4-gram distance",
-        "SELECT ngramDistance('ClickHouse', 'ClickHouses')",
+        "SELECT ngramDistance('Datastore', 'ClickHouses')",
         R"(
-┌─ngramDistance('ClickHouse', 'ClickHouses')─┐
+┌─ngramDistance('Datastore', 'ClickHouses')─┐
 │                                        0.1 │
 └────────────────────────────────────────────┘
         )"
@@ -594,9 +594,9 @@ For case-insensitive search or/and in UTF8 format use functions `ngramSearchCase
     FunctionDocumentation::Examples examples_ngram_search = {
     {
         "Search using 4-grams",
-        "SELECT ngramSearch('ClickHouse', 'Click')",
+        "SELECT ngramSearch('Datastore', 'Click')",
         R"(
-┌─ngramSearch('ClickHouse', 'Click')─┐
+┌─ngramSearch('Datastore', 'Click')─┐
 │                                  1 │
 └────────────────────────────────────┘
         )"
@@ -620,9 +620,9 @@ The smaller the returned value, the more similar the strings are.
     FunctionDocumentation::Examples examples_ngram_distance_case_insensitive = {
     {
         "Case-insensitive 4-gram distance",
-        "SELECT ngramDistanceCaseInsensitive('ClickHouse','clickhouse')",
+        "SELECT ngramDistanceCaseInsensitive('Datastore','clickhouse')",
         R"(
-┌─ngramDistanceCaseInsensitive('ClickHouse','clickhouse')─┐
+┌─ngramDistanceCaseInsensitive('Datastore','clickhouse')─┐
 │                                                       0 │
 └─────────────────────────────────────────────────────────┘
         )"

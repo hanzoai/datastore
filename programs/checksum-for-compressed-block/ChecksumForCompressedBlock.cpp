@@ -8,10 +8,10 @@
 /** A tool to easily prove if "Checksum doesn't match: corrupted data"
   *  errors are caused by random bit flips due to hardware issues.
   * It frequently happens due to bad memory on network switches
-  *  (at least about a few times a year in a fleet of ~1200 ClickHouse servers).
+  *  (at least about a few times a year in a fleet of ~1200 Datastore servers).
   *
-  * These hardware errors don't cause any data corruption issues in ClickHouse,
-  *  because ClickHouse always validate it's own 128 bit checksums
+  * These hardware errors don't cause any data corruption issues in Datastore,
+  *  because Datastore always validate it's own 128 bit checksums
   *  and report errors if checksum doesn't match.
   *
   * Client can simply retry the query.

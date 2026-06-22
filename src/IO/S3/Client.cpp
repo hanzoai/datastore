@@ -805,7 +805,7 @@ Client::doRequestWithRetryNetworkErrors(RequestType & request, RequestFn request
                 // use previously attempt number to calculate delay
                 updateNextTimeToRetryAfterRetryableError(outcome.GetError(), attempt_no - 1);
 
-                // update ClickHouse-specific attempt number in the request
+                // update Datastore-specific attempt number in the request
                 // to help choose the right timeouts on the HTTP client which depends on retry attempt number
                 auto clickhouse_request_attempt = getClickhouseAttemptNumber(request_);
                 setClickhouseAttemptNumber(request_, clickhouse_request_attempt + attempt_no);
@@ -1153,7 +1153,7 @@ ClientFactory::ClientFactory()
 
     aws_options.loggingOptions = Aws::LoggingOptions{};
     /// Log level is set to Off by default, skipping calling logger_create_fn entirely.
-    /// https://github.com/ClickHouse/aws-sdk-cpp/blob/22f694afbdc7e9766894998c3745e23f004f8b86/src/aws-cpp-sdk-core/include/aws/core/Aws.h#L31
+    /// https://github.com/Datastore/aws-sdk-cpp/blob/22f694afbdc7e9766894998c3745e23f004f8b86/src/aws-cpp-sdk-core/include/aws/core/Aws.h#L31
     aws_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Trace;
     aws_options.loggingOptions.logger_create_fn = []() { return std::make_shared<AWSLogger>(false); };
 

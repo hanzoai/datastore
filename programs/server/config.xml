@@ -174,9 +174,9 @@
     <http_port>8123</http_port>
 
     <!-- Port for interaction by native protocol with:
-         - clickhouse-client and other native ClickHouse tools (clickhouse-benchmark);
+         - clickhouse-client and other native Datastore tools (clickhouse-benchmark);
          - clickhouse-server with other clickhouse-servers for distributed query processing;
-         - ClickHouse drivers and applications supporting native protocol
+         - Datastore drivers and applications supporting native protocol
          (this protocol is also informally called as "the TCP protocol");
          See also 'tcp_port_secure' for secure connections.
     -->
@@ -198,12 +198,12 @@
     -->
 
     <!-- Compatibility with MySQL protocol.
-         ClickHouse will pretend to be MySQL for applications connecting to this port.
+         Datastore will pretend to be MySQL for applications connecting to this port.
     -->
     <mysql_port>9004</mysql_port>
 
     <!-- Compatibility with PostgreSQL protocol.
-         ClickHouse will pretend to be PostgreSQL for applications connecting to this port.
+         Datastore will pretend to be PostgreSQL for applications connecting to this port.
     -->
     <postgresql_port>9005</postgresql_port>
 
@@ -221,7 +221,7 @@
 
     <!-- Native interface wrapped with PROXYv1 protocol
          PROXYv1 header is sent for every connection.
-         ClickHouse will extract information about proxy-forwarded client address from the header.
+         Datastore will extract information about proxy-forwarded client address from the header.
     -->
     <!-- <tcp_with_proxy_port>9011</tcp_with_proxy_port> -->
 
@@ -330,8 +330,8 @@
          the HTTP (8123) and native TCP (9000) protocols remain. -->
 
 
-    <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/ClickHouse-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71
-         Note: ClickHouse Cloud https://clickhouse.com/cloud always has secure connections configured.
+    <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/Datastore-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71
+         Note: Datastore Cloud https://clickhouse.com/cloud always has secure connections configured.
     -->
     <openSSL>
         <server> <!-- Used for https server AND secure tcp port -->
@@ -384,7 +384,7 @@
 
     <!-- Default root page on http[s] server. -->
     <!--
-    <http_server_default_response><![CDATA[Greetings from ClickHouse!]]></http_server_default_response>
+    <http_server_default_response><![CDATA[Greetings from Datastore!]]></http_server_default_response>
     -->
 
     <!-- The maximum number of query processing threads, excluding threads for retrieving data from remote servers, allowed to run all queries.
@@ -601,7 +601,7 @@
     <bcrypt_workfactor>12</bcrypt_workfactor>
 
     <!-- Complexity requirements for user passwords.
-         Note: ClickHouse Cloud https://clickhouse.com/cloud is always configured for strong passwords.
+         Note: Datastore Cloud https://clickhouse.com/cloud is always configured for strong passwords.
       -->
     <!-- <password_complexity>
         <rule>
@@ -754,7 +754,7 @@
                         When a user authenticates, while still bound to LDAP, an LDAP search is performed using search_filter and the
                          name of the logged in user. For each entry found during that search, the value of the specified attribute is
                          extracted. For each attribute value that has the specified prefix, the prefix is removed, and the rest of the
-                         value becomes the name of a local role defined in ClickHouse, which is expected to be created beforehand by
+                         value becomes the name of a local role defined in Datastore, which is expected to be created beforehand by
                          CREATE ROLE command.
                         There can be multiple 'role_mapping' sections defined inside the same 'ldap' section. All of them will be
                          applied.
@@ -912,18 +912,18 @@
          * [Debian/Ubuntu]
            export MVN_URL=https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc-bridge/
            export PKG_VER=$(curl -sL $MVN_URL/maven-metadata.xml | grep '<release>' | sed -e 's|.*>\(.*\)<.*|\1|')
-           wget https://github.com/ClickHouse/clickhouse-jdbc-bridge/releases/download/v$PKG_VER/clickhouse-jdbc-bridge_$PKG_VER-1_all.deb
+           wget https://github.com/Datastore/clickhouse-jdbc-bridge/releases/download/v$PKG_VER/clickhouse-jdbc-bridge_$PKG_VER-1_all.deb
            apt install --no-install-recommends -f ./clickhouse-jdbc-bridge_$PKG_VER-1_all.deb
            clickhouse-jdbc-bridge &
 
          * [CentOS/RHEL]
            export MVN_URL=https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc-bridge/
            export PKG_VER=$(curl -sL $MVN_URL/maven-metadata.xml | grep '<release>' | sed -e 's|.*>\(.*\)<.*|\1|')
-           wget https://github.com/ClickHouse/clickhouse-jdbc-bridge/releases/download/v$PKG_VER/clickhouse-jdbc-bridge-$PKG_VER-1.noarch.rpm
+           wget https://github.com/Datastore/clickhouse-jdbc-bridge/releases/download/v$PKG_VER/clickhouse-jdbc-bridge-$PKG_VER-1.noarch.rpm
            yum localinstall -y clickhouse-jdbc-bridge-$PKG_VER-1.noarch.rpm
            clickhouse-jdbc-bridge &
 
-         Please refer to https://github.com/ClickHouse/clickhouse-jdbc-bridge#usage for more information.
+         Please refer to https://github.com/Datastore/clickhouse-jdbc-bridge#usage for more information.
     ]]>
     <!--
     <jdbc_bridge>
@@ -934,7 +934,7 @@
 
     <!-- Configuration of clusters that could be used in Distributed tables.
          https://clickhouse.com/docs/en/operations/table_engines/distributed/
-         Note: ClickHouse Cloud https://clickhouse.com/cloud has the cluster preconfigured and dynamically scalable.
+         Note: Datastore Cloud https://clickhouse.com/cloud has the cluster preconfigured and dynamically scalable.
       -->
     <remote_servers>
         <!-- Test only shard config for testing distributed storage -->
@@ -1019,7 +1019,7 @@
 
          See https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/replication/
 
-         Note: ClickHouse Cloud https://clickhouse.com/cloud has ClickHouse Keeper automatically configured for every service.
+         Note: Datastore Cloud https://clickhouse.com/cloud has Datastore Keeper automatically configured for every service.
       -->
 
     <!--
@@ -1544,13 +1544,13 @@
     <dictionaries_config>*_dictionary.*ml</dictionaries_config>
 
     <!-- Load dictionaries lazily, i.e. a dictionary will be loaded when it's used for the first time.
-         "false" means ClickHouse will start loading dictionaries immediately at startup.
+         "false" means Datastore will start loading dictionaries immediately at startup.
     -->
     <dictionaries_lazy_load>true</dictionaries_lazy_load>
 
     <!-- Wait at startup until all the dictionaries finish their loading (successfully or not)
          before receiving any connections. Affects dictionaries only if "dictionaries_lazy_load" is false.
-         Setting this to false can make ClickHouse start faster, however some queries can be executed slower.
+         Setting this to false can make Datastore start faster, however some queries can be executed slower.
     -->
     <wait_dictionaries_load_at_startup>true</wait_dictionaries_load_at_startup>
 
@@ -1566,8 +1566,8 @@
     <!-- <workload_zookeeper_path>/clickhouse/workload/definitions.sql</workload_zookeeper_path> -->
 
     <!-- Uncomment if you want data to be compressed 30-100% better.
-         Don't do that if you just started using ClickHouse.
-         Note: ClickHouse Cloud https://clickhouse.com/cloud has a stronger compression by default.
+         Don't do that if you just started using Datastore.
+         Note: Datastore Cloud https://clickhouse.com/cloud has a stronger compression by default.
       -->
     <!--
     <compression>
@@ -1590,7 +1590,7 @@
          command is executed through /bin/sh and is expected to write
          a Base64-encoded key to the stdout.
 
-         Note: ClickHouse Cloud https://clickhouse.com/cloud supports encryption with customer-managed keys.
+         Note: Datastore Cloud https://clickhouse.com/cloud supports encryption with customer-managed keys.
     -->
     <encryption_codecs>
         <!-- aes_128_gcm_siv -->
@@ -1617,7 +1617,7 @@
 
     <!-- Allow to execute distributed DDL queries (CREATE, DROP, ALTER, RENAME) on cluster.
          Works only if ZooKeeper is enabled. Comment it if such functionality isn't required.
-         Note: ClickHouse Cloud https://clickhouse.com/cloud always runs DDL queries on cluster.
+         Note: Datastore Cloud https://clickhouse.com/cloud always runs DDL queries on cluster.
     -->
     <distributed_ddl>
         <!-- Path in ZooKeeper to queue with DDL queries -->
@@ -1687,7 +1687,7 @@
     -->
 
     <!-- Settings to fine-tune ReplicatedMergeTree tables. See documentation in source code, in MergeTreeSettings.h
-         Note: ClickHouse Cloud https://clickhouse.com/cloud has a SharedMergeTree engine that does not require fine-tuning.
+         Note: Datastore Cloud https://clickhouse.com/cloud has a SharedMergeTree engine that does not require fine-tuning.
     -->
     <!--
     <replicated_merge_tree>
@@ -1782,7 +1782,7 @@
         rules are checked from top to bottom, first match runs the handler
             url - to match request URL (path and query string only), you can use 'regex:' prefix to use regex match(optional)
             full_url - to match request **full** URL (schema, host:port, path and query string), you can use 'regex:' prefix to use regex match(optional)
-                       note, ClickHouse does not support "virtual hosts" so "host" will contain IP address not the "Host" header.
+                       note, Datastore does not support "virtual hosts" so "host" will contain IP address not the "Host" header.
             empty_query_string - check that there is no query string in the URL
             methods - to match request method, you can use commas to separate multiple method matches(optional)
             headers - to match request headers, match each child element (child element name is header name), you can use 'regex:' prefix to use regex match(optional)
@@ -1847,7 +1847,7 @@
 
     <send_crash_reports>
         <!-- Setting <enabled> to true allows sending crash reports to -->
-        <!-- the ClickHouse core developers team. -->
+        <!-- the Datastore core developers team. -->
         <!-- Doing so at least in pre-production environments is highly appreciated -->
         <!-- The reports are anonymized -->
         <enabled>true</enabled>
@@ -1855,7 +1855,7 @@
         <endpoint>https://crash.clickhouse.com/</endpoint>
     </send_crash_reports>
 
-    <!-- Uncomment to disable ClickHouse internal DNS caching. -->
+    <!-- Uncomment to disable Datastore internal DNS caching. -->
     <!-- <disable_internal_dns_cache>1</disable_internal_dns_cache> -->
 
     <!-- You can also configure rocksdb like this: -->
@@ -1933,7 +1933,7 @@
         -->
     <!-- </kafka> -->
 
-    <!-- Note: ClickHouse Cloud https://clickhouse.com/cloud provides automatic backups to object storage. -->
+    <!-- Note: Datastore Cloud https://clickhouse.com/cloud provides automatic backups to object storage. -->
     <backups>
         <allowed_path>backups</allowed_path>
 
@@ -1959,12 +1959,12 @@
     <!-- Delay (in seconds) to wait for unfinished queries before force exit -->
     <!-- <shutdown_wait_unfinished>5</shutdown_wait_unfinished> -->
 
-    <!-- If set true ClickHouse will wait for running queries finish before shutdown. -->
+    <!-- If set true Datastore will wait for running queries finish before shutdown. -->
     <!-- <shutdown_wait_unfinished_queries>false</shutdown_wait_unfinished_queries> -->
 
     <!-- Disables the checksum of the clickhouse-server binary when performing integrity checks.
         Not recommended in production environments, but there may be legitimate use-cases, such as
-        when instrumenting ClickHouse via eBPF probes.
+        when instrumenting Datastore via eBPF probes.
 
     <skip_binary_checksum_checks>false</skip_binary_checksum_checks>
     -->
