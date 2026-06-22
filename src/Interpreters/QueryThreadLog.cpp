@@ -12,7 +12,7 @@
 #include <DataTypes/DataTypesNumber.h>
 #include <Interpreters/ProfileEventsExt.h>
 #include <Interpreters/QueryLog.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 
 
 namespace DB
@@ -124,7 +124,7 @@ void QueryThreadLogElement::appendToBlock(MutableColumns & columns) const
 
     QueryLogElement::appendClientInfo(client_info, columns, i);
 
-    columns[i++]->insert(ClickHouseRevision::getVersionRevision());
+    columns[i++]->insert(DatastoreRevision::getVersionRevision());
 
     if (profile_counters)
     {

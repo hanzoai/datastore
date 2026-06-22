@@ -1,3 +1,3 @@
-set (CLICKHOUSE_SU_SOURCES clickhouse-su.cpp su.cpp)
-set (CLICKHOUSE_SU_LINK PRIVATE dbms)
-clickhouse_program_add(su)
+set (DATASTORE_SU_SOURCES clickhouse-su.cpp su.cpp)
+set (DATASTORE_SU_LINK PRIVATE dbms)
+datastore_program_add(su)

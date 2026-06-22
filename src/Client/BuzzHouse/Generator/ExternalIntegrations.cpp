@@ -59,7 +59,7 @@ static String escapeJSON(const String & s)
     return out;
 }
 
-bool ClickHouseIntegratedDatabase::performTableIntegration(
+bool DatastoreIntegratedDatabase::performTableIntegration(
     RandomGenerator & rg, SQLTable & t, const bool can_shuffle, std::vector<ColumnPathChain> & entries)
 {
     const String tname = getSQLQuotedTableName(t.db, t.getBaseName());
@@ -90,13 +90,13 @@ bool ClickHouseIntegratedDatabase::performTableIntegration(
     return false;
 }
 
-bool ClickHouseIntegratedDatabase::dropPeerTableOnRemote(const SQLTable & t)
+bool DatastoreIntegratedDatabase::dropPeerTableOnRemote(const SQLTable & t)
 {
     chassert(t.hasDatabasePeer());
     return !performQuery(fmt::format("DROP TABLE IF EXISTS {};", getSQLQuotedTableName(t.db, t.getBaseName())));
 }
 
-void ClickHouseIntegratedDatabase::swapTableDefinitions(RandomGenerator & rg, CreateTable & newt)
+void DatastoreIntegratedDatabase::swapTableDefinitions(RandomGenerator & rg, CreateTable & newt)
 {
     TableEngine & te = *newt.mutable_engine();
     const auto & teng = te.engine();
@@ -268,9 +268,9 @@ void ClickHouseIntegratedDatabase::swapTableDefinitions(RandomGenerator & rg, Cr
     }
 }
 
-bool ClickHouseIntegratedDatabase::performCreatePeerTable(
+bool DatastoreIntegratedDatabase::performCreatePeerTable(
     RandomGenerator & rg,
-    const bool is_clickhouse_integration,
+    const bool is_datastore_integration,
     SQLTable & t,
     const CreateTable * ct,
     std::vector<ColumnPathChain> & entries)
@@ -279,7 +279,7 @@ bool ClickHouseIntegratedDatabase::performCreatePeerTable(
     bool res = dropPeerTableOnRemote(t);
 
     /// Create table on other db
-    if (res && is_clickhouse_integration)
+    if (res && is_datastore_integration)
     {
         if (t.db)
         {
@@ -322,13 +322,13 @@ bool ClickHouseIntegratedDatabase::performCreatePeerTable(
     return res;
 }
 
-bool ClickHouseIntegratedDatabase::truncatePeerTableOnRemote(const SQLTable & t)
+bool DatastoreIntegratedDatabase::truncatePeerTableOnRemote(const SQLTable & t)
 {
     chassert(t.hasDatabasePeer());
     return !performQuery(fmt::format("{} {} SYNC;", truncateStatement(), getSQLQuotedTableName(t.db, t.getBaseName())));
 }
 
-bool ClickHouseIntegratedDatabase::performQueryOnServerOrRemote(const PeerTableDatabase pt, const String & query)
+bool DatastoreIntegratedDatabase::performQueryOnServerOrRemote(const PeerTableDatabase pt, const String & query)
 {
     switch (pt)
     {
@@ -342,7 +342,7 @@ bool ClickHouseIntegratedDatabase::performQueryOnServerOrRemote(const PeerTableD
     }
 }
 
-String ClickHouseIntegratedDatabase::quoteIdentifier(const String & name) const
+String DatastoreIntegratedDatabase::quoteIdentifier(const String & name) const
 {
     return "`" + escapeSQLString(name, '`') + "`";
 }
@@ -1955,15 +1955,15 @@ ExternalIntegrations::ExternalIntegrations(FuzzConfig & fcc)
     {
         dolor = std::make_unique<DolorIntegration>(fc, fc.dolor_server.value());
     }
-    if (fc.clickhouse_server.has_value())
+    if (fc.datastore_server.has_value())
     {
-        clickhouse = MySQLIntegration::testAndAddMySQLConnection(fc, fc.clickhouse_server.value(), fc.read_log, "Datastore");
+        clickhouse = MySQLIntegration::testAndAddMySQLConnection(fc, fc.datastore_server.value(), fc.read_log, "Datastore");
     }
 }
 
 void ExternalIntegrations::createExternalDatabase(RandomGenerator & rg, SQLDatabase & d, DatabaseEngine * de)
 {
-    ClickHouseIntegration * next = nullptr;
+    DatastoreIntegration * next = nullptr;
 
     switch (d.integration)
     {
@@ -1981,7 +1981,7 @@ void ExternalIntegrations::createExternalDatabase(RandomGenerator & rg, SQLDatab
 void ExternalIntegrations::createExternalDatabaseTable(
     RandomGenerator & rg, SQLTable & t, std::vector<ColumnPathChain> & entries, TableEngine * te)
 {
-    ClickHouseIntegration * next = nullptr;
+    DatastoreIntegration * next = nullptr;
 
     switch (t.integration)
     {
@@ -2022,7 +2022,7 @@ void ExternalIntegrations::createExternalDatabaseTable(
 
 bool ExternalIntegrations::reRunCreateDatabase(const IntegrationCall ic, const String & body)
 {
-    ClickHouseIntegration * next = nullptr;
+    DatastoreIntegration * next = nullptr;
 
     switch (ic)
     {
@@ -2037,7 +2037,7 @@ bool ExternalIntegrations::reRunCreateDatabase(const IntegrationCall ic, const S
 
 bool ExternalIntegrations::reRunCreateTable(const IntegrationCall ic, const String & body)
 {
-    ClickHouseIntegration * next = nullptr;
+    DatastoreIntegration * next = nullptr;
 
     switch (ic)
     {
@@ -2053,7 +2053,7 @@ bool ExternalIntegrations::reRunCreateTable(const IntegrationCall ic, const Stri
 bool ExternalIntegrations::performExternalCommand(
     const uint64_t seed, const bool async, const IntegrationCall ic, const String & engine, const String & cname, const String & tname)
 {
-    ClickHouseIntegration * next = nullptr;
+    DatastoreIntegration * next = nullptr;
 
     switch (ic)
     {
@@ -2075,7 +2075,7 @@ bool ExternalIntegrations::performExternalCommand(
     return false;
 }
 
-ClickHouseIntegratedDatabase * ExternalIntegrations::getPeerPtr(const PeerTableDatabase pt) const
+DatastoreIntegratedDatabase * ExternalIntegrations::getPeerPtr(const PeerTableDatabase pt) const
 {
     switch (pt)
     {
@@ -2117,7 +2117,7 @@ bool ExternalIntegrations::optimizeTableForOracle(const PeerTableDatabase pt, co
 
 void ExternalIntegrations::dropPeerTableOnRemote(const SQLTable & t)
 {
-    ClickHouseIntegratedDatabase * next = getPeerPtr(t.peer_table);
+    DatastoreIntegratedDatabase * next = getPeerPtr(t.peer_table);
 
     if (next)
     {
@@ -2142,14 +2142,14 @@ void ExternalIntegrations::setBackupDetails(const IntegrationCall dc, const Stri
 
 int ExternalIntegrations::performQuery(const PeerTableDatabase pt, const String & query)
 {
-    ClickHouseIntegratedDatabase * next = getPeerPtr(pt);
+    DatastoreIntegratedDatabase * next = getPeerPtr(pt);
 
     return next ? next->performQuery(query) : 1;
 }
 
 std::filesystem::path ExternalIntegrations::getDatabaseDataDir(const PeerTableDatabase pt, const bool server) const
 {
-    const ClickHouseIntegratedDatabase * next = getPeerPtr(pt);
+    const DatastoreIntegratedDatabase * next = getPeerPtr(pt);
     const auto path = next ? next->sc.user_files_dir : (server ? fc.server_file_path : fc.client_file_path);
 
     return path / "fuzz.data";

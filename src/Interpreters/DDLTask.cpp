@@ -70,10 +70,10 @@ HostID HostID::fromString(const String & host_port_str)
 }
 
 
-bool HostID::isLocalAddress(UInt16 clickhouse_port) const
+bool HostID::isLocalAddress(UInt16 datastore_port) const
 {
     auto address = DNSResolver::instance().resolveAddress(host_name, port);
-    return DB::isLocalAddress(address, clickhouse_port);
+    return DB::isLocalAddress(address, datastore_port);
 }
 
 bool HostID::isLoopbackHost() const

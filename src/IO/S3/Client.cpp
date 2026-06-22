@@ -807,8 +807,8 @@ Client::doRequestWithRetryNetworkErrors(RequestType & request, RequestFn request
 
                 // update Datastore-specific attempt number in the request
                 // to help choose the right timeouts on the HTTP client which depends on retry attempt number
-                auto clickhouse_request_attempt = getClickhouseAttemptNumber(request_);
-                setClickhouseAttemptNumber(request_, clickhouse_request_attempt + attempt_no);
+                auto datastore_request_attempt = getClickhouseAttemptNumber(request_);
+                setClickhouseAttemptNumber(request_, datastore_request_attempt + attempt_no);
             }
 
             /// Slowing down due to a previously encountered retryable error, possibly from another thread.

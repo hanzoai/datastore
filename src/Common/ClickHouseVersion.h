@@ -7,14 +7,14 @@
 namespace DB
 {
 
-class ClickHouseVersion
+class DatastoreVersion
 {
 public:
-    explicit ClickHouseVersion(std::string_view version);
+    explicit DatastoreVersion(std::string_view version);
 
     std::string toString() const;
 
-    std::strong_ordering operator<=>(const ClickHouseVersion & other) const = default;
+    std::strong_ordering operator<=>(const DatastoreVersion & other) const = default;
 
 private:
     std::vector<size_t> components;

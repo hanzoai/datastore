@@ -1,1 +1,1 @@
-extern int mainEntryClickHouseZooKeeperDumpTree(int argc, char ** argv);
+extern int mainEntryDatastoreZooKeeperDumpTree(int argc, char ** argv);

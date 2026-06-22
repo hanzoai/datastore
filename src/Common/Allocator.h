@@ -21,7 +21,7 @@ extern const size_t POPULATE_THRESHOLD;
 
 static constexpr size_t MALLOC_MIN_ALIGNMENT = alignof(std::max_align_t);
 
-/** Previously there was a code which tried to use manual mmap and mremap (clickhouse_mremap.h) for large allocations/reallocations (64MB+).
+/** Previously there was a code which tried to use manual mmap and mremap (datastore_mremap.h) for large allocations/reallocations (64MB+).
   * Most modern allocators (including jemalloc) don't use mremap, so the idea was to take advantage from mremap system call for large reallocs.
   * Actually jemalloc had support for mremap, but it was intentionally removed from codebase https://github.com/jemalloc/jemalloc/commit/e2deab7a751c8080c2b2cdcfd7b11887332be1bb.
   * Our performance tests also shows that without manual mmap/mremap/munmap clickhouse is overall faster for about 1-2% and up to 5-7x for some types of queries.

@@ -215,7 +215,7 @@ target_compile_definitions (_poco_foundation
 )
 
 target_include_directories (_poco_foundation SYSTEM PUBLIC "include")
-target_link_libraries (_poco_foundation PRIVATE clickhouse_common_io)
+target_link_libraries (_poco_foundation PRIVATE datastore_common_io)
 
 target_link_libraries (_poco_foundation
     PRIVATE

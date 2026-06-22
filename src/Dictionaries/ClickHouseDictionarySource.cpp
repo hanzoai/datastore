@@ -1,4 +1,4 @@
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <memory>
 #include <Client/ConnectionPool.h>
 #include <Common/CurrentThread.h>
@@ -46,7 +46,7 @@ namespace
         return secure ? context->getTCPPortSecure().value_or(0) : context->getTCPPort();
     }
 
-    ConnectionPoolWithFailoverPtr createPool(const ClickHouseDictionarySource::Configuration & configuration)
+    ConnectionPoolWithFailoverPtr createPool(const DatastoreDictionarySource::Configuration & configuration)
     {
         if (configuration.is_local)
             return nullptr;
@@ -64,7 +64,7 @@ namespace
             configuration.quota_key,
             "", /* cluster */
             "", /* cluster_secret */
-            "ClickHouseDictionarySource",
+            "DatastoreDictionarySource",
             Protocol::Compression::Enable,
             configuration.secure ? Protocol::Secure::Enable : Protocol::Secure::Disable,
             "" /* bind_host */));
@@ -74,7 +74,7 @@ namespace
 
 }
 
-ClickHouseDictionarySource::ClickHouseDictionarySource(
+DatastoreDictionarySource::DatastoreDictionarySource(
     const DictionaryStructure & dict_struct_,
     const Configuration & configuration_,
     const Block & sample_block_,
@@ -90,7 +90,7 @@ ClickHouseDictionarySource::ClickHouseDictionarySource(
 {
 }
 
-ClickHouseDictionarySource::ClickHouseDictionarySource(const ClickHouseDictionarySource & other)
+DatastoreDictionarySource::DatastoreDictionarySource(const DatastoreDictionarySource & other)
     : update_time{other.update_time}
     , dict_struct{other.dict_struct}
     , configuration{other.configuration}
@@ -103,7 +103,7 @@ ClickHouseDictionarySource::ClickHouseDictionarySource(const ClickHouseDictionar
 {
 }
 
-std::string ClickHouseDictionarySource::getUpdateFieldAndDate()
+std::string DatastoreDictionarySource::getUpdateFieldAndDate()
 {
     if (update_time != std::chrono::system_clock::from_time_t(0))
     {
@@ -117,30 +117,30 @@ std::string ClickHouseDictionarySource::getUpdateFieldAndDate()
     return query_builder->composeLoadAllQuery();
 }
 
-BlockIO ClickHouseDictionarySource::loadAll()
+BlockIO DatastoreDictionarySource::loadAll()
 {
     return createStreamForQuery(load_all_query);
 }
 
-BlockIO ClickHouseDictionarySource::loadUpdatedAll()
+BlockIO DatastoreDictionarySource::loadUpdatedAll()
 {
     String load_update_query = getUpdateFieldAndDate();
     return createStreamForQuery(load_update_query);
 }
 
-BlockIO ClickHouseDictionarySource::loadIds(const VectorWithMemoryTracking<UInt64> & ids)
+BlockIO DatastoreDictionarySource::loadIds(const VectorWithMemoryTracking<UInt64> & ids)
 {
     return createStreamForQuery(query_builder->composeLoadIdsQuery(ids));
 }
 
 
-BlockIO ClickHouseDictionarySource::loadKeys(const Columns & key_columns, const VectorWithMemoryTracking<size_t> & requested_rows)
+BlockIO DatastoreDictionarySource::loadKeys(const Columns & key_columns, const VectorWithMemoryTracking<size_t> & requested_rows)
 {
     String query = query_builder->composeLoadKeysQuery(key_columns, requested_rows, ExternalQueryBuilder::IN_WITH_TUPLES);
     return createStreamForQuery(query);
 }
 
-bool ClickHouseDictionarySource::isModified() const
+bool DatastoreDictionarySource::isModified() const
 {
     if (!configuration.invalidate_query.empty())
     {
@@ -151,18 +151,18 @@ bool ClickHouseDictionarySource::isModified() const
     return true;
 }
 
-bool ClickHouseDictionarySource::hasUpdateField() const
+bool DatastoreDictionarySource::hasUpdateField() const
 {
     return !configuration.update_field.empty();
 }
 
-std::string ClickHouseDictionarySource::toString() const
+std::string DatastoreDictionarySource::toString() const
 {
     const std::string & where = configuration.where;
     return "Datastore: " + configuration.db + '.' + configuration.table + (where.empty() ? "" : ", where: " + where);
 }
 
-BlockIO ClickHouseDictionarySource::createStreamForQuery(const String & query)
+BlockIO DatastoreDictionarySource::createStreamForQuery(const String & query)
 {
     BlockIO io;
 
@@ -201,7 +201,7 @@ BlockIO ClickHouseDictionarySource::createStreamForQuery(const String & query)
     return io;
 }
 
-std::string ClickHouseDictionarySource::doInvalidateQuery(const std::string & request) const
+std::string DatastoreDictionarySource::doInvalidateQuery(const std::string & request) const
 {
     LOG_TRACE(log, "Performing invalidate query");
 
@@ -232,7 +232,7 @@ std::string ClickHouseDictionarySource::doInvalidateQuery(const std::string & re
     return readInvalidateQuery(pipeline);
 }
 
-void registerDictionarySourceClickHouse(DictionarySourceFactory & factory)
+void registerDictionarySourceDatastore(DictionarySourceFactory & factory)
 {
     auto create_table_source = [=](const String & /*name*/,
                                  const DictionaryStructure & dict_struct,
@@ -243,7 +243,7 @@ void registerDictionarySourceClickHouse(DictionarySourceFactory & factory)
                                  const std::string & default_database,
                                  bool created_from_ddl) -> DictionarySourcePtr
     {
-        using Configuration = ClickHouseDictionarySource::Configuration;
+        using Configuration = DatastoreDictionarySource::Configuration;
         std::optional<Configuration> configuration;
 
         std::string settings_config_prefix = config_prefix + ".clickhouse";
@@ -329,9 +329,9 @@ void registerDictionarySourceClickHouse(DictionarySourceFactory & factory)
         String dictionary_database = config.getString(".dictionary.database", "");
 
         if (dictionary_name == configuration->table && dictionary_database == configuration->db)
-            throw Exception(ErrorCodes::BAD_ARGUMENTS, "ClickHouseDictionarySource table cannot be dictionary table");
+            throw Exception(ErrorCodes::BAD_ARGUMENTS, "DatastoreDictionarySource table cannot be dictionary table");
 
-        return std::make_unique<ClickHouseDictionarySource>(dict_struct, *configuration, sample_block, context);
+        return std::make_unique<DatastoreDictionarySource>(dict_struct, *configuration, sample_block, context);
     };
 
     factory.registerSource("clickhouse", create_table_source);

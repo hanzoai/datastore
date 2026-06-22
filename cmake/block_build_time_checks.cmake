@@ -1,6 +1,6 @@
-# Block all CMake build-time probes from being used in ClickHouse-authored code.
+# Block all CMake build-time probes from being used in Datastore-authored code.
 #
-# Rationale: ClickHouse fixes its compiler (Clang, with a known minimum version - see
+# Rationale: Datastore fixes its compiler (Clang, with a known minimum version - see
 # `cmake/tools.cmake`) and its toolchain (vendored sysroots under `cmake/linux/` etc.),
 # so the set of supported compiler flags, headers, and intrinsics is fixed and known
 # statically. Running probes like `check_cxx_source_compiles` or `try_compile` at configure
@@ -19,7 +19,7 @@
 # for target architecture and sysroot).
 
 set (_CH_BLOCKED_CHECK_HINT
-    "Build-time CMake checks are disabled in ClickHouse. The compiler and toolchain are fixed, \
+    "Build-time CMake checks are disabled in Datastore. The compiler and toolchain are fixed, \
 so the set of supported features is known statically; gate any version-specific behaviour on \
 CMAKE_CXX_COMPILER_VERSION instead. See cmake/block_build_time_checks.cmake for details.")
 

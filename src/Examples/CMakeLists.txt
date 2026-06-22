@@ -108,8 +108,8 @@ if (TARGET ch_contrib::hdfs)
     list(APPEND EXAMPLES_SOURCES ../IO/examples/read_buffer_from_hdfs.cpp)
 endif()
 
-clickhouse_add_executable(clickhouse-examples ${EXAMPLES_SOURCES})
-target_link_libraries(clickhouse-examples PRIVATE dbms clickhouse_aggregate_functions clickhouse_functions)
+datastore_add_executable(clickhouse-examples ${EXAMPLES_SOURCES})
+target_link_libraries(clickhouse-examples PRIVATE dbms datastore_aggregate_functions datastore_functions)
 
 if (OS_LINUX)
     # Build as non-PIE so jemalloc heap profile addresses are stable across processes,

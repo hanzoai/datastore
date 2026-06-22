@@ -88,7 +88,7 @@
     <stacktrace>1</stacktrace>
     <database>default2</database>
     <pager>less -SR</pager>
-    <history_file>/home/user/clickhouse_custom_history.log</history_file>
+    <history_file>/home/user/datastore_custom_history.log</history_file>
     <max_parser_depth>2500</max_parser_depth>
 
         The same can be done on user-level configuration, just create & adjust: ~/.clickhouse-client/config.xml

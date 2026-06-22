@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if !CLICKHOUSE_CLOUD
+#if !DATASTORE_CLOUD
 constexpr UInt64 default_min_bytes_for_wide_part = 10485760lu;
 #else
 constexpr UInt64 default_min_bytes_for_wide_part = 1024lu * 1024lu * 1024lu;
@@ -2634,7 +2634,7 @@ void MergeTreeSettings::applyCompatibilitySetting(const String & compatibility_v
     if (compatibility_value.empty())
         return;
 
-    ClickHouseVersion version(compatibility_value);
+    DatastoreVersion version(compatibility_value);
     const auto & settings_changes_history = getMergeTreeSettingsChangesHistory();
     /// Iterate through Datastore version in descending order and apply reversed
     /// changes for each version that is higher that version from compatibility setting

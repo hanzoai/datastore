@@ -29,7 +29,7 @@
 
 #include <filesystem>
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -439,7 +439,7 @@ void BackupEntriesCollector::gatherDatabaseMetadata(
 {
     checkIsQueryCancelled();
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (database_name == SharedDatabaseCatalog::INTERNAL_DATABASE_TO_DROP)
         return;
 #endif

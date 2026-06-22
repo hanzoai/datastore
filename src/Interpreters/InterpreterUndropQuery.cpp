@@ -5,7 +5,7 @@
 #include <Interpreters/InterpreterUndropQuery.h>
 #include <Access/Common/AccessRightsElement.h>
 #include <Parsers/ASTUndropQuery.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -66,7 +66,7 @@ BlockIO InterpreterUndropQuery::executeToTable(ASTUndropQuery & query)
 
     database->checkMetadataFilenameAvailability(table_id.table_name);
 
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (SharedDatabaseCatalog::shouldReplicateQuery(getContext(), query_ptr))
     {
         SharedDatabaseCatalog::instance().undropTable(database->getUUID(), table_id.table_name);

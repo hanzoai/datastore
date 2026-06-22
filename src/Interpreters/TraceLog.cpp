@@ -17,7 +17,7 @@
 #include <Interpreters/TraceLog.h>
 #include <base/demangle.h>
 #include <base/getFQDNOrHostName.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Common/DateLUTImpl.h>
 #include <Common/Dwarf.h>
 #include <Common/HashTable/HashMap.h>
@@ -208,7 +208,7 @@ void TraceLogElement::appendToBlock(MutableColumns & columns) const
     typeid_cast<ColumnUInt32 &>(*columns[i++]).getData().push_back(static_cast<UInt32>(event_time));
     typeid_cast<ColumnDateTime64 &>(*columns[i++]).getData().push_back(event_time_microseconds);
     typeid_cast<ColumnUInt64 &>(*columns[i++]).getData().push_back(timestamp_ns);
-    typeid_cast<ColumnUInt32 &>(*columns[i++]).getData().push_back(ClickHouseRevision::getVersionRevision());
+    typeid_cast<ColumnUInt32 &>(*columns[i++]).getData().push_back(DatastoreRevision::getVersionRevision());
     typeid_cast<ColumnInt8 &>(*columns[i++]).getData().push_back(static_cast<UInt8>(trace_type));
     typeid_cast<ColumnUInt64 &>(*columns[i++]).getData().push_back(cpu_id);
     typeid_cast<ColumnUInt64 &>(*columns[i++]).getData().push_back(thread_id);

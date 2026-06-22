@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 3.25)
 # on the order in which contrib/ libraries are traversed.
 set (CMAKE_POLICY_DEFAULT_CMP0126 NEW)
 
-project(ClickHouse LANGUAGES C CXX ASM)
+project(Datastore LANGUAGES C CXX ASM)
 
 # If turned off: e.g. when ENABLE_FOO is ON, but FOO tool was not found, the CMake will continue.
 option(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION

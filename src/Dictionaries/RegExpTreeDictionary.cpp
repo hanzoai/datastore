@@ -23,7 +23,7 @@
 #include <QueryPipeline/QueryPipeline.h>
 #include <Processors/Sources/BlocksListSource.h>
 
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionaryFactory.h>
 #include <Dictionaries/DictionaryHelpers.h>
 #include <Dictionaries/DictionaryStructure.h>
@@ -417,7 +417,7 @@ RegExpTreeDictionary::RegExpTreeDictionary(
       flag_dotall(flag_dotall_),
       logger(getLogger("RegExpTreeDictionary"))
 {
-    if (auto * ch_source = typeid_cast<ClickHouseDictionarySource *>(source_ptr.get()))
+    if (auto * ch_source = typeid_cast<DatastoreDictionarySource *>(source_ptr.get()))
     {
         Block sample_block;
         /// id, parent_id, regex, keys, values
@@ -999,9 +999,9 @@ void registerDictionaryRegExpTree(DictionaryFactory & factory)
         const auto dict_id = StorageID::fromDictionaryConfig(config, config_prefix);
 
         auto context = copyContextAndApplySettingsFromDictionaryConfig(global_context, config, config_prefix);
-        const auto * clickhouse_source = typeid_cast<const ClickHouseDictionarySource *>(source_ptr.get());
+        const auto * datastore_source = typeid_cast<const DatastoreDictionarySource *>(source_ptr.get());
         bool use_async_executor
-            = clickhouse_source && clickhouse_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
+            = datastore_source && datastore_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
 
         RegExpTreeDictionary::Configuration configuration{
             .require_nonempty = config.getBool(config_prefix + ".require_nonempty", false),

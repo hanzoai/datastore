@@ -3939,7 +3939,7 @@ void ClientBase::runNonInteractive()
 
 fs::path ClientBase::getHistoryFilePath()
 {
-    auto * history_file_from_env = getenv("CLICKHOUSE_HISTORY_FILE"); // NOLINT(concurrency-mt-unsafe)
+    auto * history_file_from_env = getenv("DATASTORE_HISTORY_FILE"); // NOLINT(concurrency-mt-unsafe)
     if (history_file_from_env)
         return history_file_from_env;
 
@@ -3959,7 +3959,7 @@ fs::path ClientBase::getHistoryFilePath()
     if (!xdg_state_home.empty())
         return xdg_state_home / "client-query-history";
 
-    throw Exception(ErrorCodes::CANNOT_OPEN_FILE, "Neither $CLICKHOUSE_HISTORY_FILE, $HOME nor $XDG_STATE_HOME is set; cannot place history file.");
+    throw Exception(ErrorCodes::CANNOT_OPEN_FILE, "Neither $DATASTORE_HISTORY_FILE, $HOME nor $XDG_STATE_HOME is set; cannot place history file.");
 }
 
 #if !USE_FUZZING_MODE

@@ -35,7 +35,7 @@ private:
         std::string api_host;
     };
 
-    void exchangeIdPTokenForClickHouseJWT(bool show_messages = true);
+    void exchangeIdPTokenForDatastoreJWT(bool show_messages = true);
 
     static const AuthEndpoints * getAuthEndpoints(const std::string & host);
 
@@ -43,8 +43,8 @@ private:
     std::string host_str;
 
     // Token State
-    std::string clickhouse_jwt;
-    Poco::Timestamp clickhouse_jwt_expires_at{0};
+    std::string datastore_jwt;
+    Poco::Timestamp datastore_jwt_expires_at{0};
 
     static const std::map<std::string, AuthEndpoints> managed_service_endpoints;
 };

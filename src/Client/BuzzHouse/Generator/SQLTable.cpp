@@ -2025,7 +2025,7 @@ void StatementGenerator::getNextPeerTableDatabase(RandomGenerator & rg, SQLBase 
             this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::SQLite));
         }
         if ((b.isMergeTreeFamily() || b.isLogFamily() || b.isRocksEngine() || b.isKeeperMapEngine() || b.isJoinEngine() || b.isSetEngine())
-            && connections.hasClickHouseExtraServerConnection())
+            && connections.hasDatastoreExtraServerConnection())
         {
             this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::Datastore));
             this->ids.emplace_back(static_cast<uint32_t>(PeerTableDatabase::Datastore)); /// give more probability
@@ -2615,7 +2615,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
     const uint32_t null_src = 5 * generic_src_mult;
     /// YAMLRegExpTree only makes sense when paired with REGEXP_TREE layout.
     const uint32_t yaml_regexp_tree_src = !generic_src_mult ? 100 : 0;
-    DictionarySourceDetails * clickhouse_dsd = nullptr;
+    DictionarySourceDetails * datastore_dsd = nullptr;
     DictionarySourceDetails * yaml_dsd = nullptr;
 
     rg.pickWeighted(
@@ -2724,7 +2724,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               {
                   t.setName(dsd->mutable_est(), false);
                   dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
-                  clickhouse_dsd = dsd;
+                  datastore_dsd = dsd;
               }
           }},
          {dict_system_table,
@@ -2737,7 +2737,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
               est->mutable_database()->set_value(ntable.schema_name);
               est->mutable_table()->set_value(ntable.table_name);
               dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
-              clickhouse_dsd = dsd;
+              datastore_dsd = dsd;
           }},
          {dict_view,
           [&]
@@ -2747,7 +2747,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
 
               v.setName(dsd->mutable_est(), false);
               dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
-              clickhouse_dsd = dsd;
+              datastore_dsd = dsd;
           }},
          {dict_dict,
           [&]
@@ -2757,7 +2757,7 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
 
               d.setName(dsd->mutable_est(), false);
               dsd->set_source(DictionarySourceDetails::CLICKHOUSE);
-              clickhouse_dsd = dsd;
+              datastore_dsd = dsd;
           }},
          {null_src, [&] { cd->mutable_source()->set_null_src(true); }},
          {yaml_regexp_tree_src,
@@ -2863,16 +2863,16 @@ void StatementGenerator::generateNextCreateDictionary(RandomGenerator & rg, Crea
 
     /// Add Primary Key
     flatTableColumnPath(flat_tuple | flat_nested | flat_json | skip_nested_node, next.cols, [](const SQLColumn &) { return true; });
-    if (clickhouse_dsd)
+    if (datastore_dsd)
     {
         if (rg.nextSmallNumber() < 4)
         {
-            clickhouse_dsd->set_invalidate_query("SELECT 1");
+            datastore_dsd->set_invalidate_query("SELECT 1");
         }
         else if (rg.nextSmallNumber() < 4)
         {
-            columnPathRef(rg.pickRandomly(this->entries), clickhouse_dsd->mutable_update_field());
-            clickhouse_dsd->set_update_lag(rg.randomInt<uint32_t>(0, 3600));
+            columnPathRef(rg.pickRandomly(this->entries), datastore_dsd->mutable_update_field());
+            datastore_dsd->set_update_lag(rg.randomInt<uint32_t>(0, 3600));
         }
     }
     if (dl == IP_TRIE || yaml_dsd)

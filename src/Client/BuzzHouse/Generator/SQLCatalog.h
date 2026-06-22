@@ -50,7 +50,7 @@ enum class PeerTableDatabase
 enum class PeerQuery
 {
     None = 0,
-    ClickHouseOnly = 1,
+    DatastoreOnly = 1,
     AllPeers = 2
 };
 
@@ -372,7 +372,7 @@ public:
 
     bool hasSQLitePeer() const;
 
-    bool hasClickHousePeer() const;
+    bool hasDatastorePeer() const;
 
     bool isAttached() const;
 

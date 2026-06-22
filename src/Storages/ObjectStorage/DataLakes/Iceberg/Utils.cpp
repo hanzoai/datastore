@@ -762,20 +762,20 @@ std::pair<Poco::JSON::Object::Ptr, Int32> getPartitionSpec(
     return {result, partition_iter};
 }
 
-static String parseColumnArgument(const ASTPtr & arg_ast, const String & clickhouse_name, const String & error_suffix)
+static String parseColumnArgument(const ASTPtr & arg_ast, const String & datastore_name, const String & error_suffix)
 {
     const auto * identifier = arg_ast ? arg_ast->as<ASTIdentifier>() : nullptr;
     if (!identifier)
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
             "Invalid iceberg sort order function {}: {}",
-            clickhouse_name, error_suffix);
+            datastore_name, error_suffix);
     return identifier->name();
 }
 
 static std::pair<String, String> parseFunction(const ASTPtr & func_object)
 {
-    const static std::unordered_map<String, String> clickhouse_name_to_iceberg = {
+    const static std::unordered_map<String, String> datastore_name_to_iceberg = {
             {"identity", "identity"},
             {"icebergBucket", "bucket"},
             {"icebergTruncate", "truncate"},
@@ -789,14 +789,14 @@ static std::pair<String, String> parseFunction(const ASTPtr & func_object)
     if (!func)
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "Invalid iceberg sort order expression, expected a function");
 
-    const String & clickhouse_name = func->name;
-    const auto it = clickhouse_name_to_iceberg.find(clickhouse_name);
-    if (it == clickhouse_name_to_iceberg.end())
-        throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unsupported function {} for iceberg", clickhouse_name);
+    const String & datastore_name = func->name;
+    const auto it = datastore_name_to_iceberg.find(datastore_name);
+    if (it == datastore_name_to_iceberg.end())
+        throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unsupported function {} for iceberg", datastore_name);
 
     const auto * args_list = func->arguments ? func->arguments->as<ASTExpressionList>() : nullptr;
     if (!args_list)
-        throw Exception(ErrorCodes::BAD_ARGUMENTS, "Invalid iceberg sort order function {}: arguments are missing", clickhouse_name);
+        throw Exception(ErrorCodes::BAD_ARGUMENTS, "Invalid iceberg sort order function {}: arguments are missing", datastore_name);
     const auto & args = args_list->children;
 
     std::optional<size_t> arg;
@@ -804,7 +804,7 @@ static std::pair<String, String> parseFunction(const ASTPtr & func_object)
 
     if (args.size() == 1)
     {
-        column_name = parseColumnArgument(args[0], clickhouse_name, "expected a column identifier as an argument");
+        column_name = parseColumnArgument(args[0], datastore_name, "expected a column identifier as an argument");
     }
     else if (args.size() == 2)
     {
@@ -813,9 +813,9 @@ static std::pair<String, String> parseFunction(const ASTPtr & func_object)
             throw Exception(
                 ErrorCodes::BAD_ARGUMENTS,
                 "Invalid iceberg sort order function {}: expected (integer_literal, column_identifier), but there is no integer_literal",
-                clickhouse_name);
+                datastore_name);
 
-        column_name = parseColumnArgument(args[1], clickhouse_name, "expected (integer_literal, column_identifier), but there is no column_identifier");
+        column_name = parseColumnArgument(args[1], datastore_name, "expected (integer_literal, column_identifier), but there is no column_identifier");
 
         UInt64 u_param = 0;
         Int64 i_param = 0;
@@ -827,14 +827,14 @@ static std::pair<String, String> parseFunction(const ASTPtr & func_object)
             throw Exception(
                 ErrorCodes::BAD_ARGUMENTS,
                 "Invalid iceberg sort order function {}: expected a non-negative integer literal as first argument",
-                clickhouse_name);
+                datastore_name);
     }
     else
     {
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
             "Invalid iceberg sort order function {}: expected 1 or 2 arguments, but got {}",
-            clickhouse_name, args.size());
+            datastore_name, args.size());
     }
 
     String transform = it->second;
@@ -1326,14 +1326,14 @@ KeyDescription getSortingKeyDescriptionFromMetadata(Poco::JSON::Object::Ptr meta
             auto column_name = source_id_to_column_name[source_id];
             int direction = field->getValue<String>(f_direction) == "asc" ? 1 : -1;
             auto iceberg_transform_name = field->getValue<String>(f_transform);
-            auto clickhouse_transform_name = parseTransformAndArgument(iceberg_transform_name);
+            auto datastore_transform_name = parseTransformAndArgument(iceberg_transform_name);
             String full_argument;
-            if (clickhouse_transform_name->transform_name != "identity")
+            if (datastore_transform_name->transform_name != "identity")
             {
-                full_argument = clickhouse_transform_name->transform_name + "(";
-                if (clickhouse_transform_name->argument)
+                full_argument = datastore_transform_name->transform_name + "(";
+                if (datastore_transform_name->argument)
                 {
-                    full_argument += std::to_string(*clickhouse_transform_name->argument) +  ", ";
+                    full_argument += std::to_string(*datastore_transform_name->argument) +  ", ";
                 }
                 full_argument += column_name + ")";
             }

@@ -77,7 +77,7 @@ DB::NamesAndTypesList TableChanges::getSchemaUnlocked() const
 
     using KernelSharedSchema = KernelPointerWrapper<ffi::SharedSchema, ffi::free_schema>;
     KernelSharedSchema kernel_schema(ffi::table_changes_schema(getTableChanges().get()));
-    schema = convertToClickHouseSchema(kernel_schema.get());
+    schema = convertToDatastoreSchema(kernel_schema.get());
 
     LOG_TRACE(log, "Table schema: {}, source header: {}", schema->toString(), header.dumpNames());
     return schema.value();
@@ -194,7 +194,7 @@ DB::Chunk TableChanges::next()
     DB::ArrowColumnToCHColumn arrow_conv(
         header, format_name, format_settings,
         /* parquet_columns_to_clickhouse */std::nullopt,
-        /* clickhouse_columns_to_parquet */std::nullopt,
+        /* datastore_columns_to_parquet */std::nullopt,
         format_settings.parquet.allow_missing_columns,
         format_settings.null_as_default,
         format_settings.date_time_overflow_behavior,

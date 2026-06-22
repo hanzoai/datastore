@@ -70,7 +70,7 @@
 #include <base/types.h>
 
 #include <boost/core/noncopyable.hpp>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -1036,7 +1036,7 @@ void StorageKeeperMap::drop()
 
     // used in private build
     bool do_not_drop_table_data_in_keeper = false;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// In case of Shared Catalog, table data in ZooKeeper will be dropped separately
     do_not_drop_table_data_in_keeper = SharedDatabaseCatalog::initialized() && SharedDatabaseCatalog::instance().isTableInLocalDropOrDetachQueue(getStorageID().uuid);
 #endif
@@ -1749,7 +1749,7 @@ StoragePtr create(const StorageFactory::Arguments & args)
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "StorageKeeperMap requires one column in primary key");
 
     // used in private build
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     const auto & client_info = args.getLocalContext()->getClientInfo();
     bool override_metadata = client_info.is_shared_catalog_internal && !SharedDatabaseCatalog::isInitialQuery(args.getLocalContext());
 #else

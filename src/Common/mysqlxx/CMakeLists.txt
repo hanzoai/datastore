@@ -14,7 +14,7 @@ add_library (mysqlxx
 target_include_directories (mysqlxx PUBLIC .)
 
 target_link_libraries (mysqlxx
-    clickhouse_common_io
+    datastore_common_io
     ch_contrib::zlib
     ch_contrib::mariadbclient
 )

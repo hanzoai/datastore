@@ -208,7 +208,7 @@ const char * auto_contributors[] {
     "Anmol Arora",
     "Anna",
     "Anna Shakhova",
-    "AnneClickHouse",
+    "AnneDatastore",
     "Anselmo D. Adams",
     "Anthony N. Simon",
     "AntiTopQuark",

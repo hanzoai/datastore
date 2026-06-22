@@ -438,11 +438,11 @@ void KeeperClient::initialize(Poco::Util::Application & /* self */)
 
     EventNotifier::init();
 
-    const char * env_password = getenv("CLICKHOUSE_KEEPER_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_password = getenv("DATASTORE_KEEPER_PASSWORD"); // NOLINT(concurrency-mt-unsafe)
     if (env_password && !config().has("password"))
         config().setString("password", env_password);
 
-    const char * env_identity = getenv("CLICKHOUSE_KEEPER_IDENTITY"); // NOLINT(concurrency-mt-unsafe)
+    const char * env_identity = getenv("DATASTORE_KEEPER_IDENTITY"); // NOLINT(concurrency-mt-unsafe)
     if (env_identity && !config().has("identity"))
         config().setString("identity", env_identity);
 }
@@ -654,10 +654,10 @@ void KeeperClient::connectToKeeper()
 
     /// This will handle a situation when clickhouse is running on the embedded config, but config.d folder is also present.
     ConfigProcessor::registerEmbeddedConfig("config.xml", "<clickhouse/>");
-    auto clickhouse_config = config_processor.loadConfig();
+    auto datastore_config = config_processor.loadConfig();
 
     Poco::Util::AbstractConfiguration::Keys keys;
-    clickhouse_config.configuration->keys("zookeeper", keys);
+    datastore_config.configuration->keys("zookeeper", keys);
 
     zkutil::ZooKeeperArgs new_zk_args;
 
@@ -671,10 +671,10 @@ void KeeperClient::connectToKeeper()
                 continue;
 
             String prefix = "zookeeper." + key;
-            String host = clickhouse_config.configuration->getString(prefix + ".host");
-            String port = clickhouse_config.configuration->getString(prefix + ".port");
+            String host = datastore_config.configuration->getString(prefix + ".host");
+            String port = datastore_config.configuration->getString(prefix + ".port");
 
-            if (clickhouse_config.configuration->has(prefix + ".secure") || config().has("secure"))
+            if (datastore_config.configuration->has(prefix + ".secure") || config().has("secure"))
                 host = "secure://" + host;
 
             new_zk_args.hosts.push_back(host + ":" + port);
@@ -698,11 +698,11 @@ void KeeperClient::connectToKeeper()
     new_zk_args.use_xid_64 = config().hasOption("use-xid-64");
     new_zk_args.password = config().has("password")
         ? config().getString("password")
-        : clickhouse_config.configuration->getString("zookeeper.password", "");
+        : datastore_config.configuration->getString("zookeeper.password", "");
 
     new_zk_args.identity = config().has("identity")
         ? config().getString("identity")
-        : clickhouse_config.configuration->getString("zookeeper.identity", "");
+        : datastore_config.configuration->getString("zookeeper.identity", "");
 
     if (!new_zk_args.identity.empty())
         new_zk_args.auth_scheme = "digest";
@@ -745,7 +745,7 @@ int KeeperClient::main(const std::vector<String> & /* args */)
 }
 
 
-int mainEntryClickHouseKeeperClient(int argc, char ** argv)
+int mainEntryDatastoreKeeperClient(int argc, char ** argv)
 {
     try
     {

@@ -10,7 +10,7 @@
 #include <Common/DNSResolver.h>
 #include <Common/DateLUT.h>
 #include <Common/DateLUTImpl.h>
-#include <Common/ClickHouseRevision.h>
+#include <Common/DatastoreRevision.h>
 #include <Interpreters/Context.h>
 
 #include <Poco/Environment.h>
@@ -115,7 +115,7 @@ namespace
     public:
         static constexpr auto name = "revision";
         static FunctionPtr create(ContextPtr context) { return std::make_shared<FunctionRevision>(context); }
-        explicit FunctionRevision(ContextPtr context) : FunctionServerConstantBase(ClickHouseRevision::getVersionRevision(), context->isDistributed()) {}
+        explicit FunctionRevision(ContextPtr context) : FunctionServerConstantBase(DatastoreRevision::getVersionRevision(), context->isDistributed()) {}
     };
 
     class FunctionZooKeeperSessionUptime : public FunctionServerConstantBase<FunctionZooKeeperSessionUptime, UInt32, DataTypeUInt32>

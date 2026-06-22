@@ -81,7 +81,7 @@ public:
         , qcfile(ffc.client_file_path / "query.data")
         , qsfile(ffc.server_file_path / "query.data")
         , qfile_peer(
-              ffc.clickhouse_server.has_value() ? (ffc.clickhouse_server.value().user_files_dir / "peer.data")
+              ffc.datastore_server.has_value() ? (ffc.datastore_server.value().user_files_dir / "peer.data")
                                                 : std::filesystem::temp_directory_path())
         , rows_dist(fc.min_insert_rows, fc.max_insert_rows)
         , can_test_oracle_result(fc.compare_success_results)

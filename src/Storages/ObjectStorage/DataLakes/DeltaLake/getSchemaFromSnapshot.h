@@ -32,7 +32,7 @@ DB::NamesAndTypesList getWriteSchema(ffi::SharedWriteContext * write_context);
 /// therefore partition columns are passed separately.
 DB::Names getPartitionColumnsFromSnapshot(ffi::SharedSnapshot * snapshot);
 
-DB::NamesAndTypesList convertToClickHouseSchema(ffi::SharedSchema * schema);
+DB::NamesAndTypesList convertToDatastoreSchema(ffi::SharedSchema * schema);
 
 }
 

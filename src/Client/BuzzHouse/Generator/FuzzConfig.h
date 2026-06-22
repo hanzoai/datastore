@@ -307,7 +307,7 @@ public:
     DB::Strings hot_table_settings;
     DB::Strings tokenizers;
 
-    std::optional<ServerCredentials> clickhouse_server;
+    std::optional<ServerCredentials> datastore_server;
     std::optional<ServerCredentials> mysql_server;
     std::optional<ServerCredentials> postgresql_server;
     std::optional<ServerCredentials> sqlite_server;
@@ -448,7 +448,7 @@ public:
 
     void comparePerformanceResults(const String & oracle_name, PerformanceResult & server, PerformanceResult & peer) const;
 
-    void validateClickHouseHealth();
+    void validateDatastoreHealth();
 };
 
 }

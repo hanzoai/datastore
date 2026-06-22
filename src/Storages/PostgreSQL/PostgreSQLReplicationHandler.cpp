@@ -132,14 +132,14 @@ namespace
     String getReplicationSlotName(
         const String & postgres_database,
         const String & postgres_table,
-        const String & clickhouse_uuid,
+        const String & datastore_uuid,
         const MaterializedPostgreSQLSettings & replication_settings)
     {
         String slot_name = replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_replication_slot];
         if (slot_name.empty())
         {
             if (replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_use_unique_replication_consumer_identifier])
-                slot_name = clickhouse_uuid;
+                slot_name = datastore_uuid;
             else
                 slot_name = postgres_table.empty() ? postgres_database : fmt::format("{}_{}_ch_replication_slot", postgres_database, postgres_table);
 
@@ -152,8 +152,8 @@ namespace
 PostgreSQLReplicationHandler::PostgreSQLReplicationHandler(
     const String & postgres_database_,
     const String & postgres_table_,
-    const String & clickhouse_database_,
-    const String & clickhouse_uuid_,
+    const String & datastore_database_,
+    const String & datastore_uuid_,
     const postgres::ConnectionInfo & connection_info_,
     ContextPtr context_,
     bool is_attach_,
@@ -164,7 +164,7 @@ PostgreSQLReplicationHandler::PostgreSQLReplicationHandler(
     , is_attach(is_attach_)
     , postgres_database(postgres_database_)
     , postgres_schema(replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_schema])
-    , current_database_name(clickhouse_database_)
+    , current_database_name(datastore_database_)
     , connection_info(connection_info_)
     , max_block_size(replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_max_block_size])
     , is_materialized_postgresql_database(is_materialized_postgresql_database_)
@@ -173,7 +173,7 @@ PostgreSQLReplicationHandler::PostgreSQLReplicationHandler(
     , schema_as_a_part_of_table_name(!schema_list.empty() || replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_tables_list_with_schema])
     , user_managed_slot(!replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_replication_slot].value.empty())
     , user_provided_snapshot(replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_snapshot])
-    , replication_slot(getReplicationSlotName(postgres_database_, postgres_table_, clickhouse_uuid_, replication_settings))
+    , replication_slot(getReplicationSlotName(postgres_database_, postgres_table_, datastore_uuid_, replication_settings))
     , tmp_replication_slot(replication_slot + "_tmp")
     , publication_name(getPublicationName(postgres_database_, postgres_table_))
     , reschedule_backoff_min_ms(replication_settings[MaterializedPostgreSQLSetting::materialized_postgresql_backoff_min_ms])

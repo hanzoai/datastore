@@ -37,7 +37,7 @@
 #include <mutex>
 #include <string>
 #include <utility>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 
@@ -1154,7 +1154,7 @@ bool DatabaseCatalog::isDictionaryExist(const StorageID & table_id) const
 
 StoragePtr DatabaseCatalog::getTable(const StorageID & table_id, ContextPtr local_context) const
 {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (SharedDatabaseCatalog::initialized())
     {
         if (auto res = SharedDatabaseCatalog::instance().tryGetStorageFromIntentions(table_id, local_context))
@@ -1217,7 +1217,7 @@ void DatabaseCatalog::loadMarkedAsDroppedTables()
     }
 
 
-    /// /clickhouse_root/metadata_dropped/ contains files with metadata of tables,
+    /// /datastore_root/metadata_dropped/ contains files with metadata of tables,
     /// which where marked as dropped by Atomic databases.
     /// Data directories of such tables still exists in store/
     /// and metadata still exists in ZooKeeper for ReplicatedMergeTree tables.

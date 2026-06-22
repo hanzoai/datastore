@@ -24,10 +24,10 @@ if (NOT ENABLE_PRQL AND NOT ENABLE_SKIM AND NOT ENABLE_POLYGLOT)
     return()
 endif()
 
-clickhouse_import_crate(MANIFEST_PATH Cargo.toml)
+datastore_import_crate(MANIFEST_PATH Cargo.toml)
 
 if (ENABLE_PRQL)
-    clickhouse_config_crate_flags(_ch_rust_prql)
+    datastore_config_crate_flags(_ch_rust_prql)
     target_include_directories(_ch_rust_prql INTERFACE prql/include)
     add_library(ch_rust::prql ALIAS _ch_rust_prql)
 
@@ -47,7 +47,7 @@ if (ENABLE_PRQL)
         if (_LLD_FOR_STRIP)
             set(_prql_lib "${CMAKE_CURRENT_BINARY_DIR}/lib_ch_rust_prql.a")
             add_custom_target(strip_prql_symbols
-                COMMAND bash "${ClickHouse_SOURCE_DIR}/cmake/strip_rust_symbols.sh"
+                COMMAND bash "${Datastore_SOURCE_DIR}/cmake/strip_rust_symbols.sh"
                     "${_prql_lib}" "${CMAKE_AR}" "${CMAKE_OBJCOPY}" "${_LLD_FOR_STRIP}"
                     prql_to_sql prql_free_pointer
                 DEPENDS cargo-build__ch_rust_prql
@@ -60,7 +60,7 @@ if (ENABLE_PRQL)
 endif()
 
 if (ENABLE_POLYGLOT)
-    clickhouse_config_crate_flags(_ch_rust_polyglot)
+    datastore_config_crate_flags(_ch_rust_polyglot)
     target_include_directories(_ch_rust_polyglot INTERFACE polyglot/include)
     add_library(ch_rust::polyglot ALIAS _ch_rust_polyglot)
 
@@ -70,7 +70,7 @@ if (ENABLE_POLYGLOT)
         if (_LLD_FOR_STRIP)
             set(_polyglot_lib "${CMAKE_CURRENT_BINARY_DIR}/lib_ch_rust_polyglot.a")
             add_custom_target(strip_polyglot_symbols
-                COMMAND bash "${ClickHouse_SOURCE_DIR}/cmake/strip_rust_symbols.sh"
+                COMMAND bash "${Datastore_SOURCE_DIR}/cmake/strip_rust_symbols.sh"
                     "${_polyglot_lib}" "${CMAKE_AR}" "${CMAKE_OBJCOPY}" "${_LLD_FOR_STRIP}"
                     polyglot_transpile polyglot_free_pointer
                 DEPENDS cargo-build__ch_rust_polyglot
@@ -83,7 +83,7 @@ if (ENABLE_POLYGLOT)
 endif()
 
 if (ENABLE_SKIM)
-    clickhouse_config_crate_flags(_ch_rust_skim_rust)
+    datastore_config_crate_flags(_ch_rust_skim_rust)
     target_include_directories(_ch_rust_skim_rust INTERFACE skim/include)
     add_library(ch_rust::skim ALIAS _ch_rust_skim_rust)
 endif()

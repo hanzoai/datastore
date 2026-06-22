@@ -52,7 +52,7 @@ void * mremap_fallback(
 #endif
 
 
-inline void * clickhouse_mremap(
+inline void * datastore_mremap(
     void * old_address,
     size_t old_size,
     size_t new_size,

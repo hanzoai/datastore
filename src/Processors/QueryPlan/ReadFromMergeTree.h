@@ -386,7 +386,7 @@ public:
     bool isSkipIndexAvailableForTopK(const String & sort_column) const;
     const ProjectionIndexReadDescription & getProjectionIndexReadDescription() const { return projection_index_read_desc; }
     ProjectionIndexReadDescription & getProjectionIndexReadDescription() { return projection_index_read_desc; }
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// In distributed query plan, this step will be executed in a distributed manner - shards will be read in parallel.
     void setDistributedRead(size_t bucket_count);
     /// Makes a list of shards to read in parallel in distributed query plan
@@ -408,7 +408,7 @@ public:
 
     const FilterDAGInfoPtr & getDeferredRowLevelFilter() const { return deferred_row_level_filter; }
     const PrewhereInfoPtr & getDeferredPrewhereInfo() const { return deferred_prewhere_info; }
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     size_t getDistributedReadBucketCount() const { return distributed_read_bucket_count; }
 #endif
 
@@ -562,13 +562,13 @@ private:
 
     std::optional<TopKFilterInfo> top_k_filter_info;
     ProjectionIndexReadDescription projection_index_read_desc;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// This is set when this step is part of a distributed query plan and it will be executed in a distributed manner.
     /// "bucket_id" task parameter will be used to determine what part of the data to read.
     size_t distributed_read_bucket_count = 0;
 #endif
 };
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 /// Filter the mark ranges for a single part's worth of ranges for a specific bucket.
 /// `effective_bucket_index` is updated in-place so that consecutive calls across multiple parts
 /// maintain even distribution — small ranges that cannot be split do not all fall into bucket 0.

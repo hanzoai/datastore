@@ -1,10 +1,10 @@
-set (CLICKHOUSE_ZOOKEEPER_REMOVE_BY_LIST_SOURCES ZooKeeperRemoveByList.cpp)
+set (DATASTORE_ZOOKEEPER_REMOVE_BY_LIST_SOURCES ZooKeeperRemoveByList.cpp)
 
-set (CLICKHOUSE_ZOOKEEPER_REMOVE_BY_LIST_LINK
+set (DATASTORE_ZOOKEEPER_REMOVE_BY_LIST_LINK
     PRIVATE
         dbms
-        clickhouse_functions
+        datastore_functions
         boost::program_options
 )
 
-clickhouse_program_add(zookeeper-remove-by-list)
+datastore_program_add(zookeeper-remove-by-list)

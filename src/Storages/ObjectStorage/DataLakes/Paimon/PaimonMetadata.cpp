@@ -297,7 +297,7 @@ NamesAndTypesList PaimonMetadata::getTableSchema(ContextPtr /*local_context*/) c
     if (!state)
         return {};
 
-    auto schema = persistent_components.schema_processor->getClickHouseSchema(state->schema_id);
+    auto schema = persistent_components.schema_processor->getDatastoreSchema(state->schema_id);
     return schema ? *schema : NamesAndTypesList{};
 }
 
@@ -326,7 +326,7 @@ std::unique_ptr<StorageInMemoryMetadata> PaimonMetadata::buildStorageMetadataFro
         persistent_components.schema_processor->addSchema(schema_json);
     }
 
-    auto columns = persistent_components.schema_processor->getClickHouseSchema(paimon_state->schema_id);
+    auto columns = persistent_components.schema_processor->getDatastoreSchema(paimon_state->schema_id);
     if (!columns)
         throw Exception(ErrorCodes::LOGICAL_ERROR, "Failed to get Datastore schema for schema_id={}", paimon_state->schema_id);
 

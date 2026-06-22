@@ -17,7 +17,7 @@
 #include <base/itoa.h>
 #include <base/range.h>
 #include <base/sort.h>
-#include <Dictionaries/ClickHouseDictionarySource.h>
+#include <Dictionaries/DatastoreDictionarySource.h>
 #include <Dictionaries/DictionarySource.h>
 #include <Dictionaries/DictionarySourceHelpers.h>
 #include <Dictionaries/DictionaryPipelineExecutor.h>
@@ -1246,9 +1246,9 @@ void registerDictionaryTrie(DictionaryFactory & factory)
         const bool require_nonempty = config.getBool(config_prefix + ".require_nonempty", false);
 
         auto context = copyContextAndApplySettingsFromDictionaryConfig(global_context, config, config_prefix);
-        const auto * clickhouse_source = dynamic_cast<const ClickHouseDictionarySource *>(source_ptr.get());
+        const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get());
         bool use_async_executor
-            = clickhouse_source && clickhouse_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
+            = datastore_source && datastore_source->isLocal() && context->getSettingsRef()[Setting::dictionary_use_async_executor];
 
         IPAddressDictionary::Configuration configuration{
             .dict_lifetime = dict_lifetime,

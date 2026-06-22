@@ -530,7 +530,7 @@ DB::Names getPartitionColumnsFromSnapshot(ffi::SharedSnapshot * snapshot)
     return data.getPartitionColumns();
 }
 
-DB::NamesAndTypesList convertToClickHouseSchema(ffi::SharedSchema * schema)
+DB::NamesAndTypesList convertToDatastoreSchema(ffi::SharedSchema * schema)
 {
     SchemaVisitorData data;
     SchemaVisitor::visitSchema(schema, data);

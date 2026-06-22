@@ -5,7 +5,7 @@ endif ()
 
 enable_language(ASM)
 
-clickhouse_add_executable (memcpy-bench
+datastore_add_executable (memcpy-bench
     memcpy-bench.cpp
     FastMemcpy.cpp
     FastMemcpy_Avx.cpp
@@ -30,5 +30,5 @@ set_source_files_properties(FastMemcpy_Avx.cpp PROPERTIES COMPILE_FLAGS "-mavx -
 set_source_files_properties(memcpy-bench.cpp PROPERTIES COMPILE_FLAGS "-Wno-used-but-marked-unused")
 
 target_include_directories(memcpy-bench PRIVATE .)
-target_link_libraries(memcpy-bench PRIVATE clickhouse_common_io boost::program_options ch_contrib::stringzilla)
+target_link_libraries(memcpy-bench PRIVATE datastore_common_io boost::program_options ch_contrib::stringzilla)
 

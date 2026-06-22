@@ -1242,7 +1242,7 @@ std::shared_ptr<Aws::Auth::AWSCredentialsProvider> AwsAuthSTSAssumeRoleCredentia
     const std::string & sts_endpoint_override)
 {
     auto client = std::make_shared<AWSAssumeRoleClient>(credentials_provider, client_configuration, sts_endpoint_override);
-    auto session_name = session_name_.empty() ? "ClickHouseSession" : std::move(session_name_);
+    auto session_name = session_name_.empty() ? "DatastoreSession" : std::move(session_name_);
     return CredentialsProviderCache::instance().getOrSet(
         AwsAuthSTSAssumeRoleCredentialsProvider::CacheKey{
             role_arn_, session_name, client->getEndpoint().GetURL(), credentials_provider->GetAWSCredentials()},
@@ -1259,7 +1259,7 @@ AwsAuthSTSAssumeRoleCredentialsProvider::AwsAuthSTSAssumeRoleCredentialsProvider
     uint64_t expiration_window_seconds_,
     std::shared_ptr<AWSAssumeRoleClient> client_)
     : role_arn(std::move(role_arn_))
-    , session_name(session_name_.empty() ? "ClickHouseSession" : std::move(session_name_))
+    , session_name(session_name_.empty() ? "DatastoreSession" : std::move(session_name_))
     , expiration_window_seconds(expiration_window_seconds_)
     , client(std::move(client_))
     , logger(getLogger("AwsAuthSTSAssumeRoleCredentialsProvider"))

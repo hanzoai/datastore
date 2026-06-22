@@ -1,9 +1,9 @@
-set (CLICKHOUSE_OBFUSCATOR_SOURCES Obfuscator.cpp)
+set (DATASTORE_OBFUSCATOR_SOURCES Obfuscator.cpp)
 
-set (CLICKHOUSE_OBFUSCATOR_LINK
+set (DATASTORE_OBFUSCATOR_LINK
     PRIVATE
         boost::program_options
         dbms
 )
 
-clickhouse_program_add(obfuscator)
+datastore_program_add(obfuscator)
