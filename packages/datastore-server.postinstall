@@ -1,0 +1,62 @@
+#!/bin/sh
+set -e
+
+PROGRAM=datastore-server
+DATASTORE_USER=${DATASTORE_USER:-datastore}
+DATASTORE_GROUP=${DATASTORE_GROUP:-${DATASTORE_USER}}
+DATASTORE_CONFDIR=${DATASTORE_CONFDIR:-/etc/datastore-server}
+DATASTORE_DATADIR=${DATASTORE_DATADIR:-/var/lib/datastore}
+DATASTORE_LOGDIR=${DATASTORE_LOGDIR:-/var/log/datastore-server}
+DATASTORE_BINDIR=${DATASTORE_BINDIR:-/usr/bin}
+DATASTORE_GENERIC_PROGRAM=${DATASTORE_GENERIC_PROGRAM:-datastore}
+DATASTORE_PIDDIR=/var/run/$PROGRAM
+
+# Provide datastore-keeper
+KEEPER_CONFDIR=${KEEPER_CONFDIR:-/etc/datastore-keeper}
+KEEPER_DATADIR=${KEEPER_DATADIR:-/var/lib/datastore}
+KEEPER_LOGDIR=${KEEPER_LOGDIR:-/var/log/datastore-keeper}
+
+[ -f /usr/share/debconf/confmodule ] && . /usr/share/debconf/confmodule
+[ -f /etc/default/datastore-server ] && . /etc/default/datastore-server
+
+if [ ! -f "/etc/debian_version" ]; then
+    not_deb_os=1
+fi
+
+if [ "$1" = configure ] || [ -n "$not_deb_os" ]; then
+
+    ${DATASTORE_GENERIC_PROGRAM} install --user "${DATASTORE_USER}" --group "${DATASTORE_GROUP}" --pid-path "${DATASTORE_PIDDIR}" --config-path "${DATASTORE_CONFDIR}" --binary-path "${DATASTORE_BINDIR}" --log-path "${DATASTORE_LOGDIR}" --data-path "${DATASTORE_DATADIR}"
+
+    if [ -x "/bin/systemctl" ] && [ -f /lib/systemd/system/datastore-server.service ] && [ -d /run/systemd/system ]; then
+        if [ -x "/etc/init.d/datastore-server" ] && [ -x "/usr/sbin/update-rc.d" ]; then
+            /usr/sbin/update-rc.d datastore-server remove
+        fi
+
+        /bin/systemctl daemon-reload
+        /bin/systemctl enable datastore-server
+    else
+        if [ -x "/etc/init.d/datastore-server" ]; then
+            if [ -x "/usr/sbin/update-rc.d" ]; then
+                /usr/sbin/update-rc.d datastore-server defaults 19 19 >/dev/null || exit $?
+            else
+                echo # Other OS
+            fi
+        fi
+    fi
+
+    # Setup datastore-keeper directories
+    chown -R "${DATASTORE_USER}:${DATASTORE_GROUP}" "${KEEPER_CONFDIR}"
+    chmod 0755 "${KEEPER_CONFDIR}"
+
+    if ! [ -d "${KEEPER_DATADIR}" ]; then
+        mkdir -p "${KEEPER_DATADIR}"
+        chown -R "${DATASTORE_USER}:${DATASTORE_GROUP}" "${KEEPER_DATADIR}"
+        chmod 0700 "${KEEPER_DATADIR}"
+    fi
+
+    if ! [ -d "${KEEPER_LOGDIR}" ]; then
+        mkdir -p "${KEEPER_LOGDIR}"
+        chown -R "${DATASTORE_USER}:${DATASTORE_GROUP}" "${KEEPER_LOGDIR}"
+        chmod 0770 "${KEEPER_LOGDIR}"
+    fi
+fi

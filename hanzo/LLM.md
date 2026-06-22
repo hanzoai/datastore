@@ -19,10 +19,10 @@ cd hanzo
 docker compose up -d
 
 # Initialize schema
-docker exec -i hanzo-datastore hanzo-datastore-client < schema.sql
+docker exec -i datastore datastore-client < schema.sql
 
 # Connect to Hanzo Datastore
-docker exec -it hanzo-datastore hanzo-datastore-client
+docker exec -it datastore datastore-client
 ```
 
 ## Hanzo Schema
@@ -61,24 +61,24 @@ Real-time aggregations for dashboards:
 
 Console connects for AI observability:
 ```env
-HANZO_DATASTORE_URL=http://localhost:8123
-HANZO_DATASTORE_DATABASE=hanzo
+DATASTORE_URL=http://localhost:8123
+DATASTORE_DATABASE=hanzo
 ```
 
 ### With hanzo/analytics (Umami fork)
 
 Analytics connects for web tracking:
 ```env
-DATABASE_URL=hanzo-datastore://default:@localhost:8123/hanzo
+DATABASE_URL=datastore://default:@localhost:8123/hanzo
 ```
 
 ### With hanzo/platform (Dokploy fork)
 
 Platform writes deployment metrics:
 ```env
-HANZO_DATASTORE_HOST=localhost
-HANZO_DATASTORE_PORT=8123
-HANZO_DATASTORE_DB=hanzo
+DATASTORE_HOST=localhost
+DATASTORE_PORT=8123
+DATASTORE_DB=hanzo
 ```
 
 ## Syncing with Upstream ClickHouse

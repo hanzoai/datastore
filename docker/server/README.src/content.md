@@ -33,7 +33,7 @@ For more information and documentation see https://hanzo.ai/docs/datastore.
 ### start server instance
 
 ```bash
-docker run -d --name some-hanzo-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
+docker run -d --name some-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
 ```
 
 By default, Hanzo Datastore will be accessible only via the Docker network. See the **networking** section below.
@@ -43,9 +43,9 @@ By default, starting above server instance will be run as the `default` user wit
 ### connect to it from a native client
 
 ```bash
-docker run -it --rm --network=container:some-hanzo-datastore-server --entrypoint hanzo-datastore-client %%IMAGE%%
+docker run -it --rm --network=container:some-datastore-server --entrypoint datastore-client %%IMAGE%%
 # OR
-docker exec -it some-hanzo-datastore-server hanzo-datastore-client
+docker exec -it some-datastore-server datastore-client
 ```
 
 More information about the [Hanzo Datastore client](https://hanzo.ai/docs/datastore/interfaces/cli/).
@@ -53,7 +53,7 @@ More information about the [Hanzo Datastore client](https://hanzo.ai/docs/datast
 ### connect to it using curl
 
 ```bash
-echo "SELECT 'Hello, Hanzo Datastore!'" | docker run -i --rm --network=container:some-hanzo-datastore-server buildpack-deps:curl curl 'http://localhost:8123/?query=' -s --data-binary @-
+echo "SELECT 'Hello, Hanzo Datastore!'" | docker run -i --rm --network=container:some-datastore-server buildpack-deps:curl curl 'http://localhost:8123/?query=' -s --data-binary @-
 ```
 
 More information about the [Hanzo Datastore HTTP Interface](https://hanzo.ai/docs/datastore/interfaces/http/).
@@ -61,8 +61,8 @@ More information about the [Hanzo Datastore HTTP Interface](https://hanzo.ai/doc
 ### stopping / removing the container
 
 ```bash
-docker stop some-hanzo-datastore-server
-docker rm some-hanzo-datastore-server
+docker stop some-datastore-server
+docker rm some-datastore-server
 ```
 
 ### networking
@@ -72,7 +72,7 @@ docker rm some-hanzo-datastore-server
 You can expose your Hanzo Datastore running in docker by [mapping a particular port](https://docs.docker.com/config/containers/container-networking/) from inside the container using host ports:
 
 ```bash
-docker run -d -p 18123:8123 -p19000:9000 -e HANZO_PASSWORD=changeme --name some-hanzo-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
+docker run -d -p 18123:8123 -p19000:9000 -e DATASTORE_PASSWORD=changeme --name some-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
 echo 'SELECT version()' | curl 'http://localhost:18123/?password=changeme' --data-binary @-
 ```
 
@@ -81,7 +81,7 @@ echo 'SELECT version()' | curl 'http://localhost:18123/?password=changeme' --dat
 Or by allowing the container to use [host ports directly](https://docs.docker.com/network/host/) using `--network=host` (also allows achieving better network performance):
 
 ```bash
-docker run -d --network=host --name some-hanzo-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
+docker run -d --network=host --name some-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
 echo 'SELECT version()' | curl 'http://localhost:8123/' --data-binary @-
 ```
 
@@ -93,20 +93,20 @@ echo 'SELECT version()' | curl 'http://localhost:8123/' --data-binary @-
 
 Typically you may want to mount the following folders inside your container to achieve persistency:
 
--	`/var/lib/hanzo-datastore/` - main folder where Hanzo Datastore stores the data
--	`/var/log/hanzo-datastore-server/` - logs
+-	`/var/lib/datastore/` - main folder where Hanzo Datastore stores the data
+-	`/var/log/datastore-server/` - logs
 
 ```bash
 docker run -d \
-    -v "$PWD/hds_data:/var/lib/hanzo-datastore/" \
-    -v "$PWD/hds_logs:/var/log/hanzo-datastore-server/" \
-    --name some-hanzo-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
+    -v "$PWD/hds_data:/var/lib/datastore/" \
+    -v "$PWD/hds_logs:/var/log/datastore-server/" \
+    --name some-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
 ```
 
 You may also want to mount:
 
--	`/etc/hanzo-datastore-server/config.d/*.xml` - files with server configuration adjustments
--	`/etc/hanzo-datastore-server/users.d/*.xml` - files with user settings adjustments
+-	`/etc/datastore-server/config.d/*.xml` - files with server configuration adjustments
+-	`/etc/datastore-server/users.d/*.xml` - files with user settings adjustments
 -	`/docker-entrypoint-initdb.d/` - folder with database initialization scripts (see below).
 
 ### Linux capabilities
@@ -118,7 +118,7 @@ They are optional and can be enabled using the following [docker command-line ar
 ```bash
 docker run -d \
     --cap-add=SYS_NICE --cap-add=NET_ADMIN --cap-add=IPC_LOCK \
-    --name some-hanzo-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
+    --name some-datastore-server --ulimit nofile=262144:262144 %%IMAGE%%
 ```
 
 Read more in [knowledge base](https://hanzo.ai/docs/datastore/knowledgebase/configure_cap_ipc_lock_and_cap_sys_nice_in_docker).
@@ -132,46 +132,46 @@ Hanzo Datastore configuration is represented with a file "config.xml" ([document
 ### Start server instance with custom configuration
 
 ```bash
-docker run -d --name some-hanzo-datastore-server --ulimit nofile=262144:262144 -v /path/to/your/config.xml:/etc/hanzo-datastore-server/config.xml %%IMAGE%%
+docker run -d --name some-datastore-server --ulimit nofile=262144:262144 -v /path/to/your/config.xml:/etc/datastore-server/config.xml %%IMAGE%%
 ```
 
 ### Start server as custom user
 
 ```bash
-# $PWD/data/hanzo-datastore should exist and be owned by current user
-docker run --rm --user "${UID}:${GID}" --name some-hanzo-datastore-server --ulimit nofile=262144:262144 -v "$PWD/logs/hanzo-datastore:/var/log/hanzo-datastore-server" -v "$PWD/data/hanzo-datastore:/var/lib/hanzo-datastore" %%IMAGE%%
+# $PWD/data/datastore should exist and be owned by current user
+docker run --rm --user "${UID}:${GID}" --name some-datastore-server --ulimit nofile=262144:262144 -v "$PWD/logs/datastore:/var/log/datastore-server" -v "$PWD/data/datastore:/var/lib/datastore" %%IMAGE%%
 ```
 
-When you use the image with local directories mounted, you probably want to specify the user to maintain the proper file ownership. Use the `--user` argument and mount `/var/lib/hanzo-datastore` and `/var/log/hanzo-datastore-server` inside the container. Otherwise, the image will complain and not start.
+When you use the image with local directories mounted, you probably want to specify the user to maintain the proper file ownership. Use the `--user` argument and mount `/var/lib/datastore` and `/var/log/datastore-server` inside the container. Otherwise, the image will complain and not start.
 
 ### Start server from root (useful in case of enabled user namespace)
 
 ```bash
-docker run --rm -e HANZO_RUN_AS_ROOT=1 --name hanzo-datastore-server-userns -v "$PWD/logs/hanzo-datastore:/var/log/hanzo-datastore-server" -v "$PWD/data/hanzo-datastore:/var/lib/hanzo-datastore" %%IMAGE%%
+docker run --rm -e DATASTORE_RUN_AS_ROOT=1 --name datastore-server-userns -v "$PWD/logs/datastore:/var/log/datastore-server" -v "$PWD/data/datastore:/var/lib/datastore" %%IMAGE%%
 ```
 
 ### How to create default database and user on starting
 
-Sometimes you may want to create a user (user named `default` is used by default) and database on a container start. You can do it using environment variables `HANZO_DB`, `HANZO_USER`, `HANZO_DEFAULT_ACCESS_MANAGEMENT` and `HANZO_PASSWORD`:
+Sometimes you may want to create a user (user named `default` is used by default) and database on a container start. You can do it using environment variables `DATASTORE_DB`, `DATASTORE_USER`, `DATASTORE_DEFAULT_ACCESS_MANAGEMENT` and `DATASTORE_PASSWORD`:
 
 ```bash
-docker run --rm -e HANZO_DB=my_database -e HANZO_USER=username -e HANZO_DEFAULT_ACCESS_MANAGEMENT=1 -e HANZO_PASSWORD=password -p 9000:9000/tcp %%IMAGE%%
+docker run --rm -e DATASTORE_DB=my_database -e DATASTORE_USER=username -e DATASTORE_DEFAULT_ACCESS_MANAGEMENT=1 -e DATASTORE_PASSWORD=password -p 9000:9000/tcp %%IMAGE%%
 ```
 
 #### Managing `default` user
 
-The user `default` has disabled network access by default in the case none of `HANZO_USER`, `HANZO_PASSWORD`, or `HANZO_DEFAULT_ACCESS_MANAGEMENT` are set.
+The user `default` has disabled network access by default in the case none of `DATASTORE_USER`, `DATASTORE_PASSWORD`, or `DATASTORE_DEFAULT_ACCESS_MANAGEMENT` are set.
 
-There's a way to make `default` user insecurely available by setting environment variable `HANZO_SKIP_USER_SETUP` to 1:
+There's a way to make `default` user insecurely available by setting environment variable `DATASTORE_SKIP_USER_SETUP` to 1:
 
 ```bash
-docker run --rm -e HANZO_SKIP_USER_SETUP=1 -p 9000:9000/tcp %%IMAGE%%
+docker run --rm -e DATASTORE_SKIP_USER_SETUP=1 -p 9000:9000/tcp %%IMAGE%%
 ```
 
 ## How to extend this image
 
 To perform additional initialization in an image derived from this one, add one or more `*.sql`, `*.sql.gz`, or `*.sh` scripts under `/docker-entrypoint-initdb.d`. After the entrypoint calls `initdb`, it will run any `*.sql` files, run any executable `*.sh` scripts, and source any non-executable `*.sh` scripts found in that directory to do further initialization before starting the service.
-Also, you can provide environment variables `HANZO_USER` & `HANZO_PASSWORD` that will be used for hanzo-datastore-client during initialization.
+Also, you can provide environment variables `DATASTORE_USER` & `DATASTORE_PASSWORD` that will be used for datastore-client during initialization.
 
 For example, to add an additional user and database, add the following to `/docker-entrypoint-initdb.d/init-db.sh`:
 
@@ -179,7 +179,7 @@ For example, to add an additional user and database, add the following to `/dock
 #!/bin/bash
 set -e
 
-hanzo-datastore client -n <<-EOSQL
+datastore client -n <<-EOSQL
     CREATE DATABASE docker;
     CREATE TABLE docker.docker (x Int32) ENGINE = Log;
 EOSQL
