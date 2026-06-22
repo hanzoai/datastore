@@ -22,9 +22,10 @@
 [submodule "contrib/googletest"]
 	path = contrib/googletest
 	url = https://github.com/google/googletest
-[submodule "contrib/capnproto"]
-	path = contrib/capnproto
-	url = https://github.com/ClickHouse/capnproto
+[submodule "contrib/zap"]
+	path = contrib/zap
+	url = https://github.com/zap-proto/cpp-core
+	branch = main
 [submodule "contrib/re2"]
 	path = contrib/re2
 	url = https://github.com/google/re2
