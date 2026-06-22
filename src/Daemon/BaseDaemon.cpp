@@ -556,8 +556,8 @@ void BaseDaemon::setupWatchdog()
     if (argv0)
         original_process_name = argv0;
 
-    bool restart = getenvBool("CLICKHOUSE_WATCHDOG_RESTART");
-    bool forward_signals = !getenvBool("CLICKHOUSE_WATCHDOG_NO_FORWARD");
+    bool restart = getenvBool("DATASTORE_WATCHDOG_RESTART");
+    bool forward_signals = !getenvBool("DATASTORE_WATCHDOG_NO_FORWARD");
 
     while (true)
     {
@@ -627,7 +627,7 @@ void BaseDaemon::setupWatchdog()
         notify_sync.close();
 
         /// Change short thread name and process name.
-        DB::setThreadName(ThreadName::CLICKHOUSE_WATCH);
+        DB::setThreadName(ThreadName::DATASTORE_WATCH);
 
         if (argv0)
         {
