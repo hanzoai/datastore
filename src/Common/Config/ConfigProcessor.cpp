@@ -403,14 +403,14 @@ bool ConfigProcessor::merge(XMLDocumentPtr config, XMLDocumentPtr with)
     std::string config_root_node_name = config_root->nodeName();
     std::string merged_root_node_name = with_root->nodeName();
 
-    /// For compatibility, we treat 'yandex' and 'clickhouse' equivalent.
-    /// See https://clickhouse.com/blog/en/2021/clickhouse-inc/
+    /// For compatibility, we treat 'yandex', 'clickhouse' and 'datastore' equivalent.
+    /// 'datastore' is the Hanzo white-label config root; 'yandex'/'clickhouse' are upstream.
 
     if (config_root_node_name != merged_root_node_name
-        && !((config_root_node_name == "yandex" || config_root_node_name == "clickhouse")
-            && (merged_root_node_name == "yandex" || merged_root_node_name == "clickhouse")))
+        && !((config_root_node_name == "yandex" || config_root_node_name == "clickhouse" || config_root_node_name == "datastore")
+            && (merged_root_node_name == "yandex" || merged_root_node_name == "clickhouse" || merged_root_node_name == "datastore")))
     {
-        if (config_root_node_name != "clickhouse" && config_root_node_name != "yandex")
+        if (config_root_node_name != "clickhouse" && config_root_node_name != "yandex" && config_root_node_name != "datastore")
             return false;
 
         throw Poco::Exception("Root element doesn't have the corresponding root element as the config file."
