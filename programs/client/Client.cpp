@@ -738,9 +738,9 @@ String Client::getHelpHeader() const
         "--user <username> --password <password> or with --ask-password argument\n"
         "that will open command prompt.\n\n"
         "Connect to tcp native port (9000) without encryption:\n"
-        "    {0} --host clickhouse.example.com --password mysecretpassword\n"
+        "    {0} --host datastore.example.com --password mysecretpassword\n"
         "Connect to secure endpoint:\n"
-        "    {0} --secure --host clickhouse.example.com --password mysecretpassword\n",
+        "    {0} --secure --host datastore.example.com --password mysecretpassword\n",
         app_name);
 }
 
@@ -769,10 +769,10 @@ void Client::printHelpMessage(const OptionsDescription & options_description)
     if (options_description.hosts_and_ports_description.has_value())
         output_stream << options_description.hosts_and_ports_description.value() << "\n";
 
-    output_stream << "All settings are documented at https://clickhouse.com/docs/operations/settings/settings.\n";
+    output_stream << "All settings are documented at https://hanzo.ai/docs/operations/settings/settings.\n";
     output_stream << getHelpFooter() << "\n";
     output_stream << "In addition, --param_name=value can be specified for substitution of parameters for parameterized queries.\n";
-    output_stream << "\nSee also: https://clickhouse.com/docs/en/integrations/sql-clients/cli\n";
+    output_stream << "\nSee also: https://hanzo.ai/docs/en/integrations/sql-clients/cli\n";
 }
 
 

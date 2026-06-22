@@ -15,8 +15,8 @@
             [1]: https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/Logger.h#L105-L114
         -->
         <level>trace</level>
-        <log>/var/log/clickhouse-keeper/clickhouse-keeper.log</log>
-        <errorlog>/var/log/clickhouse-keeper/clickhouse-keeper.err.log</errorlog>
+        <log>/var/log/datastore-keeper/datastore-keeper.log</log>
+        <errorlog>/var/log/datastore-keeper/datastore-keeper.err.log</errorlog>
         <!-- Rotation policy
              See https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/FileChannel.h#L54-L85
           -->
@@ -33,8 +33,8 @@
             <!-- Must be unique among all keeper serves -->
             <server_id>1</server_id>
 
-            <log_storage_path>/var/lib/clickhouse/coordination/logs</log_storage_path>
-            <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+            <log_storage_path>/var/lib/datastore/coordination/logs</log_storage_path>
+            <snapshot_storage_path>/var/lib/datastore/coordination/snapshots</snapshot_storage_path>
 
             <coordination_settings>
                 <operation_timeout_ms>10000</operation_timeout_ms>

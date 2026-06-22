@@ -246,7 +246,7 @@ void registerDictionarySourceDatastore(DictionarySourceFactory & factory)
         using Configuration = DatastoreDictionarySource::Configuration;
         std::optional<Configuration> configuration;
 
-        std::string settings_config_prefix = config_prefix + ".clickhouse";
+        std::string settings_config_prefix = config_prefix + ".datastore";
         auto named_collection = created_from_ddl ? tryGetNamedCollectionWithOverrides(config, settings_config_prefix, global_context) : nullptr;
 
         if (named_collection)

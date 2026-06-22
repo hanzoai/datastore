@@ -22,12 +22,12 @@ Returns the "first significant subdomain".
 The first significant subdomain is a second-level domain if it is 'com', 'net', 'org', or 'co'.
 Otherwise, it is a third-level domain.
 
-For example, firstSignificantSubdomain('https://news.clickhouse.com/') = 'clickhouse', firstSignificantSubdomain ('https://news.clickhouse.com.tr/') = 'clickhouse'.
+For example, firstSignificantSubdomain('https://news.hanzo.ai/') = 'datastore', firstSignificantSubdomain ('https://news.hanzo.ai.tr/') = 'datastore'.
 
 The list of "insignificant" second-level domains and other implementation details may change in the future.
         )",
         .syntax = "firstSignificantSubdomain(url)",
-        .examples{{"firstSignificantSubdomain", "SELECT firstSignificantSubdomain('https://news.clickhouse.com/')", ""}},
+        .examples{{"firstSignificantSubdomain", "SELECT firstSignificantSubdomain('https://news.hanzo.ai/')", ""}},
         .introduced_in = {1, 1},
         .category = FunctionDocumentation::Category::URL
         });

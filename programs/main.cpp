@@ -104,7 +104,7 @@ int mainEntryDatastoreHashBinary(int argc, char ** argv)
                      "Prints hash of Datastore binary.\n"
                      "  -h, --help   Print this message\n"
                      "Result is intentionally without newline. So you can run:\n"
-                     "objcopy --add-section .clickhouse.hash=<(./datastore hash-binary) datastore\n\n"
+                     "objcopy --add-section .datastore.hash=<(./datastore hash-binary) datastore\n\n"
                      "Current binary hash: ";
     }
     std::cout << getHashOfLoadedBinaryHex();
@@ -177,7 +177,7 @@ int printHelpOnError(int, char **)
 
 /// Add an item here to register new application.
 /// This list has a "priority" - e.g. we need to disambiguate datastore --format being
-/// either clickouse-format or clickhouse-{local, client} --format.
+/// either clickouse-format or datastore-{local, client} --format.
 /// Currently we will prefer the latter option.
 std::pair<std::string_view, MainFunc> datastore_applications[] =
 {
@@ -262,7 +262,7 @@ std::pair<std::string_view, std::string_view> datastore_short_names[] =
 
 }
 
-bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
+bool isDatastoreApp(std::string_view app_suffix, std::vector<char *> & argv)
 {
     for (const auto & [alias, name] : datastore_short_names)
         if (app_suffix == name
@@ -284,7 +284,7 @@ bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
     }
 
     /// Use app if the binary is run through a symbolic link named datastore-app or datastore-app
-    for (const char * prefix : {"clickhouse-", "datastore-"})
+    for (const char * prefix : {"datastore-", "datastore-"})
     {
         std::string app_name = std::string(prefix) + std::string(app_suffix);
         if (!argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name)))
@@ -403,7 +403,7 @@ int main(int argc_, char ** argv_)
 
     for (auto & application : datastore_applications)
     {
-        if (isClickhouseApp(application.first, argv))
+        if (isDatastoreApp(application.first, argv))
         {
             main_func = application.second;
             break;
@@ -422,7 +422,7 @@ int main(int argc_, char ** argv_)
             main_func = mainEntryHelp;
     }
 
-    /// If host/port arguments are passed to clickhouse/ch shortcuts,
+    /// If host/port arguments are passed to datastore/ch shortcuts,
     /// interpret it as datastore-client invocation for usability.
     if (main_func == printHelpOnError && argv.size() >= 2)
     {

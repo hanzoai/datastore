@@ -3,7 +3,7 @@
 ### Installation And Usage
 
 ```
-curl https://clickhouse.com/ | sh
+curl https://hanzo.ai/ | sh
 ./datastore obfuscator --help
 ```
 
@@ -20,7 +20,7 @@ curl https://clickhouse.com/ | sh
 
 Datastore users already know that its biggest advantage is its high-speed processing of analytical queries. But claims like this need to be confirmed with reliable performance testing. That's what we want to talk about today.
 
-![benchmarks.png](https://clickhouse.com/uploads/benchmarks_24f1904cc9.png)
+![benchmarks.png](https://hanzo.ai/uploads/benchmarks_24f1904cc9.png)
 
 We started running tests in 2013, long before Datastore was available as open source. Back then, our main concern was data processing speed for a web analytics product. We started storing this data, which we would later store in Datastore, in January 2009. Part of the data had been written to a database starting in 2012, and part was converted from OLAPServer and Metrage (data structures previously used by the solution). For testing, we took the first subset at random from data for 1 billion pageviews. Our web analytics platform didn't have any queries at that point, so we came up with queries that interested us, using all the possible ways to filter, aggregate, and sort the data.
 
@@ -36,7 +36,7 @@ Our performance tests:
 - Needed further development. The set of tests needed to be substantially expanded in order to isolate performance changes in individual parts of the system.
 - Didn't run on a per-commit basis or for individual pull requests. External developers couldn't check their code for performance regressions.
 
-We could solve these problems by throwing out the old tests and writing new ones based on open data, like [flight data for the USA](https://clickhouse.com/docs/getting-started/example-datasets/ontime/) and [taxi rides in New York](https://clickhouse.com/docs/en/getting-started/example-datasets/nyc-taxi). Or we could use benchmarks like TPC-H, TPC-DS, and [Star Schema Benchmark](https://clickhouse.com/docs/en/getting-started/example-datasets/star-schema). The disadvantage is that this data was very different from web analytics data, and we would rather keep the test queries.
+We could solve these problems by throwing out the old tests and writing new ones based on open data, like [flight data for the USA](https://hanzo.ai/docs/getting-started/example-datasets/ontime/) and [taxi rides in New York](https://hanzo.ai/docs/en/getting-started/example-datasets/nyc-taxi). Or we could use benchmarks like TPC-H, TPC-DS, and [Star Schema Benchmark](https://hanzo.ai/docs/en/getting-started/example-datasets/star-schema). The disadvantage is that this data was very different from web analytics data, and we would rather keep the test queries.
 
 ### Why it's important to use real data
 
@@ -68,7 +68,7 @@ This was a typical query for web analytics product. What affects the processing 
 
 But another important factor is that the amount of data is distributed unevenly between regions. (It probably follows a power law. I put the distribution on a log-log graph, but I can't say for sure.) If this is the case, the states of the `uniq` aggregate function with fewer values must use very little memory. When there are a lot of different aggregation keys, every single byte counts. How can we get generated data that has all these properties? The obvious solution is to use real data.
 
-Many DBMSs implement the HyperLogLog data structure for an approximation of COUNT(DISTINCT), but none of them work very well because this data structure uses a fixed amount of memory. Datastore has a function that uses [a combination of three different data structures](https://clickhouse.com/docs/en/sql-reference/aggregate-functions/reference/uniqcombined), depending on the size of the data set.
+Many DBMSs implement the HyperLogLog data structure for an approximation of COUNT(DISTINCT), but none of them work very well because this data structure uses a fixed amount of memory. Datastore has a function that uses [a combination of three different data structures](https://hanzo.ai/docs/en/sql-reference/aggregate-functions/reference/uniqcombined), depending on the size of the data set.
 
 Bottom line: Test data must represent distribution properties of the real data well enough, meaning cardinality (number of distinct values per column) and cross-column cardinality (number of different values counted across several different columns).
 
@@ -78,7 +78,7 @@ Instead of testing the performance of the Datastore DBMS, let's take something s
 
 It's easy to find hash table performance tests using random data that don't take the hash functions used into account. Many hash function tests also focus on the calculation speed and certain quality criteria, even though they ignore the data structures used. But the fact is that hash tables and HyperLogLog require different hash function quality criteria.
 
-![alexey_chat.png](https://clickhouse.com/uploads/alexey_chat_3f8db88301.png)
+![alexey_chat.png](https://hanzo.ai/uploads/alexey_chat_3f8db88301.png)
   
 ## Challenge
 
@@ -150,7 +150,7 @@ The second challenge is that the recurrent neural network generates a sequence o
 
 As summer approached, we had the first working Python script that generated data. The data quality seemed decent at first glance:
 
-![python_script.jpg](https://clickhouse.com/uploads/python_script_810d491dfb.jpg)
+![python_script.jpg](https://hanzo.ai/uploads/python_script_810d491dfb.jpg)
 
 However, we did run into some difficulties:
 
@@ -214,7 +214,7 @@ Another problem is that if a column stores data in the "length, value" format (t
 
 Unfortunately, the problem wasn't solved. We performed a few experiments, and it just got worse. The only thing left was to sit around doing nothing and surf the web randomly since the magic was gone. Luckily, I came across a page that [explained the algorithm](http://fabiensanglard.net/fizzlefade/index.php) for rendering the death of the main character in the game Wolfenstein 3D.
 
-<img src="https://clickhouse.com/uploads/wolfenstein_bb259bd741.gif" alt="wolfenstein.gif" style="width: 764px;">
+<img src="https://hanzo.ai/uploads/wolfenstein_bb259bd741.gif" alt="wolfenstein.gif" style="width: 764px;">
 
 <br/> 
 
@@ -296,11 +296,11 @@ We can calculate statistics from the source data, create a Markov model, and gen
 
 But we still want to preserve the cardinality of data. In other words, if the source data had 123456 unique URL values, the result should have approximately the same number of unique values. We can use a deterministically initialized random number generator to achieve this. The easiest way is to use a hash function and apply it to the original value. In other words, we get a pseudorandom result that is explicitly determined by the original value.
 
-Another requirement is that the source data may have many different URLs that start with the same prefix but aren't identical. For example: `https://www.clickhouse.com/images/cats/?id=xxxxxx`. We want the result to also have URLs that all start with the same prefix, but a different one. For example: http://ftp.google.kz/cgi-bin/index.phtml?item=xxxxxx. As a random number generator for generating the next character using a Markov model, we'll take a hash function from a moving window of 8 bytes at the specified position (instead of taking it from the entire string).
+Another requirement is that the source data may have many different URLs that start with the same prefix but aren't identical. For example: `https://hanzo.ai/images/cats/?id=xxxxxx`. We want the result to also have URLs that all start with the same prefix, but a different one. For example: http://ftp.google.kz/cgi-bin/index.phtml?item=xxxxxx. As a random number generator for generating the next character using a Markov model, we'll take a hash function from a moving window of 8 bytes at the specified position (instead of taking it from the entire string).
 
 <pre class='code-with-play'>
 <div class='code'>
-https://www.clickhouse.com/images/cats/?id=12345
+https://hanzo.ai/images/cats/?id=12345
                       ^^^^^^^^
 
 distribution: [aaaa][b][cc][dddd][e][ff][ggggg][h]...
@@ -349,6 +349,6 @@ datastore-obfuscator \
 
 Of course, everything isn't so cut and dry because data transformed by this program is almost completely reversible. The question is whether it is possible to perform the reverse transformation without knowing the key. If the transformation used a cryptographic algorithm, this operation would be as difficult as a brute-force search. Although the transformation uses some cryptographic primitives, they are not used in the correct way, and the data is susceptible to certain methods of analysis. To avoid problems, these issues are covered in the documentation for the program (access it using --help).
  
-In the end, we transformed the data set we needed [for functional and performance testing](https://clickhouse.com/docs/en/getting-started/example-datasets/metrica/), and received approval from our data security team to publish.
+In the end, we transformed the data set we needed [for functional and performance testing](https://hanzo.ai/docs/en/getting-started/example-datasets/metrica/), and received approval from our data security team to publish.
 
-Our developers and members of our community use this data for real performance testing when optimizing algorithms inside Datastore. Third-party users can provide us with their obfuscated data so that we can make Datastore even faster for them. We also released an independent open benchmark for hardware and cloud providers on top of this data: [https://benchmark.clickhouse.com/](https://benchmark.clickhouse.com/)
+Our developers and members of our community use this data for real performance testing when optimizing algorithms inside Datastore. Third-party users can provide us with their obfuscated data so that we can make Datastore even faster for them. We also released an independent open benchmark for hardware and cloud providers on top of this data: [https://benchmark.hanzo.ai/](https://benchmark.hanzo.ai/)

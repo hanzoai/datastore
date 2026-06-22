@@ -199,7 +199,7 @@ MutableNamedCollectionPtr tryGetNamedCollectionWithOverrides(
 
     /// Register the dictionary that uses this named collection as a dependency,
     /// so that DROP NAMED COLLECTION is blocked while the dictionary exists.
-    /// config_prefix is "<dict_root>.source.<type>" (e.g. "dictionary.source.clickhouse"),
+    /// config_prefix is "<dict_root>.source.<type>" (e.g. "dictionary.source.datastore"),
     /// where the dictionary root is always the first component.
     auto dot = config_prefix.find('.');
     if (dot == std::string::npos)

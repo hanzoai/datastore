@@ -65,7 +65,7 @@ int printHelp(int, char **)
 }
 
 
-static bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
+static bool isDatastoreApp(std::string_view app_suffix, std::vector<char *> & argv)
 {
     /// Use app if the first arg 'app' is passed (the arg should be quietly removed)
     if (argv.size() >= 2)
@@ -86,7 +86,7 @@ static bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & a
         return false;
 
     /// Use app if datastore binary is run through symbolic link with name datastore-app
-    std::string app_name = "clickhouse-" + std::string(app_suffix);
+    std::string app_name = "datastore-" + std::string(app_suffix);
     return !argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name));
 }
 
@@ -196,7 +196,7 @@ int main(int argc_, char ** argv_)
     /// Print a basic help if nothing was matched
     MainFunc main_func = mainEntryDatastoreKeeper;
 
-    if (isClickhouseApp("help", argv))
+    if (isDatastoreApp("help", argv))
     {
         main_func = printHelp;
     }
@@ -204,7 +204,7 @@ int main(int argc_, char ** argv_)
     {
         for (auto & application : datastore_applications)
         {
-            if (isClickhouseApp(application.first, argv))
+            if (isDatastoreApp(application.first, argv))
             {
                 main_func = application.second;
                 break;

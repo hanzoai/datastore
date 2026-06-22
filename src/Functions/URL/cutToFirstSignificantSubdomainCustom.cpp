@@ -48,7 +48,7 @@ Returns the part of the domain that includes top-level subdomains up to the firs
 **Configuration example**
 
 ```yaml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -86,7 +86,7 @@ Returns the part of the domain that includes top-level subdomains up to the firs
 **Configuration example**
 
 ```yaml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -133,7 +133,7 @@ Similar to [cutToFirstSignificantSubdomainCustom](#cutToFirstSignificantSubdomai
 **Configuration example**
 
 ```xml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>
@@ -181,7 +181,7 @@ Similar to [cutToFirstSignificantSubdomainCustomWithWWW](#cutToFirstSignificantS
 **Configuration example**
 
 ```xml
-<!-- <top_level_domains_path>/var/lib/clickhouse/top_level_domains/</top_level_domains_path> -->
+<!-- <top_level_domains_path>/var/lib/datastore/top_level_domains/</top_level_domains_path> -->
 <top_level_domains_lists>
     <!-- https://publicsuffix.org/list/public_suffix_list.dat -->
     <public_suffix_list>public_suffix_list.dat</public_suffix_list>

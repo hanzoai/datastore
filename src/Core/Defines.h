@@ -59,7 +59,7 @@ static constexpr auto DEFAULT_TCP_KEEP_ALIVE_TIMEOUT = 290;
 static constexpr auto DEFAULT_HTTP_KEEP_ALIVE_TIMEOUT = 30;
 static constexpr auto DEFAULT_HTTP_KEEP_ALIVE_MAX_REQUEST = 1000;
 
-static constexpr auto DBMS_DEFAULT_PATH = "/var/lib/clickhouse/";
+static constexpr auto DBMS_DEFAULT_PATH = "/var/lib/datastore/";
 
 /// Actually, there may be multiple acquisitions of different locks for a given table within one query.
 /// Check with IStorage class for the list of possible locks

@@ -680,7 +680,7 @@ ContextMutablePtr DatabaseReplicatedTask::makeQueryContext(ContextPtr from_conte
         bool should_check_stop_flag = macros->getMacroMap().contains("replica");
         if (should_check_stop_flag)
         {
-            String stop_flag_path = "/clickhouse/stop_replicated_ddl_queries/{replica}";
+            String stop_flag_path = "/datastore/stop_replicated_ddl_queries/{replica}";
             stop_flag_path = macros->expand(stop_flag_path);
 
             zookeeper->createAncestors(stop_flag_path);

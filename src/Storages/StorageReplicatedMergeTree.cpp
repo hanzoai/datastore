@@ -5806,8 +5806,8 @@ void StorageReplicatedMergeTree::startupImpl(bool from_attach_thread, const ZooK
         assert(prev_ptr == nullptr);
 
         /// The endpoint id:
-        ///     old format: DataPartsExchange:/clickhouse/tables/default/t1/{shard}/{replica}
-        ///     new format: DataPartsExchange:{zookeeper_name}:/clickhouse/tables/default/t1/{shard}/{replica}
+        ///     old format: DataPartsExchange:/datastore/tables/default/t1/{shard}/{replica}
+        ///     new format: DataPartsExchange:{zookeeper_name}:/datastore/tables/default/t1/{shard}/{replica}
         /// Notice:
         ///     They are incompatible and the default is the old format.
         ///     If you want to use the new format, please ensure that 'enable_the_endpoint_id_with_zookeeper_name_prefix' of all nodes is true .
@@ -10472,7 +10472,7 @@ StorageReplicatedMergeTree::unlockSharedData(const IMergeTreeDataPart & part, co
         /// In opposition, when the part has been mutated in generally it hardlinks the files from source part.
         /// Therefore remote data could be shared, it has to be unlocked in the keeper.
         /// In order to track all that cases remove_tmp_policy is used.
-        /// Clickhouse set that field as REMOVE_BLOBS or PRESERVE_BLOBS when it sure about the decision without asking keeper.
+        /// Datastore set that field as REMOVE_BLOBS or PRESERVE_BLOBS when it sure about the decision without asking keeper.
 
         if (part.remove_tmp_policy == IMergeTreeDataPart::BlobsRemovalPolicyForTemporaryParts::REMOVE_BLOBS
             || part.remove_tmp_policy == IMergeTreeDataPart::BlobsRemovalPolicyForTemporaryParts::PRESERVE_BLOBS)

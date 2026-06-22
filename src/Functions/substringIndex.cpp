@@ -320,10 +320,10 @@ Returns the substring of `s` before `count` occurrences of the delimiter `delim`
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT substringIndex('www.clickhouse.com', '.', 2)",
+        "SELECT substringIndex('hanzo.ai', '.', 2)",
         R"(
-┌─substringIndex('www.clickhouse.com', '.', 2)─┐
-│ www.clickhouse                               │
+┌─substringIndex('hanzo.ai', '.', 2)─┐
+│ www.datastore                               │
 └──────────────────────────────────────────────┘
         )"}
     };

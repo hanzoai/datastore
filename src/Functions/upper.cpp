@@ -32,7 +32,7 @@ Converts the ASCII Latin symbols in a string to uppercase.
         "SELECT upper('datastore')",
         R"(
 ┌─upper('datastore')─┐
-│ CLICKHOUSE          │
+│ DATASTORE          │
 └─────────────────────┘
         )"
     }

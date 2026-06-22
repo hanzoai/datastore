@@ -127,11 +127,11 @@ LIMIT 1
 Row 1:
 ──────
 trace_source_code_lines: /lib/x86_64-linux-gnu/libpthread-2.27.so
-/usr/lib/debug/usr/bin/clickhouse
+/usr/lib/debug/usr/bin/datastore
 /build/obj-x86_64-linux-gnu/../src/Common/ThreadPool.cpp:199
 /build/obj-x86_64-linux-gnu/../src/Common/ThreadPool.h:155
 /usr/include/c++/9/bits/atomic_base.h:551
-/usr/lib/debug/usr/bin/clickhouse
+/usr/lib/debug/usr/bin/datastore
 /lib/x86_64-linux-gnu/libpthread-2.27.so
 /build/glibc-OTsEL5/glibc-2.27/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:97
         )"

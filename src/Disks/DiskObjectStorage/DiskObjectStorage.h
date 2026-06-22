@@ -24,7 +24,7 @@ namespace DB
 /// Disk build on top of IObjectStorage. Use additional disk (local for example)
 /// for metadata storage. Metadata is a small files with mapping from local paths to
 /// objects in object storage, like:
-/// "/var/lib/clickhouse/data/db/table/all_0_0_0/columns.txt" -> /xxxxxxxxxxxxxxxxxxxx
+/// "/var/lib/datastore/data/db/table/all_0_0_0/columns.txt" -> /xxxxxxxxxxxxxxxxxxxx
 ///                                                           -> /yyyyyyyyyyyyyyyyyyyy
 class DiskObjectStorage : public IDisk
 {

@@ -16,7 +16,7 @@ include(${Datastore_SOURCE_DIR}/cmake/split_debug_symbols.cmake)
 # If you do not know what modes you need, turn then all.
 option (ENABLE_DATASTORE_ALL "Enable all Datastore modes by default" ON)
 
-# https://presentations.clickhouse.com/matemarketing_2020/
+# https://presentations.hanzo.ai/matemarketing_2020/
 option (ENABLE_DATASTORE_GIT_IMPORT "A tool to analyze Git repositories" ${ENABLE_DATASTORE_ALL})
 
 option (ENABLE_DATASTORE_KEEPER "Datastore alternative to ZooKeeper" ${ENABLE_DATASTORE_ALL})
@@ -248,8 +248,8 @@ if (USE_BINARY_HASH)
     endif()
 
     add_custom_command(TARGET datastore POST_BUILD
-        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash datastore
-        COMMENT "Adding section '.clickhouse.hash' to datastore binary" VERBATIM)
+        COMMAND ${OBJCOPY_PATH} --add-section .datastore.hash=hash datastore
+        COMMENT "Adding section '.datastore.hash' to datastore binary" VERBATIM)
 endif()
 
 if (CHECK_LARGE_OBJECT_SIZES)
@@ -280,7 +280,7 @@ endif()
 if (TARGET ch_contrib::protobuf)
     get_property(google_proto_files TARGET ch_contrib::protobuf PROPERTY google_proto_files)
     foreach (proto_file IN LISTS google_proto_files)
-        install(FILES ${proto_file} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/clickhouse/protos/google/protobuf)
+        install(FILES ${proto_file} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/datastore/protos/google/protobuf)
     endforeach()
 endif ()
 

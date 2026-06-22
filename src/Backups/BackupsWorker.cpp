@@ -1154,7 +1154,7 @@ BackupsWorker::makeBackupCoordination(bool on_cluster, const BackupSettings & ba
 
     bool is_internal_backup = backup_settings.internal;
 
-    String root_zk_path = context->getConfigRef().getString("backups.zookeeper_path", "/clickhouse/backups");
+    String root_zk_path = context->getConfigRef().getString("backups.zookeeper_path", "/datastore/backups");
     auto get_zookeeper = [global_context = context->getGlobalContext()] { return global_context->getZooKeeper(); };
     auto keeper_settings = BackupKeeperSettings(context);
 
@@ -1192,7 +1192,7 @@ BackupsWorker::makeRestoreCoordination(bool on_cluster, const RestoreSettings & 
 
     bool is_internal_restore = restore_settings.internal;
 
-    String root_zk_path = context->getConfigRef().getString("backups.zookeeper_path", "/clickhouse/backups");
+    String root_zk_path = context->getConfigRef().getString("backups.zookeeper_path", "/datastore/backups");
     auto get_zookeeper = [global_context = context->getGlobalContext()] { return global_context->getZooKeeper(); };
     auto keeper_settings = BackupKeeperSettings(context);
 

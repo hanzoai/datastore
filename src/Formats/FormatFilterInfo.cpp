@@ -39,21 +39,21 @@ std::pair<std::unordered_map<String, String>, std::unordered_map<String, String>
     const std::unordered_map<Int64, String> & format_encoding)
 {
     std::unordered_map<String, String> datastore_to_parquet_names;
-    std::unordered_map<String, String> parquet_names_to_clickhouse;
+    std::unordered_map<String, String> parquet_names_to_datastore;
     for (const auto & [column_name, field_id] : storage_encoding)
     {
         if (auto it = format_encoding.find(field_id); it != format_encoding.end())
         {
             datastore_to_parquet_names[column_name] = it->second;
-            parquet_names_to_clickhouse[it->second] = column_name;
+            parquet_names_to_datastore[it->second] = column_name;
         }
         else
         {
             datastore_to_parquet_names[column_name] = column_name;
-            parquet_names_to_clickhouse[column_name] = column_name;
+            parquet_names_to_datastore[column_name] = column_name;
         }
     }
-    return {datastore_to_parquet_names, parquet_names_to_clickhouse};
+    return {datastore_to_parquet_names, parquet_names_to_datastore};
 }
 
 FormatFilterInfo::FormatFilterInfo(

@@ -90,7 +90,7 @@ const std::vector<CHAggregate> CHAggrs = {
     CHAggregate(SQLFunc::FUNCmedianDD, 1, 2, 1, 1, false),
     CHAggregate(SQLFunc::FUNCrankCorr, 0, 0, 2, 2, false),
     CHAggregate(SQLFunc::FUNCsumKahan, 0, 0, 1, 1, false),
-    /// Clickhouse aggregates
+    /// Datastore aggregates
     CHAggregate(SQLFunc::FUNCaggThrow, 0, 0, 1, 1, false),
     CHAggregate(SQLFunc::FUNCanalysisOfVariance, 0, 0, 2, 2, false),
     CHAggregate(SQLFunc::FUNCboundingRatio, 0, 0, 2, 2, false),
