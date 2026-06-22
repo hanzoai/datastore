@@ -5,9 +5,9 @@ if(NOT ENABLE_PROMETHEUS_PROTOBUFS)
   return()
 endif()
 
-set(Protobuf_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/google-protobuf/src")
-set(Prometheus_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/prometheus-protobufs")
-set(GogoProto_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/prometheus-protobufs-gogo")
+set(Protobuf_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/google-protobuf/src")
+set(Prometheus_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/prometheus-protobufs")
+set(GogoProto_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/prometheus-protobufs-gogo")
 
 # Protobuf_IMPORT_DIRS specify where the protobuf compiler will look for .proto files.
 set(Old_Protobuf_IMPORT_DIRS ${Protobuf_IMPORT_DIRS})

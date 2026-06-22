@@ -1,4 +1,4 @@
-set(STRINGZILLA_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/StringZilla")
+set(STRINGZILLA_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/StringZilla")
 
 SET(STRINGZILLA_SOURCES
     "${STRINGZILLA_SOURCE_DIR}/c/compare.c"

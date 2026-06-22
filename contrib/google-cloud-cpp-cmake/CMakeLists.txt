@@ -25,9 +25,9 @@ set(GOOGLE_CLOUD_CPP_PRIVATE_INCLUDES)
 set(GOOGLE_CLOUD_CPP_PRIVATE_LIBS)
 
 # Directories.
-SET(GOOGLE_CLOUD_CPP_DIR "${ClickHouse_SOURCE_DIR}/contrib/google-cloud-cpp" )
+SET(GOOGLE_CLOUD_CPP_DIR "${Datastore_SOURCE_DIR}/contrib/google-cloud-cpp" )
 list(APPEND GOOGLE_CLOUD_CPP_PRIVATE_INCLUDES "${GOOGLE_CLOUD_CPP_DIR}")
-list(APPEND CMAKE_MODULE_PATH "${ClickHouse_SOURCE_DIR}/contrib/google-cloud-cpp-cmake/cmake")
+list(APPEND CMAKE_MODULE_PATH "${Datastore_SOURCE_DIR}/contrib/google-cloud-cpp-cmake/cmake")
 
 # Set the PROJECT_SOURCE_DIR so that all Google Cloud cmake files work
 set(PROJECT_SOURCE_DIR_BAK ${PROJECT_SOURCE_DIR})
@@ -42,7 +42,7 @@ include(GoogleCloudCppLibrary)
 set(GOOGLE_CLOUD_CPP_ENABLE_GRPC ON)
 set(PROJECT_VERSION "1")
 set(PROJECT_VERSION_MAJOR "1")
-set(PROTO_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/google-protobuf/src")
+set(PROTO_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/google-protobuf/src")
 
 if (NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME OR NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL CMAKE_SYSTEM_PROCESSOR)
     set(Protobuf_PROTOC_EXECUTABLE "${PROJECT_BINARY_DIR}/native/contrib/google-protobuf-cmake/protoc")
@@ -89,7 +89,7 @@ include(google_cloud_cpp_storage)
 # Common
 list(APPEND GOOGLE_CLOUD_CPP_PUBLIC_INCLUDES "${GOOGLE_CLOUD_CPP_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 
-set(GRPC_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/grpc")
+set(GRPC_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/grpc")
 list(APPEND GOOGLE_CLOUD_CPP_PUBLIC_INCLUDES "${GRPC_INCLUDE_DIR}/include" "${GRPC_INCLUDE_DIR}/spm-cpp-include")
 
 # Restore the PROJECT_SOURCE_DIR.

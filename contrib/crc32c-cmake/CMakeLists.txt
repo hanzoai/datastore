@@ -1,5 +1,5 @@
-set(CRC32C_DIR ${ClickHouse_SOURCE_DIR}/contrib/crc32c)
-set(CRC32C_CMAKE_DIR ${ClickHouse_SOURCE_DIR}/contrib/crc32c-cmake)
+set(CRC32C_DIR ${Datastore_SOURCE_DIR}/contrib/crc32c)
+set(CRC32C_CMAKE_DIR ${Datastore_SOURCE_DIR}/contrib/crc32c-cmake)
 
 include_directories("${PROJECT_BINARY_DIR}/include")
 

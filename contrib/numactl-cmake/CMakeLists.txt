@@ -15,7 +15,7 @@ if (NOT ENABLE_NUMACTL)
     return()
 endif ()
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/numactl")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/numactl")
 
 set (SRCS
     "${LIBRARY_DIR}/libnuma.c"

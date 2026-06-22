@@ -31,7 +31,7 @@
 # ################################################################
 
 # Define library directory, where sources and header files are located
-SET(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/zstd/lib")
+SET(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/zstd/lib")
 INCLUDE_DIRECTORIES(BEFORE ${LIBRARY_DIR} "${LIBRARY_DIR}/common")
 
 # cd contrib/zstd/lib

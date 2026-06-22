@@ -16,7 +16,7 @@ else()
 endif()
 
 # project and source dir
-set(HDFS3_ROOT_DIR "${ClickHouse_SOURCE_DIR}/contrib/libhdfs3")
+set(HDFS3_ROOT_DIR "${Datastore_SOURCE_DIR}/contrib/libhdfs3")
 set(HDFS3_SOURCE_DIR "${HDFS3_ROOT_DIR}/src")
 set(HDFS3_COMMON_DIR "${HDFS3_SOURCE_DIR}/common")
 
@@ -159,7 +159,7 @@ add_library(_hdfs3 ${SRCS})
 
 add_dependencies(_hdfs3 protoc)
 target_compile_options(_hdfs3 PRIVATE
-    -include "${ClickHouse_SOURCE_DIR}/contrib/google-protobuf/src/google/protobuf/stubs/port.h"
+    -include "${Datastore_SOURCE_DIR}/contrib/google-protobuf/src/google/protobuf/stubs/port.h"
 )
 
 if (ENABLE_CLICKHOUSE_BENCHMARK)
@@ -173,7 +173,7 @@ else ()
     target_include_directories(_hdfs3 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif ()
 
-target_include_directories(_hdfs3 SYSTEM BEFORE INTERFACE "${ClickHouse_SOURCE_DIR}/contrib/libhdfs3/include")
+target_include_directories(_hdfs3 SYSTEM BEFORE INTERFACE "${Datastore_SOURCE_DIR}/contrib/libhdfs3/include")
 
 target_link_libraries(_hdfs3 PRIVATE ch_contrib::gsasl)
 if (WITH_KERBEROS)

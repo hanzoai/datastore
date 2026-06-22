@@ -6,8 +6,8 @@ if (NOT ENABLE_CRC32_S390X)
     return()
 endif()
 
-set(CRC32_S390X_SOURCE_DIR ${ClickHouse_SOURCE_DIR}/contrib/crc32-s390x)
-set(CRC32_S390X_INCLUDE_DIR ${ClickHouse_SOURCE_DIR}/contrib/crc32-s390x)
+set(CRC32_S390X_SOURCE_DIR ${Datastore_SOURCE_DIR}/contrib/crc32-s390x)
+set(CRC32_S390X_INCLUDE_DIR ${Datastore_SOURCE_DIR}/contrib/crc32-s390x)
 
 set(CRC32_SRCS 
     "${CRC32_S390X_SOURCE_DIR}/crc32-s390x.c"

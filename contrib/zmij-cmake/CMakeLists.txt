@@ -1,4 +1,4 @@
-set(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/zmij")
+set(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/zmij")
 
 add_library(_zmij "${LIBRARY_DIR}/zmij.cc")
 target_include_directories(_zmij SYSTEM BEFORE PUBLIC "${LIBRARY_DIR}/")

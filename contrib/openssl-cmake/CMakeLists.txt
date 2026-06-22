@@ -27,7 +27,7 @@ endif()
 
 # (*) https://github.com/openssl/openssl/blob/master/INSTALL.md
 
-set(OPENSSL_SOURCE_DIR ${ClickHouse_SOURCE_DIR}/contrib/openssl)
+set(OPENSSL_SOURCE_DIR ${Datastore_SOURCE_DIR}/contrib/openssl)
 
 set(OPENSSLDIR "/etc/ssl" CACHE PATH "Set the default openssl directory")
 set(OPENSSL_ENGINESDIR "/usr/local/lib/engines-3" CACHE PATH "Set the default openssl directory for engines")

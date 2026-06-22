@@ -1,4 +1,4 @@
-set(USEARCH_PROJECT_DIR "${ClickHouse_SOURCE_DIR}/contrib/usearch")
+set(USEARCH_PROJECT_DIR "${Datastore_SOURCE_DIR}/contrib/usearch")
 
 add_library(_usearch INTERFACE)
 target_include_directories(_usearch SYSTEM INTERFACE ${USEARCH_PROJECT_DIR}/include)

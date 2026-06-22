@@ -9,8 +9,8 @@ if (NOT ENABLE_ICU)
     return()
 endif()
 
-set(ICU_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/icu/icu4c/source")
-set(ICUDATA_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/icudata/")
+set(ICU_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/icu/icu4c/source")
+set(ICUDATA_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/icudata/")
 
 # These lists of sources were generated from build log of the original ICU build system (configure + make).
 

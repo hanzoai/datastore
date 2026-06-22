@@ -1,6 +1,6 @@
-set(DELTA_KERNEL_RS_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/delta-kernel-rs")
+set(DELTA_KERNEL_RS_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/delta-kernel-rs")
 set(DELTA_KERNEL_RS_BINARY_DIR "${CMAKE_BINARY_DIR}/contrib/delta-kernel-rs")
-set(DELTA_KERNEL_RS_CMAKE_DIR "${ClickHouse_SOURCE_DIR}/contrib/delta-kernel-rs-cmake")
+set(DELTA_KERNEL_RS_CMAKE_DIR "${Datastore_SOURCE_DIR}/contrib/delta-kernel-rs-cmake")
 
 include(ExternalProject)
 

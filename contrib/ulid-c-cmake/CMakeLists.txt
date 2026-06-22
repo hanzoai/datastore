@@ -5,7 +5,7 @@ if (NOT ENABLE_ULID)
     return()
 endif()
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/ulid-c")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/ulid-c")
 
 set (SRCS
     "${LIBRARY_DIR}/src/ulid.c"

@@ -23,17 +23,17 @@ endif()
 set (LLVM_VERSION "22.1.1bundled")
 
 # Directories
-set (LLVM_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/llvm")
-set (LLVM_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/llvm-project/llvm")
+set (LLVM_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/llvm-project/llvm")
+set (LLVM_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/llvm-project/llvm")
 set (LLVM_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set (LLVM_INCLUDE_DIRS
     "${LLVM_SOURCE_DIR}/include"
     "${LLVM_BINARY_DIR}/include"
-    "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
+    "${Datastore_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
 )
 if (ENABLE_XRAY)
-    list(APPEND LLVM_INCLUDE_DIRS "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/compiler-rt/include")
+    list(APPEND LLVM_INCLUDE_DIRS "${Datastore_SOURCE_DIR}/contrib/llvm-project/compiler-rt/include")
 endif()
 
 # Target architecture
@@ -393,7 +393,7 @@ target_include_directories(llvm-min-tblgen PRIVATE
     ${LLVM_SOURCE_DIR}/include
     ${LLVM_BINARY_DIR}/include
     ${LLVM_SOURCE_DIR}/utils/TableGen
-    "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
+    "${Datastore_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
 )
 
 target_compile_definitions(llvm-min-tblgen PRIVATE ${LLVM_COMPILE_DEFINITIONS})
@@ -541,7 +541,7 @@ target_include_directories(llvm-tblgen PRIVATE
     ${LLVM_BINARY_DIR}/include
     ${LLVM_SOURCE_DIR}/lib/Target
     ${LLVM_SOURCE_DIR}/utils/TableGen
-    "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
+    "${Datastore_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
 )
 
 target_compile_definitions(llvm-tblgen PRIVATE ${LLVM_COMPILE_DEFINITIONS})

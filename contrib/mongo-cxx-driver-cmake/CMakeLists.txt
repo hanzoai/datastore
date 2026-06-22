@@ -5,10 +5,10 @@ if(NOT USE_MONGODB)
     return()
 endif()
 
-set(BSONCXX_SOURCES_DIR "${ClickHouse_SOURCE_DIR}/contrib/mongo-cxx-driver/src/bsoncxx")
-set(BSONCXX_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/mongo-cxx-driver/src/bsoncxx")
+set(BSONCXX_SOURCES_DIR "${Datastore_SOURCE_DIR}/contrib/mongo-cxx-driver/src/bsoncxx")
+set(BSONCXX_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/mongo-cxx-driver/src/bsoncxx")
 
-include(${ClickHouse_SOURCE_DIR}/cmake/generate_export_header.cmake)
+include(${Datastore_SOURCE_DIR}/cmake/generate_export_header.cmake)
 
 set(BSONCXX_SOURCES
         ${BSONCXX_SOURCES_DIR}/lib/bsoncxx/private/itoa.cpp
@@ -96,8 +96,8 @@ datastore_generate_export_header(_bsoncxx
 )
 
 
-set(MONGOCXX_SOURCES_DIR "${ClickHouse_SOURCE_DIR}/contrib/mongo-cxx-driver/src/mongocxx")
-set(MONGOCXX_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/mongo-cxx-driver/src/mongocxx")
+set(MONGOCXX_SOURCES_DIR "${Datastore_SOURCE_DIR}/contrib/mongo-cxx-driver/src/mongocxx")
+set(MONGOCXX_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/mongo-cxx-driver/src/mongocxx")
 set(MONGOCXX_SOURCES
         ${MONGOCXX_SOURCES_DIR}/lib/mongocxx/private/bson.cpp
         ${MONGOCXX_SOURCES_DIR}/lib/mongocxx/private/conversions.cpp

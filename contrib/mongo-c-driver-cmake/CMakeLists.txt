@@ -13,11 +13,11 @@ set(libmongoc_VERSION_MINOR 3)
 set(libmongoc_VERSION_PATCH 0)
 set(libmongoc_VERSION 2.3.0)
 
-set(LIBBSON_SOURCES_ROOT "${ClickHouse_SOURCE_DIR}/contrib/mongo-c-driver/src")
+set(LIBBSON_SOURCES_ROOT "${Datastore_SOURCE_DIR}/contrib/mongo-c-driver/src")
 set(LIBBSON_SOURCE_DIR "${LIBBSON_SOURCES_ROOT}/libbson/src")
 file(GLOB_RECURSE LIBBSON_SOURCES "${LIBBSON_SOURCE_DIR}/*.c")
 
-set(LIBBSON_BINARY_ROOT "${ClickHouse_BINARY_DIR}/contrib/mongo-c-driver/src")
+set(LIBBSON_BINARY_ROOT "${Datastore_BINARY_DIR}/contrib/mongo-c-driver/src")
 set(LIBBSON_BINARY_DIR "${LIBBSON_BINARY_ROOT}/libbson/src")
 
 # Hard-code endianness based on the target architecture (set in cmake/arch.cmake) instead

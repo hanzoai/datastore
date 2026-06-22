@@ -5,7 +5,7 @@ if (NOT ENABLE_S2_GEOMETRY)
     return()
 endif()
 
-set(S2_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/s2geometry/src")
+set(S2_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/s2geometry/src")
 
 set(S2_SRCS
     "${S2_SOURCE_DIR}/s2/base/malloc_extension.cc"

@@ -55,7 +55,7 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED 1) # Do not relink all depended targets on .so
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Check that submodules are present
-if (NOT EXISTS "${ClickHouse_SOURCE_DIR}/contrib/sysroot/README.md")
+if (NOT EXISTS "${Datastore_SOURCE_DIR}/contrib/sysroot/README.md")
     message (FATAL_ERROR "Submodules are not initialized. Run\n\tgit submodule update --init")
 endif ()
 

@@ -1,4 +1,4 @@
-set(JSON_DIR ${ClickHouse_SOURCE_DIR}/contrib/nlohmann-json)
+set(JSON_DIR ${Datastore_SOURCE_DIR}/contrib/nlohmann-json)
 add_library(_nlohmann_json INTERFACE)
 set_property(
     TARGET _nlohmann_json

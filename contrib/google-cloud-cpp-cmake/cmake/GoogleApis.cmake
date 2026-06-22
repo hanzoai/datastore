@@ -167,7 +167,7 @@ set(PB_ARCHIVE "${PB_HASH}.tar.gz")
 set(PB_DIR "googleapis-${PB_HASH}")
 
 file(ARCHIVE_EXTRACT INPUT
-    "${ClickHouse_SOURCE_DIR}/contrib/google-cloud-cpp-cmake/googleapis/${PB_ARCHIVE}"
+    "${Datastore_SOURCE_DIR}/contrib/google-cloud-cpp-cmake/googleapis/${PB_ARCHIVE}"
     DESTINATION
     "${EXTERNAL_GOOGLEAPIS_PREFIX}/tmp")
 

@@ -6,7 +6,7 @@ if(NOT ENABLE_ANTLR4_GRAMMARS)
   return()
 endif()
 
-set(_ANTLR4_GRAMMARS_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/antlr4-grammars-cmake/generated")
+set(_ANTLR4_GRAMMARS_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/antlr4-grammars-cmake/generated")
 set(_ANTLR4_GRAMMARS_SOURCE_DIR "${_ANTLR4_GRAMMARS_INCLUDE_DIR}/antlr4_grammars")
 
 file(GLOB _ANTLR4_GRAMMARS_SRC "${_ANTLR4_GRAMMARS_SOURCE_DIR}/*.h" "${_ANTLR4_GRAMMARS_SOURCE_DIR}/*.cpp")

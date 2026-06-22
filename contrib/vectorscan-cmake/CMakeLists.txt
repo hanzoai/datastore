@@ -10,7 +10,7 @@ endif()
 
 set (CMAKE_CXX_STANDARD 17)
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/vectorscan")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/vectorscan")
 
 # Gobble up all c/cpp files in vectorscan/src/, omit *dump*.c/cpp files as we don't use the dump feature (see x86/config.h)
 set (SRCS

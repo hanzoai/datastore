@@ -62,7 +62,7 @@ SOURCES=$(find contrib/libstemmer_c -name "*.c" -not -path "*/examples/*" | sort
 
 cat > contrib/libstemmer-c-cmake/CMakeLists.txt << EOF
 
-set(LIBRARY_DIR "\${ClickHouse_SOURCE_DIR}/contrib/libstemmer_c")
+set(LIBRARY_DIR "\${Datastore_SOURCE_DIR}/contrib/libstemmer_c")
 
 add_library(_stemmer
 ${SOURCES}

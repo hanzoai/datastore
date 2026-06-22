@@ -5,7 +5,7 @@ if (NOT ENABLE_SIMDCOMP OR NOT OS_LINUX OR NOT ARCH_AMD64)
     return()
 endif()
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/simdcomp")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/simdcomp")
 
 set (SRCS
     "${LIBRARY_DIR}/src/avx512bitpacking.c"

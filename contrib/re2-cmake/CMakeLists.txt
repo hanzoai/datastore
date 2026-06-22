@@ -1,4 +1,4 @@
-set(SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/re2")
+set(SRC_DIR "${Datastore_SOURCE_DIR}/contrib/re2")
 
 set(RE2_SOURCES
     ${SRC_DIR}/re2/bitmap256.cc

@@ -15,8 +15,8 @@ if (USE_MUSL OR ARCH_PPC64LE OR OS_DARWIN OR ARCH_S390X OR OS_FREEBSD OR ARCH_LO
 endif()
 
 
-set (SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/wasmedge")
-set (CURRENT_DIR_BINARY "${ClickHouse_BINARY_DIR}/contrib/wasmedge")
+set (SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/wasmedge")
+set (CURRENT_DIR_BINARY "${Datastore_BINARY_DIR}/contrib/wasmedge")
 
 SET(WASMEDGE_USE_LLVM 0)
 
@@ -82,8 +82,8 @@ target_include_directories(_wasmedge PRIVATE ${SOURCE_DIR}/thirdparty)
 
 target_compile_definitions(_wasmedge PRIVATE SPDLOG_FMT_EXTERNAL)
 target_compile_definitions(_wasmedge PRIVATE FMT_HEADER_ONLY)
-target_include_directories(_wasmedge PRIVATE "${ClickHouse_SOURCE_DIR}/contrib/spdlog/include")
-target_include_directories(_wasmedge PRIVATE "${ClickHouse_SOURCE_DIR}/contrib/fmtlib/include")
+target_include_directories(_wasmedge PRIVATE "${Datastore_SOURCE_DIR}/contrib/spdlog/include")
+target_include_directories(_wasmedge PRIVATE "${Datastore_SOURCE_DIR}/contrib/fmtlib/include")
 
 target_compile_options (_wasmedge PRIVATE -Wno-invalid-specialization)
 

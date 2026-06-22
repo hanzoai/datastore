@@ -8,8 +8,8 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(_gRPC_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/grpc")
-set(_gRPC_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/grpc")
+set(_gRPC_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/grpc")
+set(_gRPC_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/grpc")
 
 if(TARGET OpenSSL::SSL)
   set(gRPC_USE_UNSECURE_LIBRARIES FALSE)
@@ -22,7 +22,7 @@ endif()
 include(grpc.cmake)
 include(protobuf_generate_grpc.cmake)
 
-set(gRPC_INCLUDE_DIRS "${ClickHouse_SOURCE_DIR}/contrib/grpc/include")
+set(gRPC_INCLUDE_DIRS "${Datastore_SOURCE_DIR}/contrib/grpc/include")
 if(gRPC_USE_UNSECURE_LIBRARIES)
   set(gRPC_LIBRARIES grpc_unsecure grpc++_unsecure)
 else()

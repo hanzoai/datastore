@@ -5,7 +5,7 @@ if (NOT ENABLE_BCRYPT)
     return()
 endif()
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/libbcrypt")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/libbcrypt")
 
 set(SRCS
     "${LIBRARY_DIR}/bcrypt.c"

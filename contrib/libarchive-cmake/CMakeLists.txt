@@ -1,4 +1,4 @@
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/libarchive")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/libarchive")
 
 set(SRCS
     "${LIBRARY_DIR}/libarchive/archive_acl.c"
