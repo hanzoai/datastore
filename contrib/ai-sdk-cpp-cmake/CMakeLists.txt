@@ -5,7 +5,7 @@ if (NOT ENABLE_CLIENT_AI)
     return()
 endif()
 
-set(AI_SDK_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/ai-sdk-cpp")
+set(AI_SDK_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/ai-sdk-cpp")
 set(AI_SDK_THIRD_PARTY_DIR "${AI_SDK_SOURCE_DIR}/third_party")
 
 # Core library sources

@@ -4,7 +4,7 @@ if (NOT ENABLE_MINIZIP)
     return()
 endif()
 
-set(_MINIZIP_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/minizip-ng")
+set(_MINIZIP_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/minizip-ng")
 
 # Initial source files
 set(MINIZIP_SRC

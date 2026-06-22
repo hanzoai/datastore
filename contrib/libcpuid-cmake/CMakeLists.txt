@@ -12,7 +12,7 @@ endif()
 
 add_definitions (-D_GNU_SOURCE)
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/libcpuid")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/libcpuid")
 
 set (SRCS
     "${LIBRARY_DIR}/libcpuid/asm-bits.c"

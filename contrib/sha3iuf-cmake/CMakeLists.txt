@@ -1,5 +1,5 @@
-set(SHA3IUF_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/SHA3IUF")
-set(SHA3IUF_SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/SHA3IUF")
+set(SHA3IUF_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/SHA3IUF")
+set(SHA3IUF_SRC_DIR "${Datastore_SOURCE_DIR}/contrib/SHA3IUF")
 set(SHA3IUF_SRC ${SHA3IUF_SRC_DIR}/sha3.c)
 
 add_library(_sha3iuf ${SHA3IUF_SRC})

@@ -1,4 +1,4 @@
-set(COMPILER_RT_FUZZER_SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/compiler-rt/lib/fuzzer")
+set(COMPILER_RT_FUZZER_SRC_DIR "${Datastore_SOURCE_DIR}/contrib/llvm-project/compiler-rt/lib/fuzzer")
 
 set(FUZZER_SRCS
     "${COMPILER_RT_FUZZER_SRC_DIR}/FuzzerCrossOver.cpp"

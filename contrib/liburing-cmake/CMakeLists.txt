@@ -11,8 +11,8 @@ if (NOT ENABLE_LIBURING)
     return ()
 endif ()
 
-set (LIBURING_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/liburing/src/include")
-set (LIBURING_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/liburing/src")
+set (LIBURING_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/liburing/src/include")
+set (LIBURING_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/liburing/src")
 
 set (SRCS
     "${LIBURING_SOURCE_DIR}/queue.c"
@@ -25,7 +25,7 @@ set (SRCS
 add_compile_definitions (_GNU_SOURCE)
 add_compile_definitions (LIBURING_INTERNAL)
 
-set (LIBURING_COMPAT_INCLUDE_DIR "${ClickHouse_BINARY_DIR}/contrib/liburing/src/include-compat")
+set (LIBURING_COMPAT_INCLUDE_DIR "${Datastore_BINARY_DIR}/contrib/liburing/src/include-compat")
 set (LIBURING_COMPAT_HEADER "${LIBURING_COMPAT_INCLUDE_DIR}/liburing/compat.h")
 
 set (LIBURING_CONFIG_HAS_KERNEL_RWF_T    FALSE)
@@ -37,7 +37,7 @@ set (LIBURING_CONFIG_HAS_DISCARD_CMD     FALSE)
 
 configure_file (compat.h.in ${LIBURING_COMPAT_HEADER})
 
-set (LIBURING_GENERATED_INCLUDE_DIR "${ClickHouse_BINARY_DIR}/contrib/liburing/src/include")
+set (LIBURING_GENERATED_INCLUDE_DIR "${Datastore_BINARY_DIR}/contrib/liburing/src/include")
 set (LIBURING_VERSION_HEADER "${LIBURING_GENERATED_INCLUDE_DIR}/liburing/io_uring_version.h")
 
 file (READ "${LIBURING_SOURCE_DIR}/../liburing.spec" LIBURING_SPEC)

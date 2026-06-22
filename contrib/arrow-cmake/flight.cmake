@@ -11,15 +11,15 @@ if(NOT ENABLE_GRPC)
     return()
 endif()
 
-set(GRPC_INCLUDE_DIR ${ClickHouse_SOURCE_DIR}/contrib/grpc/include)
+set(GRPC_INCLUDE_DIR ${Datastore_SOURCE_DIR}/contrib/grpc/include)
 
-set(ARROW_FLIGHT_SRC_DIR ${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src/arrow/flight)
-set(ARROW_FLIGHT_SQL_SRC_DIR ${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src/arrow/flight/sql)
-set(ARROW_FLIGHT_PROTO_DIR ${ClickHouse_SOURCE_DIR}/contrib/arrow/format)
+set(ARROW_FLIGHT_SRC_DIR ${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src/arrow/flight)
+set(ARROW_FLIGHT_SQL_SRC_DIR ${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src/arrow/flight/sql)
+set(ARROW_FLIGHT_PROTO_DIR ${Datastore_SOURCE_DIR}/contrib/arrow/format)
 set(ARROW_FLIGHT_GENERATED_SRC_DIR ${ARROW_GENERATED_SRC_DIR}/arrow/flight)
 set(ARROW_FLIGHT_SQL_GENERATED_SRC_DIR ${ARROW_GENERATED_SRC_DIR}/arrow/flight/sql)
 
-set(PROTOBUF_IMPORT_DIRS ${ARROW_FLIGHT_PROTO_DIR} ${ClickHouse_SOURCE_DIR}/contrib/google-protobuf/src)
+set(PROTOBUF_IMPORT_DIRS ${ARROW_FLIGHT_PROTO_DIR} ${Datastore_SOURCE_DIR}/contrib/google-protobuf/src)
 
 PROTOBUF_GENERATE_GRPC_CPP(
     flight_sources

@@ -4,7 +4,7 @@ if (NOT USE_LIBPROTOBUF_MUTATOR)
     return()
 endif()
 
-set(LIBRARY_DIR ${ClickHouse_SOURCE_DIR}/contrib/libprotobuf-mutator)
+set(LIBRARY_DIR ${Datastore_SOURCE_DIR}/contrib/libprotobuf-mutator)
 
 add_library(_protobuf-mutator
     ${LIBRARY_DIR}/src/libfuzzer/libfuzzer_macro.cc

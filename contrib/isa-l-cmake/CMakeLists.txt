@@ -10,7 +10,7 @@ if (NOT ENABLE_ISAL_LIBRARY)
     return()
 endif()
 
-set(ISAL_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/isa-l")
+set(ISAL_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/isa-l")
 
 # ISAL specifically needs NASM (the YASM assembler is partially compatible but produces
 # weird build errors). Use an explicit `find_program` to locate NASM and feed the result

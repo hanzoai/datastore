@@ -10,7 +10,7 @@ if (NOT ENABLE_NATS)
     return()
 endif()
 
-set(NATS_IO_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/nats-io/src")
+set(NATS_IO_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/nats-io/src")
 
 if(UNIX)
     set(NATS_PLATFORM_INCLUDE "unix")

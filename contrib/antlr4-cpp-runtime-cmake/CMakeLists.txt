@@ -6,7 +6,7 @@ if(NOT ENABLE_ANTLR4_CPP_RUNTIME)
   return()
 endif()
 
-set(_ANTLR4_CPP_RUNTIME_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/antlr4-cpp-runtime/runtime/Cpp")
+set(_ANTLR4_CPP_RUNTIME_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/antlr4-cpp-runtime/runtime/Cpp")
 
 file(GLOB _ANTLR4_CPP_RUNTIME_SRC
   "${_ANTLR4_CPP_RUNTIME_SOURCE_DIR}/runtime/src/*.cpp"

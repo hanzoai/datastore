@@ -18,7 +18,7 @@ if(NOT TARGET ch_contrib::librseq)
     return()
 endif()
 
-set(SILK_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/silk")
+set(SILK_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/silk")
 
 # silk-util
 file(GLOB SILK_UTIL_SOURCES "${SILK_SOURCE_DIR}/src/util/*.cpp")

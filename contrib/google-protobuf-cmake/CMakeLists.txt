@@ -8,7 +8,7 @@ endif()
 # To avoid errors "'X' does not refer to a value" while using `offsetof` function.
 set(CMAKE_CXX_STANDARD 17)
 
-set(Protobuf_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/google-protobuf/src")
+set(Protobuf_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/google-protobuf/src")
 if(OS_FREEBSD AND SANITIZE STREQUAL "address")
   # ../contrib/protobuf/src/google/protobuf/arena_impl.h:45:10: fatal error: 'sanitizer/asan_interface.h' file not found
   # #include <sanitizer/asan_interface.h>
@@ -20,8 +20,8 @@ if(OS_FREEBSD AND SANITIZE STREQUAL "address")
   endif()
 endif()
 
-set(protobuf_source_dir "${ClickHouse_SOURCE_DIR}/contrib/google-protobuf")
-set(protobuf_binary_dir "${ClickHouse_BINARY_DIR}/contrib/google-protobuf")
+set(protobuf_source_dir "${Datastore_SOURCE_DIR}/contrib/google-protobuf")
+set(protobuf_binary_dir "${Datastore_BINARY_DIR}/contrib/google-protobuf")
 
 add_definitions(-DGOOGLE_PROTOBUF_CMAKE_BUILD)
 
@@ -440,7 +440,7 @@ if (NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME OR NOT CMAKE_HOST_SYST
     set_target_properties (protoc PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/native/contrib/google-protobuf-cmake/protoc")
 endif()
 
-include("${ClickHouse_SOURCE_DIR}/contrib/google-protobuf-cmake/protobuf_generate.cmake")
+include("${Datastore_SOURCE_DIR}/contrib/google-protobuf-cmake/protobuf_generate.cmake")
 
 # These files needs to be installed to make it possible that users can use well-known protobuf types
 set(google_proto_files

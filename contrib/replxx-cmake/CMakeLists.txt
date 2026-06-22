@@ -1,4 +1,4 @@
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/replxx")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/replxx")
 
 set(SRCS
     "${LIBRARY_DIR}/src/conversion.cxx"

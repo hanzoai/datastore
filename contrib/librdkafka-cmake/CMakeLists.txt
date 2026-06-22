@@ -5,7 +5,7 @@ if (NOT ENABLE_KAFKA)
     return()
 endif()
 
-set(RDKAFKA_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/librdkafka/src")
+set(RDKAFKA_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/librdkafka/src")
 
 set(SRCS
   "${RDKAFKA_SOURCE_DIR}/cJSON.c"    # see below

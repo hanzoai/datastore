@@ -7,8 +7,8 @@ if (NOT ENABLE_LIBCOTP OR NOT ENABLE_SSL OR OS_FREEBSD)
   return()
 endif()
 
-set (LIBCOTP_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/libcotp")
-set (LIBCOTP_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/libcotp")
+set (LIBCOTP_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/libcotp")
+set (LIBCOTP_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/libcotp")
 
 set(SRCS
     "${LIBCOTP_SOURCE_DIR}/src/otp.c"

@@ -5,8 +5,8 @@ if(NOT ENABLE_H3)
     return()
 endif()
 
-set(H3_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/h3/src/h3lib")
-set(H3_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/h3/src/h3lib")
+set(H3_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/h3/src/h3lib")
+set(H3_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/h3/src/h3lib")
 
 set(SRCS
     "${H3_SOURCE_DIR}/lib/algos.c"
@@ -30,7 +30,7 @@ set(SRCS
     "${H3_SOURCE_DIR}/lib/baseCells.c"
 )
 
-file(READ "${ClickHouse_SOURCE_DIR}/contrib/h3/VERSION" H3_VERSION LIMIT_COUNT 1)
+file(READ "${Datastore_SOURCE_DIR}/contrib/h3/VERSION" H3_VERSION LIMIT_COUNT 1)
 # Clean any newlines
 string(REPLACE "\n" "" H3_VERSION "${H3_VERSION}")
 string(REPLACE "." ";" H3_VERSION_LIST "${H3_VERSION}")

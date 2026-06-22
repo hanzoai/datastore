@@ -1,8 +1,8 @@
 # Build description for libpq which is part of the PostgreSQL sources
 
-set(POSTGRES_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/postgres")
+set(POSTGRES_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/postgres")
 set(LIBPQ_SOURCE_DIR "${POSTGRES_SOURCE_DIR}/src/interfaces/libpq")
-set(LIBPQ_CMAKE_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/postgres-cmake")
+set(LIBPQ_CMAKE_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/postgres-cmake")
 
 set(SRCS
     "${LIBPQ_SOURCE_DIR}/fe-auth.c"

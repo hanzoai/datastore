@@ -16,7 +16,7 @@ if (NOT TARGET ch_contrib::uv)
     return()
 endif()
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/AMQP-CPP")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/AMQP-CPP")
 
 set (SRCS
     "${LIBRARY_DIR}/src/array.cpp"

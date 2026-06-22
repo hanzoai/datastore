@@ -5,7 +5,7 @@ if (NOT WITH_LIBSTEMMER)
     return()
 endif()
 
-set(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/libstemmer_c")
+set(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/libstemmer_c")
 
 add_library(_stemmer
     ${LIBRARY_DIR}/src_c/stem_UTF_8_arabic.c

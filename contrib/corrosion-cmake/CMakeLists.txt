@@ -29,7 +29,7 @@ macro(set_rust_target)
     endif ()
 
     # FindRust.cmake
-    set(RUST_MODULE_PATH "${ClickHouse_SOURCE_DIR}/contrib/corrosion/cmake")
+    set(RUST_MODULE_PATH "${Datastore_SOURCE_DIR}/contrib/corrosion/cmake")
     if (NOT "${RUST_MODULE_PATH}" IN_LIST "${CMAKE_MODULE_PATH}")
         list (APPEND CMAKE_MODULE_PATH "${RUST_MODULE_PATH}")
     endif()
@@ -72,9 +72,9 @@ endif()
 
 set_rust_target()
 # Define function corrosion_import_crate()
-include ("${ClickHouse_SOURCE_DIR}/contrib/corrosion/cmake/Corrosion.cmake")
+include ("${Datastore_SOURCE_DIR}/contrib/corrosion/cmake/Corrosion.cmake")
 
-set(CXX_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/libcxx/include")
+set(CXX_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/llvm-project/libcxx/include")
 
 if (CMAKE_BUILD_TYPE_UC STREQUAL "DEBUG")
     set(RUST_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")

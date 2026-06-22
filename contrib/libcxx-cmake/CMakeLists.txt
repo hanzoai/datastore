@@ -1,7 +1,7 @@
-set(LIBCXX_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/libcxx")
-set(LIBCXX_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/llvm-project/libcxx")
+set(LIBCXX_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/llvm-project/libcxx")
+set(LIBCXX_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/llvm-project/libcxx")
 set(LIBCXX_GENERATED_INCLUDE_DIR "${LIBCXX_BINARY_DIR}/include/c++/v1")
-set(LIBC_DIR "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/libc")
+set(LIBC_DIR "${Datastore_SOURCE_DIR}/contrib/llvm-project/libc")
 
 set(SRCS
 "${LIBCXX_SOURCE_DIR}/src/algorithm.cpp"

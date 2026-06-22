@@ -1,4 +1,4 @@
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/libpqxx")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/libpqxx")
 
 set (SRCS
     "${LIBRARY_DIR}/src/array.cxx"

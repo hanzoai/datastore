@@ -1,4 +1,4 @@
-set(LIBLLVMLIBC_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/libc")
+set(LIBLLVMLIBC_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/llvm-project/libc")
 
 # Only build on supported architectures
 if (NOT (ARCH_AMD64 OR ARCH_AARCH64))
@@ -125,8 +125,8 @@ if (ARCH_AMD64)
             "${CMAKE_CURRENT_SOURCE_DIR}/llvmlibc_dispatch.cpp"
         )
         target_include_directories(llvmlibc_dispatch PRIVATE
-            ${ClickHouse_SOURCE_DIR}/src
-            ${ClickHouse_SOURCE_DIR}/base
+            ${Datastore_SOURCE_DIR}/src
+            ${Datastore_SOURCE_DIR}/base
         )
 
         add_library(libllvmlibc INTERFACE)

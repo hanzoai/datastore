@@ -15,7 +15,7 @@ if(NOT AWK_PROGRAM)
     message(FATAL_ERROR "You need the awk program to build ClickHouse with krb5 enabled.")
 endif()
 
-set(KRB5_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/krb5/src")
+set(KRB5_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/krb5/src")
 set(KRB5_ET_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/include_private")
 
 set(ALL_SRCS

@@ -1,4 +1,4 @@
-set(CLICKSTACK_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/clickstack/out")
+set(CLICKSTACK_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/clickstack/out")
 
 # Set clickstack directory for gzipped files in build directory
 set(CLICKSTACK_DIR "${CMAKE_CURRENT_BINARY_DIR}/clickstack_compressed")

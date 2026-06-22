@@ -1,4 +1,4 @@
-set (SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/xz")
+set (SRC_DIR "${Datastore_SOURCE_DIR}/contrib/xz")
 
 # Author: Lasse Collin
 #

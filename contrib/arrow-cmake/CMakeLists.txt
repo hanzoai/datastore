@@ -58,7 +58,7 @@ endif()
 
 
 # === orc
-set(ORC_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/orc/c++")
+set(ORC_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/orc/c++")
 set(ORC_INCLUDE_DIR "${ORC_SOURCE_DIR}/include")
 set(ORC_SOURCE_SRC_DIR "${ORC_SOURCE_DIR}/src")
 # set(ORC_SOURCE_WRAP_DIR "${ORC_SOURCE_DIR}/wrap")
@@ -67,7 +67,7 @@ set(ORC_BUILD_SRC_DIR "${CMAKE_CURRENT_BINARY_DIR}/../orc/c++/src")
 set(ORC_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/../orc/c++/include")
 
 set(ORC_ADDITION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-set(ARROW_SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src")
+set(ARROW_SRC_DIR "${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src")
 
 if (NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME OR NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL CMAKE_SYSTEM_PROCESSOR)
     set(PROTOBUF_EXECUTABLE "${PROJECT_BINARY_DIR}/native/contrib/google-protobuf-cmake/protoc")
@@ -85,8 +85,8 @@ add_custom_command(OUTPUT orc_proto.pb.h orc_proto.pb.cc
         "${PROTO_DIR}/orc_proto.proto")
 
 # === flatbuffers
-set(FLATBUFFERS_SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/flatbuffers")
-set(FLATBUFFERS_BINARY_DIR "${ClickHouse_BINARY_DIR}/contrib/flatbuffers")
+set(FLATBUFFERS_SRC_DIR "${Datastore_SOURCE_DIR}/contrib/flatbuffers")
+set(FLATBUFFERS_BINARY_DIR "${Datastore_BINARY_DIR}/contrib/flatbuffers")
 set(FLATBUFFERS_INCLUDE_DIR "${FLATBUFFERS_SRC_DIR}/include")
 
 set(FLATBUFFERS_SRCS
@@ -102,7 +102,7 @@ target_compile_definitions(_flatbuffers PRIVATE -DFLATBUFFERS_LOCALE_INDEPENDENT
 
 # ===  hdfs
 # NOTE: cannot use ch_contrib::hdfs since it's INCLUDE_DIRECTORIES does not includes trailing "hdfs/"
-set(HDFS_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/libhdfs3/include/hdfs/")
+set(HDFS_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/libhdfs3/include/hdfs/")
 
 # arrow-cmake cmake file calling orc cmake subroutine which detects certain compiler features.
 # Apple Clang compiler failed to compile this code without specifying c++11 standard.
@@ -212,9 +212,9 @@ target_link_libraries(_orc PRIVATE
     ch_contrib::zstd)
 target_include_directories(_orc SYSTEM BEFORE PUBLIC
     ${ORC_INCLUDE_DIR}
-    "${ClickHouse_SOURCE_DIR}/contrib/arrow-cmake/cpp/src/orc/c++/include")
+    "${Datastore_SOURCE_DIR}/contrib/arrow-cmake/cpp/src/orc/c++/include")
 target_compile_options(_orc PRIVATE
-    -include "${ClickHouse_SOURCE_DIR}/contrib/google-protobuf/src/google/protobuf/stubs/port.h"
+    -include "${Datastore_SOURCE_DIR}/contrib/google-protobuf/src/google/protobuf/stubs/port.h"
 )
 target_include_directories(_orc SYSTEM BEFORE PUBLIC ${ORC_BUILD_INCLUDE_DIR})
 target_include_directories(_orc SYSTEM PRIVATE
@@ -226,7 +226,7 @@ target_include_directories(_orc SYSTEM PRIVATE
 
 # === arrow
 
-set(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src/arrow")
+set(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src/arrow")
 
 set(ARROW_GENERATED_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/cpp/src)
 configure_file("${LIBRARY_DIR}/util/config.h.cmake" "${ARROW_GENERATED_SRC_DIR}/arrow/util/config.h" ESCAPE_QUOTES)
@@ -506,7 +506,7 @@ target_link_libraries(_arrow PUBLIC _orc)
 add_dependencies(_arrow protoc)
 
 target_include_directories(_arrow SYSTEM BEFORE PUBLIC ${ARROW_SRC_DIR})
-target_include_directories(_arrow SYSTEM BEFORE PUBLIC "${ClickHouse_SOURCE_DIR}/contrib/arrow-cmake/cpp/src")
+target_include_directories(_arrow SYSTEM BEFORE PUBLIC "${Datastore_SOURCE_DIR}/contrib/arrow-cmake/cpp/src")
 
 target_include_directories(_arrow SYSTEM PRIVATE ${HDFS_INCLUDE_DIR})
 
@@ -516,8 +516,8 @@ include(flight.cmake)
 
 # === parquet
 
-set(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src/parquet")
-set(GEN_LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src/generated")
+set(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src/parquet")
+set(GEN_LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src/generated")
 # arrow/cpp/src/parquet/CMakeLists.txt
 set(PARQUET_SRCS
         "${LIBRARY_DIR}/arrow/fuzz_internal.cc"
@@ -583,7 +583,7 @@ add_library(_parquet ${PARQUET_SRCS})
 add_library(ch_contrib::parquet ALIAS _parquet)
 target_include_directories(_parquet SYSTEM BEFORE
     PUBLIC
-        "${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/src"
+        "${Datastore_SOURCE_DIR}/contrib/arrow/cpp/src"
         "${CMAKE_CURRENT_SOURCE_DIR}/cpp/src")
 target_link_libraries(_parquet
     PUBLIC
@@ -609,7 +609,7 @@ add_definitions(-DARROW_ENABLE_THREADING)
 
 # === tools
 
-set(TOOLS_DIR "${ClickHouse_SOURCE_DIR}/contrib/arrow/cpp/tools/parquet")
+set(TOOLS_DIR "${Datastore_SOURCE_DIR}/contrib/arrow/cpp/tools/parquet")
 set(PARQUET_TOOLS parquet_dump_schema parquet_reader parquet_scan)
 foreach (TOOL ${PARQUET_TOOLS})
     add_executable(${TOOL} "${TOOLS_DIR}/${TOOL}.cc")

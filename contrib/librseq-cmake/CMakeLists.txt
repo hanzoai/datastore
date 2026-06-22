@@ -3,7 +3,7 @@ if (NOT OS_LINUX)
     return ()
 endif ()
 
-set (LIBRSEQ_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/librseq")
+set (LIBRSEQ_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/librseq")
 
 add_library (_librseq STATIC
     "${LIBRSEQ_SOURCE_DIR}/src/rseq.c"

@@ -4,7 +4,7 @@ if ((NOT ENABLE_SQIDS))
     return()
 endif()
 
-set (SQIDS_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/sqids-cpp")
+set (SQIDS_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/sqids-cpp")
 set (SQIDS_INCLUDE_DIR "${SQIDS_SOURCE_DIR}/include")
 
 add_library(_sqids INTERFACE)
