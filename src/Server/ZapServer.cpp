@@ -91,8 +91,9 @@ void ZapServer::run()
         /// query interface (executeQuery dispatch, result streaming) is served as the bootstrap next.
         zap::TwoPartyServer rpc_server(zap::Capability::Client(nullptr));
 
+        const std::string host = address.host().toString();
         auto parsed = io.provider->getNetwork()
-                          .parseAddress(address.host().toString(), address.port())
+                          .parseAddress(kj::StringPtr(host.c_str()), address.port())
                           .wait(io.waitScope);
         auto listener = parsed->listen();
 
