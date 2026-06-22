@@ -51,6 +51,7 @@ const VersionToSettingsChangesMap & getSettingsChangesHistory()
             {"use_partition_pruning", true, true, "New setting controlling whether MergeTree uses partition key for pruning. 'use_partition_key' is an alias for this setting."},
             {"use_partition_key", true, true, "Alias for setting 'use_partition_pruning'."},
             {"mysql_datatypes_support_level", "", "decimal,datetime64,date2Date32", "Enable modern MySQL type mappings by default."},
+        });
         /// It's used to implement `compatibility` setting (see https://github.com/Datastore/Datastore/issues/35972)
         /// Note: please check if the key already exists to prevent duplicate entries.
         addSettingsChanges(settings_changes_history, "26.5",
