@@ -4,8 +4,8 @@
 #if USE_CAPNP
 
 #include <Formats/FormatSchemaInfo.h>
-#include <capnp/schema-parser.h>
-#include <capnp/dynamic.h>
+#include <zap/schema-parser.h>
+#include <zap/dynamic.h>
 
 namespace DB
 {
@@ -20,21 +20,21 @@ struct DestructorCatcher
     ~DestructorCatcher() noexcept try { } catch (...) { return; } // Ok: intentionally catches destructor exceptions
 };
 
-class CapnProtoSchemaParser : public DestructorCatcher<capnp::SchemaParser>
+class CapnProtoSchemaParser : public DestructorCatcher<zap::SchemaParser>
 {
 public:
     CapnProtoSchemaParser() = default;
 
-    capnp::StructSchema getMessageSchema(const FormatSchemaInfo & schema_info);
+    zap::StructSchema getMessageSchema(const FormatSchemaInfo & schema_info);
 };
 
-bool checkIfStructContainsUnnamedUnion(const capnp::StructSchema & struct_schema);
-bool checkIfStructIsNamedUnion(const capnp::StructSchema & struct_schema);
+bool checkIfStructContainsUnnamedUnion(const zap::StructSchema & struct_schema);
+bool checkIfStructIsNamedUnion(const zap::StructSchema & struct_schema);
 
 /// Get full name of type for better exception messages.
-String getCapnProtoFullTypeName(const capnp::Type & type);
+String getCapnProtoFullTypeName(const zap::Type & type);
 
-NamesAndTypesList capnProtoSchemaToCHSchema(const capnp::StructSchema & schema, bool skip_unsupported_fields);
+NamesAndTypesList capnProtoSchemaToCHSchema(const zap::StructSchema & schema, bool skip_unsupported_fields);
 
 }
 

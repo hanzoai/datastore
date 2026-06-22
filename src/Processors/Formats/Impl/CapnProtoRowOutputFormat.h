@@ -7,8 +7,8 @@
 #    include <Formats/CapnProtoSerializer.h>
 #    include <Formats/FormatSchemaInfo.h>
 #    include <Processors/Formats/IRowOutputFormat.h>
-#    include <capnp/dynamic.h>
-#    include <capnp/schema.h>
+#    include <zap/dynamic.h>
+#    include <zap/schema.h>
 #    include <kj/io.h>
 
 namespace DB
@@ -43,7 +43,7 @@ private:
 
     Names column_names;
     DataTypes column_types;
-    capnp::StructSchema schema;
+    zap::StructSchema schema;
     std::unique_ptr<CapnProtoOutputStream> output_stream;
     CapnProtoSchemaParser schema_parser;
     std::unique_ptr<CapnProtoSerializer> serializer;

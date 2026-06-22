@@ -5,9 +5,9 @@
 #include <Interpreters/Context.h>
 #include <Formats/FormatFactory.h>
 #include <Formats/FormatSchemaInfo.h>
-#include <capnp/serialize.h>
-#include <capnp/dynamic.h>
-#include <capnp/common.h>
+#include <zap/serialize.h>
+#include <zap/dynamic.h>
+#include <zap/common.h>
 
 namespace DB
 {
@@ -28,7 +28,7 @@ CapnProtoRowInputFormat::CapnProtoRowInputFormat(ReadBuffer & in_, SharedHeader 
     serializer = std::make_unique<CapnProtoSerializer>(header.getDataTypes(), header.getNames(), schema, format_settings.capn_proto);
 }
 
-std::pair<kj::Array<capnp::word>, size_t> CapnProtoRowInputFormat::readMessagePrefix()
+std::pair<kj::Array<zap::word>, size_t> CapnProtoRowInputFormat::readMessagePrefix()
 {
     uint32_t segment_count;
     in->readStrict(reinterpret_cast<char*>(&segment_count), sizeof(uint32_t));
@@ -41,7 +41,7 @@ std::pair<kj::Array<capnp::word>, size_t> CapnProtoRowInputFormat::readMessagePr
     // one for segmentCount and one because segmentCount starts from 0
     const auto prefix_size = (2 + segment_count) * sizeof(uint32_t);
     const auto words_prefix_size = (segment_count + 1) / 2 + 1;
-    auto prefix = kj::heapArray<capnp::word>(words_prefix_size);
+    auto prefix = kj::heapArray<zap::word>(words_prefix_size);
     auto prefix_chars = prefix.asChars();
     ::memcpy(prefix_chars.begin(), &segment_count, sizeof(uint32_t));
 
@@ -52,14 +52,14 @@ std::pair<kj::Array<capnp::word>, size_t> CapnProtoRowInputFormat::readMessagePr
     return {std::move(prefix), prefix_size};
 }
 
-kj::Array<capnp::word> CapnProtoRowInputFormat::readMessage()
+kj::Array<zap::word> CapnProtoRowInputFormat::readMessage()
 {
     auto [prefix, prefix_size] = readMessagePrefix();
     auto prefix_chars = prefix.asChars();
 
     // calculate size of message
-    const auto expected_words = capnp::expectedSizeInWordsFromPrefix(prefix);
-    const auto expected_bytes = expected_words * sizeof(capnp::word);
+    const auto expected_words = zap::expectedSizeInWordsFromPrefix(prefix);
+    const auto expected_bytes = expected_words * sizeof(zap::word);
 
     if (expected_bytes > max_message_size)
         throw Exception(ErrorCodes::INCORRECT_DATA,
@@ -67,7 +67,7 @@ kj::Array<capnp::word> CapnProtoRowInputFormat::readMessage()
             expected_bytes, max_message_size);
 
     const auto data_size = expected_bytes - prefix_size;
-    auto msg = kj::heapArray<capnp::word>(expected_words);
+    auto msg = kj::heapArray<zap::word>(expected_words);
     auto msg_chars = msg.asChars();
 
     // read full message
@@ -82,7 +82,7 @@ void CapnProtoRowInputFormat::skipMessage()
     auto [prefix, prefix_size] = readMessagePrefix();
 
     // calculate size of message
-    const auto expected_bytes = capnp::expectedSizeInWordsFromPrefix(prefix) * sizeof(capnp::word);
+    const auto expected_bytes = zap::expectedSizeInWordsFromPrefix(prefix) * sizeof(zap::word);
     const auto data_size = expected_bytes - prefix_size;
 
     // skip full message
@@ -97,8 +97,8 @@ bool CapnProtoRowInputFormat::readRow(MutableColumns & columns, RowReadExtension
     try
     {
         auto array = readMessage();
-        capnp::FlatArrayMessageReader msg(array);
-        auto root_reader = msg.getRoot<capnp::DynamicStruct>(schema);
+        zap::FlatArrayMessageReader msg(array);
+        auto root_reader = msg.getRoot<zap::DynamicStruct>(schema);
         serializer->readRow(columns, root_reader);
     }
     catch (const kj::Exception & e)

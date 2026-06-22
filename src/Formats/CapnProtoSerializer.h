@@ -5,7 +5,7 @@
 #include <Columns/IColumn_fwd.h>
 #include <Formats/FormatSettings.h>
 
-#include <capnp/dynamic.h>
+#include <zap/dynamic.h>
 
 namespace DB
 {
@@ -17,11 +17,11 @@ using DataTypes = std::vector<DataTypePtr>;
 class CapnProtoSerializer
 {
 public:
-    CapnProtoSerializer(const DataTypes & data_types, const Names & names, const capnp::StructSchema & schema, const FormatSettings::CapnProto & settings);
+    CapnProtoSerializer(const DataTypes & data_types, const Names & names, const zap::StructSchema & schema, const FormatSettings::CapnProto & settings);
 
-    void writeRow(const Columns & columns, capnp::DynamicStruct::Builder builder, size_t row_num);
+    void writeRow(const Columns & columns, zap::DynamicStruct::Builder builder, size_t row_num);
 
-    void readRow(MutableColumns & columns, capnp::DynamicStruct::Reader & reader);
+    void readRow(MutableColumns & columns, zap::DynamicStruct::Reader & reader);
 
     ~CapnProtoSerializer();
 
