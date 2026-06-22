@@ -433,9 +433,9 @@ void Connection::sendHello()
     /** Disallow control characters in user controlled parameters
       *  to mitigate the possibility of SSRF.
       * The user may do server side requests with 'remote' table function.
-      * Malicious user with full r/w access to ClickHouse
+      * Malicious user with full r/w access to Datastore
       *  may use 'remote' table function to forge requests
-      *  to another services in the network other than ClickHouse (examples: SMTP).
+      *  to another services in the network other than Datastore (examples: SMTP).
       * Limiting number of possible characters in user-controlled part of handshake
       *  will mitigate this possibility but doesn't solve it completely.
       */
@@ -471,7 +471,7 @@ void Connection::sendHello()
         sendClusterNameAndSalt();
 #else
         throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-                        "Inter-server secret support is disabled, because ClickHouse was built without SSL library");
+                        "Inter-server secret support is disabled, because Datastore was built without SSL library");
 #endif
     }
 #if USE_SSH
@@ -994,7 +994,7 @@ void Connection::sendQuery(
             writeStringBinary(hash, *out);
 #else
             throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-                            "Inter-server secret support is disabled, because ClickHouse was built without SSL library");
+                            "Inter-server secret support is disabled, because Datastore was built without SSL library");
 #endif
         }
         else

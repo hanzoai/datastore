@@ -257,7 +257,7 @@ std::shared_ptr<DataLake::ICatalog> DatabaseDataLake::getCatalog() const
                 Context::getGlobalContextInstance());
             break;
 #else
-            throw Exception(ErrorCodes::BAD_ARGUMENTS, "Cannot use 'hive' database engine: ClickHouse was compiled without USE_HIVE built option");
+            throw Exception(ErrorCodes::BAD_ARGUMENTS, "Cannot use 'hive' database engine: Datastore was compiled without USE_HIVE built option");
 #endif
         }
         case DB::DatabaseDataLakeCatalogType::NONE:

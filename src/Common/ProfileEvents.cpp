@@ -20,7 +20,7 @@
 /// If the event is generic (i.e. not server specific)
 /// it should be also added to src/Coordination/KeeperConstant.cpp
 #define APPLY_FOR_BUILTIN_EVENTS(M) \
-    M(Query, "Number of queries to be interpreted and potentially executed. Does not include queries that failed to parse or were rejected due to AST size limits, quota limits or limits on the number of simultaneously running queries. May include internal queries initiated by ClickHouse itself. Does not count subqueries.", ValueType::Number) \
+    M(Query, "Number of queries to be interpreted and potentially executed. Does not include queries that failed to parse or were rejected due to AST size limits, quota limits or limits on the number of simultaneously running queries. May include internal queries initiated by Datastore itself. Does not count subqueries.", ValueType::Number) \
     M(SelectQuery, "Same as Query, but only for SELECT queries.", ValueType::Number) \
     M(InsertQuery, "Same as Query, but only for INSERT queries.", ValueType::Number) \
     M(InitialQuery, "Same as Query, but only counts initial queries (see is_initial_query).", ValueType::Number) \
@@ -142,10 +142,10 @@
     M(CreatedReadBufferMMapFailed, "Number of times a read buffer with 'mmap' was attempted to be created for reading data (while choosing among other read methods), but the OS did not allow it (due to lack of filesystem support or other reasons) and we fallen back to the ordinary reading method.", ValueType::Number) \
     M(DiskReadElapsedMicroseconds, "Total time spent waiting for read syscall. This include reads from page cache.", ValueType::Microseconds) \
     M(DiskWriteElapsedMicroseconds, "Total time spent waiting for write syscall. This include writes to page cache.", ValueType::Microseconds) \
-    M(NetworkReceiveElapsedMicroseconds, "Total time spent waiting for data to receive or receiving data from network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.", ValueType::Microseconds) \
-    M(NetworkSendElapsedMicroseconds, "Total time spent waiting for data to send to network or sending data to network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.", ValueType::Microseconds) \
-    M(NetworkReceiveBytes, "Total number of bytes received from network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.", ValueType::Bytes) \
-    M(NetworkSendBytes, "Total number of bytes send to network. Only ClickHouse-related network interaction is included, not by 3rd party libraries.", ValueType::Bytes) \
+    M(NetworkReceiveElapsedMicroseconds, "Total time spent waiting for data to receive or receiving data from network. Only Datastore-related network interaction is included, not by 3rd party libraries.", ValueType::Microseconds) \
+    M(NetworkSendElapsedMicroseconds, "Total time spent waiting for data to send to network or sending data to network. Only Datastore-related network interaction is included, not by 3rd party libraries.", ValueType::Microseconds) \
+    M(NetworkReceiveBytes, "Total number of bytes received from network. Only Datastore-related network interaction is included, not by 3rd party libraries.", ValueType::Bytes) \
+    M(NetworkSendBytes, "Total number of bytes send to network. Only Datastore-related network interaction is included, not by 3rd party libraries.", ValueType::Bytes) \
     M(FilterPartsByVirtualColumnsMicroseconds, "Total time spent in filterPartsByVirtualColumns function.", ValueType::Microseconds) \
     \
     M(GlobalThreadPoolExpansions, "Counts the total number of times new threads have been added to the global thread pool. This metric indicates the frequency of expansions in the global thread pool to accommodate increased processing demands.", ValueType::Number) \
@@ -601,7 +601,7 @@ The server successfully detected this situation and will download merged part fr
     M(MemoryAllocatorPurge, "Total number of times memory allocator purge was requested", ValueType::Number) \
     M(MemoryAllocatorPurgeTimeMicroseconds, "Total time spent for memory allocator purge", ValueType::Microseconds) \
     M(SoftPageFaults, "The number of soft page faults in query execution threads. Soft page fault usually means a miss in the memory allocator cache, which requires a new memory mapping from the OS and subsequent allocation of a page of physical memory.", ValueType::Number) \
-    M(HardPageFaults, "The number of hard page faults in query execution threads. High values indicate either that you forgot to turn off swap on your server, or eviction of memory pages of the ClickHouse binary during very high memory pressure, or successful usage of the 'mmap' read method for the tables data.", ValueType::Number) \
+    M(HardPageFaults, "The number of hard page faults in query execution threads. High values indicate either that you forgot to turn off swap on your server, or eviction of memory pages of the Datastore binary during very high memory pressure, or successful usage of the 'mmap' read method for the tables data.", ValueType::Number) \
     \
     M(OSIOWaitMicroseconds, "Total time a thread spent waiting for a result of IO operation, from the OS point of view. This is real IO that doesn't include page cache.", ValueType::Microseconds) \
     M(OSCPUWaitMicroseconds, "Total time a thread was ready for execution but waiting to be scheduled by OS, from the OS point of view.", ValueType::Microseconds) \
@@ -925,9 +925,9 @@ The server successfully detected this situation and will download merged part fr
     M(KafkaRebalanceRevocations, "Number of partition revocations (the first stage of consumer group rebalance)", ValueType::Number) \
     M(KafkaRebalanceAssignments, "Number of partition assignments (the final stage of consumer group rebalance)", ValueType::Number) \
     M(KafkaRebalanceErrors, "Number of failed consumer group rebalances", ValueType::Number) \
-    M(KafkaMessagesPolled, "Number of Kafka messages polled from librdkafka to ClickHouse", ValueType::Number) \
-    M(KafkaMessagesRead, "Number of Kafka messages already processed by ClickHouse", ValueType::Number) \
-    M(KafkaMessagesFailed, "Number of Kafka messages ClickHouse failed to parse", ValueType::Number) \
+    M(KafkaMessagesPolled, "Number of Kafka messages polled from librdkafka to Datastore", ValueType::Number) \
+    M(KafkaMessagesRead, "Number of Kafka messages already processed by Datastore", ValueType::Number) \
+    M(KafkaMessagesFailed, "Number of Kafka messages Datastore failed to parse", ValueType::Number) \
     M(KafkaRowsRead, "Number of rows parsed from Kafka messages", ValueType::Number) \
     M(KafkaRowsRejected, "Number of parsed rows which were later rejected (due to rebalances / errors or similar reasons). Those rows will be consumed again after the rebalance.", ValueType::Number) \
     M(KafkaDirectReads, "Number of direct selects from Kafka tables since server start", ValueType::Number) \

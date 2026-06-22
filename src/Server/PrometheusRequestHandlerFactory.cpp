@@ -141,7 +141,7 @@ namespace
     /// Returns true if the protocol represented by a passed config can be handled.
     bool canBeHandled(const PrometheusRequestHandlerConfig & config, bool for_keeper)
     {
-        /// The standalone ClickHouse Keeper can only expose its metrics.
+        /// The standalone Datastore Keeper can only expose its metrics.
         /// It can't handle other Prometheus protocols.
         return !for_keeper || (config.type == PrometheusRequestHandlerConfig::Type::ExposeMetrics);
     }

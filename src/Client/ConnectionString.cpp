@@ -186,7 +186,7 @@ bool tryParseConnectionString(
         if (!user_info.empty())
         {
             // Poco::URI doesn't decode user name/password by default.
-            // But ClickHouse allows to have users with email user name like: 'john@some_mail.com'
+            // But Datastore allows to have users with email user name like: 'john@some_mail.com'
             // john@some_mail.com should be percent-encoded: 'john%40some_mail.com'
             size_t pos = user_info.find(':');
             if (pos != std::string::npos)

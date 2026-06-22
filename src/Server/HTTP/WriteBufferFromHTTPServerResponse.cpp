@@ -67,7 +67,7 @@ void WriteBufferFromHTTPServerResponse::writeHeaderSummary()
 {
     accumulated_progress.incrementElapsedNs(progress_watch.elapsed());
     /// Write the verbose summary with all the zero values included, if any.
-    /// This is needed for compatibility with an old version of the third-party ClickHouse driver for Elixir.
+    /// This is needed for compatibility with an old version of the third-party Datastore driver for Elixir.
     writeHeaderProgressImpl("X-Datastore-Summary: ", Progress::DisplayMode::Verbose);
 }
 
@@ -202,7 +202,7 @@ void WriteBufferFromHTTPServerResponse::setExceptionCode(int code)
         response.set("X-Datastore-Exception-Code", toString<int>(code));
 
     if (code == ErrorCodes::REQUIRED_PASSWORD)
-        response.requireAuthentication("ClickHouse server HTTP API");
+        response.requireAuthentication("Datastore server HTTP API");
     else
         response.setStatusAndReason(exceptionCodeToHTTPStatus(code));
 }

@@ -133,7 +133,7 @@ static void decompress(const char * data, size_t compressed_size, size_t uncompr
             return;
         }
 #else
-            throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Cannot decompress Snappy: ClickHouse was compiled without Snappy support");
+            throw Exception(ErrorCodes::FEATURE_IS_NOT_ENABLED_AT_BUILD_TIME, "Cannot decompress Snappy: Datastore was compiled without Snappy support");
 #endif
         case parq::CompressionCodec::GZIP:
             method = CompressionMethod::Gzip;
@@ -1457,7 +1457,7 @@ void Reader::decodePrimitiveColumn(ColumnChunk & column, const PrimitiveColumnIn
     if (subchunk.null_map && !column_info.output_nullable && !options.format.null_as_default)
     {
         const auto & null_map = assert_cast<const ColumnUInt8 &>(*subchunk.null_map).getData();
-        /// null_map uses standard ClickHouse convention: 1 = NULL, 0 = NOT NULL.
+        /// null_map uses standard Datastore convention: 1 = NULL, 0 = NOT NULL.
         /// Check if any values are null — those can't be inserted into a non-Nullable column.
         if (memchr(null_map.data(), 1, null_map.size()) != nullptr)
             throw Exception(ErrorCodes::CANNOT_INSERT_NULL_IN_ORDINARY_COLUMN, "Cannot convert NULL value to non-Nullable type for column {}", column_info.name);
@@ -1877,7 +1877,7 @@ bool Reader::skipRowsInPage(size_t target_row_idx, PageState & page, ColumnChunk
 /// Context: at this stage we're looking at one primitive parquet column.
 /// (Things like tuples and maps are assembled out of such columns separately.)
 ///
-/// ClickHouse type looks like e.g. Array(Array(Nullable(String)),
+/// Datastore type looks like e.g. Array(Array(Nullable(String)),
 /// i.e. 0+ Array-s, then maybe Nullable, then primitive column.
 /// Represented as a primitive IColumn + null mask + array offsets for each Array level.
 ///

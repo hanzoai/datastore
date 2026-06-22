@@ -131,7 +131,7 @@ static constexpr auto DBMS_MIN_REVISION_WITH_NULLABLE_SPARSE_SERIALIZATION = 544
 static constexpr auto DBMS_MIN_PROTOCOL_VERSION_WITH_PROGRESS_IN_ASYNC_INSERT = 54484;
 
 
-/// Version of ClickHouse TCP protocol.
+/// Version of Datastore TCP protocol.
 ///
 /// Should be incremented manually on protocol changes.
 ///

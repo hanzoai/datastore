@@ -90,7 +90,7 @@ static bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & a
     return !argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name));
 }
 
-/// Don't allow dlopen in the main ClickHouse binary, because it is harmful and insecure.
+/// Don't allow dlopen in the main Datastore binary, because it is harmful and insecure.
 /// We don't use it. But it can be used by some libraries for implementation of "plugins".
 /// We absolutely discourage the ancient technique of loading
 /// 3rd-party uncontrolled dangerous libraries into the process address space,
@@ -116,7 +116,7 @@ extern "C"
 
     const char * dlerror()
     {
-        return "ClickHouse does not allow dynamic library loading";
+        return "Datastore does not allow dynamic library loading";
     }
 }
 #endif

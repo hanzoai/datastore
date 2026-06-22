@@ -78,7 +78,7 @@ ColumnsDescription QueryThreadLogElement::getColumnsDescription()
         {"quota_key", std::make_shared<DataTypeString>(), "The 'quota key' specified in the quotas setting."},
         {"distributed_depth", std::make_shared<DataTypeUInt64>(), "How many times a query was forwarded between servers."},
 
-        {"revision", std::make_shared<DataTypeUInt32>(), "ClickHouse revision."},
+        {"revision", std::make_shared<DataTypeUInt32>(), "Datastore revision."},
 
         {"ProfileEvents", std::make_shared<DataTypeMap>(low_cardinality_string, std::make_shared<DataTypeUInt64>()), "ProfileEvents that measure different metrics for this thread. The description of them could be found in the table system.events."},
     };

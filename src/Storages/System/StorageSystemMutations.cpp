@@ -24,7 +24,7 @@ ColumnsDescription StorageSystemMutations::getColumnsDescription()
     {
         { "database",                      std::make_shared<DataTypeString>(), "The name of the database to which the mutation was applied."},
         { "table",                         std::make_shared<DataTypeString>(), "The name of the table to which the mutation was applied."},
-        { "mutation_id",                   std::make_shared<DataTypeString>(), "The ID of the mutation. For replicated tables these IDs correspond to znode names in the `<table_path_in_clickhouse_keeper>/mutations/` directory in ClickHouse Keeper. For non-replicated tables the IDs correspond to file names in the data directory of the table."},
+        { "mutation_id",                   std::make_shared<DataTypeString>(), "The ID of the mutation. For replicated tables these IDs correspond to znode names in the `<table_path_in_clickhouse_keeper>/mutations/` directory in Datastore Keeper. For non-replicated tables the IDs correspond to file names in the data directory of the table."},
         { "command",                       std::make_shared<DataTypeString>(), "The mutation command string (the part of the query after ALTER TABLE [db.]table)."},
         { "create_time",                   std::make_shared<DataTypeDateTime>(), "Date and time when the mutation command was submitted for execution."},
         { "block_numbers.partition_id",    std::make_shared<DataTypeArray>(std::make_shared<DataTypeString>()), "For mutations of replicated tables, the array contains the partitions' IDs (one record for each partition). For mutations of non-replicated tables the array is empty."},
@@ -44,7 +44,7 @@ ColumnsDescription StorageSystemMutations::getColumnsDescription()
             "0 if the mutation is still in process. "
         },
         { "is_killed", std::make_shared<DataTypeUInt8>(),
-            "Indicates whether a mutation has been killed. Only available in ClickHouse Cloud."
+            "Indicates whether a mutation has been killed. Only available in Datastore Cloud."
             "Note: is_killed=1 does not necessarily mean the mutation is completely finalized."
             "It is possible for a mutation to remain in a state where is_killed=1 and is_done=0 for an extended period."
             "This can occur if another long-running mutation is blocking the killed mutation. This is a normal situation."

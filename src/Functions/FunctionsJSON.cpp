@@ -518,7 +518,7 @@ class JSONExtractKeysAndValuesImpl;
 /**
 * Functions JSONExtract and JSONExtractKeysAndValues force the return type - it is specified in the last argument.
 * For example - `SELECT JSONExtract(materialize('{"a": 131231, "b": 1234}'), 'b', 'LowCardinality(FixedString(4))')`
-* But by default ClickHouse decides on its own whether the return type will be LowCardinality based on the types of
+* But by default Datastore decides on its own whether the return type will be LowCardinality based on the types of
 * input arguments.
 * And for these specific functions we cannot rely on this mechanism, so these functions have their own implementation -
 * just convert all of the LowCardinality input columns to full ones, execute and wrap the resulting column in LowCardinality
@@ -1584,15 +1584,15 @@ SELECT JSONExtractString('{"a": "hello", "b": [-100, 200.0, 300]}', 'a') AS res;
     /// JSONExtract
     {
         FunctionDocumentation::Description description = R"(
-Parses JSON and extracts a value with given ClickHouse data type.
+Parses JSON and extracts a value with given Datastore data type.
         )";
         FunctionDocumentation::Syntax syntax = "JSONExtract(json[, indices_or_keys, ...], return_type)";
         FunctionDocumentation::Arguments arguments = {
             {"json", "JSON string to parse.", {"String"}},
             {"indices_or_keys", "A list of zero or more arguments each of which can be either string or integer.", {"String", "(U)Int*"}},
-            {"return_type", "ClickHouse data type to return.", {"String"}}
+            {"return_type", "Datastore data type to return.", {"String"}}
         };
-        FunctionDocumentation::ReturnedValue returned_value = {"Returns a value of specified ClickHouse data type if possible, otherwise returns the default value for that type.", {}};
+        FunctionDocumentation::ReturnedValue returned_value = {"Returns a value of specified Datastore data type if possible, otherwise returns the default value for that type.", {}};
         FunctionDocumentation::Examples examples = {
         {
             "Usage example",
@@ -1615,13 +1615,13 @@ SELECT JSONExtract('{"a": "hello", "b": [-100, 200.0, 300]}', 'Tuple(String, Arr
     /// JSONExtractKeysAndValues
     {
         FunctionDocumentation::Description description = R"(
-Parses key-value pairs from a JSON where the values are of the given ClickHouse data type.
+Parses key-value pairs from a JSON where the values are of the given Datastore data type.
         )";
         FunctionDocumentation::Syntax syntax = "JSONExtractKeysAndValues(json[, indices_or_keys, ...], value_type)";
         FunctionDocumentation::Arguments arguments = {
             {"json", "JSON string to parse.", {"String"}},
             {"indices_or_keys", "A list of zero or more arguments each of which can be either string or integer.", {"String", "(U)Int*"}},
-            {"value_type", "ClickHouse data type of the values.", {"String"}}
+            {"value_type", "Datastore data type of the values.", {"String"}}
         };
         FunctionDocumentation::ReturnedValue returned_value = {"Returns an array of tuples with the parsed key-value pairs.", {"Array(Tuple(String, value_type))"}};
         FunctionDocumentation::Examples examples = {
@@ -1887,13 +1887,13 @@ Parses JSON and extracts a string using case-insensitive key matching. This func
     /// JSONExtractCaseInsensitive
     {
         FunctionDocumentation::Description description = R"(
-Parses JSON and extracts a value of the given ClickHouse data type using case-insensitive key matching. This function is similar to [`JSONExtract`](#JSONExtract).
+Parses JSON and extracts a value of the given Datastore data type using case-insensitive key matching. This function is similar to [`JSONExtract`](#JSONExtract).
         )";
         FunctionDocumentation::Syntax syntax = "JSONExtractCaseInsensitive(json [, indices_or_keys...], return_type)";
         FunctionDocumentation::Arguments arguments = {
             {"json", "JSON string to parse", {"String"}},
             {"indices_or_keys", "Optional. Indices or keys to navigate to the field. Keys use case-insensitive matching", {"String", "(U)Int*"}},
-            {"return_type", "The ClickHouse data type to extract", {"String"}}
+            {"return_type", "The Datastore data type to extract", {"String"}}
         };
         FunctionDocumentation::ReturnedValue returned_value = {"Returns the extracted value in the specified data type.", {"Any"}};
         FunctionDocumentation::Examples examples = {
@@ -1916,7 +1916,7 @@ Parses key-value pairs from JSON using case-insensitive key matching. This funct
         FunctionDocumentation::Arguments arguments = {
             {"json", "JSON string to parse", {"String"}},
             {"indices_or_keys", "Optional. Indices or keys to navigate to the object. Keys use case-insensitive matching", {"String", "(U)Int*"}},
-            {"value_type", "The ClickHouse data type of the values", {"String"}}
+            {"value_type", "The Datastore data type of the values", {"String"}}
         };
         FunctionDocumentation::ReturnedValue returned_value = {"Returns an array of tuples containing key-value pairs.", {"Array(Tuple(String, T))"}};
         FunctionDocumentation::Examples examples = {

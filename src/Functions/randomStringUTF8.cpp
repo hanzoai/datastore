@@ -157,7 +157,7 @@ REGISTER_FUNCTION(RandomStringUTF8)
     FunctionDocumentation::Description description = R"(
 Generates a random [UTF-8](https://en.wikipedia.org/wiki/UTF-8) string with the specified number of codepoints.
 No codepoints from unassigned [planes](https://en.wikipedia.org/wiki/Plane_(Unicode)) (planes 4 to 13) are returned.
-It is still possible that the client interacting with ClickHouse server is not able to display the produced UTF-8 string correctly.
+It is still possible that the client interacting with Datastore server is not able to display the produced UTF-8 string correctly.
     )";
     FunctionDocumentation::Syntax syntax = "randomStringUTF8(length)";
     FunctionDocumentation::Arguments arguments = {

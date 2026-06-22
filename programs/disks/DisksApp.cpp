@@ -363,7 +363,7 @@ void DisksApp::processOptions()
 
 void DisksApp::printEntryHelpMessage() const
 {
-    std::cout << "\x1b[1;33m ClickHouse disk management tool \x1b[0m \n";
+    std::cout << "\x1b[1;33m Datastore disk management tool \x1b[0m \n";
     std::cout << options_description << '\n';
 }
 

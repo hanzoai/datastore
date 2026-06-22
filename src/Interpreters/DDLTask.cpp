@@ -407,7 +407,7 @@ bool DDLTask::findCurrentHostID(ContextPtr global_context, LoggerPtr log, const 
         if (host_in_hostlist)
         {
             /// This check could be slow a little bit
-            LOG_WARNING(log, "There are two the same ClickHouse instances in task {}: {} and {}. Will use the first one only.",
+            LOG_WARNING(log, "There are two the same Datastore instances in task {}: {} and {}. Will use the first one only.",
                              entry_name, host_id.readableString(), host.readableString());
         }
         else
@@ -501,7 +501,7 @@ bool DDLTask::tryFindHostInCluster()
                     if (default_database == address.default_database)
                     {
                         throw Exception(ErrorCodes::INCONSISTENT_CLUSTER_DEFINITION,
-                                        "There are two exactly the same ClickHouse instances {} in cluster {}",
+                                        "There are two exactly the same Datastore instances {} in cluster {}",
                                         address.readableString(), cluster_name);
                     }
 
@@ -557,7 +557,7 @@ bool DDLTask::tryFindHostInClusterViaResolving(ContextPtr context)
                 if (found_via_resolving)
                 {
                     throw Exception(ErrorCodes::INCONSISTENT_CLUSTER_DEFINITION,
-                                    "There are two the same ClickHouse instances in cluster {} : {} and {}",
+                                    "There are two the same Datastore instances in cluster {} : {} and {}",
                                     cluster_name, address_in_cluster.readableString(), address.readableString());
                 }
 

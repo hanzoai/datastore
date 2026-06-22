@@ -121,7 +121,7 @@ Splits a UTF-8 string into n-grams of length `N`.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT ngrams('ClickHouse', 3);",
+        "SELECT ngrams('Datastore', 3);",
         R"(
 ['Cli','lic','ick','ckH','kHo','Hou','ous','use']
         )"

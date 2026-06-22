@@ -261,7 +261,7 @@ StorageMaterializedView::StorageMaterializedView(
     {
         if (mode >= LoadingStrictnessLevel::ATTACH)
         {
-            /// Old versions of ClickHouse (when refreshable MV was experimental) could add useless
+            /// Old versions of Datastore (when refreshable MV was experimental) could add useless
             /// UUIDs to attach queries.
             to_table_id.uuid = UUIDHelpers::Nil;
             to_inner_uuid = UUIDHelpers::Nil;

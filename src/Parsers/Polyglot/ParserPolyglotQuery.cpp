@@ -22,7 +22,7 @@ namespace ErrorCodes
 
 bool ParserPolyglotQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
 {
-    /// SET queries are standard ClickHouse SQL and must be handled normally
+    /// SET queries are standard Datastore SQL and must be handled normally
     /// so that settings like `dialect` and `polyglot_dialect` can be changed.
     /// This is checked before the feature gate so users can recover from
     /// misconfigured profiles (e.g. `SET dialect = 'clickhouse'`).
@@ -48,7 +48,7 @@ bool ParserPolyglotQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expecte
         "Rust code or polyglot itself may be disabled. Use another dialect!");
 #else
     /// Pass the entire remaining input to polyglot as an opaque string.
-    /// Foreign dialects may contain syntax that the ClickHouse Lexer cannot
+    /// Foreign dialects may contain syntax that the Datastore Lexer cannot
     /// tokenize correctly, so we do not use the token stream at all.
     const char * begin = pos->begin;
 
@@ -67,7 +67,7 @@ bool ParserPolyglotQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expecte
             input_size,
             max_query_size);
 
-    /// Transpile the foreign SQL to ClickHouse SQL.
+    /// Transpile the foreign SQL to Datastore SQL.
     uint8_t * sql_query_ptr{nullptr};
     uint64_t sql_query_size{0};
 
@@ -96,7 +96,7 @@ bool ParserPolyglotQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expecte
 
     chassert(sql_query_size > 0);
 
-    /// Parse the transpiled ClickHouse SQL with the standard parser.
+    /// Parse the transpiled Datastore SQL with the standard parser.
     ParserQuery query_p(sql_query_char_ptr + sql_query_size - 1, false);
     String error_message;
     node = tryParseQuery(

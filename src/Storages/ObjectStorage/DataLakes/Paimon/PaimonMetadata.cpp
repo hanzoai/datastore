@@ -328,7 +328,7 @@ std::unique_ptr<StorageInMemoryMetadata> PaimonMetadata::buildStorageMetadataFro
 
     auto columns = persistent_components.schema_processor->getClickHouseSchema(paimon_state->schema_id);
     if (!columns)
-        throw Exception(ErrorCodes::LOGICAL_ERROR, "Failed to get ClickHouse schema for schema_id={}", paimon_state->schema_id);
+        throw Exception(ErrorCodes::LOGICAL_ERROR, "Failed to get Datastore schema for schema_id={}", paimon_state->schema_id);
 
     auto result = std::make_unique<StorageInMemoryMetadata>();
     result->setColumns(ColumnsDescription{*columns});

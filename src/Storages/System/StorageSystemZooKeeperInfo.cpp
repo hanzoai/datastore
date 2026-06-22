@@ -30,9 +30,9 @@ ColumnsDescription StorageSystemZooKeeperInfo::getColumnsDescription()
     return ColumnsDescription
     {
         /* 0 */ {"zookeeper_cluster_name", std::make_shared<DataTypeString>(), "ZooKeeper cluster's name."},
-        /* 1 */ {"host", std::make_shared<DataTypeString>(), "The hostname/IP of the ZooKeeper node that ClickHouse connected to."},
-        /* 2 */ {"port", std::make_shared<DataTypeUInt16>(), "The port of the ZooKeeper node that ClickHouse connected to."},
-        /* 3 */ {"index", std::make_shared<DataTypeNullable>(std::make_shared<DataTypeUInt8>()), "The index of the ZooKeeper node that ClickHouse connected to. The index is from ZooKeeper config. If not connected, this column is NULL."},
+        /* 1 */ {"host", std::make_shared<DataTypeString>(), "The hostname/IP of the ZooKeeper node that Datastore connected to."},
+        /* 2 */ {"port", std::make_shared<DataTypeUInt16>(), "The port of the ZooKeeper node that Datastore connected to."},
+        /* 3 */ {"index", std::make_shared<DataTypeNullable>(std::make_shared<DataTypeUInt8>()), "The index of the ZooKeeper node that Datastore connected to. The index is from ZooKeeper config. If not connected, this column is NULL."},
         /* 4 */ {"is_connected", std::make_shared<DataTypeUInt8>(), "Is the zookeeper connected."},
 
         /// isro command

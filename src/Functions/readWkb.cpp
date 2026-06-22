@@ -239,13 +239,13 @@ private:
 REGISTER_FUNCTION(ReadWKB)
 {
     FunctionDocumentation::Description description_point = R"(
-Parses a Well-Known Binary (WKB) representation of a Point geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a Point geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_point = "readWKBPoint(wkb_string)";
     FunctionDocumentation::Arguments arguments_point = {
         {"wkb_string", "The input WKB string representing a Point geometry.", {"String"}}
     };
-    FunctionDocumentation::ReturnedValue returned_value_point = {"The function returns a ClickHouse internal representation of the point geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_point = {"The function returns a Datastore internal representation of the point geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_point =
     {
     {
@@ -265,11 +265,11 @@ SELECT toTypeName(readWKBPoint(unhex('0101000000333333333333f33f3333333333330b40
     factory.registerFunction<FunctionReadWKB<DataTypePointName, CartesianPoint, PointSerializer<CartesianPoint>, ReadWKBPointNameHolder>>(function_documentation_point);
 
     FunctionDocumentation::Description description_linestring = R"(
-Parses a Well-Known Binary (WKB) representation of a LineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a LineString geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_linestring = "readWKBLineString(wkb_string)";
     FunctionDocumentation::Arguments arguments_linestring = {{"wkb_string", "The input WKB string representing a LineString geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_linestring = {"Returns returns a ClickHouse internal representation of the linestring geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_linestring = {"Returns returns a Datastore internal representation of the linestring geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_linestring =
     {
     {
@@ -289,11 +289,11 @@ SELECT readWKBLineString(unhex('010200000004000000000000000000f03f000000000000f0
     factory.registerFunction<FunctionReadWKB<DataTypeLineStringName, CartesianLineString, LineStringSerializer<CartesianPoint>, ReadWKBLineStringNameHolder>>(function_documentation_linestring);
 
     FunctionDocumentation::Description description_multilinestring = R"(
-Parses a Well-Known Binary (WKB) representation of a MultiLineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a MultiLineString geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_multilinestring = "readWKBMultiLineString(wkb_string)";
     FunctionDocumentation::Arguments arguments_multilinestring = {{"wkb_string", "The input WKB string representing a MultiLineString geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_multilinestring = {"Returns a ClickHouse internal representation of the multilinestring geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_multilinestring = {"Returns a Datastore internal representation of the multilinestring geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_multilinestring =
     {
     {
@@ -313,11 +313,11 @@ SELECT readWKBMultiLineString(unhex('0105000000020000000102000000030000000000000
     factory.registerFunction<FunctionReadWKB<DataTypeMultiLineStringName, CartesianMultiLineString, MultiLineStringSerializer<CartesianPoint>, ReadWKBMultiLineStringNameHolder>>(function_documentation_multilinestring);
 
     FunctionDocumentation::Description description_polygon = R"(
-Parses a Well-Known Binary (WKB) representation of a Polygon geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a Polygon geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_polygon = "readWKBPolygon(wkb_string)";
     FunctionDocumentation::Arguments arguments_polygon = {{"wkb_string", "The input WKB string representing a Polygon geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_polygon = {"Returns a ClickHouse internal representation of the Polygon geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_polygon = {"Returns a Datastore internal representation of the Polygon geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_polygon =
     {
     {
@@ -339,11 +339,11 @@ Polygon [[(2,0),(10,0),(10,10),(0,10),(2,0)]]
     factory.registerFunction<FunctionReadWKB<DataTypePolygonName, CartesianPolygon, PolygonSerializer<CartesianPoint>, ReadWKBPolygonNameHolder>>(function_documentation_polygon);
 
     FunctionDocumentation::Description description_multipolygon = R"(
-Parses a Well-Known Binary (WKB) representation of a MultiPolygon geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a MultiPolygon geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_multipolygon = "readWKBMultiPolygon(wkb_string)";
     FunctionDocumentation::Arguments arguments_multipolygon = {{"wkb_string", "The input WKB string representing a MultiPolygon geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_multipolygon = {"Returns a ClickHouse internal representation of the MultiPolygon geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_multipolygon = {"Returns a Datastore internal representation of the MultiPolygon geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_multipolygon =
     {
     {
@@ -372,11 +372,11 @@ readWKBMulti~000024c0')): [[[(2,0),(10,0),(10,10),(0,10),(2,0)],[(4,4),(5,4),(5,
     factory.registerAlias("ST_MPolyFromWKB", ReadWKBMultiPolygonNameHolder::name);
 
     FunctionDocumentation::Description description_common = R"(
-Parses a Well-Known Binary (WKB) representation of a Geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Binary (WKB) representation of a Geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_common = "readWKB(wkb_string)";
     FunctionDocumentation::Arguments arguments_common = {{"wkb_string", "The input WKB string representing a Point geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_common = {"Returns a ClickHouse internal representation of the Geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_common = {"Returns a Datastore internal representation of the Geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_common =
     {
     {

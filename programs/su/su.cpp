@@ -30,8 +30,8 @@
 /// But it would be very strange to use 3rd-party software only to do two-three syscalls.
 /// That's why we provide this tool.
 ///
-/// Note: ClickHouse does not need Docker at all and works better without Docker.
-/// ClickHouse has no dependencies, it is packaged and distributed in single binary.
+/// Note: Datastore does not need Docker at all and works better without Docker.
+/// Datastore has no dependencies, it is packaged and distributed in single binary.
 /// There is no reason to use Docker unless you are already running all your software in Docker.
 
 namespace DB

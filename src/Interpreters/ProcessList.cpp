@@ -176,11 +176,11 @@ ProcessList::EntryPtr ProcessList::insert(
              *
              * With `max_concurrent_queries_for_all_users` it is possible to configure an additional, runtime configurable, limit for query concurrency.
              * Usually it should be configured just once for `default_profile` which is inherited by all users. DBAs can override
-             * this setting when connecting to ClickHouse, or it can be configured for a DBA profile to have a value greater than that of
+             * this setting when connecting to Datastore, or it can be configured for a DBA profile to have a value greater than that of
              * the default profile (or 0 for unlimited).
              *
              * One example is to set `max_size=X`, `max_concurrent_queries_for_all_users=X-10` for default profile,
-             * and `max_concurrent_queries_for_all_users=0` for DBAs or accounts that are vital for ClickHouse operations (like metrics
+             * and `max_concurrent_queries_for_all_users=0` for DBAs or accounts that are vital for Datastore operations (like metrics
              * exporters).
              *
              * Another creative example is to configure `max_concurrent_queries_for_all_users=50` for "analyst" profiles running adhoc queries

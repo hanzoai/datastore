@@ -6,7 +6,7 @@
 
 namespace DB
 {
-/** Tries to parse ClickHouse connection string.
+/** Tries to parse Datastore connection string.
  * if @connection_string starts with 'clickhouse:' then connection string will be parsed
  * and converted into a set of arguments for the client.
  * Connection string format is similar to URI "clickhouse:[//[user[:password]@][hosts_and_ports]][/dbname][?query_parameters]"

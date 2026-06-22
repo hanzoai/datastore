@@ -986,7 +986,7 @@ void FuzzConfig::validateClickHouseHealth()
                 }
                 throw DB::Exception(
                     DB::ErrorCodes::BUZZHOUSE,
-                    "ClickHouse health check on {}:{}: found {} {}{}",
+                    "Datastore health check on {}:{}: found {} {}{}",
                     host,
                     port,
                     val,
@@ -1024,7 +1024,7 @@ void FuzzConfig::comparePerformanceResults(const String & oracle_name, Performan
                 {
                     throw DB::Exception(
                         DB::ErrorCodes::BUZZHOUSE,
-                        "{}: ClickHouse peer server {}: {} was less than the target server: {}",
+                        "{}: Datastore peer server {}: {} was less than the target server: {}",
                         oracle_name,
                         key,
                         peer.result_strings.at(key),

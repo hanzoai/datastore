@@ -12,7 +12,7 @@ namespace DB
 
 class IAST;
 
-/** For given ClickHouse query,
+/** For given Datastore query,
   * creates another query in a form of
   *
   * SELECT columns... FROM db.table WHERE ...

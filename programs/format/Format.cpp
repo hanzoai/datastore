@@ -132,7 +132,7 @@ int mainEntryClickHouseFormat(int argc, char ** argv)
 #if !USE_REPLXX
         if (hilite)
         {
-            std::cerr << "Option 'hilite' is only available if ClickHouse is built with replxx library." << std::endl;
+            std::cerr << "Option 'hilite' is only available if Datastore is built with replxx library." << std::endl;
             return 2;
         }
 #endif

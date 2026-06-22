@@ -13,7 +13,7 @@
 
 namespace DB
 {
-/** Allows loading dictionaries from local or remote ClickHouse instance
+/** Allows loading dictionaries from local or remote Datastore instance
   *    @todo use ConnectionPoolWithFailover
   *    @todo invent a way to keep track of source modifications
   */

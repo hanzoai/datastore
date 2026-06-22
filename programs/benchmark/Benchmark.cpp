@@ -42,7 +42,7 @@
 #include <Client/ClientApplicationBaseParser.h>
 #include <Parsers/parseQuery.h>
 
-/** A tool for evaluating ClickHouse performance.
+/** A tool for evaluating Datastore performance.
   * The tool emulates a case with fixed amount of simultaneously executing queries.
   */
 
@@ -979,7 +979,7 @@ int mainEntryClickHouseBenchmark(int argc, char ** argv)
         {
             std::cout << "Usage: clickhouse benchmark [options] < queries.txt\n";
             std::cout << "Usage: clickhouse benchmark [options] --query \"query text\"\n\n";
-            std::cout << "clickhouse-benchmark connects to ClickHouse server, repeatedly sends "
+            std::cout << "clickhouse-benchmark connects to Datastore server, repeatedly sends "
                          "specified queries and reports query statistics. "
                          "Multiple queries can be used if passed in TSV format.\n\n";
             if (options.contains("verbose"))

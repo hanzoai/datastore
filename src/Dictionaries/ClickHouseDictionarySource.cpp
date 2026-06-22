@@ -159,7 +159,7 @@ bool ClickHouseDictionarySource::hasUpdateField() const
 std::string ClickHouseDictionarySource::toString() const
 {
     const std::string & where = configuration.where;
-    return "ClickHouse: " + configuration.db + '.' + configuration.table + (where.empty() ? "" : ", where: " + where);
+    return "Datastore: " + configuration.db + '.' + configuration.table + (where.empty() ? "" : ", where: " + where);
 }
 
 BlockIO ClickHouseDictionarySource::createStreamForQuery(const String & query)
@@ -176,7 +176,7 @@ BlockIO ClickHouseDictionarySource::createStreamForQuery(const String & query)
     const char * query_begin = query.data();
     const char * query_end = query.data() + query.size();
     ParserQuery parser(query_end);
-    ASTPtr ast = parseQuery(parser, query_begin, query_end, "Query for ClickHouse dictionary", 0, DBMS_DEFAULT_MAX_PARSER_DEPTH, DBMS_DEFAULT_MAX_PARSER_BACKTRACKS);
+    ASTPtr ast = parseQuery(parser, query_begin, query_end, "Query for Datastore dictionary", 0, DBMS_DEFAULT_MAX_PARSER_DEPTH, DBMS_DEFAULT_MAX_PARSER_BACKTRACKS);
 
     if (!ast || ast->getQueryKind() != IAST::QueryKind::Select)
         throw Exception(ErrorCodes::INCORRECT_QUERY, "Only SELECT query can be used as a dictionary source");

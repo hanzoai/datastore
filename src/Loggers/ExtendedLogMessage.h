@@ -8,7 +8,7 @@ class Message;
 
 namespace DB
 {
-/// Poco::Message with more ClickHouse-specific info
+/// Poco::Message with more Datastore-specific info
 /// NOTE: Poco::Message is not polymorphic class, so we can't use inheritance in couple with dynamic_cast<>()
 class ExtendedLogMessage
 {

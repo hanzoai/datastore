@@ -705,7 +705,7 @@ DatabasePtr DatabaseCatalog::detachDatabase(ContextPtr local_context, const Stri
             throw;
         }
 
-        /// Old ClickHouse versions did not store database.sql files
+        /// Old Datastore versions did not store database.sql files
         /// Remove metadata dir (if exists) to avoid recreation of .sql file on server startup
         default_db_disk->removeDirectoryIfExists(getMetadataDirPath(database_name));
         default_db_disk->removeFileIfExists(getMetadataFilePath(database_name));

@@ -106,7 +106,7 @@ If this assumption is violated, no exception is thrown and the result is undefin
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT reverseUTF8('ClickHouse')",
+        "SELECT reverseUTF8('Datastore')",
         "esuoHkcilC"
     }
     };

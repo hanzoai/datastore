@@ -331,10 +331,10 @@ private:
 REGISTER_FUNCTION(NaiveBayesClassifier)
 {
     FunctionDocumentation::Description description = "Classifies input text using a Naive Bayes model with ngrams and Laplace smoothing. "
-                                                     "The model must be configured in ClickHouse before use.";
+                                                     "The model must be configured in Datastore before use.";
     FunctionDocumentation::Syntax syntax = "naiveBayesClassifier(model_name, input_text)";
     FunctionDocumentation::Arguments arguments
-        = {{"model_name", "Name of the pre-configured model. The model must be defined in ClickHouse's configuration files.", {"String"}},
+        = {{"model_name", "Name of the pre-configured model. The model must be defined in Datastore's configuration files.", {"String"}},
            {"input_text", "Text to classify. Input is processed exactly as provided (case/punctuation preserved).", {"String"}}};
     FunctionDocumentation::ReturnedValue returned_value
         = {"Predicted class ID as an unsigned integer. Class IDs correspond to categories defined during model construction.", {"UInt32"}};

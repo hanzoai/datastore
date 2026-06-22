@@ -60,9 +60,9 @@ Name of the data part. The part naming structure can be used to determine many a
 
 * Definitions:
   - `partition_id` - identifies the partition key
-  - `minimum_block_number` - identifies the minimum block number in the part. ClickHouse always merges continuous blocks
+  - `minimum_block_number` - identifies the minimum block number in the part. Datastore always merges continuous blocks
   - `maximum_block_number` - identifies the maximum block number in the part
-  - `level` - incremented by one with each additional merge on the part. A level of 0 indicates this is a new part that has not been merged. It is important to remember that all parts in ClickHouse are always immutable
+  - `level` - incremented by one with each additional merge on the part. A level of 0 indicates this is a new part that has not been merged. It is important to remember that all parts in Datastore are always immutable
   - `data_version` - optional value, incremented when a part is mutated (again, mutated data is always only written to a new part, since parts are immutable)
 )"},
         {"uuid",                                        std::make_shared<DataTypeUUID>(),      "The UUID of data part."},

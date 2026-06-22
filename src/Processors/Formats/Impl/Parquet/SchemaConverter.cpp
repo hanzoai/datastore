@@ -764,7 +764,7 @@ void SchemaConverter::processPrimitiveColumn(
     ///  * Parquet Type ("physical type"),
     ///  * Parquet ConvertedType (deprecated, but we have to support it),
     ///  * Parquet LogicalType,
-    ///  * ClickHouse type hint (e.g. if the user specified column types explicitly).
+    ///  * Datastore type hint (e.g. if the user specified column types explicitly).
     ///
     /// Outputs:
     ///  * out_decoder - how to decode the column (it then separately further dispatches to
@@ -1292,7 +1292,7 @@ void SchemaConverter::processPrimitiveColumn(
                     return;
                 }
 
-                /// Legacy ClickHouse binary formats for [U]Int128 and [U]Int256.
+                /// Legacy Datastore binary formats for [U]Int128 and [U]Int256.
                 /// These are written as FIXED_LEN_BYTE_ARRAY(16/32) but without logical types.
                 if (which.isInteger() && !which.isNativeInteger() &&
                     type_hint->getSizeOfValueInMemory() == size_t(element.type_length))

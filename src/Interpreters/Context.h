@@ -311,7 +311,7 @@ using DatabasePtr = std::shared_ptr<IDatabase>;
 using DatabaseAndTable = std::pair<DatabasePtr, StoragePtr>;
 
 /// An empty interface for an arbitrary object that may be attached by a shared pointer
-/// to query context, when using ClickHouse as a library.
+/// to query context, when using Datastore as a library.
 struct IHostContext
 {
     virtual ~IHostContext() = default;
@@ -673,7 +673,7 @@ protected:
                                                      /// (key=name, value)
 
     IHostContextPtr host_context;  /// Arbitrary object that may used to attach some host specific information to query context,
-                                   /// when using ClickHouse as a library in some project. For example, it may contain host
+                                   /// when using Datastore as a library in some project. For example, it may contain host
                                    /// logger, some query identification information, profiling guards, etc. This field is
                                    /// to be customized in HTTP and TCP servers by overloading the customizeContext(DB::ContextPtr)
                                    /// methods.

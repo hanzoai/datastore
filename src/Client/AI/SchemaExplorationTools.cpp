@@ -20,7 +20,7 @@ void SchemaExplorationTools::initializeTools()
     // list_databases tool
     tools["list_databases"] = ai::create_simple_tool(
         "list_databases",
-        "List all available databases in the ClickHouse instance",
+        "List all available databases in the Datastore instance",
         {}, // No parameters
         [this](const ai::JsonValue & args, const ai::ToolExecutionContext & context) { return listDatabases(args, context); });
 

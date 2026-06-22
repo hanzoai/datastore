@@ -45,8 +45,8 @@ namespace ErrorCodes
 ///  - DateTime64 => DataTypeDateTime64
 ///  - Int8       => error
 /// Please note that INPUT and OUTPUT types may differ, e.g.:
-///  - 'AddSecondsImpl::execute(UInt32, ...) -> UInt32' is available to the ClickHouse users as 'addSeconds(DateTime, ...) -> DateTime'
-///  - 'AddSecondsImpl::execute(UInt16, ...) -> UInt32' is available to the ClickHouse users as 'addSeconds(Date, ...) -> DateTime'
+///  - 'AddSecondsImpl::execute(UInt32, ...) -> UInt32' is available to the Datastore users as 'addSeconds(DateTime, ...) -> DateTime'
+///  - 'AddSecondsImpl::execute(UInt16, ...) -> UInt32' is available to the Datastore users as 'addSeconds(Date, ...) -> DateTime'
 
 struct AddNanosecondsImpl
 {

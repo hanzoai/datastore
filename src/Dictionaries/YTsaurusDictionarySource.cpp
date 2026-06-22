@@ -104,7 +104,7 @@ void registerDictionarySourceYTsaurus(DictionarySourceFactory & factory)
         bool /* created_from_ddl */) -> DictionarySourcePtr
     {
         throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-        "Dictionary source of type `ytsaurus` is disabled because ClickHouse was built without YTsaurus support.");
+        "Dictionary source of type `ytsaurus` is disabled because Datastore was built without YTsaurus support.");
     };
     #endif
 

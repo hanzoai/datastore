@@ -242,7 +242,7 @@ void SQLDatabase::setDatabasePath(RandomGenerator & rg, const FuzzConfig & fc)
         integration = IntegrationCall::Dolor; /// Has to use La Casa Del Dolor
         format = (catalog == LakeCatalog::REST || catalog == LakeCatalog::Hive || catalog == LakeCatalog::Glue) ? LakeFormat::Iceberg
                                                                                                                 : LakeFormat::DeltaLake;
-        storage = LakeStorage::S3; /// What ClickHouse supports now
+        storage = LakeStorage::S3; /// What Datastore supports now
     }
 }
 
@@ -572,7 +572,7 @@ bool SQLBase::hasSQLitePeer() const
 
 bool SQLBase::hasClickHousePeer() const
 {
-    return peer_table == PeerTableDatabase::ClickHouse;
+    return peer_table == PeerTableDatabase::Datastore;
 }
 
 bool SQLBase::isAttached() const
@@ -656,7 +656,7 @@ void SQLBase::setTablePath(RandomGenerator & rg, const FuzzConfig & fc, const bo
         String next_bucket_path;
         const String bname = rg.nextSmallNumber() < 4 ? name : ("t" + std::to_string(counter));
 
-        /// Set integration call to use, sometimes create tables in ClickHouse, others also in Spark
+        /// Set integration call to use, sometimes create tables in Datastore, others also in Spark
         if (has_dolor && isAnyLakeEngine() && rg.nextBool())
         {
             integration = IntegrationCall::Dolor;
@@ -760,7 +760,7 @@ void SQLBase::setTablePath(RandomGenerator & rg, const FuzzConfig & fc, const bo
             if (rg.nextBool())
             {
                 /// Either a generic .data extension or a compression-recognized extension
-                /// (exercises ClickHouse's extension-based compression auto-detection)
+                /// (exercises Datastore's extension-based compression auto-detection)
                 static const DB::Strings comp_extensions
                     = {"gz", "gzip", "bz2", "lz4", "xz", "zst", "zstd", "lzma", "br", "brotli", "deflate", "snappy", "7z"};
                 next_bucket_path += rg.nextSmallNumber() < 4 ? ".data" : ("." + rg.pickRandomly(comp_extensions));

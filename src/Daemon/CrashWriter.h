@@ -20,7 +20,7 @@ using LoggerPtr = std::shared_ptr<Poco::Logger>;
 
 
 /// Sends crash reports and LOGICAL_ERRORs (if "send_logical_errors" is enabled)
-/// to ClickHouse core developer team.
+/// to Datastore core developer team.
 ///
 /// This feature can be enabled with "send_crash_reports.enabled" server setting.
 ///

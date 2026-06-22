@@ -3045,7 +3045,7 @@ bool ClientBase::processQueryText(const String & text)
     if (supportsLocalMetaCommands() && boost::iequals(trimmed_input, "ls"))
     {
         // Rewrites `ls` into a query that returns the list of all files of the current working directory
-        // TODO: Use the filesystem table engine once https://github.com/ClickHouse/ClickHouse/pull/53610 is merged
+        // TODO: Use the filesystem table engine once https://github.com/Datastore/Datastore/pull/53610 is merged
         const String ls_query = "SELECT _file AS file FROM file('*', 'One') ORDER BY file";
         return executeMultiQuery(ls_query);
     }
@@ -3390,7 +3390,7 @@ void ClientBase::addCommonOptions(OptionsDescription & options_description)
         ("progress-table", po::value<ProgressOption>()->implicit_value(ProgressOption::TTY, "tty")->default_value(ProgressOption::DEFAULT, "default"), "Print a progress table with changing metrics during query execution - to TTY: tty|on|1|true|yes; to STDERR non-interactive mode: err; OFF: off|0|false|no; DEFAULT - interactive to TTY, non-interactive is off")
         ("enable-progress-table-toggle", po::value<bool>()->default_value(true), "Enable toggling of the progress table by pressing the control key (Space). Only applicable in interactive mode with the progress table enabled.")
 
-        ("disable_suggestion,A", "Disable loading suggestions. Note that suggestions are loaded asynchronously through a second connection to ClickHouse server. Recommended when pasting queries with TAB characters.") /// Shorthand -A like in MySQL client
+        ("disable_suggestion,A", "Disable loading suggestions. Note that suggestions are loaded asynchronously through a second connection to Datastore server. Recommended when pasting queries with TAB characters.") /// Shorthand -A like in MySQL client
         ("wait_for_suggestions_to_load", "Load suggestion data synchronously")
         ("suggestion_limit", po::value<int>()->default_value(10000), "Suggestion limit for how many databases, tables and columns to fetch")
 

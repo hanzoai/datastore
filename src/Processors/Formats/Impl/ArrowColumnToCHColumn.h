@@ -48,7 +48,7 @@ public:
     /// truncated.  Throws INCORRECT_DATA on a malformed bitmap.
     static void checkRecordBatchValidityBitmaps(const arrow::RecordBatch & batch);
 
-    /// Transform arrow schema to ClickHouse header
+    /// Transform arrow schema to Datastore header
     static Block arrowSchemaToCHHeader(
         const arrow::Schema & schema,
         std::shared_ptr<const arrow::KeyValueMetadata> metadata,

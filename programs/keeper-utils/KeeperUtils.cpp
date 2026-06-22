@@ -985,7 +985,7 @@ int mainEntryClickHouseKeeperUtils(int argc, char ** argv)
 
         if ((vm.contains("help") && !vm.contains("command")) || !vm.contains("command"))
         {
-            std::cout << "ClickHouse Keeper Utils - A utility for managing ClickHouse Keeper data\n\n"
+            std::cout << "Datastore Keeper Utils - A utility for managing Datastore Keeper data\n\n"
                       << "Usage:\n  clickhouse-keeper-utils <command> [options]\n\n"
                       << "Available commands:\n"
                       << "  dump-state             Dump Keeper state from snapshot and changelog\n"

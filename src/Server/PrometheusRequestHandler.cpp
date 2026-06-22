@@ -209,7 +209,7 @@ protected:
         {
             if (isSettingLikeParameter(key))
             {
-                /// This query parameter should be considered as a ClickHouse setting.
+                /// This query parameter should be considered as a Datastore setting.
                 settings_changes.push_back({key, value});
             }
         }

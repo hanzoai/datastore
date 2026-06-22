@@ -1900,7 +1900,7 @@ ColumnWithTypeAndName ORCColumnToCHColumn::readColumnFromORCColumn(
             if (key_type_hint && !key_type_hint->equals(*key_column.type))
             {
                 /// Cast key column to target type, because it can happen
-                /// that parsed type cannot be ClickHouse Map key type.
+                /// that parsed type cannot be Datastore Map key type.
                 key_column.column = castColumn(key_column, key_type_hint);
                 key_column.type = key_type_hint;
             }

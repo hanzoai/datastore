@@ -66,7 +66,7 @@ UInt256 calculateHash(std::string_view data [[maybe_unused]])
     encodeSHA256(data, reinterpret_cast<unsigned char *>(hash.items));
     return hash;
 #else
-    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SHA256 hash support is disabled, because ClickHouse was built without SSL library");
+    throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SHA256 hash support is disabled, because Datastore was built without SSL library");
 #endif
 }
 

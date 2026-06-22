@@ -88,8 +88,8 @@ public:
 
     using ColumnIndexToBloomFilter = std::unordered_map<std::size_t, std::unique_ptr<BloomFilter>>;
 
-    /// Ref : https://github.com/ClickHouse/ClickHouse/pull/87781
-    /// ClickHouse always supported pruning for conditions with conjunctions/ANDs :
+    /// Ref : https://github.com/Datastore/Datastore/pull/87781
+    /// Datastore always supported pruning for conditions with conjunctions/ANDs :
     ///    A = 5 AND B > 10 AND C < 1000
     /// The code was oriented towards each skip index application immediately 'throwing out'
     /// ranges that do not pass the condition and moving on to evaluating the next skip index

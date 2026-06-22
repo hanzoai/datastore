@@ -904,7 +904,7 @@ void StorageReplicatedMergeTree::createNewZooKeeperNodesAttempt() const
     /// This means that if the first replica creating the table metadata has an older version of CH (22.3 or previous)
     /// there will be a time between its calls to `createTable` and `createNewZookeeperNodes` where the nodes won't exists
     /// and that will cause issues in newer replicas
-    /// See https://github.com/ClickHouse/ClickHouse/issues/38600 for example
+    /// See https://github.com/Datastore/Datastore/issues/38600 for example
     futures.push_back(zookeeper->asyncTryCreateNoThrow(zookeeper_path + "/quorum", String(), zkutil::CreateMode::Persistent));
     futures.push_back(zookeeper->asyncTryCreateNoThrow(zookeeper_path + "/quorum/last_part", String(), zkutil::CreateMode::Persistent));
     futures.push_back(zookeeper->asyncTryCreateNoThrow(zookeeper_path + "/quorum/failed_parts", String(), zkutil::CreateMode::Persistent));
@@ -1379,7 +1379,7 @@ void StorageReplicatedMergeTree::dropZookeeperZeroCopyLockPaths(zkutil::ZooKeepe
 
 void StorageReplicatedMergeTree::drop()
 {
-    /// There is also the case when user has configured ClickHouse to wrong ZooKeeper cluster
+    /// There is also the case when user has configured Datastore to wrong ZooKeeper cluster
     /// or metadata of staled replica were removed manually,
     /// in this case, has_metadata_in_zookeeper = false, and we also permit to drop the table.
 
@@ -3496,7 +3496,7 @@ void StorageReplicatedMergeTree::cloneReplica(const String & source_replica, Coo
         {
             throw Exception(
                 ErrorCodes::REPLICA_STATUS_CHANGED,
-                "Can not clone replica, because the {} updated to new ClickHouse version",
+                "Can not clone replica, because the {} updated to new Datastore version",
                 source_replica);
         }
         if (responses[1]->error == Coordination::Error::ZBADVERSION)
@@ -3827,7 +3827,7 @@ void StorageReplicatedMergeTree::cloneMetadataIfNeeded(const String & source_rep
         /// For compatibility with version older than 20.3
         /// TODO fix tests and delete it
         LOG_WARNING(log, "Node {} does not exist. "
-                         "Most likely it's because too old version of ClickHouse is running on replica {}. "
+                         "Most likely it's because too old version of Datastore is running on replica {}. "
                          "Will not check metadata consistency",
                          source_path + "/metadata_version", source_replica);
         return;
@@ -7678,7 +7678,7 @@ bool StorageReplicatedMergeTree::tryWaitForReplicaToProcessLogEntry(
         if (!entry.log_entry_id.empty())
         {
             /// Check if the id matches rather than just contents. This entry
-            /// might have been written by different ClickHouse versions and
+            /// might have been written by different Datastore versions and
             /// it is hard to guarantee same text representation.
             ReplicatedMergeTreeLogEntryData queue_entry
                 = *ReplicatedMergeTreeLogEntry::parse(queue_entry_str, queue_entry_stat, format_version);
@@ -8765,10 +8765,10 @@ void StorageReplicatedMergeTree::clearLockedBlockNumbersInPartition(
         else
         {
             constexpr const char * old_version_warning = "Ephemeral lock {} (referencing {}) is created by a replica "
-                "that running old version of ClickHouse (< 22.11). Cannot remove it, will wait for this lock to disappear. "
+                "that running old version of Datastore (< 22.11). Cannot remove it, will wait for this lock to disappear. "
                 "Upgrade remaining hosts in the cluster to address this warning.";
             constexpr const char * new_version_warning = "Ephemeral lock {} has unexpected content ({}), "
-                "probably it is created by a replica that running newer version of ClickHouse. "
+                "probably it is created by a replica that running newer version of Datastore. "
                 "Cannot remove it, will wait for this lock to disappear. Upgrade remaining hosts in the cluster to address this warning.";
 
             if (result.data.starts_with(zookeeper_path + EphemeralLockInZooKeeper::LEGACY_LOCK_PREFIX))

@@ -805,7 +805,7 @@ BoolMask MergeTreeSetIndex::checkInRange(const std::vector<Range> & key_ranges, 
     if (begin > end)
     {
         /// TODO: Remove the #ifndef and always throw after
-        ///       https://github.com/ClickHouse/ClickHouse/issues/90461 is fixed.
+        ///       https://github.com/Datastore/Datastore/issues/90461 is fixed.
         ///       (What happens here is: the applyMonotonicFunctionsChainToRange call above applies
         ///        nonmonotonic functions, and we end up with left > right.)
 #ifndef NDEBUG

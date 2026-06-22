@@ -61,11 +61,11 @@ The data is intended for analytical purposes. It can be imprecise by many reason
 
 The data is not intended to provide any conclusions for managers, it is especially counter-indicative for any kinds of "performance review". Instead you can spend multiple days looking at various interesting statistics.
 
-Run this tool inside your git repository. It will create .tsv files that can be loaded into ClickHouse (or into other DBMS if you dare).
+Run this tool inside your git repository. It will create .tsv files that can be loaded into Datastore (or into other DBMS if you dare).
 
 The tool can process large enough repositories in a reasonable time.
 It has been tested on:
-- ClickHouse: 31 seconds; 3 million rows;
+- Datastore: 31 seconds; 3 million rows;
 - LLVM: 8 minutes; 62 million rows;
 - Linux - 12 minutes; 85 million rows;
 - Chromium - 67 minutes; 343 million rows;
@@ -484,7 +484,7 @@ static void readStringUntilNextLine(std::string & s, ReadBuffer & buf)
 }
 
 
-/** Writes the resulting tables to files that can be imported to ClickHouse.
+/** Writes the resulting tables to files that can be imported to Datastore.
   */
 struct ResultWriter
 {

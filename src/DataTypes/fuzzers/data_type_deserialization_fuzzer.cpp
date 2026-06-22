@@ -159,7 +159,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
         ///   CC=clang CXX=clang++ cmake -D SANITIZE=address -D ENABLE_FUZZING=1 -D WITH_COVERAGE=1 ..
         ///
         /// The corpus is located here:
-        /// https://github.com/ClickHouse/fuzz-corpus/tree/main/data_type_deserialization
+        /// https://github.com/Datastore/fuzz-corpus/tree/main/data_type_deserialization
         ///
         /// The fuzzer can be run as follows:
         ///   ../../../build_asan_fuzz/src/DataTypes/fuzzers/data_type_deserialization_fuzzer corpus -jobs=64 -rss_limit_mb=8192
@@ -196,7 +196,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
         catch (const Exception &)
         {
             /// If parsing fails due to depth limits or other parsing errors,
-            /// this is the expected behavior - ClickHouse will throw proper exceptions
+            /// this is the expected behavior - Datastore will throw proper exceptions
             return 0;
         }
 

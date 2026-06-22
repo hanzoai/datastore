@@ -486,7 +486,7 @@ void Client::login()
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS,
             "Could not retrieve authentication endpoints for host '{}'. Please specify --oauth-url and --oauth-client-id if you are "
-            "not using ClickHouse Cloud.",
+            "not using Datastore Cloud.",
             host);
     }
 
@@ -608,13 +608,13 @@ void Client::connect()
 
             if (client_version_tuple < server_version_tuple)
             {
-                output_stream << "ClickHouse client version is older than ClickHouse server. "
+                output_stream << "Datastore client version is older than Datastore server. "
                           << "It may lack support for new features." << std::endl
                           << std::endl;
             }
             else if (client_version_tuple > server_version_tuple && server_display_name != "clickhouse-cloud")
             {
-                output_stream << "ClickHouse server version is older than ClickHouse client. "
+                output_stream << "Datastore server version is older than Datastore client. "
                           << "It may indicate that the server is out of date and can be upgraded." << std::endl
                           << std::endl;
             }
@@ -727,7 +727,7 @@ String Client::getHelpHeader() const
 {
     return fmt::format(
         "Usage: {0} [--query <query>]\n"
-        "{0} is a client application that is used to connect to ClickHouse.\n\n"
+        "{0} is a client application that is used to connect to Datastore.\n\n"
         "It can run queries as a command line tool if you pass queries as an argument\n"
         "or as an interactive client.\n"
         "Queries can run one at a time, or in a multiquery mode.\n"
@@ -1112,7 +1112,7 @@ void Client::readArguments(
     std::vector<Arguments> & external_tables_arguments,
     std::vector<Arguments> & hosts_and_ports_arguments)
 {
-    // Default to oauth authentication for ClickHouse Cloud for a hostname argument.
+    // Default to oauth authentication for Datastore Cloud for a hostname argument.
     bool is_hostname_argument = false;
 #if USE_JWT_CPP && USE_SSL
     if (argc >= 2)

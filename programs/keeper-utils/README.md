@@ -1,13 +1,13 @@
-# ClickHouse Keeper Utils
+# Datastore Keeper Utils
 
-A comprehensive utility tool for managing and analyzing ClickHouse Keeper data, including snapshots and changelogs.
+A comprehensive utility tool for managing and analyzing Datastore Keeper data, including snapshots and changelogs.
 
 ## Building
 
-Build the tool as part of the main ClickHouse build process:
+Build the tool as part of the main Datastore build process:
 
 ```bash
-cd /path/to/ClickHouse
+cd /path/to/Datastore
 mkdir -p build
 cd build
 cmake ..
@@ -276,7 +276,7 @@ The `dump-state` command supports various output formats, including:
 - `CSV` / `CSVWithNames` / `CSVWithNamesAndTypes` (default)
 - `JSON` / `JSONEachRow`
 - `TSV` / `TSVRaw` / `TSVWithNames` / `TSVWithNamesAndTypes`
-- And other formats supported by ClickHouse
+- And other formats supported by Datastore
 
 ## Troubleshooting
 
@@ -286,4 +286,4 @@ The `dump-state` command supports various output formats, including:
 
 ## License
 
-This utility is part of ClickHouse and is distributed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+This utility is part of Datastore and is distributed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).

@@ -2333,7 +2333,7 @@ If the index falls outside of the bounds of an array, it returns a default value
 except for arguments of a non-constant array and a constant index 0. In this case there will be an error `Array indices are 1-based`.
 
 :::note
-Arrays in ClickHouse are one-indexed.
+Arrays in Datastore are one-indexed.
 :::
 
 Negative indexes are supported. In this case, the corresponding element is selected, numbered from the end. For example, `arr[-1]` is the last item in the array.
@@ -2363,7 +2363,7 @@ Gets the element of the provided array with index `n` where `n` can be any integ
 If the index falls outside of the bounds of an array, `NULL` is returned instead of a default value.
 
 :::note
-Arrays in ClickHouse are one-indexed.
+Arrays in Datastore are one-indexed.
 :::
 
 Negative indexes are supported. In this case, it selects the corresponding element numbered from the end. For example, `arr[-1]` is the last item in the array.

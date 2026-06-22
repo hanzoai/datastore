@@ -127,7 +127,7 @@ ColumnsDescription QueryLogElement::getColumnsDescription()
         {"quota_key", std::make_shared<DataTypeString>(), "The quota key specified in the quotas setting (see keyed)."},
         {"distributed_depth", std::make_shared<DataTypeUInt64>(), "How many times a query was forwarded between servers."},
 
-        {"revision", std::make_shared<DataTypeUInt32>(), "ClickHouse revision."},
+        {"revision", std::make_shared<DataTypeUInt32>(), "Datastore revision."},
 
         {"log_comment", std::make_shared<DataTypeString>(), "Log comment. It can be set to arbitrary string no longer than max_query_size. An empty string if it is not defined."},
 

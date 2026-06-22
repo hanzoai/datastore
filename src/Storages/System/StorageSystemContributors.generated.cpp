@@ -354,7 +354,7 @@ const char * auto_contributors[] {
     "Clayton McClure",
     "Clement Rodriguez",
     "ClickGap AI Bot",
-    "ClickHouse Admin",
+    "Datastore Admin",
     "Clément Rodriguez",
     "Cody Baker",
     "Cole Smith",

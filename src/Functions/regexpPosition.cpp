@@ -284,7 +284,7 @@ If `subexpression` is greater than 0, the position of the corresponding capture 
 
 Returns 0 if no match is found, or if the requested capture group did not participate in the match.
 
-Provided for compatibility with PostgreSQL's `regexp_instr` (also exposed under that alias). Note that positions are byte-based, consistent with other ClickHouse regex functions; PostgreSQL's `regexp_instr` is character-based.
+Provided for compatibility with PostgreSQL's `regexp_instr` (also exposed under that alias). Note that positions are byte-based, consistent with other Datastore regex functions; PostgreSQL's `regexp_instr` is character-based.
     )";
     FunctionDocumentation::Syntax syntax = "regexpPosition(haystack, pattern[, position[, occurrence[, return_option[, flags[, subexpression]]]]])";
     FunctionDocumentation::Arguments arguments = {

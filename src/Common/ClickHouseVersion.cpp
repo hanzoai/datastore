@@ -21,14 +21,14 @@ ClickHouseVersion::ClickHouseVersion(std::string_view version)
     boost::split(split, version, [](char c){ return c == '.'; });
     components.reserve(split.size());
     if (split.empty())
-        throw Exception{ErrorCodes::BAD_ARGUMENTS, "Cannot parse ClickHouse version here: {}", version};
+        throw Exception{ErrorCodes::BAD_ARGUMENTS, "Cannot parse Datastore version here: {}", version};
 
     for (const auto & split_element : split)
     {
         size_t component;
         ReadBufferFromString buf(split_element);
         if (!tryReadIntText(component, buf) || !buf.eof())
-            throw Exception{ErrorCodes::BAD_ARGUMENTS, "Cannot parse ClickHouse version here: {}", version};
+            throw Exception{ErrorCodes::BAD_ARGUMENTS, "Cannot parse Datastore version here: {}", version};
         components.push_back(component);
     }
 }

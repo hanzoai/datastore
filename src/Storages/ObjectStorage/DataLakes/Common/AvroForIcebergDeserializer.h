@@ -28,7 +28,7 @@ using ParsedManifestFileEntryPtr = std::shared_ptr<const ParsedManifestFileEntry
 /// It has rich types system, with it's own binary representation and it's really tricky
 /// to parse some of them.
 ///
-/// In ClickHouse we already support avro as input format, so we can parse it. The main complexity
+/// In Datastore we already support avro as input format, so we can parse it. The main complexity
 /// comes from the fact that we parse Avro files into nested Tuple column which are really hard
 /// to operate in key-value fashion. That is why this class is written on top of our avro parser.
 /// It allows to access files in avro files using syntax like "data_file.partition.XXXX" and return

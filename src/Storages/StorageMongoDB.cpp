@@ -530,7 +530,7 @@ bsoncxx::document::value StorageMongoDB::buildMongoDBQuery(const ContextPtr & co
         if (throw_on_error)
             throw Exception(ErrorCodes::NOT_IMPLEMENTED,
                 "Only simple queries are supported, failed to convert expression '{}' to MongoDB query. "
-                "You can disable this restriction with 'SET mongodb_throw_on_unsupported_query=0', to read the full table and process on ClickHouse side (this may cause poor performance)", node->formatASTForErrorMessage());
+                "You can disable this restriction with 'SET mongodb_throw_on_unsupported_query=0', to read the full table and process on Datastore side (this may cause poor performance)", node->formatASTForErrorMessage());
         LOG_WARNING(log, "Failed to build MongoDB query for '{}'", node ? node->formatASTForErrorMessage() : "<unknown>");
     };
 
@@ -637,9 +637,9 @@ void registerStorageMongoDB(StorageFactory & factory)
 {
     factory.registerStorage("MongoDB", [](const StorageFactory::Arguments & args)
     {
-        /// Allow loading tables with excessive path in host parameter created on older ClickHouse versions
+        /// Allow loading tables with excessive path in host parameter created on older Datastore versions
         /// (that used the previous Poco-based MongoDB implementation which allowed it).
-        /// TODO: we can remove it after ClickHouse 27.5, it should be enough time for users to migrate.
+        /// TODO: we can remove it after Datastore 27.5, it should be enough time for users to migrate.
         bool allow_excessive_path_in_host = args.mode > LoadingStrictnessLevel::CREATE;
         return std::make_shared<StorageMongoDB>(
             args.table_id,

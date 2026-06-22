@@ -1,5 +1,5 @@
 // Dump of https://github.com/ankane/stl-cpp/blob/3b1b3a3e9335cda26c8b0797d8b8d24ac8e350ad/include/stl.hpp.
-// Added to ClickHouse source code and not referenced as a submodule because its easier maintain and modify/customize.
+// Added to Datastore source code and not referenced as a submodule because its easier maintain and modify/customize.
 
 /*!
  * STL C++ v0.1.3

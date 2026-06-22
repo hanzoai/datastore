@@ -1586,7 +1586,7 @@ class FunctionBinaryArithmetic : public IFunction
             {
                 return static_cast<Int64>(std::clamp<Int128>(wide_result, result_min, result_max));
             }
-            /// Ignore: truncate to Int64. The result is undefined per ClickHouse docs.
+            /// Ignore: truncate to Int64. The result is undefined per Datastore docs.
             return static_cast<Int64>(wide_result);
         };
 

@@ -75,7 +75,7 @@ ConfigProcessor::ConfigProcessor(
     , throw_on_bad_incl(throw_on_bad_incl_)
     , throw_on_bad_include_from(throw_on_bad_include_from_)
     , substitutions(substitutions_)
-    /// We need larger name pool to allow to support vast amount of users in users.xml files for ClickHouse.
+    /// We need larger name pool to allow to support vast amount of users in users.xml files for Datastore.
     /// Size is prime because Poco::XML::NamePool uses bad (inefficient, low quality)
     ///  hash function internally, and its size was prime by default.
     , name_pool(new Poco::XML::NamePool(65521))

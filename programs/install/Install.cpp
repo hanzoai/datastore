@@ -49,7 +49,7 @@ constexpr unsigned char resource_users_xml[] =
 };
 
 
-/** This tool can be used to install ClickHouse without a deb/rpm/tgz package, having only "clickhouse" binary.
+/** This tool can be used to install Datastore without a deb/rpm/tgz package, having only "clickhouse" binary.
   * It also allows to avoid dependency on systemd, upstart, SysV init.
   *
   * The following steps are performed:
@@ -245,7 +245,7 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Install ClickHouse without .deb/.rpm/.tgz packages (having the binary only)\n\n";
+            std::cout << "Install Datastore without .deb/.rpm/.tgz packages (having the binary only)\n\n";
             std::cout << "Usage: " << formatWithSudo("clickhouse install", getuid() != 0) << " [options]\n";
             std::cout << desc << '\n';
             return 0;
@@ -351,18 +351,18 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
                 if (old_binary_exists && binary_self_canonical_path == fs::canonical(main_bin_path))
                 {
                     already_installed = true;
-                    fmt::print("ClickHouse binary is already located at {}\n", main_bin_path.string());
+                    fmt::print("Datastore binary is already located at {}\n", main_bin_path.string());
                 }
                 /// Check if binary has the same content.
                 else if (old_binary_exists && binary_size == fs::file_size(main_bin_path))
                 {
-                    fmt::print("Found already existing ClickHouse binary at {} having the same size. Will check its contents.\n",
+                    fmt::print("Found already existing Datastore binary at {} having the same size. Will check its contents.\n",
                         main_bin_path.string());
 
                     if (filesEqual(binary_self_path.string(), main_bin_path.string()))
                     {
                         already_installed = true;
-                        fmt::print("ClickHouse binary is already located at {} and it has the same content as {}\n",
+                        fmt::print("Datastore binary is already located at {} and it has the same content as {}\n",
                             main_bin_path.string(), binary_self_canonical_path.string());
                     }
                 }
@@ -386,7 +386,7 @@ int mainEntryClickHouseInstall(int argc, char ** argv)
                     throw Exception(ErrorCodes::NOT_ENOUGH_SPACE, "Not enough space for clickhouse binary in {}, required {}, available {}.",
                         bin_dir.string(), ReadableSize(binary_size), ReadableSize(available_space));
 
-                fmt::print("Copying ClickHouse binary to {}\n", main_bin_tmp_path.string());
+                fmt::print("Copying Datastore binary to {}\n", main_bin_tmp_path.string());
 
                 try
                 {
@@ -1044,7 +1044,7 @@ namespace
         else
         {
             /// Create a directory for pid file.
-            /// It's created by "install" but we also support cases when ClickHouse is already installed different way.
+            /// It's created by "install" but we also support cases when Datastore is already installed different way.
             fs::path pid_path = pid_file;
             pid_path = pid_path.remove_filename();
             fs::create_directories(pid_path);

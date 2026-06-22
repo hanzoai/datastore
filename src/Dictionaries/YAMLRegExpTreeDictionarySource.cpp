@@ -95,7 +95,7 @@ void registerDictionarySourceYAMLRegExpTree(DictionarySourceFactory & factory)
 #else
         throw Exception(
             ErrorCodes::SUPPORT_IS_DISABLED,
-            "Dictionary source of type `{}` is disabled because ClickHouse was built without yaml_cpp support",
+            "Dictionary source of type `{}` is disabled because Datastore was built without yaml_cpp support",
             kYAMLRegExpTree);
 #endif
     };
