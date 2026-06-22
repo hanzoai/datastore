@@ -121,8 +121,12 @@ target_compile_options(_zap PRIVATE ${ZAP_PRIVATE_CXX_FLAGS})
 target_compile_options(_zap_rpc PRIVATE ${ZAP_PRIVATE_CXX_FLAGS})
 target_compile_options(_zapc PRIVATE ${ZAP_PRIVATE_CXX_FLAGS})
 
-# _zapc carries the full codec+rpc+schema surface.
+# _zapc carries the full codec+rpc+schema surface — this is what the native ZAP query
+# transport links.
 add_library(ch_contrib::zap ALIAS _zapc)
-# Transition alias: the CapnProto data format links ch_contrib::capnp until its code
-# is migrated to ch_contrib::zap. Same underlying target (ZAP == debranded capnp).
-add_library(ch_contrib::capnp ALIAS _zapc)
+
+# NOTE: the CapnProto data format (src/Formats/CapnProto*, #if USE_CAPNP) is intentionally
+# NOT wired here. It depends on ClickHouse-fork capnp patches (DynamicStruct/List
+# getBuilderImpl/getReaderImpl, Text::Reader->String) that vanilla zap-proto/cpp-core lacks.
+# Without a ch_contrib::capnp target, USE_CAPNP=0 and that format gates off cleanly. Re-enabling
+# it = porting those ~16 lines of accessors into zap-proto/cpp-core's dynamic.h (tracked follow-up).
