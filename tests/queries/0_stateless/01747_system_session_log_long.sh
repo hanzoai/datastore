@@ -171,12 +171,12 @@ function testHTTPWithURL()
 
     # Loging\Logout
     ${CLICKHOUSE_CURL} -sS "${clickhouse_url}" \
-        -H "X-ClickHouse-User: ${username}" -H "X-ClickHouse-Key: ${password}" \
+        -H "X-Datastore-User: ${username}" -H "X-Datastore-Key: ${password}" \
         -d 'SELECT 1 Format Null'
 
     # Wrong username
     ${CLICKHOUSE_CURL} -sS "${clickhouse_url}" \
-        -H "X-ClickHouse-User: invalid_${username}" -H "X-ClickHouse-Key: ${password}" \
+        -H "X-Datastore-User: invalid_${username}" -H "X-Datastore-Key: ${password}" \
         -d 'SELECT 1 Format Null' | grep -Eq "Code: 516. DB::Exception: invalid_${username}: Authentication failed: password is incorrect, or there is no user with such name"
 
     # Wrong password
@@ -186,7 +186,7 @@ function testHTTPWithURL()
     else
         # user with `no_password` is able to login with any password, so it makes sense to skip this testcase.
         ${CLICKHOUSE_CURL} -sS "${clickhouse_url}" \
-            -H "X-ClickHouse-User: ${username}" -H "X-ClickHouse-Key: invalid_${password}" \
+            -H "X-Datastore-User: ${username}" -H "X-Datastore-Key: invalid_${password}" \
             -d 'SELECT 1 Format Null' \
             | grep -Eq "Code: 516. .+ ${username}: Authentication failed: password is incorrect, or there is no user with such name"
     fi

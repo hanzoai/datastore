@@ -60,11 +60,11 @@ def execute_query_https(
         f"https://{instance.ip_address}:{HTTPS_PORT}/?query={urllib.parse.quote(query)}"
     )
     request = urllib.request.Request(url)
-    request.add_header("X-ClickHouse-User", user)
+    request.add_header("X-Datastore-User", user)
     if enable_ssl_auth:
-        request.add_header("X-ClickHouse-SSL-Certificate-Auth", "on")
+        request.add_header("X-Datastore-SSL-Certificate-Auth", "on")
     if password:
-        request.add_header("X-ClickHouse-Key", password)
+        request.add_header("X-Datastore-Key", password)
     response = urllib.request.urlopen(
         request, context=get_ssl_context(cert_name)
     ).read()

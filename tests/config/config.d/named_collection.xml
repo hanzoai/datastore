@@ -17,11 +17,11 @@
         <url_with_headers>
             <headers>
                 <header>
-                    <name>X-ClickHouse-Format</name>
+                    <name>X-Datastore-Format</name>
                     <value>Vertical</value>
                 </header>
                 <header>
-                    <name>X-ClickHouse-Database</name>
+                    <name>X-Datastore-Database</name>
                     <value>non_existing_database</value>
                 </header>
             </headers>

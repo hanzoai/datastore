@@ -8,7 +8,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 extract_query_id() {
-    grep '< X-ClickHouse-Query-Id:' | sed 's/\r$//' | sed 's/^< X-ClickHouse-Query-Id: //'
+    grep '< X-Datastore-Query-Id:' | sed 's/\r$//' | sed 's/^< X-Datastore-Query-Id: //'
 }
 
 count_injected_headers() {

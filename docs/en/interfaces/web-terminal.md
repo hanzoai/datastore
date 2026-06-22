@@ -35,7 +35,7 @@ The web terminal authenticates the user against the same `Session` and access-co
 {"type": "auth", "user": "<user>", "password": "<password>"}
 ```
 
-This avoids placing credentials in URL query parameters or `Authorization` headers attached to the upgrade request, where they could end up in browser history, server access logs, and reverse-proxy logs. URL parameters, HTTP Basic, and `X-ClickHouse-User`/`X-ClickHouse-Key` headers on the upgrade request are intentionally **not** consulted by `/webterminal`.
+This avoids placing credentials in URL query parameters or `Authorization` headers attached to the upgrade request, where they could end up in browser history, server access logs, and reverse-proxy logs. URL parameters, HTTP Basic, and `X-Datastore-User`/`X-Datastore-Key` headers on the upgrade request are intentionally **not** consulted by `/webterminal`.
 
 Invalid credentials cause the server to close the WebSocket with code `1008`; the browser UI re-prompts for credentials.
 

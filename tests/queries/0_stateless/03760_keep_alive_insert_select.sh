@@ -14,7 +14,7 @@ ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" -H 'Accept-Encoding: gzip' \
 query_id=$(
     ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&max_block_size=1&http_headers_progress_interval_ms=10&send_progress_in_http_headers=1" \
     -d 'INSERT INTO insert_number_table (record) SELECT number FROM system.numbers LIMIT 10' 2>&1 \
-    | grep -F '< X-ClickHouse-Query-Id:' | sed 's/< X-ClickHouse-Query-Id: //' | tr -d '\n\t\r' | xargs
+    | grep -F '< X-Datastore-Query-Id:' | sed 's/< X-Datastore-Query-Id: //' | tr -d '\n\t\r' | xargs
 )
 
 ${CLICKHOUSE_CURL} -sS "${CLICKHOUSE_URL}" \

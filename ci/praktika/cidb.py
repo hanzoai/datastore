@@ -79,8 +79,8 @@ class CIDB:
     def __init__(self, url, user, passwd):
         self.url = url
         self.auth = {
-            "X-ClickHouse-User": user,
-            "X-ClickHouse-Key": passwd,
+            "X-Datastore-User": user,
+            "X-Datastore-Key": passwd,
         }
 
     def get_link_to_test_case_statistics(

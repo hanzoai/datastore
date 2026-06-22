@@ -10,7 +10,7 @@ query_id=$(${CLICKHOUSE_CLIENT} -q "select lower(hex(reverse(reinterpretAsString
 ${CLICKHOUSE_CLIENT} -q "select 1 format Null" "--query_id=$query_id"
 
 ${CLICKHOUSE_CURL} \
-    --header "X-ClickHouse-Query-Id: $query_id" \
+    --header "X-Datastore-Query-Id: $query_id" \
     $CLICKHOUSE_URL \
     --get \
     --data-urlencode "query=select 1 format Null"

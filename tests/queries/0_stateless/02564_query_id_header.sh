@@ -15,7 +15,7 @@ function run_and_check_headers()
     echo "$query"
 
     ${CLICKHOUSE_CURL} -sS -v "${CLICKHOUSE_URL}&query_id=$query_id" -d "$1" 2>&1 \
-        | grep -e "< X-ClickHouse-Query-Id" -e "< X-ClickHouse-Timezone" -e "< X-ClickHouse-Format" -e "< Content-Type" \
+        | grep -e "< X-Datastore-Query-Id" -e "< X-Datastore-Timezone" -e "< X-Datastore-Format" -e "< Content-Type" \
         | sed "s/$CLICKHOUSE_TIMEZONE_ESCAPED/timezone/" \
         | sed "s/$query_id/query_id/" \
         | sed "s/\r$//" \
