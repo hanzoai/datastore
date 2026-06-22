@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <!-- We log heavily using the async logger, with a small queue size to trigger the drop messages metrics -->
         <console>1</console>
@@ -11,4 +11,4 @@
         <async>true</async>
         <async_queue_max_size>1</async_queue_max_size>
     </logger>
-</clickhouse>
+</datastore>

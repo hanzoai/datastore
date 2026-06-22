@@ -138,23 +138,23 @@ def test_not_replicated_table_migration(cluster):
 
     config_old = \
 """
-<clickhouse>
+<datastore>
     <insert_deduplication_version>old_separate_hashes</insert_deduplication_version>
-</clickhouse>
+</datastore>
 """
 
     config_compatible = \
 """
-<clickhouse>
+<datastore>
     <insert_deduplication_version>compatible_double_hashes</insert_deduplication_version>
-</clickhouse>
+</datastore>
 """
 
     config_new = \
 """
-<clickhouse>
+<datastore>
     <insert_deduplication_version>new_unified_hash</insert_deduplication_version>
-</clickhouse>
+</datastore>
 """
 
     def check_insert_deduplicated_across_configs(node, first_config, second_config):

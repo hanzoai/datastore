@@ -19,4 +19,4 @@
             <path>config.d/lem-en.bin</path>
         </lemmatizer>
     </lemmatizers>
-</clickhouse>
+</datastore>

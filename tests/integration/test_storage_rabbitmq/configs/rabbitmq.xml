@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <rabbitmq>
         <username>root</username>
         <password>clickhouse</password>
@@ -15,4 +15,4 @@
     
     <!-- Settings for streaming storage factory -->
     <streaming_storage_shutdown_threads>10</streaming_storage_shutdown_threads>
-</clickhouse>
+</datastore>

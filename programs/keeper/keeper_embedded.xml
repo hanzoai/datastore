@@ -18,4 +18,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

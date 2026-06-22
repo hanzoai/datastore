@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <text_log>
         <level>information</level>
     </text_log>
-</clickhouse>
+</datastore>

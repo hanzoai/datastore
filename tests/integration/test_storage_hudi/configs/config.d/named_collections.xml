@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <named_collections>
     <s3>
         <url>http://minio1:9001/root/</url>
@@ -6,4 +6,4 @@
         <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>
     </s3>
   </named_collections>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <profiles>
     <default>
       <constraints>
@@ -19,4 +19,4 @@
       <quota>default</quota>
     </test_profile_settings_and_constraints_order>
   </users>
-</clickhouse>
+</datastore>

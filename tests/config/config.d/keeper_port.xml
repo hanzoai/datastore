@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -49,4 +49,4 @@
             <remove_recursive>1</remove_recursive>
         </feature_flags>
     </keeper_server>
-</clickhouse>
+</datastore>

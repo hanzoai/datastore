@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <allow_prefetched_read_pool_for_remote_filesystem>0</allow_prefetched_read_pool_for_remote_filesystem>
@@ -6,4 +6,4 @@
             <filesystem_prefetch_max_memory_usage>1Gi</filesystem_prefetch_max_memory_usage>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

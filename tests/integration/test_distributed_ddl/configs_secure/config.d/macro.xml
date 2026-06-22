@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
         <macros>
                 <cluster>cluster_no_replicas</cluster>
         </macros>
-</clickhouse>
+</datastore>

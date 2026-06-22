@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <enable_parallel_replicas>1</enable_parallel_replicas>
@@ -7,4 +7,4 @@
             <parallel_replicas_for_non_replicated_merge_tree>1</parallel_replicas_for_non_replicated_merge_tree>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

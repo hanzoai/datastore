@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <test_local_disk_metadata_local_object_storage>
@@ -33,4 +33,4 @@
             </test_plain_rewriteable_metadata_s3_object_storage>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

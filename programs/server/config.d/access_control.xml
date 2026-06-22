@@ -10,4 +10,4 @@
             <path>access/</path>
         </local_directory>
     </user_directories>
-</clickhouse>
+</datastore>

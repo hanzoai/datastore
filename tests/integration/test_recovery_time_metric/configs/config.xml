@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <tcp_port>9000</tcp_port>
 
     <profiles>
@@ -38,4 +38,4 @@
         <session_timeout_ms>20000</session_timeout_ms>
     </zookeeper>
 
-</clickhouse>
+</datastore>

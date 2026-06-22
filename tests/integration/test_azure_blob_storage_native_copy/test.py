@@ -28,7 +28,7 @@ def generate_config(port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         TEMPLATE = """
-        <clickhouse>
+        <datastore>
             <storage_configuration>
                 <disks>
                     <disk_azure>
@@ -96,7 +96,7 @@ def generate_config(port):
                 <allowed_disk>disk_azure_cache</allowed_disk>
                 <allowed_disk>disk_azure_other_bucket</allowed_disk>
             </backups>
-        </clickhouse>
+        </datastore>
         """
         f.write(TEMPLATE.format(port=port))
     return path

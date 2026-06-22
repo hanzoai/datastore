@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <allow_experimental_cluster_discovery>1</allow_experimental_cluster_discovery>
     <remote_servers>
         <two_shards>
@@ -19,4 +19,4 @@
     <fail_points_active>
         <cluster_discovery_faults/>
     </fail_points_active>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
@@ -19,4 +19,4 @@
         </disks>
     </storage_configuration>
     <temporary_data_in_cache>disk1</temporary_data_in_cache>
-</clickhouse>
+</datastore>

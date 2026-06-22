@@ -70,7 +70,7 @@ Creating a dictionary with a configuration file is not applicable to ClickHouse 
 The dictionary configuration file has the following format:
 
 ```xml
-<clickhouse>
+<datastore>
     <comment>An optional element with any content. Ignored by the ClickHouse server.</comment>
 
     <!--Optional element. File name with substitutions-->
@@ -82,7 +82,7 @@ The dictionary configuration file has the following format:
         <!-- There can be any number of dictionary sections in a configuration file. -->
     </dictionary>
 
-</clickhouse>
+</datastore>
 ```
 
 You can configure any number of dictionaries in the same file.

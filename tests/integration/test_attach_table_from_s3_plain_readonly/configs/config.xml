@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3_plain_readonly>
@@ -19,4 +19,4 @@
             </s3_plain_readonly>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

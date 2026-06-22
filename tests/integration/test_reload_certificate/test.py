@@ -50,7 +50,7 @@ def change_config_to_key(name, pass_phrase=""):
             "bash",
             "-c",
             """cat > /etc/clickhouse-server/config.d/cert.xml << EOF
-<clickhouse>
+<datastore>
     <https_port>8443</https_port>
     <openSSL>
         <server>
@@ -63,7 +63,7 @@ def change_config_to_key(name, pass_phrase=""):
             {pass_phrase}
         </server>
     </openSSL>
-</clickhouse>
+</datastore>
 EOF""".format(
                 cur_name=name, pass_phrase=pass_phrase
             ),

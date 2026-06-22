@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <urldb>
             <url>http://nginx:80/test_dict</url>
@@ -21,4 +21,4 @@
             <format>CSV</format>
         </urldict2>
     </named_collections>
-</clickhouse>
+</datastore>

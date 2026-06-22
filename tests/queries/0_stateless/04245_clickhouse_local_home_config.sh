@@ -13,16 +13,16 @@ mkdir -p "$TESTDIR/home/.clickhouse-local"
 mkdir -p "$TESTDIR/cwd"
 
 cat > "$TESTDIR/home/.clickhouse-local/config.xml" <<EOF
-<clickhouse>
+<datastore>
     <user_directories>
         <users_xml>
             <path>users.xml</path>
         </users_xml>
     </user_directories>
-</clickhouse>
+</datastore>
 EOF
 cat > "$TESTDIR/home/.clickhouse-local/users.xml" <<EOF
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_threads>42</max_threads>
@@ -39,7 +39,7 @@ cat > "$TESTDIR/home/.clickhouse-local/users.xml" <<EOF
     <quotas>
         <default></default>
     </quotas>
-</clickhouse>
+</datastore>
 EOF
 
 echo "-- HOME/.clickhouse-local/config.xml"
@@ -79,7 +79,7 @@ mkdir -p "$TESTDIR/empty_home"
 # config's directory; a missing file fails fast instead of silently picking
 # up a `./users.xml` from cwd. Verified for both forms below.
 cat > "$TESTDIR/cwd/users.xml" <<EOF
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_threads>99</max_threads>
@@ -96,19 +96,19 @@ cat > "$TESTDIR/cwd/users.xml" <<EOF
     <quotas>
         <default></default>
     </quotas>
-</clickhouse>
+</datastore>
 EOF
 
 echo "-- missing user_directories.users_xml.path does not silently load cwd users.xml"
 mkdir -p "$TESTDIR/orphan_home/.clickhouse-local"
 cat > "$TESTDIR/orphan_home/.clickhouse-local/config.xml" <<EOF
-<clickhouse>
+<datastore>
     <user_directories>
         <users_xml>
             <path>users.xml</path>
         </users_xml>
     </user_directories>
-</clickhouse>
+</datastore>
 EOF
 (
     cd "$TESTDIR/cwd" || exit 1
@@ -120,9 +120,9 @@ EOF
 echo "-- missing users_config users.xml does not silently load cwd users.xml"
 mkdir -p "$TESTDIR/orphan_home_uc/.clickhouse-local"
 cat > "$TESTDIR/orphan_home_uc/.clickhouse-local/config.xml" <<EOF
-<clickhouse>
+<datastore>
     <users_config>users.xml</users_config>
-</clickhouse>
+</datastore>
 EOF
 (
     cd "$TESTDIR/cwd" || exit 1

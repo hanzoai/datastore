@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <default>
             <shard>
@@ -22,4 +22,4 @@
     <access_control_improvements>
         <throw_on_invalid_replicated_access_entities>true</throw_on_invalid_replicated_access_entities>
     </access_control_improvements>
-</clickhouse>
+</datastore>

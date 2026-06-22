@@ -100,7 +100,7 @@ def change_config_to_key(name):
                 "bash",
                 "-c",
                 """cat > /etc/clickhouse-server/config.d/ssl_conf.xml << EOF
-<clickhouse>
+<datastore>
     <openSSL>
         <client>
             <certificateFile>/etc/clickhouse-server/config.d/{cur_name}_client.crt</certificateFile>
@@ -115,7 +115,7 @@ def change_config_to_key(name):
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>
 EOF""".format(
                     cur_name=name
                 ),

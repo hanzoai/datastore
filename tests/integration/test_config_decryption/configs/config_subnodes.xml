@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 
     <encryption_codecs>
         <aes_128_gcm_siv>
@@ -11,4 +11,4 @@
         <password>96260000000B0000000000E8FE3C087CED2205A5071078B29FD5C3B97F824911DED3217E980C</password>
     </interserver_http_credentials>
 
-</clickhouse>
+</datastore>

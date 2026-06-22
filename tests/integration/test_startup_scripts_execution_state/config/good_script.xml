@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <startup_scripts>
         <scripts>
             <condition>SELECT 0;</condition>
@@ -8,4 +8,4 @@
             <query>SELECT 42;</query>
         </scripts>
     </startup_scripts>
-</clickhouse>
+</datastore>

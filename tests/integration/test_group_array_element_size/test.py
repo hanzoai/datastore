@@ -3,10 +3,10 @@ import pytest
 
 from helpers.cluster import ClickHouseCluster
 
-ORIGINAL_CONFIG = """<clickhouse>
+ORIGINAL_CONFIG = """<datastore>
     <aggregate_function_group_array_max_element_size>10</aggregate_function_group_array_max_element_size>
     <aggregate_function_group_array_action_when_limit_is_reached>throw</aggregate_function_group_array_action_when_limit_is_reached>
-</clickhouse>"""
+</datastore>"""
 
 cluster = ClickHouseCluster(__file__)
 node1 = cluster.add_instance(

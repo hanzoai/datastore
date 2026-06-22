@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <proxy>
         <http>
             <uri>http://proxy1</uri>
         </http>
     </proxy>
-</clickhouse>
+</datastore>

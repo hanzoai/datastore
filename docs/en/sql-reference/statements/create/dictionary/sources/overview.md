@@ -34,7 +34,7 @@ SOURCE(SOURCE_TYPE(param1 val1 ... paramN valN)) -- Source configuration
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
   <dictionary>
     ...
     <source>
@@ -45,7 +45,7 @@ SOURCE(SOURCE_TYPE(param1 val1 ... paramN valN)) -- Source configuration
     ...
   </dictionary>
   ...
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>

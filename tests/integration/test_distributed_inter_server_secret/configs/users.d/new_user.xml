@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <new_user>
             <password></password>
@@ -9,4 +9,4 @@
             <quota>default</quota>
         </new_user>
     </users>
-</clickhouse>
+</datastore>

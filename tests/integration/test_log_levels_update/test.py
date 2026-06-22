@@ -9,12 +9,12 @@ node = cluster.add_instance(
     "node", with_zookeeper=False, main_configs=["configs/log.xml"]
 )
 
-config = """<clickhouse>
+config = """<datastore>
     <logger>
         <level>debug</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
     </logger>
-</clickhouse>"""
+</datastore>"""
 
 
 @pytest.fixture(scope="module")

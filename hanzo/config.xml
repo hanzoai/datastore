@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Hanzo Datastore Configuration -->
 
     <!-- Memory limits -->
@@ -48,4 +48,4 @@
         <events>true</events>
         <asynchronous_metrics>true</asynchronous_metrics>
     </prometheus>
-</clickhouse>
+</datastore>

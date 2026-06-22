@@ -39,7 +39,7 @@
             <port>2183</port>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>
   */
 
 

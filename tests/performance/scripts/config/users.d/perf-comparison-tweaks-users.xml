@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <allow_introspection_functions>1</allow_introspection_functions>
@@ -46,4 +46,4 @@
             <memory_profiler_step>0</memory_profiler_step>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

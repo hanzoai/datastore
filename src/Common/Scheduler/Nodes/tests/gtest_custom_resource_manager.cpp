@@ -15,7 +15,7 @@ TEST(SchedulerCustomResourceManager, Smoke)
     ResourceTest t;
 
     t.update(R"CONFIG(
-        <clickhouse>
+        <datastore>
             <resources>
                 <res1>
                     <node path="/"><type>inflight_limit</type><max_requests>10</max_requests></node>
@@ -28,7 +28,7 @@ TEST(SchedulerCustomResourceManager, Smoke)
                 <A><res1>/fair/A</res1></A>
                 <B><res1>/fair/B</res1></B>
             </workload_classifiers>
-        </clickhouse>
+        </datastore>
     )CONFIG");
 
     ClassifierPtr c_a = t.manager->acquire("A");
@@ -65,7 +65,7 @@ TEST(SchedulerCustomResourceManager, Fairness)
     ResourceTest t(2 * threads_per_queue + 1);
 
     t.update(R"CONFIG(
-        <clickhouse>
+        <datastore>
             <resources>
                 <res1>
                     <node path="/">           <type>inflight_limit</type><max_requests>1</max_requests></node>
@@ -80,7 +80,7 @@ TEST(SchedulerCustomResourceManager, Fairness)
                 <B><res1>/fair/B</res1></B>
                 <leader><res1>/fair/leader</res1></leader>
             </workload_classifiers>
-        </clickhouse>
+        </datastore>
     )CONFIG");
 
     for (int thread = 0; thread < threads_per_queue; thread++)

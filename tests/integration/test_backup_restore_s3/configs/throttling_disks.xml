@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
        <disks>
            <s3_native_copy>
@@ -33,4 +33,4 @@
             </s3_no_native_copy>
         </policies>
    </storage_configuration>
-</clickhouse>
+</datastore>

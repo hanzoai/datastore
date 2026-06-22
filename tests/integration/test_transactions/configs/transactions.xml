@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <allow_experimental_transactions>42</allow_experimental_transactions>
 
     <merge_tree>
@@ -11,4 +11,4 @@
         <table>transactions_info_log</table>
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
     </transactions_info_log>
-</clickhouse>
+</datastore>

@@ -1278,7 +1278,7 @@ def modify_server_settings(
     tree = ET.parse(input_config_path)
     root = tree.getroot()
     if root.tag != "clickhouse":
-        raise Exception("<clickhouse> element not found")
+        raise Exception("<datastore> element not found")
 
     if root.find("tcp_port_secure") is None:
         modified = True
@@ -1530,7 +1530,7 @@ def modify_user_settings(
     tree = ET.parse(input_config_path)
     root = tree.getroot()
     if root.tag != "clickhouse":
-        raise Exception("<clickhouse> element not found")
+        raise Exception("<datastore> element not found")
 
     if number_clusters > 0:
         modified = True
@@ -1566,7 +1566,7 @@ def modify_user_settings(
 
 
 KEEPER_PROPERTIES_TEMPLATE = """
-<clickhouse>
+<datastore>
     <listen_try>true</listen_try>
     <listen_host>::</listen_host>
     <listen_host>0.0.0.0</listen_host>
@@ -1604,7 +1604,7 @@ KEEPER_PROPERTIES_TEMPLATE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 keeper_settings = {

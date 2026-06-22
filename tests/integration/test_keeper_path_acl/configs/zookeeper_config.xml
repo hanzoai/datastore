@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>node</host>
@@ -26,4 +26,4 @@
             </acl2>
         </path_acls>
     </zookeeper>
-</clickhouse>
+</datastore>

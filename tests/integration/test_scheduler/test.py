@@ -101,7 +101,7 @@ def update_workloads_config(*nodes, **settings):
             [
                 "bash",
                 "-c",
-                f"echo '<clickhouse>{xml}</clickhouse>' > /etc/clickhouse-server/config.d/workloads.xml",
+                f"echo '<datastore>{xml}</datastore>' > /etc/clickhouse-server/config.d/workloads.xml",
             ]
         )
         n.query("system reload config")

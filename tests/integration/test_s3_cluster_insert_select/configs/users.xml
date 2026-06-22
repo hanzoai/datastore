@@ -1,8 +1,8 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <password></password>
             <profile>default</profile>
         </default>
     </users>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 	<users>
         <admin>
             <password></password>
@@ -9,4 +9,4 @@
             <quota>default</quota>
         </admin>
     </users>
-</clickhouse>
+</datastore>

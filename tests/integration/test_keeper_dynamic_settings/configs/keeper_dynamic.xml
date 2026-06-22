@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <coordination_settings>
             <snapshot_distance>75</snapshot_distance>
@@ -6,4 +6,4 @@
             <quorum_reads>false</quorum_reads>
         </coordination_settings>
     </keeper_server>
-</clickhouse>
+</datastore>

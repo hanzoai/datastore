@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Value exceeds INT_MAX, should be rejected at config load -->
     <http_connections_rcvbuf>9999999999999</http_connections_rcvbuf>
-</clickhouse>
+</datastore>

@@ -64,9 +64,9 @@ In addition to the functionality described at the top of this document, ClickHou
 - Non-Replicated MergeTree table engine only
 - Enable experimental transaction support by adding this setting in `config.d/transactions.xml`:
   ```xml
-  <clickhouse>
+  <datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-  </clickhouse>
+  </datastore>
   ```
 
 ### Notes {#notes-1}
@@ -81,9 +81,9 @@ These examples are with a single node ClickHouse server with ClickHouse Keeper e
 #### Enable experimental transaction support {#enable-experimental-transaction-support}
 
 ```xml title=/etc/clickhouse-server/config.d/transactions.xml
-<clickhouse>
+<datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-</clickhouse>
+</datastore>
 ```
 
 #### Basic configuration for a single ClickHouse server node with ClickHouse Keeper enabled {#basic-configuration-for-a-single-clickhouse-server-node-with-clickhouse-keeper-enabled}
@@ -93,7 +93,7 @@ See the [deployment](/deployment-guides/terminology.md) documentation for detail
 :::
 
 ```xml title=/etc/clickhouse-server/config.d/config.xml
-<clickhouse replace="true">
+<datastore replace="true">
     <logger>
         <level>debug</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
@@ -129,7 +129,7 @@ See the [deployment](/deployment-guides/terminology.md) documentation for detail
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 ```
 
 ### Example {#example}

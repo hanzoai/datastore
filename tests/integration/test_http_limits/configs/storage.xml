@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -43,4 +43,4 @@
     <merge_tree>
         <storage_policy>hdd</storage_policy>
     </merge_tree>
-</clickhouse>
+</datastore>

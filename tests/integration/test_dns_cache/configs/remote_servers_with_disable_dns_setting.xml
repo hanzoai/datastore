@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <disable_internal_dns_cache>0</disable_internal_dns_cache>
     <remote_servers>
         <test_cluster>
@@ -11,4 +11,4 @@
             </shard>
         </test_cluster>
     </remote_servers>
-</clickhouse>
+</datastore>

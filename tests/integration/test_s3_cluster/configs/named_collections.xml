@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <test_s3>
             <url>http://minio1:9001/root/data/{clickhouse,database}/*</url>
@@ -14,4 +14,4 @@
             <structure>id UInt32, date Date DEFAULT 18262</structure>
         </test_s3_with_default>
     </named_collections>
-</clickhouse>
+</datastore>

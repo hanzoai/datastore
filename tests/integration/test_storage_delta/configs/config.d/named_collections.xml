@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <named_collections>
     <s3>
         <url>http://minio1:9001/root/var/lib/clickhouse/user_files</url>
@@ -13,4 +13,4 @@
         <path>test-delta-lake-file-path</path>
     </local>
   </named_collections>
-</clickhouse>
+</datastore>

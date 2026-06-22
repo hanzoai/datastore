@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <text_log>
         <database>system</database>
         <table>text_log</table>
@@ -31,4 +31,4 @@
             </shard>
         </cluster_old>
     </remote_servers>
-</clickhouse>
+</datastore>

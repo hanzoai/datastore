@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <distributed_ddl_entry_format_version>2</distributed_ddl_entry_format_version>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

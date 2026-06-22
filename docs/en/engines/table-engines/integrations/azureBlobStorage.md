@@ -85,14 +85,14 @@ SETTINGS filesystem_cache_name = 'cache_for_azure', enable_filesystem_cache = 1;
 1. add the following section to clickhouse configuration file:
 
 ```xml
-<clickhouse>
+<datastore>
     <filesystem_caches>
         <cache_for_azure>
             <path>path to cache directory</path>
             <max_size>10Gi</max_size>
         </cache_for_azure>
     </filesystem_caches>
-</clickhouse>
+</datastore>
 ```
 
 2. reuse cache configuration (and therefore cache storage) from clickhouse `storage_configuration` section, [described here](/operations/storing-data.md/#using-local-cache)

@@ -38,10 +38,10 @@ After that, you can create UDFs that reference functions exported by the module 
 Enable WebAssembly support in your ClickHouse configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_webassembly_udf>true</allow_experimental_webassembly_udf>
     <webassembly_udf_engine>wasmtime</webassembly_udf_engine>
-</clickhouse>
+</datastore>
 ```
 
 Available Engine Implementations:

@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <coordination_settings>
             <max_request_size>10000000</max_request_size>
         </coordination_settings>
     </keeper_server>
-</clickhouse>
+</datastore>

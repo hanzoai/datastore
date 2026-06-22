@@ -65,7 +65,7 @@ class BuzzHouseGenerator(Generator):
             tree = ET.parse(server_settings)
             root = tree.getroot()
             if root.tag != "clickhouse":
-                raise Exception("<clickhouse> element not found")
+                raise Exception("<datastore> element not found")
 
         # Load configuration
         buzz_config = {}

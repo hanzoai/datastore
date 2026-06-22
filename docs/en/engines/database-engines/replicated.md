@@ -168,7 +168,7 @@ The following settings are supported:
 
 Default values may be overwritten in the configuration file
 ```xml
-<clickhouse>
+<datastore>
     <database_replicated>
         <max_broken_tables_ratio>0.75</max_broken_tables_ratio>
         <max_replication_lag_to_enqueue>100</max_replication_lag_to_enqueue>
@@ -181,5 +181,5 @@ Default values may be overwritten in the configuration file
         <default_replica_name>{replica}</default_replica_name>
         <internal_replication>false</internal_replication>
     </database_replicated>
-</clickhouse>
+</datastore>
 ```

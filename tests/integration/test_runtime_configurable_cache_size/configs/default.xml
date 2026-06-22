@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 
     <query_cache>
         <max_entries>2</max_entries>
@@ -6,4 +6,4 @@
 
     <mark_cache_size>496</mark_cache_size>
 
-</clickhouse>
+</datastore>

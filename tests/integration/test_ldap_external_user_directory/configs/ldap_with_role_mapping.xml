@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <ldap_servers>
         <openldap>
             <host>openldap</host>
@@ -19,4 +19,4 @@
             </role_mapping>
         </ldap>
     </user_directories>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <dictionary>
     <name>slow</name>
     <source>
@@ -15,4 +15,4 @@
       </attribute>
     </structure>
   </dictionary>
-</clickhouse>
+</datastore>

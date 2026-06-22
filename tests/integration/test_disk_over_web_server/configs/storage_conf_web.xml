@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <web>
@@ -33,4 +33,4 @@
     <page_cache_max_size>10000000000</page_cache_max_size>
 
     <query_log></query_log>
-</clickhouse>
+</datastore>

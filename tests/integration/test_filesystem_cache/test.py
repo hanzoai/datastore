@@ -318,9 +318,9 @@ def test_custom_cached_disk(non_shared_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>
-        </clickhouse>
+        </datastore>
         " > /etc/clickhouse-server/config.d/filesystem_caches_path.xml
         """,
         ]
@@ -347,9 +347,9 @@ def test_custom_cached_disk(non_shared_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <custom_cached_disks_base_directory>/var/lib/clickhouse/custom_caches/</custom_cached_disks_base_directory>
-        </clickhouse>
+        </datastore>
         " > /etc/clickhouse-server/config.d/custom_filesystem_caches_path.xml
         """,
         ]
@@ -660,7 +660,7 @@ INSERT INTO test SELECT randomString(200);
 
 
 cache_dynamic_resize_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
@@ -692,7 +692,7 @@ cache_dynamic_resize_config = """
             <database>system</database>
             <table>filesystem_cache_log</table>
     </filesystem_cache_log>
-</clickhouse>
+</datastore>
 """
 
 
@@ -1043,7 +1043,7 @@ def test_concurrent_eviction(cluster, cache_policy):
 
 
 cache_dynamic_resize_slru_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
@@ -1063,7 +1063,7 @@ cache_dynamic_resize_slru_config = """
             </cache_dynamic_resize_slru>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
 
 

@@ -1,5 +1,5 @@
 
-<clickhouse>
+<datastore>
     <http_handlers>
         <rule>
             <methods>GET</methods>
@@ -13,4 +13,4 @@
             </handler>
         </rule>
     </http_handlers>
-</clickhouse>
+</datastore>

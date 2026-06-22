@@ -67,7 +67,7 @@ def test_zookeeper_connection_log(started_cluster):
         "ALTER TABLE simple2 FETCH PARTITION '2020-08-28' FROM 'zk_conn_log_test_3:/clickhouse/tables/0/simple';"
     )
 
-    new_auxiliary_config = """<clickhouse>
+    new_auxiliary_config = """<datastore>
     <auxiliary_zookeepers>
         <zk_conn_log_test_2>
             <node index="1">
@@ -82,9 +82,9 @@ def test_zookeeper_connection_log(started_cluster):
             </node>
         </zk_conn_log_test_4>
     </auxiliary_zookeepers>
-</clickhouse>"""
+</datastore>"""
 
-    new_config = """<clickhouse>
+    new_config = """<datastore>
     <zookeeper>
         <node index="1">
             <host>zoo2</host>
@@ -92,7 +92,7 @@ def test_zookeeper_connection_log(started_cluster):
         </node>
         <session_timeout_ms>15000</session_timeout_ms>
     </zookeeper>
-</clickhouse>"""
+</datastore>"""
 
     with node1.with_replace_config(
         "/etc/clickhouse-server/conf.d/zookeeper_config.xml", new_config

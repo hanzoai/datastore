@@ -96,7 +96,7 @@ is equal to:
 An example of full storage configuration will look like:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -115,13 +115,13 @@ An example of full storage configuration will look like:
             </s3>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 Starting with version 24.1, it can also look like:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -142,18 +142,18 @@ Starting with version 24.1, it can also look like:
             </s3>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 To make a specific kind of storage a default option for all `MergeTree` tables,
 add the following section to the configuration file:
 
 ```xml
-<clickhouse>
+<datastore>
     <merge_tree>
         <storage_policy>s3</storage_policy>
     </merge_tree>
-</clickhouse>
+</datastore>
 ```
 
 If you want to configure a specific storage policy for a specific table, 
@@ -530,7 +530,7 @@ In this sample configuration:
 By the way, HDFS is unsupported and therefore there might be issues when using it. Feel free to make a pull request with the fix if any issue arises.
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdfs>
@@ -556,7 +556,7 @@ By the way, HDFS is unsupported and therefore there might be issues when using i
             </hdfs>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 Keep in mind that HDFS may not work in corner cases.
@@ -605,7 +605,7 @@ When writing the same file to `disk2`, it will actually be written to the physic
 Example of disk configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3>
@@ -622,7 +622,7 @@ Example of disk configuration:
             </disk_s3_encrypted>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 ### Using local cache {#using-local-cache}
@@ -635,7 +635,7 @@ Cache uses `LRU` cache policy.
 Example of configuration for versions later or equal to 22.8:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -665,7 +665,7 @@ Example of configuration for versions later or equal to 22.8:
 Example of configuration for versions earlier than 22.8:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3>
@@ -800,7 +800,7 @@ In this sample configuration:
 - a cache on local storage is used
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <web>
@@ -831,7 +831,7 @@ In this sample configuration:
             </cached_web>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 :::tip
@@ -877,7 +877,7 @@ ORDER BY (postcode1, postcode2, addr1, addr2)
 A ready test case. You need to add this configuration to config:
 
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <web>
@@ -895,7 +895,7 @@ A ready test case. You need to add this configuration to config:
             </web>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 And then execute this query:

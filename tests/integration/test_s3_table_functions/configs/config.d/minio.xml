@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- Using named collections 22.4+ -->
-<clickhouse>
+<datastore>
     <named_collections>
         <nc_s3>
             <url>http://minio1:9001/root/data/</url>
@@ -9,4 +9,4 @@
             <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>
         </nc_s3>
     </named_collections>
-</clickhouse>
+</datastore>

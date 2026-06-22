@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- To make it fail earlier, we will limit max_server_memory_usage explicitly. -->
     <max_server_memory_usage>4000000000</max_server_memory_usage>
 
@@ -20,4 +20,4 @@
 
     <!-- just in case it will be enabled by default -->
     <zookeeper_log remove="remove" />
-</clickhouse>
+</datastore>

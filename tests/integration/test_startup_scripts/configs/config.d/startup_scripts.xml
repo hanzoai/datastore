@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test>
             <shard>
@@ -54,4 +54,4 @@
             <query>CREATE TABLE replicated.test_replica (key Int) Engine=ReplicatedMergeTree() ORDER BY ()</query>
         </scripts>
     </startup_scripts>
-</clickhouse>
+</datastore>

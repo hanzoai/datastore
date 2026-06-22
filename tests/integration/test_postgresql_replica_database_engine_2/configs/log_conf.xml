@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <log>/var/log/clickhouse-server/log.log</log>
@@ -30,4 +30,4 @@
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
         <level>Test</level>
     </text_log>
-</clickhouse>
+</datastore>

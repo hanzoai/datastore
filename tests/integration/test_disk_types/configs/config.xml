@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
@@ -40,4 +40,4 @@
     <max_concurrent_queries>500</max_concurrent_queries>
     <path>./clickhouse/</path>
     <users_config>users.xml</users_config>
-</clickhouse>
+</datastore>

@@ -64,7 +64,7 @@ def generate_cluster_def(common_path, port, azure_container):
     with open(path, "w") as f:
         f.write(
             f"""
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_local_common>
@@ -89,7 +89,7 @@ def generate_cluster_def(common_path, port, azure_container):
         </disks>
     </storage_configuration>
     <allowed_disks_for_table_engines>disk_local_common,disk_s3_common,disk_azure_common</allowed_disks_for_table_engines>
-</clickhouse>
+</datastore>
 """
         )
     return path

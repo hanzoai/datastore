@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3>
@@ -110,4 +110,4 @@
 
     <temporary_data_in_cache>s3_cache</temporary_data_in_cache>
     <allow_remove_stale_moving_parts>true</allow_remove_stale_moving_parts>
-</clickhouse>
+</datastore>

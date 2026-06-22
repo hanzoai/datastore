@@ -42,7 +42,7 @@ The same priority applies to `--identity` / `CLICKHOUSE_KEEPER_IDENTITY` / `<zoo
 Example XML config file with authentication settings:
 
 ```xml
-<clickhouse>
+<datastore>
     <zookeeper>
         <password>secret</password>
         <node index="1">
@@ -50,7 +50,7 @@ Example XML config file with authentication settings:
             <port>9181</port>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>
 ```
 
 ## Example {#clickhouse-keeper-client-example}

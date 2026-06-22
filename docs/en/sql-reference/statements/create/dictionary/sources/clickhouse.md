@@ -34,7 +34,7 @@ SOURCE(CLICKHOUSE(
 
 ```xml
 <source>
-    <clickhouse>
+    <datastore>
         <host>example01-01-1</host>
         <port>9000</port>
         <user>default</user>
@@ -44,7 +44,7 @@ SOURCE(CLICKHOUSE(
         <where>id=10</where>
         <secure>1</secure>
         <query>SELECT id, value_1, value_2 FROM default.ids</query>
-    </clickhouse>
+    </datastore>
 </source>
 ```
 

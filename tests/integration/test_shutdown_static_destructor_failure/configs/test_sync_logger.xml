@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <log>/var/log/clickhouse-server/log.log</log>
@@ -9,4 +9,4 @@
         <stdout>/var/log/clickhouse-server/stdout.log</stdout>
         <async>false</async>
     </logger>
-</clickhouse>
+</datastore>

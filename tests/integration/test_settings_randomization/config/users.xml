@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_block_size>59999</max_block_size>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

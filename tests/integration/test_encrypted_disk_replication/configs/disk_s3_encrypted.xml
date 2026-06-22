@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3>
@@ -47,4 +47,4 @@
             </s3_encrypted_policy_with_diff_keys>
          </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

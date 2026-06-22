@@ -20,9 +20,9 @@ The `/webterminal` endpoint is gated by the `allow_experimental_webterminal` ser
 To enable it, add the following to your server configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_webterminal>true</allow_experimental_webterminal>
-</clickhouse>
+</datastore>
 ```
 
 After enabling, navigate to `/webterminal` on any ClickHouse HTTP port (for example, `http://localhost:8123/webterminal`) to open the terminal.

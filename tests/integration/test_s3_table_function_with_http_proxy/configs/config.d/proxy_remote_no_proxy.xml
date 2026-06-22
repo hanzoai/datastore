@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <proxy>
         <no_proxy>not_important_host,,  minio1  ,</no_proxy>
         <!--
@@ -15,4 +15,4 @@
             </resolver>
         </http>
     </proxy>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <openSSL>
         <client>
             <certificateFile>/etc/clickhouse-server/config.d/client.crt</certificateFile>
@@ -13,4 +13,4 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>

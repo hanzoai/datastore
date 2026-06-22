@@ -126,12 +126,12 @@ def test_max_size_0(start_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <max_size_rows replace=\\"replace\\">0</max_size_rows>
                 <reserved_size_rows replace=\\"replace\\">0</reserved_size_rows>
             </query_log>
-        </clickhouse>
+        </datastore>
         " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
         """,
         ]
@@ -150,12 +150,12 @@ def test_reserved_size_greater_max_size(start_cluster):
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <max_size_rows replace=\\"replace\\">10</max_size_rows>
                 <reserved_size_rows replace=\\"replace\\">11</reserved_size_rows>
             </query_log>
-        </clickhouse>
+        </datastore>
         " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
         """,
         ]

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <local_disk_check_period_ms>30000</local_disk_check_period_ms>
 
     <storage_configuration>
@@ -160,4 +160,4 @@
             <boundary_alignment>1Mi</boundary_alignment>
         </cache_for_readbigat>
     </filesystem_caches>
-</clickhouse>
+</datastore>

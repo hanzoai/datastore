@@ -79,7 +79,7 @@ def test_index_uncompressed_cache_runtime_toggle():
     # the cache is now actually used (misses on first query, hits on second).
     with node.with_replace_config(
         CACHE_CONFIG_PATH,
-        "<clickhouse><index_uncompressed_cache_size>10485760</index_uncompressed_cache_size></clickhouse>",
+        "<datastore><index_uncompressed_cache_size>10485760</index_uncompressed_cache_size></datastore>",
         reload_before=True,
         reload_after=True,
     ):

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <insert_keeper_max_retries>100</insert_keeper_max_retries>
@@ -7,4 +7,4 @@
             <insert_keeper_retry_max_backoff_ms>10</insert_keeper_retry_max_backoff_ms>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

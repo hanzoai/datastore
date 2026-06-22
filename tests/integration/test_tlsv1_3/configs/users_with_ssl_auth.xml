@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <john>
             <ssl_certificates>
@@ -18,4 +18,4 @@
             <password>qwe123</password>
         </jane>
     </users>
-</clickhouse>
+</datastore>
