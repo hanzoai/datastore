@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <jemalloc_enable_global_profiler>1</jemalloc_enable_global_profiler>
     <jemalloc_collect_global_profile_samples_in_trace_log>1</jemalloc_collect_global_profile_samples_in_trace_log>
     <total_memory_tracker_sample_probability>0.1</total_memory_tracker_sample_probability>
@@ -25,4 +25,4 @@
     <iceberg_metadata_log remove="remove" />
     <zookeeper_log remove="remove" />
     <transactions_info_log remove="remove" />
-</clickhouse>
+</datastore>

@@ -4,7 +4,7 @@
     filesystem cache path lies inside `filesystem_caches_path` /
     `custom_cached_disks_base_directory`, so point both at the same root.
 -->
-<clickhouse>
+<datastore>
     <filesystem_caches_path replace="replace">/dev/shm/clickhouse/</filesystem_caches_path>
     <custom_cached_disks_base_directory replace="replace">/dev/shm/clickhouse/</custom_cached_disks_base_directory>
-</clickhouse>
+</datastore>

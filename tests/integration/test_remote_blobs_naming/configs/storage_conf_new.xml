@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<clickhouse>
+<datastore>
     <logger>
         <level>test</level>
     </logger>
@@ -60,4 +60,4 @@
         <serialization_info_version>basic</serialization_info_version>
         <string_serialization_version>single_stream</string_serialization_version>
     </merge_tree>
-</clickhouse>
+</datastore>

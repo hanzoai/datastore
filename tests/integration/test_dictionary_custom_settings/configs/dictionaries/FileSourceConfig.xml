@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>test_file</name>
         
@@ -42,4 +42,4 @@
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>

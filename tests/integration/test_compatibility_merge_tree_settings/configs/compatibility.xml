@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <compatibility>24.7</compatibility>
@@ -7,4 +7,4 @@
 
     <!-- Just verify it works correctly with allow_feature_tier -->
     <allow_feature_tier>1</allow_feature_tier>
-</clickhouse>
+</datastore>

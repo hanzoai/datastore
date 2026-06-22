@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Native interface with TLS.
          You have to configure certificate to enable this interface.
          See the openSSL section below.
@@ -14,4 +14,4 @@
             <verificationMode>none</verificationMode>
         </server>
     </openSSL>
-</clickhouse>
+</datastore>

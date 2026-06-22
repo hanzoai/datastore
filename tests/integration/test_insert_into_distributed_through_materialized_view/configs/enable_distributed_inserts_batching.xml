@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <distributed_background_insert_batch>1</distributed_background_insert_batch>
@@ -6,4 +6,4 @@
             <allow_deprecated_syntax_for_merge_tree>1</allow_deprecated_syntax_for_merge_tree>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

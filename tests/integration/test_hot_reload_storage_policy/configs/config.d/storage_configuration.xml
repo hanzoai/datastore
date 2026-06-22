@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
@@ -25,4 +25,4 @@
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>

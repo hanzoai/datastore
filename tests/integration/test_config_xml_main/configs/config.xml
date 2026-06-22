@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
@@ -203,4 +203,4 @@
         <anonymize>false</anonymize>
         <endpoint>https://6f33034cfe684dd7a3ab9875e57b1c8d@o388870.ingest.sentry.io/5226277</endpoint>
     </send_crash_reports>
-</clickhouse>
+</datastore>

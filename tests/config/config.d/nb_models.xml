@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <nb_models>
         <model>
             <mode>token</mode>
@@ -97,4 +97,4 @@
             </priors>
         </model>
     </nb_models>
-</clickhouse>
+</datastore>

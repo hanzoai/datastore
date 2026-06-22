@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <listen_host>0.0.0.0</listen_host>
     <tcp_port>9000</tcp_port>
 
@@ -46,4 +46,4 @@
             <handlers>http_handlers_alt</handlers>
         </alt_http>
     </protocols>
-</clickhouse>
+</datastore>

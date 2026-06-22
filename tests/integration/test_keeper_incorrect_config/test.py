@@ -22,7 +22,7 @@ def started_cluster():
 
 
 DUPLICATE_ID_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -48,11 +48,11 @@ DUPLICATE_ID_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 DUPLICATE_ENDPOINT_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -78,11 +78,11 @@ DUPLICATE_ENDPOINT_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 LOCALHOST_WITH_REMOTE = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -109,11 +109,11 @@ LOCALHOST_WITH_REMOTE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 MULTIPLE_LOCAL_WITH_REMOTE = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -145,11 +145,11 @@ MULTIPLE_LOCAL_WITH_REMOTE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 NORMAL_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -170,11 +170,11 @@ NORMAL_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 JUST_WRONG_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -201,11 +201,11 @@ JUST_WRONG_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 INVALID_ROTATE_INTERVAL_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -227,7 +227,7 @@ INVALID_ROTATE_INTERVAL_CONFIG = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <max_expanded_ast_elements>1800</max_expanded_ast_elements>
@@ -6,4 +6,4 @@
             <force_primary_key>1</force_primary_key>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

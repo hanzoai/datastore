@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <mysql1>
             <user>root</user>
@@ -20,4 +20,4 @@
             <database>clickhouse</database>
         </mysql3>
     </named_collections>
-</clickhouse>
+</datastore>

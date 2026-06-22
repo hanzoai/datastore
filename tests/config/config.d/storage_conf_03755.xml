@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_03755_0>
@@ -31,4 +31,4 @@
             </policy_03755>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

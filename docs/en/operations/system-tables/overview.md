@@ -38,7 +38,7 @@ System log tables can be customized by creating a config file with the same name
 An example:
 
 ```xml
-<clickhouse>
+<datastore>
     <query_log>
         <database>system</database>
         <table>query_log</table>
@@ -53,7 +53,7 @@ An example:
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </query_log>
-</clickhouse>
+</datastore>
 ```
 
 By default, table growth is unlimited. To control a size of a table, you can use [TTL](/sql-reference/statements/alter/ttl) settings for removing outdated log records. Also you can use the partitioning feature of `MergeTree`-engine tables.

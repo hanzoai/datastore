@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <local_disk_check_period_ms>1000</local_disk_check_period_ms>
     <path>/var/lib/clickhouse/</path>
     <storage_configuration>
@@ -29,4 +29,4 @@
             </test2>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

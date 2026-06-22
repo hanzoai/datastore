@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <text_log>
         <database>system</database>
         <table>text_log</table>
@@ -9,4 +9,4 @@
         <flush_on_crash>false</flush_on_crash>
         <level>test</level>
     </text_log>
-</clickhouse>
+</datastore>

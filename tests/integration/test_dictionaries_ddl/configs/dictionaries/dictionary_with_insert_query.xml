@@ -1,14 +1,14 @@
-<clickhouse>
+<datastore>
 <dictionary>
     <name>test.dictionary_with_insert_query</name>
     <source>
-        <clickhouse>
+        <datastore>
             <host>localhost</host>
             <port>9000</port>
             <user>default</user>
             <password></password>
             <query>insert into test.xml_dictionary_table values (432234, 28, 'smth')</query>
-        </clickhouse>
+        </datastore>
     </source>
 
     <lifetime>
@@ -37,4 +37,4 @@
         </attribute>
     </structure>
 </dictionary>
-</clickhouse>
+</datastore>

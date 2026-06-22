@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <local_plain_rewritable_03008>
@@ -9,4 +9,4 @@
             </local_plain_rewritable_03008>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

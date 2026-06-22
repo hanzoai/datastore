@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

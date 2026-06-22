@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <query_log>
         <database>system</database>
         <table>query_log</table>
@@ -16,4 +16,4 @@
             <replace>[hidden]</replace>
         </rule>
     </query_masking_rules>
-</clickhouse>
+</datastore>

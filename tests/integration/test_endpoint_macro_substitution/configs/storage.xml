@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <macros incl="macros" optional="true" replace="replace"/>
     <storage_configuration>
         <disks>
@@ -15,4 +15,4 @@
             </disk_encrypted>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

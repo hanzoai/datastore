@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <azure_queue_log>
         <database>system</database>
         <table>azure_queue_log</table>
@@ -10,4 +10,4 @@
     <logger>
         <count>25</count>
     </logger>
-</clickhouse>
+</datastore>

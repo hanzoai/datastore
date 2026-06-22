@@ -1,15 +1,15 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>dep_x</name>
         <source>
-            <clickhouse>
+            <datastore>
                 <host>localhost</host>
                 <port>9000</port>
                 <user>default</user>
                 <password></password>
                 <db>dict</db>
                 <table>dep_z</table>
-            </clickhouse>
+            </datastore>
         </source>
         <!-- ExternalLoader::PeriodicUpdater::check_period_sec=5 anyway -->
         <lifetime>4</lifetime>
@@ -27,4 +27,4 @@
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>

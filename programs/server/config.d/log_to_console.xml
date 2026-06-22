@@ -4,4 +4,4 @@
         <log remove="remove"/>
         <errorlog remove="remove"/>
     </logger>
-</clickhouse>
+</datastore>

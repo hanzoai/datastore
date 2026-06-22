@@ -40,21 +40,21 @@ function configure
 
     if [[ -n "${SERVER_FUZZER_ENABLED:-}" ]]; then
         cat > $CONFIG_DIR/users.d/serverfuzz-tweaks.xml <<EOL
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <ast_fuzzer_runs>5</ast_fuzzer_runs>
             <ast_fuzzer_any_query>true</ast_fuzzer_any_query>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 EOL
     fi
 
     cat > $CONFIG_DIR/config.d/max_server_memory_usage_to_ram_ratio.xml <<EOL
-<clickhouse>
+<datastore>
     <max_server_memory_usage_to_ram_ratio>0.75</max_server_memory_usage_to_ram_ratio>
-</clickhouse>
+</datastore>
 EOL
 
 

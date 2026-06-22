@@ -18,7 +18,7 @@ def generate_cluster_def(port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <named_collections>
         <azure_conf1>
             <connection_string>DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite1:{port}/devstoreaccount1;</connection_string>
@@ -65,7 +65,7 @@ def generate_cluster_def(port):
             </blob_storage_policy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
         )
     return path
@@ -84,7 +84,7 @@ def generate_cluster_def_native_copy(port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <storage_configuration>
         <disks>
             <blob_storage_disk_native_copy>
@@ -107,7 +107,7 @@ def generate_cluster_def_native_copy(port):
             </blob_storage_policy_native_copy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
         )
     return path

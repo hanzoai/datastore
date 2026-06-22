@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <proxy>
         <!--
             At each interaction with S3 resolver sends empty GET request to specified endpoint URL to obtain proxy host.
@@ -14,4 +14,4 @@
             </resolver>
         </http>
     </proxy>
-</clickhouse>
+</datastore>

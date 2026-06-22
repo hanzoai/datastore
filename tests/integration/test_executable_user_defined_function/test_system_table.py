@@ -26,9 +26,9 @@ def copy_file_to_container(local_path, dist_path, container_id):
 
 
 # Config with both working and broken UDFs
-config = """<clickhouse>
+config = """<datastore>
     <user_defined_executable_functions_config>/etc/clickhouse-server/functions/*.xml</user_defined_executable_functions_config>
-</clickhouse>"""
+</datastore>"""
 
 # Working UDF config with comprehensive configuration options
 working_udf_config = """<functions>

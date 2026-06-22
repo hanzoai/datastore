@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <split_cache_disk>
@@ -72,4 +72,4 @@
             </lru>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

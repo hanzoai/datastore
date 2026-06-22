@@ -162,7 +162,7 @@ SETTINGS PROFILE log_ingest
 ### Using XML to create a settings profile and user {#using-xml-to-create-a-settings-profile-and-user}
 
 ```xml title=/etc/clickhouse-server/users.d/users.xml
-<clickhouse>
+<datastore>
 # highlight-start
     <profiles>
         <log_ingest>
@@ -184,7 +184,7 @@ SETTINGS PROFILE log_ingest
             <named_collection_control>1</named_collection_control>
         </default>
     </users>
-</clickhouse>
+</datastore>
 ```
 
 #### Examine the settings profile and assignment {#examine-the-settings-profile-and-assignment-1}

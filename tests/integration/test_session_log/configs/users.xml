@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <function_sleep_max_microseconds_per_block>0</function_sleep_max_microseconds_per_block>
@@ -8,4 +8,4 @@
         <default>
         </default>
     </users>
-</clickhouse>
+</datastore>

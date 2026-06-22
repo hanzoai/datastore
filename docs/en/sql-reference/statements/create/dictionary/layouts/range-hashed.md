@@ -120,7 +120,7 @@ RANGE(MIN StartTimeStamp MAX EndTimeStamp)
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         ...
 
@@ -148,7 +148,7 @@ RANGE(MIN StartTimeStamp MAX EndTimeStamp)
         </structure>
 
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>

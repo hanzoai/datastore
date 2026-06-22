@@ -40,7 +40,7 @@ def get_coordination_settings(node):
 DYNAMIC_CONFIG_PATH = "/etc/clickhouse-server/config.d/keeper_dynamic.xml"
 
 UPDATED_DYNAMIC_CONFIG = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <coordination_settings>
             <snapshot_distance>99999</snapshot_distance>
@@ -49,7 +49,7 @@ UPDATED_DYNAMIC_CONFIG = """
             <max_request_size>1024</max_request_size>
         </coordination_settings>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 

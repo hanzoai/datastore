@@ -129,7 +129,7 @@ To enable TOTP authentication for a user, configure the `time_based_one_time_pas
 
 **Example**
 ```xml
-<clickhouse>
+<datastore>
     <!-- ... -->
     <users>
         <my_user>
@@ -147,7 +147,7 @@ To enable TOTP authentication for a user, configure the `time_based_one_time_pas
             </time_based_one_time_password>
         </my_user>
     </users>
-</clickhouse>
+</datastore>
 
 Parameters:
 

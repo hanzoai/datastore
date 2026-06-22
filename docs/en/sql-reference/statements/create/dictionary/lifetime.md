@@ -125,11 +125,11 @@ Example of settings:
 ```xml
 <dictionary>
     ...
-        <clickhouse>
+        <datastore>
             ...
             <update_field>added_time</update_field>
             <update_lag>15</update_lag>
-        </clickhouse>
+        </datastore>
     ...
 </dictionary>
 ```

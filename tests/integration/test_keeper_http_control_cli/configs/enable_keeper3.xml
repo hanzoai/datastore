@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>3</server_id>
@@ -34,4 +34,4 @@
             <port>9182</port>
         </http_control>
     </keeper_server>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
    <quotas>
         <myQuota>
             <interval>
@@ -15,4 +15,4 @@
             </interval>
         </myQuota>
     </quotas>
-</clickhouse>
+</datastore>

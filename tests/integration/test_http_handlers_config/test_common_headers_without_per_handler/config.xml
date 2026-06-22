@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <http_handlers>
         <common_http_response_headers>
             <X-My-Common-Header>Common header present</X-My-Common-Header>
@@ -26,4 +26,4 @@
             </handler>
         </rule>
     </http_handlers>
-</clickhouse>
+</datastore>

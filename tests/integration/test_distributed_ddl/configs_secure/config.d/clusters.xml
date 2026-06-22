@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 <tcp_port_secure>9440</tcp_port_secure>
 <remote_servers>
 
@@ -114,4 +114,4 @@
     </cluster_disabled_ddl>
 
 </remote_servers>
-</clickhouse>
+</datastore>

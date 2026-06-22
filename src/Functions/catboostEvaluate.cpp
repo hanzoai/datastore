@@ -191,7 +191,7 @@ Next, specify the path to `libcatboostmodel.<so|dylib>` in the datastore configu
 ...
     <catboost_lib_path>/path/to/libcatboostmodel.so</catboost_lib_path>
 ...
-</clickhouse>
+</datastore>
 ```
 
 For security and isolation reasons, the model evaluation does not run in the server process but in the datastore-library-bridge process.

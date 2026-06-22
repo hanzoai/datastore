@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <password></password>
@@ -7,4 +7,4 @@
             <delta_lake_enable_expression_visitor_logging>1</delta_lake_enable_expression_visitor_logging>
         </default>
     </users>
-</clickhouse>
+</datastore>

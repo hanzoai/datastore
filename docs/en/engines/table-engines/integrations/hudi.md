@@ -36,7 +36,7 @@ CREATE TABLE hudi_table ENGINE=Hudi('http://mars-doc-test.s3.amazonaws.com/click
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <hudi_conf>
             <url>http://mars-doc-test.s3.amazonaws.com/clickhouse-bucket-3/</url>
@@ -44,7 +44,7 @@ Using named collections:
             <secret_access_key>Abc+123</secret_access_key>
         </hudi_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

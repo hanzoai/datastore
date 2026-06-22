@@ -45,21 +45,21 @@ def started_cluster():
         cluster.shutdown()
 
 
-config_default = """<clickhouse>
-</clickhouse>"""
+config_default = """<datastore>
+</datastore>"""
 
-config_accept = """<clickhouse>
+config_accept = """<datastore>
     <accept-invalid-certificate>1</accept-invalid-certificate>
-</clickhouse>"""
+</datastore>"""
 
-config_connection_accept = """<clickhouse>
+config_connection_accept = """<datastore>
     <connections_credentials>
         <connection>
             <name>{ip_address}</name>
             <accept-invalid-certificate>1</accept-invalid-certificate>
         </connection>
     </connections_credentials>
-</clickhouse>"""
+</datastore>"""
 
 
 def execute_query_native(node, query, config):
@@ -109,7 +109,7 @@ def test_connection_accept():
 
 def test_strict_reject():
     with pytest.raises(Exception) as err:
-        execute_query_native(node1, "SELECT 1", "<clickhouse></clickhouse>")
+        execute_query_native(node1, "SELECT 1", "<datastore></datastore>")
     assert "certificate verify failed" in str(err.value)
 
 

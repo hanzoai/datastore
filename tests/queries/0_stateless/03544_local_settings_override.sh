@@ -10,17 +10,17 @@ local_path="${CUR_DIR:?}/${CLICKHOUSE_TEST_UNIQUE_NAME:?}"
 mkdir -p "$local_path"
 
 cat > "$local_path/config.xml" <<EOL
-<clickhouse>
+<datastore>
     <user_directories>
         <users_xml>
             <path>users.xml</path>
         </users_xml>
     </user_directories>
-</clickhouse>
+</datastore>
 EOL
 
 cat > "$local_path/users.xml" <<EOL
-<clickhouse>
+<datastore>
     <profiles>
         <default>
           <max_threads>1</max_threads>
@@ -40,7 +40,7 @@ cat > "$local_path/users.xml" <<EOL
     <quotas>
         <default></default>
     </quotas>
-</clickhouse>
+</datastore>
 EOL
 $CLICKHOUSE_LOCAL --path "$local_path" --config "$local_path/config.xml" -q "SELECT getSetting('max_threads')"
 $CLICKHOUSE_LOCAL --path "$local_path" --config "$local_path/config.xml" --max_threads 10 -q "SELECT getSetting('max_threads')"

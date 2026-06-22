@@ -17,7 +17,7 @@ To define HTTP authentication server you must add `http_authentication_servers` 
 
 **Example**
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <http_authentication_servers>
         <basic_auth_server>
@@ -35,7 +35,7 @@ To define HTTP authentication server you must add `http_authentication_servers` 
 
         </basic_auth_server>
     </http_authentication_servers>
-</clickhouse>
+</datastore>
 
 ```
 
@@ -68,7 +68,7 @@ Parameters:
 
 Example (goes into `users.xml`):
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <my_user>
         <!- ... -->
@@ -77,7 +77,7 @@ Example (goes into `users.xml`):
             <scheme>basic</scheme>
         </http_authentication>
     </test_user_2>
-</clickhouse>
+</datastore>
 ```
 
 :::note

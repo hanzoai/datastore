@@ -88,7 +88,7 @@ def test_kafka_sasl(kafka_cluster):
 def test_kafka_sasl_settings_precedence(kafka_cluster):
     # Test that SASL related settings in create query override those in config
     config_with_wrong_passwords = """
-    <clickhouse>
+    <datastore>
     <kafka>
         <security_protocol>plaintext</security_protocol>
         <sasl_mechanism>SCRAM-SHA-256</sasl_mechanism>
@@ -101,7 +101,7 @@ def test_kafka_sasl_settings_precedence(kafka_cluster):
             <sasl_password>wrong_password_2</sasl_password>
         </consumer>
     </kafka>
-</clickhouse>
+</datastore>
 """
     config_file_path = "/etc/clickhouse-server/config.d/sasl_settings.xml"
 

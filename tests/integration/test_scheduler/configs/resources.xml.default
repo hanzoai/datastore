@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <resources>
         <network_read>
             <node path="/">                         <type>inflight_limit</type><max_cost>1000000</max_cost></node>
@@ -73,4 +73,4 @@
             <network_write>/prio/fair/dev_mutations</network_write>
         </dev_mutations>
     </workload_classifiers>
-</clickhouse>
+</datastore>

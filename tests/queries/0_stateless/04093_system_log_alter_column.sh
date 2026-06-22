@@ -10,7 +10,7 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 CONFIG_FILE="${CLICKHOUSE_TMP}/system_log_config.xml"
 cat > "${CONFIG_FILE}" <<'EOF'
-<clickhouse>
+<datastore>
     <query_log>
         <database>system</database>
         <table>query_log</table>
@@ -21,7 +21,7 @@ cat > "${CONFIG_FILE}" <<'EOF'
         <table>processors_profile_log</table>
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
     </processors_profile_log>
-</clickhouse>
+</datastore>
 EOF
 
 $CLICKHOUSE_LOCAL --config-file "${CONFIG_FILE}" --multiquery "

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <!-- Lower block size to test multi-level merge of projection parts -->
@@ -7,4 +7,4 @@
             <min_insert_block_size_rows>1000</min_insert_block_size_rows>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

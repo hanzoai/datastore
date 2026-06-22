@@ -1,15 +1,15 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>node</name>
         <source>
-            <clickhouse>
+            <datastore>
                 <host>localhost</host>
                 <port>9000</port>
                 <user>default</user>
                 <password></password>
                 <db>system</db>
                 <query>select dummy, toString(dummy) from system.one</query>
-            </clickhouse>
+            </datastore>
         </source>
         <lifetime>0</lifetime>
         <layout><flat /></layout>
@@ -22,4 +22,4 @@
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>

@@ -259,7 +259,7 @@ sudo sed -i "s|>1<|>0<|g" /etc/clickhouse-server/config.d/lost_forever_check.xml
 rm -f /etc/clickhouse-server/config.d/filesystem_caches_path.xml
 
 # Set compatibility setting to previous version, so we won't fail due to known backward incompatible changes.
-echo "<clickhouse>
+echo "<datastore>
     <profiles>
         <default>
             <compatibility>$old_major_version</compatibility>
@@ -267,7 +267,7 @@ echo "<clickhouse>
             <enable_positional_arguments_for_projections>1</enable_positional_arguments_for_projections>
         </default>
     </profiles>
-</clickhouse>" > /etc/clickhouse-server/users.d/compatibility.xml
+</datastore>" > /etc/clickhouse-server/users.d/compatibility.xml
 
 cat /etc/clickhouse-server/users.d/compatibility.xml
 

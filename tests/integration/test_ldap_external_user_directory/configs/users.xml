@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default remove="remove">
         </default>
@@ -8,4 +8,4 @@
             <readonly>0</readonly>
         </common_user>
     </users>
-</clickhouse>
+</datastore>

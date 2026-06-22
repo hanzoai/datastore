@@ -54,7 +54,7 @@ CREATE TABLE iceberg_table ENGINE=IcebergS3('http://test.s3.amazonaws.com/clickh
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <iceberg_conf>
             <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
@@ -62,7 +62,7 @@ Using named collections:
             <secret_access_key>test</secret_access_key>
         </iceberg_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

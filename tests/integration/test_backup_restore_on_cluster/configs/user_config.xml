@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <compatibility>24.9</compatibility>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

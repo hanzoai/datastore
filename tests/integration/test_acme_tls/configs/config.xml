@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <http_port>5002</http_port>  <!-- Must match with Pebble configuration -->
     <https_port>3443</https_port>
 
@@ -19,4 +19,4 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>

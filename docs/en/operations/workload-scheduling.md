@@ -40,7 +40,7 @@ To enable IO scheduling for a specific disk, you have to specify `read_resource`
 
 Example:
 ```xml
-<clickhouse>
+<datastore>
     <storage_configuration>
         ...
         <disks>
@@ -63,7 +63,7 @@ Example:
             </s3_main>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 ```
 
 Note that server configuration options have priority over SQL way to define resources.
@@ -120,7 +120,7 @@ To be able to use the full capacity of the underlying resource, you should use `
 The following example shows how to define IO scheduling hierarchies shown in the picture:
 
 ```xml
-<clickhouse>
+<datastore>
     <resources>
         <network_read>
             <node path="/">
@@ -155,7 +155,7 @@ The following example shows how to define IO scheduling hierarchies shown in the
             </node>
         </network_write>
     </resources>
-</clickhouse>
+</datastore>
 ```
 
 ## Workload classifiers {#workload_classifiers}
@@ -168,7 +168,7 @@ Workload classifiers are used to define mapping from `workload` specified by a q
 
 Example:
 ```xml
-<clickhouse>
+<datastore>
     <workload_classifiers>
         <production>
             <network_read>/fair/prod</network_read>
@@ -183,7 +183,7 @@ Example:
             <network_write>/fair/dev</network_write>
         </default>
     </workload_classifiers>
-</clickhouse>
+</datastore>
 ```
 
 ## Workload hierarchy {#workloads}
@@ -348,14 +348,14 @@ In addition to SQL-based definitions, workloads and resources can be predefined 
 ### Configuration format {#config_based_workloads_format}
 
 ```xml
-<clickhouse>
+<datastore>
     <resources_and_workloads>
         CREATE RESOURCE s3disk_read (READ DISK s3);
         CREATE RESOURCE s3disk_write (WRITE DISK s3);
         CREATE WORKLOAD all SETTINGS max_io_requests = 500 FOR s3disk_read, max_io_requests = 1000 FOR s3disk_write, max_bytes_per_second = 1342177280 FOR s3disk_read, max_bytes_per_second = 3355443200 FOR s3disk_write;
         CREATE WORKLOAD production IN all SETTINGS weight = 3;
     </resources_and_workloads>
-</clickhouse>
+</datastore>
 ```
 
 The configuration uses the same SQL syntax as `CREATE WORKLOAD` and `CREATE RESOURCE` statements. All queries must be valid.

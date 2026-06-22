@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <enable_filesystem_cache_on_write_operations>1</enable_filesystem_cache_on_write_operations>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

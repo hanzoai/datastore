@@ -1,5 +1,5 @@
 <!-- alternative graphite config, for testing 02910_replicated_merge_parameters_must_consistent -->
-<clickhouse>
+<datastore>
     <graphite_rollup_alternative>
         <version_column_name>Version</version_column_name>
         <pattern>
@@ -50,4 +50,4 @@
             </retention>
         </default>
     </graphite_rollup_alternative_no_function>
-</clickhouse>
+</datastore>

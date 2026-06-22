@@ -9,7 +9,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SAFE_DIR="${CUR_DIR}/${CLICKHOUSE_DATABASE}_02360_local"
 mkdir -p "${SAFE_DIR}"
 
-echo "<clickhouse>
+echo "<datastore>
     <logger>
         <level>trace</level>
         <console>true</console>
@@ -26,9 +26,9 @@ echo "<clickhouse>
             <path>users.xml</path>
         </users_xml>
     </user_directories>
-</clickhouse>" > $SAFE_DIR/config.xml
+</datastore>" > $SAFE_DIR/config.xml
 
-echo        "<clickhouse>
+echo        "<datastore>
             <profiles>
                 <default></default>
             </profiles>
@@ -45,7 +45,7 @@ echo        "<clickhouse>
             <quotas>
                 <default></default>
             </quotas>
-        </clickhouse>" > $SAFE_DIR/users.xml
+        </datastore>" > $SAFE_DIR/users.xml
 
 local_opts=(
     "--config-file=$SAFE_DIR/config.xml"

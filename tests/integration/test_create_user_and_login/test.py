@@ -63,13 +63,13 @@ def test_login_as_dropped_user_xml():
                 "-c",
                 """
             cat > /etc/clickhouse-server/users.d/user_c.xml << EOF
-<clickhouse>
+<datastore>
     <users>
         <C>
             <no_password/>
         </C>
     </users>
-</clickhouse>
+</datastore>
 EOF""",
             ]
         )

@@ -574,7 +574,7 @@ void LocalServer::setupUsers()
         "    <quotas>"
         "        <default></default>"
         "    </quotas>"
-        "</clickhouse>";
+        "</datastore>";
 
     ConfigurationPtr users_config;
     auto & access_control = global_context->getAccessControl();

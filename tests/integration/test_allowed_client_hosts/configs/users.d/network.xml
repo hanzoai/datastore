@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <!-- List of networks with open access.
@@ -28,4 +28,4 @@
             </networks>
         </default>
     </users>
-</clickhouse>
+</datastore>

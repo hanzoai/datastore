@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
   <named_collections>
     <local>
     </local>
   </named_collections>
-</clickhouse>
+</datastore>

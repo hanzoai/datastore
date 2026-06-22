@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
      <remote_servers>
          <test_shard_names_incorrect_non_unique>
             <node>
@@ -13,4 +13,4 @@
             </node>
          </test_shard_names_incorrect_non_unique>
      </remote_servers>
- </clickhouse>
+ </datastore>

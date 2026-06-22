@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <encryption_codecs>
         <aes_128_gcm_siv>
             <key remove="1"/>
@@ -7,4 +7,4 @@
             <current_key_id>1</current_key_id>
         </aes_128_gcm_siv>
     </encryption_codecs>
-</clickhouse>
+</datastore>

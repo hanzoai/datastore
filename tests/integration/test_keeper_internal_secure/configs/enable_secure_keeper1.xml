@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <use_cluster>0</use_cluster>
         <tcp_port>9181</tcp_port>
@@ -41,4 +41,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

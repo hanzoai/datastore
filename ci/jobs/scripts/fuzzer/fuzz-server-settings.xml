@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Allow merge tree settings to avoid errors while fuzzing definitions of tables -->
     <merge_tree>
         <allow_nullable_key>1</allow_nullable_key>
@@ -32,4 +32,4 @@
         <allowed_path>/var/lib/clickhouse/user_files/</allowed_path>
     </backups>
     <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
-</clickhouse>
+</datastore>

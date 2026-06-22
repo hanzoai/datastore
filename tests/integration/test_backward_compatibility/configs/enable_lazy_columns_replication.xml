@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <enable_lazy_columns_replication>1</enable_lazy_columns_replication>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

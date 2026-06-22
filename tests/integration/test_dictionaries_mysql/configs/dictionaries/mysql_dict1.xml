@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
    <dictionary>
       <name>dict0</name>
       <source>
@@ -71,4 +71,4 @@
       </structure>
       <lifetime>0</lifetime>
    </dictionary>
-</clickhouse>
+</datastore>

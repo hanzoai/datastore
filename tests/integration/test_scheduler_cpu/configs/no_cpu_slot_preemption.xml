@@ -1,3 +1,3 @@
-<clickhouse>
+<datastore>
     <cpu_slot_preemption>false</cpu_slot_preemption>
-</clickhouse>
+</datastore>

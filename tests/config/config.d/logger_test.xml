@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>test</level>
     </logger>
-</clickhouse>
+</datastore>

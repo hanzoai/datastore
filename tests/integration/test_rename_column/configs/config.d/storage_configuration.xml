@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 
 <storage_configuration>
     <disks>
@@ -37,4 +37,4 @@
 <query_metric_log remove="remove"/>
 <metric_log remove="remove"/>
 
-</clickhouse>
+</datastore>

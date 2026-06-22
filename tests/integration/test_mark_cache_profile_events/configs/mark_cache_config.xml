@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 
     <mark_cache_size>124</mark_cache_size>
     <merge_tree>
@@ -11,4 +11,4 @@
         <flush_interval_milliseconds>1000</flush_interval_milliseconds>
     </query_log>
 
-</clickhouse>
+</datastore>

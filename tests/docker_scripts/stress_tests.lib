@@ -124,9 +124,9 @@ function configure_limits()
     max_server_memory_usage_to_ram_ratio=0.8
     echo "Setting max_server_memory_usage_to_ram_ratio to ${max_server_memory_usage_to_ram_ratio}"
     cat > /etc/clickhouse-server/config.d/max_server_memory_usage.xml <<EOL
-<clickhouse>
+<datastore>
     <max_server_memory_usage_to_ram_ratio>${max_server_memory_usage_to_ram_ratio}</max_server_memory_usage_to_ram_ratio>
-</clickhouse>
+</datastore>
 EOL
 
     local max_users_mem
@@ -134,7 +134,7 @@ EOL
     # Similar to docker/test/fuzzer/query-fuzzer-tweaks-users.xml
     echo "Setting max_memory_usage_for_user=$max_users_mem and max_memory_usage for queries to 10G"
     cat > /etc/clickhouse-server/users.d/stress_test_tweaks-users.xml <<EOL
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <database_replicated_allow_replicated_engine_arguments>1</database_replicated_allow_replicated_engine_arguments>
@@ -181,24 +181,24 @@ EOL
             <allow_experimental_window_view>false</allow_experimental_window_view>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 EOL
 
     if [[ -n "${ENABLE_SERVER_FUZZER:-}" ]]; then
         cat > /etc/clickhouse-server/users.d/stress_test_serverfuzz.xml <<EOL
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <ast_fuzzer_runs>5</ast_fuzzer_runs>
             <ast_fuzzer_any_query>true</ast_fuzzer_any_query>
         </default>
     </profiles>
-</clickhouse>
+</datastore>
 EOL
     fi
 
     cat > /etc/clickhouse-server/config.d/core.xml <<EOL
-<clickhouse>
+<datastore>
     <core_path>/cores</core_path>
 
     <remote_servers>
@@ -212,7 +212,7 @@ EOL
       </test_cluster_database_replicated>
   </remote_servers>
 
-</clickhouse>
+</datastore>
 EOL
 }
 

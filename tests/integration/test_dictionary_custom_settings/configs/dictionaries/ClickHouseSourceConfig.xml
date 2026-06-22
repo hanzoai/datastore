@@ -1,16 +1,16 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>test_clickhouse</name>
         
         <source>
-            <clickhouse>
+            <datastore>
                 <host>localhost</host>
                 <port>9000</port>
                 <user>default</user>
                 <password></password>
                 <db>default</db>
                 <table>source</table>
-            </clickhouse>
+            </datastore>
 
             <settings>
                 <max_result_bytes>1</max_result_bytes>
@@ -45,4 +45,4 @@
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>

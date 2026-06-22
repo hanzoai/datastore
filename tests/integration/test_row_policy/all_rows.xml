@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <!-- Allows all rows -->
@@ -19,4 +19,4 @@
             </databases>
         </default>
     </users>
-</clickhouse>
+</datastore>

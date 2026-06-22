@@ -34,7 +34,7 @@ Uptime: **13 minutes and 51 seconds**
 #### ClickHouse configuration
 **result**
 ```XML
-<clickhouse>
+<datastore>
 	<logger>
 		<level>trace</level>
 		<log>/var/log/clickhouse-server/clickhouse-server.log</log>

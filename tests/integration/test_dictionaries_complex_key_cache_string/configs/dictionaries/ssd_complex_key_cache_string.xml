@@ -1,15 +1,15 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>radars</name>
         <source>
-            <clickhouse>
+            <datastore>
                 <host>localhost</host>
                 <port>9000</port>
                 <user>default</user>
                 <password></password>
                 <db>default</db>
                 <table>radars_table</table>
-            </clickhouse>
+            </datastore>
         </source>
         <structure>
             <key>
@@ -48,4 +48,4 @@
         </layout>
         <lifetime>1</lifetime>
     </dictionary>
-</clickhouse>
+</datastore>

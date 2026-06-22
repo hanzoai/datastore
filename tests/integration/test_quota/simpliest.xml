@@ -1,6 +1,6 @@
-<clickhouse>
+<datastore>
     <quotas>
         <myQuota>
         </myQuota>
     </quotas>
-</clickhouse>
+</datastore>

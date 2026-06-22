@@ -1,16 +1,16 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>clickhouse_cache</name>
 
         <source>
-            <clickhouse>
+            <datastore>
                 <host>localhost</host>
                 <port>9000</port>
                 <user>default</user>
                 <password></password>
                 <db>default</db>
                 <table>dictionary_source</table>
-            </clickhouse>
+            </datastore>
         </source>
 
         <lifetime>
@@ -34,4 +34,4 @@
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>

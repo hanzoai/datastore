@@ -262,7 +262,7 @@ namespace
     <!-- highlight-start -->
     <tmp_policy>tmp_two_disks</tmp_policy>
     <!-- highlight-end -->
-    </clickhouse>
+    </datastore>
     ```
     )", 0) \
     DECLARE(UInt64, max_temporary_data_on_disk_size, 0, R"(
@@ -315,7 +315,7 @@ namespace
     <!-- highlight-start -->
     <temporary_data_in_cache>tiny_local_cache</temporary_data_in_cache>
     <!-- highlight-end -->
-    </clickhouse>
+    </datastore>
     ```
     )", 0) \
     DECLARE(Bool, temporary_data_in_distributed_cache, 0, R"(Store temporary data in the distributed cache.)", 0) \

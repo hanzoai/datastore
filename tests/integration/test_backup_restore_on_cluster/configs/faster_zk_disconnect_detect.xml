@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <zookeeper replace="replace">
         <node index="1">
             <host>zoo1</host>
@@ -9,4 +9,4 @@
         <operation_timeout_ms>1000</operation_timeout_ms>
         <session_timeout_ms>5000</session_timeout_ms>
     </zookeeper>
-</clickhouse>
+</datastore>

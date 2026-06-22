@@ -191,7 +191,7 @@ TEST(Context, SetClustersConfigAfterReloadClusterConfig)
     /// Now simulate the first ConfigReloader pass calling setClustersConfig().
     /// Without the fix this throws Poco::NullPointerException because shared->clusters
     /// is non-null but shared->clusters_config is still null.
-    std::istringstream config_stream{"<clickhouse><remote_servers/></clickhouse>"};
+    std::istringstream config_stream{"<datastore><remote_servers/></datastore>"};
     Poco::AutoPtr<Poco::Util::XMLConfiguration> config = new Poco::Util::XMLConfiguration(config_stream);
     ASSERT_NO_THROW(context->setClustersConfig(config, /*enable_discovery=*/false));
 

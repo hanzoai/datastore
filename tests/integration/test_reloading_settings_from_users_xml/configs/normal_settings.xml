@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles replace="replace">
         <default>
             <max_memory_usage>10000000000</max_memory_usage>
@@ -6,4 +6,4 @@
             <replication_alter_partitions_sync>2</replication_alter_partitions_sync>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <allow_deprecated_syntax_for_merge_tree>1</allow_deprecated_syntax_for_merge_tree>
@@ -23,4 +23,4 @@
             </allow_databases>
         </test_allow>
     </users>
-</clickhouse>
+</datastore>

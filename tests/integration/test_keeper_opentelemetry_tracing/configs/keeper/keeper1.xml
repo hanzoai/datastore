@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -50,4 +50,4 @@
 
     <path>/var/lib/clickhouse/coordination</path>
     <listen_host>0.0.0.0</listen_host>
-</clickhouse>
+</datastore>

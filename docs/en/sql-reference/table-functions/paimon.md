@@ -46,7 +46,7 @@ A table with the specified structure for reading data in the specified Paimon ta
 Here is an example of configuring a named collection for storing the URL and credentials:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <paimon_conf>
             <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
@@ -56,7 +56,7 @@ Here is an example of configuring a named collection for storing the URL and cre
             <structure>auto</structure>
         </paimon_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

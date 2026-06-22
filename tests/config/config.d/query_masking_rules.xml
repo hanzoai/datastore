@@ -1,5 +1,5 @@
 <!-- Config for test server -->
-<clickhouse>
+<datastore>
     <query_masking_rules>
         <rule_topsecret>
             <regexp>TOPSECRET.TOPSECRET</regexp>
@@ -11,4 +11,4 @@
             <throw_on_match>true</throw_on_match>
         </rule_passwords_in_tests>
     </query_masking_rules>
-</clickhouse>
+</datastore>

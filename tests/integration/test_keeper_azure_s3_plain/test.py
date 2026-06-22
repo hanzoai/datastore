@@ -18,7 +18,7 @@ def generate_config(azurite_port):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(
-            f"""<clickhouse>
+            f"""<datastore>
     <logger>
         <level>trace</level>
     </logger>
@@ -69,7 +69,7 @@ def generate_config(azurite_port):
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>"""
+</datastore>"""
         )
     return path
 

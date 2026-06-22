@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_auto_cluster>
             <discovery>
@@ -6,4 +6,4 @@
             </discovery>
         </test_auto_cluster>
     </remote_servers>
-</clickhouse>
+</datastore>

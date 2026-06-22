@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <s3_snapshot>
             <endpoint>http://minio1:9001/snapshots/</endpoint>
@@ -41,4 +41,4 @@
     </keeper_server>
     <global_profiler_real_time_period_ns>1000000000</global_profiler_real_time_period_ns>
     <global_profiler_cpu_time_period_ns>1000000000</global_profiler_cpu_time_period_ns>
-</clickhouse>
+</datastore>

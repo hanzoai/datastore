@@ -15,9 +15,9 @@ CONFIG_FILE=$(mktemp -p "${CLICKHOUSE_TMP:-.}" 04117_config.XXXXXX.xml)
 trap 'rm -f "$CONFIG_FILE"' EXIT
 
 cat > "$CONFIG_FILE" <<'EOF'
-<clickhouse>
+<datastore>
     <max_server_memory_usage>4G</max_server_memory_usage>
-</clickhouse>
+</datastore>
 EOF
 
 run_local() {

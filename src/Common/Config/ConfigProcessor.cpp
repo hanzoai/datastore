@@ -1030,7 +1030,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
         </aes_128_gcm_siv>
       </encryption_codecs>
       <max_table_size_to_drop encrypted_by="AES_128_GCM_SIV">96260000000B0000000000E8FE3C087CED2205A5071078B29FD5C3B97F824911DED3217E980C</max_table_size_to_drop>
-    </clickhouse>
+    </datastore>
 
     Config example we do not process here:
     <datastore>
@@ -1040,7 +1040,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
         </aes_128_gcm_siv>
       </encryption_codecs>
       <max_table_size_to_drop encrypted_by="AES_128_GCM_SIV">96260000000B0000000000E8FE3C087CED2205A5071078B29FD5C3B97F824911DED3217E980C</max_table_size_to_drop>
-    </clickhouse>
+    </datastore>
     */
     constexpr auto encryption_codecs_key = "encryption_codecs";
     if (!skip_zk_encryption_keys || !hasNodeWithNameAndChildNodeWithAttribute(loaded_config, encryption_codecs_key, "from_zk"))

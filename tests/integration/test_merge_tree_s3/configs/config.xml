@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <s3>
         <broken_s3>
             <endpoint>http://resolver:8085/root/data/</endpoint>
@@ -9,4 +9,4 @@
 
     <enable_system_unfreeze>true</enable_system_unfreeze>
     <allow_remove_stale_moving_parts>true</allow_remove_stale_moving_parts>
-</clickhouse>
+</datastore>

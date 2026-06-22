@@ -56,7 +56,7 @@ In the above example:
 To manage named collections with DDL a user must have the `named_collection_control` privilege.  This can be assigned by adding a file to `/etc/clickhouse-server/users.d/`.  The example gives the user `default` both the `access_management` and `named_collection_control` privileges:
 
 ```xml title='/etc/clickhouse-server/users.d/user_default.xml'
-<clickhouse>
+<datastore>
   <users>
     <default>
       <password_sha256_hex>65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5</password_sha256_hex replace=true>
@@ -66,7 +66,7 @@ To manage named collections with DDL a user must have the `named_collection_cont
       <!-- highlight-end -->
     </default>
   </users>
-</clickhouse>
+</datastore>
 ```
 
 :::tip
@@ -85,7 +85,7 @@ you can use `local_encrypted` or `keeper_encrypted`/`zookeeper_encrypted`.
 To use ZooKeeper/Keeper we also need to set up a `path` (path in ZooKeeper/Keeper, where named collections will be stored) to
 `named_collections_storage` section in configuration file. The following example uses encryption and ZooKeeper/Keeper:
 ```xml
-<clickhouse>
+<datastore>
   <named_collections_storage>
     <type>zookeeper_encrypted</type>
     <key_hex>bebec0cabebec0cabebec0cabebec0ca</key_hex>
@@ -93,7 +93,7 @@ To use ZooKeeper/Keeper we also need to set up a `path` (path in ZooKeeper/Keepe
     <path>/named_collections_path/</path>
     <update_timeout_ms>1000</update_timeout_ms>
   </named_collections_storage>
-</clickhouse>
+</datastore>
 ```
 
 An optional configuration parameter `update_timeout_ms` by default is equal to `5000`.
@@ -103,7 +103,7 @@ An optional configuration parameter `update_timeout_ms` by default is equal to `
 ### XML example {#xml-example}
 
 ```xml title='/etc/clickhouse-server/config.d/named_collections.xml'
-<clickhouse>
+<datastore>
      <named_collections>
         <name>
             <key_1 overridable="true">value</key_1>
@@ -111,7 +111,7 @@ An optional configuration parameter `update_timeout_ms` by default is equal to `
             <url>https://connection.url/</url>
         </name>
      </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 In the above example:
@@ -176,7 +176,7 @@ url = 'https://s3.us-east-1.amazonaws.com/yourbucket/mydata/'
 ### XML example {#xml-example-1}
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <s3_mydata>
             <access_key_id>AKIAIOSFODNN7EXAMPLE</access_key_id>
@@ -185,7 +185,7 @@ url = 'https://s3.us-east-1.amazonaws.com/yourbucket/mydata/'
             <url>https://s3.us-east-1.amazonaws.com/yourbucket/mydata/</url>
         </s3_mydata>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ### s3() function and S3 Table named collection examples {#s3-function-and-s3-table-named-collection-examples}
@@ -239,7 +239,7 @@ replace_query = 1
 ### XML example {#xml-example-2}
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <mymysql>
             <user>myuser</user>
@@ -251,7 +251,7 @@ replace_query = 1
             <replace_query>1</replace_query>
         </mymysql>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ### mysql() function, MySQL table, MySQL database, and Dictionary named collection examples {#mysql-function-mysql-table-mysql-database-and-dictionary-named-collection-examples}
@@ -345,7 +345,7 @@ schema = 'test_schema'
 
 Example of configuration:
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <mypg>
             <user>pguser</user>
@@ -356,7 +356,7 @@ Example of configuration:
             <schema>test_schema</schema>
         </mypg>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ### Example of using named collections with the postgresql function {#example-of-using-named-collections-with-the-postgresql-function}
@@ -440,7 +440,7 @@ secure = 1
 ```
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <remote1>
             <host>remote_host</host>
@@ -451,7 +451,7 @@ secure = 1
             <secure>1</secure>
         </remote1>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 `secure` is not needed for connection because of `remoteSecure`, but it can be used for dictionaries.
 
@@ -509,7 +509,7 @@ kafka_max_block_size = '1048576';
 ### XML example {#xml-example-3}
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <my_kafka_cluster>
             <kafka_broker_list>localhost:9092</kafka_broker_list>
@@ -519,7 +519,7 @@ kafka_max_block_size = '1048576';
             <kafka_max_block_size>1048576</kafka_max_block_size>
         </my_kafka_cluster>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ### Example of using named collections with a Kafka table {#example-of-using-named-collections-with-a-kafka-table}
@@ -559,7 +559,7 @@ BACKUP TABLE default.test to S3(named_collection_s3_backups, 'directory')
 ### XML example {#xml-example-4}
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <named_collection_s3_backups>
             <url>https://my-s3-bucket.s3.amazonaws.com/backup-S3/</url>
@@ -567,7 +567,7 @@ BACKUP TABLE default.test to S3(named_collection_s3_backups, 'directory')
             <secret_access_key>Abc+123</secret_access_key>
         </named_collection_s3_backups>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ## Named collections for accessing MongoDB Table and Dictionary {#named-collections-for-accessing-mongodb-table-and-dictionary}
@@ -590,7 +590,7 @@ options = 'connectTimeoutMS=10000'
 ### XML example {#xml-example-5}
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <mymongo>
             <user></user>
@@ -602,7 +602,7 @@ options = 'connectTimeoutMS=10000'
             <options>connectTimeoutMS=10000</options>
         </mymongo>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 #### MongoDB table {#mongodb-table}

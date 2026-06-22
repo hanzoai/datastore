@@ -47,7 +47,7 @@ ENGINE = DeltaLake('http://mars-doc-test.s3.amazonaws.com/clickhouse-bucket-3/te
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <deltalake_conf>
             <url>http://mars-doc-test.s3.amazonaws.com/clickhouse-bucket-3/</url>
@@ -55,7 +55,7 @@ Using named collections:
             <secret_access_key>Abc+123</secret_access_key>
         </deltalake_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>2181</tcp_port>
         <server_id>1</server_id>
@@ -23,4 +23,4 @@
         </node>
         <session_timeout_ms>20000</session_timeout_ms>
     </zookeeper>
-</clickhouse>
+</datastore>

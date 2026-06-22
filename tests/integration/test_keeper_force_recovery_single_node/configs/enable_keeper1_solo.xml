@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <use_cluster>false</use_cluster>
         <force_recovery>1</force_recovery>
@@ -23,4 +23,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

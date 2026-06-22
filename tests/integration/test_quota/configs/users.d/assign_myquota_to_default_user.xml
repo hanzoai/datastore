@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <quota>myQuota</quota>
         </default>
     </users>
-</clickhouse>
+</datastore>

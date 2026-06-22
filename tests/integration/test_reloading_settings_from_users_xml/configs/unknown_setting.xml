@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <profiles replace="replace">
         <default>
             <xyz>8</xyz>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

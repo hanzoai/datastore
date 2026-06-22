@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <level>warning</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
@@ -7,5 +7,5 @@
         <size>200M</size>
         <count>10</count>
     </logger>
-</clickhouse>
+</datastore>
 

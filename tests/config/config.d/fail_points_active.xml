@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- REGULAR failpoints enabled during stress tests.
          Only REGULAR type is safe here: they fire-and-return on every trigger
          with no synchronization. ONCE failpoints would fire once then vanish;
@@ -11,4 +11,4 @@
         <check_table_query_delay_for_part/>
         <file_cache_slru_downgrade_fail_before_finalize/>
     </fail_points_active>
-</clickhouse>
+</datastore>

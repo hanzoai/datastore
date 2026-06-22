@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <stream_like_engine_allow_direct_select>1</stream_like_engine_allow_direct_select>
@@ -17,4 +17,4 @@
 						<input_format_protobuf_oneof_presence>true</input_format_protobuf_oneof_presence>
         </default>
     </users>
-</clickhouse>
+</datastore>

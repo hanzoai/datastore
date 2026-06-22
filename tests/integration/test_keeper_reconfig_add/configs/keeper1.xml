@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <enable_reconfiguration>true</enable_reconfiguration>
 
@@ -17,4 +17,4 @@
             <server> <id>1</id> <hostname>node1</hostname> <port>9234</port> </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

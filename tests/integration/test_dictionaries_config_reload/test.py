@@ -24,9 +24,9 @@ def copy_file_to_container(local_path, dist_path, container_id):
     )
 
 
-config = """<clickhouse>
+config = """<datastore>
     <dictionaries_config>/etc/clickhouse-server/dictionaries/{dictionaries_config}</dictionaries_config>
-</clickhouse>"""
+</datastore>"""
 
 
 @pytest.fixture(scope="module")

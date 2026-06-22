@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <workload_zookeeper_path>/clickhouse/workload/definitions.sql</workload_zookeeper_path>
     <storage_configuration>
         <disks>
@@ -83,4 +83,4 @@
             </s3_no_fake_tx_move>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

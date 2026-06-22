@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <prefer_localhost_replica>false</prefer_localhost_replica>
@@ -20,4 +20,4 @@
         <default>
         </default>
     </quotas>
-</clickhouse>
+</datastore>

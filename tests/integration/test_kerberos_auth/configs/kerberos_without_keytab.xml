@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <kerberos>
         <realm>TEST.CLICKHOUSE.TECH</realm>
     </kerberos>
-</clickhouse>
+</datastore>

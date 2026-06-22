@@ -10,9 +10,9 @@ using namespace DB;
 
 TEST(Common, ConfigWithDotInKeys)
 {
-    std::string xml(R"CONFIG(<clickhouse>
+    std::string xml(R"CONFIG(<datastore>
     <foo.bar>1</foo.bar>
-</clickhouse>)CONFIG");
+</datastore>)CONFIG");
 
     Poco::XML::DOMParser dom_parser;
     Poco::AutoPtr<Poco::XML::Document> document = dom_parser.parseString(xml);

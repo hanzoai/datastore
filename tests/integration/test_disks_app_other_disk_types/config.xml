@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <path>/var/lib/clickhouse/</path>
     <logger>
         <clickhouse-disks>/clickhouse-disks.log</clickhouse-disks>
@@ -23,4 +23,4 @@
             </plain_rewritable>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

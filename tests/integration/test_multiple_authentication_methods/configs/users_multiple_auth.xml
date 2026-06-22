@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<clickhouse>
+<datastore>
     <profiles>
         <default/>
     </profiles>
@@ -76,4 +76,4 @@
             <quota>default</quota>
         </mixed_auth>
     </users>
-</clickhouse>
+</datastore>

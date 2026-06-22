@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -33,4 +33,4 @@
             <port>9181</port>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <auxiliary_zookeepers>
         <zookeeper2>
             <node index="1">
@@ -11,4 +11,4 @@
             </node>
         </zookeeper2>
     </auxiliary_zookeepers>
-</clickhouse>
+</datastore>

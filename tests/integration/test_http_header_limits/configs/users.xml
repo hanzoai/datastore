@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <!-- Small limits for testing -->
@@ -9,4 +9,4 @@
             <http_headers_read_timeout>3</http_headers_read_timeout>
         </default>
     </profiles>
-</clickhouse>
+</datastore>

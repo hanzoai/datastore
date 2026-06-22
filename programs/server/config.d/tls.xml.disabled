@@ -6,4 +6,4 @@
             <dhParamsFile remove="remove"/>
         </server>
     </openSSL>
-</clickhouse>
+</datastore>

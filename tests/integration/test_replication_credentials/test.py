@@ -5,13 +5,13 @@ import pytest
 from helpers.cluster import ClickHouseCluster
 
 ORIGINAL_CREDENTIALS1 = """
-<clickhouse>
+<datastore>
     <interserver_http_port>9009</interserver_http_port>
     <interserver_http_credentials>
         <user>admin</user>
         <password>222</password>
     </interserver_http_credentials>
-</clickhouse>
+</datastore>
 """
 
 
@@ -157,7 +157,7 @@ def test_different_credentials(different_credentials_cluster):
     assert node6.query("SELECT id FROM test_table order by id") == "222\n"
 
     add_old = """
-    <clickhouse>
+    <datastore>
         <interserver_http_port>9009</interserver_http_port>
         <interserver_http_credentials>
             <user>admin</user>
@@ -171,7 +171,7 @@ def test_different_credentials(different_credentials_cluster):
                 <password>333</password>
             </old>
         </interserver_http_credentials>
-    </clickhouse>
+    </datastore>
     """
 
     node5.replace_config("/etc/clickhouse-server/config.d/credentials1.xml", add_old)
@@ -229,14 +229,14 @@ def test_credentials_and_no_credentials(credentials_and_no_credentials_cluster):
     assert node8.query("SELECT id FROM test_table order by id") == "222\n"
 
     allow_empty = """
-    <clickhouse>
+    <datastore>
         <interserver_http_port>9009</interserver_http_port>
         <interserver_http_credentials>
             <user>admin</user>
             <password>222</password>
             <allow_empty>true</allow_empty>
         </interserver_http_credentials>
-    </clickhouse>
+    </datastore>
     """
 
     # change state: Flip node7 to mixed auth/non-auth (allow node8)

@@ -47,7 +47,7 @@ def test_adjust_log_level(start_cluster):
             "bash",
             "-c",
             """echo "
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
@@ -56,7 +56,7 @@ def test_adjust_log_level(start_cluster):
         <size>200M</size>
         <count>10</count>
     </logger>
-</clickhouse>
+</datastore>
             " > /etc/clickhouse-server/config.d/logger.xml
             """,
         ]

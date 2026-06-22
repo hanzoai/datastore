@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_db_remote>
@@ -21,4 +21,4 @@
             <port>9181</port>
         </node>
     </zookeeper>
-</clickhouse>
+</datastore>

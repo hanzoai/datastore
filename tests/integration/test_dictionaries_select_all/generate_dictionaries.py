@@ -57,7 +57,7 @@ def generate_structure():
 
 def generate_dictionaries(path, structure):
     dictionary_skeleton = """
-    <clickhouse>
+    <datastore>
        <dictionary>
            <name>{name}</name>
 
@@ -82,7 +82,7 @@ def generate_dictionaries(path, structure):
                {parent}
            </structure>
        </dictionary>
-    </clickhouse>"""
+    </datastore>"""
     attribute_skeleton = """
     <attribute>
         <name>%s_</name>
@@ -99,14 +99,14 @@ def generate_dictionaries(path, structure):
     )
 
     source_clickhouse = """
-    <clickhouse>
+    <datastore>
         <host>localhost</host>
         <port>9000</port>
         <user>default</user>
         <password></password>
         <db>test</db>
         <table>dictionary_source</table>
-    </clickhouse>
+    </datastore>
     """
 
     layout_flat = "<flat />"

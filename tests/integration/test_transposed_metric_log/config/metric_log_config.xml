@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <metric_log>
         <database>system</database>
         <table>metric_log</table>
@@ -15,4 +15,4 @@
     SETTINGS ttl_only_drop_parts=1, merge_selecting_sleep_ms='50000'
     </engine>
     </metric_log>
-</clickhouse>
+</datastore>

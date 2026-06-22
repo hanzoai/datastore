@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <s3>
         <no_sign_request>0</no_sign_request>
     </s3>
-</clickhouse>
+</datastore>

@@ -10,7 +10,7 @@ doc_type: 'guide'
 ClickHouse can run arbitrary SQL queries from the server configuration during startup. This can be useful for migrations or automatic schema creation.
 
 ```xml
-<clickhouse>
+<datastore>
     <startup_scripts>
         <throw_on_error>false</throw_on_error>
         <scripts>
@@ -25,7 +25,7 @@ ClickHouse can run arbitrary SQL queries from the server configuration during st
             <user>default</user>
         </scripts>
     </startup_scripts>
-</clickhouse>
+</datastore>
 ```
 
 ClickHouse executes all queries from the `startup_scripts` sequentially in the specified order. If any of the queries fail, the execution of the following queries won't be interrupted. However, if `throw_on_error` is set to true,

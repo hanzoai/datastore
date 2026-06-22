@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
       <disks>
             <default>
@@ -63,4 +63,4 @@
             </local_cache>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

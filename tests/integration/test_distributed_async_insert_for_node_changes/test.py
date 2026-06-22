@@ -20,7 +20,7 @@ node3 = cluster.add_instance(
     main_configs=["configs/remote_servers.xml"],
 )
 
-config1 = """<clickhouse>
+config1 = """<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -57,9 +57,9 @@ config1 = """<clickhouse>
             </shard>
         </test_cluster_with_replication>
     </remote_servers>
-</clickhouse>"""
+</datastore>"""
 
-config2 = """<clickhouse>
+config2 = """<datastore>
     <remote_servers>
         <test_cluster>
             <shard>
@@ -98,7 +98,7 @@ config2 = """<clickhouse>
             </shard>
         </test_cluster_with_replication>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 

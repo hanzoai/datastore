@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <listen_host>::</listen_host>
     <tcp_port>9000</tcp_port>
     <http_port>8123</http_port>
@@ -13,4 +13,4 @@
             <path>users.xml</path>
         </users_xml>
     </user_directories>
-</clickhouse>
+</datastore>

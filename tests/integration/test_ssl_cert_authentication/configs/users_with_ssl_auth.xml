@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <john>
             <ssl_certificates>
@@ -42,4 +42,4 @@
             </auth_methods>
         </trurl>
     </users>
-</clickhouse>
+</datastore>

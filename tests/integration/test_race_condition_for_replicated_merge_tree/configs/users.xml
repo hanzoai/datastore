@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <allow_drop_detached>1</allow_drop_detached>
@@ -14,4 +14,4 @@
             <profile>default</profile>
         </default>
     </users>
-</clickhouse>
+</datastore>

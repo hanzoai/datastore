@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <tcp_port>9000</tcp_port>
 
     <profiles>
@@ -13,4 +13,4 @@
         </default>
     </users>
 
-</clickhouse>
+</datastore>

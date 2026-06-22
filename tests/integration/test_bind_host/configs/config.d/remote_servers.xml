@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_cluster_bind_host>
             <shard>
@@ -57,4 +57,4 @@
             </shard>
         </test_cluster_bind_host_fail>
     </remote_servers>
-</clickhouse>
+</datastore>

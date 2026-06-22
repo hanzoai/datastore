@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <hdd_blob>
@@ -18,4 +18,4 @@
             </cache_dynamic_resize_slru>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

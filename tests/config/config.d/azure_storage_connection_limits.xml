@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Stateless tests run with high parallelism against the in-process
          `azurite-rs` Azure Blob Storage emulator. With many concurrent
          connections to the storage backend the default
@@ -8,4 +8,4 @@
          "having stderror". Raise the limit so that warnings only fire if
          the connection count is genuinely abnormal. -->
     <storage_connections_warn_limit>100000</storage_connections_warn_limit>
-</clickhouse>
+</datastore>

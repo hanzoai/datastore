@@ -378,11 +378,11 @@ def _build_node_config_xml(server_id, peers_xml, coord_settings, feature_flags_x
         server_id, peers_xml, path_block, _http_control_xml(), coord_settings, feature_flags_xml
     )
     return (
-        "<clickhouse>"
+        "<datastore>"
         + keeper_server
         + _prometheus_xml()
         + _listen_hosts_xml()
-        + "</clickhouse>"
+        + "</datastore>"
     )
 
 
@@ -421,7 +421,7 @@ class ClusterBuilder:
         # Use keeper_metrics_only=false so ClickHouse exports ZooKeeper* ProfileEvents (ZK client), not just Keeper* (server).
         prometheus_cfg = self.conf_dir / "zk_prometheus.xml"
         prometheus_cfg.write_text(
-            "<clickhouse>" + _prometheus_xml(keeper_metrics_only=False) + "</clickhouse>"
+            "<datastore>" + _prometheus_xml(keeper_metrics_only=False) + "</datastore>"
         )
         zk_main_configs = [str(prometheus_cfg)]
 

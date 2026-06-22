@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- This config is used as an override on top of zookeeper.xml.
          It only contains fault injection specific settings.
 
@@ -16,4 +16,4 @@
         <send_sleep_probability>0.00001</send_sleep_probability>
         <send_sleep_ms>10000</send_sleep_ms>
     </zookeeper>
-</clickhouse>
+</datastore>

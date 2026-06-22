@@ -33,7 +33,7 @@ ClickHouse supports OpenTelemetry tracing for [ClickHouse Keeper](../guides/sre/
 To enable tracing for Keeper requests, configure the following settings in your ZooKeeper/Keeper client configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <zookeeper>
         <node>
             <host>keeper1</host>
@@ -42,7 +42,7 @@ To enable tracing for Keeper requests, configure the following settings in your 
         <!-- Enable OpenTelemetry tracing context propagation -->
         <pass_opentelemetry_tracing_context>true</pass_opentelemetry_tracing_context>
     </zookeeper>
-</clickhouse>
+</datastore>
 ```
 
 ### Keeper Span Types {#keeper-span-types}

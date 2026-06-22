@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <log>/var/log/clickhouse-server/log.log</log>
         <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
@@ -12,4 +12,4 @@
     <path>/var/lib/clickhouse/</path>
 
     <users_config>users.xml</users_config>
-</clickhouse>
+</datastore>

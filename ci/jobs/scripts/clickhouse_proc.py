@@ -121,7 +121,7 @@ class ClickHouseProc:
         Path(f"{self.ch_config_dir}/config.d").mkdir(parents=True, exist_ok=True)
         with open(f"{self.ch_config_dir}/config.d/storage_conf_backups.xml", "w") as file:
             file.write(f"""
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <backups>
@@ -130,14 +130,14 @@ class ClickHouseProc:
             </backups>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """)
         with open(f"{self.ch_config_dir}/config.d/filesystem_caches_path.xml", "w") as file:
             file.write(f"""
-<clickhouse>
+<datastore>
     <filesystem_caches_path>{self.ch_var_lib_dir}/filesystem_caches/</filesystem_caches_path>
     <custom_cached_disks_base_directory replace="replace">{self.ch_var_lib_dir}/filesystem_caches/</custom_cached_disks_base_directory>
-</clickhouse>
+</datastore>
 """)
 
     def start_minio(self, test_type):
@@ -240,9 +240,9 @@ class ClickHouseProc:
 
     @staticmethod
     def set_memory_ratio(ratio):
-        config = f"""<clickhouse>
+        config = f"""<datastore>
     <max_server_memory_usage_to_ram_ratio>{ratio}</max_server_memory_usage_to_ram_ratio>
-</clickhouse>
+</datastore>
 """
         file_path = "/etc/clickhouse-server/config.d/max_server_memory_usage_to_ram_ratio.xml"
         with open(file_path, "w") as f:
@@ -333,9 +333,9 @@ profiles:
         ]
 
         c1 = """
-<clickhouse>
+<datastore>
     <max_server_memory_usage_to_ram_ratio>0.75</max_server_memory_usage_to_ram_ratio>
-</clickhouse>
+</datastore>
 """
         file_path = f"{temp_dir}/config.d/max_server_memory_usage_to_ram_ratio.xml"
         with open(file_path, "w") as file:
@@ -354,9 +354,9 @@ profiles:
 <vector_similarity_index_cache_size>214748364800</vector_similarity_index_cache_size>
 <max_build_vector_similarity_index_thread_pool_size>48</max_build_vector_similarity_index_thread_pool_size>
 <vector_similarity_index_cache_size_ratio>0.99</vector_similarity_index_cache_size_ratio>
-</clickhouse>
+</datastore>
         """
-        commands = [f'sed -i "s|</clickhouse>||g" {temp_dir}/config.xml']
+        commands = [f'sed -i "s|</datastore>||g" {temp_dir}/config.xml']
         res = True
         for command in commands:
             res = res and Shell.check(command, verbose=True)

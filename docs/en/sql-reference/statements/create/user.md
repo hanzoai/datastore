@@ -49,7 +49,7 @@ There are multiple ways of user identification:
 Password complexity requirements can be edited in [config.xml](/operations/configuration-files). Below is an example configuration that requires passwords to be at least 12 characters long and contain 1 number. Each password complexity rule requires a regex to match against passwords and a description of the rule.
 
 ```xml
-<clickhouse>
+<datastore>
     <password_complexity>
         <rule>
             <pattern>.{12}</pattern>
@@ -60,7 +60,7 @@ Password complexity requirements can be edited in [config.xml](/operations/confi
             <message>contain at least 1 numeric character</message>
         </rule>
     </password_complexity>
-</clickhouse>
+</datastore>
 ```
 
 :::note

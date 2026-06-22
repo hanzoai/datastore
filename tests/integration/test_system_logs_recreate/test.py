@@ -61,12 +61,12 @@ def test_system_logs_recreate():
                     "bash",
                     "-c",
                     f"""echo "
-            <clickhouse>
+            <datastore>
                 <{table}>
                     <engine>ENGINE = Null</engine>
                     <partition_by remove='remove'/>
                 </{table}>
-            </clickhouse>
+            </datastore>
             " > /etc/clickhouse-server/config.d/zzz-override-{table}.xml
             """,
                 ]
@@ -95,11 +95,11 @@ def test_system_logs_recreate():
                     "bash",
                     "-c",
                     f"""echo "
-            <clickhouse>
+            <datastore>
                 <{table}>
                     <storage_policy>system_tables</storage_policy>
                 </{table}>
-            </clickhouse>
+            </datastore>
             " > /etc/clickhouse-server/config.d/zzz-override-{table}.xml
             """,
                 ]
@@ -176,11 +176,11 @@ def test_drop_system_log():
             "bash",
             "-c",
             f"""echo "
-        <clickhouse>
+        <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
             </query_log>
-        </clickhouse>
+        </datastore>
         " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
         """,
         ]

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <filesystem_caches>
         <cache1>
             <type>cache</type>
@@ -17,4 +17,4 @@
             <cache_on_write_operations>1</cache_on_write_operations>
         </cache2>
     </filesystem_caches>
-</clickhouse>
+</datastore>

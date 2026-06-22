@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <grpc_port>9100</grpc_port>
     <grpc replace="replace">
         <!-- Enable if you want very detailed logs -->
@@ -20,4 +20,4 @@
         <flush_on_crash>false</flush_on_crash>
     </opentelemetry_span_log>
 
-</clickhouse>
+</datastore>

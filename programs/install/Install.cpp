@@ -617,7 +617,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                     "    <tmp_path>" << (data_path / "tmp").string() << "</tmp_path>\n"
                     "    <user_files_path>" << (data_path / "user_files").string() << "</user_files_path>\n"
                     "    <format_schema_path>" << (data_path / "format_schemas").string() << "</format_schema_path>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                     out.sync();
                     out.finalize();
                     fs::permissions(data_file, fs::perms::owner_read, fs::perm_options::replace);
@@ -634,7 +634,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                     "        <log>" << (log_path / "datastore-server.log").string() << "</log>\n"
                     "        <errorlog>" << (log_path / "datastore-server.err.log").string() << "</errorlog>\n"
                     "    </logger>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                     out.sync();
                     out.finalize();
                     fs::permissions(logger_file, fs::perms::owner_read, fs::perm_options::replace);
@@ -652,7 +652,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                     "            <path>" << (data_path / "access").string() << "</path>\n"
                     "        </local_directory>\n"
                     "    </user_directories>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                     out.sync();
                     out.finalize();
                     fs::permissions(user_directories_file, fs::perms::owner_read, fs::perm_options::replace);
@@ -671,7 +671,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                     "            <privateKeyFile>" << (config_dir / "server.key").string() << "</privateKeyFile>\n"
                     "        </server>\n"
                     "    </openSSL>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                     out.sync();
                     out.finalize();
                     fs::permissions(openssl_file, fs::perms::owner_read, fs::perm_options::replace);
@@ -857,7 +857,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                     "            <password_sha256_hex>" << hash_hex << "</password_sha256_hex>\n"
                     "        </default>\n"
                     "    </users>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                 out.sync();
                 out.finalize();
                 fmt::print("{}Password for the default user is saved in file {}.{}\n", start_hilite, password_file, end_hilite);
@@ -868,7 +868,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                     "            <password><![CDATA[" << password << "]]></password>\n"
                     "        </default>\n"
                     "    </users>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                 out.sync();
                 out.finalize();
                 fmt::print("{}Password for the default user is saved in plaintext in file {}.{}\n", start_hilite, password_file, end_hilite);
@@ -914,7 +914,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 WriteBufferFromFile out(listen_file);
                 out << "<datastore>\n"
                     "    <listen_host>::</listen_host>\n"
-                    "</clickhouse>\n";
+                    "</datastore>\n";
                 out.sync();
                 out.finalize();
                 fmt::print("The choice is saved in file {}.\n", listen_file);

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <s3_remote>
@@ -25,4 +25,4 @@
             </local_only>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

@@ -15,7 +15,7 @@ CLICKHOUSE_PORT_TCP=""
 
 CONFIG=$CLICKHOUSE_TMP/client.xml
 cat > $CONFIG <<EOL
-<clickhouse>
+<datastore>
     <host>$TEST_HOST</host>
     <port>$TEST_PORT</port>
     <database>$TEST_DATABASE</database>
@@ -67,12 +67,12 @@ cat > $CONFIG <<EOL
             <history_file>/no/such/dir/.history</history_file>
         </connection>
     </connections_credentials>
-</clickhouse>
+</datastore>
 EOL
 
 CONFIG_ROOT_OVERRIDES=$CLICKHOUSE_TMP/client_user_pass.xml
 cat > $CONFIG_ROOT_OVERRIDES <<EOL
-<clickhouse>
+<datastore>
     <host>$TEST_HOST</host>
     <port>$TEST_PORT</port>
     <database>$TEST_DATABASE</database>
@@ -94,7 +94,7 @@ cat > $CONFIG_ROOT_OVERRIDES <<EOL
             <database>system</database>
         </connection>
     </connections_credentials>
-</clickhouse>
+</datastore>
 EOL
 
 echo 'connection'

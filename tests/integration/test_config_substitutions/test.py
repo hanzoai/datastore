@@ -137,7 +137,7 @@ def test_config_from_env_overrides(start_cluster):
     with node7.with_replace_config(
         "/etc/clickhouse-server/users.d/000-users_with_env_subst.xml",
         """
-<clickhouse>
+<datastore>
   <profiles>
     <default>
         <max_query_size from_env="MAX_QUERY_SIZE" />
@@ -154,7 +154,7 @@ def test_config_from_env_overrides(start_cluster):
       <include incl="users_1" />
       <include incl="users_2" />
   </users>
-</clickhouse>
+</datastore>
 """,
     ):
         with pytest.raises(
@@ -166,7 +166,7 @@ def test_config_from_env_overrides(start_cluster):
     with node7.with_replace_config(
         "/etc/clickhouse-server/users.d/000-users_with_env_subst.xml",
         """
-<clickhouse>
+<datastore>
   <profiles>
     <default>
         <max_query_size from_env="MAX_QUERY_SIZE" />
@@ -183,7 +183,7 @@ def test_config_from_env_overrides(start_cluster):
       <include incl="users_1" />
       <include incl="users_2" />
   </users>
-</clickhouse>
+</datastore>
 """,
     ):
         node7.query("SYSTEM RELOAD CONFIG")
@@ -200,9 +200,9 @@ def test_config_merge_from_env_overrides(start_cluster):
     with node7.with_replace_config(
         "/etc/clickhouse-server/config.d/010-server_with_env_subst.xml",
         """
-<clickhouse>
+<datastore>
     <max_thread_pool_size from_env="CH_THREADS" replace="1">9000</max_thread_pool_size>
-</clickhouse>
+</datastore>
 """,
     ):
         node7.query("SYSTEM RELOAD CONFIG")
@@ -336,7 +336,7 @@ def test_config_multiple_zk_substitutions(start_cluster):
         with node3.with_replace_config(
             "/etc/clickhouse-server/config.d/config_zk_include_test.xml",
             """
-    <clickhouse>
+    <datastore>
       <include from_zk="/background_pool_size" merge="true"/>
       <background_pool_size>44</background_pool_size>
       <merge_tree>
@@ -346,7 +346,7 @@ def test_config_multiple_zk_substitutions(start_cluster):
       </merge_tree>
 
       <include from_zk="/min_bytes_for_wide_part" merge="true"/>
-     </clickhouse>
+     </datastore>
     """,
         ):
             node3.query("SYSTEM RELOAD CONFIG")

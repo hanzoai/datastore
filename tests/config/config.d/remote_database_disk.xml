@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <database_disk>
         <disk>disk_db_remote</disk>
     </database_disk>
@@ -14,4 +14,4 @@
             </disk_db_remote>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

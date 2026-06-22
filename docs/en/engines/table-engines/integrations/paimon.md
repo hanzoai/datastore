@@ -48,7 +48,7 @@ CREATE TABLE paimon_table ENGINE=PaimonS3('http://test.s3.amazonaws.com/clickhou
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <paimon_conf>
             <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
@@ -56,7 +56,7 @@ Using named collections:
             <secret_access_key>test</secret_access_key>
         </paimon_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

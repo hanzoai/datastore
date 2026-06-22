@@ -15,7 +15,7 @@ To enable SSL certificate authentication, a list of `Common Name`'s or `Subject 
 
 **Example**
 ```xml
-<clickhouse>
+<datastore>
     <!- ... -->
     <users>
         <user_name_1>
@@ -40,7 +40,7 @@ To enable SSL certificate authentication, a list of `Common Name`'s or `Subject 
             </ssl_certificates>
         </user_name_3>
     </users>
-</clickhouse>
+</datastore>
 ```
 
 For the SSL [`chain of trust`](https://en.wikipedia.org/wiki/Chain_of_trust) to work correctly, it is also important to make sure that the [`caConfig`](../server-configuration-parameters/settings.md#openssl) parameter is configured properly.

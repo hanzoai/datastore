@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <!-- Disk for test 04070_s3_disk_settings_override.
@@ -23,4 +23,4 @@
             </s3_04070>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <tcp_port_secure>9440</tcp_port_secure>
 
     <openSSL>
@@ -12,4 +12,4 @@
             </invalidCertificateHandler>
         </client>
     </openSSL>
-</clickhouse>
+</datastore>

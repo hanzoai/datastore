@@ -15,9 +15,9 @@ To enable KeeperMap storage engine, you need to define a ZooKeeper path where th
 For example:
 
 ```xml
-<clickhouse>
+<datastore>
     <keeper_map_path_prefix>/keeper_map_tables</keeper_map_path_prefix>
-</clickhouse>
+</datastore>
 ```
 
 where path can be any other valid ZooKeeper path.
@@ -63,9 +63,9 @@ PRIMARY KEY key
 with
 
 ```xml
-<clickhouse>
+<datastore>
     <keeper_map_path_prefix>/keeper_map_tables</keeper_map_path_prefix>
-</clickhouse>
+</datastore>
 ```
 
 Each value, which is binary serialization of `(v1, v2, v3)`, will be stored inside `/keeper_map_tables/keeper_map_table/data/serialized_key` in `Keeper`.

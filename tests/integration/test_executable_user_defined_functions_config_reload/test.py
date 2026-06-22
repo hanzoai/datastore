@@ -26,9 +26,9 @@ def copy_file_to_container(local_path, dist_path, container_id):
     )
 
 
-config = """<clickhouse>
+config = """<datastore>
     <user_defined_executable_functions_config>/etc/clickhouse-server/functions/{user_defined_executable_functions_config}</user_defined_executable_functions_config>
-</clickhouse>"""
+</datastore>"""
 
 
 @pytest.fixture(scope="module")

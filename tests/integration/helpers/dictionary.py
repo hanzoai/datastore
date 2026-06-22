@@ -366,7 +366,7 @@ class Dictionary(object):
             if "direct" not in self.structure.layout.get_str():
                 result.write(
                     """
-                <clickhouse>
+                <datastore>
                 <dictionary>
                     <lifetime>
                         <min>{min_lifetime}</min>
@@ -378,7 +378,7 @@ class Dictionary(object):
                     {source}
                     </source>
                 </dictionary>
-                </clickhouse>
+                </datastore>
                 """.format(
                         min_lifetime=self.min_lifetime,
                         max_lifetime=self.max_lifetime,
@@ -390,7 +390,7 @@ class Dictionary(object):
             else:
                 result.write(
                     """
-                <clickhouse>
+                <datastore>
                 <dictionary>
                     <name>{name}</name>
                     {structure}
@@ -398,7 +398,7 @@ class Dictionary(object):
                     {source}
                     </source>
                 </dictionary>
-                </clickhouse>
+                </datastore>
                 """.format(
                         min_lifetime=self.min_lifetime,
                         max_lifetime=self.max_lifetime,

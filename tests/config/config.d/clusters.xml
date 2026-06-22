@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <!-- Remove the default remote server to avoid people depending on its hardcoded config
              Use test_shard_localhost instead -->
@@ -394,4 +394,4 @@
             </node>
         </test_cluster_multiple_nodes_all_unavailable>
     </remote_servers>
-</clickhouse>
+</datastore>

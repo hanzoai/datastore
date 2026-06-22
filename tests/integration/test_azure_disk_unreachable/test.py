@@ -17,7 +17,7 @@ NODE_NAME = "node"
 # Must be outside the CI port pool range (30000–50000) defined in helpers/cluster.py.
 UNREACHABLE_PORT = 60111
 
-DISK_CONFIG = f"""<clickhouse>
+DISK_CONFIG = f"""<datastore>
     <storage_configuration>
         <disks>
             <unreachable_azure_disk>
@@ -42,7 +42,7 @@ DISK_CONFIG = f"""<clickhouse>
             </unreachable_azure_policy>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>
 """
 
 CONFIG_PATH = "/etc/clickhouse-server/config.d/unreachable_azure.xml"

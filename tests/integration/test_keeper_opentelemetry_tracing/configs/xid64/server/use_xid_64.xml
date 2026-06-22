@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <zookeeper>
         <use_xid_64>1</use_xid_64>
     </zookeeper>
-</clickhouse>
+</datastore>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -26,4 +26,4 @@
             <zookeeper_path>/clickhouse/access</zookeeper_path>
         </replicated>
     </user_directories>
-</clickhouse>
+</datastore>

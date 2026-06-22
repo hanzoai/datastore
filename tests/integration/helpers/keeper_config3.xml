@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <listen_try>true</listen_try>
     <listen_host>::</listen_host>
     <listen_host>0.0.0.0</listen_host>
@@ -45,4 +45,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

@@ -43,7 +43,7 @@ def started_cluster():
         cluster.shutdown()
 
 
-config = """<clickhouse>
+config = """<datastore>
     <openSSL>
         <client>
             <verificationMode>strict</verificationMode>
@@ -52,7 +52,7 @@ config = """<clickhouse>
             <caConfig>{caConfig}</caConfig>
         </client>
     </openSSL>
-</clickhouse>"""
+</datastore>"""
 
 
 def execute_query_native(node, query, user, cert_name, password=None):

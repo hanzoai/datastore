@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <!-- To verify it works with compatibility values too (as long as they don't change tiers)
@@ -20,4 +20,4 @@
             <show_named_collections_secrets>1</show_named_collections_secrets>
         </default>
     </users>
-</clickhouse>
+</datastore>

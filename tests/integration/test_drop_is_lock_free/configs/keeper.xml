@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
      <zookeeper>
         <node index="1">
             <host>localhost</host>
@@ -27,4 +27,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

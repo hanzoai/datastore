@@ -32,9 +32,9 @@ For older versions, please check [allocation profiling for versions before 25.9]
 To sample and profile allocations, start ClickHouse/Keeper with the `jemalloc_enable_global_profiler` config enabled:
 
 ```xml
-<clickhouse>
+<datastore>
     <jemalloc_enable_global_profiler>1</jemalloc_enable_global_profiler>
-</clickhouse>
+</datastore>
 ```
 
 `jemalloc` will sample allocations and store the information internally.
@@ -51,9 +51,9 @@ You can store jemalloc samples in `system.trace_log` under the `JemallocSample` 
 To enable it globally, use the `jemalloc_collect_global_profile_samples_in_trace_log` config:
 
 ```xml
-<clickhouse>
+<datastore>
     <jemalloc_collect_global_profile_samples_in_trace_log>1</jemalloc_collect_global_profile_samples_in_trace_log>
-</clickhouse>
+</datastore>
 ```
 
 :::warning Warning
@@ -209,13 +209,13 @@ http://localhost:9182/jemalloc
 The Keeper UI is available on the HTTP control port. This port is **disabled by default** and must be explicitly enabled by setting `keeper_server.http_control.port` in the Keeper configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <keeper_server>
         <http_control>
             <port>9182</port>
         </http_control>
     </keeper_server>
-</clickhouse>
+</datastore>
 ```
 
 Once enabled, the UI provides the same visualizations as the server — Summary, Allocations, Arenas, Operations, Global Profiler, and Raw Output — except for the Query Profiler tab which requires SQL and `system.trace_log`.

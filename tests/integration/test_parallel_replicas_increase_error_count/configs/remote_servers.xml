@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_1_shard_3_replicas>
             <shard>
@@ -18,5 +18,5 @@
             </shard>
         </test_1_shard_3_replicas>
     </remote_servers>
-</clickhouse>
+</datastore>
 

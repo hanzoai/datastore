@@ -67,7 +67,7 @@ SETTINGS
 Using named collections:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <s3queue_conf>
             <url>'https://clickhouse-public-datasets.s3.amazonaws.com/my-test-bucket-768/*</url>
@@ -75,7 +75,7 @@ Using named collections:
             <secret_access_key>test</secret_access_key>
         </s3queue_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

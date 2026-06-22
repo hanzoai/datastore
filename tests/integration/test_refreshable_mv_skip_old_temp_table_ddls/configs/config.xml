@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- For some reason the test becomes flaky with the default (changed) value -->
     <s3_retry_attempts>100</s3_retry_attempts>
     <remote_servers>
@@ -19,4 +19,4 @@
     <fail_points_active>
         <database_replicated_startup_pause>false</database_replicated_startup_pause>
     </fail_points_active>
-</clickhouse>
+</datastore>

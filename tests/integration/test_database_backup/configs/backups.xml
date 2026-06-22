@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <backup_disk_local>
@@ -25,4 +25,4 @@
         <allowed_disk>backup_disk_object_storage_local_plain</allowed_disk>
         <allowed_path>/backups</allowed_path>
     </backups>
-</clickhouse>
+</datastore>
