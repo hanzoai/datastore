@@ -370,10 +370,10 @@ def main():
 
     if "server image" in info.job_name:
         image_path = args.image_path or "docker/server"
-        image_repo = args.image_repo or "clickhouse/clickhouse-server"
+        image_repo = args.image_repo or "ghcr.io/hanzoai/datastore"
     elif "keeper image" in info.job_name:
         image_path = args.image_path or "docker/keeper"
-        image_repo = args.image_repo or "clickhouse/clickhouse-keeper"
+        image_repo = args.image_repo or "ghcr.io/hanzoai/datastore-keeper"
     else:
         assert False, f"Unexpected job name [{info.job_name}]"
 
