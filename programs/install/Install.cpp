@@ -56,10 +56,10 @@ constexpr unsigned char resource_users_xml[] =
   *
   * - copying the binary to binary directory (/usr/bin/)
   * - creation of symlinks for tools.
-  * - creation of clickhouse user and group.
-  * - creation of config directory (/etc/clickhouse-server/).
+  * - creation of datastore user and group.
+  * - creation of config directory (/etc/datastore-server/).
   * - creation of default configuration files.
-  * - creation of a directory for logs (/var/log/clickhouse-server/).
+  * - creation of a directory for logs (/var/log/datastore-server/).
   * - creation of a data directory if not exists.
   * - setting a password for default user.
   * - choose an option to listen connections.
@@ -68,7 +68,7 @@ constexpr unsigned char resource_users_xml[] =
   * - setting ulimits for the user.
   * - (todo) put service in cron.
   *
-  * It does not install clickhouse-odbc-bridge.
+  * It does not install datastore-odbc-bridge.
   */
 
 namespace DB
@@ -96,8 +96,8 @@ static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "";
 #else
 static constexpr auto DEFAULT_DATASTORE_SERVER_USER = "clickhouse";
 static constexpr auto DEFAULT_DATASTORE_SERVER_GROUP = "clickhouse";
-static constexpr auto DEFAULT_DATASTORE_BRIDGE_USER = "clickhouse-bridge";
-static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "clickhouse-bridge";
+static constexpr auto DEFAULT_DATASTORE_BRIDGE_USER = "datastore-bridge";
+static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "datastore-bridge";
 #endif
 
 using namespace DB;
@@ -230,10 +230,10 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
 #else
             ("binary-path", po::value<std::string>()->default_value("usr/bin"), "where to install binaries")
 #endif
-            ("config-path", po::value<std::string>()->default_value("etc/clickhouse-server"), "where to install configs")
-            ("log-path", po::value<std::string>()->default_value("var/log/clickhouse-server"), "where to create log directory")
+            ("config-path", po::value<std::string>()->default_value("etc/datastore-server"), "where to install configs")
+            ("log-path", po::value<std::string>()->default_value("var/log/datastore-server"), "where to create log directory")
             ("data-path", po::value<std::string>()->default_value("var/lib/clickhouse"), "directory for data")
-            ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
+            ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
             ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user to create")
             ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group to create")
             ("noninteractive,y", "run non-interactively")
@@ -383,7 +383,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
 
                 size_t available_space = fs::space(bin_dir).available;
                 if (available_space < binary_size)
-                    throw Exception(ErrorCodes::NOT_ENOUGH_SPACE, "Not enough space for clickhouse binary in {}, required {}, available {}.",
+                    throw Exception(ErrorCodes::NOT_ENOUGH_SPACE, "Not enough space for datastore binary in {}, required {}, available {}.",
                         bin_dir.string(), ReadableSize(binary_size), ReadableSize(available_space));
 
                 fmt::print("Copying Datastore binary to {}\n", main_bin_tmp_path.string());
@@ -432,20 +432,20 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
 
         std::initializer_list<std::string_view> tools
         {
-            "clickhouse-server",
-            "clickhouse-client",
-            "clickhouse-local",
-            "clickhouse-benchmark",
-            "clickhouse-obfuscator",
-            "clickhouse-git-import",
-            "clickhouse-compressor",
-            "clickhouse-format",
-            "clickhouse-extract-from-config",
-            "clickhouse-keeper",
-            "clickhouse-keeper-converter",
-            "clickhouse-disks",
+            "datastore-server",
+            "datastore-client",
+            "datastore-local",
+            "datastore-benchmark",
+            "datastore-obfuscator",
+            "datastore-git-import",
+            "datastore-compressor",
+            "datastore-format",
+            "datastore-extract-from-config",
+            "datastore-keeper",
+            "datastore-keeper-converter",
+            "datastore-disks",
 #if USE_CHDIG
-            "clickhouse-chdig",
+            "datastore-chdig",
             "chdig",
 #endif
             "ch",
@@ -504,22 +504,22 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
             }
         }
 
-        /// Creation of clickhouse user and group.
+        /// Creation of datastore user and group.
 
         std::string user = options["user"].as<std::string>();
         std::string group = options["group"].as<std::string>();
 
         if (!group.empty())
         {
-            fmt::print("Creating clickhouse group if it does not exist.\n");
+            fmt::print("Creating datastore group if it does not exist.\n");
             createGroup(group);
         }
         else
-            fmt::print("Will not create a dedicated clickhouse group.\n");
+            fmt::print("Will not create a dedicated datastore group.\n");
 
         if (!user.empty())
         {
-            fmt::print("Creating clickhouse user if it does not exist.\n");
+            fmt::print("Creating datastore user if it does not exist.\n");
             createUser(user, group);
 
             if (group.empty())
@@ -554,7 +554,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
             }
         }
         else
-            fmt::print("Will not create a dedicated clickhouse user.\n");
+            fmt::print("Will not create a dedicated datastore user.\n");
 
         /// Creating configuration files and directories.
 
@@ -612,7 +612,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 if (!fs::exists(data_file))
                 {
                     WriteBufferFromFile out(data_file);
-                    out << "<clickhouse>\n"
+                    out << "<datastore>\n"
                     "    <path>" << data_path.string() << "</path>\n"
                     "    <tmp_path>" << (data_path / "tmp").string() << "</tmp_path>\n"
                     "    <user_files_path>" << (data_path / "user_files").string() << "</user_files_path>\n"
@@ -629,10 +629,10 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 if (!fs::exists(logger_file))
                 {
                     WriteBufferFromFile out(logger_file);
-                    out << "<clickhouse>\n"
+                    out << "<datastore>\n"
                     "    <logger>\n"
-                    "        <log>" << (log_path / "clickhouse-server.log").string() << "</log>\n"
-                    "        <errorlog>" << (log_path / "clickhouse-server.err.log").string() << "</errorlog>\n"
+                    "        <log>" << (log_path / "datastore-server.log").string() << "</log>\n"
+                    "        <errorlog>" << (log_path / "datastore-server.err.log").string() << "</errorlog>\n"
                     "    </logger>\n"
                     "</clickhouse>\n";
                     out.sync();
@@ -646,7 +646,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 if (!fs::exists(user_directories_file))
                 {
                     WriteBufferFromFile out(user_directories_file);
-                    out << "<clickhouse>\n"
+                    out << "<datastore>\n"
                     "    <user_directories>\n"
                     "        <local_directory>\n"
                     "            <path>" << (data_path / "access").string() << "</path>\n"
@@ -664,7 +664,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 if (!fs::exists(openssl_file))
                 {
                     WriteBufferFromFile out(openssl_file);
-                    out << "<clickhouse>\n"
+                    out << "<datastore>\n"
                     "    <openSSL>\n"
                     "        <server>\n"
                     "            <certificateFile>" << (config_dir / "server.crt").string() << "</certificateFile>\n"
@@ -779,17 +779,17 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
         /// Not recursive, because there can be a huge number of files and it will be slow.
         changeOwnership(data_path, user, group, /* recursive= */ false);
 
-        /// All users are allowed to read pid file (for clickhouse status command).
+        /// All users are allowed to read pid file (for datastore status command).
         fs::permissions(pid_path, fs::perms::owner_all | fs::perms::group_read | fs::perms::others_read, fs::perm_options::replace);
 
-        /// Other users in clickhouse group are allowed to read and even delete logs.
+        /// Other users in datastore group are allowed to read and even delete logs.
         fs::permissions(log_path, fs::perms::owner_all | fs::perms::group_all, fs::perm_options::replace);
 
         /// Data directory is not accessible to anyone except clickhouse.
         fs::permissions(data_path, fs::perms::owner_all, fs::perm_options::replace);
 
-        fs::path odbc_bridge_path = bin_dir / "clickhouse-odbc-bridge";
-        fs::path library_bridge_path = bin_dir / "clickhouse-library-bridge";
+        fs::path odbc_bridge_path = bin_dir / "datastore-odbc-bridge";
+        fs::path library_bridge_path = bin_dir / "datastore-library-bridge";
 
         if (fs::exists(odbc_bridge_path) || fs::exists(library_bridge_path))
         {
@@ -850,7 +850,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 hash_hex.resize(64);
                 for (size_t i = 0; i < 32; ++i)
                     writeHexByteLowercase(hash[i], &hash_hex[2 * i]);
-                out << "<clickhouse>\n"
+                out << "<datastore>\n"
                     "    <users>\n"
                     "        <default>\n"
                     "            <password remove='1' />\n"
@@ -862,7 +862,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 out.finalize();
                 fmt::print("{}Password for the default user is saved in file {}.{}\n", start_hilite, password_file, end_hilite);
 #else
-                out << "<clickhouse>\n"
+                out << "<datastore>\n"
                     "    <users>\n"
                     "        <default>\n"
                     "            <password><![CDATA[" << password << "]]></password>\n"
@@ -893,12 +893,12 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
           */
 
 #if defined(OS_LINUX)
-        fmt::print("Setting capabilities for clickhouse binary. This is optional.\n");
+        fmt::print("Setting capabilities for datastore binary. This is optional.\n");
         std::string command = fmt::format("command -v setcap >/dev/null"
             " && command -v capsh >/dev/null"
             " && capsh --has-p=cap_net_admin,cap_ipc_lock,cap_sys_nice,cap_net_bind_service+ep >/dev/null 2>&1"
             " && setcap 'cap_net_admin,cap_ipc_lock,cap_sys_nice,cap_net_bind_service+ep' {0}"
-            " || echo \"Cannot set 'net_admin' or 'ipc_lock' or 'sys_nice' or 'net_bind_service' capability for clickhouse binary."
+            " || echo \"Cannot set 'net_admin' or 'ipc_lock' or 'sys_nice' or 'net_bind_service' capability for datastore binary."
                 " This is optional. Taskstats accounting will be disabled."
                 " To enable taskstats accounting you may add the required capability later manually.\"",
             shellQuote(fs::canonical(main_bin_path).string()));
@@ -912,7 +912,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
             {
                 std::string listen_file = config_d / "listen.xml";
                 WriteBufferFromFile out(listen_file);
-                out << "<clickhouse>\n"
+                out << "<datastore>\n"
                     "    <listen_host>::</listen_host>\n"
                     "</clickhouse>\n";
                 out.sync();
@@ -972,15 +972,15 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
 
         std::string start_options = maybe_prefix + maybe_pid_path + maybe_config_path + maybe_binary_path + maybe_user + maybe_group;
 
-        fs::path pid_file = pid_path / "clickhouse-server.pid";
+        fs::path pid_file = pid_path / "datastore-server.pid";
         if (fs::exists(pid_file))
         {
             fmt::print(
                 "\nDatastore has been successfully installed.\n"
-                "\nRestart clickhouse-server with:\n"
+                "\nRestart datastore-server with:\n"
                 " {}{}\n"
-                "\nStart clickhouse-client with:\n"
-                " clickhouse-client{}\n\n",
+                "\nStart datastore-client with:\n"
+                " datastore-client{}\n\n",
                 formatWithSudo("clickhouse restart"),
                 start_options,
                 maybe_password);
@@ -989,10 +989,10 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
         {
             fmt::print(
                 "\nDatastore has been successfully installed.\n"
-                "\nStart clickhouse-server with:\n"
+                "\nStart datastore-server with:\n"
                 " {}{}\n"
-                "\nStart clickhouse-client with:\n"
-                " clickhouse-client{}\n\n",
+                "\nStart datastore-client with:\n"
+                " datastore-client{}\n\n",
                 formatWithSudo("clickhouse start"),
                 start_options,
                 maybe_password);
@@ -1048,7 +1048,7 @@ namespace
             fs::path pid_path = pid_file;
             pid_path = pid_path.remove_filename();
             fs::create_directories(pid_path);
-            /// All users are allowed to read pid file (for clickhouse status command).
+            /// All users are allowed to read pid file (for datastore status command).
             fs::permissions(pid_path, fs::perms::owner_all | fs::perms::group_read | fs::perms::others_read, fs::perm_options::replace);
 
             changeOwnership(pid_path, user);
@@ -1062,14 +1062,14 @@ namespace
             if (no_sudo)
             {
                 /// Sometimes there is no sudo available like in some Docker images.
-                /// We will use clickhouse su instead.
+                /// We will use datastore su instead.
                 command = fmt::format("{} su {} {}",
                     shellQuote(binary.string()), shellQuote(user + ":" + group), command);
             }
             else
             {
                 /// sudo respects limits in /etc/security/limits.conf e.g. open files,
-                /// that's why we are using it instead of the 'clickhouse su' tool.
+                /// that's why we are using it instead of the 'datastore su' tool.
                 /// by default, sudo resets all the ENV variables, but we should preserve
                 /// the values /etc/default/clickhouse in /etc/init.d/clickhouse file
                 if (!group.empty())
@@ -1167,7 +1167,7 @@ namespace
 
         if (!pid)
         {
-            fmt::print("Now there is no clickhouse-server process.\n");
+            fmt::print("Now there is no datastore-server process.\n");
         }
 
         return pid;
@@ -1257,11 +1257,11 @@ int mainEntryDatastoreStart(int argc, char ** argv)
 #else
             ("binary-path", po::value<std::string>()->default_value("usr/bin"), "directory with binary")
 #endif
-            ("config-path", po::value<std::string>()->default_value("etc/clickhouse-server"), "directory with configs")
-            ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
+            ("config-path", po::value<std::string>()->default_value("etc/datastore-server"), "directory with configs")
+            ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
             ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user")
             ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group")
-            ("no-sudo", po::bool_switch(), "use clickhouse su instead of sudo (useful when running in a Docker container)")
+            ("no-sudo", po::bool_switch(), "use datastore su instead of sudo (useful when running in a Docker container)")
             ("max-tries", po::value<unsigned>()->default_value(60), "Max number of tries for waiting the server (with 1 second delay)")
         ;
 
@@ -1281,17 +1281,17 @@ int mainEntryDatastoreStart(int argc, char ** argv)
         std::string group = options["group"].as<std::string>();
         /// `--group` has a default for help/documentation purposes only.
         /// It should be applied to the launched server only when the user
-        /// explicitly requested it. Otherwise `clickhouse start --user alice`
-        /// would force `-g clickhouse` (or `alice:clickhouse` on the no-sudo
-        /// path), which fails when the user is not a member of `clickhouse`.
+        /// explicitly requested it. Otherwise `datastore start --user alice`
+        /// would force `-g datastore` (or `alice:datastore` on the no-sudo
+        /// path), which fails when the user is not a member of `datastore`.
         if (options["group"].defaulted())
             group.clear();
 
         fs::path prefix = options["prefix"].as<std::string>();
         fs::path binary = prefix / options["binary-path"].as<std::string>() / "clickhouse";
-        fs::path executable = prefix / options["binary-path"].as<std::string>() / "clickhouse-server";
+        fs::path executable = prefix / options["binary-path"].as<std::string>() / "datastore-server";
         fs::path config = prefix / options["config-path"].as<std::string>() / "config.xml";
-        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "clickhouse-server.pid";
+        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "datastore-server.pid";
         unsigned max_tries = options["max-tries"].as<unsigned>();
 
         return start(user, group, binary, executable, config, pid_file, max_tries, no_sudo);
@@ -1312,7 +1312,7 @@ int mainEntryDatastoreStop(int argc, char ** argv)
         desc.add_options()
             ("help,h", "produce help message")
             ("prefix", po::value<std::string>()->default_value("/"), "prefix for all paths")
-            ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
+            ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
             ("force", po::bool_switch(), "Stop with KILL signal instead of TERM")
             ("do-not-kill", po::bool_switch(), "Do not send KILL even if TERM did not help")
             ("max-tries", po::value<unsigned>()->default_value(60), "Max number of tries for waiting the server to finish after sending TERM (with 1 second delay)")
@@ -1329,7 +1329,7 @@ int mainEntryDatastoreStop(int argc, char ** argv)
         }
 
         fs::path prefix = options["prefix"].as<std::string>();
-        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "clickhouse-server.pid";
+        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "datastore-server.pid";
 
         bool force = options["force"].as<bool>();
         bool do_not_kill = options["do-not-kill"].as<bool>();
@@ -1352,7 +1352,7 @@ int mainEntryDatastoreStatus(int argc, char ** argv)
         desc.add_options()
             ("help,h", "produce help message")
             ("prefix", po::value<std::string>()->default_value("/"), "prefix for all paths")
-            ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
+            ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
         ;
 
         po::variables_map options;
@@ -1366,7 +1366,7 @@ int mainEntryDatastoreStatus(int argc, char ** argv)
         }
 
         fs::path prefix = options["prefix"].as<std::string>();
-        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "clickhouse-server.pid";
+        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "datastore-server.pid";
 
         isRunning(pid_file, /*ignore_file_does_not_exist=*/ false);
     }
@@ -1394,11 +1394,11 @@ int mainEntryDatastoreRestart(int argc, char ** argv)
 #else
             ("binary-path", po::value<std::string>()->default_value("usr/bin"), "directory with binary")
 #endif
-            ("config-path", po::value<std::string>()->default_value("etc/clickhouse-server"), "directory with configs")
-            ("pid-path", po::value<std::string>()->default_value("var/run/clickhouse-server"), "directory for pid file")
+            ("config-path", po::value<std::string>()->default_value("etc/datastore-server"), "directory with configs")
+            ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
             ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user")
             ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group")
-            ("no-sudo", po::bool_switch(), "use clickhouse su instead of sudo (useful when running in a Docker container)")
+            ("no-sudo", po::bool_switch(), "use datastore su instead of sudo (useful when running in a Docker container)")
             ("force", po::value<bool>()->default_value(false), "Stop with KILL signal instead of TERM")
             ("do-not-kill", po::bool_switch(), "Do not send KILL even if TERM did not help")
             ("max-tries", po::value<unsigned>()->default_value(60), "Max number of tries for waiting the server (with 1 second delay)")
@@ -1425,9 +1425,9 @@ int mainEntryDatastoreRestart(int argc, char ** argv)
 
         fs::path prefix = options["prefix"].as<std::string>();
         fs::path binary = prefix / options["binary-path"].as<std::string>() / "clickhouse";
-        fs::path executable = prefix / options["binary-path"].as<std::string>() / "clickhouse-server";
+        fs::path executable = prefix / options["binary-path"].as<std::string>() / "datastore-server";
         fs::path config = prefix / options["config-path"].as<std::string>() / "config.xml";
-        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "clickhouse-server.pid";
+        fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "datastore-server.pid";
 
         bool force = options["force"].as<bool>();
         bool do_not_kill = options["do-not-kill"].as<bool>();

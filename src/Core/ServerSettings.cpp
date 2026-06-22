@@ -50,7 +50,7 @@ namespace
 {
     constexpr int getDefaultOomScore() {
 #if defined(OS_LINUX) && !defined(NDEBUG)
-        /// In debug version on Linux, increase oom score so that clickhouse is killed
+        /// In debug version on Linux, increase oom score so that datastore is killed
         /// first, instead of some service. Use a carefully chosen random score of 555:
         /// the maximum is 1000, and chromium uses 300 for its tab processes. Ignore
         /// whatever errors that occur, because it's just a debugging aid and we don't
@@ -234,7 +234,7 @@ namespace
     When `/disk1` is full, temporary data will be stored on `/disk2`.
 
     ```xml
-    <clickhouse>
+    <datastore>
     <storage_configuration>
         <disks>
             <disk1>
@@ -291,7 +291,7 @@ namespace
     Both the cache for `local_disk`, and temporary data will be stored in `/tiny_local_cache` on the filesystem, managed by `tiny_local_cache`.
 
     ```xml
-    <clickhouse>
+    <datastore>
     <storage_configuration>
         <disks>
             <local_disk>
@@ -398,9 +398,9 @@ namespace
     )", 0) \
     DECLARE(UInt64, database_catalog_unused_dir_hide_timeout_sec, 60 * 60, R"(
     Parameter of a task that cleans up garbage from `store/` directory.
-    If some subdirectory is not used by clickhouse-server and this directory was not modified for last
+    If some subdirectory is not used by datastore-server and this directory was not modified for last
     [`database_catalog_unused_dir_hide_timeout_sec`](/operations/server-configuration-parameters/settings#database_catalog_unused_dir_hide_timeout_sec) seconds, the task will "hide" this directory by
-    removing all access rights. It also works for directories that clickhouse-server does not
+    removing all access rights. It also works for directories that datastore-server does not
     expect to see inside `store/`.
 
     :::note
@@ -409,11 +409,11 @@ namespace
     )", 0) \
     DECLARE(UInt64, database_catalog_unused_dir_rm_timeout_sec, 30 * 24 * 60 * 60, R"(
     Parameter of a task that cleans up garbage from `store/` directory.
-    If some subdirectory is not used by clickhouse-server and it was previously "hidden"
+    If some subdirectory is not used by datastore-server and it was previously "hidden"
     (see [database_catalog_unused_dir_hide_timeout_sec](/operations/server-configuration-parameters/settings#database_catalog_unused_dir_hide_timeout_sec))
     and this directory was not modified for last
     [`database_catalog_unused_dir_rm_timeout_sec`]/operations/server-configuration-parameters/settings#database_catalog_unused_dir_rm_timeout_sec) seconds, the task will remove this directory.
-    It also works for directories that clickhouse-server does not
+    It also works for directories that datastore-server does not
     expect to see inside `store/`.
 
     :::note
@@ -640,7 +640,7 @@ namespace
     :::note
     A value of `0` means that you can delete all tables without any restrictions.
 
-    This setting does not require a restart of the Datastore server to apply. Another way to disable the restriction is to create the `<clickhouse-path>/flags/force_drop_table` file.
+    This setting does not require a restart of the Datastore server to apply. Another way to disable the restriction is to create the `<datastore-path>/flags/force_drop_table` file.
     :::
 
     **Example**
@@ -653,7 +653,7 @@ namespace
     Restriction on dropping partitions.
 
     If the size of a [MergeTree](../../engines/table-engines/mergetree-family/mergetree.md) table exceeds [`max_partition_size_to_drop`](#max_partition_size_to_drop) (in bytes), you can't drop a partition using a [DROP PARTITION](../../sql-reference/statements/alter/partition.md#drop-partitionpart) query.
-    This setting does not require a restart of the Datastore server to apply. Another way to disable the restriction is to create the `<clickhouse-path>/flags/force_drop_table` file.
+    This setting does not require a restart of the Datastore server to apply. Another way to disable the restriction is to create the `<datastore-path>/flags/force_drop_table` file.
 
     :::note
     The value `0` means that you can drop partitions without any restrictions.
@@ -668,7 +668,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_named_collection_num_to_warn, 1000lu, R"(
-    If the number of named collections exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of named collections exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -677,7 +677,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_table_num_to_warn, 5000lu, R"(
-    If the number of attached tables exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached tables exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -686,7 +686,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_pending_mutations_to_warn, 500lu, R"(
-    If the number of pending mutations exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of pending mutations exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -695,7 +695,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_pending_mutations_execution_time_to_warn, 86400lu, R"(
-    If any of the pending mutations exceeds the specified value in seconds, clickhouse server will add warning messages to `system.warnings` table.
+    If any of the pending mutations exceeds the specified value in seconds, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -704,7 +704,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_view_num_to_warn, 10000lu, R"(
-    If the number of attached views exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached views exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -713,7 +713,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_dictionary_num_to_warn, 1000lu, R"(
-    If the number of attached dictionaries exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached dictionaries exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -722,7 +722,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_database_num_to_warn, 1000lu, R"(
-    If the number of attached databases exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of attached databases exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -731,7 +731,7 @@ namespace
     ```
     )", 0) \
     DECLARE(UInt64, max_part_num_to_warn, 100000lu, R"(
-    If the number of active parts exceeds the specified value, clickhouse server will add warning messages to `system.warnings` table.
+    If the number of active parts exceeds the specified value, datastore server will add warning messages to `system.warnings` table.
 
     **Example**
 
@@ -1153,7 +1153,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     See also: `shared_log_pipeline.enable_sync_flush`, `shared_log_pipeline.flush_timeout_seconds`.
     )", EXPERIMENTAL) \
     DECLARE(UInt64, config_reload_interval_ms, 2000, R"(
-    How often clickhouse will reload config and check for new changes
+    How often datastore will reload config and check for new changes
     )", 0) \
     DECLARE(UInt64, memory_worker_period_ms, 0, R"(
     Tick period of background memory worker which corrects memory tracker memory usages and cleans up unused pages during higher memory usage. If set to 0, default value will be used depending on the memory usage source
@@ -1340,7 +1340,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     )", 0) \
     DECLARE(String, keeper_hosts, "", R"(Dynamic setting. Contains a set of [Zoo]Keeper hosts Datastore can potentially connect to. Doesn't expose information from `<auxiliary_zookeepers>`)", 0) \
     DECLARE(Bool, allow_experimental_webassembly_udf, false, R"(Enable experimental support for WebAssembly UDFs)", EXPERIMENTAL) \
-    DECLARE(Bool, allow_experimental_webterminal, false, R"(Enable experimental web terminal interface at the `/webterminal` HTTP endpoint. Provides an interactive `clickhouse-client` session in the browser via WebSocket.)", EXPERIMENTAL) \
+    DECLARE(Bool, allow_experimental_webterminal, false, R"(Enable experimental web terminal interface at the `/webterminal` HTTP endpoint. Provides an interactive `datastore-client` session in the browser via WebSocket.)", EXPERIMENTAL) \
     DECLARE(String, webterminal_allowed_origins, "", R"(Comma-separated list of full origins (scheme + host + optional port) allowed to open `/webterminal` WebSocket sessions. When empty, the same-origin policy is enforced strictly (Origin must match the request scheme, host, and port). Set this for deployments behind a TLS-terminating reverse proxy where `request.isSecure()` is `false` even though the browser uses `https`. Example: `https://example.com,https://app.example.com:8443`.)", EXPERIMENTAL) \
     DECLARE(String, webassembly_udf_engine, "wasmtime", "The engine used to execute WebAssembly UDFs. Supported values are 'wasmtime' and 'wasmedge'.", EXPERIMENTAL) \
     DECLARE(Bool, allow_impersonate_user, false, R"(Enable/disable the IMPERSONATE feature (EXECUTE AS target_user). The setting is deprecated.)", SettingsTierType::OBSOLETE) \
@@ -1509,7 +1509,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     ```
     )", 0) \
     DECLARE(Bool, mlock_executable, false, R"(
-    Perform `<mlockall>` after startup to lower first queries latency and to prevent clickhouse executable from being paged out under high IO load.
+    Perform `<mlockall>` after startup to lower first queries latency and to prevent datastore executable from being paged out under high IO load.
 
     :::note
     Enabling this option is recommended but will lead to increased startup time for up to a few seconds. Keep in mind that this setting would not work without "CAP_IPC_LOCK" capability.

@@ -13,7 +13,7 @@ namespace DB
 class FilesystemCacheLog;
 
 /**
- * Remote disk might need to split one clickhouse file into multiple files in remote fs.
+ * Remote disk might need to split one datastore file into multiple files in remote fs.
  * This class works like a proxy to allow transition from one file into multiple.
  */
 class ReadBufferFromRemoteFSGather final : public ReadBufferFromFileBase

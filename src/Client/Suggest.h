@@ -26,7 +26,7 @@ public:
             loading_thread.join();
     }
 
-    /// Load suggestions for clickhouse-client.
+    /// Load suggestions for datastore-client.
     template <typename ConnectionType>
     void load(ContextPtr context, const ConnectionParameters & connection_parameters, Int32 suggestion_limit, bool wait_for_load);
 

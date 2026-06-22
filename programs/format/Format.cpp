@@ -103,7 +103,7 @@ int mainEntryDatastoreFormat(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: clickhouse format [options] < query" << std::endl;
+            std::cout << "Usage: datastore format [options] < query" << std::endl;
             std::cout << desc << std::endl;
             return 0;
         }

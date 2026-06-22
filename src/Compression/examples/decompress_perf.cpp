@@ -172,9 +172,9 @@ public:
 
 #!/bin/sh
 
-./clickhouse-compressor < clickhouse-compressor > compressed
-./clickhouse-compressor -d < compressed > clickhouse-compressor2
-cmp clickhouse-compressor clickhouse-compressor2 && echo "Ok." || echo "Fail."
+./datastore-compressor < datastore-compressor > compressed
+./datastore-compressor -d < compressed > datastore-compressor2
+cmp datastore-compressor datastore-compressor2 && echo "Ok." || echo "Fail."
 
 */
 

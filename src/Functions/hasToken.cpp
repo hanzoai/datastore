@@ -38,9 +38,9 @@ Uses [splitByNonAlpha](/sql-reference/functions/splitting-merging-functions.md/#
     FunctionDocumentation::Examples examples = {
     {
         "Token search",
-        "SELECT hasToken('clickhouse test', 'test')",
+        "SELECT hasToken('datastore test', 'test')",
         R"(
-┌─hasToken('clickhouse test', 'test')─┐
+┌─hasToken('datastore test', 'test')─┐
 │                                   1 │
 └─────────────────────────────────────┘
         )"

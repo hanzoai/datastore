@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <logger>
         <console>true</console>
         <log remove="remove"/>

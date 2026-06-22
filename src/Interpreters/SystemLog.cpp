@@ -104,8 +104,8 @@ namespace
 
 /// Flush buffered text-log entries from the application's async logger, if any.
 ///
-/// `BaseDaemon::flushTextLogs` is what `clickhouse-server` uses to drain its async log
-/// channels into `system.text_log`. `clickhouse-local`/`clickhouse-client` derive from
+/// `BaseDaemon::flushTextLogs` is what `datastore-server` uses to drain its async log
+/// channels into `system.text_log`. `datastore-local`/`datastore-client` derive from
 /// `ClientApplicationBase` rather than `BaseDaemon`, so `BaseDaemon::instance()` would
 /// throw `std::bad_cast`; that exception used to escape `SystemLogs::flushAndShutdown`,
 /// leaving the saving threads alive while `~SystemLogQueue` ran `pthread_cond_destroy`,

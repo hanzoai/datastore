@@ -346,7 +346,7 @@ void KeeperClient::defineOptions(Poco::Util::OptionSet & options)
             .binding("use-xid-64"));
 
     options.addOption(
-        Poco::Util::Option("config-file", "c", "if set, will try to get a connection string from clickhouse config. default `config.xml`")
+        Poco::Util::Option("config-file", "c", "if set, will try to get a connection string from datastore config. default `config.xml`")
             .argument("<file>")
             .binding("config-file"));
 
@@ -652,7 +652,7 @@ void KeeperClient::connectToKeeper()
 
     ConfigProcessor config_processor(config().getString("config-file", "config.xml"));
 
-    /// This will handle a situation when clickhouse is running on the embedded config, but config.d folder is also present.
+    /// This will handle a situation when datastore is running on the embedded config, but config.d folder is also present.
     ConfigProcessor::registerEmbeddedConfig("config.xml", "<clickhouse/>");
     auto datastore_config = config_processor.loadConfig();
 

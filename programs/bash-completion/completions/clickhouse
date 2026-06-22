@@ -1,4 +1,4 @@
-[[ -v $_DATASTORE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/clickhouse-bootstrap"
+[[ -v $_DATASTORE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/datastore-bootstrap"
 
 function _datastore_get_utils()
 {
@@ -30,5 +30,5 @@ function _complete_for_datastore_entrypoint_bin()
     return 0
 }
 
-_complete_datastore_generic clickhouse _complete_for_datastore_entrypoint_bin
+_complete_datastore_generic datastore _complete_for_datastore_entrypoint_bin
 _complete_datastore_generic ch _complete_for_datastore_entrypoint_bin

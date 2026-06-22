@@ -58,9 +58,9 @@ public:
     void resetProgress();
 
     /// Update Progress object. It can be updated from:
-    /// 1. onProgress in clickhouse-client;
+    /// 1. onProgress in datastore-client;
     /// 2. ProgressCallback via setProgressCallback methrod in:
-    ///    - context (used in clickhouse-local, can also be added in arbitrary place)
+    ///    - context (used in datastore-local, can also be added in arbitrary place)
     ///    - ISource (also in streams)
     ///    - readBufferFromFileDescriptor (for file processing progress)
     bool updateProgress(const Progress & value);
@@ -118,7 +118,7 @@ private:
     EventRateMeter cpu_usage_meter{static_cast<double>(clock_gettime_ns()), 2'000'000'000 /*ns*/, 4}; // average cpu utilization last 2 second, skip first 4 points
     HostToTimesMap hosts_data;
     /// In case of all of the above:
-    /// - clickhouse-local
+    /// - datastore-local
     /// - input_format_parallel_parsing=true
     /// - write_progress_on_update=true
     ///

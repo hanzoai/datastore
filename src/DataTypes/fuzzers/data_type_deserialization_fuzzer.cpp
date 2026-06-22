@@ -164,7 +164,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
         /// The fuzzer can be run as follows:
         ///   ../../../build_asan_fuzz/src/DataTypes/fuzzers/data_type_deserialization_fuzzer corpus -jobs=64 -rss_limit_mb=8192
 
-        /// clickhouse-local --query "SELECT toJSONString(*) FROM (SELECT name FROM system.functions UNION ALL SELECT name FROM system.data_type_families)" > dictionary
+        /// datastore-local --query "SELECT toJSONString(*) FROM (SELECT name FROM system.functions UNION ALL SELECT name FROM system.data_type_families)" > dictionary
 
         DB::ReadBufferFromMemory in(data, size);
 

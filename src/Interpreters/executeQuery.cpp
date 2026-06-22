@@ -1177,7 +1177,7 @@ static BlockIO executeQueryImpl(
             /// Pass through to `ParserPolyglotQuery` which handles SET queries
             /// internally (via the standard parser) even when the feature gate
             /// is off.  This lets users recover from misconfigured profiles
-            /// (e.g. `SET dialect = 'clickhouse'`) without being locked out.
+            /// (e.g. `SET dialect = 'datastore'`) without being locked out.
             ParserPolyglotQuery parser(
                 max_query_size,
                 settings[Setting::max_parser_depth],

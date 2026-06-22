@@ -16,7 +16,7 @@
 /// In fact, this program can set Unix user and group.
 ///
 /// Usage:
-/// clickhouse su user[:group] args...
+/// datastore su user[:group] args...
 ///
 /// - will set user and, optionally, group and exec the remaining args.
 ///   user and group can be numeric identifiers or strings.
@@ -123,7 +123,7 @@ try
     if (argc < 3)
     {
         std::cout << "A tool similar to 'su'" << std::endl;
-        std::cout << "Usage: clickhouse su user:group ..." << std::endl;
+        std::cout << "Usage: datastore su user:group ..." << std::endl;
         exit(0); // NOLINT(concurrency-mt-unsafe)
     }
 

@@ -14,7 +14,7 @@
 
 int mainEntryDatastoreServer(int argc, char ** argv);
 
-static std::string clickhouse("clickhouse-server");
+static std::string datastore("datastore-server");
 static std::vector<char *> args{clickhouse.data()};
 static std::future<int> main_app;
 

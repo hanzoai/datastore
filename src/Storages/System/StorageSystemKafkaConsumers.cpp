@@ -62,7 +62,7 @@ void StorageSystemKafkaConsumers::fillData(MutableColumns & res_columns, Context
 
     auto & database = assert_cast<ColumnString &>(*res_columns[index++]);
     auto & table = assert_cast<ColumnString &>(*res_columns[index++]);
-    auto & consumer_id = assert_cast<ColumnString &>(*res_columns[index++]); //(number? or string? - single clickhouse table can have many consumers)
+    auto & consumer_id = assert_cast<ColumnString &>(*res_columns[index++]); //(number? or string? - single datastore table can have many consumers)
 
     auto & assignments_topics = assert_cast<ColumnString &>(assert_cast<ColumnArray &>(*res_columns[index]).getData());
     auto & assignments_topics_offsets = assert_cast<ColumnArray &>(*res_columns[index++]).getOffsets();

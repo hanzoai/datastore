@@ -10,7 +10,7 @@ namespace DB
 /// Handles WebSocket connections for the web terminal interface.
 /// On regular GET requests, serves the HTML page.
 /// On WebSocket upgrade requests, establishes a pseudoterminal session
-/// with the embedded clickhouse-client.
+/// with the embedded datastore-client.
 class WebTerminalRequestHandler : public HTTPRequestHandler
 {
 public:

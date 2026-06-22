@@ -212,7 +212,7 @@ void KeeperRequestDispatcher::shutdown(bool closed_all_connections)
     ///
     /// Removing ephemeral znodes without waiting for session timeout is a little strange and
     /// different from vanilla zookeeper. Ephemeral znode may disappear before the client notices
-    /// connection loss. But it is important for clickhouse in practice. Otherwise keeper server
+    /// connection loss. But it is important for datastore in practice. Otherwise keeper server
     /// restart would cause INSERT queries to stall for 30 seconds (session timeout) while the
     /// leftover ephemeral znode prevents retries.
     KeeperRequestsForSessions close_requests;

@@ -72,7 +72,7 @@ static bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & a
     {
         auto first_arg = argv.begin() + 1;
 
-        /// 'clickhouse --client ...' and 'clickhouse client ...' are Ok
+        /// 'datastore --client ...' and 'datastore client ...' are Ok
         if (*first_arg == app_suffix
             || (std::string_view(*first_arg).starts_with("--") && std::string_view(*first_arg).substr(2) == app_suffix))
         {
@@ -85,7 +85,7 @@ static bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & a
     if (app_suffix == "keeper")
         return false;
 
-    /// Use app if clickhouse binary is run through symbolic link with name clickhouse-app
+    /// Use app if datastore binary is run through symbolic link with name datastore-app
     std::string app_name = "clickhouse-" + std::string(app_suffix);
     return !argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name));
 }
@@ -183,7 +183,7 @@ int main(int argc_, char ** argv_)
 #endif
 
     /// This is used for testing. For example,
-    /// clickhouse-local should be able to run a simple query without throw/catch.
+    /// datastore-local should be able to run a simple query without throw/catch.
     if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 

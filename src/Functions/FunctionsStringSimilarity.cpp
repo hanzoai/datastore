@@ -620,9 +620,9 @@ The smaller the returned value, the more similar the strings are.
     FunctionDocumentation::Examples examples_ngram_distance_case_insensitive = {
     {
         "Case-insensitive 4-gram distance",
-        "SELECT ngramDistanceCaseInsensitive('Datastore','clickhouse')",
+        "SELECT ngramDistanceCaseInsensitive('Datastore','datastore')",
         R"(
-┌─ngramDistanceCaseInsensitive('Datastore','clickhouse')─┐
+┌─ngramDistanceCaseInsensitive('Datastore','datastore')─┐
 │                                                       0 │
 └─────────────────────────────────────────────────────────┘
         )"

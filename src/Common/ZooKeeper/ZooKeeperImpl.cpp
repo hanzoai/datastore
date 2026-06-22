@@ -123,7 +123,7 @@ namespace
 /** ZooKeeper wire protocol.
 
 Debugging example:
-strace -t -f -e trace=network -s1000 -x ./clickhouse-zookeeper-cli localhost:2181
+strace -t -f -e trace=network -s1000 -x ./datastore-zookeeper-cli localhost:2181
 
 All numbers are in network byte order (big endian). Sizes are 32 bit. Numbers are signed.
 

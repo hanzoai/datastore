@@ -207,7 +207,7 @@ void DWARFBlockInputFormat::initELF()
     }
 
     /// If can't mmap, read the entire file into memory.
-    /// We could read just the .debug_* sections, but typically they take up most of the binary anyway (60% for clickhouse debug build).
+    /// We could read just the .debug_* sections, but typically they take up most of the binary anyway (60% for datastore debug build).
     {
         auto buf = WriteBufferFromVector<PODArray<char>>(file_contents);
         copyData(*in, buf, is_stopped);

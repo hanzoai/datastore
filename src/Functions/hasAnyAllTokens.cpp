@@ -522,7 +522,7 @@ ENGINE = MergeTree
 ORDER BY id;
 
 INSERT INTO log VALUES
-    (1, ['clickhouse', 'clickhouse cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
+    (1, ['datastore', 'datastore cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
     (2, ['chdb'], {'embedded': 'true', 'log_level': 'DEBUG'});
         )",
         ""
@@ -530,7 +530,7 @@ INSERT INTO log VALUES
     {
         "Example with an array column",
         R"(
-SELECT count() FROM log WHERE hasAnyTokens(tags, 'clickhouse');
+SELECT count() FROM log WHERE hasAnyTokens(tags, 'datastore');
         )",
         R"(
 ┌─count()─┐
@@ -674,7 +674,7 @@ ENGINE = MergeTree
 ORDER BY id;
 
 INSERT INTO log VALUES
-    (1, ['clickhouse', 'clickhouse cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
+    (1, ['datastore', 'datastore cloud'], {'address': '192.0.0.1', 'log_level': 'INFO'}),
     (2, ['chdb'], {'embedded': 'true', 'log_level': 'DEBUG'});
         )",
         ""
@@ -682,7 +682,7 @@ INSERT INTO log VALUES
     {
         "Example with an array column",
         R"(
-SELECT count() FROM log WHERE hasAllTokens(tags, 'clickhouse');
+SELECT count() FROM log WHERE hasAllTokens(tags, 'datastore');
         )",
         R"(
 ┌─count()─┐

@@ -157,9 +157,9 @@ Cluster::Address::Address(
     }
     else
     {
-        /// For clickhouse-local (treat_local_port_as_remote) try to read the address without passing a default port
+        /// For datastore-local (treat_local_port_as_remote) try to read the address without passing a default port
         /// If it works we have a full address that includes a port, which means it won't be local
-        /// since clickhouse-local doesn't listen in any port
+        /// since datastore-local doesn't listen in any port
         /// If it doesn't include a port then use the default one and it could be local (if the address is)
         try
         {
@@ -956,7 +956,7 @@ const std::string & Cluster::ShardInfo::insertPathForInternalReplication(bool pr
 bool Cluster::maybeCrossReplication() const
 {
     /// Cluster can be used for cross-replication if some replicas have different default database names,
-    /// so one clickhouse-server instance can contain multiple replicas.
+    /// so one datastore-server instance can contain multiple replicas.
 
     if (addresses_with_failover.empty())
         return false;

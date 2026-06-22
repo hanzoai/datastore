@@ -25,7 +25,7 @@ $0 "(" $1 ", " $2 ", " $3 ")";
 $1 " as " $2 ;
 
 
-// TODO: add more clickhouse specific stuff
+// TODO: add more datastore specific stuff
 "SELECT " $1 " FROM " $2 " WHERE " $3 ;
 "SELECT " $1 " FROM " $2 " GROUP BY " $3 ;
 "SELECT " $1 " FROM " $2 " SORT BY " $3 ;
