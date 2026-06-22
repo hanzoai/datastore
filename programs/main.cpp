@@ -283,9 +283,14 @@ bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
         }
     }
 
-    /// Use app if clickhouse binary is run through symbolic link with name clickhouse-app
-    std::string app_name = "clickhouse-" + std::string(app_suffix);
-    return !argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name));
+    /// Use app if the binary is run through a symbolic link named clickhouse-app or datastore-app
+    for (const char * prefix : {"clickhouse-", "datastore-"})
+    {
+        std::string app_name = std::string(prefix) + std::string(app_suffix);
+        if (!argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name)))
+            return true;
+    }
+    return false;
 }
 
 /// Don't allow dlopen in the main ClickHouse binary, because it is harmful and insecure.
