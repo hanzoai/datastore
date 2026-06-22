@@ -1,21 +1,21 @@
 services:
   datastore:
     image: ghcr.io/hanzoai/datastore:latest
-    container_name: hanzo-datastore
+    container_name: datastore
     ports:
       - "8123:8123"  # HTTP interface
       - "9000:9000"  # Native TCP
       - "9009:9009"  # Interserver
     volumes:
-      - datastore-data:/var/lib/hanzo-datastore
-      - datastore-logs:/var/log/hanzo-datastore-server
+      - datastore-data:/var/lib/datastore
+      - datastore-logs:/var/log/datastore-server
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-      - ./config.xml:/etc/hanzo-datastore-server/config.d/hanzo.xml:ro
+      - ./config.xml:/etc/datastore-server/config.d/hanzo.xml:ro
     environment:
-      HANZO_DATASTORE_DB: hanzo
-      HANZO_DATASTORE_USER: hanzo
-      HANZO_DATASTORE_PASSWORD: ${HANZO_DATASTORE_PASSWORD:-hanzo_dev}
-      HANZO_DATASTORE_DEFAULT_ACCESS_MANAGEMENT: 1
+      DATASTORE_DB: hanzo
+      DATASTORE_USER: hanzo
+      DATASTORE_PASSWORD: ${DATASTORE_PASSWORD:-hanzo_dev}
+      DATASTORE_DEFAULT_ACCESS_MANAGEMENT: 1
     ulimits:
       nofile:
         soft: 262144
@@ -49,4 +49,4 @@ volumes:
 
 networks:
   default:
-    name: hanzo-datastore
+    name: datastore

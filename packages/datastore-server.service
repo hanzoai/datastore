@@ -8,16 +8,16 @@ Wants=time-sync.target
 Type=notify
 
 # NOTE: we leave watchdog process enabled to be able to see OOM/SIGKILL traces in server log files.
-# If you wish to disable the watchdog and rely on systemd logs just add "Environment=HANZO_WATCHDOG_ENABLE=0" line.
-User=hanzo-datastore
-Group=hanzo-datastore
+# If you wish to disable the watchdog and rely on systemd logs just add "Environment=DATASTORE_WATCHDOG_ENABLE=0" line.
+User=datastore
+Group=datastore
 Restart=always
 RestartSec=30
 TimeoutStopSec=infinity
-Environment=HANZO_WATCHDOG_NO_FORWARD=1
+Environment=DATASTORE_WATCHDOG_NO_FORWARD=1
 TimeoutStartSec=0
 RuntimeDirectory=%p
-ExecStart=/usr/bin/hanzo-datastore-server --config=/etc/hanzo-datastore-server/config.xml --pid-file=%t/%p/%p.pid
+ExecStart=/usr/bin/datastore-server --config=/etc/datastore-server/config.xml --pid-file=%t/%p/%p.pid
 EnvironmentFile=-/etc/default/%p
 LimitCORE=infinity
 LimitNOFILE=500000
