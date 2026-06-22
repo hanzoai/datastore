@@ -10,8 +10,8 @@
 #include <DataTypes/DataTypeString.h>
 #include <DataTypes/IDataType.h>
 #include <boost/algorithm/string/join.hpp>
-#include <capnp/schema.h>
-#include <capnp/schema-parser.h>
+#include <zap/schema.h>
+#include <zap/schema-parser.h>
 #include <fcntl.h>
 
 namespace DB
@@ -27,9 +27,9 @@ namespace ErrorCodes
     extern const int BAD_ARGUMENTS;
 }
 
-capnp::StructSchema CapnProtoSchemaParser::getMessageSchema(const FormatSchemaInfo & schema_info)
+zap::StructSchema CapnProtoSchemaParser::getMessageSchema(const FormatSchemaInfo & schema_info)
 {
-    capnp::ParsedSchema schema;
+    zap::ParsedSchema schema;
     try
     {
         int fd;
@@ -61,42 +61,42 @@ capnp::StructSchema CapnProtoSchemaParser::getMessageSchema(const FormatSchemaIn
     return message_schema->asStruct();
 }
 
-bool checkIfStructContainsUnnamedUnion(const capnp::StructSchema & struct_schema)
+bool checkIfStructContainsUnnamedUnion(const zap::StructSchema & struct_schema)
 {
     return struct_schema.getFields().size() != struct_schema.getNonUnionFields().size();
 }
 
-bool checkIfStructIsNamedUnion(const capnp::StructSchema & struct_schema)
+bool checkIfStructIsNamedUnion(const zap::StructSchema & struct_schema)
 {
     return struct_schema.getFields().size() == struct_schema.getUnionFields().size();
 }
 
 /// Get full name of type for better exception messages.
-String getCapnProtoFullTypeName(const capnp::Type & type)
+String getCapnProtoFullTypeName(const zap::Type & type)
 {
-    static const std::map<capnp::schema::Type::Which, String> capnp_simple_type_names =
+    static const std::map<zap::schema::Type::Which, String> capnp_simple_type_names =
     {
-        {capnp::schema::Type::Which::BOOL, "Bool"},
-        {capnp::schema::Type::Which::VOID, "Void"},
-        {capnp::schema::Type::Which::INT8, "Int8"},
-        {capnp::schema::Type::Which::INT16, "Int16"},
-        {capnp::schema::Type::Which::INT32, "Int32"},
-        {capnp::schema::Type::Which::INT64, "Int64"},
-        {capnp::schema::Type::Which::UINT8, "UInt8"},
-        {capnp::schema::Type::Which::UINT16, "UInt16"},
-        {capnp::schema::Type::Which::UINT32, "UInt32"},
-        {capnp::schema::Type::Which::UINT64, "UInt64"},
-        {capnp::schema::Type::Which::FLOAT32, "Float32"},
-        {capnp::schema::Type::Which::FLOAT64, "Float64"},
-        {capnp::schema::Type::Which::TEXT, "Text"},
-        {capnp::schema::Type::Which::DATA, "Data"},
-        {capnp::schema::Type::Which::INTERFACE, "Interface"},
-        {capnp::schema::Type::Which::ANY_POINTER, "AnyPointer"},
+        {zap::schema::Type::Which::BOOL, "Bool"},
+        {zap::schema::Type::Which::VOID, "Void"},
+        {zap::schema::Type::Which::INT8, "Int8"},
+        {zap::schema::Type::Which::INT16, "Int16"},
+        {zap::schema::Type::Which::INT32, "Int32"},
+        {zap::schema::Type::Which::INT64, "Int64"},
+        {zap::schema::Type::Which::UINT8, "UInt8"},
+        {zap::schema::Type::Which::UINT16, "UInt16"},
+        {zap::schema::Type::Which::UINT32, "UInt32"},
+        {zap::schema::Type::Which::UINT64, "UInt64"},
+        {zap::schema::Type::Which::FLOAT32, "Float32"},
+        {zap::schema::Type::Which::FLOAT64, "Float64"},
+        {zap::schema::Type::Which::TEXT, "Text"},
+        {zap::schema::Type::Which::DATA, "Data"},
+        {zap::schema::Type::Which::INTERFACE, "Interface"},
+        {zap::schema::Type::Which::ANY_POINTER, "AnyPointer"},
     };
 
     switch (type.which())
     {
-        case capnp::schema::Type::Which::STRUCT:
+        case zap::schema::Type::Which::STRUCT:
         {
             auto struct_schema = type.asStruct();
 
@@ -122,9 +122,9 @@ String getCapnProtoFullTypeName(const capnp::Type & type)
             type_name += ")";
             return type_name;
         }
-        case capnp::schema::Type::Which::LIST:
+        case zap::schema::Type::Which::LIST:
             return "List(" + getCapnProtoFullTypeName(type.asList().getElementType()) + ")";
-        case capnp::schema::Type::Which::ENUM:
+        case zap::schema::Type::Which::ENUM:
         {
             auto enum_schema = type.asEnum();
             String enum_name = "Enum(";
@@ -150,7 +150,7 @@ namespace
 {
 
     template <typename ValueType>
-    DataTypePtr getEnumDataTypeFromEnumerants(const capnp::EnumSchema::EnumerantList & enumerants)
+    DataTypePtr getEnumDataTypeFromEnumerants(const zap::EnumSchema::EnumerantList & enumerants)
     {
         std::vector<std::pair<String, ValueType>> values;
         for (auto enumerant : enumerants)
@@ -158,7 +158,7 @@ namespace
         return std::make_shared<DataTypeEnum<ValueType>>(std::move(values));
     }
 
-    DataTypePtr getEnumDataTypeFromEnumSchema(const capnp::EnumSchema & enum_schema)
+    DataTypePtr getEnumDataTypeFromEnumSchema(const zap::EnumSchema & enum_schema)
     {
         auto enumerants = enum_schema.getEnumerants();
         if (enumerants.size() < 128)
@@ -169,37 +169,37 @@ namespace
         throw Exception(ErrorCodes::CAPN_PROTO_BAD_TYPE, "Datastore supports only 8 and 16-bit Enums");
     }
 
-    DataTypePtr getDataTypeFromCapnProtoType(const capnp::Type & capnp_type, bool skip_unsupported_fields)
+    DataTypePtr getDataTypeFromCapnProtoType(const zap::Type & capnp_type, bool skip_unsupported_fields)
     {
         switch (capnp_type.which())
         {
-            case capnp::schema::Type::INT8:
+            case zap::schema::Type::INT8:
                 return std::make_shared<DataTypeInt8>();
-            case capnp::schema::Type::INT16:
+            case zap::schema::Type::INT16:
                 return std::make_shared<DataTypeInt16>();
-            case capnp::schema::Type::INT32:
+            case zap::schema::Type::INT32:
                 return std::make_shared<DataTypeInt32>();
-            case capnp::schema::Type::INT64:
+            case zap::schema::Type::INT64:
                 return std::make_shared<DataTypeInt64>();
-            case capnp::schema::Type::BOOL: [[fallthrough]];
-            case capnp::schema::Type::UINT8:
+            case zap::schema::Type::BOOL: [[fallthrough]];
+            case zap::schema::Type::UINT8:
                 return std::make_shared<DataTypeUInt8>();
-            case capnp::schema::Type::UINT16:
+            case zap::schema::Type::UINT16:
                 return std::make_shared<DataTypeUInt16>();
-            case capnp::schema::Type::UINT32:
+            case zap::schema::Type::UINT32:
                 return std::make_shared<DataTypeUInt32>();
-            case capnp::schema::Type::UINT64:
+            case zap::schema::Type::UINT64:
                 return std::make_shared<DataTypeUInt64>();
-            case capnp::schema::Type::FLOAT32:
+            case zap::schema::Type::FLOAT32:
                 return std::make_shared<DataTypeFloat32>();
-            case capnp::schema::Type::FLOAT64:
+            case zap::schema::Type::FLOAT64:
                 return std::make_shared<DataTypeFloat64>();
-            case capnp::schema::Type::DATA: [[fallthrough]];
-            case capnp::schema::Type::TEXT:
+            case zap::schema::Type::DATA: [[fallthrough]];
+            case zap::schema::Type::TEXT:
                 return std::make_shared<DataTypeString>();
-            case capnp::schema::Type::ENUM:
+            case zap::schema::Type::ENUM:
                 return getEnumDataTypeFromEnumSchema(capnp_type.asEnum());
-            case capnp::schema::Type::LIST:
+            case zap::schema::Type::LIST:
             {
                 auto list_schema = capnp_type.asList();
                 auto nested_type = getDataTypeFromCapnProtoType(list_schema.getElementType(), skip_unsupported_fields);
@@ -207,7 +207,7 @@ namespace
                     return nullptr;
                 return std::make_shared<DataTypeArray>(nested_type);
             }
-            case capnp::schema::Type::STRUCT:
+            case zap::schema::Type::STRUCT:
             {
                 auto struct_schema = capnp_type.asStruct();
 
@@ -272,7 +272,7 @@ namespace
 
 }
 
-NamesAndTypesList capnProtoSchemaToCHSchema(const capnp::StructSchema & schema, bool skip_unsupported_fields)
+NamesAndTypesList capnProtoSchemaToCHSchema(const zap::StructSchema & schema, bool skip_unsupported_fields)
 {
     if (checkIfStructContainsUnnamedUnion(schema))
         throw Exception(ErrorCodes::CAPN_PROTO_BAD_TYPE, "Unnamed union is not supported");

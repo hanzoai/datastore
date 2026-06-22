@@ -8,8 +8,8 @@
 #include <IO/WriteBuffer.h>
 #include <Processors/Port.h>
 
-#include <capnp/dynamic.h>
-#include <capnp/serialize-packed.h>
+#include <zap/dynamic.h>
+#include <zap/serialize-packed.h>
 
 namespace DB
 {
@@ -36,15 +36,15 @@ CapnProtoRowOutputFormat::CapnProtoRowOutputFormat(
     schema = schema_parser.getMessageSchema(info.getSchemaInfo());
     const auto & header = getPort(PortKind::Main).getHeader();
     serializer = std::make_unique<CapnProtoSerializer>(header.getDataTypes(), header.getNames(), schema, format_settings.capn_proto);
-    capnp::MallocMessageBuilder message;
+    zap::MallocMessageBuilder message;
 }
 
 void CapnProtoRowOutputFormat::write(const Columns & columns, size_t row_num)
 {
-    capnp::MallocMessageBuilder message;
-    capnp::DynamicStruct::Builder root = message.initRoot<capnp::DynamicStruct>(schema);
+    zap::MallocMessageBuilder message;
+    zap::DynamicStruct::Builder root = message.initRoot<zap::DynamicStruct>(schema);
     serializer->writeRow(columns, std::move(root), row_num);
-    capnp::writeMessage(*output_stream, message);
+    zap::writeMessage(*output_stream, message);
 
 }
 

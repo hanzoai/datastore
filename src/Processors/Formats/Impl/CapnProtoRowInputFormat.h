@@ -33,12 +33,12 @@ private:
     bool supportsCountRows() const override { return true; }
     size_t countRows(size_t max_block_size) override;
 
-    std::pair<kj::Array<capnp::word>, size_t> readMessagePrefix();
-    kj::Array<capnp::word> readMessage();
+    std::pair<kj::Array<zap::word>, size_t> readMessagePrefix();
+    kj::Array<zap::word> readMessage();
     void skipMessage();
 
     std::shared_ptr<CapnProtoSchemaParser> parser;
-    capnp::StructSchema schema;
+    zap::StructSchema schema;
     std::unique_ptr<CapnProtoSerializer> serializer;
     UInt64 max_message_size;
 };
