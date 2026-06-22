@@ -3,7 +3,7 @@ if (NOT ENABLE_LIBFIU)
   return ()
 endif ()
 
-set(LIBFIU_DIR "${ClickHouse_SOURCE_DIR}/contrib/libfiu/")
+set(LIBFIU_DIR "${Datastore_SOURCE_DIR}/contrib/libfiu/")
 
 set(LIBFIU_SOURCES
     ${LIBFIU_DIR}/libfiu/fiu.c

@@ -21,13 +21,13 @@ endif()
 
 
 # Utilities.
-include("${ClickHouse_SOURCE_DIR}/contrib/aws-cmake/AwsFeatureTests.cmake")
-include("${ClickHouse_SOURCE_DIR}/contrib/aws-cmake/AwsThreadAffinity.cmake")
-include("${ClickHouse_SOURCE_DIR}/contrib/aws-cmake/AwsThreadName.cmake")
-include("${ClickHouse_SOURCE_DIR}/contrib/aws-cmake/AwsSIMD.cmake")
-include("${ClickHouse_SOURCE_DIR}/contrib/aws-cmake/AwsGetVersion.cmake")
+include("${Datastore_SOURCE_DIR}/contrib/aws-cmake/AwsFeatureTests.cmake")
+include("${Datastore_SOURCE_DIR}/contrib/aws-cmake/AwsThreadAffinity.cmake")
+include("${Datastore_SOURCE_DIR}/contrib/aws-cmake/AwsThreadName.cmake")
+include("${Datastore_SOURCE_DIR}/contrib/aws-cmake/AwsSIMD.cmake")
+include("${Datastore_SOURCE_DIR}/contrib/aws-cmake/AwsGetVersion.cmake")
 
-set (AWS_STUBS "${ClickHouse_SOURCE_DIR}/contrib/aws-cmake/aws_stubs.cpp")
+set (AWS_STUBS "${Datastore_SOURCE_DIR}/contrib/aws-cmake/aws_stubs.cpp")
 
 
 # Gather sources and options.
@@ -57,24 +57,24 @@ endif()
 
 
 # Directories.
-SET(AWS_SDK_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws")
+SET(AWS_SDK_DIR "${Datastore_SOURCE_DIR}/contrib/aws")
 SET(AWS_SDK_CORE_DIR "${AWS_SDK_DIR}/src/aws-cpp-sdk-core")
 SET(AWS_SDK_S3_DIR "${AWS_SDK_DIR}/generated/src/aws-cpp-sdk-s3")
 SET(AWS_SDK_KMS_DIR "${AWS_SDK_DIR}/generated/src/aws-cpp-sdk-kms")
 SET(AWS_SDK_GLUE_DIR "${AWS_SDK_DIR}/generated/src/aws-cpp-sdk-glue")
 
-SET(AWS_AUTH_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-auth")
-SET(AWS_CAL_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-cal")
-SET(AWS_CHECKSUMS_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-checksums")
-SET(AWS_COMMON_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-common")
-SET(AWS_COMPRESSION_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-compression")
-SET(AWS_CRT_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-crt-cpp")
-SET(AWS_EVENT_STREAM_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-event-stream")
-SET(AWS_HTTP_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-http")
-SET(AWS_IO_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-io")
-SET(AWS_MQTT_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-mqtt")
-SET(AWS_S3_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-s3")
-SET(AWS_SDKUTILS_DIR "${ClickHouse_SOURCE_DIR}/contrib/aws-c-sdkutils")
+SET(AWS_AUTH_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-auth")
+SET(AWS_CAL_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-cal")
+SET(AWS_CHECKSUMS_DIR "${Datastore_SOURCE_DIR}/contrib/aws-checksums")
+SET(AWS_COMMON_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-common")
+SET(AWS_COMPRESSION_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-compression")
+SET(AWS_CRT_DIR "${Datastore_SOURCE_DIR}/contrib/aws-crt-cpp")
+SET(AWS_EVENT_STREAM_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-event-stream")
+SET(AWS_HTTP_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-http")
+SET(AWS_IO_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-io")
+SET(AWS_MQTT_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-mqtt")
+SET(AWS_S3_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-s3")
+SET(AWS_SDKUTILS_DIR "${Datastore_SOURCE_DIR}/contrib/aws-c-sdkutils")
 
 
 # aws-cpp-sdk-core

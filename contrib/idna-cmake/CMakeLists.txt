@@ -5,7 +5,7 @@ if ((NOT ENABLE_IDNA))
     return()
 endif()
 
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/idna")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/idna")
 
 set (SRCS
     "${LIBRARY_DIR}/src/idna.cpp"

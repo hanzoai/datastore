@@ -16,7 +16,7 @@ if(ENABLE_JWT_CPP)
     endif()
 endif()
 
-set (JWT_CPP_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/jwt-cpp/include")
+set (JWT_CPP_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/jwt-cpp/include")
 
 add_library (_jwt-cpp INTERFACE)
 target_include_directories(_jwt-cpp SYSTEM BEFORE INTERFACE ${JWT_CPP_INCLUDE_DIR})

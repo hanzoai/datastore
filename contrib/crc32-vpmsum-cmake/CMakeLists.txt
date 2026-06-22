@@ -5,7 +5,7 @@ if (NOT ARCH_PPC64LE)
     return()
 endif()
 
-SET(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/crc32-vpmsum")
+SET(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/crc32-vpmsum")
 
 add_library(_crc32-vpmsum 
 	"${LIBRARY_DIR}/vec_crc32.c"

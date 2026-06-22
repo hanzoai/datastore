@@ -1,4 +1,4 @@
-set (LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/xxHash")
+set (LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/xxHash")
 set (SRCS
     "${LIBRARY_DIR}/xxhash.c"
 )

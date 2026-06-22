@@ -1,4 +1,4 @@
-set(ABSL_ROOT_DIR "${ClickHouse_SOURCE_DIR}/contrib/abseil-cpp")
+set(ABSL_ROOT_DIR "${Datastore_SOURCE_DIR}/contrib/abseil-cpp")
 set(ABSL_COMMON_INCLUDE_DIRS "${ABSL_ROOT_DIR}")
 
 set(CMAKE_CXX_STANDARD 17)

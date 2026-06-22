@@ -1,4 +1,4 @@
-set (SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/zlib-ng")
+set (SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/zlib-ng")
 
 add_library(_zlib)
 add_library(ch_contrib::zlib ALIAS _zlib)

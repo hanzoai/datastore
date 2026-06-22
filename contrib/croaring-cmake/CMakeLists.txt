@@ -1,4 +1,4 @@
-set(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/croaring")
+set(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/croaring")
 
 set(SRCS
     "${LIBRARY_DIR}/src/array_util.c"

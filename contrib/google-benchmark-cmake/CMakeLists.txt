@@ -1,4 +1,4 @@
-set (SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/google-benchmark/src")
+set (SRC_DIR "${Datastore_SOURCE_DIR}/contrib/google-benchmark/src")
 
 set (SRCS
   "${SRC_DIR}/benchmark.cc"

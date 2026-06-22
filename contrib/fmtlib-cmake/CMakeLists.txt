@@ -1,4 +1,4 @@
-set(FMT_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/fmtlib")
+set(FMT_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/fmtlib")
 
 set (SRCS
     # NOTE: do not build module for now:

@@ -12,7 +12,7 @@
 #   * clang_rt_ubsan_standalone / ubsan_standalone_cxx — if SANITIZE = undefined
 #   * clang_rt_xray                          — if ENABLE_XRAY
 
-set(COMPILER_RT_DIR     "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/compiler-rt")
+set(COMPILER_RT_DIR     "${Datastore_SOURCE_DIR}/contrib/llvm-project/compiler-rt")
 set(BUILTINS_SOURCE_DIR "${COMPILER_RT_DIR}/lib/builtins")
 set(SANCOMMON_DIR       "${COMPILER_RT_DIR}/lib/sanitizer_common")
 set(INTERCEPTION_DIR    "${COMPILER_RT_DIR}/lib/interception")
@@ -202,7 +202,7 @@ _prepend_dir(BUILTINS_SOURCES "${BUILTINS_SOURCE_DIR}" ${BUILTINS_ARCH_SOURCES})
 add_library(clang_rt_builtins STATIC ${BUILTINS_SOURCES})
 target_include_directories(clang_rt_builtins PRIVATE
     "${BUILTINS_SOURCE_DIR}"
-    "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
+    "${Datastore_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
 )
 target_compile_options(clang_rt_builtins PRIVATE
     # These flags mirror BUILTIN_CFLAGS in
@@ -264,7 +264,7 @@ include(sources/xray.cmake)
 set(SANITIZER_INCLUDE_DIRS
     "${COMPILER_RT_DIR}/lib"
     "${COMPILER_RT_DIR}/include"
-    "${ClickHouse_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
+    "${Datastore_SOURCE_DIR}/contrib/llvm-project/third-party/siphash/include"
 )
 
 # Per-CFG flags shared by every sanitizer/XRay component.
