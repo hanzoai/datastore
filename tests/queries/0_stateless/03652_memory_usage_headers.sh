@@ -14,8 +14,8 @@ CURL_OUTPUT="$(
     --data-urlencode "timeout_before_checking_execution_speed=0" 2>&1
 )"
 
-echo "$CURL_OUTPUT" | grep -m1 'X-ClickHouse-Progress:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
-echo "$CURL_OUTPUT" | grep 'X-ClickHouse-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep -m1 'X-Datastore-Progress:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep 'X-Datastore-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
 
 # Check that we have memory_usage in summary without progress headers
 CURL_OUTPUT="$(
@@ -24,7 +24,7 @@ CURL_OUTPUT="$(
         --data-urlencode "send_progress_in_http_headers=0" 2>&1
 )"
 
-echo "$CURL_OUTPUT" | grep -m1 'X-ClickHouse-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep -m1 'X-Datastore-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
 
 # Check that we have memory_usage in summary for 241 OOM errors
 CURL_OUTPUT="$(
@@ -35,5 +35,5 @@ CURL_OUTPUT="$(
     --data-urlencode "max_bytes_ratio_before_external_group_by=0" 2>&1
 )"
 
-echo "$CURL_OUTPUT" | grep 'X-ClickHouse-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
-echo "$CURL_OUTPUT" | grep -q 'X-ClickHouse-Exception-Code: 241' && echo "Ok"
+echo "$CURL_OUTPUT" | grep 'X-Datastore-Summary:' | grep -q '"memory_usage":"[1-9][0-9]*"' && echo "Ok"
+echo "$CURL_OUTPUT" | grep -q 'X-Datastore-Exception-Code: 241' && echo "Ok"

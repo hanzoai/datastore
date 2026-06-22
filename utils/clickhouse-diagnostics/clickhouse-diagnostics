@@ -503,8 +503,8 @@ class ClickhouseClient:
     def __init__(self, *, host="localhost", port=8123, user="default", password):
         self._session = requests.Session()
         if user:
-            self._session.headers["X-ClickHouse-User"] = user
-            self._session.headers["X-ClickHouse-Key"] = password
+            self._session.headers["X-Datastore-User"] = user
+            self._session.headers["X-Datastore-Key"] = password
         self._url = f"http://{host}:{port}"
         self._timeout = 60
         self._ch_version = None

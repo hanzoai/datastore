@@ -69,8 +69,8 @@ class CIDBCluster:
                 return False
         if self.pwd and not self._auth:
             self._auth = {
-                "X-ClickHouse-User": self.user,
-                "X-ClickHouse-Key": self.pwd,
+                "X-Datastore-User": self.user,
+                "X-Datastore-Key": self.pwd,
             }
         params = {
             "query": f"SELECT 1",
