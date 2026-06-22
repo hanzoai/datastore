@@ -1262,7 +1262,7 @@ try
                     " It could happen due to incorrect Datastore package installation."
                     " You could resolve the problem manually with 'sudo setcap cap_ipc_lock=+ep {}'."
                     " Note that it will not work on 'nosuid' mounted filesystems.",
-                    executable_path.empty() ? "/usr/bin/clickhouse" : executable_path);
+                    executable_path.empty() ? "/usr/bin/datastore" : executable_path);
             }
         }
         else

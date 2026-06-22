@@ -173,7 +173,7 @@ datastore-client --query "INSERT INTO git.commits FORMAT TSV" < commits.tsv
 datastore-client --query "INSERT INTO git.file_changes FORMAT TSV" < file_changes.tsv
 datastore-client --query "INSERT INTO git.line_changes FORMAT TSV" < line_changes.tsv
 
-Check out this presentation: https://presentations.clickhouse.com/matemarketing_2020/
+Check out this presentation: https://presentations.hanzo.ai/matemarketing_2020/
 )";
 
 namespace po = boost::program_options;
@@ -1235,7 +1235,7 @@ try
             << "Usage: datastore git-import\n"
             << desc << '\n'
             << "\nExample:\n"
-            << "\nclickhouse git-import --skip-paths 'generated\\.cpp|^(contrib|docs?|website|libs/(libcityhash|liblz4|libdivide|libvectorclass|libdouble-conversion|libcpuid|libzstd|libfarmhash|libmetrohash|libpoco|libwidechar_width))/' --skip-commits-with-messages '^Merge branch '\n";
+            << "\ndatastore git-import --skip-paths 'generated\\.cpp|^(contrib|docs?|website|libs/(libcityhash|liblz4|libdivide|libvectorclass|libdouble-conversion|libcpuid|libzstd|libfarmhash|libmetrohash|libpoco|libwidechar_width))/' --skip-commits-with-messages '^Merge branch '\n";
         return 0;
     }
 

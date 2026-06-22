@@ -714,19 +714,19 @@ void logQueryFinishImpl(
     if (query_span && query_span->isTraceEnabled())
     {
         query_span->addAttribute("db.statement", elem.query);
-        query_span->addAttribute("clickhouse.query_id", elem.client_info.current_query_id);
-        query_span->addAttribute("clickhouse.query_status", "QueryFinish");
-        query_span->addAttributeIfNotEmpty("clickhouse.tracestate", OpenTelemetry::CurrentContext().tracestate);
-        query_span->addAttributeIfNotZero("clickhouse.read_rows", elem.read_rows);
-        query_span->addAttributeIfNotZero("clickhouse.read_bytes", elem.read_bytes);
-        query_span->addAttributeIfNotZero("clickhouse.written_rows", elem.written_rows);
-        query_span->addAttributeIfNotZero("clickhouse.written_bytes", elem.written_bytes);
-        query_span->addAttributeIfNotZero("clickhouse.memory_usage", elem.memory_usage);
+        query_span->addAttribute("datastore.query_id", elem.client_info.current_query_id);
+        query_span->addAttribute("datastore.query_status", "QueryFinish");
+        query_span->addAttributeIfNotEmpty("datastore.tracestate", OpenTelemetry::CurrentContext().tracestate);
+        query_span->addAttributeIfNotZero("datastore.read_rows", elem.read_rows);
+        query_span->addAttributeIfNotZero("datastore.read_bytes", elem.read_bytes);
+        query_span->addAttributeIfNotZero("datastore.written_rows", elem.written_rows);
+        query_span->addAttributeIfNotZero("datastore.written_bytes", elem.written_bytes);
+        query_span->addAttributeIfNotZero("datastore.memory_usage", elem.memory_usage);
 
         if (context)
         {
             std::string user_name = context->getUserName();
-            query_span->addAttribute("clickhouse.user", user_name);
+            query_span->addAttribute("datastore.user", user_name);
         }
 
         if (settings[Setting::log_query_settings])
@@ -734,7 +734,7 @@ void logQueryFinishImpl(
             auto changes = settings.changes();
             for (const auto & change : changes)
             {
-                query_span->addAttribute(fmt::format("clickhouse.setting.{}", change.name), convertFieldToString(change.value));
+                query_span->addAttribute(fmt::format("datastore.setting.{}", change.name), convertFieldToString(change.value));
             }
         }
         query_span->finish(time);
@@ -847,9 +847,9 @@ void logQueryException(
     if (query_span)
     {
         query_span->addAttribute("db.statement", elem.query);
-        query_span->addAttribute("clickhouse.query_id", elem.client_info.current_query_id);
-        query_span->addAttribute("clickhouse.exception", elem.exception);
-        query_span->addAttribute("clickhouse.exception_code", elem.exception_code);
+        query_span->addAttribute("datastore.query_id", elem.client_info.current_query_id);
+        query_span->addAttribute("datastore.exception", elem.exception);
+        query_span->addAttribute("datastore.exception_code", elem.exception_code);
         query_span->finish(time_now);
     }
 }
@@ -979,10 +979,10 @@ void logExceptionBeforeStart(
 
     if (query_span)
     {
-        query_span->addAttribute("clickhouse.exception_code", elem.exception_code);
-        query_span->addAttribute("clickhouse.exception", elem.exception);
+        query_span->addAttribute("datastore.exception_code", elem.exception_code);
+        query_span->addAttribute("datastore.exception", elem.exception);
         query_span->addAttribute("db.statement", elem.query);
-        query_span->addAttribute("clickhouse.query_id", elem.client_info.current_query_id);
+        query_span->addAttribute("datastore.query_id", elem.client_info.current_query_id);
         query_span->finish(query_end_time);
     }
 }
@@ -1121,7 +1121,7 @@ static BlockIO executeQueryImpl(
     {
         // If we don't see an initial_query_start_time yet, initialize it to current time.
         // It's possible to have unset initial_query_start_time for non-initial queries. For
-        // example, the query is from an initiator that is running an old version of clickhouse.
+        // example, the query is from an initiator that is running an old version of datastore.
         // On the other hand, if it's initialized then take it as the start of the query
         context->setInitialQueryStartTime(query_start_time);
     }

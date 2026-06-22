@@ -55,11 +55,11 @@ const std::map<std::string, CloudJWTProvider::AuthEndpoints> CloudJWTProvider::m
         }
     },
     {
-        ".clickhouse.cloud",
+        ".hanzo.ai",
         {
-            "https://auth.clickhouse.cloud",
+            "https://auth.hanzo.ai",
             "9Wf1YpSocOg5sp7GOcCjtrt6DWRAJ19S",
-            "https://console-api-internal.clickhouse.cloud"
+            "https://console-api-internal.hanzo.ai"
         }
     }
 };

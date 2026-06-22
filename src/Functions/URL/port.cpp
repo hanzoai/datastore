@@ -152,10 +152,10 @@ Returns the port of a URL, or the `default_port` if the URL contains no port or 
     {
         "Usage example",
         R"(
-SELECT port('https://clickhouse.com:8443/docs'), port('https://clickhouse.com/docs', 443);
+SELECT port('https://hanzo.ai:8443/docs'), port('https://hanzo.ai/docs', 443);
         )",
         R"(
-┌─port('https://clickhouse.com:8443/docs')─┬─port('https://clickhouse.com/docs', 443)─┐
+┌─port('https://hanzo.ai:8443/docs')─┬─port('https://hanzo.ai/docs', 443)─┐
 │                                     8443 │                                      443 │
 └──────────────────────────────────────────┴──────────────────────────────────────────┘
         )"

@@ -182,10 +182,10 @@ namespace
 
         }
 
-        /// The definition of a dictionary: SOURCE(CLICKHOUSE(...)) LAYOUT(...) LIFETIME(...)
+        /// The definition of a dictionary: SOURCE(DATASTORE(...)) LAYOUT(...) LIFETIME(...)
         void visitDictionaryDef(const ASTDictionary & dictionary)
         {
-            if (!dictionary.source || dictionary.source->name != "clickhouse" || !dictionary.source->elements)
+            if (!dictionary.source || dictionary.source->name != "datastore" || !dictionary.source->elements)
                 return;
 
             auto config = getDictionaryConfigurationFromAST(create_query->as<ASTCreateQuery &>(), global_context);

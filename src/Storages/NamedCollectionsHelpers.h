@@ -36,7 +36,7 @@ MutableNamedCollectionPtr tryGetNamedCollectionWithOverrides(
 /// Also registers the dictionary as a dependency of the named collection, so that
 /// DROP NAMED COLLECTION is blocked while the dictionary exists.
 /// The dictionary's identity is derived from config_prefix, which has the form
-/// "<dict_root>.source.<type>" (e.g. "dictionary.source.clickhouse"); the first
+/// "<dict_root>.source.<type>" (e.g. "dictionary.source.datastore"); the first
 /// component is used as the dictionary root to call StorageID::fromDictionaryConfig.
 MutableNamedCollectionPtr tryGetNamedCollectionWithOverrides(
     const Poco::Util::AbstractConfiguration & config,

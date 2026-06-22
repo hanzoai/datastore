@@ -1117,7 +1117,7 @@ std::shared_ptr<DirectKeyValueJoin> tryDirectJoin(const std::shared_ptr<TableJoi
       * Direct key value join implementation during storage querying must use storage column names.
       *
       * Example:
-      * CREATE DICTIONARY test_dictionary (id UInt64, value String) PRIMARY KEY id SOURCE(CLICKHOUSE(TABLE 'test_dictionary_table')) LIFETIME(0);
+      * CREATE DICTIONARY test_dictionary (id UInt64, value String) PRIMARY KEY id SOURCE(DATASTORE(TABLE 'test_dictionary_table')) LIFETIME(0);
       * SELECT t1.id FROM test_table AS t1 INNER JOIN test_dictionary AS t2 ON t1.id = t2.id;
       *
       * Unique execution name for `id` column from right table expression `test_dictionary AS t2` for example can be `t2.id_0`.

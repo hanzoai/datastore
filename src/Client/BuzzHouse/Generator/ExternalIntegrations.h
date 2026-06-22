@@ -113,13 +113,13 @@ private:
     static void closeMySQLConnection(MYSQL * mysql);
     using MySQLUniqueKeyPtr = std::unique_ptr<MYSQL, decltype(&closeMySQLConnection)>;
 
-    const bool is_clickhouse;
+    const bool is_datastore;
     MySQLUniqueKeyPtr mysql_connection;
 
 public:
     MySQLIntegration(FuzzConfig & fcc, const ServerCredentials & scc, const bool is_click, MySQLUniqueKeyPtr mcon)
         : DatastoreIntegratedDatabase(fcc, scc)
-        , is_clickhouse(is_click)
+        , is_datastore(is_click)
         , mysql_connection(std::move(mcon))
     {
     }

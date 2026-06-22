@@ -503,7 +503,7 @@ void RestorerFromBackup::createDatabase(const String & database_name) const
         {
             // Change engine to Replicated
             auto engine = makeASTFunction("Replicated",
-                    make_intrusive<ASTLiteral>("/clickhouse/databases/{uuid}"),
+                    make_intrusive<ASTLiteral>("/datastore/databases/{uuid}"),
                     make_intrusive<ASTLiteral>("{shard}"),
                     make_intrusive<ASTLiteral>("{replica}")
                 );

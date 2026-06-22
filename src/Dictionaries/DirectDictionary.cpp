@@ -439,7 +439,7 @@ void DirectDictionary<dictionary_key_type>::applySettings(const Settings & setti
 {
     if (const auto * datastore_source = dynamic_cast<const DatastoreDictionarySource *>(source_ptr.get()))
     {
-        /// Only applicable for CLICKHOUSE dictionary source.
+        /// Only applicable for DATASTORE dictionary source.
         use_async_executor = settings[Setting::dictionary_use_async_executor] && datastore_source->isLocal();
     }
 }

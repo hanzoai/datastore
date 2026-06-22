@@ -653,7 +653,7 @@ void KeeperClient::connectToKeeper()
     ConfigProcessor config_processor(config().getString("config-file", "config.xml"));
 
     /// This will handle a situation when datastore is running on the embedded config, but config.d folder is also present.
-    ConfigProcessor::registerEmbeddedConfig("config.xml", "<clickhouse/>");
+    ConfigProcessor::registerEmbeddedConfig("config.xml", "<datastore/>");
     auto datastore_config = config_processor.loadConfig();
 
     Poco::Util::AbstractConfiguration::Keys keys;

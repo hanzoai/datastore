@@ -517,7 +517,7 @@ Aws::S3::Model::GetObjectResult ReadBufferFromS3::sendRequest(size_t attempt, si
     if (!version_id.empty())
         req.SetVersionId(version_id);
 
-    S3::setClickhouseAttemptNumber(req, attempt);
+    S3::setDatastoreAttemptNumber(req, attempt);
 
     if (range_end_incl)
     {

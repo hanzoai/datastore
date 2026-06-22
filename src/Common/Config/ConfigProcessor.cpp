@@ -407,10 +407,10 @@ bool ConfigProcessor::merge(XMLDocumentPtr config, XMLDocumentPtr with)
     /// 'datastore' is the Hanzo white-label config root; 'yandex'/'datastore' are upstream.
 
     if (config_root_node_name != merged_root_node_name
-        && !((config_root_node_name == "yandex" || config_root_node_name == "clickhouse" || config_root_node_name == "datastore")
-            && (merged_root_node_name == "yandex" || merged_root_node_name == "clickhouse" || merged_root_node_name == "datastore")))
+        && !((config_root_node_name == "yandex" || config_root_node_name == "datastore" || config_root_node_name == "datastore")
+            && (merged_root_node_name == "yandex" || merged_root_node_name == "datastore" || merged_root_node_name == "datastore")))
     {
-        if (config_root_node_name != "clickhouse" && config_root_node_name != "yandex" && config_root_node_name != "datastore")
+        if (config_root_node_name != "datastore" && config_root_node_name != "yandex" && config_root_node_name != "datastore")
             return false;
 
         throw Poco::Exception("Root element doesn't have the corresponding root element as the config file."
@@ -1036,7 +1036,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
     <datastore>
       <encryption_codecs>
         <aes_128_gcm_siv>
-            <key_hex from_zk="/clickhouse/aes128_key_hex"/>
+            <key_hex from_zk="/datastore/aes128_key_hex"/>
         </aes_128_gcm_siv>
       </encryption_codecs>
       <max_table_size_to_drop encrypted_by="AES_128_GCM_SIV">96260000000B0000000000E8FE3C087CED2205A5071078B29FD5C3B97F824911DED3217E980C</max_table_size_to_drop>

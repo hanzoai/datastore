@@ -163,7 +163,7 @@ void ClientApplicationBase::init(int argc, char ** argv)
 
     /// Set application name for help messages based on how the binary was invoked
     std::string_view argv0_view(argv0 ? argv0 : "");
-    std::string name_with_dash = "clickhouse-" + getName();
+    std::string name_with_dash = "datastore-" + getName();
     if (argv0_view.find(name_with_dash) != std::string_view::npos)
         app_name = name_with_dash;
     else

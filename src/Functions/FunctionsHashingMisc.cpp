@@ -362,7 +362,7 @@ This hash function has two modes:
     FunctionDocumentation::Examples URLHash_examples = {
     {
         "Usage example",
-        "SELECT URLHash('https://www.clickhouse.com')",
+        "SELECT URLHash('https://hanzo.ai')",
         R"(
 ┌─URLHash('htt⋯house.com')─┐
 │     13614512636072854701 │
@@ -372,15 +372,15 @@ This hash function has two modes:
     {
         "Hash of url with specified level",
         R"(
-SELECT URLHash('https://www.clickhouse.com/docs', 0);
-SELECT URLHash('https://www.clickhouse.com/docs', 1);
+SELECT URLHash('https://hanzo.ai/docs', 0);
+SELECT URLHash('https://hanzo.ai/docs', 1);
         )",
         R"(
--- hash of https://www.clickhouse.com
+-- hash of https://hanzo.ai
 ┌─URLHash('htt⋯m/docs', 0)─┐
 │     13614512636072854701 │
 └──────────────────────────┘
--- hash of https://www.clickhouse.com/docs
+-- hash of https://hanzo.ai/docs
 ┌─URLHash('htt⋯m/docs', 1)─┐
 │     13167253331440520598 │
 └──────────────────────────┘

@@ -715,7 +715,7 @@ void ZooKeeper::receiveHandshake()
 
     /// Special way to tell a client that server is not ready to serve it.
     /// It's better for faster failover than just connection drop.
-    /// Implemented in clickhouse-keeper.
+    /// Implemented in datastore-keeper.
     if (protocol_version_read == KEEPER_PROTOCOL_VERSION_CONNECTION_REJECT)
         throw Exception::fromMessage(Error::ZCONNECTIONLOSS,
                                      "Keeper server rejected the connection during the handshake. "

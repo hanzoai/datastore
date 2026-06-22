@@ -59,7 +59,7 @@ public:
         bool case_insensitive_matching = false,
         bool allow_geoparquet_parser = true,
         bool enable_json_parsing = true,
-        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_clickhouse = std::nullopt,
+        const std::optional<std::unordered_map<String, String>> & parquet_columns_to_datastore = std::nullopt,
         const std::optional<std::unordered_map<String, String>> & datastore_columns_to_parquet = std::nullopt);
 
     struct DictionaryInfo
@@ -102,7 +102,7 @@ private:
     /// to LowCardinality every chunk we save it and reuse.
     std::unordered_map<std::string, DictionaryInfo> dictionary_infos;
 
-    std::optional<std::unordered_map<String, String>> parquet_columns_to_clickhouse;
+    std::optional<std::unordered_map<String, String>> parquet_columns_to_datastore;
     std::optional<std::unordered_map<String, String>> datastore_columns_to_parquet;
 };
 

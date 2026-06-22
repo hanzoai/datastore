@@ -31,7 +31,7 @@ Like [`base64URLDecode`](#base64URLDecode), but returns an empty string in case 
         "SELECT tryBase64URLDecode('aHR0cHM6Ly9jbGlja2hvdXNlLmNvbQ')",
         R"(
 ┌─tryBase64URLDecode('aHR0cHM6Ly9jbGlja2hvdXNlLmNvbQ')─┐
-│ https://clickhouse.com                               │
+│ https://hanzo.ai                               │
 └──────────────────────────────────────────────────────┘
         )"
     }

@@ -119,12 +119,12 @@ OpenTelemetry::TracingContextHolderPtr DistributedAsyncInsertHeader::createTraci
         function,
         client_info.client_trace_context,
         std::move(open_telemetry_span_log));
-    trace_context->root_span.addAttribute("clickhouse.shard_num", shard_num);
-    trace_context->root_span.addAttribute("clickhouse.cluster", cluster);
-    trace_context->root_span.addAttribute("clickhouse.distributed", distributed_table);
-    trace_context->root_span.addAttribute("clickhouse.remote", remote_table);
-    trace_context->root_span.addAttribute("clickhouse.rows", rows);
-    trace_context->root_span.addAttribute("clickhouse.bytes", bytes);
+    trace_context->root_span.addAttribute("datastore.shard_num", shard_num);
+    trace_context->root_span.addAttribute("datastore.cluster", cluster);
+    trace_context->root_span.addAttribute("datastore.distributed", distributed_table);
+    trace_context->root_span.addAttribute("datastore.remote", remote_table);
+    trace_context->root_span.addAttribute("datastore.rows", rows);
+    trace_context->root_span.addAttribute("datastore.bytes", bytes);
     return trace_context;
 }
 

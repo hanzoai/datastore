@@ -21,7 +21,7 @@
         <aes_128_gcm_siv>
             <key_hex>530933fba27708642288fecc4ec02c96</key_hex>
             <!--key_hex from_env="CLICK_KEY"/-->
-            <!--key_hex from_zk="/clickhouse/key128"/-->
+            <!--key_hex from_zk="/datastore/key128"/-->
         </aes_128_gcm_siv>
     </encryption_codecs>
 

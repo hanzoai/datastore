@@ -77,7 +77,7 @@ SELECT name, size FROM filesystem('my_data')
 )", ""},
                 {"List files with an absolute path", R"(
 ```sql
-SELECT * FROM filesystem('/var/lib/clickhouse/user_files')
+SELECT * FROM filesystem('/var/lib/datastore/user_files')
 ```
 )", ""},
             },

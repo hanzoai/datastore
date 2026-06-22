@@ -42,7 +42,7 @@ struct ZooKeeperArgs
     String auth_scheme;
     String identity;
     String chroot;
-    String sessions_path = "/clickhouse/sessions";
+    String sessions_path = "/datastore/sessions";
     String client_availability_zone;
     int32_t connection_timeout_ms = Coordination::DEFAULT_CONNECTION_TIMEOUT_MS;
     UInt64 num_connection_retries = 2;

@@ -23,17 +23,17 @@ macro(datastore_split_debug_symbols)
        # Splits debug symbols into separate file, leaves the binary untouched:
        COMMAND "${OBJCOPY_PATH}" --only-keep-debug "${STRIP_BINARY_PATH}" "${STRIP_DESTINATION_DIR}/lib/debug/bin/${STRIP_TARGET}.debug"
        COMMAND chmod 0644 "${STRIP_DESTINATION_DIR}/lib/debug/bin/${STRIP_TARGET}.debug"
-       # Strips binary, sections '.note' & '.comment' are removed in line with Debian's stripping policy: www.debian.org/doc/debian-policy/ch-files.html, section '.clickhouse.hash' is needed for integrity check.
+       # Strips binary, sections '.note' & '.comment' are removed in line with Debian's stripping policy: www.debian.org/doc/debian-policy/ch-files.html, section '.datastore.hash' is needed for integrity check.
        # Also, after we disabled the export of symbols for dynamic linking, we still to keep a static symbol table for good stack traces.
        COMMAND "${STRIP_PATH}" --strip-debug --remove-section=.comment --remove-section=.note "${STRIP_BINARY_PATH}" -o "${STRIP_DESTINATION_DIR}/bin/${STRIP_TARGET}"
        # Associate stripped binary with debug symbols:
        COMMAND "${OBJCOPY_PATH}" --add-gnu-debuglink "${STRIP_DESTINATION_DIR}/lib/debug/bin/${STRIP_TARGET}.debug" "${STRIP_DESTINATION_DIR}/bin/${STRIP_TARGET}"
-       COMMENT "Stripping clickhouse binary" VERBATIM
+       COMMENT "Stripping datastore binary" VERBATIM
    )
 
-   install(PROGRAMS ${STRIP_DESTINATION_DIR}/bin/${STRIP_TARGET} DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
+   install(PROGRAMS ${STRIP_DESTINATION_DIR}/bin/${STRIP_TARGET} DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
    cmake_path(SET DEBUG_PATH NORMALIZE "${CMAKE_INSTALL_LIBDIR}/debug/${CMAKE_INSTALL_FULL_BINDIR}")
-   install(FILES ${STRIP_DESTINATION_DIR}/lib/debug/bin/${STRIP_TARGET}.debug DESTINATION ${DEBUG_PATH} COMPONENT clickhouse)
+   install(FILES ${STRIP_DESTINATION_DIR}/lib/debug/bin/${STRIP_TARGET}.debug DESTINATION ${DEBUG_PATH} COMPONENT datastore)
 endmacro()
 
 
@@ -58,5 +58,5 @@ macro(datastore_make_empty_debug_info_for_nfpm)
    )
 
    cmake_path(SET DEBUG_PATH NORMALIZE "${CMAKE_INSTALL_LIBDIR}/debug/${CMAKE_INSTALL_FULL_BINDIR}")
-   install(FILES "${EMPTY_DEBUG_DESTINATION_DIR}/lib/debug/${EMPTY_DEBUG_BINARY}.debug" DESTINATION ${DEBUG_PATH} COMPONENT clickhouse)
+   install(FILES "${EMPTY_DEBUG_DESTINATION_DIR}/lib/debug/${EMPTY_DEBUG_BINARY}.debug" DESTINATION ${DEBUG_PATH} COMPONENT datastore)
 endmacro()

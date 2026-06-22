@@ -209,7 +209,7 @@ void fillBufferWithRandomNumbers(char * __restrict data, size_t count, pcg64 & r
 
         /// Byteswap each value so that the generated *number* is the same on big-endian and little-endian machines (for the same seed).
         /// (Why not store rng outputs in native endianness in the first place?
-        ///  For non-64 bit values it would produce results different from previous versions of clickhouse.
+        ///  For non-64 bit values it would produce results different from previous versions of datastore.
         ///  Maybe that would be ok, we'd just have to update all the tests that rely on it.)
         if constexpr (std::endian::native == std::endian::big && sizeof(T) > 1)
         {

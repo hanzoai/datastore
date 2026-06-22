@@ -1226,7 +1226,7 @@ namespace
     void setNullDictionarySourceIfExternal(ASTCreateQuery & create_query)
     {
         ASTDictionary & dict = *create_query.dictionary;
-        if (Poco::toLower(dict.source->name) == "clickhouse")
+        if (Poco::toLower(dict.source->name) == "datastore")
         {
             auto config = getDictionaryConfigurationFromAST(create_query, Context::getGlobalContextInstance());
             auto info = getInfoIfDatastoreDictionarySource(config, Context::getGlobalContextInstance());

@@ -629,7 +629,7 @@ public:
     ///
     /// We need a way to reject requests from old sessions somehow.
     ///
-    /// So we update the version of /clickhouse/sessions/server_uuid node when starting a new session.
+    /// So we update the version of /datastore/sessions/server_uuid node when starting a new session.
     /// And there's an option to check this version when committing something.
     void addCheckSessionOp(Coordination::Requests & requests) const;
 private:

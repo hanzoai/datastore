@@ -115,7 +115,7 @@ __attribute__((constructor(202))) void init_ssl()
 /// class C { C() { assert(inside_main); } };
 bool inside_main = false;
 
-int clickhouseMain(int argc_, char ** argv_)
+int datastoreMain(int argc_, char ** argv_)
 {
     inside_main = true;
     SCOPE_EXIT({ inside_main = false; });
@@ -174,7 +174,7 @@ pthread_t runner_thread_id{};
 struct sigaction original_sigalrm_action{};
 
 String datastore{"datastore"};
-std::vector<char *> datastore_args{clickhouse.data()};
+std::vector<char *> datastore_args{datastore.data()};
 
 /// Signal-safe stderr print helper.
 void signalSafeWrite(const char * msg)
@@ -267,7 +267,7 @@ int LLVMFuzzerInitialize(const int *argc, char ***argv)
     {
         // Start datastore local
         std::unique_lock lock(mutex);
-        runner = std::thread(clickhouseMain, datastore_args.size(), datastore_args.data());
+        runner = std::thread(datastoreMain, datastore_args.size(), datastore_args.data());
         runner_thread_id = runner->native_handle();
         if (!cv.wait_for(lock, std::chrono::seconds(30), []{ return state == FuzzerState::WAITING_FOR_INPUT; }))
             abort();

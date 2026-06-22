@@ -133,14 +133,14 @@ namespace
 
     /// ASTDictionary keeps a dictionary definition, for example
     /// PRIMARY KEY key_column1, key_column2
-    /// SOURCE(CLICKHOUSE(host '127.0.0.1' port 9000 user 'default' password '' db 'default' table 'ids' where 'id=10' query 'SELECT id, value_1, value_2 FROM default.ids'))
+    /// SOURCE(DATASTORE(host '127.0.0.1' port 9000 user 'default' password '' db 'default' table 'ids' where 'id=10' query 'SELECT id, value_1, value_2 FROM default.ids'))
     /// LAYOUT ... LIFETIME ... RANGE ...
     ///
     /// We'll try to replace database and table name in SOURCE if the specified `host` is local.
     /// TODO: Probably we could try to replace database and table name in `query` too.
     void visitDictionaryDef(ASTDictionary & dictionary, const DDLRenamingVisitor::Data & data)
     {
-        if (!dictionary.source || dictionary.source->name != "clickhouse" || !dictionary.source->elements)
+        if (!dictionary.source || dictionary.source->name != "datastore" || !dictionary.source->elements)
             return;
 
         auto config = getDictionaryConfigurationFromAST(data.create_query->as<ASTCreateQuery &>(), data.global_context);

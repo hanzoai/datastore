@@ -413,7 +413,7 @@ void MySQLIntegration::setTableEngineDetails(RandomGenerator & rg, const SQLTabl
 
 String MySQLIntegration::getSQLQuotedTableName(std::shared_ptr<SQLDatabase> db, const String & tname)
 {
-    if (is_clickhouse)
+    if (is_datastore)
         return db ? ("`" + escapeSQLString(db->getName(), '`') + "`.`" + escapeSQLString(tname, '`') + "`")
                   : ("`" + escapeSQLString(tname, '`') + "`");
     return "`test`.`" + escapeSQLString(tname, '`') + "`";
@@ -421,13 +421,13 @@ String MySQLIntegration::getSQLQuotedTableName(std::shared_ptr<SQLDatabase> db, 
 
 String MySQLIntegration::truncateStatement()
 {
-    return fmt::format("TRUNCATE{}", is_clickhouse ? " TABLE" : "");
+    return fmt::format("TRUNCATE{}", is_datastore ? " TABLE" : "");
 }
 
 bool MySQLIntegration::optimizeTableForOracle(const PeerTableDatabase pt, const SQLTable & t)
 {
     chassert(t.hasDatabasePeer());
-    if (is_clickhouse && t.isMergeTreeFamily())
+    if (is_datastore && t.isMergeTreeFamily())
     {
         /// Sometimes the optimize step doesn't have to do anything, then throws error. Ignore it
         const String tname = getSQLQuotedTableName(t.db, t.getBaseName());
@@ -2080,7 +2080,7 @@ DatastoreIntegratedDatabase * ExternalIntegrations::getPeerPtr(const PeerTableDa
     switch (pt)
     {
         case PeerTableDatabase::Datastore:
-            return clickhouse.get();
+            return datastore.get();
         case PeerTableDatabase::MySQL:
             return mysql.get();
         case PeerTableDatabase::PostgreSQL:
@@ -2109,7 +2109,7 @@ bool ExternalIntegrations::optimizeTableForOracle(const PeerTableDatabase pt, co
     switch (t.peer_table)
     {
         case PeerTableDatabase::Datastore:
-            return clickhouse->optimizeTableForOracle(pt, t);
+            return datastore->optimizeTableForOracle(pt, t);
         default:
             return false;
     }
@@ -2169,7 +2169,7 @@ bool ExternalIntegrations::getPerformanceMetricsForLastQuery(const PeerTableData
         return false;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(fc.flush_log_wait_time));
-    if (clickhouse->performQueryOnServerOrRemote(
+    if (datastore->performQueryOnServerOrRemote(
             pt,
             fmt::format(
                 "INSERT INTO TABLE FUNCTION file('{}', 'TabSeparated', 'c0 UInt64, c1 UInt64, c2 UInt64') SELECT query_duration_ms, "
@@ -2203,7 +2203,7 @@ void ExternalIntegrations::setDefaultSettings(const PeerTableDatabase pt, const 
     for (const auto & entry : settings)
     {
         /// Some settings may not exist in earlier Datastore versions, so we can ignore the errors here
-        const auto u = clickhouse->performQueryOnServerOrRemote(pt, fmt::format("SET {} = 1;", entry));
+        const auto u = datastore->performQueryOnServerOrRemote(pt, fmt::format("SET {} = 1;", entry));
         UNUSED(u);
     }
 }
@@ -2271,7 +2271,7 @@ void ExternalIntegrations::replicateSettings(const PeerTableDatabase pt)
                 }
             }
             /// Some settings may not exist in earlier Datastore versions, so we can ignore the errors here
-            auto u = clickhouse->performQueryOnServerOrRemote(pt, fmt::format("SET {} = '{}';", nname, replaced));
+            auto u = datastore->performQueryOnServerOrRemote(pt, fmt::format("SET {} = '{}';", nname, replaced));
             UNUSED(u);
             buf.resize(0);
         }

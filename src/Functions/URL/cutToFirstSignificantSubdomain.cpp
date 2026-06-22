@@ -63,13 +63,13 @@ Returns the part of the domain that includes top-level subdomains up to the [fir
         "Usage example",
         R"(
 SELECT
-    cutToFirstSignificantSubdomain('https://news.clickhouse.com.tr/'),
+    cutToFirstSignificantSubdomain('https://news.hanzo.ai.tr/'),
     cutToFirstSignificantSubdomain('www.tr'),
     cutToFirstSignificantSubdomain('tr');
         )",
         R"(
-┌─cutToFirstSignificantSubdomain('https://news.clickhouse.com.tr/')─┬─cutToFirstSignificantSubdomain('www.tr')─┬─cutToFirstSignificantSubdomain('tr')─┐
-│ clickhouse.com.tr                                                 │ tr                                       │                                      │
+┌─cutToFirstSignificantSubdomain('https://news.hanzo.ai.tr/')─┬─cutToFirstSignificantSubdomain('www.tr')─┬─cutToFirstSignificantSubdomain('tr')─┐
+│ hanzo.ai.tr                                                 │ tr                                       │                                      │
 └───────────────────────────────────────────────────────────────────┴──────────────────────────────────────────┴──────────────────────────────────────┘
         )"
     }
@@ -101,13 +101,13 @@ Similar to [`cutToFirstSignificantSubdomain`](#cutToFirstSignificantSubdomain) b
          "Usage example",
          R"(
 SELECT
-    cutToFirstSignificantSubdomainWithWWW('https://news.clickhouse.com.tr/'),
+    cutToFirstSignificantSubdomainWithWWW('https://news.hanzo.ai.tr/'),
     cutToFirstSignificantSubdomainWithWWW('www.tr'),
     cutToFirstSignificantSubdomainWithWWW('tr');
          )",
          R"(
-┌─cutToFirstSignificantSubdomainWithWWW('https://news.clickhouse.com.tr/')─┬─cutToFirstSignificantSubdomainWithWWW('www.tr')─┬─cutToFirstSignificantSubdomainWithWWW('tr')─┐
-│ clickhouse.com.tr                                                        │ www.tr                                          │                                             │
+┌─cutToFirstSignificantSubdomainWithWWW('https://news.hanzo.ai.tr/')─┬─cutToFirstSignificantSubdomainWithWWW('www.tr')─┬─cutToFirstSignificantSubdomainWithWWW('tr')─┐
+│ hanzo.ai.tr                                                        │ www.tr                                          │                                             │
 └──────────────────────────────────────────────────────────────────────────┴─────────────────────────────────────────────────┴─────────────────────────────────────────────┘
          )"
     }

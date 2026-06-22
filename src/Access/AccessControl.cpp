@@ -637,7 +637,7 @@ AuthResult AccessControl::authenticate(const Credentials & credentials, const Po
 
             message << R"(
 
-If you use Datastore Cloud, the password can be reset at https://clickhouse.cloud/
+If you use Datastore Cloud, the password can be reset at https://hanzo.ai/
 on the settings page for the corresponding service.
 
 If you have installed Datastore and forgot password you can reset it in the configuration file.

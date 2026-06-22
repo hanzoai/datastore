@@ -26,10 +26,10 @@ Returns the path without query string from a URL.
     {
         "Usage example",
         R"(
-SELECT path('https://clickhouse.com/docs/sql-reference/functions/url-functions/?query=value');
+SELECT path('https://hanzo.ai/docs/sql-reference/functions/url-functions/?query=value');
         )",
         R"(
-┌─path('https://clickhouse.com/en/sql-reference/functions/url-functions/?query=value')─┐
+┌─path('https://hanzo.ai/en/sql-reference/functions/url-functions/?query=value')─┐
 │ /docs/sql-reference/functions/url-functions/                                         │
 └──────────────────────────────────────────────────────────────────────────────────────┘
         )"

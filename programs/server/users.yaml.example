@@ -74,9 +74,9 @@ users:
         # Each element of list has one of the following forms:
         # ip: IP-address or network mask. Examples: 213.180.204.3 or 10.0.0.1/8 or 10.0.0.1/255.255.255.0
         # 2a02:6b8::3 or 2a02:6b8::3/64 or 2a02:6b8::3/ffff:ffff:ffff:ffff::.
-        # host: Hostname. Example: server01.clickhouse.com.
+        # host: Hostname. Example: server01.hanzo.ai.
         # To check access, DNS query is performed, and all received addresses compared to peer address.
-        # host_regexp: Regular expression for host names. Example, ^server\d\d-\d\d-\d\.clickhouse\.com$
+        # host_regexp: Regular expression for host names. Example, ^server\d\d-\d\d-\d\.datastore\.com$
         # To check access, DNS PTR query is performed for peer address and then regexp is applied.
         # Then, for result of PTR query, another DNS query is performed and all received addresses compared to peer address.
         # Strongly recommended that regexp is ends with $ and take all expression in ''
@@ -94,7 +94,7 @@ users:
         # User can create other users and grant rights to them.
         # access_management: 1
 
-        # SQL expressions for grants available for that user - https://clickhouse.com/docs/sql-reference/statements/grant
+        # SQL expressions for grants available for that user - https://hanzo.ai/docs/sql-reference/statements/grant
         # grants:
         #   - query: GRANT ALL ON *.*
 

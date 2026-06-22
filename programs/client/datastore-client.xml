@@ -96,7 +96,7 @@
 
     <!-- Directory containing the proto files for the well-known Protobuf types.
       -->
-    <google_protos_path>/usr/share/clickhouse/protos/</google_protos_path>
+    <google_protos_path>/usr/share/datastore/protos/</google_protos_path>
 
     <!-- Analog of .netrc -->
     <![CDATA[

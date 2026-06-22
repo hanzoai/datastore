@@ -1,6 +1,6 @@
 # This is an example of a configuration file "config.xml" rewritten in YAML
 # You can read this documentation for detailed information about YAML configuration:
-# https://clickhouse.com/docs/operations/configuration-files/
+# https://hanzo.ai/docs/operations/configuration-files/
 
 # NOTE: User and query level settings are set up in "users.yaml" file.
 # If you have accidentally specified user-level settings here, server won't start.
@@ -103,7 +103,7 @@ interserver_http_port: 9009
 # If not specified, than it is determined analogous to 'hostname -f' command.
 # This setting could be used to switch replication to another network interface
 # (the server may be connected to multiple networks via multiple addresses)
-# interserver_http_host: example.clickhouse.com
+# interserver_http_host: example.hanzo.ai
 
 # You can specify credentials for authenthication between replicas.
 # This is required when interserver_https_port is accessible from untrusted networks,
@@ -395,7 +395,7 @@ ldap_servers: ''
 
 # Example:
 # kerberos:
-#     principal: HTTP/clickhouse.example.com@EXAMPLE.COM
+#     principal: HTTP/datastore.example.com@EXAMPLE.COM
 
 # Example:
 # kerberos:
@@ -509,13 +509,13 @@ remap_executable: false
 # Uncomment below in order to use JDBC table engine and function.
 # To install and run JDBC bridge in background:
 # * [Debian/Ubuntu]
-# export MVN_URL=https://repo1.maven.org/maven2/ru/yandex/clickhouse/datastore-jdbc-bridge
+# export MVN_URL=https://repo1.maven.org/maven2/ru/yandex/datastore/datastore-jdbc-bridge
 # export PKG_VER=$(curl -sL $MVN_URL/maven-metadata.xml | grep '<release>' | sed -e 's|.*>\(.*\)<.*|\1|')
 # wget https://github.com/Datastore/datastore-jdbc-bridge/releases/download/v$PKG_VER/datastore-jdbc-bridge_$PKG_VER-1_all.deb
 # apt install --no-install-recommends -f ./datastore-jdbc-bridge_$PKG_VER-1_all.deb
 # datastore-jdbc-bridge &
 # * [CentOS/RHEL]
-# export MVN_URL=https://repo1.maven.org/maven2/ru/yandex/clickhouse/datastore-jdbc-bridge
+# export MVN_URL=https://repo1.maven.org/maven2/ru/yandex/datastore/datastore-jdbc-bridge
 # export PKG_VER=$(curl -sL $MVN_URL/maven-metadata.xml | grep '<release>' | sed -e 's|.*>\(.*\)<.*|\1|')
 # wget https://github.com/Datastore/datastore-jdbc-bridge/releases/download/v$PKG_VER/datastore-jdbc-bridge-$PKG_VER-1.noarch.rpm
 # yum localinstall -y datastore-jdbc-bridge-$PKG_VER-1.noarch.rpm
@@ -527,7 +527,7 @@ remap_executable: false
 #     port: 9019
 
 # Configuration of clusters that could be used in Distributed tables.
-# https://clickhouse.com/docs/operations/table_engines/distributed/
+# https://hanzo.ai/docs/operations/table_engines/distributed/
 remote_servers:
     # Test only shard config for testing distributed storage
     default:
@@ -569,10 +569,10 @@ remote_servers:
 # remote_url_allow_hosts:
 
 # Host should be specified exactly as in URL. The name is checked before DNS resolution.
-# Example: "clickhouse.com", "clickhouse.com." and "www.clickhouse.com" are different hosts.
+# Example: "hanzo.ai", "hanzo.ai." and "hanzo.ai" are different hosts.
 # If port is explicitly specified in URL, the host:port is checked as a whole.
 # If host specified here without port, any port with this host allowed.
-# "clickhouse.com" -> "clickhouse.com:443", "clickhouse.com:80" etc. is allowed, but "clickhouse.com:80" -> only "clickhouse.com:80" is allowed.
+# "hanzo.ai" -> "hanzo.ai:443", "hanzo.ai:80" etc. is allowed, but "hanzo.ai:80" -> only "hanzo.ai:80" is allowed.
 # If the host is specified as IP address, it is checked as specified in URL. Example: "[2a02:6b8:a::a]".
 # If there are redirects and support for redirects is enabled, every redirect (the Location field) is checked.
 
@@ -582,11 +582,11 @@ remote_servers:
 
 # If element has 'incl' attribute, then for it's value will be used corresponding substitution from another file.
 # By default, path to file with substitutions is /etc/metrika.xml. It could be changed in config in 'include_from' element.
-# Values for substitutions are specified in /clickhouse/name_of_substitution elements in that file.
+# Values for substitutions are specified in /datastore/name_of_substitution elements in that file.
 
 # ZooKeeper is used to store metadata about replicas, when using Replicated tables.
 # Optional. If you don't use replicated tables, you could omit that.
-# See https://clickhouse.com/docs/engines/table-engines/mergetree-family/replication/
+# See https://hanzo.ai/docs/engines/table-engines/mergetree-family/replication/
 
 # zookeeper:
 #     - node:
@@ -601,7 +601,7 @@ remote_servers:
 
 # Substitutions for parameters of replicated tables.
 # Optional. If you don't use replicated tables, you could omit that.
-# See https://clickhouse.com/docs/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
+# See https://hanzo.ai/docs/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
 # macros:
 #     shard: 01
 #     replica: example01-01-1
@@ -671,7 +671,7 @@ query_log:
     database: system
     table: query_log
 
-    # PARTITION BY expr: https://clickhouse.com/docs/table_engines/mergetree-family/custom_partitioning_key/
+    # PARTITION BY expr: https://hanzo.ai/docs/table_engines/mergetree-family/custom_partitioning_key/
     # Example:
     # event_date
     # toMonday(event_date)
@@ -679,7 +679,7 @@ query_log:
     # toStartOfHour(event_time)
     partition_by: toYYYYMM(event_date)
 
-    # Table TTL specification: https://clickhouse.com/docs/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
+    # Table TTL specification: https://hanzo.ai/docs/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
     # Example:
     # event_date + INTERVAL 1 WEEK
     # event_date + INTERVAL 7 DAY DELETE
@@ -803,7 +803,7 @@ top_level_domains_lists: ''
 # public_suffix_list: /path/to/public_suffix_list.dat
 
 # Configuration of external dictionaries. See:
-# https://clickhouse.com/docs/sql-reference/dictionaries/external-dictionaries/external-dicts
+# https://hanzo.ai/docs/sql-reference/dictionaries/external-dictionaries/external-dicts
 dictionaries_config: '*_dictionary.xml'
 
 # Uncomment if you want data to be compressed 30-100% better.
@@ -822,7 +822,7 @@ dictionaries_config: '*_dictionary.xml'
 # Works only if ZooKeeper is enabled. Comment it if such functionality isn't required.
 distributed_ddl:
     # Path in ZooKeeper to queue with DDL queries
-    path: /clickhouse/task_queue/ddl
+    path: /datastore/task_queue/ddl
 
     # Settings from this profile will be used to execute DDL queries
     # profile: default
@@ -924,7 +924,7 @@ query_masking_rules:
 
 send_crash_reports:
     enabled: true
-    endpoint: 'https://crash.clickhouse.com/'
+    endpoint: 'https://crash.hanzo.ai/'
 
 # Uncomment to disable Datastore internal DNS caching.
 # disable_internal_dns_cache: 1

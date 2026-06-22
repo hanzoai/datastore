@@ -476,7 +476,7 @@ bool SchemaConverter::processSubtreeMap(TraversalNode & node)
         else if (typeid_cast<const DataTypeArray *>(node.type_hint.get()))
         {
             /// Support explicitly requesting Array(Tuple) type for map columns. Useful e.g. if the map
-            /// key type is something that's not allowed as Map key in clickhouse.
+            /// key type is something that's not allowed as Map key in datastore.
             array_type_hint = node.type_hint;
             no_map = true;
         }

@@ -457,7 +457,7 @@ bool manageDatastoreUser(
         {
             std::ofstream f(default_user_xml);
             f << "<datastore>\n"
-              << "  <!-- Docs: <https://clickhouse.com/docs/operations/settings/settings_users/> -->\n"
+              << "  <!-- Docs: <https://hanzo.ai/docs/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <!-- Remove default user -->\n"
               << "    <default remove=\"remove\">\n"
@@ -489,7 +489,7 @@ bool manageDatastoreUser(
         {
             std::ofstream f(default_user_xml);
             f << "<datastore>\n"
-              << "  <!-- Docs: <https://clickhouse.com/docs/operations/settings/settings_users/> -->\n"
+              << "  <!-- Docs: <https://hanzo.ai/docs/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <default>\n"
               << "      <!-- User default is available only locally -->\n"
@@ -816,7 +816,7 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
                "  DATASTORE_WATCHDOG_ENABLE          Enable watchdog (default: 0)\n"
                "\nEnvironment variables (keeper mode):\n"
                "  KEEPER_CONFIG                       Path to keeper config file\n"
-               "  DATASTORE_DATA_DIR                 Data directory (default: /var/lib/clickhouse)\n"
+               "  DATASTORE_DATA_DIR                 Data directory (default: /var/lib/datastore)\n"
                "  LOG_DIR                             Log directory (default: /var/log/datastore-keeper)\n";
         return 0;
     }
@@ -858,11 +858,11 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
             /// Build the full path to the symlink (e.g. /usr/bin/datastore-client).
             /// The symlink points to the datastore binary; dispatching is done by argv[0].
             /// Short names like "client" must be resolved to "datastore-client" since the
-            /// distroless image only has "clickhouse-*" symlinks (not bare "client", "local", etc.).
+            /// distroless image only has "datastore-*" symlinks (not bare "client", "local", etc.).
             fs::path bin_dir = fs::path(g_datastore_binary).parent_path();
             std::string link_name = extra_args[0];
-            if (!link_name.starts_with("clickhouse-"))
-                link_name = "clickhouse-" + link_name;
+            if (!link_name.starts_with("datastore-"))
+                link_name = "datastore-" + link_name;
             cmd = (bin_dir / link_name).string();
         }
 
@@ -936,7 +936,7 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
     if (keeper_mode)
     {
         std::string keeper_config = getEnv("KEEPER_CONFIG", "/etc/datastore-keeper/keeper_config.xml");
-        std::string data_dir = getEnv("DATASTORE_DATA_DIR", "/var/lib/clickhouse");
+        std::string data_dir = getEnv("DATASTORE_DATA_DIR", "/var/lib/datastore");
         std::string log_dir = getEnv("LOG_DIR", "/var/log/datastore-keeper");
 
         for (const auto & dir : {data_dir, log_dir,

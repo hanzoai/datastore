@@ -1186,7 +1186,7 @@ BlockIO InterpreterSystemQuery::execute()
         {
             auto context = getContext();
             context->checkAccess(AccessType::SYSTEM_JEMALLOC);
-            auto filename = std::string(Jemalloc::flushProfile("/tmp/jemalloc_clickhouse"));
+            auto filename = std::string(Jemalloc::flushProfile("/tmp/jemalloc_datastore"));
             auto format = context->getSettingsRef()[Setting::jemalloc_profile_text_output_format];
             auto symbolize_with_inline = context->getSettingsRef()[Setting::jemalloc_profile_text_symbolize_with_inline];
 
