@@ -23,7 +23,7 @@ option(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION
    but is not possible to satisfy" ON)
 
 # This allows to compile some code conditionally in the private build while having byte-identical source files.
-set (CLICKHOUSE_CLOUD 0)
+set (DATASTORE_CLOUD 0)
 
 if(FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION)
     set(RECONFIGURE_MESSAGE_LEVEL FATAL_ERROR)
@@ -91,7 +91,7 @@ if (ENABLE_FUZZING)
     set (ENABLE_CHECK_HEAVY_BUILDS 1)
     set (GLIBC_COMPATIBILITY OFF)
     set (ENABLE_BENCHMARKS 0)
-    set (ENABLE_CLICKHOUSE_KEEPER 0)
+    set (ENABLE_DATASTORE_KEEPER 0)
 
     # For codegen_select_fuzzer
     set (ENABLE_PROTOBUF 1)
@@ -216,7 +216,7 @@ endif ()
 # Add a section with the hash of the compiled machine code for integrity checks.
 # Only for official builds, because adding a section can be time consuming (rewrite of several GB).
 # And cross compiled binaries are not supported (since you cannot execute clickhouse hash-binary)
-if (CLICKHOUSE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
+if (DATASTORE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
     message(STATUS "Official build: A checksum hash will be added to the clickhouse executable")
     set (USE_BINARY_HASH 1 CACHE STRING "Calculate binary hash and store it in the separate section")
 else ()
@@ -510,9 +510,9 @@ option(ENABLE_OPENSSL_DYNAMIC "This option removes SSL from ClickHouse and will 
 
 # when installing to /usr - place configs to /etc but for /usr/local place to /usr/local/etc
 if (CMAKE_INSTALL_PREFIX STREQUAL "/usr")
-    set (CLICKHOUSE_ETC_DIR "/etc")
+    set (DATASTORE_ETC_DIR "/etc")
 else ()
-    set (CLICKHOUSE_ETC_DIR "${CMAKE_INSTALL_PREFIX}/etc")
+    set (DATASTORE_ETC_DIR "${CMAKE_INSTALL_PREFIX}/etc")
 endif ()
 
 message (STATUS "Building for: ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_LIBRARY_ARCHITECTURE}")
@@ -541,19 +541,19 @@ if (NOT ENABLE_JEMALLOC)
     message (WARNING "Non default allocator is disabled. This is not recommended for production builds.")
 endif ()
 
-macro (clickhouse_add_executable target)
+macro (datastore_add_executable target)
     # invoke built-in add_executable
-    # explicitly acquire and interpose malloc symbols by clickhouse_malloc
+    # explicitly acquire and interpose malloc symbols by datastore_malloc
     # if GLIBC_COMPATIBILITY is ON and ENABLE_THINLTO is on than provide memcpy symbol explicitly to neutrialize thinlto's libcall generation.
     if (ARCH_AMD64 AND GLIBC_COMPATIBILITY AND ENABLE_THINLTO)
-        add_executable (${ARGV} $<TARGET_OBJECTS:clickhouse_malloc> $<TARGET_OBJECTS:memcpy>)
+        add_executable (${ARGV} $<TARGET_OBJECTS:datastore_malloc> $<TARGET_OBJECTS:memcpy>)
     else ()
-        add_executable (${ARGV} $<TARGET_OBJECTS:clickhouse_malloc>)
+        add_executable (${ARGV} $<TARGET_OBJECTS:datastore_malloc>)
     endif ()
 
     get_target_property (type ${target} TYPE)
     if (${type} STREQUAL EXECUTABLE)
-        target_link_libraries (${target} PUBLIC clickhouse_new_delete)
+        target_link_libraries (${target} PUBLIC datastore_new_delete)
 
         # In case of static jemalloc, because zone_register() is located in zone.c and
         # is never used outside (it is declared as constructor) it is omitted
@@ -694,7 +694,7 @@ if (NATIVE_BUILD_TARGETS
             "-DCMAKE_BUILD_TYPE=Release"
             # Avoid overriding .cargo/config.toml with native toolchain.
             "-DENABLE_RUST=OFF"
-            "-DENABLE_CLICKHOUSE_SELF_EXTRACTING=${ENABLE_CLICKHOUSE_SELF_EXTRACTING}"
+            "-DENABLE_DATASTORE_SELF_EXTRACTING=${ENABLE_DATASTORE_SELF_EXTRACTING}"
             "-DUSE_BINARY_HASH=${USE_BINARY_HASH}"
         ${PROJECT_SOURCE_DIR}
         WORKING_DIRECTORY "${NATIVE_BUILD_DIR}"
