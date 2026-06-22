@@ -9,8 +9,8 @@ namespace DB
 
 /* file(path, format[, structure, compression]) - creates a temporary storage from file
  *
- * The file must be in the clickhouse data directory.
- * The relative path begins with the clickhouse data directory.
+ * The file must be in the datastore data directory.
+ * The relative path begins with the datastore data directory.
  */
 class TableFunctionFile : public ITableFunctionFileLike
 {

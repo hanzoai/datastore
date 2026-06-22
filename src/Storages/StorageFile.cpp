@@ -413,7 +413,7 @@ std::unique_ptr<ReadBuffer> selectReadBuffer(
       *   as it might require stack unwinding from arbitrary place;
       * - arbitrary slowdown due to page fault in arbitrary place in the code is difficult to debug.
       *
-      * But we keep this mode for clickhouse-local as it is not so bad for a command line tool.
+      * But we keep this mode for datastore-local as it is not so bad for a command line tool.
       */
     if (context->getApplicationType() == Context::ApplicationType::SERVER && read_method == LocalFSReadMethod::mmap)
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "Using storage_file_read_method=mmap is not safe in server mode. Consider using pread.");

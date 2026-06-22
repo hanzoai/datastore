@@ -4,7 +4,7 @@
   You can either move the settings to the right place inside "users.xml" file
    or add <skip_check_for_incorrect_settings>1</skip_check_for_incorrect_settings> here.
 -->
-<clickhouse>
+<datastore>
     <logger>
         <!-- Possible levels [1]:
 
@@ -39,8 +39,8 @@
              It is useful for debugging shutdown issues -->
         <!-- <shutdown_console_log_level>trace</shutdown_console_log_level> -->
 
-        <log>/var/log/datastore-server/clickhouse-server.log</log>
-        <errorlog>/var/log/datastore-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/datastore-server/datastore-server.log</log>
+        <errorlog>/var/log/datastore-server/datastore-server.err.log</errorlog>
         <!-- Rotation policy
              See https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/FileChannel.h#L54-L85
           -->
@@ -150,7 +150,7 @@
         </header>
         <header>
             <name>Access-Control-Allow-Headers</name>
-            <value>origin, x-requested-with, x-clickhouse-format, x-clickhouse-user, x-clickhouse-key, Authorization</value>
+            <value>origin, x-requested-with, x-datastore-format, x-datastore-user, x-datastore-key, Authorization</value>
         </header>
         <header>
             <name>Access-Control-Allow-Methods</name>
@@ -162,7 +162,7 @@
         </header>
     </http_options_response>
 
-    <!-- The name that will be shown in the clickhouse-client.
+    <!-- The name that will be shown in the datastore-client.
          By default, anything with "production" will be highlighted in red in query prompt.
     -->
     <!--display_name>production</display_name-->
@@ -174,8 +174,8 @@
     <http_port>8123</http_port>
 
     <!-- Port for interaction by native protocol with:
-         - clickhouse-client and other native Datastore tools (clickhouse-benchmark);
-         - clickhouse-server with other clickhouse-servers for distributed query processing;
+         - datastore-client and other native Datastore tools (datastore-benchmark);
+         - datastore-server with other datastore-servers for distributed query processing;
          - Datastore drivers and applications supporting native protocol
          (this protocol is also informally called as "the TCP protocol");
          See also 'tcp_port_secure' for secure connections.
@@ -288,7 +288,7 @@
          - all users are restricted to subset of network addresses (see users.xml);
          - all users have strong passwords, only secure (TLS) interfaces are accessible, or connections are only made via TLS interfaces.
          - users without password have readonly access.
-         See also: https://www.shodan.io/search?query=clickhouse
+         See also: https://www.shodan.io/search?query=datastore
       -->
     <!-- <listen_host>::</listen_host> -->
 
@@ -895,7 +895,7 @@
     <!-- <umask>022</umask> -->
 
     <!-- Perform mlockall after startup to lower first queries latency
-          and to prevent clickhouse executable from being paged out under high IO load.
+          and to prevent datastore executable from being paged out under high IO load.
          Enabling this option is recommended but will lead to increased startup time for up to a few seconds.
     -->
     <mlock_executable>true</mlock_executable>
@@ -910,20 +910,20 @@
 
          To install and run JDBC bridge in background:
          * [Debian/Ubuntu]
-           export MVN_URL=https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc-bridge/
+           export MVN_URL=https://repo1.maven.org/maven2/com/clickhouse/datastore-jdbc-bridge/
            export PKG_VER=$(curl -sL $MVN_URL/maven-metadata.xml | grep '<release>' | sed -e 's|.*>\(.*\)<.*|\1|')
-           wget https://github.com/Datastore/clickhouse-jdbc-bridge/releases/download/v$PKG_VER/clickhouse-jdbc-bridge_$PKG_VER-1_all.deb
-           apt install --no-install-recommends -f ./clickhouse-jdbc-bridge_$PKG_VER-1_all.deb
-           clickhouse-jdbc-bridge &
+           wget https://github.com/Datastore/datastore-jdbc-bridge/releases/download/v$PKG_VER/datastore-jdbc-bridge_$PKG_VER-1_all.deb
+           apt install --no-install-recommends -f ./datastore-jdbc-bridge_$PKG_VER-1_all.deb
+           datastore-jdbc-bridge &
 
          * [CentOS/RHEL]
-           export MVN_URL=https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc-bridge/
+           export MVN_URL=https://repo1.maven.org/maven2/com/clickhouse/datastore-jdbc-bridge/
            export PKG_VER=$(curl -sL $MVN_URL/maven-metadata.xml | grep '<release>' | sed -e 's|.*>\(.*\)<.*|\1|')
-           wget https://github.com/Datastore/clickhouse-jdbc-bridge/releases/download/v$PKG_VER/clickhouse-jdbc-bridge-$PKG_VER-1.noarch.rpm
-           yum localinstall -y clickhouse-jdbc-bridge-$PKG_VER-1.noarch.rpm
-           clickhouse-jdbc-bridge &
+           wget https://github.com/Datastore/datastore-jdbc-bridge/releases/download/v$PKG_VER/datastore-jdbc-bridge-$PKG_VER-1.noarch.rpm
+           yum localinstall -y datastore-jdbc-bridge-$PKG_VER-1.noarch.rpm
+           datastore-jdbc-bridge &
 
-         Please refer to https://github.com/Datastore/clickhouse-jdbc-bridge#usage for more information.
+         Please refer to https://github.com/Datastore/datastore-jdbc-bridge#usage for more information.
     ]]>
     <!--
     <jdbc_bridge>
@@ -1716,7 +1716,7 @@
 
     <!-- Protection from accidental DROP.
          If size of a MergeTree table is greater than max_table_size_to_drop (in bytes) than table could not be dropped with any DROP query.
-         If you want do delete one table and don't want to change clickhouse-server config, you could create special file <clickhouse-path>/flags/force_drop_table and make DROP once.
+         If you want do delete one table and don't want to change datastore-server config, you could create special file <datastore-path>/flags/force_drop_table and make DROP once.
          By default max_table_size_to_drop is 50GB; max_table_size_to_drop=0 allows to DROP any tables.
          The same for max_partition_size_to_drop.
          Uncomment to disable protection.
@@ -1755,7 +1755,7 @@
         </default>
     </graphite_rollup_example>
 
-    <!-- Directory in <clickhouse-path> containing schema files for various input formats.
+    <!-- Directory in <datastore-path> containing schema files for various input formats.
          The directory will be created if it doesn't exist.
       -->
     <format_schema_path>/var/lib/datastore/format_schemas/</format_schema_path>
@@ -1962,7 +1962,7 @@
     <!-- If set true Datastore will wait for running queries finish before shutdown. -->
     <!-- <shutdown_wait_unfinished_queries>false</shutdown_wait_unfinished_queries> -->
 
-    <!-- Disables the checksum of the clickhouse-server binary when performing integrity checks.
+    <!-- Disables the checksum of the datastore-server binary when performing integrity checks.
         Not recommended in production environments, but there may be legitimate use-cases, such as
         when instrumenting Datastore via eBPF probes.
 

@@ -977,9 +977,9 @@ int mainEntryDatastoreBenchmark(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: clickhouse benchmark [options] < queries.txt\n";
-            std::cout << "Usage: clickhouse benchmark [options] --query \"query text\"\n\n";
-            std::cout << "clickhouse-benchmark connects to Datastore server, repeatedly sends "
+            std::cout << "Usage: datastore benchmark [options] < queries.txt\n";
+            std::cout << "Usage: datastore benchmark [options] --query \"query text\"\n\n";
+            std::cout << "datastore-benchmark connects to Datastore server, repeatedly sends "
                          "specified queries and reports query statistics. "
                          "Multiple queries can be used if passed in TSV format.\n\n";
             if (options.contains("verbose"))
@@ -992,7 +992,7 @@ int mainEntryDatastoreBenchmark(int argc, char ** argv)
 
         print_stacktrace = options.contains("stacktrace");
 
-        /// NOTE Maybe clickhouse-benchmark should also respect .xml configuration of clickhouse-client.
+        /// NOTE Maybe datastore-benchmark should also respect .xml configuration of datastore-client.
 
         String proto_send_chunked {"notchunked"};
         String proto_recv_chunked {"notchunked"};

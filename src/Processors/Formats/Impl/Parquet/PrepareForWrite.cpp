@@ -552,7 +552,7 @@ void prepareColumnTuple(
     size_t num_elements = type_tuple->getElements().size();
 
     /// We artificially disallow empty tuples because they're not widely supported.
-    /// But they're supported in clickhouse; if we remove this check, nothing breaks, and clickhouse
+    /// But they're supported in datastore; if we remove this check, nothing breaks, and datastore
     /// can write and read such columns.
     if (num_elements == 0)
         throw Exception(ErrorCodes::BAD_ARGUMENTS, "Parquet doesn't support empty tuples");

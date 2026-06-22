@@ -39,19 +39,19 @@ namespace ErrorCodes
 
 const std::map<std::string, CloudJWTProvider::AuthEndpoints> CloudJWTProvider::managed_service_endpoints = {
     {
-        ".clickhouse-dev.com",
+        ".datastore-dev.com",
         {
-            "https://auth.control-plane.clickhouse-dev.com",
+            "https://auth.control-plane.datastore-dev.com",
             "dKv0XkTAw7rghGiAa5sjPFYGQUVtjzuz",
-            "https://console-api-internal.clickhouse-dev.com"
+            "https://console-api-internal.datastore-dev.com"
         }
     },
     {
-        ".clickhouse-staging.com",
+        ".datastore-staging.com",
         {
-            "https://auth.control-plane.clickhouse-staging.com",
+            "https://auth.control-plane.datastore-staging.com",
             "rpEkizLMmAU95MP4JL8ERefbVXtUQSFs",
-            "https://console-api-internal.clickhouse-staging.com"
+            "https://console-api-internal.datastore-staging.com"
         }
     },
     {

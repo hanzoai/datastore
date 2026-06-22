@@ -6,8 +6,8 @@ endif ()
 
 include(${Datastore_SOURCE_DIR}/cmake/split_debug_symbols.cmake)
 
-# The `clickhouse` binary is a multi purpose tool that contains multiple execution modes (client, server, etc.),
-# So client/server/... is just a symlink to `clickhouse` binary.
+# The `datastore` binary is a multi purpose tool that contains multiple execution modes (client, server, etc.),
+# So client/server/... is just a symlink to `datastore` binary.
 #
 # But, there are several components that requires extra libraries, like keeper
 # requires NuRaft, that regular binary does not requires, so you can disable
@@ -21,14 +21,14 @@ option (ENABLE_DATASTORE_GIT_IMPORT "A tool to analyze Git repositories" ${ENABL
 
 option (ENABLE_DATASTORE_KEEPER "Datastore alternative to ZooKeeper" ${ENABLE_DATASTORE_ALL})
 
-option (ENABLE_DATASTORE_KEEPER_CONVERTER "Util allows to convert ZooKeeper logs and snapshots into clickhouse-keeper snapshot" ${ENABLE_DATASTORE_ALL})
+option (ENABLE_DATASTORE_KEEPER_CONVERTER "Util allows to convert ZooKeeper logs and snapshots into datastore-keeper snapshot" ${ENABLE_DATASTORE_ALL})
 
 option (ENABLE_DATASTORE_KEEPER_CLIENT "Datastore Keeper Client" ${ENABLE_DATASTORE_ALL})
 
 if (NOT ENABLE_NURAFT)
     # RECONFIGURE_MESSAGE_LEVEL should not be used here,
     # since ENABLE_NURAFT is set to OFF for FreeBSD and Darwin.
-    message (STATUS "clickhouse-keeper and clickhouse-keeper-converter will not be built (lack of NuRaft)")
+    message (STATUS "datastore-keeper and datastore-keeper-converter will not be built (lack of NuRaft)")
     set(ENABLE_DATASTORE_KEEPER OFF)
     set(ENABLE_DATASTORE_KEEPER_CONVERTER OFF)
 endif()
@@ -130,39 +130,39 @@ if (ENABLE_DATASTORE_SELF_EXTRACTING AND NOT ENABLE_DUMMY_LAUNCHERS)
     add_subdirectory (self-extracting)
 endif ()
 
-datastore_add_executable (clickhouse main.cpp)
-set_target_properties (clickhouse PROPERTIES OUTPUT_NAME datastore)
+datastore_add_executable (datastore main.cpp)
+set_target_properties (datastore PROPERTIES OUTPUT_NAME datastore)
 
 # A library that prevent usage of several functions from libc.
 if (ARCH_AMD64 AND OS_LINUX AND NOT OS_ANDROID)
     set (HARMFUL_LIB harmful)
 endif ()
 
-target_link_libraries (clickhouse PRIVATE datastore_common_io ${HARMFUL_LIB})
-target_include_directories (clickhouse PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries (datastore PRIVATE datastore_common_io ${HARMFUL_LIB})
+target_include_directories (datastore PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 if (ENABLE_DATASTORE_KEEPER)
-    datastore_target_link_split_lib(clickhouse keeper)
+    datastore_target_link_split_lib(datastore keeper)
 endif()
 if (ENABLE_DATASTORE_KEEPER_CONVERTER)
-    datastore_target_link_split_lib(clickhouse keeper-converter)
+    datastore_target_link_split_lib(datastore keeper-converter)
 endif()
 if (ENABLE_DATASTORE_KEEPER_CLIENT)
-    datastore_target_link_split_lib(clickhouse keeper-client)
+    datastore_target_link_split_lib(datastore keeper-client)
 endif()
-datastore_target_link_split_lib(clickhouse install)
+datastore_target_link_split_lib(datastore install)
 
 macro(datastore_program_alias alias)
     message(STATUS "Adding alias ${alias}")
-    add_custom_command (TARGET clickhouse POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore ${alias})
-    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/${alias}" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
+    add_custom_command (TARGET datastore POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore ${alias})
+    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/${alias}" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
 endmacro()
 
 set (DATASTORE_BUNDLE)
 function(datastore_program_install name lib_name)
-    datastore_target_link_split_lib(clickhouse ${lib_name})
-    add_custom_command (TARGET clickhouse POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore ${name})
-    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
+    datastore_target_link_split_lib(datastore ${lib_name})
+    add_custom_command (TARGET datastore POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore ${name})
+    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
 
     foreach(alias ${ARGN})
         datastore_program_alias(${alias})
@@ -202,31 +202,31 @@ endif ()
 
 if (ENABLE_DATASTORE_KEEPER)
     if (NOT BUILD_STANDALONE_KEEPER)
-        add_custom_command (TARGET clickhouse POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore clickhouse-keeper)
-        install (FILES "${CMAKE_CURRENT_BINARY_DIR}/clickhouse-keeper" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
-        datastore_make_empty_debug_info_for_nfpm(TARGET clickhouse BINARY clickhouse-keeper DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/../${SPLIT_DEBUG_SYMBOLS_DIR})
+        add_custom_command (TARGET datastore POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore datastore-keeper)
+        install (FILES "${CMAKE_CURRENT_BINARY_DIR}/datastore-keeper" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
+        datastore_make_empty_debug_info_for_nfpm(TARGET datastore BINARY datastore-keeper DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/../${SPLIT_DEBUG_SYMBOLS_DIR})
     endif()
 
     # otherwise we don't build keeper
     if (BUILD_STANDALONE_KEEPER)
-        list(APPEND DATASTORE_BUNDLE clickhouse-keeper)
+        list(APPEND DATASTORE_BUNDLE datastore-keeper)
     endif()
 endif ()
 if (ENABLE_DATASTORE_KEEPER_CONVERTER)
-    add_custom_command (TARGET clickhouse POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore clickhouse-keeper-converter)
-    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/clickhouse-keeper-converter" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
+    add_custom_command (TARGET datastore POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore datastore-keeper-converter)
+    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/datastore-keeper-converter" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
 endif ()
 if (ENABLE_DATASTORE_KEEPER_CLIENT)
     if (NOT BUILD_STANDALONE_KEEPER)
-        add_custom_command (TARGET clickhouse POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore clickhouse-keeper-client)
-        install (FILES "${CMAKE_CURRENT_BINARY_DIR}/clickhouse-keeper-client" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
+        add_custom_command (TARGET datastore POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink datastore datastore-keeper-client)
+        install (FILES "${CMAKE_CURRENT_BINARY_DIR}/datastore-keeper-client" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
     endif ()
 endif ()
 
-add_custom_target (clickhouse-bundle ALL DEPENDS ${DATASTORE_BUNDLE})
+add_custom_target (datastore-bundle ALL DEPENDS ${DATASTORE_BUNDLE})
 
 if (USE_BINARY_HASH)
-    add_dependencies(clickhouse hash-binary)
+    add_dependencies(datastore hash-binary)
 
     # When cross-compiling, use the native-built hash-binary; otherwise use the regular build output
     if (CMAKE_CROSSCOMPILING)
@@ -235,46 +235,46 @@ if (USE_BINARY_HASH)
         set(HASH_BINARY_PATH "$<TARGET_FILE:hash-binary>")
     endif()
 
-    add_custom_command(TARGET clickhouse POST_BUILD
-        COMMAND ${HASH_BINARY_PATH} clickhouse > hash 2> /dev/null
-        COMMENT "Computing hash of clickhouse binary" VERBATIM)
+    add_custom_command(TARGET datastore POST_BUILD
+        COMMAND ${HASH_BINARY_PATH} datastore > hash 2> /dev/null
+        COMMENT "Computing hash of datastore binary" VERBATIM)
 
     if (NOT CMAKE_CROSSCOMPILING)
-        add_custom_command(TARGET clickhouse POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E echo "Verifying hash-binary utility matches clickhouse hash-binary..."
-            COMMAND sh -c "./clickhouse hash-binary > hash.verify && diff -u hash hash.verify || (echo 'ERROR: hash-binary utility output does not match clickhouse hash-binary' && exit 1)"
+        add_custom_command(TARGET datastore POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Verifying hash-binary utility matches datastore hash-binary..."
+            COMMAND sh -c "./datastore hash-binary > hash.verify && diff -u hash hash.verify || (echo 'ERROR: hash-binary utility output does not match datastore hash-binary' && exit 1)"
             COMMAND ${CMAKE_COMMAND} -E rm hash.verify
-            COMMENT "Verifying hash-binary output matches clickhouse hash-binary" VERBATIM)
+            COMMENT "Verifying hash-binary output matches datastore hash-binary" VERBATIM)
     endif()
 
-    add_custom_command(TARGET clickhouse POST_BUILD
-        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash clickhouse
-        COMMENT "Adding section '.clickhouse.hash' to clickhouse binary" VERBATIM)
+    add_custom_command(TARGET datastore POST_BUILD
+        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash datastore
+        COMMENT "Adding section '.clickhouse.hash' to datastore binary" VERBATIM)
 endif()
 
 if (CHECK_LARGE_OBJECT_SIZES)
-    add_custom_command(TARGET clickhouse POST_BUILD
+    add_custom_command(TARGET datastore POST_BUILD
         COMMAND "${CMAKE_SOURCE_DIR}/utils/check-large-objects.sh" "${CMAKE_BINARY_DIR}")
 endif ()
 
 if (SPLIT_DEBUG_SYMBOLS)
-    datastore_split_debug_symbols(TARGET clickhouse DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SPLIT_DEBUG_SYMBOLS_DIR} BINARY_PATH clickhouse)
+    datastore_split_debug_symbols(TARGET datastore DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SPLIT_DEBUG_SYMBOLS_DIR} BINARY_PATH datastore)
 else()
-    datastore_make_empty_debug_info_for_nfpm(TARGET clickhouse BINARY clickhouse DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SPLIT_DEBUG_SYMBOLS_DIR})
-    install (TARGETS clickhouse RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT clickhouse)
+    datastore_make_empty_debug_info_for_nfpm(TARGET datastore BINARY datastore DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SPLIT_DEBUG_SYMBOLS_DIR})
+    install (TARGETS datastore RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT datastore)
 endif()
 
 if (BUILD_STRIPPED_BINARY)
-    add_custom_target(clickhouse-stripped ALL
-        COMMAND "${STRIP_PATH}" -o "${CMAKE_CURRENT_BINARY_DIR}/clickhouse-stripped" --strip-debug --remove-section=.comment --remove-section=.note "${CMAKE_CURRENT_BINARY_DIR}/clickhouse"
-        DEPENDS clickhouse
-        COMMENT "Stripping clickhouse binary" VERBATIM)
+    add_custom_target(datastore-stripped ALL
+        COMMAND "${STRIP_PATH}" -o "${CMAKE_CURRENT_BINARY_DIR}/datastore-stripped" --strip-debug --remove-section=.comment --remove-section=.note "${CMAKE_CURRENT_BINARY_DIR}/clickhouse"
+        DEPENDS datastore
+        COMMENT "Stripping datastore binary" VERBATIM)
 endif()
 
 if (ENABLE_TESTS)
     set (DATASTORE_UNIT_TESTS_TARGETS unit_tests_dbms)
-    add_custom_target (clickhouse-tests ALL DEPENDS ${DATASTORE_UNIT_TESTS_TARGETS})
-    add_dependencies(clickhouse-bundle clickhouse-tests)
+    add_custom_target (datastore-tests ALL DEPENDS ${DATASTORE_UNIT_TESTS_TARGETS})
+    add_dependencies(datastore-bundle datastore-tests)
 endif()
 
 if (TARGET ch_contrib::protobuf)
@@ -287,13 +287,13 @@ endif ()
 # FIXME: This should be at the end, to avoid using symbols from chdig if there
 # are the same in one of contribs (the problem was with lz4)
 if (TARGET ch_rust::chdig)
-    target_link_libraries (clickhouse PRIVATE ch_rust::chdig)
+    target_link_libraries (datastore PRIVATE ch_rust::chdig)
 
-    datastore_program_alias(clickhouse-chdig)
+    datastore_program_alias(datastore-chdig)
     datastore_program_alias(chdig)
 else()
     message(STATUS "Adding dummy chdig targets (for nfpm)")
-    foreach (chdig_path ${CMAKE_BINARY_DIR}/chdig ${CMAKE_BINARY_DIR}/clickhouse-chdig)
+    foreach (chdig_path ${CMAKE_BINARY_DIR}/chdig ${CMAKE_BINARY_DIR}/datastore-chdig)
         file(GENERATE OUTPUT ${chdig_path} CONTENT "#!/usr/bin/env sh\necho chdig is not enabled in this Datastore build >&2 && exit 1\n")
         install(FILES ${chdig_path}
             DESTINATION ${CMAKE_INSTALL_BINDIR}

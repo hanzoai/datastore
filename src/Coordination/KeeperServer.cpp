@@ -348,7 +348,7 @@ void KeeperServer::KeeperRaftServer::commit_in_bg()
     DB::setThreadName(ThreadName::KEEPER_COMMIT);
 
     /// Set up query profiler for the commit thread if configured.
-    /// We create a new Context, as if this were a clickhouse query, and set setting
+    /// We create a new Context, as if this were a datastore query, and set setting
     /// query_profiler_real_time_period_ns so that the profiler samples this thread and results
     /// appear in system.trace_log with query_id = 'KeeperCommit' for easy filtering.
     std::optional<ThreadGroupSwitcher> thread_group_switcher;

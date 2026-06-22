@@ -29,9 +29,9 @@ Converts the ASCII Latin symbols in a string to uppercase.
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",
-        "SELECT upper('clickhouse')",
+        "SELECT upper('datastore')",
         R"(
-┌─upper('clickhouse')─┐
+┌─upper('datastore')─┐
 │ CLICKHOUSE          │
 └─────────────────────┘
         )"

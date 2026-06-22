@@ -159,9 +159,9 @@ function _datastore_get_options()
     local command_base="${1/*\/}"
     # Some tools like client/local/benchmark --help will not print all settings, this is done only under --verbose
     case "$command_base" in
-        chc|clickhouse-client) extra_args+=(--verbose) ;;
-        ch|clickhouse-local) extra_args+=(--verbose) ;;
-        clickhouse-benchmark) extra_args+=(--verbose) ;;
+        chc|datastore-client) extra_args+=(--verbose) ;;
+        ch|datastore-local) extra_args+=(--verbose) ;;
+        datastore-benchmark) extra_args+=(--verbose) ;;
     esac
     if [ "$command_base" = "clickhouse" ]; then
         case "$2" in

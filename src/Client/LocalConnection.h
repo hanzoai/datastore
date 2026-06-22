@@ -189,7 +189,7 @@ private:
     /// Optional callback to check if the query was cancelled (e.g. via Ctrl+C).
     /// Set by the client application; used as `interactive_cancel_callback` on the query context.
     std::function<bool()> is_cancelled_callback;
-    String description = "clickhouse-local";
+    String description = "datastore-local";
 
     std::optional<LocalQueryState> state;
 

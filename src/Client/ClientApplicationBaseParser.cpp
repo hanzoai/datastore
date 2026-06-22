@@ -57,8 +57,8 @@ void ClientApplicationBase::parseAndCheckOptions(OptionsDescription & options_de
             && !op.original_tokens[0].empty() && !op.value.empty())
         {
             /// Two special cases for better usability:
-            /// - if the option contains a whitespace, it might be a query: clickhouse "SELECT 1"
-            /// - if the option is a filesystem file, then it's likely a queries file (clickhouse repro.sql)
+            /// - if the option contains a whitespace, it might be a query: datastore "SELECT 1"
+            /// - if the option is a filesystem file, then it's likely a queries file (datastore repro.sql)
             /// These are relevant for interactive usage - user-friendly, but questionable in general.
             /// In case of ambiguity or for scripts, prefer using proper options.
 
@@ -75,7 +75,7 @@ void ClientApplicationBase::parseAndCheckOptions(OptionsDescription & options_de
                 /// The argument looks like a file path (contains `/` or `.`) but doesn't exist on disk.
                 /// Give a clear "no such file" error rather than the generic "positional option is not supported"
                 /// which is confusing when the user meant to pass a file, e.g.:
-                ///     $ clickhouse local /tmp/aaa.rep
+                ///     $ datastore local /tmp/aaa.rep
                 ///     Positional option `/tmp/aaa.rep` is not supported.
                 throw Exception(ErrorCodes::BAD_ARGUMENTS, "No such file: {}", token);
             else

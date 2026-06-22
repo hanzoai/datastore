@@ -12,7 +12,7 @@ class ColumnMapper;
 namespace DB::Parquet
 {
 
-/// Converting parquet schema to clickhouse schema + information for decoding.
+/// Converting parquet schema to datastore schema + information for decoding.
 /// Used both for schema inference and for reading.
 struct SchemaConverter
 {
@@ -68,9 +68,9 @@ private:
         /// E.g. name is initially the parent element's name, then the callee appends a path
         /// component to it.
         ///
-        /// If there's ColumnMapper, `name` is the mapped name (clickhouse column name), while
+        /// If there's ColumnMapper, `name` is the mapped name (datastore column name), while
         /// `parquet_name` is the name according to the parquet schema.
-        /// If `parquet_name` is nullopt, the clickhouse and parquet names are equal.
+        /// If `parquet_name` is nullopt, the datastore and parquet names are equal.
         String name;
         std::optional<String> parquet_name;
         DataTypePtr type_hint;

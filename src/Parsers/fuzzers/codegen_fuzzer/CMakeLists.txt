@@ -12,8 +12,8 @@ configure_file(
     COPYONLY)
 
 configure_file(
-    "${CURRENT_DIR_IN_SOURCES}/clickhouse-template.g"
-    "${CURRENT_DIR_IN_BINARY}/clickhouse-template.g"
+    "${CURRENT_DIR_IN_SOURCES}/datastore-template.g"
+    "${CURRENT_DIR_IN_BINARY}/datastore-template.g"
     COPYONLY)
 
 # Note that it depends on all.dict file!

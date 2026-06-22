@@ -196,7 +196,7 @@ SELECT hostName()
         )",
         R"(
 ┌─hostName()─┐
-│ clickhouse │
+│ datastore │
 └────────────┘
         )"
     }

@@ -25,7 +25,7 @@ bool ParserPolyglotQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expecte
     /// SET queries are standard Datastore SQL and must be handled normally
     /// so that settings like `dialect` and `polyglot_dialect` can be changed.
     /// This is checked before the feature gate so users can recover from
-    /// misconfigured profiles (e.g. `SET dialect = 'clickhouse'`).
+    /// misconfigured profiles (e.g. `SET dialect = 'datastore'`).
     ParserSetQuery set_p;
     if (set_p.parse(pos, node, expected))
         return true;

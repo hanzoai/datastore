@@ -386,7 +386,7 @@ Token Lexer::nextTokenImpl()
                     /// or #! as a special case for "shebang".
                     /// #hello - not a comment
                     /// # hello - a comment
-                    /// #!/usr/bin/clickhouse-local --queries-file - a comment
+                    /// #!/usr/bin/datastore-local --queries-file - a comment
             ++pos;
             if (pos < end && (*pos == ' ' || *pos == '!'))
                 return comment_until_end_of_line();

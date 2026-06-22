@@ -13,10 +13,10 @@
   * Keys for codecs are loaded from <encryption_codecs> section of configuration file via value given in config/env/ZooKeeper.
   *
   * How to use:
-  *     ./encrypt_decrypt /etc/clickhouse-server/config.xml -e AES_128_GCM_SIV text_to_encrypt
+  *     ./encrypt_decrypt /etc/datastore-server/config.xml -e AES_128_GCM_SIV text_to_encrypt
   *
   * config.xml example:
-<clickhouse>
+<datastore>
     <encryption_codecs>
         <aes_128_gcm_siv>
             <key_hex>530933fba27708642288fecc4ec02c96</key_hex>
@@ -66,7 +66,7 @@ int mainEntryExampleEncryptDecrypt(int argc, char ** argv)
                       << "codec: AES_128_GCM_SIV or AES_256_GCM_SIV." << std::endl
                       << std::endl
                       << "Example:" << std::endl
-                      << "    ./encrypt_decrypt /etc/clickhouse-server/config.xml -e AES_128_GCM_SIV text_to_encrypt";
+                      << "    ./encrypt_decrypt /etc/datastore-server/config.xml -e AES_128_GCM_SIV text_to_encrypt";
             return 3;
         }
 

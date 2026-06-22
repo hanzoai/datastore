@@ -15,7 +15,7 @@ _main() {
         exit 1
     fi
 
-    cat clickhouse-template.g > clickhouse.g
+    cat datastore-template.g > clickhouse.g
     
     while read line;
     do

@@ -27,7 +27,7 @@ SELECT fragment('https://clickhouse.com/docs/getting-started/quick-start/cloud#1
             )",
             R"(
 ┌─fragment('http⋯ouse-service')─┐
-│ 1-create-a-clickhouse-service │
+│ 1-create-a-datastore-service │
 └───────────────────────────────┘
             )"
         }

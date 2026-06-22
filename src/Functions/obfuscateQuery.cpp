@@ -45,7 +45,7 @@ namespace
 const KnownIdentifierFunc & getKnownIdentifierFunc()
 {
     /// Built once per process: the registered names are populated at server startup
-    /// and do not change afterwards. Mirrors the logic of `clickhouse-format --obfuscate`
+    /// and do not change afterwards. Mirrors the logic of `datastore-format --obfuscate`
     /// in programs/format/Format.cpp so that names of functions, aggregate functions,
     /// table functions, formats, storages, data types, settings, codecs, etc. are kept
     /// as-is instead of being replaced by random words.

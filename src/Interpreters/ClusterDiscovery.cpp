@@ -396,7 +396,7 @@ ClusterPtr ClusterDiscovery::makeCluster(const ClusterInfo & cluster_info)
         /* password= */ cluster_info.password,
         /* datastore_port= */ secure ? context->getTCPPortSecure().value_or(DBMS_DEFAULT_SECURE_PORT) : context->getTCPPort(),
         /* treat_local_as_remote= */ false,
-        /* treat_local_port_as_remote= */ false, /// should be set only for clickhouse-local, but cluster discovery is not used there
+        /* treat_local_port_as_remote= */ false, /// should be set only for datastore-local, but cluster discovery is not used there
         /* secure= */ secure,
         /* bind_host= */ "",
         /* priority= */ Priority{1},

@@ -1,16 +1,16 @@
-## clickhouse-obfuscator — a tool for dataset anonymization
+## datastore-obfuscator — a tool for dataset anonymization
 
 ### Installation And Usage
 
 ```
 curl https://clickhouse.com/ | sh
-./clickhouse obfuscator --help
+./datastore obfuscator --help
 ```
 
 ### Example
 
 ```
-./clickhouse obfuscator --seed 123 --input-format TSV --output-format TSV \
+./datastore obfuscator --seed 123 --input-format TSV --output-format TSV \
   --structure 'CounterID UInt32, URLDomain String, URL String, SearchPhrase String, Title String' \
   < source.tsv > result.tsv 
 ```
@@ -330,12 +330,12 @@ PhotoFunian Dünyasın takımız halles en kulları - TEZ
 
 ## Results
 
-After trying four methods, I got so tired of this problem that it was time just to choose something, make it into a usable tool, and announce the solution. I chose the solution that uses random permutations and Markov models parameterized by a key. It is implemented as the clickhouse-obfuscator program, which is very easy to use. The input is a table dump in any supported format (such as CSV or JSONEachRow), and the command line parameters specify the table structure (column names and types) and the secret key (any string, which you can forget immediately after use). The output is the same number of rows of obfuscated data.
+After trying four methods, I got so tired of this problem that it was time just to choose something, make it into a usable tool, and announce the solution. I chose the solution that uses random permutations and Markov models parameterized by a key. It is implemented as the datastore-obfuscator program, which is very easy to use. The input is a table dump in any supported format (such as CSV or JSONEachRow), and the command line parameters specify the table structure (column names and types) and the secret key (any string, which you can forget immediately after use). The output is the same number of rows of obfuscated data.
 
-The program is installed with `clickhouse-client`, has no dependencies, and works on almost any flavor of Linux. You can apply it to any database dump, not just Datastore. For instance, you can generate test data from MySQL or PostgreSQL databases or create development databases that are similar to your production databases.
+The program is installed with `datastore-client`, has no dependencies, and works on almost any flavor of Linux. You can apply it to any database dump, not just Datastore. For instance, you can generate test data from MySQL or PostgreSQL databases or create development databases that are similar to your production databases.
  
 ```bash
-clickhouse-obfuscator \
+datastore-obfuscator \
     --seed "$(head -c16 /dev/urandom | base64)" \
     --input-format TSV --output-format TSV \
     --structure 'CounterID UInt32, URLDomain String, \
@@ -344,7 +344,7 @@ clickhouse-obfuscator \
 ```
  
 ```bash
- clickhouse-obfuscator --help
+ datastore-obfuscator --help
 ```
 
 Of course, everything isn't so cut and dry because data transformed by this program is almost completely reversible. The question is whether it is possible to perform the reverse transformation without knowing the key. If the transformation used a cryptographic algorithm, this operation would be as difficult as a brute-force search. Although the transformation uses some cryptographic primitives, they are not used in the correct way, and the data is susceptible to certain methods of analysis. To avoid problems, these issues are covered in the documentation for the program (access it using --help).

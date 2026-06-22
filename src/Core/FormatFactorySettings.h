@@ -1539,11 +1539,11 @@ For streaming inserts, you must also set `min_insert_block_size_rows=0` and `min
 **Example: streaming Wikipedia recent changes into Datastore**
 
 ```bash
-clickhouse-client --query 'CREATE TABLE wikipedia_edits (data JSON)'
+datastore-client --query 'CREATE TABLE wikipedia_edits (data JSON)'
 
 curl -sS --globoff -H 'Accept: application/json' --no-buffer \
   'https://stream.wikimedia.org/v2/stream/recentchange' \
-  | clickhouse-client \
+  | datastore-client \
       --query 'INSERT INTO wikipedia_edits FORMAT JSONAsObject' \
       --input_format_max_block_wait_ms 1000 \
       --input_format_connection_handling 1 \

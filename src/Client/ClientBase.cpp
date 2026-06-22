@@ -1962,7 +1962,7 @@ void ClientBase::sendData(Block & sample, const ColumnsDescription & columns_des
     if (!parsed_insert_query)
         return;
 
-    /// If it's clickhouse-local, and the input data reading is already baked into the query pipeline,
+    /// If it's datastore-local, and the input data reading is already baked into the query pipeline,
     /// don't read the data again here. This happens in some cases (e.g. input() table function) but not others (e.g. INFILE).
     if (!connection->isSendDataNeeded())
         return;
@@ -3021,7 +3021,7 @@ bool ClientBase::processQueryText(const String & text)
         return false;
 
     /// Clear the terminal (POSIX `clear`-style), not SQL. Same entry point as `ls` / `\i` meta-commands.
-    /// Only in interactive mode, or in clickhouse-local (including `-q`), so `clickhouse-client` batch
+    /// Only in interactive mode, or in datastore-local (including `-q`), so `datastore-client` batch
     /// mode still parses `clear` as SQL and errors on mistakes (UNKNOWN_IDENTIFIER).
     if ((boost::iequals(trimmed_input, "clear") || boost::iequals(trimmed_input, "/clear"))
         && (is_interactive || supportsLocalMetaCommands()))
@@ -3362,7 +3362,7 @@ void ClientBase::addCommonOptions(OptionsDescription & options_description)
     chassert(!options_description.main_description.has_value(), "The options_description.main_description should be initialized by the method addCommonOptions().");
 
     options_description.main_description.emplace(createOptionsDescription("Main options", terminal_width));
-    /// Common options for clickhouse-client and clickhouse-local.
+    /// Common options for datastore-client and datastore-local.
     options_description.main_description->add_options()
         ("help", "Print usage summary and exit; combine with --verbose to display all options")
         ("verbose", "Increase output verbosity")
@@ -3402,7 +3402,7 @@ void ClientBase::addCommonOptions(OptionsDescription & options_description)
         ("log-level", po::value<std::string>(), "Log level")
         ("server_logs_file", po::value<std::string>(), "Write server logs to specified file")
 
-        ("format,f", po::value<std::string>(), "Default input and output format. In clickhouse-client only the default output format.")
+        ("format,f", po::value<std::string>(), "Default input and output format. In datastore-client only the default output format.")
         ("output-format", po::value<std::string>(), "Default output format. Takes precedence over --format.")
         ("vertical,E", "Same as --format=Vertical or FORMAT Vertical or \\G at end of command")
 
@@ -3868,8 +3868,8 @@ bool ClientBase::processMultiQueryFromFile(const String & file_name)
     ReadBufferFromFile in(file_name);
     readStringUntilEOF(queries_from_file, in);
 
-    /// For `clickhouse-local` only: same entry point as `-q` / stdin so meta-commands (`clear`, `ls`,
-    /// `\i`, …) work for whole-file input. Remote `clickhouse-client` keeps `executeMultiQuery` so
+    /// For `datastore-local` only: same entry point as `-q` / stdin so meta-commands (`clear`, `ls`,
+    /// `\i`, …) work for whole-file input. Remote `datastore-client` keeps `executeMultiQuery` so
     /// `--queries-file` does not apply `exit_strings` and other text-level metas (avoids silent
     /// behavior changes for batch automation).
     if (supportsLocalMetaCommands())
@@ -3943,13 +3943,13 @@ fs::path ClientBase::getHistoryFilePath()
     if (history_file_from_env)
         return history_file_from_env;
 
-    /// Client query history was stored in ~/.clickhouse-client-history
+    /// Client query history was stored in ~/.datastore-client-history
     /// before moving to $XDG_STATE_HOME/clickhouse/client-query-history.
     /// We'll pick up the old file and use it if it is already present.
     auto * home_path = getenv("HOME"); // NOLINT(concurrency-mt-unsafe)
     if (home_path)
     {
-        auto path_in_home_dir = fs::path(home_path) / ".clickhouse-client-history";
+        auto path_in_home_dir = fs::path(home_path) / ".datastore-client-history";
 
         if (fs::exists(path_in_home_dir))
             return path_in_home_dir;
@@ -3972,7 +3972,7 @@ void ClientBase::clearTerminal()
     /// and clear until end of screen.
     /// It is needed if garbage is left in terminal.
     /// Show cursor. It can be left hidden by invocation of previous programs.
-    /// A test for this feature: perl -e 'print "x"x100000'; echo -ne '\033[0;0H\033[?25l'; clickhouse-client
+    /// A test for this feature: perl -e 'print "x"x100000'; echo -ne '\033[0;0H\033[?25l'; datastore-client
     output_stream << "\r" "\033[0J" "\033[?25h";
 }
 
