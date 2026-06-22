@@ -5,15 +5,26 @@
 #include <Common/logger_useful.h>
 #include <Common/Exception.h>
 
-#include <chrono>
+#include <kj/async.h>
+#include <kj/async-io.h>
+#include <kj/memory.h>
+#include <zap/capability.h>
+#include <zap/rpc-twoparty.h>
+
+#include <condition_variable>
+#include <mutex>
 
 namespace DB
 {
 
-/// Opaque KJ state. Empty for the transport-plumbing scaffold; the KJ event loop, listener and
-/// zap-rpc TwoPartyServer are layered here next (see ZapServer.h doc).
+/// KJ event-loop state. KJ promises/fulfillers are thread-confined; the only safe cross-thread
+/// signal is a CrossThreadPromiseFulfiller, created inside the loop thread and fulfilled from stop().
 struct ZapServer::Runtime
 {
+    std::mutex mutex;
+    std::condition_variable ready_cv;
+    bool ready = false;
+    kj::Own<kj::CrossThreadPromiseFulfiller<void>> stop_fulfiller;
 };
 
 ZapServer::ZapServer(IServer & server_, const Poco::Net::SocketAddress & address_)
@@ -46,21 +57,62 @@ void ZapServer::start()
 void ZapServer::stop()
 {
     should_stop.store(true);
-    if (runtime_thread.joinable())
-        runtime_thread.join();
+    if (!runtime_thread.joinable())
+        return;
+
+    /// Wait until run() has published its cross-thread fulfiller, then fulfill it to unwind the
+    /// event loop. (The fulfiller is created on the loop thread but safe to fulfill from here.)
+    {
+        std::unique_lock<std::mutex> lock(runtime->mutex);
+        runtime->ready_cv.wait(lock, [this] { return runtime->ready; });
+        if (runtime->stop_fulfiller)
+            runtime->stop_fulfiller->fulfill();
+    }
+    runtime_thread.join();
 }
 
 void ZapServer::run()
 {
-    /// Transport-plumbing scaffold: the port is bound by the acceptor in Server.cpp; this thread
-    /// will host the KJ event loop + zap-rpc TwoPartyServer (promise pipelining) serving the .zap
-    /// query interface. Until that lands it parks so start/stop and the ProtocolServerAdapter
-    /// lifecycle are exercised end to end.
-        (void)server; /// retained for the query service (executeQuery dispatch) layered next
-LOG_INFO(log, "ZAP server started on {} (native transport; query service pending)", address.toString());
-    while (!should_stop.load())
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    LOG_INFO(log, "ZAP server stopped on {}", address.toString());
+    (void)server; /// retained for the query service (executeQuery dispatch) layered next
+
+    try
+    {
+        auto io = kj::setupAsyncIo();
+
+        auto paf = kj::newPromiseAndCrossThreadFulfiller<void>();
+        {
+            std::lock_guard<std::mutex> lock(runtime->mutex);
+            runtime->stop_fulfiller = kj::mv(paf.fulfiller);
+            runtime->ready = true;
+        }
+        runtime->ready_cv.notify_all();
+
+        /// Null bootstrap for now — proves the zap-rpc handshake + pipelining transport. The .zap
+        /// query interface (executeQuery dispatch, result streaming) is served as the bootstrap next.
+        zap::TwoPartyServer rpc_server(zap::Capability::Client(nullptr));
+
+        auto parsed = io.provider->getNetwork()
+                          .parseAddress(address.host().toString(), address.port())
+                          .wait(io.waitScope);
+        auto listener = parsed->listen();
+
+        LOG_INFO(log, "ZAP server listening on {} (zap-rpc, promise pipelining)", address.toString());
+
+        /// listen() never resolves on its own; race it against the stop promise so stop() unwinds us.
+        rpc_server.listen(*listener).exclusiveJoin(kj::mv(paf.promise)).wait(io.waitScope);
+
+        LOG_INFO(log, "ZAP server stopped on {}", address.toString());
+    }
+    catch (const kj::Exception & e)
+    {
+        /// Publish readiness even on failure so stop() never deadlocks waiting for it.
+        {
+            std::lock_guard<std::mutex> lock(runtime->mutex);
+            runtime->ready = true;
+        }
+        runtime->ready_cv.notify_all();
+        LOG_ERROR(log, "ZAP server error on {}: {}", address.toString(), std::string(e.getDescription().cStr()));
+    }
 }
 
 }
