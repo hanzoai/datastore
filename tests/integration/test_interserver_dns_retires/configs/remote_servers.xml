@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <remote_servers>
     <cluster_missing_replica>
       <shard>
@@ -28,5 +28,5 @@
       </shard>
     </cluster_missing_replica>
   </remote_servers>
-</clickhouse>
+</datastore>
 

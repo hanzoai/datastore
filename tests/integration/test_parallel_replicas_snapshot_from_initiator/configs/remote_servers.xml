@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <parallel_replicas>
             <shard>
@@ -30,4 +30,4 @@
             </shard>
         </parallel_replicas>
     </remote_servers>
-</clickhouse>
+</datastore>

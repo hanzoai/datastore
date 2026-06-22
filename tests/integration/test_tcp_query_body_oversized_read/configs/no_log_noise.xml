@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Keep system-log noise low so the small container has room. -->
     <asynchronous_metric_log remove="remove"/>
     <metric_log remove="remove"/>
@@ -8,4 +8,4 @@
     <text_log remove="remove"/>
     <trace_log remove="remove"/>
     <processors_profile_log remove="remove"/>
-</clickhouse>
+</datastore>

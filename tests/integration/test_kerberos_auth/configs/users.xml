@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
@@ -16,4 +16,4 @@
             <quota>default</quota>
         </kuser>
     </users>
-</clickhouse>
+</datastore>

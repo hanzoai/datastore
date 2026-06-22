@@ -411,10 +411,10 @@ def test_host_is_drop_from_cache_after_consecutive_failures(cluster_ready):
 
 def _render_filter_config(allow_ipv4, allow_ipv6):
     config = f"""
-    <clickhouse>
+    <datastore>
         <dns_allow_resolve_names_to_ipv4>{int(allow_ipv4)}</dns_allow_resolve_names_to_ipv4>
         <dns_allow_resolve_names_to_ipv6>{int(allow_ipv6)}</dns_allow_resolve_names_to_ipv6>
-    </clickhouse>
+    </datastore>
     """
     return config
 

@@ -24,10 +24,10 @@ node2 = cluster.add_instance(
 )
 
 config = """
-<clickhouse>
+<datastore>
     <replicated_fetches_http_connection_timeout>30</replicated_fetches_http_connection_timeout>
     <replicated_fetches_http_receive_timeout>1</replicated_fetches_http_receive_timeout>
-</clickhouse>
+</datastore>
 """
 
 

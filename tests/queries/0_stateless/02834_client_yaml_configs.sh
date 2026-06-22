@@ -15,7 +15,7 @@ echo "max_block_size: 31338" > clickhouse-client.yml
 ${CLICKHOUSE_CLIENT} --query "SELECT getSetting('max_block_size')"
 rm clickhouse-client.yml
 
-echo "<clickhouse><max_block_size>31339</max_block_size></clickhouse>" > clickhouse-client.xml
+echo "<datastore><max_block_size>31339</max_block_size></datastore>" > clickhouse-client.xml
 ${CLICKHOUSE_CLIENT} --query "SELECT getSetting('max_block_size')"
 rm clickhouse-client.xml
 

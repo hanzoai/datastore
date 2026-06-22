@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
@@ -9,4 +9,4 @@
             <no_password></no_password>
         </default>
     </users>
-</clickhouse>
+</datastore>

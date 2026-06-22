@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <zookeeper>
         <!--<zookeeper_load_balancing>random / in_order / nearest_hostname / hostname_levenshtein_distance / first_or_random / round_robin</zookeeper_load_balancing>-->
         <zookeeper_load_balancing>random</zookeeper_load_balancing>
@@ -18,4 +18,4 @@
             <root>/test/chroot/auxiliary_zookeeper2</root>
         </zookeeper2>
     </auxiliary_zookeepers>
-</clickhouse>
+</datastore>

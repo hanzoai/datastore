@@ -6,4 +6,4 @@
     <google_protos_path replace="replace">../../contrib/google-protobuf/src/</google_protos_path>
     <access_control_path replace="replace">./access/</access_control_path>
     <top_level_domains_path replace="replace">./top_level_domains/</top_level_domains_path>
-</clickhouse>
+</datastore>

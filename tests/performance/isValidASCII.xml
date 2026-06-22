@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<clickhouse>
+<datastore>
     <create_query>
         CREATE TABLE IF NOT EXISTS tab (
             id UInt32,
@@ -35,4 +35,4 @@
     <query>SELECT isValidASCII(long_utf8) FROM tab FORMAT Null</query>
 
     <drop_query>DROP TABLE tab</drop_query>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <allow_experimental_cluster_discovery>1</allow_experimental_cluster_discovery>
     <remote_servers>
         <dynamic_clusters1>
@@ -14,4 +14,4 @@
             </discovery>
         </dynamic_clusters2>
     </remote_servers>
-</clickhouse>
+</datastore>

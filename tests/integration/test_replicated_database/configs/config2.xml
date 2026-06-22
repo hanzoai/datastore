@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <database_atomic_delay_before_drop_table_sec>10</database_atomic_delay_before_drop_table_sec>
     <allow_moving_table_directory_to_trash>1</allow_moving_table_directory_to_trash>
     <merge_tree>
@@ -8,4 +8,4 @@
     <allow_experimental_transactions>42</allow_experimental_transactions>
     <replica_group_name>group</replica_group_name>
     <async_load_databases>false</async_load_databases>
-</clickhouse>
+</datastore>

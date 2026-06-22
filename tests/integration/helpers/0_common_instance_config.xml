@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <timezone>Etc/UTC</timezone>
     <listen_host>0.0.0.0</listen_host>
     <custom_settings_prefixes>custom_</custom_settings_prefixes>
@@ -61,4 +61,4 @@
     <asynchronous_metric_log remove="1"/>
     <processors_profile_log remove="1"/>
     <query_thread_log remove="1"/>
-</clickhouse>
+</datastore>

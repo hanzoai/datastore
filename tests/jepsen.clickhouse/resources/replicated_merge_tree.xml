@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <default_replica_path>/clickhouse/tables/{database}/{table}</default_replica_path>
     <default_replica_name>{replica}</default_replica_name>
 
@@ -49,4 +49,4 @@
         <cleanup_delay_period>60</cleanup_delay_period>
         <max_tasks_in_queue>1000</max_tasks_in_queue>
     </distributed_ddl>
-</clickhouse>
+</datastore>

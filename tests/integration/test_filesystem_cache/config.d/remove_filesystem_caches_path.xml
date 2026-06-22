@@ -1,3 +1,3 @@
-<clickhouse>
+<datastore>
     <custom_cached_disks_base_directory remove="remove"/>
-</clickhouse>
+</datastore>

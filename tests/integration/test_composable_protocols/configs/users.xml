@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
@@ -20,4 +20,4 @@
             <profile>default</profile>
         </user123>
     </users>
-</clickhouse>
+</datastore>

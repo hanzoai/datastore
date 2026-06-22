@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
     <send_crash_reports>
         <enabled>true</enabled>
         <debug>true</debug>
         <endpoint>http://localhost:9500/</endpoint>
     </send_crash_reports>
-</clickhouse>
+</datastore>

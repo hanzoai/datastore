@@ -77,7 +77,7 @@ Enable experimental transaction support by adding this setting to your [configur
 ```xml
 <datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-</clickhouse>
+</datastore>
 ```
 
 For more information see the page [Transactional (ACID) support](/guides/developer/transactional#transactions-commit-and-rollback).
@@ -127,7 +127,7 @@ This function is part of an experimental feature set. Enable experimental transa
 ```xml
 <datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-</clickhouse>
+</datastore>
 ```
 
 For more information see the page [Transactional (ACID) support](/guides/developer/transactional#transactions-commit-and-rollback).
@@ -169,7 +169,7 @@ This function is part of an experimental feature set. Enable experimental transa
 ```xml
 <datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
-</clickhouse>
+</datastore>
 ```
 
 For more information see the page [Transactional (ACID) support](/guides/developer/transactional#transactions-commit-and-rollback).

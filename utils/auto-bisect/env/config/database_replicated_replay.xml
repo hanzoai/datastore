@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <zookeeper>
         <node index="1">
             <host>localhost</host>
@@ -80,4 +80,4 @@
     <merge_tree>
         <deduplicate_merge_projection_mode>ignore</deduplicate_merge_projection_mode>
     </merge_tree>
-</clickhouse>
+</datastore>

@@ -10,9 +10,9 @@ node = cluster.add_instance(
     stay_alive=True,
 )
 
-config = """<clickhouse>
+config = """<datastore>
     <max_materialized_views_count_for_table>2</max_materialized_views_count_for_table>
-</clickhouse>
+</datastore>
 """
 
 

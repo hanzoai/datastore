@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <custom_local_disks_base_directory>/var/lib/clickhouse/disks/</custom_local_disks_base_directory>
     <database_disk>
         <disk>global_db_disk</disk>
@@ -29,4 +29,4 @@
             </s3_plain_rewritable>
         </disks>
     </storage_configuration>
-</clickhouse>
+</datastore>

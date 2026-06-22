@@ -59,7 +59,7 @@ LAYOUT(LAYOUT_TYPE(param value)) -- layout settings
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         ...
         <layout>
@@ -69,7 +69,7 @@ LAYOUT(LAYOUT_TYPE(param value)) -- layout settings
         </layout>
         ...
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <default>
@@ -40,4 +40,4 @@
     <merge_tree>
         <storage_policy>jbod</storage_policy>
     </merge_tree>
-</clickhouse>
+</datastore>

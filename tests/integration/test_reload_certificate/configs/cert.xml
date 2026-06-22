@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <https_port>8443</https_port>
     <openSSL>
         <server>
@@ -10,4 +10,4 @@
             <preferServerCiphers>true</preferServerCiphers>
         </server>
     </openSSL>
-</clickhouse>
+</datastore>

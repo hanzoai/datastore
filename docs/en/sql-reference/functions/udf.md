@@ -450,9 +450,9 @@ WebAssembly User Defined Functions (WASM UDFs) allow you to run custom code comp
 Enable experimental WebAssembly support in your ClickHouse configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_webassembly_udf>true</allow_experimental_webassembly_udf>
-</clickhouse>
+</datastore>
 ```
 
 Insert your compiled WASM module into the system table:

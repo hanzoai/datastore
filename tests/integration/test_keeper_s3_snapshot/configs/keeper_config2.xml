@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <s3_snapshot>
             <endpoint>http://minio1:9001/snapshots/</endpoint>
@@ -40,4 +40,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

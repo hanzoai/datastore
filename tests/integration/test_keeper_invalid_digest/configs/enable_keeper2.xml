@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <use_cluster>false</use_cluster>
         <tcp_port>9181</tcp_port>
@@ -33,4 +33,4 @@
         <log>/var/log/clickhouse-server/clickhouse-server.log</log>
         <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
     </logger>
-</clickhouse>
+</datastore>

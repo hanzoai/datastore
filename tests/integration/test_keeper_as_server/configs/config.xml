@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <prometheus>
         <endpoint>/metrics</endpoint>
         <port>8001</port>
@@ -39,4 +39,4 @@
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>

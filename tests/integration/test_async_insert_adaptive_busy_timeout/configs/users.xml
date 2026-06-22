@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <async_insert_use_adaptive_busy_timeout>1</async_insert_use_adaptive_busy_timeout>
@@ -11,4 +11,4 @@
             <profile>default</profile>
         </default>
     </users>
-</clickhouse>
+</datastore>

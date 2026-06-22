@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <remote1>
             <host>127.0.0.2</host>
@@ -50,4 +50,4 @@
             <format>RawBLOB</format>
         </url_override2>
     </named_collections>
-</clickhouse>
+</datastore>

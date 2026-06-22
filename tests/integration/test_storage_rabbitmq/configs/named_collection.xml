@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <named_collections>
     <rabbit1>
         <rabbitmq_host_port>rabbitmq1:5672</rabbitmq_host_port>
@@ -11,4 +11,4 @@
         <rabbitmq_password>clickhouse</rabbitmq_password>
     </rabbit1>
   </named_collections>
-</clickhouse>
+</datastore>

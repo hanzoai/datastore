@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <dictionary>
         <name>postgres_odbc_nopool</name>
         <source>
@@ -38,4 +38,4 @@
 
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>

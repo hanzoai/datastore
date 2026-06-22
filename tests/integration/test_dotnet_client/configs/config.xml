@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
 
     <logger>
         <level>trace</level>
@@ -13,4 +13,4 @@
 
     <path>./clickhouse/</path>
     <users_config>users.xml</users_config>
-</clickhouse>
+</datastore>

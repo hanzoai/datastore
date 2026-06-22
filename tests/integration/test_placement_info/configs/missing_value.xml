@@ -1,5 +1,5 @@
-<clickhouse>
+<datastore>
     <placement>
         <use_imds>0</use_imds>
     </placement>
-</clickhouse>
+</datastore>

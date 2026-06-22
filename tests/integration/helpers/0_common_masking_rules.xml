@@ -1,6 +1,6 @@
 <!-- Config for test server -->
 <!-- Same file as tests/config/config.d/query_masking_rules.xml -->
-<clickhouse>
+<datastore>
     <query_masking_rules>
         <rule_topsecret>
             <name>Detect passwords in tests</name>
@@ -8,4 +8,4 @@
             <throw_on_match>true</throw_on_match>
         </rule_topsecret>
     </query_masking_rules>
-</clickhouse>
+</datastore>

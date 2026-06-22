@@ -1,5 +1,5 @@
 
-<clickhouse>
+<datastore>
     <http_handlers>
         <rule>
             <methods>POST</methods>
@@ -15,4 +15,4 @@
         </rule>
         <defaults/>
     </http_handlers>
-</clickhouse>
+</datastore>

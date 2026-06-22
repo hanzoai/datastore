@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <ignore_on_cluster_for_replicated_named_collections_queries>0</ignore_on_cluster_for_replicated_named_collections_queries>
@@ -15,4 +15,4 @@
             <show_named_collections_secrets>1</show_named_collections_secrets>
         </default>
     </users>
-</clickhouse>
+</datastore>

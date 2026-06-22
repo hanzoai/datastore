@@ -9,7 +9,7 @@ import time
 from argparse import ArgumentParser
 
 XML_TEMPLATE = """
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <log>{data_dir}/clickhouse-keeper.log</log>
@@ -52,7 +52,7 @@ XML_TEMPLATE = """
             </server>
         </raft_configuration>
     </keeper_server>
-</clickhouse>
+</datastore>
 
 """
 

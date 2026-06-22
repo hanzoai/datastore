@@ -191,11 +191,11 @@ def test_no_sign_config(started_cluster):
     with instance.with_replace_config(
         "/etc/clickhouse-server/config.d/s3_no_sign_request.xml",
         """
-<clickhouse>
+<datastore>
     <s3>
         <no_sign_request>1</no_sign_request>
     </s3>
-</clickhouse>
+</datastore>
 """,
     ):
         instance.restart_clickhouse()
@@ -205,14 +205,14 @@ def test_no_sign_config(started_cluster):
     with instance.with_replace_config(
         "/etc/clickhouse-server/config.d/s3_no_sign_request.xml",
         f"""
-<clickhouse>
+<datastore>
     <s3>
         <endpoint_no_sign>
             <endpoint>http://{started_cluster.minio_host}:{started_cluster.minio_port}/{bucket}/test_cache5.jsonl</endpoint>
             <no_sign_request>1</no_sign_request>
         </endpoint_no_sign>
     </s3>
-</clickhouse>
+</datastore>
 """,
     ):
         instance.restart_clickhouse()

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <azure>
@@ -43,4 +43,4 @@
             </azure_encrypted>
         </policies>
     </storage_configuration>
-</clickhouse>
+</datastore>

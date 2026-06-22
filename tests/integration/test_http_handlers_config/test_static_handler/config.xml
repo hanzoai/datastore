@@ -1,5 +1,5 @@
 
-<clickhouse>
+<datastore>
     <test_get_config_static_handler>Test get static handler and config content</test_get_config_static_handler>
 
     <http_handlers>
@@ -52,4 +52,4 @@
         </rule>
 
     </http_handlers>
-</clickhouse>
+</datastore>

@@ -1,5 +1,5 @@
 
-<clickhouse>
+<datastore>
     <http_handlers>
         <rule>
             <methods>GET</methods>
@@ -8,4 +8,4 @@
             <handler><type>replicas_status</type></handler>
         </rule>
     </http_handlers>
-</clickhouse>
+</datastore>

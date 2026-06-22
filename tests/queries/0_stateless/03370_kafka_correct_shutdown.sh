@@ -6,9 +6,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$CUR_DIR"/../shell_config.sh
 
 echo "
-<clickhouse>
+<datastore>
     <max_table_num_to_throw>1</max_table_num_to_throw>
-</clickhouse>
+</datastore>
 " > $CLICKHOUSE_TEST_UNIQUE_NAME.xml
 
 $CLICKHOUSE_LOCAL --config $CLICKHOUSE_TEST_UNIQUE_NAME.xml -m -q "

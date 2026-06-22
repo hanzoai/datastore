@@ -1,3 +1,3 @@
-<clickhouse>
+<datastore>
     <timezone>Etc/UTC</timezone>
-</clickhouse>
+</datastore>

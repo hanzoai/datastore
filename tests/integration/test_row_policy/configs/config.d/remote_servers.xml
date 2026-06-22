@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <remote_servers>
         <test_local_cluster>
             <shard>
@@ -29,4 +29,4 @@
              </shard>
         </test_cluster_two_shards_same_node>
     </remote_servers>
-</clickhouse>
+</datastore>

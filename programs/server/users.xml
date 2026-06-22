@@ -141,4 +141,4 @@
             </interval>
         </default>
     </quotas>
-</clickhouse>
+</datastore>

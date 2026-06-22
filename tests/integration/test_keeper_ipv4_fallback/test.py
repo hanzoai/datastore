@@ -4,11 +4,11 @@ import subprocess
 from helpers.cluster import ClickHouseCluster
 
 keeper_config_ipv6_enabled = """
-<clickhouse>
+<datastore>
     <keeper_server>
         <enable_ipv6>true</enable_ipv6>
     </keeper_server>
-</clickhouse>
+</datastore>
 """
 
 @pytest.fixture(scope="module")

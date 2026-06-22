@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <keeper_server>
         <tcp_port>9181</tcp_port>
         <server_id>1</server_id>
@@ -21,4 +21,4 @@
         <cleanup_old_and_ignore_new_acl>0</cleanup_old_and_ignore_new_acl>
         <create_snapshot_on_exit>0</create_snapshot_on_exit>
     </keeper_server>
-</clickhouse>
+</datastore>

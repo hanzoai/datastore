@@ -58,13 +58,13 @@ def test_create_and_drop_udf_on_cluster(ignore, expected_raise):
         "/etc/clickhouse-server/users.d/users.xml",
         inspect.cleandoc(
             f"""
-            <clickhouse>
+            <datastore>
                 <profiles>
                     <default>
                         <ignore_on_cluster_for_replicated_udf_queries>{ignore}</ignore_on_cluster_for_replicated_udf_queries>
                     </default>
                 </profiles>
-            </clickhouse>
+            </datastore>
             """
         ),
     )
@@ -172,7 +172,7 @@ def test_reload_zookeeper():
         (node1, node2),
         inspect.cleandoc(
             """
-            <clickhouse>
+            <datastore>
                 <zookeeper>
                     <node index="1">
                         <host>zoo1</host>
@@ -180,7 +180,7 @@ def test_reload_zookeeper():
                     </node>
                     <session_timeout_ms>2000</session_timeout_ms>
                 </zookeeper>
-            </clickhouse>
+            </datastore>
             """
         ),
     )
@@ -219,7 +219,7 @@ def test_reload_zookeeper():
         (node1, node2),
         inspect.cleandoc(
             """
-            <clickhouse>
+            <datastore>
                 <zookeeper>
                     <node index="1">
                         <host>zoo2</host>
@@ -227,7 +227,7 @@ def test_reload_zookeeper():
                     </node>
                     <session_timeout_ms>2000</session_timeout_ms>
                 </zookeeper>
-            </clickhouse>
+            </datastore>
             """
         ),
     )

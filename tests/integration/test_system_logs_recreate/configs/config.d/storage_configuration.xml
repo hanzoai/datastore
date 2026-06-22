@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk1>
@@ -29,4 +29,4 @@
         <table>metric_log</table>
     </metric_log>
 
-</clickhouse>
+</datastore>

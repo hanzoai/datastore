@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
         </default>
@@ -28,4 +28,4 @@
         <default>
         </default>
     </quotas>
-</clickhouse>
+</datastore>

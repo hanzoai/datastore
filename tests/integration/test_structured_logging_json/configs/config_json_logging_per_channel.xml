@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<clickhouse>
+<datastore>
     <logger>
         <formatting>
             <type>json</type>
@@ -18,4 +18,4 @@
             </names>
         </formatting>
     </logger>
-</clickhouse>
+</datastore>

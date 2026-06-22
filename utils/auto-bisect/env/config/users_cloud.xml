@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <profiles>
     <default>
       <cloud_mode>1</cloud_mode>
@@ -39,4 +39,4 @@
       </replicated>
   </user_directories>
 
-</clickhouse>
+</datastore>

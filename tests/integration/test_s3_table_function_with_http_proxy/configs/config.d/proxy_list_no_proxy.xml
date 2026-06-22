@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <proxy>
         <no_proxy>not_important_host,,  minio1  ,</no_proxy>
         <http>
@@ -6,4 +6,4 @@
             <uri>http://proxy2</uri>
         </http>
     </proxy>
-</clickhouse>
+</datastore>

@@ -26,7 +26,7 @@ def started_cluster():
 
 
 old_disk_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
@@ -53,11 +53,11 @@ old_disk_config = """
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 new_disk_config = """
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk0>
@@ -90,7 +90,7 @@ new_disk_config = """
             </shard>
         </default>
     </remote_servers>
-</clickhouse>
+</datastore>
 """
 
 

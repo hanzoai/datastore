@@ -10,13 +10,13 @@ cluster = ClickHouseCluster(__file__)
 
 NODES = {"node" + str(i): None for i in (1, 2)}
 
-config = """<clickhouse>
+config = """<datastore>
     <profiles>
         <default>
             <sleep_in_send_data_ms>{sleep_in_send_data_ms}</sleep_in_send_data_ms>
         </default>
     </profiles>
-</clickhouse>"""
+</datastore>"""
 
 
 @pytest.fixture(scope="module")

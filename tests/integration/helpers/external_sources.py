@@ -285,14 +285,14 @@ class SourceMongoURI(SourceMongo):
 class SourceClickHouse(ExternalSource):
     def get_source_str(self, table_name):
         return """
-            <clickhouse>
+            <datastore>
                 <host>{host}</host>
                 <port>{port}</port>
                 <user>{user}</user>
                 <password>{password}</password>
                 <db>test</db>
                 <table>{tbl}</table>
-            </clickhouse>
+            </datastore>
         """.format(
             host=self.docker_hostname,
             port=self.docker_port,

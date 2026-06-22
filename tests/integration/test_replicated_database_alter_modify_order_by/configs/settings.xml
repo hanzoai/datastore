@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <database_replicated_allow_replicated_engine_arguments>3</database_replicated_allow_replicated_engine_arguments>
@@ -10,4 +10,4 @@
             <profile>default</profile>
         </default>
     </users>
-</clickhouse>
+</datastore>

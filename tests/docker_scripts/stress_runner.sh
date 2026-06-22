@@ -273,13 +273,13 @@ fi
 
 # Randomize async_load_databases
 if [ $((RANDOM % 2)) -eq 0 ]; then
-    sudo echo "<clickhouse><async_load_databases>false</async_load_databases></clickhouse>" \
+    sudo echo "<datastore><async_load_databases>false</async_load_databases></datastore>" \
         > /etc/clickhouse-server/config.d/enable_async_load_databases.xml
 fi
 
 # Randomize concurrent_threads_scheduler (default is max_min_fair)
 if [ $((RANDOM % 2)) -eq 1 ]; then
-    sudo echo "<clickhouse><concurrent_threads_scheduler>fair_round_robin</concurrent_threads_scheduler></clickhouse>" \
+    sudo echo "<datastore><concurrent_threads_scheduler>fair_round_robin</concurrent_threads_scheduler></datastore>" \
         > /etc/clickhouse-server/config.d/enable_max_min_fair_scheduler.xml
 fi
 

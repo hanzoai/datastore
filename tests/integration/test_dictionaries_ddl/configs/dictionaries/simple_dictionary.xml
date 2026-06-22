@@ -1,15 +1,15 @@
-<clickhouse>
+<datastore>
 <dictionary>
    <name>xml_dictionary</name>
    <source>
-        <clickhouse>
+        <datastore>
             <host>localhost</host>
             <port>9000</port>
             <user>default</user>
             <password></password>
             <db>test</db>
             <table>xml_dictionary_table</table>
-        </clickhouse>
+        </datastore>
     </source>
 
        <lifetime>
@@ -38,4 +38,4 @@
         </attribute>
    </structure>
 </dictionary>
-</clickhouse>
+</datastore>

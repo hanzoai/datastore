@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <query_log>
         <partition_by>toYYYYMM(event_date)</partition_by>
         <ttl>event_date + INTERVAL 30 DAY DELETE</ttl>
@@ -7,4 +7,4 @@
         <storage_policy>policy1</storage_policy>
         <settings>storage_policy='policy2', ttl_only_drop_parts=1</settings>
     </query_log>
-</clickhouse>
+</datastore>

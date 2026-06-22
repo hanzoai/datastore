@@ -82,4 +82,4 @@
         </server>
     </openSSL>
 
-</clickhouse>
+</datastore>

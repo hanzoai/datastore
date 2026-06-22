@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
   <nb_models>
     <model>
       <name>empty_model</name>
@@ -8,4 +8,4 @@
       <alpha>1</alpha>
     </model>
   </nb_models>
-</clickhouse>
+</datastore>

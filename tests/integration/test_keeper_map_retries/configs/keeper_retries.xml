@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <keeper_max_retries>20</keeper_max_retries>
@@ -11,4 +11,4 @@
             <profile>default</profile>
         </default>
     </users>
-</clickhouse>
+</datastore>

@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <query_masking_rules remove="remove"/>
 
     <query_thread_log remove="remove"/>
@@ -26,4 +26,4 @@
     <asynchronous_metrics_update_period_s>1</asynchronous_metrics_update_period_s>
     <asynchronous_metric_log />
     <metric_log />
-</clickhouse>
+</datastore>

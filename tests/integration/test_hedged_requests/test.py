@@ -58,7 +58,7 @@ def started_cluster():
         cluster.shutdown()
 
 
-config = """<clickhouse>
+config = """<datastore>
     <profiles>
         <default>
             <sleep_in_send_tables_status_ms>{sleep_in_send_tables_status_ms}</sleep_in_send_tables_status_ms>
@@ -66,7 +66,7 @@ config = """<clickhouse>
             <sleep_after_receiving_query_ms>{sleep_after_receiving_query_ms}</sleep_after_receiving_query_ms>
         </default>
     </profiles>
-</clickhouse>"""
+</datastore>"""
 
 
 def check_query(expected_replica, receive_timeout=300):

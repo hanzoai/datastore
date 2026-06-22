@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <mysql1>
             <user>root</user>
@@ -52,4 +52,4 @@
             <ssl_key>/etc/clickhouse-server/config.d/client-key.pem</ssl_key>
         </mysql_with_ssl>
     </named_collections>
-</clickhouse>
+</datastore>

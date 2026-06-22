@@ -1,7 +1,7 @@
-<clickhouse>
+<datastore>
 
     <query_cache>
         <max_entries>0</max_entries>
     </query_cache>
 
-</clickhouse>
+</datastore>

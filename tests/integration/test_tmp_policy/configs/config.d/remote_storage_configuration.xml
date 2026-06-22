@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <disk_s3_plain>
@@ -21,4 +21,4 @@
     </storage_configuration>
 
     <tmp_policy>tmp</tmp_policy>
-</clickhouse>
+</datastore>

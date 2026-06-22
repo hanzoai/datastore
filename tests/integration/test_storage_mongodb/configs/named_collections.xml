@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <named_collections>
         <mongo1>
             <user>root</user>
@@ -14,4 +14,4 @@
         </mongo1_uri>
     </named_collections>
 
-</clickhouse>
+</datastore>

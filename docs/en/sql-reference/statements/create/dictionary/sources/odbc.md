@@ -145,7 +145,7 @@ LIFETIME(MIN 300 MAX 360)
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         <name>table_name</name>
         <source>
@@ -174,7 +174,7 @@ LIFETIME(MIN 300 MAX 360)
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>
@@ -258,7 +258,7 @@ LIFETIME(MIN 300 MAX 360)
 <TabItem value="xml" label="Configuration file">
 
 ```xml
-<clickhouse>
+<datastore>
     <dictionary>
         <name>test</name>
         <source>
@@ -288,7 +288,7 @@ LIFETIME(MIN 300 MAX 360)
             </attribute>
         </structure>
     </dictionary>
-</clickhouse>
+</datastore>
 ```
 
 </TabItem>

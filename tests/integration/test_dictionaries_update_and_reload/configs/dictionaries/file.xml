@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <dictionary>
       <name>file</name>
       <source>
@@ -49,4 +49,4 @@
         </attribute>
       </structure>
     </dictionary>
-</clickhouse>
+</datastore>

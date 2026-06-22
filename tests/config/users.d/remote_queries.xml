@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <profiles>
         <default>
             <!-- Avoid "Connection failed at try №1" messages. -->
@@ -10,4 +10,4 @@
                  SYSTEM RELOAD CONFIG can be executed before each test -->
         </default>
     </profiles>
-</clickhouse>
+</datastore>

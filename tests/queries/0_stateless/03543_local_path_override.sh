@@ -14,9 +14,9 @@ $CLICKHOUSE_LOCAL --path "$local_path" -q "SELECT * FROM x"
 
 config="$CUR_DIR/${CLICKHOUSE_TEST_UNIQUE_NAME}.config.xml"
 cat > "$config" <<EOL
-<clickhouse>
+<datastore>
   <path>/var/lib/clickhouse</path>
-</clickhouse>
+</datastore>
 EOL
 $CLICKHOUSE_LOCAL --config "$config" --path "$local_path" -q "SELECT * FROM x"
 

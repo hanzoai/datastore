@@ -473,7 +473,7 @@ bool manageDatastoreUser(
               << "      <access_management>" << access_management << "</access_management>\n"
               << "    </" << datastore_user << ">\n"
               << "  </users>\n"
-              << "</clickhouse>\n";
+              << "</datastore>\n";
             if (!f.good())
                 std::cerr << "docker-init: error: failed to write " << default_user_xml << "\n";
         }
@@ -499,7 +499,7 @@ bool manageDatastoreUser(
               << "      </networks>\n"
               << "    </default>\n"
               << "  </users>\n"
-              << "</clickhouse>\n";
+              << "</datastore>\n";
             if (!f.good())
                 std::cerr << "docker-init: error: failed to write " << default_user_xml << "\n";
         }

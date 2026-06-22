@@ -52,7 +52,7 @@ ClickHouse currently supports reading v1 and v2 of the Iceberg format via the `i
 Here is an example of configuring a named collection for storing the URL and credentials:
 
 ```xml
-<clickhouse>
+<datastore>
     <named_collections>
         <iceberg_conf>
             <url>http://test.s3.amazonaws.com/clickhouse-bucket/</url>
@@ -62,7 +62,7 @@ Here is an example of configuring a named collection for storing the URL and cre
             <structure>auto</structure>
         </iceberg_conf>
     </named_collections>
-</clickhouse>
+</datastore>
 ```
 
 ```sql

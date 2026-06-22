@@ -77,7 +77,7 @@ Additionally, sample models and their associated config files are available [her
 Here is an example configuration for a naive Bayes model in ClickHouse:
 
 ```xml
-<clickhouse>
+<datastore>
     <nb_models>
         <model>
             <name>sentiment</name>
@@ -97,7 +97,7 @@ Here is an example configuration for a naive Bayes model in ClickHouse:
             </priors>
         </model>
     </nb_models>
-</clickhouse>
+</datastore>
 ```
 
 **Configuration Parameters**

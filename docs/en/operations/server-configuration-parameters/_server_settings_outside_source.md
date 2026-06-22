@@ -9,7 +9,7 @@ If the setting is not enabled by default on your environment, depending on how C
 To manually turn on asynchronous metric logs history collection [`system.asynchronous_metric_log`](../../operations/system-tables/asynchronous_metric_log.md), create `/etc/clickhouse-server/config.d/asynchronous_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
      <asynchronous_metric_log>
         <database>system</database>
         <table>asynchronous_metric_log</table>
@@ -20,7 +20,7 @@ To manually turn on asynchronous metric logs history collection [`system.asynchr
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </asynchronous_metric_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
@@ -28,7 +28,7 @@ To manually turn on asynchronous metric logs history collection [`system.asynchr
 To disable `asynchronous_metric_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_asynchronous_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse><asynchronous_metric_log remove="1" /></clickhouse>
+<datastore><asynchronous_metric_log remove="1" /></datastore>
 ```
 
 <SystemLogParameters/>
@@ -295,7 +295,7 @@ It is disabled by default.
 To manually turn on error history collection [`system.error_log`](../../operations/system-tables/error_log.md), create `/etc/clickhouse-server/config.d/error_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <error_log>
         <database>system</database>
         <table>error_log</table>
@@ -306,7 +306,7 @@ To manually turn on error history collection [`system.error_log`](../../operatio
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </error_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
@@ -314,9 +314,9 @@ To manually turn on error history collection [`system.error_log`](../../operatio
 To disable `error_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_error_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <error_log remove="1" />
-</clickhouse>
+</datastore>
 ```
 
 <SystemLogParameters/>
@@ -1114,7 +1114,7 @@ It is disabled by default.
 To manually turn on metrics history collection [`system.metric_log`](../../operations/system-tables/metric_log.md), create `/etc/clickhouse-server/config.d/metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <metric_log>
         <database>system</database>
         <table>metric_log</table>
@@ -1125,7 +1125,7 @@ To manually turn on metrics history collection [`system.metric_log`](../../opera
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </metric_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
@@ -1133,9 +1133,9 @@ To manually turn on metrics history collection [`system.metric_log`](../../opera
 To disable `metric_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <metric_log remove="1" />
-</clickhouse>
+</datastore>
 ```
 
 <SystemLogParameters/>
@@ -1300,7 +1300,7 @@ Settings:
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <listen_host>0.0.0.0</listen_host>
     <http_port>8123</http_port>
     <tcp_port>9000</tcp_port>
@@ -1314,7 +1314,7 @@ Settings:
         <errors>true</errors>
     </prometheus>
     <!-- highlight-end -->
-</clickhouse>
+</datastore>
 ```
 
 Check (replace `127.0.0.1` with the IP addr or hostname of your ClickHouse server):
@@ -1356,7 +1356,7 @@ It is disabled by default.
 To manually turn on metrics history collection [`system.query_metric_log`](../../operations/system-tables/query_metric_log.md), create `/etc/clickhouse-server/config.d/query_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <query_metric_log>
         <database>system</database>
         <table>query_metric_log</table>
@@ -1367,7 +1367,7 @@ To manually turn on metrics history collection [`system.query_metric_log`](../..
         <buffer_size_rows_flush_threshold>524288</buffer_size_rows_flush_threshold>
         <flush_on_crash>false</flush_on_crash>
     </query_metric_log>
-</clickhouse>
+</datastore>
 ```
 
 **Disabling**
@@ -1375,9 +1375,9 @@ To manually turn on metrics history collection [`system.query_metric_log`](../..
 To disable `query_metric_log` setting, you should create the following file `/etc/clickhouse-server/config.d/disable_query_metric_log.xml` with the following content:
 
 ```xml
-<clickhouse>
+<datastore>
     <query_metric_log remove="1" />
-</clickhouse>
+</datastore>
 ```
 
 <SystemLogParameters/>
@@ -1476,7 +1476,7 @@ Additionally:
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <text_log>
         <level>notice</level>
         <database>system</database>
@@ -1489,7 +1489,7 @@ Additionally:
         <!-- <partition_by>event_date</partition_by> -->
         <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine>
     </text_log>
-</clickhouse>
+</datastore>
 ```
 
 ## trace_log {#trace_log}
@@ -1523,7 +1523,7 @@ Settings for the [asynchronous_insert_log](/operations/system-tables/asynchronou
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <asynchronous_insert_log>
         <database>system</database>
         <table>asynchronous_insert_log</table>
@@ -1535,7 +1535,7 @@ Settings for the [asynchronous_insert_log](/operations/system-tables/asynchronou
         <flush_on_crash>false</flush_on_crash>
         <!-- <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine> -->
     </asynchronous_insert_log>
-</clickhouse>
+</datastore>
 ```
 
 ## crash_log {#crash_log}
@@ -1603,7 +1603,7 @@ Settings for the [backup_log](../../operations/system-tables/backup_log.md) syst
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <backup_log>
         <database>system</database>
         <table>backup_log</table>
@@ -1615,7 +1615,7 @@ Settings for the [backup_log](../../operations/system-tables/backup_log.md) syst
         <flush_on_crash>false</flush_on_crash>
         <!-- <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine> -->
     </backup_log>
-</clickhouse>
+</datastore>
 ```
 
 ## blob_storage_log {#blob_storage_log}
@@ -2353,12 +2353,12 @@ The following settings can be configured by sub-tags:
 **Example**
 
 ```xml
-<clickhouse>
+<datastore>
     <zookeeper_log>
         <database>system</database>
         <table>zookeeper_log</table>
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
         <ttl>event_date + INTERVAL 1 WEEK DELETE</ttl>
     </zookeeper_log>
-</clickhouse>
+</datastore>
 ```

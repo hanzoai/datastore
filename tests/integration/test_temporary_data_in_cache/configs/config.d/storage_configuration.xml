@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <storage_configuration>
         <disks>
             <local_disk>
@@ -37,4 +37,4 @@
     </storage_configuration>
 
     <temporary_data_in_cache>tiny_local_cache</temporary_data_in_cache>
-</clickhouse>
+</datastore>
