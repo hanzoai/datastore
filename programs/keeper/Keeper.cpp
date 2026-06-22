@@ -161,7 +161,7 @@ int Keeper::run()
     if (config().hasOption("help"))
     {
         Poco::Util::HelpFormatter help_formatter(Keeper::options());
-        std::string app_name = (commandName() == "clickhouse-keeper") ? "clickhouse-keeper" : "clickhouse keeper";
+        std::string app_name = (commandName() == "datastore-keeper") ? "datastore-keeper" : "datastore keeper";
         auto header_str = fmt::format("{0} [OPTION] [-- [ARG]...]\n"
 #if ENABLE_DATASTORE_KEEPER_CLIENT
                                       "{0} client [OPTION]\n"

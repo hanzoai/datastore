@@ -1856,7 +1856,7 @@ std::string formatHTTPErrorResponseWhenUserIsConnectedToWrongPort(const Poco::Ut
 
     std::string result = fmt::format(
         "HTTP/1.0 400 Bad Request\r\n\r\n"
-        "Port {} is for clickhouse-client program\r\n",
+        "Port {} is for datastore-client program\r\n",
         config.getString(tcp_port_config));
 
     if (config.has(http_port_config))
@@ -2373,7 +2373,7 @@ void TCPHandler::processQuery(std::shared_ptr<QueryState> & state)
         }
 
         /// NOTE Usually we get some fields of client_info (including initial_address and initial_user) from user input,
-        /// so we should not rely on that. However, in this particular case we got client_info from other clickhouse-server, so it's ok.
+        /// so we should not rely on that. However, in this particular case we got client_info from other datastore-server, so it's ok.
         if (client_info.initial_user.empty())
         {
             LOG_DEBUG(log, "User (no user, interserver mode) (client: {})", getClientAddress(client_info).toString());

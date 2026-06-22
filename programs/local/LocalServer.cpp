@@ -410,12 +410,12 @@ void LocalServer::tryInitPath()
             LOG_DEBUG(log, "Will create working directory inside current directory: {}", parent_folder.string());
         }
 
-        /// we can have another clickhouse-local running simultaneously, even with the same PID (for ex. - several dockers mounting the same folder)
-        /// or it can be some leftovers from other clickhouse-local runs
+        /// we can have another datastore-local running simultaneously, even with the same PID (for ex. - several dockers mounting the same folder)
+        /// or it can be some leftovers from other datastore-local runs
         /// as we can't accurately distinguish those situations we don't touch any existent folders
         /// we just try to pick some free name for our working folder
 
-        default_path = parent_folder / fmt::format("clickhouse-local-{}", UUIDHelpers::generateV4());
+        default_path = parent_folder / fmt::format("datastore-local-{}", UUIDHelpers::generateV4());
 
         if (fs::exists(default_path))
             throw Exception(ErrorCodes::FILE_ALREADY_EXISTS, "Unsuccessful attempt to set up the working directory: {} already exists.", default_path.string());
@@ -555,7 +555,7 @@ static ConfigurationPtr getConfigurationFromXMLString(const char * xml_data)
 void LocalServer::setupUsers()
 {
     static const char * minimal_default_user_xml =
-        "<clickhouse>"
+        "<datastore>"
         "    <profiles>"
         "        <default></default>"
         "    </profiles>"
@@ -594,7 +594,7 @@ void LocalServer::setupUsers()
     access_control.setThrowOnInvalidReplicatedAccessEntities(config.getBool("access_control_improvements.throw_on_invalid_replicated_access_entities", true));
 
     /// Apply user-level configuration from a loaded config file (including those
-    /// auto-discovered via `getLocalConfigPath`, e.g. `~/.clickhouse-local/config.xml`).
+    /// auto-discovered via `getLocalConfigPath`, e.g. `~/.datastore-local/config.xml`).
     if (!loaded_config_path.empty())
     {
         const auto config_dir = fs::path{loaded_config_path}.remove_filename().string();
@@ -839,7 +839,7 @@ void LocalServer::processConfig()
     {
         getClientConfiguration().setString("logger", "logger");
         getClientConfiguration().setString("logger.level", logging ? level : "fatal");
-        buildLoggers(getClientConfiguration(), logger(), "clickhouse-local");
+        buildLoggers(getClientConfiguration(), logger(), "datastore-local");
     }
 
     shared_context = Context::createShared();
@@ -1181,7 +1181,7 @@ void LocalServer::processConfig()
     }
 
     /// Initialize system logs only when explicitly configured (e.g. `query_log`, `processors_profile_log`).
-    /// Default `clickhouse-local` invocations have no system log sections in the config, and skipping
+    /// Default `datastore-local` invocations have no system log sections in the config, and skipping
     /// initialization avoids a TSan-visible race between background pool task logging and `Context`
     /// teardown that would otherwise be triggered for short-lived processes.
     /// Also skip in `--only-system-tables` mode, which is intended for reading existing persisted

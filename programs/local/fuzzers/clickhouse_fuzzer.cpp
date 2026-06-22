@@ -131,7 +131,7 @@ int clickhouseMain(int argc_, char ** argv_)
 #endif
 
     /// This is used for testing. For example,
-    /// clickhouse-local should be able to run a simple query without throw/catch.
+    /// datastore-local should be able to run a simple query without throw/catch.
     if (getenv("DATASTORE_TERMINATE_ON_ANY_EXCEPTION")) // NOLINT(concurrency-mt-unsafe)
         DB::terminate_on_any_exception = true;
 
@@ -173,7 +173,7 @@ std::optional<std::thread> runner;
 pthread_t runner_thread_id{};
 struct sigaction original_sigalrm_action{};
 
-String clickhouse{"clickhouse"};
+String datastore{"clickhouse"};
 std::vector<char *> datastore_args{clickhouse.data()};
 
 /// Signal-safe stderr print helper.
@@ -255,7 +255,7 @@ int LLVMFuzzerInitialize(const int *argc, char ***argv)
     // Initialize as a main thread
     DB::MainThreadStatus::getInstance();
 
-    // Collect clickhouse arguments
+    // Collect datastore arguments
     bool ignore = false;
     for (int i = 1; i < *argc; ++i)
         if (ignore)
@@ -265,7 +265,7 @@ int LLVMFuzzerInitialize(const int *argc, char ***argv)
                 ignore = true;
 
     {
-        // Start clickhouse local
+        // Start datastore local
         std::unique_lock lock(mutex);
         runner = std::thread(clickhouseMain, datastore_args.size(), datastore_args.data());
         runner_thread_id = runner->native_handle();

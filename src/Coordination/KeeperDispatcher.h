@@ -99,7 +99,7 @@ public:
     ~KeeperDispatcher();
 
     /// Initialization from config.
-    /// standalone_keeper -- we are standalone keeper application (not inside clickhouse server)
+    /// standalone_keeper -- we are standalone keeper application (not inside datastore server)
     /// 'macros' are used to substitute macros in endpoint of disks
     void initialize(const Poco::Util::AbstractConfiguration & config, bool standalone_keeper, bool start_async, const MultiVersion<Macros>::Version & macros);
 

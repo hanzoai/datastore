@@ -1705,7 +1705,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                     /// ORC format outputs big integers as binary column, because there is no fixed binary in ORC.
                     ///
                     /// When ORC/Parquet file says the type is "byte array" or "fixed len byte array",
-                    /// but the clickhouse query says to interpret the column as e.g. Int128, it
+                    /// but the datastore query says to interpret the column as e.g. Int128, it
                     /// may mean one of two things:
                     ///  * The byte array is the 16 bytes of Int128, little-endian.
                     ///  * The byte array is an ASCII string containing the Int128 formatted in base 10.
@@ -2130,7 +2130,7 @@ static ColumnWithTypeAndName readNonNullableColumnFromArrowColumn(
                         field_name = it->second;
                         size_t pos = field_name.rfind('.');
                         /// Get the Clickhouse field as the last element of the name.
-                        /// For example, if we converted parquet "a.b" to clickhouse "c.d", the resulting field name would be "d".
+                        /// For example, if we converted parquet "a.b" to datastore "c.d", the resulting field name would be "d".
                         if (pos != std::string::npos)
                             field_name = field_name.substr(pos + 1);
                     }

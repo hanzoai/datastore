@@ -1040,7 +1040,7 @@ std::set<String> PostgreSQLReplicationHandler::fetchRequiredTables()
     /// Also we make sure that queries in postgres always use quoted version "table_schema"."table_name".
     /// But tables in Datastore in case of multi-schame database are never double-quoted.
     /// It is ok, because they are accessed with backticks: postgres_database.`table_schema.table_name`.
-    /// We do quote tables_list table AFTER collected expected_tables, because expected_tables are future clickhouse tables.
+    /// We do quote tables_list table AFTER collected expected_tables, because expected_tables are future datastore tables.
 
     return result_tables;
 }

@@ -1,8 +1,8 @@
-/// clickhouse docker-init — Docker entrypoint for distroless Datastore images.
+/// datastore docker-init — Docker entrypoint for distroless Datastore images.
 /// Replaces entrypoint.sh in shell-free environments (no bash, no coreutils).
 ///
 /// Usage:
-///   clickhouse docker-init [--keeper] [-- <extra-server-args>...]
+///   datastore docker-init [--keeper] [-- <extra-server-args>...]
 ///
 /// Environment variables (same as entrypoint.sh):
 ///   DATASTORE_CONFIG, DATASTORE_RUN_AS_ROOT, DATASTORE_DO_NOT_CHOWN,
@@ -35,7 +35,7 @@ namespace fs = std::filesystem;
 namespace
 {
 
-/// Path to the clickhouse multi-tool binary, derived from argv[0].
+/// Path to the datastore multi-tool binary, derived from argv[0].
 /// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 std::string g_datastore_binary;
 
@@ -236,7 +236,7 @@ bool isValidIdentifier(const std::string & s)
     return true;
 }
 
-/// Extract a single value from a Datastore config key via `clickhouse extract-from-config`.
+/// Extract a single value from a Datastore config key via `datastore extract-from-config`.
 /// Returns an empty string if the key is absent (--try flag suppresses errors).
 std::string extractConfigValue(const std::string & config_file, const std::string & key, bool use_users = false)
 {
@@ -287,7 +287,7 @@ void recursiveChown(const std::string & path_str, uid_t uid, gid_t gid)
 /// Three cases:
 ///   1. do_chown=true (root, normal mode): create with fs::create_directories, then chown.
 ///   2. do_chown=false, running as root (DATASTORE_DO_NOT_CHOWN=1): delegate to
-///      `clickhouse su UID:GID` so the directory is created as the target user.
+///      `datastore su UID:GID` so the directory is created as the target user.
 ///      This handles NFS mounts where root is mapped to nobody.
 ///   3. do_chown=false, running as non-root: create directly — we are already the target user.
 bool createDirectoryAndChown(const std::string & dir, uid_t uid, gid_t gid, bool do_chown)
@@ -360,7 +360,7 @@ bool createDirectoryAndChown(const std::string & dir, uid_t uid, gid_t gid, bool
     return true;
 }
 
-/// Write the user management XML to `/etc/clickhouse-server/users.d/default-user.xml`.
+/// Write the user management XML to `/etc/datastore-server/users.d/default-user.xml`.
 /// Returns false if a user-requested setup (DATASTORE_USER/PASSWORD/ACCESS_MANAGEMENT)
 /// is invalid — caller should treat this as fatal.
 bool manageDatastoreUser(
@@ -376,7 +376,7 @@ bool manageDatastoreUser(
         return true;
     }
 
-    const std::string users_d_dir = "/etc/clickhouse-server/users.d";
+    const std::string users_d_dir = "/etc/datastore-server/users.d";
     const std::string default_user_xml = users_d_dir + "/default-user.xml";
 
     std::error_code ec;
@@ -456,7 +456,7 @@ bool manageDatastoreUser(
 
         {
             std::ofstream f(default_user_xml);
-            f << "<clickhouse>\n"
+            f << "<datastore>\n"
               << "  <!-- Docs: <https://clickhouse.com/docs/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <!-- Remove default user -->\n"
@@ -488,7 +488,7 @@ bool manageDatastoreUser(
                      "disabling network access for user 'default'\n";
         {
             std::ofstream f(default_user_xml);
-            f << "<clickhouse>\n"
+            f << "<datastore>\n"
               << "  <!-- Docs: <https://clickhouse.com/docs/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <default>\n"
@@ -562,7 +562,7 @@ bool runInitScripts(const std::vector<std::string> & client_base)
         else if (filename.ends_with(".sql.gz"))
         {
             std::cerr << "docker-init: running " << path << " (decompressing)\n";
-            /// Decompress via clickhouse-local (auto-detects .gz) and pipe to clickhouse-client.
+            /// Decompress via datastore-local (auto-detects .gz) and pipe to datastore-client.
             /// Escape single quotes in the path to prevent SQL injection via crafted filenames.
             std::string escaped_path;
             for (char c : path.string())
@@ -637,7 +637,7 @@ bool initDatastoreDB(
     /// properties (e.g. --listen_host=127.0.0.1), while options before "--" are parsed by
     /// Poco and must be registered. Without "--", Poco rejects "--listen_host" as unknown.
     std::vector<std::string> server_args = {
-        g_datastore_binary, "su", run_as, "clickhouse-server",
+        g_datastore_binary, "su", run_as, "datastore-server",
         "--config-file=" + config_file,
         "--", "--listen_host=127.0.0.1",
     };
@@ -793,14 +793,14 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
     if (show_help)
     {
         std::cout
-            << "Usage: clickhouse docker-init [--keeper] [-- <extra-args>...]\n"
+            << "Usage: datastore docker-init [--keeper] [-- <extra-args>...]\n"
                "Docker entrypoint for distroless Datastore images.\n"
                "\nOptions:\n"
                "  --keeper   Start Datastore Keeper instead of server\n"
                "  --help     Show this help message\n"
                "\nEnvironment variables (server mode):\n"
                "  DATASTORE_CONFIG                   Path to config file "
-               "(default: /etc/clickhouse-server/config.xml)\n"
+               "(default: /etc/datastore-server/config.xml)\n"
                "  DATASTORE_RUN_AS_ROOT              Run as root (0/1)\n"
                "  DATASTORE_DO_NOT_CHOWN             Skip chown operations (0/1)\n"
                "  DATASTORE_UID                      Override UID to run as\n"
@@ -817,7 +817,7 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
                "\nEnvironment variables (keeper mode):\n"
                "  KEEPER_CONFIG                       Path to keeper config file\n"
                "  DATASTORE_DATA_DIR                 Data directory (default: /var/lib/clickhouse)\n"
-               "  LOG_DIR                             Log directory (default: /var/log/clickhouse-keeper)\n";
+               "  LOG_DIR                             Log directory (default: /var/log/datastore-keeper)\n";
         return 0;
     }
 
@@ -832,15 +832,15 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
     if (!extra_args.empty() && !extra_args[0].starts_with("--"))
     {
         static constexpr std::array datastore_tools = {
-            "clickhouse-client",
-            "clickhouse-local",
-            "clickhouse-keeper-client",
-            "clickhouse-benchmark",
-            "clickhouse-format",
-            "clickhouse-compressor",
-            "clickhouse-obfuscator",
-            "clickhouse-extract-from-config",
-            "clickhouse-disks",
+            "datastore-client",
+            "datastore-local",
+            "datastore-keeper-client",
+            "datastore-benchmark",
+            "datastore-format",
+            "datastore-compressor",
+            "datastore-obfuscator",
+            "datastore-extract-from-config",
+            "datastore-disks",
             "client",
             "local",
             "keeper-client",
@@ -855,9 +855,9 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
         std::string cmd = extra_args[0];
         if (std::find(datastore_tools.begin(), datastore_tools.end(), extra_args[0]) != datastore_tools.end())
         {
-            /// Build the full path to the symlink (e.g. /usr/bin/clickhouse-client).
-            /// The symlink points to the clickhouse binary; dispatching is done by argv[0].
-            /// Short names like "client" must be resolved to "clickhouse-client" since the
+            /// Build the full path to the symlink (e.g. /usr/bin/datastore-client).
+            /// The symlink points to the datastore binary; dispatching is done by argv[0].
+            /// Short names like "client" must be resolved to "datastore-client" since the
             /// distroless image only has "clickhouse-*" symlinks (not bare "client", "local", etc.).
             fs::path bin_dir = fs::path(g_datastore_binary).parent_path();
             std::string link_name = extra_args[0];
@@ -894,7 +894,7 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
         }
         else
         {
-            /// Default to the `clickhouse` system user if it exists, otherwise fall back to UID 101.
+            /// Default to the `datastore` system user if it exists, otherwise fall back to UID 101.
             uid_t default_uid = 101;
             gid_t default_gid = 101;
             const passwd * pw = getpwnam("clickhouse"); // NOLINT(concurrency-mt-unsafe)
@@ -935,9 +935,9 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
     /// --- Keeper mode ---
     if (keeper_mode)
     {
-        std::string keeper_config = getEnv("KEEPER_CONFIG", "/etc/clickhouse-keeper/keeper_config.xml");
+        std::string keeper_config = getEnv("KEEPER_CONFIG", "/etc/datastore-keeper/keeper_config.xml");
         std::string data_dir = getEnv("DATASTORE_DATA_DIR", "/var/lib/clickhouse");
-        std::string log_dir = getEnv("LOG_DIR", "/var/log/clickhouse-keeper");
+        std::string log_dir = getEnv("LOG_DIR", "/var/log/datastore-keeper");
 
         for (const auto & dir : {data_dir, log_dir,
                                   data_dir + "/coordination",
@@ -954,7 +954,7 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
         chdir(data_dir.c_str()); // NOLINT(bugprone-unused-return-value)
 
         std::vector<std::string> exec_args = {
-            g_datastore_binary, "su", run_as, "clickhouse-keeper",
+            g_datastore_binary, "su", run_as, "datastore-keeper",
         };
 
         std::error_code ec;
@@ -966,12 +966,12 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
 
         auto exec_argv = buildArgv(exec_args);
         execvp(exec_argv[0], exec_argv.data());
-        std::cerr << "docker-init: failed to exec clickhouse keeper: " << strerror(errno) << "\n"; // NOLINT(concurrency-mt-unsafe)
+        std::cerr << "docker-init: failed to exec datastore keeper: " << strerror(errno) << "\n"; // NOLINT(concurrency-mt-unsafe)
         return 1;
     }
 
     /// --- Server mode ---
-    std::string config_file = getEnv("DATASTORE_CONFIG", "/etc/clickhouse-server/config.xml");
+    std::string config_file = getEnv("DATASTORE_CONFIG", "/etc/datastore-server/config.xml");
 
     /// Extract all relevant paths from the config.
     std::string data_dir = extractConfigValue(config_file, "path");
@@ -1060,9 +1060,9 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
     if (std::getenv("DATASTORE_WATCHDOG_ENABLE") == nullptr) // NOLINT(concurrency-mt-unsafe)
         setenv("DATASTORE_WATCHDOG_ENABLE", "0", 0); // NOLINT(concurrency-mt-unsafe)
 
-    /// Replace this process with clickhouse-server via `clickhouse su`.
+    /// Replace this process with datastore-server via `datastore su`.
     std::vector<std::string> exec_args = {
-        g_datastore_binary, "su", run_as, "clickhouse-server",
+        g_datastore_binary, "su", run_as, "datastore-server",
         "--config-file=" + config_file,
     };
     for (const auto & arg : extra_args)
@@ -1070,6 +1070,6 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
 
     auto exec_argv = buildArgv(exec_args);
     execvp(exec_argv[0], exec_argv.data());
-    std::cerr << "docker-init: failed to exec clickhouse server: " << strerror(errno) << "\n"; // NOLINT(concurrency-mt-unsafe)
+    std::cerr << "docker-init: failed to exec datastore server: " << strerror(errno) << "\n"; // NOLINT(concurrency-mt-unsafe)
     return 1;
 }

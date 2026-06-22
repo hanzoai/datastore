@@ -641,9 +641,9 @@ If you use Datastore Cloud, the password can be reset at https://clickhouse.clou
 on the settings page for the corresponding service.
 
 If you have installed Datastore and forgot password you can reset it in the configuration file.
-The password for default user is typically located at /etc/clickhouse-server/users.d/default-password.xml
+The password for default user is typically located at /etc/datastore-server/users.d/default-password.xml
 and deleting this file will reset the password.
-See also /etc/clickhouse-server/users.xml on the server where Datastore is installed.
+See also /etc/datastore-server/users.xml on the server where Datastore is installed.
 
 )";
         }

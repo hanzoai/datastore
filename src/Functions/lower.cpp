@@ -33,7 +33,7 @@ Converts an ASCII string to lowercase.
         "SELECT lower('CLICKHOUSE')",
         R"(
 ┌─lower('CLICKHOUSE')─┐
-│ clickhouse          │
+│ datastore          │
 └─────────────────────┘
         )"
     }

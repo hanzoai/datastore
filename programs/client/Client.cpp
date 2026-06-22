@@ -612,7 +612,7 @@ void Client::connect()
                           << "It may lack support for new features." << std::endl
                           << std::endl;
             }
-            else if (client_version_tuple > server_version_tuple && server_display_name != "clickhouse-cloud")
+            else if (client_version_tuple > server_version_tuple && server_display_name != "datastore-cloud")
             {
                 output_stream << "Datastore server version is older than Datastore client. "
                           << "It may indicate that the server is out of date and can be upgraded." << std::endl
@@ -733,7 +733,7 @@ String Client::getHelpHeader() const
         "Queries can run one at a time, or in a multiquery mode.\n"
         "To change settings you may use SET statements and SETTINGS clause\n"
         "in queries or set them for a session with corresponding arguments.\n"
-        "'{0}' command will try to connect to clickhouse-server running\n"
+        "'{0}' command will try to connect to datastore-server running\n"
         "on the same server. If you have credentials set up, pass them with\n"
         "--user <username> --password <password> or with --ask-password argument\n"
         "that will open command prompt.\n\n"
@@ -748,7 +748,7 @@ String Client::getHelpHeader() const
 String Client::getHelpFooter() const
 {
     return fmt::format(
-        "Note: if clickhouse is installed, you can use 'clickhouse-client' invocation with a dash.\n\n"
+        "Note: if datastore is installed, you can use 'datastore-client' invocation with a dash.\n\n"
         "Example printing current longest running query on a server:\n"
         "    {0} --query \\\n"
         "        'SELECT * FROM system.processes ORDER BY elapsed LIMIT 1 FORMAT Vertical'\n"
@@ -1134,7 +1134,7 @@ void Client::readArguments(
                     hostname = host;
                     port = std::to_string(uri.getPort());
                 }
-                /// Check if connection string contains user credentials (e.g., clickhouse://user:password@host)
+                /// Check if connection string contains user credentials (e.g., datastore://user:password@host)
                 has_auth_in_connection_string = !uri.getUserInfo().empty();
             }
             catch (const Poco::URISyntaxException &) // NOLINT(bugprone-empty-catch)

@@ -1957,7 +1957,7 @@ ExternalIntegrations::ExternalIntegrations(FuzzConfig & fcc)
     }
     if (fc.datastore_server.has_value())
     {
-        clickhouse = MySQLIntegration::testAndAddMySQLConnection(fc, fc.datastore_server.value(), fc.read_log, "Datastore");
+        datastore = MySQLIntegration::testAndAddMySQLConnection(fc, fc.datastore_server.value(), fc.read_log, "Datastore");
     }
 }
 

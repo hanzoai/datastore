@@ -12,27 +12,27 @@ endif ()
 
 set(self_extracting_deps)
 
-add_custom_target (clickhouse-self-extracting ALL
-    ${CMAKE_COMMAND} -E remove clickhouse
-    COMMAND ${COMPRESSOR} ${DECOMPRESSOR} clickhouse ../clickhouse
-    DEPENDS clickhouse compressor
+add_custom_target (datastore-self-extracting ALL
+    ${CMAKE_COMMAND} -E remove datastore
+    COMMAND ${COMPRESSOR} ${DECOMPRESSOR} datastore ../clickhouse
+    DEPENDS datastore compressor
 )
-list(APPEND self_extracting_deps clickhouse-self-extracting)
+list(APPEND self_extracting_deps datastore-self-extracting)
 
 if (BUILD_STRIPPED_BINARY)
-    add_custom_target (clickhouse-self-extracting-stripped ALL
-        ${CMAKE_COMMAND} -E remove clickhouse-stripped
-        COMMAND ${COMPRESSOR} ${DECOMPRESSOR} clickhouse-stripped ../clickhouse-stripped
-        DEPENDS clickhouse clickhouse-stripped
+    add_custom_target (datastore-self-extracting-stripped ALL
+        ${CMAKE_COMMAND} -E remove datastore-stripped
+        COMMAND ${COMPRESSOR} ${DECOMPRESSOR} datastore-stripped ../datastore-stripped
+        DEPENDS datastore datastore-stripped
     )
-    list(APPEND self_extracting_deps clickhouse-self-extracting-stripped)
+    list(APPEND self_extracting_deps datastore-self-extracting-stripped)
 endif()
 
 if (BUILD_STANDALONE_KEEPER)
     add_custom_target (self-extracting-keeper ALL
-        ${CMAKE_COMMAND} -E remove clickhouse-keeper
-        COMMAND ${COMPRESSOR} ${DECOMPRESSOR} clickhouse-keeper ../clickhouse-keeper
-        DEPENDS compressor clickhouse-keeper
+        ${CMAKE_COMMAND} -E remove datastore-keeper
+        COMMAND ${COMPRESSOR} ${DECOMPRESSOR} datastore-keeper ../datastore-keeper
+        DEPENDS compressor datastore-keeper
     )
     list(APPEND self_extracting_deps self-extracting-keeper)
 endif()

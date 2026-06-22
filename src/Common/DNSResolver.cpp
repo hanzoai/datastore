@@ -201,7 +201,7 @@ struct DNSResolver::Impl
     /// (and a re-read of `host_name`) is populated by
     /// `updateHostNameAndAddresses`, which is called periodically by
     /// `DNSCacheUpdater` (server-only) and explicitly during server startup,
-    /// so non-server programs (`clickhouse-client`, `-local`, `-keeper`,
+    /// so non-server programs (`datastore-client`, `-local`, `-keeper`,
     /// `-disks`) never trigger a DNS lookup of the local hostname here.
 };
 

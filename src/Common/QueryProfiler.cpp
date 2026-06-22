@@ -149,7 +149,7 @@ void Timer::createIfNecessary(UInt64 thread_id, int clock_type, int pause_signal
         if (timer_create(clock_type, &sev, &local_timer_id))
         {
             /// In Google Cloud Run, the function "timer_create" is implemented incorrectly as of 2020-01-25.
-            /// https://mybranch.dev/posts/clickhouse-on-cloud-run/
+            /// https://mybranch.dev/posts/datastore-on-cloud-run/
             if (errno == 0)
                 throw Exception(ErrorCodes::CANNOT_CREATE_TIMER, "Failed to create thread timer. The function "
                                 "'timer_create' returned non-zero but didn't set errno. This is bug in your OS.");

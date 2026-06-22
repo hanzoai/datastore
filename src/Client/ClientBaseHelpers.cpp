@@ -132,7 +132,7 @@ std::string getChineseZodiac()
 
 bool isCloudEndpoint(const std::string & host)
 {
-    return endsWith(host, ".clickhouse.cloud") || endsWith(host, ".clickhouse-staging.com") || endsWith(host, ".clickhouse-dev.com");
+    return endsWith(host, ".clickhouse.cloud") || endsWith(host, ".datastore-staging.com") || endsWith(host, ".datastore-dev.com");
 }
 
 #if USE_REPLXX

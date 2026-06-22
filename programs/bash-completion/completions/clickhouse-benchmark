@@ -1,2 +1,2 @@
-[[ -v $_DATASTORE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/clickhouse-bootstrap"
-_complete_datastore_generic clickhouse-benchmark
+[[ -v $_DATASTORE_COMPLETION_LOADED ]] || source "$(dirname "${BASH_SOURCE[0]}")/datastore-bootstrap"
+_complete_datastore_generic datastore-benchmark

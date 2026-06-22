@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <path replace="replace">./</path>
     <tmp_path replace="replace">./tmp/</tmp_path>
     <user_files_path replace="replace">./user_files/</user_files_path>

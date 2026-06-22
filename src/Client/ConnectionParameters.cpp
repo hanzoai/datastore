@@ -158,7 +158,7 @@ ConnectionParameters::ConnectionParameters(const Poco::Util::AbstractConfigurati
     /// If Datastore is run under QEMU-user with a binary for a different architecture,
     /// and there are all listed startup dependency shared libraries available, but not the runtime dependencies of glibc,
     /// the glibc cannot open "plugins" for DNS resolving, and the DNS resolution does not work.
-    /// At the same time, I want clickhouse-local to always work, regardless.
+    /// At the same time, I want datastore-local to always work, regardless.
     /// TODO: get rid of glibc, or replace getaddrinfo to c-ares.
 
     compression = config.getBool("compression", host != "localhost" && !isLocalAddress(DNSResolver::instance().resolveHostAllInOriginOrder(host).front()))

@@ -711,7 +711,7 @@ int Server::run()
     if (config().hasOption("help"))
     {
         Poco::Util::HelpFormatter help_formatter(Server::options());
-        std::string app_name = (commandName() == "clickhouse-server") ? "clickhouse-server" : "clickhouse server";
+        std::string app_name = (commandName() == "datastore-server") ? "datastore-server" : "datastore server";
         auto header_str = fmt::format("{} [OPTION] [-- [ARG]...]\n"
                                       "positional arguments can be used to rewrite config.xml properties, for example, --http_port=8010",
                                       app_name);
@@ -1244,7 +1244,7 @@ try
                     if (0 != mlock(addr, len))
                         LOG_WARNING(log, "Failed mlock: {}", errnoToString());
                     else
-                        LOG_TRACE(log, "The memory map of clickhouse executable has been mlock'ed, total {}", ReadableSize(len));
+                        LOG_TRACE(log, "The memory map of datastore executable has been mlock'ed, total {}", ReadableSize(len));
                 }
                 catch (...)
                 {
@@ -1264,7 +1264,7 @@ try
         }
         else
         {
-            LOG_INFO(log, "Skip mlock for the clickhouse executable, because the total memory in the system ({}) is less than the minimum configured threshold (`mlock_executable_min_total_memory_amount_bytes` = {})",
+            LOG_INFO(log, "Skip mlock for the datastore executable, because the total memory in the system ({}) is less than the minimum configured threshold (`mlock_executable_min_total_memory_amount_bytes` = {})",
                 ReadableSize(physical_server_memory), ReadableSize(min_physical_server_memory_to_mlock));
         }
     }
@@ -2617,8 +2617,8 @@ try
     if (config().has("keeper_server.server_id"))
     {
 #if USE_NURAFT
-        //// If we don't have configured connection probably someone trying to use clickhouse-server instead
-        //// of clickhouse-keeper, so start synchronously.
+        //// If we don't have configured connection probably someone trying to use datastore-server instead
+        //// of datastore-keeper, so start synchronously.
         bool can_initialize_keeper_async = false;
 
         if (has_zookeeper) /// We have configured connection to some zookeeper cluster
@@ -3175,7 +3175,7 @@ try
 
 #if defined(OS_LINUX)
         /// Tell the service manager that service startup is finished.
-        /// NOTE: the parent clickhouse-watchdog process must do systemdNotify("MAINPID={}\n", child_pid); before
+        /// NOTE: the parent datastore-watchdog process must do systemdNotify("MAINPID={}\n", child_pid); before
         /// the child process notifies 'READY=1'.
         systemdNotify("READY=1\n");
 #endif

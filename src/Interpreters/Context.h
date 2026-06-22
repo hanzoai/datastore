@@ -1663,11 +1663,11 @@ public:
 
     enum class ApplicationType : uint8_t
     {
-        SERVER,         /// The program is run as clickhouse-server daemon (default behavior)
-        CLIENT,         /// clickhouse-client
-        LOCAL,          /// clickhouse-local
-        KEEPER,         /// clickhouse-keeper (also daemon)
-        DISKS,          /// clickhouse-disks
+        SERVER,         /// The program is run as datastore-server daemon (default behavior)
+        CLIENT,         /// datastore-client
+        LOCAL,          /// datastore-local
+        KEEPER,         /// datastore-keeper (also daemon)
+        DISKS,          /// datastore-disks
     };
 
     ApplicationType getApplicationType() const;

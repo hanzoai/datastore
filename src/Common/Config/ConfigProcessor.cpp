@@ -403,8 +403,8 @@ bool ConfigProcessor::merge(XMLDocumentPtr config, XMLDocumentPtr with)
     std::string config_root_node_name = config_root->nodeName();
     std::string merged_root_node_name = with_root->nodeName();
 
-    /// For compatibility, we treat 'yandex', 'clickhouse' and 'datastore' equivalent.
-    /// 'datastore' is the Hanzo white-label config root; 'yandex'/'clickhouse' are upstream.
+    /// For compatibility, we treat 'yandex', 'datastore' and 'datastore' equivalent.
+    /// 'datastore' is the Hanzo white-label config root; 'yandex'/'datastore' are upstream.
 
     if (config_root_node_name != merged_root_node_name
         && !((config_root_node_name == "yandex" || config_root_node_name == "clickhouse" || config_root_node_name == "datastore")
@@ -974,7 +974,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
             std::replace(new_path.begin(), new_path.end(), '/', '_');
 
             /// If we have config file in YAML format, the preprocessed config will inherit .yaml extension
-            /// but will contain config in XML format, so some tools like clickhouse extract-from-config won't work
+            /// but will contain config in XML format, so some tools like datastore extract-from-config won't work
             new_path = fs::path(new_path).replace_extension(".xml").string();
 
             if (preprocessed_dir.empty())
@@ -1023,7 +1023,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
     (but they will not be able to decrypt encrypted elements). If there are no `encryption_codecs` tags with `from_zk` attributes, we can decrypt anyways.
 
     Config example we process here:
-    <clickhouse>
+    <datastore>
       <encryption_codecs>
         <aes_128_gcm_siv>
             <key_hex>00112233445566778899aabbccddeeff</key_hex>
@@ -1033,7 +1033,7 @@ void ConfigProcessor::savePreprocessedConfig(LoadedConfig & loaded_config, std::
     </clickhouse>
 
     Config example we do not process here:
-    <clickhouse>
+    <datastore>
       <encryption_codecs>
         <aes_128_gcm_siv>
             <key_hex from_zk="/clickhouse/aes128_key_hex"/>

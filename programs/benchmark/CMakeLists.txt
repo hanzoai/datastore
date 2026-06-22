@@ -10,4 +10,4 @@ set (DATASTORE_BENCHMARK_LINK
 
 datastore_program_add(benchmark)
 
-target_link_libraries (clickhouse-benchmark-lib PRIVATE clickhouse-client-lib)
+target_link_libraries (datastore-benchmark-lib PRIVATE datastore-client-lib)

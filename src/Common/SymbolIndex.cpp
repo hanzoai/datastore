@@ -41,7 +41,7 @@ But because Datastore is linked with most of the symbols exported (-rdynamic fla
 3. DWARF debug info. It contains the most detailed information about symbols and everything else.
 It allows to get source file names and line numbers from addresses. Only available if you use -g option for compiler.
 It is also used by default for Datastore builds, but because of its weight (about two gigabytes)
-it is split to separate binary and provided in clickhouse-common-static-dbg package.
+it is split to separate binary and provided in datastore-common-static-dbg package.
 This separate binary is placed in /usr/lib/debug/usr/bin/clickhouse.debug and is loaded automatically by tools like gdb, addr2line.
 When you build Datastore by yourself, debug info is not split and present in a single huge binary.
 
@@ -56,7 +56,7 @@ And finally, it will read DWARF info (3) if available to display file names and 
 
 What detail can you obtain depending on your binary?
 
-If you have debug info (you build Datastore by yourself or install clickhouse-common-static-dbg package), you will get source file names and line numbers.
+If you have debug info (you build Datastore by yourself or install datastore-common-static-dbg package), you will get source file names and line numbers.
 Otherwise you will get only symbol names. If your binary contains symbol table in section headers (the default, unless stripped), you will get all symbol names.
 Otherwise you will get only exported symbols from program headers.
 
@@ -98,9 +98,9 @@ namespace
 
 /// Notes: "PHDR" is "Program Headers".
 /// To look at program headers, run:
-///  readelf -l ./clickhouse-server
+///  readelf -l ./datastore-server
 /// To look at section headers, run:
-///  readelf -S ./clickhouse-server
+///  readelf -S ./datastore-server
 /// Also look at: https://wiki.osdev.org/ELF
 /// Also look at: man elf
 /// http://www.linker-aliens.org/blogs/ali/entry/inside_elf_symbol_tables/

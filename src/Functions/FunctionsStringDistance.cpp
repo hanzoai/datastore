@@ -952,9 +952,9 @@ Calculates the [edit distance](https://en.wikipedia.org/wiki/Edit_distance) betw
     FunctionDocumentation::Examples examples_edit = {
     {
         "Usage example",
-        "SELECT editDistance('clickhouse', 'mouse')",
+        "SELECT editDistance('datastore', 'mouse')",
         R"(
-┌─editDistance('clickhouse', 'mouse')─┐
+┌─editDistance('datastore', 'mouse')─┐
 │                                   6 │
 └─────────────────────────────────────┘
         )"
@@ -997,9 +997,9 @@ Calculates the [Damerau-Levenshtein distance](https://en.wikipedia.org/wiki/Dame
     FunctionDocumentation::Examples examples_damerau = {
     {
         "Usage example",
-        "SELECT damerauLevenshteinDistance('clickhouse', 'mouse')",
+        "SELECT damerauLevenshteinDistance('datastore', 'mouse')",
         R"(
-┌─damerauLevenshteinDistance('clickhouse', 'mouse')─┐
+┌─damerauLevenshteinDistance('datastore', 'mouse')─┐
 │                                                 6 │
 └───────────────────────────────────────────────────┘
         )"
@@ -1020,9 +1020,9 @@ Calculates the [Jaccard similarity index](https://en.wikipedia.org/wiki/Jaccard_
     FunctionDocumentation::Examples examples_jaccard = {
     {
         "Usage example",
-        "SELECT stringJaccardIndex('clickhouse', 'mouse')",
+        "SELECT stringJaccardIndex('datastore', 'mouse')",
         R"(
-┌─stringJaccardIndex('clickhouse', 'mouse')─┐
+┌─stringJaccardIndex('datastore', 'mouse')─┐
 │                                       0.4 │
 └───────────────────────────────────────────┘
         )"
@@ -1066,9 +1066,9 @@ Calculates the [Jaro similarity](https://en.wikipedia.org/wiki/Jaro%E2%80%93Wink
     FunctionDocumentation::Examples examples_jaro = {
     {
         "Usage example",
-        "SELECT jaroSimilarity('clickhouse', 'click')",
+        "SELECT jaroSimilarity('datastore', 'click')",
         R"(
-┌─jaroSimilarity('clickhouse', 'click')─┐
+┌─jaroSimilarity('datastore', 'click')─┐
 │                    0.8333333333333333 │
 └───────────────────────────────────────┘
         )"
@@ -1089,9 +1089,9 @@ Calculates the [Jaro-Winkler similarity](https://en.wikipedia.org/wiki/Jaro%E2%8
     FunctionDocumentation::Examples examples_jaro_winkler = {
     {
         "Usage example",
-        "SELECT jaroWinklerSimilarity('clickhouse', 'click')",
+        "SELECT jaroWinklerSimilarity('datastore', 'click')",
         R"(
-┌─jaroWinklerSimilarity('clickhouse', 'click')─┐
+┌─jaroWinklerSimilarity('datastore', 'click')─┐
 │                           0.8999999999999999 │
 └──────────────────────────────────────────────┘
         )"

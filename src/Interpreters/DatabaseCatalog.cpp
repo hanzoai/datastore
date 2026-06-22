@@ -2041,7 +2041,7 @@ bool DatabaseCatalog::maybeRemoveDirectory(const String & disk_name, const DiskP
 
         if (st.st_uid != geteuid())
         {
-            /// Directory is not owned by clickhouse, it's weird, let's ignore it (chmod will likely fail anyway).
+            /// Directory is not owned by datastore, it's weird, let's ignore it (chmod will likely fail anyway).
             LOG_WARNING(log, "Found directory {} with unexpected owner (uid={}) on disk {}", unused_dir, st.st_uid, disk_name);
             return false;
         }

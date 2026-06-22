@@ -30,4 +30,4 @@ list(APPEND DATASTORE_CLIENT_LINK PRIVATE readpassphrase)
 
 datastore_program_add(client)
 
-install (FILES clickhouse-client.xml DESTINATION "${DATASTORE_ETC_DIR}/clickhouse-client" COMPONENT clickhouse-client RENAME config.xml)
+install (FILES datastore-client.xml DESTINATION "${DATASTORE_ETC_DIR}/datastore-client" COMPONENT datastore-client RENAME config.xml)

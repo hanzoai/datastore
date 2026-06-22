@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <predicate_statistics_log>
         <database>system</database>
         <table>predicate_statistics_log</table>

@@ -31,7 +31,7 @@ set_source_files_properties(Server.cpp PROPERTIES OBJECT_DEPENDS
 
 datastore_program_add(server)
 
-install(FILES config.xml users.xml DESTINATION "${DATASTORE_ETC_DIR}/datastore-server" COMPONENT clickhouse)
+install(FILES config.xml users.xml DESTINATION "${DATASTORE_ETC_DIR}/datastore-server" COMPONENT datastore)
 
 if (ENABLE_FUZZING)
     add_subdirectory(fuzzers)

@@ -1,4 +1,4 @@
-<!-- Config set into /etc/clickhouse-client/. It's used if no other configs are found. -->
+<!-- Config set into /etc/datastore-client/. It's used if no other configs are found. -->
 <config>
     <!-- Shorthand for self-signed combination in openSSL section below: <accept-invalid-certificate>1</accept-invalid-certificate> -->
     <openSSL>
@@ -16,7 +16,7 @@
     </openSSL>
 
     <!--
-        Custom prompt settings for clickhouse-client. See also <connections_credentials>.
+        Custom prompt settings for datastore-client. See also <connections_credentials>.
 
         Possible macros:
             {host}
@@ -58,7 +58,7 @@
     </proto_caps>
     -->
 
-    <!-- Do not send clickhouse-client to background on C-z -->
+    <!-- Do not send datastore-client to background on C-z -->
     <!-- <ignore_shell_suspend>true</ignore_shell_suspend> -->
 
     <!-- Disable showing warnings from `system.warnings` when the client connects to the server. -->
@@ -91,7 +91,7 @@
     <history_file>/home/user/datastore_custom_history.log</history_file>
     <max_parser_depth>2500</max_parser_depth>
 
-        The same can be done on user-level configuration, just create & adjust: ~/.clickhouse-client/config.xml
+        The same can be done on user-level configuration, just create & adjust: ~/.datastore-client/config.xml
     -->
 
     <!-- Directory containing the proto files for the well-known Protobuf types.

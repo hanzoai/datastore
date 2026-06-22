@@ -345,7 +345,7 @@ public:
 
     /// Returns a list of storage objects (contains path, size, ...).
     /// (A list is returned because for Log family engines there might
-    /// be multiple files in remote fs for single clickhouse file.
+    /// be multiple files in remote fs for single datastore file.
     virtual StoredObjects getStorageObjects(const String &) const
     {
         throw Exception(ErrorCodes::NOT_IMPLEMENTED,
@@ -525,8 +525,8 @@ public:
     /// You can ask -- why we have zero and what does it mean? For some unknown reason
     /// the decision was made to take 0 as "no references exist", but only file itself left.
     /// With normal file system we will get 1 in this case:
-    /// $ stat clickhouse
-    ///  File: clickhouse
+    /// $ stat datastore
+    ///  File: datastore
     ///  Size: 3014014920      Blocks: 5886760    IO Block: 4096   regular file
     ///  Device: 10301h/66305d   Inode: 3109907     Links: 1
     /// Why we have always zero by default? Because normal filesystem

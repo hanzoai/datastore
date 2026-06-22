@@ -765,7 +765,7 @@ BlockIO InterpreterSystemQuery::execute()
         case Type::RELOAD_CONFIG:
         {
             if (system_context->getApplicationType() == Context::ApplicationType::LOCAL)
-                throw Exception::createDeprecated("SYSTEM RELOAD CONFIG query is not supported in clickhouse-local", ErrorCodes::UNSUPPORTED_METHOD);
+                throw Exception::createDeprecated("SYSTEM RELOAD CONFIG query is not supported in datastore-local", ErrorCodes::UNSUPPORTED_METHOD);
             getContext()->checkAccess(AccessType::SYSTEM_RELOAD_CONFIG);
             system_context->reloadConfig();
             break;
@@ -986,7 +986,7 @@ BlockIO InterpreterSystemQuery::execute()
         case Type::STOP_LISTEN:
         {
             if (system_context->getApplicationType() == Context::ApplicationType::LOCAL)
-                throw Exception::createDeprecated("SYSTEM STOP LISTEN query is not supported in clickhouse-local", ErrorCodes::UNSUPPORTED_METHOD);
+                throw Exception::createDeprecated("SYSTEM STOP LISTEN query is not supported in datastore-local", ErrorCodes::UNSUPPORTED_METHOD);
             getContext()->checkAccess(AccessType::SYSTEM_LISTEN);
             getContext()->stopServers(query.server_type);
             break;
@@ -994,7 +994,7 @@ BlockIO InterpreterSystemQuery::execute()
         case Type::START_LISTEN:
         {
             if (system_context->getApplicationType() == Context::ApplicationType::LOCAL)
-                throw Exception::createDeprecated("SYSTEM START LISTEN query is not supported in clickhouse-local", ErrorCodes::UNSUPPORTED_METHOD);
+                throw Exception::createDeprecated("SYSTEM START LISTEN query is not supported in datastore-local", ErrorCodes::UNSUPPORTED_METHOD);
             getContext()->checkAccess(AccessType::SYSTEM_LISTEN);
             getContext()->startServers(query.server_type);
             break;

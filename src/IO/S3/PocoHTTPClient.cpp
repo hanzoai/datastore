@@ -478,12 +478,12 @@ void PocoHTTPClient::makeRequestInternalImpl(
     if (!first_attempt)
         LOG_DEBUG(
             log,
-            "Retrying S3 request to: {}, aws sdk attempt: {}, clickhouse attempt: {}, kind: {}",
+            "Retrying S3 request to: {}, aws sdk attempt: {}, datastore attempt: {}, kind: {}",
             uri, sdk_attempt, ch_attempt, getMetricKind(request) == S3MetricKind::Read ? "Read" : "Write");
     else // if (enable_s3_requests_logging)
         LOG_TEST(
             log,
-            "Make S3 request to: {}, aws sdk attempt: {}, clickhouse attempt: {}, kind: {}",
+            "Make S3 request to: {}, aws sdk attempt: {}, datastore attempt: {}, kind: {}",
             uri, sdk_attempt, ch_attempt, getMetricKind(request) == S3MetricKind::Read ? "Read" : "Write");
 
     switch (request.GetMethod())

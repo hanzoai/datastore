@@ -11,11 +11,11 @@ Replace placeholders in the commands below with paths in your environment.
 
 ```bash
 # Generated workload from config
-clickhouse keeper-bench \
+datastore keeper-bench \
     --config <config_file>
 
 # Replay workload from a request log
-clickhouse keeper-bench \
+datastore keeper-bench \
     -h localhost:9181 \
     --input-request-log <request_log_file>
 ```

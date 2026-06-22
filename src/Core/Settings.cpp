@@ -90,7 +90,7 @@ namespace ErrorCodes
   * for tracking settings changes in different versions and for special `compatibility` settings to work correctly.
   *
   * The settings in this list are used to autogenerate the markdown documentation. You can find the script which
-  * generates the markdown from source here: https://github.com/Datastore/clickhouse-docs/blob/main/scripts/settings/autogenerate-settings.sh
+  * generates the markdown from source here: https://github.com/Datastore/datastore-docs/blob/main/scripts/settings/autogenerate-settings.sh
   *
   * If a setting has an effect only in Datastore Cloud, then please include in the description: "Only has an effect in Datastore Cloud."
   */
@@ -102,7 +102,7 @@ namespace ErrorCodes
 #define OBSOLETE_SETTINGS(DECLARE, DECLARE_WITH_ALIAS)
 #else
 #define COMMON_SETTINGS(DECLARE, DECLARE_WITH_ALIAS) \
-    DECLARE(Dialect, dialect, Dialect::clickhouse, R"(
+    DECLARE(Dialect, dialect, Dialect::datastore, R"(
 Which dialect will be used to parse query
 )", 0)\
     DECLARE(UInt64, min_compress_block_size, 65536, R"(
@@ -157,11 +157,11 @@ The maximum size of blocks (in a count of rows) to form for insertion into a tab
 
 This setting controls block formation in two contexts:
 
-1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, clickhouse-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
+1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, datastore-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
    - Both min_insert_block_size_rows AND min_insert_block_size_bytes are reached, OR
    - Either max_insert_block_size_rows OR max_insert_block_size_bytes is reached
 
-   Note: When using clickhouse-client or clickhouse-local to read from a file, the client itself parses the data and this setting applies on the client side.
+   Note: When using datastore-client or datastore-local to read from a file, the client itself parses the data and this setting applies on the client side.
 
 2. INSERT operations: During INSERT queries and when data flows through materialized views, this setting's behavior depends on `use_strict_insert_block_limits`:
 
@@ -188,11 +188,11 @@ The minimum size of blocks (in rows) to form for insertion into a table.
 
 This setting controls block formation in two contexts:
 
-1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, clickhouse-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
+1. Format parsing: When the server parses row-based input formats (CSV, TSV, JSONEachRow, etc.) from any interface (HTTP, datastore-client with inline data, gRPC, PostgreSQL wire protocol), blocks are emitted when:
    - Both min_insert_block_size_rows AND min_insert_block_size_bytes are reached, OR
    - Either max_insert_block_size_rows OR max_insert_block_size_bytes is reached
 
-   Note: When using clickhouse-client or clickhouse-local to read from a file, the client itself parses the data and this setting applies on the client side.
+   Note: When using datastore-client or datastore-local to read from a file, the client itself parses the data and this setting applies on the client side.
 
 2. INSERT operations: During INSERT queries and when data flows through materialized views, this setting's behavior depends on `use_strict_insert_block_limits`:
 
@@ -2340,7 +2340,7 @@ Possible values:
 )", 0) \
     \
     DECLARE(Bool, send_progress_in_http_headers, false, R"(
-Enables or disables `X-Datastore-Progress` HTTP response headers in `clickhouse-server` responses.
+Enables or disables `X-Datastore-Progress` HTTP response headers in `datastore-server` responses.
 
 For more information, read the [HTTP interface description](/interfaces/http).
 
@@ -3802,7 +3802,7 @@ log_query_views=1
     DECLARE(String, log_comment, "", R"(
 Specifies the value for the `log_comment` field of the [system.query_log](../system-tables/query_log.md) table and comment text for the server log.
 
-It can be used to improve the readability of server logs. Additionally, it helps to select queries related to the test from the `system.query_log` after running [clickhouse-test](../../development/tests.md).
+It can be used to improve the readability of server logs. Additionally, it helps to select queries related to the test from the `system.query_log` after running [datastore-test](../../development/tests.md).
 
 Possible values:
 
@@ -6305,7 +6305,7 @@ Possible values:
 )", 0) \
     \
     DECLARE(LocalFSReadMethod, storage_file_read_method, LocalFSReadMethod::pread, R"(
-Method of reading data from storage file, one of: `read`, `pread`, `mmap`. The mmap method does not apply to clickhouse-server (it's intended for clickhouse-local).
+Method of reading data from storage file, one of: `read`, `pread`, `mmap`. The mmap method does not apply to datastore-server (it's intended for datastore-local).
 )", 0) \
     DECLARE(String, local_filesystem_read_method, "pread_threadpool", R"(
 Method of reading data from local filesystem, one of: read, pread, mmap, io_uring, pread_threadpool.
@@ -6886,7 +6886,7 @@ Rewrite count distinct to subquery of group by
 Avoid repeated inverse dictionary lookup by doing faster lookups into a precomputed set of possible key values.
 )", 0) \
     DECLARE(Bool, throw_if_no_data_to_insert, true, R"(
-Allows or forbids empty INSERTs, enabled by default (throws an error on an empty insert). Only applies to INSERTs using [`clickhouse-client`](/interfaces/cli) or using the [gRPC interface](/interfaces/grpc).
+Allows or forbids empty INSERTs, enabled by default (throws an error on an empty insert). Only applies to INSERTs using [`datastore-client`](/interfaces/cli) or using the [gRPC interface](/interfaces/grpc).
 )", 0) \
     DECLARE(Bool, compatibility_ignore_auto_increment_in_create_table, false, R"(
 Ignore AUTO_INCREMENT keyword in column declaration if true, otherwise return error. It simplifies migration from MySQL
@@ -7566,7 +7566,7 @@ If enabled, MongoDB tables will return an error when a MongoDB query cannot be b
     DECLARE(Bool, implicit_select, false, R"(
 Allow writing simple SELECT queries without the leading SELECT keyword, which makes it simple for calculator-style usage, e.g. `1 + 2` becomes a valid query.
 
-In `clickhouse-local` it is enabled by default and can be explicitly disabled.
+In `datastore-local` it is enabled by default and can be explicitly disabled.
 )", 0) \
     DECLARE(Bool, optimize_extract_common_expressions, true, R"(
 Allow extracting common expressions from disjunctions in WHERE, PREWHERE, ON, HAVING and QUALIFY expressions. A logical expression like `(A AND B) OR (A AND C)` can be rewritten to `A AND (B OR C)`, which might help to utilize:
@@ -7591,7 +7591,7 @@ Automatically synchronize set of data parts after MOVE|REPLACE|ATTACH partition 
     DECLARE(String, implicit_table_at_top_level, "", R"(
 If not empty, queries without FROM at the top level will read from this table instead of system.one.
 
-This is used in clickhouse-local for input data processing.
+This is used in datastore-local for input data processing.
 The setting could be set explicitly by a user but is not intended for this type of usage.
 
 Subqueries are not affected by this setting (neither scalar, FROM, or IN subqueries).

@@ -82,7 +82,7 @@ ColumnsDescription TraceLogElement::getColumnsDescription()
         {"event_time", std::make_shared<DataTypeDateTime>(), "Timestamp of the sampling moment."},
         {"event_time_microseconds", std::make_shared<DataTypeDateTime64>(6), "Timestamp of the sampling moment with microseconds precision."},
         {"timestamp_ns", std::make_shared<DataTypeUInt64>(), "Timestamp of the sampling moment in nanoseconds."},
-        {"revision", std::make_shared<DataTypeUInt32>(), "Datastore server build revision. When connecting to the server by `clickhouse-client`, you see a string similar to `Connected to Datastore server version 19.18.1.`. This field contains the `revision`, but not the `version` of a server."},
+        {"revision", std::make_shared<DataTypeUInt32>(), "Datastore server build revision. When connecting to the server by `datastore-client`, you see a string similar to `Connected to Datastore server version 19.18.1.`. This field contains the `revision`, but not the `version` of a server."},
         {"trace_type", std::make_shared<TraceDataType>(trace_values), "Trace type: "
             "`Real` represents collecting stack traces by wall-clock time. "
             "`CPU` represents collecting stack traces by CPU time. "

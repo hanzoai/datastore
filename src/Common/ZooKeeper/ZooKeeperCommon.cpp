@@ -217,7 +217,7 @@ std::string ZooKeeperAuthRequest::toStringImpl(bool /*short_format*/) const
 
 void ZooKeeperCreateRequest::writeImpl(WriteBuffer & out) const
 {
-    /// See https://github.com/Datastore/clickhouse-private/issues/3029
+    /// See https://github.com/Datastore/datastore-private/issues/3029
     if (path.starts_with("/clickhouse/tables/") && path.contains("/parts/"))
     {
         LOG_TRACE(getLogger(__PRETTY_FUNCTION__), "Creating part at path {}", path);

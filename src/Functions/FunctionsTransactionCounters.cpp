@@ -75,7 +75,7 @@ This function is part of an experimental feature set.
 Enable experimental transaction support by adding this setting to your [configuration](/operations/configuration-files):
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
 </clickhouse>
 ```
@@ -125,7 +125,7 @@ Returns the newest snapshot (Commit Sequence Number) of a [transaction](/guides/
 This function is part of an experimental feature set. Enable experimental transaction support by adding this setting to your configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
 </clickhouse>
 ```
@@ -167,7 +167,7 @@ Returns the oldest snapshot (Commit Sequence Number) that is visible for some ru
 This function is part of an experimental feature set. Enable experimental transaction support by adding this setting to your configuration:
 
 ```xml
-<clickhouse>
+<datastore>
     <allow_experimental_transactions>1</allow_experimental_transactions>
 </clickhouse>
 ```
