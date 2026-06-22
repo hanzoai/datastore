@@ -163,7 +163,7 @@ function _datastore_get_options()
         ch|datastore-local) extra_args+=(--verbose) ;;
         datastore-benchmark) extra_args+=(--verbose) ;;
     esac
-    if [ "$command_base" = "clickhouse" ]; then
+    if [ "$command_base" = "datastore" ]; then
         case "$2" in
             client) extra_args+=(--verbose) ;;
             local) extra_args+=(--verbose) ;;

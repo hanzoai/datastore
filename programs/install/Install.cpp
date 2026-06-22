@@ -49,7 +49,7 @@ constexpr unsigned char resource_users_xml[] =
 };
 
 
-/** This tool can be used to install Datastore without a deb/rpm/tgz package, having only "clickhouse" binary.
+/** This tool can be used to install Datastore without a deb/rpm/tgz package, having only "datastore" binary.
   * It also allows to avoid dependency on systemd, upstart, SysV init.
   *
   * The following steps are performed:
@@ -94,8 +94,8 @@ static constexpr auto DEFAULT_DATASTORE_SERVER_GROUP = "";
 static constexpr auto DEFAULT_DATASTORE_BRIDGE_USER = "";
 static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "";
 #else
-static constexpr auto DEFAULT_DATASTORE_SERVER_USER = "clickhouse";
-static constexpr auto DEFAULT_DATASTORE_SERVER_GROUP = "clickhouse";
+static constexpr auto DEFAULT_DATASTORE_SERVER_USER = "datastore";
+static constexpr auto DEFAULT_DATASTORE_SERVER_GROUP = "datastore";
 static constexpr auto DEFAULT_DATASTORE_BRIDGE_USER = "datastore-bridge";
 static constexpr auto DEFAULT_DATASTORE_BRIDGE_GROUP = "datastore-bridge";
 #endif
@@ -234,8 +234,8 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
             ("log-path", po::value<std::string>()->default_value("var/log/datastore-server"), "where to create log directory")
             ("data-path", po::value<std::string>()->default_value("var/lib/clickhouse"), "directory for data")
             ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
-            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user to create")
-            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group to create")
+            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "datastore user to create")
+            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "datastore group to create")
             ("noninteractive,y", "run non-interactively")
             ("link", "create symlink to the binary instead of copying to binary-path")
         ;
@@ -246,7 +246,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
         if (options.contains("help"))
         {
             std::cout << "Install Datastore without .deb/.rpm/.tgz packages (having the binary only)\n\n";
-            std::cout << "Usage: " << formatWithSudo("clickhouse install", getuid() != 0) << " [options]\n";
+            std::cout << "Usage: " << formatWithSudo("datastore install", getuid() != 0) << " [options]\n";
             std::cout << desc << '\n';
             return 0;
         }
@@ -287,7 +287,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
         fs::path prefix = options["prefix"].as<std::string>();
         fs::path bin_dir = prefix / options["binary-path"].as<std::string>();
 
-        fs::path main_bin_path = bin_dir / "clickhouse";
+        fs::path main_bin_path = bin_dir / "datastore";
         fs::path main_bin_tmp_path = bin_dir / "clickhouse.new";
         fs::path main_bin_old_path = bin_dir / "clickhouse.old";
 
@@ -462,7 +462,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
             {
                 /// Do not replace short named symlinks if they are already present in the system
                 /// to avoid collision with other tools.
-                if (!tool.starts_with("clickhouse"))
+                if (!tool.starts_with("datastore"))
                 {
                     fmt::print("Symlink {} already exists. Will keep it.\n", symlink_path.string());
                     need_to_create = false;
@@ -981,7 +981,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 " {}{}\n"
                 "\nStart datastore-client with:\n"
                 " datastore-client{}\n\n",
-                formatWithSudo("clickhouse restart"),
+                formatWithSudo("datastore restart"),
                 start_options,
                 maybe_password);
         }
@@ -993,7 +993,7 @@ int mainEntryDatastoreInstall(int argc, char ** argv)
                 " {}{}\n"
                 "\nStart datastore-client with:\n"
                 " datastore-client{}\n\n",
-                formatWithSudo("clickhouse start"),
+                formatWithSudo("datastore start"),
                 start_options,
                 maybe_password);
         }
@@ -1259,8 +1259,8 @@ int mainEntryDatastoreStart(int argc, char ** argv)
 #endif
             ("config-path", po::value<std::string>()->default_value("etc/datastore-server"), "directory with configs")
             ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
-            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user")
-            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group")
+            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "datastore user")
+            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "datastore group")
             ("no-sudo", po::bool_switch(), "use datastore su instead of sudo (useful when running in a Docker container)")
             ("max-tries", po::value<unsigned>()->default_value(60), "Max number of tries for waiting the server (with 1 second delay)")
         ;
@@ -1272,7 +1272,7 @@ int mainEntryDatastoreStart(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: " << formatWithSudo("clickhouse start", !no_sudo && getuid() != 0) << " [options]\n";
+            std::cout << "Usage: " << formatWithSudo("datastore start", !no_sudo && getuid() != 0) << " [options]\n";
             std::cout << desc << "\n";
             return 0;
         }
@@ -1288,7 +1288,7 @@ int mainEntryDatastoreStart(int argc, char ** argv)
             group.clear();
 
         fs::path prefix = options["prefix"].as<std::string>();
-        fs::path binary = prefix / options["binary-path"].as<std::string>() / "clickhouse";
+        fs::path binary = prefix / options["binary-path"].as<std::string>() / "datastore";
         fs::path executable = prefix / options["binary-path"].as<std::string>() / "datastore-server";
         fs::path config = prefix / options["config-path"].as<std::string>() / "config.xml";
         fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "datastore-server.pid";
@@ -1323,7 +1323,7 @@ int mainEntryDatastoreStop(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: " << formatWithSudo("clickhouse stop", getuid() != 0) << " [options]\n";
+            std::cout << "Usage: " << formatWithSudo("datastore stop", getuid() != 0) << " [options]\n";
             std::cout << desc << "\n";
             return 0;
         }
@@ -1360,7 +1360,7 @@ int mainEntryDatastoreStatus(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: " << formatWithSudo("clickhouse status", getuid() != 0) << " [options]\n";
+            std::cout << "Usage: " << formatWithSudo("datastore status", getuid() != 0) << " [options]\n";
             std::cout << desc << "\n";
             return 0;
         }
@@ -1396,8 +1396,8 @@ int mainEntryDatastoreRestart(int argc, char ** argv)
 #endif
             ("config-path", po::value<std::string>()->default_value("etc/datastore-server"), "directory with configs")
             ("pid-path", po::value<std::string>()->default_value("var/run/datastore-server"), "directory for pid file")
-            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "clickhouse user")
-            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "clickhouse group")
+            ("user", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_USER), "datastore user")
+            ("group", po::value<std::string>()->default_value(DEFAULT_DATASTORE_SERVER_GROUP), "datastore group")
             ("no-sudo", po::bool_switch(), "use datastore su instead of sudo (useful when running in a Docker container)")
             ("force", po::value<bool>()->default_value(false), "Stop with KILL signal instead of TERM")
             ("do-not-kill", po::bool_switch(), "Do not send KILL even if TERM did not help")
@@ -1411,7 +1411,7 @@ int mainEntryDatastoreRestart(int argc, char ** argv)
 
         if (options.contains("help"))
         {
-            std::cout << "Usage: " << formatWithSudo("clickhouse restart", !no_sudo && getuid() != 0) << " [options]\n";
+            std::cout << "Usage: " << formatWithSudo("datastore restart", !no_sudo && getuid() != 0) << " [options]\n";
             std::cout << desc << "\n";
             return 0;
         }
@@ -1424,7 +1424,7 @@ int mainEntryDatastoreRestart(int argc, char ** argv)
             group.clear();
 
         fs::path prefix = options["prefix"].as<std::string>();
-        fs::path binary = prefix / options["binary-path"].as<std::string>() / "clickhouse";
+        fs::path binary = prefix / options["binary-path"].as<std::string>() / "datastore";
         fs::path executable = prefix / options["binary-path"].as<std::string>() / "datastore-server";
         fs::path config = prefix / options["config-path"].as<std::string>() / "config.xml";
         fs::path pid_file = prefix / options["pid-path"].as<std::string>() / "datastore-server.pid";

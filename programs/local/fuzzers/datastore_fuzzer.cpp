@@ -173,7 +173,7 @@ std::optional<std::thread> runner;
 pthread_t runner_thread_id{};
 struct sigaction original_sigalrm_action{};
 
-String datastore{"clickhouse"};
+String datastore{"datastore"};
 std::vector<char *> datastore_args{clickhouse.data()};
 
 /// Signal-safe stderr print helper.

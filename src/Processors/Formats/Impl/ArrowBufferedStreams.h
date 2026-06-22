@@ -147,7 +147,7 @@ public:
     arrow::Status Reallocate(int64_t old_size, int64_t new_size, int64_t alignment, uint8_t ** ptr) override;
     void Free(uint8_t * buffer, int64_t size, int64_t alignment) override;
 
-    std::string backend_name() const override { return "clickhouse"; }
+    std::string backend_name() const override { return "datastore"; }
 
     int64_t bytes_allocated() const override { return stats.bytes_allocated(); }
     int64_t total_bytes_allocated() const override { return stats.total_bytes_allocated(); }

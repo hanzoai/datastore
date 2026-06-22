@@ -25,7 +25,7 @@ namespace
 using namespace std::string_literals;
 using namespace std::literals::string_view_literals;
 
-constexpr auto CONNECTION_URI_SCHEME = "clickhouse:"sv;
+constexpr auto CONNECTION_URI_SCHEME = "datastore:"sv;
 
 const std::unordered_map<std::string_view, std::string_view> PROHIBITED_CLIENT_OPTIONS = {
     /// Client option, client option long name

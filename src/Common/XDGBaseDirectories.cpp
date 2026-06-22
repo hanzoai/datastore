@@ -24,7 +24,7 @@ namespace
 
     constexpr const char* ENV_HOME = "HOME";
 
-    constexpr const char* APP_NAME = "clickhouse";
+    constexpr const char* APP_NAME = "datastore";
 
     fs::path getPathFromEnvOrDefault(const char* env_var_name, const char* path_prefix)
     {

@@ -766,7 +766,7 @@ bool initDatastoreDB(
 
 int mainEntryDatastoreDockerInit(int argc, char ** argv)
 {
-    g_datastore_binary = (argc > 0 && argv[0][0] != '\0') ? argv[0] : "clickhouse";
+    g_datastore_binary = (argc > 0 && argv[0][0] != '\0') ? argv[0] : "datastore";
 
     bool keeper_mode = false;
     bool show_help = false;
@@ -897,7 +897,7 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
             /// Default to the `datastore` system user if it exists, otherwise fall back to UID 101.
             uid_t default_uid = 101;
             gid_t default_gid = 101;
-            const passwd * pw = getpwnam("clickhouse"); // NOLINT(concurrency-mt-unsafe)
+            const passwd * pw = getpwnam("datastore"); // NOLINT(concurrency-mt-unsafe)
             if (pw)
             {
                 default_uid = pw->pw_uid;

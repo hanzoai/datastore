@@ -98,7 +98,7 @@ bool SSHKey::isEqual(const SSHKey & other) const
 String SSHKey::signString(std::string_view input) const
 {
     char * signature = nullptr;
-    if (int rc = sshsig_sign(input.data(), input.size(), key, nullptr, "clickhouse", SSHSIG_DIGEST_SHA2_256, &signature); rc != SSH_OK)
+    if (int rc = sshsig_sign(input.data(), input.size(), key, nullptr, "datastore", SSHSIG_DIGEST_SHA2_256, &signature); rc != SSH_OK)
         throw Exception(ErrorCodes::LIBSSH_ERROR, "Error signing with ssh key");
     std::unique_ptr<char, SSHStringDeleter> sig_ptr(signature);
     return String(sig_ptr.get());
@@ -108,7 +108,7 @@ bool SSHKey::verifySignature(std::string_view signature, std::string_view origin
 {
     ssh_key verify_key = nullptr;
     String sig_str(signature);
-    int rc = sshsig_verify(original.data(), original.size(), sig_str.c_str(), "clickhouse", &verify_key);
+    int rc = sshsig_verify(original.data(), original.size(), sig_str.c_str(), "datastore", &verify_key);
     if (rc != SSH_OK)
     {
         if (verify_key != nullptr)
