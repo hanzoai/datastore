@@ -218,10 +218,10 @@ protected:
         context->applySettingsChanges(settings_changes);
 
         /// Set the query id supplied by the user, if any, and also update the OpenTelemetry fields.
-        String query_id = params->get("query_id", request.get("X-ClickHouse-Query-Id", ""));
+        String query_id = params->get("query_id", request.get("X-Datastore-Query-Id", ""));
 
         /// Sanitize query_id: remove ASCII control characters to prevent CRLF injection
-        /// into HTTP response headers (the query_id is reflected in X-ClickHouse-Query-Id).
+        /// into HTTP response headers (the query_id is reflected in X-Datastore-Query-Id).
         std::erase_if(query_id, [](unsigned char c) { return isControlASCII(c) || c == 0x7F; });
 
         context->setCurrentQueryId(query_id);

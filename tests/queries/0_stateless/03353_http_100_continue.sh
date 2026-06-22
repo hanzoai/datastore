@@ -72,12 +72,12 @@ checkForMissing100ContinueResponse
 checkFor200OkResponse
 
 echo "=== Test: Deferred 100 Continue (query in body) ==="
-result=$(${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}" -H "Expect: 100-continue" -H "X-ClickHouse-100-Continue: defer" --expect100-timeout 300 --max-time 5 -d "SELECT 1" 2>&1)
+result=$(${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}" -H "Expect: 100-continue" -H "X-Datastore-100-Continue: defer" --expect100-timeout 300 --max-time 5 -d "SELECT 1" 2>&1)
 checkForMissing100ContinueResponse
 checkForTimeout
 
 echo "=== Test: Deferred 100 Continue (query in URL) ==="
-result=$(${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=SELECT%201" -H "Expect: 100-continue" -H "X-ClickHouse-100-Continue: defer" --expect100-timeout 300 --max-time 60 2>&1)
+result=$(${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=SELECT%201" -H "Expect: 100-continue" -H "X-Datastore-100-Continue: defer" --expect100-timeout 300 --max-time 60 2>&1)
 checkFor100ContinueResponse
 checkFor200OkResponse
 
@@ -86,7 +86,7 @@ $CLICKHOUSE_CLIENT -n --query "
 DROP TABLE IF EXISTS expect_100_continue;
 CREATE OR REPLACE TABLE expect_100_continue (a UInt8) ENGINE = Memory;
 "
-result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated" -H "Expect: 100-continue" -H "X-ClickHouse-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
+result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated" -H "Expect: 100-continue" -H "X-Datastore-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
 checkFor100ContinueResponse
 checkFor200OkResponse
 
@@ -96,7 +96,7 @@ while true
 do
     ${CLICKHOUSE_CLIENT} --query "SELECT count() > 0 FROM system.processes WHERE query_id = 'sleep_${CLICKHOUSE_TEST_UNIQUE_NAME}'" | grep -F '1' >/dev/null && break || sleep 1
 done
-result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated&max_concurrent_queries_for_all_users=1" -H "Expect: 100-continue" -H "X-ClickHouse-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
+result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated&max_concurrent_queries_for_all_users=1" -H "Expect: 100-continue" -H "X-Datastore-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
 checkForMissing100ContinueResponse
 checkForMissingBodyUpload
 checkForError TOO_MANY_SIMULTANEOUS_QUERIES
@@ -105,7 +105,7 @@ wait
 
 echo "=== Test: Deferred 100 Continue with AUTHENTICATION_FAILED ==="
 $CLICKHOUSE_CLIENT --query "DROP USER IF EXISTS user_${CLICKHOUSE_TEST_UNIQUE_NAME}"
-result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated&user=user_${CLICKHOUSE_TEST_UNIQUE_NAME}" -H "Expect: 100-continue" -H "X-ClickHouse-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
+result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated&user=user_${CLICKHOUSE_TEST_UNIQUE_NAME}" -H "Expect: 100-continue" -H "X-Datastore-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
 checkForMissing100ContinueResponse
 checkForMissingBodyUpload
 checkForError AUTHENTICATION_FAILED
@@ -119,7 +119,7 @@ CREATE QUOTA quota_${CLICKHOUSE_TEST_UNIQUE_NAME} KEYED BY user_name FOR INTERVA
 "
 # use up quota
 $CLICKHOUSE_CLIENT --user "user_${CLICKHOUSE_TEST_UNIQUE_NAME}" --query "INSERT INTO expect_100_continue VALUES (1)" >/dev/null
-result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated&user=user_${CLICKHOUSE_TEST_UNIQUE_NAME}" -H "Expect: 100-continue" -H "X-ClickHouse-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
+result=$(echo -ne '10\n11\n12\n' | ${CLICKHOUSE_CURL} -vsS "${CLICKHOUSE_URL}&query=INSERT%20INTO%20expect_100_continue%20FORMAT%20TabSeparated&user=user_${CLICKHOUSE_TEST_UNIQUE_NAME}" -H "Expect: 100-continue" -H "X-Datastore-100-Continue: defer" --expect100-timeout 300 --max-time 60 -d @- 2>&1)
 checkForMissing100ContinueResponse
 checkForMissingBodyUpload
 checkForError QUOTA_EXCEEDED
