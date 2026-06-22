@@ -178,7 +178,7 @@ ListBlobsPagedResponse ContainerClientWrapper::ListBlobs(const ListBlobsOptions 
 
 bool ContainerClientWrapper::IsClientForDisk() const
 {
-    return client.GetDatastoreOptions().IsClientForDisk;
+    return client.GetClickHouseOptions().IsClientForDisk;
 }
 
 BlobContainerBatch ContainerClientWrapper::CreateBatch() const
@@ -356,7 +356,7 @@ std::unique_ptr<ContainerClient> getContainerClient(const ConnectionParams & par
         auto service_client = params.createForService();
 
         ProfileEvents::increment(ProfileEvents::AzureCreateContainer);
-        if (params.client_options.DatastoreOptions.IsClientForDisk)
+        if (params.client_options.ClickHouseOptions.IsClientForDisk)
             ProfileEvents::increment(ProfileEvents::DiskAzureCreateContainer);
 
         auto raw_client = service_client->CreateBlobContainer(params.endpoint.container_name).Value;
@@ -403,7 +403,7 @@ BlobClientOptions getClientOptions(
     retry_options.MaxRetryDelay = std::chrono::milliseconds(request_settings.sdk_retry_max_backoff_ms);
     Azure::Storage::Blobs::BlobClientOptions client_options;
     client_options.Retry = retry_options;
-    client_options.DatastoreOptions = Azure::Storage::Blobs::DatastoreClientOptions{.IsClientForDisk=for_disk};
+    client_options.ClickHouseOptions = Azure::Storage::Blobs::ClickHouseClientOptions{.IsClientForDisk=for_disk};
 
     // Initialize HTTP request throttling
     HTTPRequestThrottler request_throttler;
