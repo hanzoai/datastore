@@ -270,11 +270,11 @@ struct ReadWKTMultiPolygonNameHolder
 REGISTER_FUNCTION(ReadWKT)
 {
     FunctionDocumentation::Description description_point = R"(
-The `readWKTPoint` function in ClickHouse parses a Well-Known Text (WKT) representation of a Point geometry and returns a point in the internal ClickHouse format.
+The `readWKTPoint` function in Datastore parses a Well-Known Text (WKT) representation of a Point geometry and returns a point in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_point = "readWKTPoint(wkt_string)";
     FunctionDocumentation::Arguments arguments_point = {{"wkt_string", "The input WKT string representing a Point geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_point = {"Returns a ClickHouse internal representation of the Point geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_point = {"Returns a Datastore internal representation of the Point geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_point = {{"Usage example", "SELECT readWKTPoint('POINT (1.2 3.4)');", "(1.2,3.4)"}};
     FunctionDocumentation::IntroducedIn introduced_in_point = {21, 4};
     FunctionDocumentation::Category category_point = FunctionDocumentation::Category::GeoPolygon;
@@ -283,13 +283,13 @@ The `readWKTPoint` function in ClickHouse parses a Well-Known Text (WKT) represe
     factory.registerFunction<FunctionReadWKT<DataTypePointName, CartesianPoint, PointSerializer<CartesianPoint>, ReadWKTPointNameHolder>>(function_documentation_point);
 
     FunctionDocumentation::Description description_linestring = R"(
-Parses a Well-Known Text (WKT) representation of a LineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of a LineString geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_linestring = "readWKTLineString(wkt_string)";
     FunctionDocumentation::Arguments arguments_linestring = {
         {"wkt_string", "The input WKT string representing a LineString geometry.", {"String"}}
     };
-    FunctionDocumentation::ReturnedValue returned_value_linestring = {"Returns a ClickHouse internal representation of the linestring geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_linestring = {"Returns a Datastore internal representation of the linestring geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_linestring =
     {
     {
@@ -318,13 +318,13 @@ Parses a Well-Known Text (WKT) representation of a LineString geometry and retur
     factory.registerFunction<FunctionReadWKT<DataTypeLineStringName, CartesianLineString, LineStringSerializer<CartesianPoint>, ReadWKTLineStringNameHolder>>(function_documentation_linestring);
 
     FunctionDocumentation::Description description_multilinestring = R"(
-Parses a Well-Known Text (WKT) representation of a MultiLineString geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of a MultiLineString geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_multilinestring = "readWKTMultiLineString(wkt_string)";
     FunctionDocumentation::Arguments arguments_multilinestring = {
         {"wkt_string", "The input WKT string representing a MultiLineString geometry.", {"String"}}
     };
-    FunctionDocumentation::ReturnedValue returned_value_multilinestring = {"Returns the function returns a ClickHouse internal representation of the multilinestring geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_multilinestring = {"Returns the function returns a Datastore internal representation of the multilinestring geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_multilinestring = {
     {
         "Usage example",
@@ -353,11 +353,11 @@ Parses a Well-Known Text (WKT) representation of a MultiLineString geometry and 
     factory.registerFunction<FunctionReadWKT<DataTypeMultiLineStringName, CartesianMultiLineString, MultiLineStringSerializer<CartesianPoint>, ReadWKTMultiLineStringNameHolder>>(function_documentation_multilinestring);
 
     FunctionDocumentation::Description description_ring = R"(
-Parses a Well-Known Text (WKT) representation of a Polygon geometry and returns a ring (closed linestring) in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of a Polygon geometry and returns a ring (closed linestring) in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_ring = "readWKTRing(wkt_string)";
     FunctionDocumentation::Arguments arguments_ring = {{"wkt_string", "The input WKT string representing a Polygon geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_ring = {"Returns a ClickHouse internal representation of the ring (closed linestring) geometry.", {"Geo"}};
+    FunctionDocumentation::ReturnedValue returned_value_ring = {"Returns a Datastore internal representation of the ring (closed linestring) geometry.", {"Geo"}};
     FunctionDocumentation::Examples examples_ring = {{"Usage example", "SELECT readWKTRing('POLYGON ((1 1, 2 2, 3 3, 1 1))');", "[(1,1),(2,2),(3,3),(1,1)]"}};
     FunctionDocumentation::IntroducedIn introduced_in_ring = {21, 4};
     FunctionDocumentation::Category category_ring = FunctionDocumentation::Category::GeoPolygon;
@@ -418,11 +418,11 @@ SELECT
     factory.registerFunction<FunctionReadWKT<DataTypeMultiPolygonName, CartesianMultiPolygon, MultiPolygonSerializer<CartesianPoint>, ReadWKTMultiPolygonNameHolder>>(function_documentation_multipolygon);
 
     FunctionDocumentation::Description description_common = R"(
-Parses a Well-Known Text (WKT) representation of Geometry and returns it in the internal ClickHouse format.
+Parses a Well-Known Text (WKT) representation of Geometry and returns it in the internal Datastore format.
     )";
     FunctionDocumentation::Syntax syntax_common = "readWKT(wkt_string)";
     FunctionDocumentation::Arguments arguments_common = {{"wkt_string", "The input WKT string representing a LineString geometry.", {"String"}}};
-    FunctionDocumentation::ReturnedValue returned_value_common = {"Returns a ClickHouse internal representation of the Geometry."};
+    FunctionDocumentation::ReturnedValue returned_value_common = {"Returns a Datastore internal representation of the Geometry."};
     FunctionDocumentation::Examples examples_common =
     {
     {

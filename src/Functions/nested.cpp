@@ -208,7 +208,7 @@ REGISTER_FUNCTION(Nested)
 {
     factory.registerFunction<FunctionNested>(FunctionDocumentation{
         .description=R"(
-This is a function used internally by ClickHouse and not meant to be used directly.
+This is a function used internally by Datastore and not meant to be used directly.
 
 Returns the array of tuples from multiple arrays.
 

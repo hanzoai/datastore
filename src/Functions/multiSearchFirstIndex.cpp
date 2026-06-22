@@ -34,7 +34,7 @@ REGISTER_FUNCTION(MultiSearchFirstIndex)
     {
     {
         "Usage example",
-        "SELECT multiSearchFirstIndex('ClickHouse Database', ['Click', 'Database', 'Server']);",
+        "SELECT multiSearchFirstIndex('Datastore Database', ['Click', 'Database', 'Server']);",
         R"(
 ┌─multiSearchF⋯ 'Server'])─┐
 │                        1 │
@@ -43,7 +43,7 @@ REGISTER_FUNCTION(MultiSearchFirstIndex)
     },
     {
         "Case-sensitive behavior",
-        "SELECT multiSearchFirstIndex('ClickHouse Database', ['CLICK', 'Database', 'Server']);",
+        "SELECT multiSearchFirstIndex('Datastore Database', ['CLICK', 'Database', 'Server']);",
         R"(
 ┌─multiSearchF⋯ 'Server'])─┐
 │                        2 │

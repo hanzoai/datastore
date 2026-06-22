@@ -173,7 +173,7 @@ void NpyOutputFormat::checkShape(ColumnPtr & column)
             if (array_offset[i] - array_offset[i - 1] != numpy_shape[dim])
             {
                 invalid_shape = true;
-                throw Exception(ErrorCodes::ILLEGAL_COLUMN, "ClickHouse doesn't support object types, cannot format ragged nested sequences (which is a list of arrays with different shapes)");
+                throw Exception(ErrorCodes::ILLEGAL_COLUMN, "Datastore doesn't support object types, cannot format ragged nested sequences (which is a list of arrays with different shapes)");
             }
 
         column = array_column->getDataPtr();

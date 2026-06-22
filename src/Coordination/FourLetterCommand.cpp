@@ -415,7 +415,7 @@ String ServerStatCommand::run()
     Keeper4LWInfo keeper_info = keeper_dispatcher.getKeeper4LWInfo();
     const auto & storage_stats = keeper_dispatcher.getStateMachine().getStorageStats();
 
-    write("ClickHouse Keeper version", String(VERSION_DESCRIBE) + "-" + VERSION_GITHASH);
+    write("Datastore Keeper version", String(VERSION_DESCRIBE) + "-" + VERSION_GITHASH);
 
     StringBuffer latency;
     latency << stats.getMinLatency() << "/" << stats.getAvgLatency() << "/" << stats.getMaxLatency();
@@ -445,7 +445,7 @@ String StatCommand::run()
     Keeper4LWInfo keeper_info = keeper_dispatcher.getKeeper4LWInfo();
     const auto & storage_stats = keeper_dispatcher.getStateMachine().getStorageStats();
 
-    write("ClickHouse Keeper version", String(VERSION_DESCRIBE) + "-" + VERSION_GITHASH);
+    write("Datastore Keeper version", String(VERSION_DESCRIBE) + "-" + VERSION_GITHASH);
 
     buf << "Clients:\n";
     KeeperTCPHandler::dumpConnections(buf, true);

@@ -746,7 +746,7 @@ struct ContextSharedPart : boost::noncopyable
         /// Shutdown must be called first to stop all background tasks (like loadOutdatedDataParts)
         /// that may be using the thread pool readers. Otherwise there is a data race between
         /// background tasks calling getThreadPoolReader() and the destructor resetting the readers.
-        /// See https://github.com/ClickHouse/ClickHouse/issues/62143
+        /// See https://github.com/Datastore/Datastore/issues/62143
         try
         {
             shutdown();
@@ -931,7 +931,7 @@ struct ContextSharedPart : boost::noncopyable
         /// are running when storage objects are shut down or destroyed.
         /// Without this, a background task could be accessing a storage's data_parts_indexes
         /// while DatabaseCatalog::shutdown is destroying that storage, causing a SIGBUS.
-        /// See https://github.com/ClickHouse/ClickHouse/issues/85433
+        /// See https://github.com/Datastore/Datastore/issues/85433
         SHUTDOWN(log, "merges executor", merge_mutate_executor, wait());
         SHUTDOWN(log, "fetches executor", fetch_executor, wait());
         SHUTDOWN(log, "moves executor", moves_executor, wait());
@@ -1565,7 +1565,7 @@ std::unordered_map<Context::WarningType, PreformattedMessage> Context::getWarnin
         bool single_element = obsolete_settings.size() == 1;
         constexpr auto message_format_string
             = "Obsolete setting{} [{}]{} changed. Please check 'SELECT * FROM system.settings WHERE changed AND is_obsolete' and read the "
-              "changelog at https://github.com/ClickHouse/ClickHouse/blob/master/CHANGELOG.md";
+              "changelog at https://github.com/Datastore/Datastore/blob/master/CHANGELOG.md";
         String settings_list = fmt::format("'{}'", fmt::join(obsolete_settings, "', '"));
         common_warnings[Context::WarningType::OBSOLETE_SETTINGS]
             = PreformattedMessage::create(message_format_string, single_element ? "" : "s", settings_list, single_element ? " is" : " are");
@@ -1851,7 +1851,7 @@ void Context::addWarningMessageAboutDatabaseOrdinary(const String & database_nam
     auto convert_databases_flag = fs::path(shared->flags_path) / "convert_ordinary_to_atomic";
     constexpr auto message_format_string
         = "Server has databases (for example `{}`) with Ordinary engine, which was deprecated. "
-          "To convert this database to the new Atomic engine, create a flag {} and make sure that ClickHouse has write permission for it. "
+          "To convert this database to the new Atomic engine, create a flag {} and make sure that Datastore has write permission for it. "
           "Example: sudo touch '{}' && sudo chmod 666 '{}'";
     shared->addOrUpdateWarningMessage(
         Context::WarningType::DB_ORDINARY_DEPRECATED,
@@ -6591,7 +6591,7 @@ void Context::checkCanBeDropped(const String & database, const String & table, c
                     "How to fix this:\n"
                     "1. Either increase (or set to zero) max_[table/partition]_size_to_drop in server config\n"
                     "2. Either pass a bigger (or set to zero) max_[table/partition]_size_to_drop through query settings\n"
-                    "3. Either create forcing file {} and make sure that ClickHouse has write permission for it.\n"
+                    "3. Either create forcing file {} and make sure that Datastore has write permission for it.\n"
                     "Example:\nsudo touch '{}' && sudo chmod 666 '{}'",
                     backQuoteIfNeed(database), backQuoteIfNeed(table),
                     size_str, max_size_to_drop_str,

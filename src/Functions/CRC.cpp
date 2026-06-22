@@ -159,9 +159,9 @@ Calculates the CRC32 checksum of a string using the CRC-32-IEEE 802.3 polynomial
     FunctionDocumentation::Examples examples_crc32 = {
     {
         "Usage example",
-        "SELECT CRC32('ClickHouse')",
+        "SELECT CRC32('Datastore')",
         R"(
-┌─CRC32('ClickHouse')─┐
+┌─CRC32('Datastore')─┐
 │          1538217360 │
 └─────────────────────┘
         )"
@@ -182,9 +182,9 @@ Calculates the CRC32 checksum of a string using the CRC-32-IEEE 802.3 polynomial
     FunctionDocumentation::Examples examples_crc32ieee = {
     {
         "Usage example",
-        "SELECT CRC32IEEE('ClickHouse');",
+        "SELECT CRC32IEEE('Datastore');",
         R"(
-┌─CRC32IEEE('ClickHouse')─┐
+┌─CRC32IEEE('Datastore')─┐
 │              3089448422 │
 └─────────────────────────┘
         )"
@@ -203,9 +203,9 @@ Calculates the CRC64 checksum of a string using the CRC-64-ECMA polynomial.
     FunctionDocumentation::Examples examples_crc64 = {
     {
         "Usage example",
-        "SELECT CRC64('ClickHouse');",
+        "SELECT CRC64('Datastore');",
         R"(
-┌──CRC64('ClickHouse')─┐
+┌──CRC64('Datastore')─┐
 │ 12126588151325169346 │
 └──────────────────────┘
     )"

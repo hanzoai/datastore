@@ -343,9 +343,9 @@ bool optimizeVectorSearchSecondPass(QueryPlan::Node & /*root*/, Stack & stack, Q
     const String & sort_column = sort_description.front().column_name;
 
     /// The Usearch index calculates and returns (at index granule level) the row ID(s) + corresponding distances for the top-N most similar
-    /// matches to the given reference vector. This creates a mismatch to the granule-based interface of skip indexes in ClickHouse.
+    /// matches to the given reference vector. This creates a mismatch to the granule-based interface of skip indexes in Datastore.
     /// To bridge this gap, MergeTreeVectorSimilarityIndex historically extrapolated the result from USearch to granule level. This caused
-    /// vector search queries to slow down as ClickHouse subsequently loaded the returned granules from disk and applied the distance
+    /// vector search queries to slow down as Datastore subsequently loaded the returned granules from disk and applied the distance
     /// function to _all_ contained rows (e.g. 8191 out of 8192 rows). This is maximally silly but we decided to give this mode the fancy
     /// name "rescoring mode" and turn a weakness into a strength (in terms of feature completeness).
     ///

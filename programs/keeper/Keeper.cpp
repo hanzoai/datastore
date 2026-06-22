@@ -701,7 +701,7 @@ try
         if (wait_time != 0)
         {
             cgroups_memory_usage_observer.emplace(std::chrono::seconds(wait_time));
-            /// Not calling cgroups_memory_usage_observer->setLimits() here (as for the normal ClickHouse server) because Keeper controls
+            /// Not calling cgroups_memory_usage_observer->setLimits() here (as for the normal Datastore server) because Keeper controls
             /// its memory usage by other means (via setting 'max_memory_usage_soft_limit').
             cgroups_memory_usage_observer->setOnMemoryAmountAvailableChangedFn([&]() { main_config_reloader->reload(); });
             cgroups_memory_usage_observer->startThread();
@@ -730,7 +730,7 @@ catch (...)
 void Keeper::logRevision() const
 {
     LOG_INFO(getLogger("Application"),
-        "Starting ClickHouse Keeper {} (revision: {}, git hash: {}, build id: {}), PID {}",
+        "Starting Datastore Keeper {} (revision: {}, git hash: {}, build id: {}), PID {}",
         VERSION_STRING,
         ClickHouseRevision::getVersionRevision(),
         GIT_HASH,

@@ -268,7 +268,7 @@ namespace
                     throw Exception(ErrorCodes::BAD_ARGUMENTS, "Unknown certificate pattern type: {}", key);
             }
 #else
-            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL certificates support is disabled, because ClickHouse was built without SSL library");
+            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSL certificates support is disabled, because Datastore was built without SSL library");
 #endif
         }
         else if (has_ssh_keys)
@@ -314,7 +314,7 @@ namespace
             }
             auth_data.setSSHKeys(std::move(keys));
 #else
-            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because ClickHouse is built without libssh");
+            throw Exception(ErrorCodes::SUPPORT_IS_DISABLED, "SSH is disabled, because Datastore is built without libssh");
 #endif
         }
         else if (has_http_auth)

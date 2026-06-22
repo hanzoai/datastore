@@ -482,7 +482,7 @@ std::unordered_map<String, CHSetting> performanceSettings
        {"use_index_for_in_with_subqueries", trueOrFalseSetting},
        {"use_index_for_in_with_subqueries_max_values", trueOrFalseSetting},
        {"use_join_disjunctions_push_down", trueOrFalseSetting},
-       /// ClickHouse cloud setting
+       /// Datastore cloud setting
        {"use_page_cache_with_distributed_cache", trueOrFalseSetting},
        {"use_partition_pruning", trueOrFalseSetting},
        {"use_primary_key", trueOrFalseSetting},
@@ -652,13 +652,13 @@ std::unordered_map<String, CHSetting> serverSettings = {
     {"distributed_aggregation_memory_efficient", trueOrFalseSetting},
     {"distributed_background_insert_batch", trueOrFalseSettingNoOracle},
     {"distributed_background_insert_split_batch_on_failure", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_bypass_connection_pool", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_discard_connection_if_unread_data", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_fetch_metrics_only_from_current_az", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_log_mode",
      CHSetting(
          [](RandomGenerator & rg, FuzzConfig &)
@@ -668,15 +668,15 @@ std::unordered_map<String, CHSetting> serverSettings = {
          },
          {},
          false)},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_prefer_bigger_buffer_size", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_read_only_from_current_az", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_read_request_max_tries", CHSetting(highRange, {}, false)},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_throw_on_error", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"distributed_cache_write_request_max_tries", CHSetting(highRange, {}, false)},
     {"distributed_foreground_insert", trueOrFalseSettingNoOracle},
     {"distributed_group_by_no_merge", CHSetting(zeroOneTwo, {}, false)},
@@ -1311,11 +1311,11 @@ static std::unordered_map<String, CHSetting> serverSettings2 = {
          [](RandomGenerator & rg, FuzzConfig &) { return std::to_string(rg.thresholdGenerator<uint64_t>(0.2, 0.2, 0, 1000)); }, {}, false)},
     {"query_plan_text_index_add_hint", trueOrFalseSetting},
     {"query_plan_read_in_order_through_join", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"read_from_distributed_cache_if_exists_otherwise_bypass_cache", trueOrFalseSetting},
     {"read_from_filesystem_cache_if_exists_otherwise_bypass_cache", trueOrFalseSetting},
     {"read_from_page_cache_if_exists_otherwise_bypass_cache", trueOrFalseSetting},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"read_through_distributed_cache", trueOrFalseSetting},
     {"recursive_cte_max_steps_in_type_inference",
      CHSetting(
@@ -1417,7 +1417,7 @@ static std::unordered_map<String, CHSetting> serverSettings2 = {
          false)},
     {"stream_like_engine_allow_direct_select", trueOrFalseSetting},
     {"system_events_show_zero_values", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"table_engine_read_through_distributed_cache", trueOrFalseSetting},
     {"table_function_remote_max_addresses",
      CHSetting(
@@ -1537,7 +1537,7 @@ static std::unordered_map<String, CHSetting> serverSettings2 = {
          {},
          false)},
     {"write_full_path_in_iceberg_metadata", trueOrFalseSettingNoOracle},
-    /// ClickHouse cloud setting
+    /// Datastore cloud setting
     {"write_through_distributed_cache", trueOrFalseSettingNoOracle},
     {"zstd_window_log_max",
      CHSetting(
@@ -1588,11 +1588,11 @@ void loadFuzzerServerSettings(const FuzzConfig & fc)
            "azure_max_single_part_upload_size",
            "cross_join_min_bytes_to_compress",
            "default_max_bytes_in_join",
-           /// ClickHouse cloud setting
+           /// Datastore cloud setting
            "distributed_cache_alignment",
-           /// ClickHouse cloud setting
+           /// Datastore cloud setting
            "distributed_cache_min_bytes_for_seek",
-           /// ClickHouse cloud setting
+           /// Datastore cloud setting
            "distributed_cache_read_alignment",
            "external_storage_max_read_bytes",
            "filesystem_cache_boundary_alignment",
@@ -1645,7 +1645,7 @@ void loadFuzzerServerSettings(const FuzzConfig & fc)
            "prefetch_buffer_size",
            "query_cache_max_size_in_bytes",
            "remote_read_min_bytes_for_seek",
-           /// ClickHouse cloud setting
+           /// Datastore cloud setting
            "write_through_distributed_cache_buffer_size"};
     /// NonZeroUInt64 row-count settings — must not receive 0
     DB::Strings nonzero_rows_values
@@ -1900,7 +1900,7 @@ void loadFuzzerServerSettings(const FuzzConfig & fc)
                   [](RandomGenerator & rg, FuzzConfig &) { return std::to_string(rg.thresholdGenerator<uint64_t>(0.3, 0.3, 0, 600)); },
                   {},
                   false)},
-             /// ClickHouse cloud setting
+             /// Datastore cloud setting
              {"ignore_cold_parts_seconds",
               CHSetting(
                   [](RandomGenerator & rg, FuzzConfig &) { return std::to_string(rg.thresholdGenerator<uint64_t>(0.2, 0.2, 0, 60)); },

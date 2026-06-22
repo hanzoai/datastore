@@ -44,8 +44,8 @@ ClientEmbedded::ClientEmbedded(
 
 void ClientEmbedded::printHelpMessage(const OptionsDescription & options_description)
 {
-    output_stream << "Welcome to the ClickHouse embedded client!" << "\n";
-    output_stream << "This client runs on the server side inside the ClickHouse's main process." << "\n";
+    output_stream << "Welcome to the Datastore embedded client!" << "\n";
+    output_stream << "This client runs on the server side inside the Datastore's main process." << "\n";
 
     if (options_description.main_description.has_value())
         output_stream << options_description.main_description.value() << "\n";

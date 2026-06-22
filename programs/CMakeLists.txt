@@ -14,16 +14,16 @@ include(${ClickHouse_SOURCE_DIR}/cmake/split_debug_symbols.cmake)
 # compilation of this components.
 #
 # If you do not know what modes you need, turn then all.
-option (ENABLE_CLICKHOUSE_ALL "Enable all ClickHouse modes by default" ON)
+option (ENABLE_CLICKHOUSE_ALL "Enable all Datastore modes by default" ON)
 
 # https://presentations.clickhouse.com/matemarketing_2020/
 option (ENABLE_CLICKHOUSE_GIT_IMPORT "A tool to analyze Git repositories" ${ENABLE_CLICKHOUSE_ALL})
 
-option (ENABLE_CLICKHOUSE_KEEPER "ClickHouse alternative to ZooKeeper" ${ENABLE_CLICKHOUSE_ALL})
+option (ENABLE_CLICKHOUSE_KEEPER "Datastore alternative to ZooKeeper" ${ENABLE_CLICKHOUSE_ALL})
 
 option (ENABLE_CLICKHOUSE_KEEPER_CONVERTER "Util allows to convert ZooKeeper logs and snapshots into clickhouse-keeper snapshot" ${ENABLE_CLICKHOUSE_ALL})
 
-option (ENABLE_CLICKHOUSE_KEEPER_CLIENT "ClickHouse Keeper Client" ${ENABLE_CLICKHOUSE_ALL})
+option (ENABLE_CLICKHOUSE_KEEPER_CLIENT "Datastore Keeper Client" ${ENABLE_CLICKHOUSE_ALL})
 
 if (NOT ENABLE_NURAFT)
     # RECONFIGURE_MESSAGE_LEVEL should not be used here,
@@ -33,7 +33,7 @@ if (NOT ENABLE_NURAFT)
     set(ENABLE_CLICKHOUSE_KEEPER_CONVERTER OFF)
 endif()
 
-message(STATUS "ClickHouse extra components:")
+message(STATUS "Datastore extra components:")
 
 if (ENABLE_CLICKHOUSE_SELF_EXTRACTING)
     message(STATUS "Self-extracting executable: ON")
@@ -42,21 +42,21 @@ else()
 endif()
 
 if (ENABLE_CLICKHOUSE_KEEPER_CONVERTER)
-    message(STATUS "ClickHouse keeper-converter mode: ON")
+    message(STATUS "Datastore keeper-converter mode: ON")
 else()
-    message(STATUS "ClickHouse keeper-converter mode: OFF")
+    message(STATUS "Datastore keeper-converter mode: OFF")
 endif()
 
 if (ENABLE_CLICKHOUSE_KEEPER)
-    message(STATUS "ClickHouse Keeper: ON")
+    message(STATUS "Datastore Keeper: ON")
 else()
-    message(STATUS "ClickHouse Keeper: OFF")
+    message(STATUS "Datastore Keeper: OFF")
 endif()
 
 if (ENABLE_CLICKHOUSE_KEEPER_CLIENT)
-    message(STATUS "ClickHouse keeper-client mode: ON")
+    message(STATUS "Datastore keeper-client mode: ON")
 else()
-    message(STATUS "ClickHouse keeper-client mode: OFF")
+    message(STATUS "Datastore keeper-client mode: OFF")
 endif()
 
 configure_file (config_tools.h.in ${CONFIG_INCLUDE_PATH}/config_tools.h)
@@ -294,7 +294,7 @@ if (TARGET ch_rust::chdig)
 else()
     message(STATUS "Adding dummy chdig targets (for nfpm)")
     foreach (chdig_path ${CMAKE_BINARY_DIR}/chdig ${CMAKE_BINARY_DIR}/clickhouse-chdig)
-        file(GENERATE OUTPUT ${chdig_path} CONTENT "#!/usr/bin/env sh\necho chdig is not enabled in this ClickHouse build >&2 && exit 1\n")
+        file(GENERATE OUTPUT ${chdig_path} CONTENT "#!/usr/bin/env sh\necho chdig is not enabled in this Datastore build >&2 && exit 1\n")
         install(FILES ${chdig_path}
             DESTINATION ${CMAKE_INSTALL_BINDIR}
             PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE

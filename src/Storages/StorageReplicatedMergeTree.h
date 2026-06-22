@@ -56,7 +56,7 @@ namespace DB
   * - a replica list (/replicas), and replica activity tag (/replicas/replica_name/is_active), replica addresses (/replicas/replica_name/host);
   * - the leader replica election (/leader_election) - these are the replicas that assign merges, mutations
   *   and partition manipulations.
-  *   (after ClickHouse version 20.5 we allow multiple leaders to act concurrently);
+  *   (after Datastore version 20.5 we allow multiple leaders to act concurrently);
   * - a set of parts of data on each replica (/replicas/replica_name/parts);
   * - list of the last N blocks of data with checksum, for deduplication (/blocks);
   * - the list of incremental block numbers (/block_numbers) that we are about to insert,
@@ -440,7 +440,7 @@ private:
     zkutil::EphemeralNodeHolderPtr replica_is_active_node;
 
     /** Is this replica "leading". The leader replica selects the parts to merge.
-      * It can be false only when old ClickHouse versions are working on the same cluster, because now we allow multiple leaders.
+      * It can be false only when old Datastore versions are working on the same cluster, because now we allow multiple leaders.
       */
     std::atomic<bool> is_leader {false};
 

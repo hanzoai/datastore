@@ -25,7 +25,7 @@ struct Settings;
   * sumArray(arr) - calculate sum of all elements of arrays.
   *
   * PS. Please don't mess it with so called "combiner" - totally unrelated notion from Hadoop world.
-  * "combining" - merging the states of aggregate functions - is supported naturally in ClickHouse.
+  * "combining" - merging the states of aggregate functions - is supported naturally in Datastore.
   */
 
 class IAggregateFunctionCombinator

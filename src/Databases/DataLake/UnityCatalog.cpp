@@ -182,7 +182,7 @@ bool UnityCatalog::tryGetTableMetadata(
                 else
                 {
                     result.setTableIsNotReadable(fmt::format("Cannot read table `{}` because it doesn't have storage location. " \
-                        "It means that it's not a DeltaLake table, and it's unreadable with Unity catalog in ClickHouse", full_table_name));
+                        "It means that it's not a DeltaLake table, and it's unreadable with Unity catalog in Datastore", full_table_name));
                 }
 
             }
@@ -192,21 +192,21 @@ bool UnityCatalog::tryGetTableMetadata(
             if (has_securable_kind && !READABLE_TABLES.contains(object->get("securable_kind").extract<String>()))
             {
                 result.setTableIsNotReadable(fmt::format("Cannot read table `{}` because it has unsupported securable_kind: '{}'. " \
-                    "It means that it's unreadable with Unity catalog in ClickHouse, readable tables are: [{}]",
+                    "It means that it's unreadable with Unity catalog in Datastore, readable tables are: [{}]",
                     full_table_name, object->get("securable_kind").extract<String>(), fmt::join(READABLE_TABLES, ", ")));
             }
 
             if (has_data_source_format && object->get("data_source_format").extract<String>() != READABLE_DATA_SOURCE_FORMAT)
             {
                 result.setTableIsNotReadable(fmt::format("Cannot read table `{}` because it has unsupported data_source_format '{}'. " \
-                    "It means that it's unreadable with Unity catalog in ClickHouse, readable tables must have data_source_format == '{}'",
+                    "It means that it's unreadable with Unity catalog in Datastore, readable tables must have data_source_format == '{}'",
                     full_table_name, object->get("securable_kind").extract<String>(), READABLE_DATA_SOURCE_FORMAT));
             }
 
             if (!has_data_source_format && !has_securable_kind)
             {
                 result.setTableIsNotReadable(fmt::format("Cannot read table `{}` because it has no information about data_source_format or securable_kind. " \
-                    "It means that it's unreadable with Unity catalog in ClickHouse", full_table_name));
+                    "It means that it's unreadable with Unity catalog in Datastore", full_table_name));
             }
 
             LOG_DEBUG(log, "Processing table {} is default readable {}", table_name, result.isDefaultReadableTable());

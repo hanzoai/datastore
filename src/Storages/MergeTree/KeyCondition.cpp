@@ -613,7 +613,7 @@ const KeyCondition::AtomMap KeyCondition::atom_map
 
                 const String & expression = value.safeGet<String>();
 
-                /// ClickHouse `match` patterns must not contain NUL bytes.
+                /// Datastore `match` patterns must not contain NUL bytes.
                 /// Do not attempt to optimize such patterns.
                 if (expression.find('\0') != String::npos)
                     return false;
@@ -1141,7 +1141,7 @@ static bool mayExistOnBloomFilter(const KeyCondition::BloomFilterData & conditio
     for (auto column_index = 0u; column_index < condition_bloom_filter_data.hashes_per_column.size(); column_index++)
     {
         // In case bloom filter is missing for parts of the data
-        // (e.g. for some Parquet row groups: https://github.com/ClickHouse/ClickHouse/pull/62966#discussion_r1722361237).
+        // (e.g. for some Parquet row groups: https://github.com/Datastore/Datastore/pull/62966#discussion_r1722361237).
         if (!column_index_to_column_bf.contains(condition_bloom_filter_data.key_columns[column_index]))
         {
             continue;
@@ -4727,7 +4727,7 @@ BoolMask KeyCondition::checkInHyperrectangle(
             bool contains = element.range.containsRange(key_range);
 
             /// NaN doesn't satisfy any comparison condition in SQL (e.g., NaN > 0 is false/NULL).
-            /// In ClickHouse sort order, NaN has a defined position (after +inf), so Range-based
+            /// In Datastore sort order, NaN has a defined position (after +inf), so Range-based
             /// analysis may incorrectly include NaN values.
             /// - If left bound is NaN: all values in the range are NaN (NaN sorts last),
             ///   so no comparison condition can be true.

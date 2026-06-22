@@ -48,11 +48,11 @@ public:
 REGISTER_FUNCTION(FQDN)
 {
     FunctionDocumentation::Description description = R"(
-Returns the fully qualified domain name of the ClickHouse server.
+Returns the fully qualified domain name of the Datastore server.
     )";
     FunctionDocumentation::Syntax syntax = "FQDN()";
     FunctionDocumentation::Arguments arguments = {};
-    FunctionDocumentation::ReturnedValue returned_value = {"Returns the fully qualified domain name of the ClickHouse server.", {"String"}};
+    FunctionDocumentation::ReturnedValue returned_value = {"Returns the fully qualified domain name of the Datastore server.", {"String"}};
     FunctionDocumentation::Examples examples = {
     {
         "Usage example",

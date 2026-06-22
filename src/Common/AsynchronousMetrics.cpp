@@ -741,7 +741,7 @@ void AsynchronousMetrics::applyCPUMetricsUpdate(
         = {static_cast<double>(delta_values.guest) * multiplier,
            "The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel (See `man "
            "procfs`). This is a system-wide metric, it includes all the processes on the host machine, not just clickhouse-server."
-           " This metric is irrelevant for ClickHouse, but still exists for completeness."
+           " This metric is irrelevant for Datastore, but still exists for completeness."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
     new_values["OSGuestNiceTime" + cpu_suffix]
@@ -749,7 +749,7 @@ void AsynchronousMetrics::applyCPUMetricsUpdate(
            "The ratio of time spent running a virtual CPU for guest operating systems under the control of the Linux kernel, when a guest "
            "was set to a higher priority (See `man procfs`). This is a system-wide metric, it includes all the processes on the host "
            "machine, not just clickhouse-server."
-           " This metric is irrelevant for ClickHouse, but still exists for completeness."
+           " This metric is irrelevant for Datastore, but still exists for completeness."
            " The value for a single CPU core will be in the interval [0..1]. The value for all CPU cores is calculated as a sum across "
            "them [0..num cores]."};
 }
@@ -1025,7 +1025,7 @@ void AsynchronousMetrics::processWarningForMemoryOverload(const AsynchronousMetr
     const int usage_percent = static_cast<int>(std::lround(clamped_ratio * 100.0));
 
     const auto warning_message = PreformattedMessage::create(
-        "High ClickHouse memory usage: {} of {} used ({}%) for at least {} second(s)",
+        "High Datastore memory usage: {} of {} used ({}%) for at least {} second(s)",
         formatReadableSizeWithDecimalSuffix(memory_resident),
         formatReadableSizeWithDecimalSuffix(memory_total),
         usage_percent,
@@ -1253,7 +1253,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
 #if !defined(OS_FREEBSD)
         new_values["MemoryShared"] = { data.shared,
             "The amount of memory used by the server process, that is also shared by another processes, in bytes."
-            " ClickHouse does not use shared memory, but some memory can be labeled by OS as shared for its own reasons."
+            " Datastore does not use shared memory, but some memory can be labeled by OS as shared for its own reasons."
             " This metric does not make a lot of sense to watch, and it exists only for completeness reasons."};
 #endif
         new_values["MemoryCode"] = { data.code,
@@ -1281,7 +1281,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
     }
 #endif
 
-    new_values["TrackedMemory"] = { total_memory_tracker.get(), "Memory tracked by ClickHouse (should be equal to MemoryTracking metric), in bytes." };
+    new_values["TrackedMemory"] = { total_memory_tracker.get(), "Memory tracked by Datastore (should be equal to MemoryTracking metric), in bytes." };
 
 #if defined(OS_LINUX)
     if (loadavg)
@@ -1327,9 +1327,9 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
         {
             tryLogCurrentException(__PRETTY_FUNCTION__);
 
-            /// A slight improvement for the rare case when ClickHouse is run inside LXC and LXCFS is used.
+            /// A slight improvement for the rare case when Datastore is run inside LXC and LXCFS is used.
             /// The LXCFS has an issue: sometimes it returns an error "Transport endpoint is not connected" on reading from the file inside `/proc`.
-            /// This error was correctly logged into ClickHouse's server log, but it was a source of annoyance to some users.
+            /// This error was correctly logged into Datastore's server log, but it was a source of annoyance to some users.
             /// We additionally workaround this issue by reopening a file.
             openFileIfExists("/proc/loadavg", loadavg);
         }
@@ -1344,7 +1344,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
             Float64 uptime_seconds = 0;
             readText(uptime_seconds, *uptime);
 
-            new_values["OSUptime"] = { uptime_seconds, "The uptime of the host server (the machine where ClickHouse is running), in seconds." };
+            new_values["OSUptime"] = { uptime_seconds, "The uptime of the host server (the machine where Datastore is running), in seconds." };
         }
         catch (...)
         {
@@ -1623,7 +1623,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
 
             new_values["CGroupMemoryUsedWithoutPageCache"] = {
                 cgroup_usage_without_page_cache,
-                "The amount of memory used in cgroup, in bytes, excluding the ClickHouse userspace page cache. "
+                "The amount of memory used in cgroup, in bytes, excluding the Datastore userspace page cache. "
                 "This is CGroupMemoryUsed minus the userspace page cache size. "
                 "When userspace page cache is disabled, this value equals CGroupMemoryUsed."
             };
@@ -1883,7 +1883,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardOps_" + name] = { delta_values.discard_ops,
                 "Number of discard operations requested from the block device. These operations are relevant for SSD."
-                " Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockReadMerges_" + name] = { delta_values.read_merges,
@@ -1894,7 +1894,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardMerges_" + name] = { delta_values.discard_merges,
                 "Number of discard operations requested from the block device and merged together by the OS IO scheduler."
-                " These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockReadBytes_" + name] = { delta_values.read_sectors * sector_size,
@@ -1908,7 +1908,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardBytes_" + name] = { delta_values.discard_sectors * sector_size,
                 "Number of discarded bytes on the block device."
-                " These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockReadTime_" + name] = { static_cast<double>(delta_values.read_ticks) * time_multiplier,
@@ -1919,7 +1919,7 @@ void AsynchronousMetrics::update(TimePoint update_time, bool force_update)
                 BLOCK_DEVICE_EXPLANATION };
             new_values["BlockDiscardTime_" + name] = { static_cast<double>(delta_values.discard_ticks) * time_multiplier,
                 "Time in seconds spend in discard operations requested from the block device, summed across all the operations."
-                " These operations are relevant for SSD. Discard operations are not used by ClickHouse, but can be used by other processes on the system."
+                " These operations are relevant for SSD. Discard operations are not used by Datastore, but can be used by other processes on the system."
                 BLOCK_DEVICE_EXPLANATION };
 
             new_values["BlockInFlightOps_" + name] = { delta_values.in_flight_ios,

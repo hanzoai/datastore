@@ -13,7 +13,7 @@
 namespace DB
 {
 
-/// Manages the incremental read state for Paimon tables using ClickHouse Keeper.
+/// Manages the incremental read state for Paimon tables using Datastore Keeper.
 /// This is similar to how Kafka2 stores offsets in Keeper, but for Paimon snapshot IDs.
 ///
 /// Keeper path structure:

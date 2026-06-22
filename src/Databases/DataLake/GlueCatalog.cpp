@@ -322,7 +322,7 @@ bool GlueCatalog::tryGetTableMetadata(
                 message_part = "no table_type";
 
             result.setTableIsNotReadable(fmt::format("Cannot read table `{}` because it has {}. " \
-                   "It means that it's unreadable with Glue catalog in ClickHouse, readable tables must have equalsIgnoreCase(table_type, '{}')",
+                   "It means that it's unreadable with Glue catalog in Datastore, readable tables must have equalsIgnoreCase(table_type, '{}')",
                    database_name + "." + table_name, message_part, "ICEBERG"));
         }
 
@@ -356,7 +356,7 @@ bool GlueCatalog::tryGetTableMetadata(
             else
             {
                 result.setTableIsNotReadable(fmt::format("Cannot read table `{}` because it has no metadata_location and Location. " \
-                    "It means that it's unreadable with Glue catalog in ClickHouse, " \
+                    "It means that it's unreadable with Glue catalog in Datastore, " \
                     "readable tables must have 'metadata_location' or `Location` in table metadata",
                     database_name + "." + table_name));
             }

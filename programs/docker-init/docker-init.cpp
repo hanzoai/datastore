@@ -1,4 +1,4 @@
-/// clickhouse docker-init — Docker entrypoint for distroless ClickHouse images.
+/// clickhouse docker-init — Docker entrypoint for distroless Datastore images.
 /// Replaces entrypoint.sh in shell-free environments (no bash, no coreutils).
 ///
 /// Usage:
@@ -221,7 +221,7 @@ int runPipeline(const std::vector<std::string> & lhs, const std::vector<std::str
     return WIFEXITED(rhs_status) ? WEXITSTATUS(rhs_status) : -1;
 }
 
-/// Returns true if the string is a safe ClickHouse identifier:
+/// Returns true if the string is a safe Datastore identifier:
 /// alphanumeric + underscore, not starting with a digit.
 /// Used to validate DATASTORE_USER and DATASTORE_DB before embedding in SQL/XML.
 bool isValidIdentifier(const std::string & s)
@@ -236,7 +236,7 @@ bool isValidIdentifier(const std::string & s)
     return true;
 }
 
-/// Extract a single value from a ClickHouse config key via `clickhouse extract-from-config`.
+/// Extract a single value from a Datastore config key via `clickhouse extract-from-config`.
 /// Returns an empty string if the key is absent (--try flag suppresses errors).
 std::string extractConfigValue(const std::string & config_file, const std::string & key, bool use_users = false)
 {
@@ -253,7 +253,7 @@ std::string extractConfigValue(const std::string & config_file, const std::strin
     return (code == 0 && !lines.empty()) ? lines[0] : std::string{};
 }
 
-/// Extract multiple values from a ClickHouse config key (wildcard patterns return multiple lines).
+/// Extract multiple values from a Datastore config key (wildcard patterns return multiple lines).
 std::vector<std::string> extractConfigValues(const std::string & config_file, const std::string & key)
 {
     auto [code, lines] = captureCommand({
@@ -596,7 +596,7 @@ bool runInitScripts(const std::vector<std::string> & client_base)
     return true;
 }
 
-/// Start a temporary ClickHouse server, run init scripts, then stop it.
+/// Start a temporary Datastore server, run init scripts, then stop it.
 bool initClickHouseDB(
     const std::string & config_file,
     const std::string & data_dir,
@@ -611,7 +611,7 @@ bool initClickHouseDB(
     bool database_exists = fs::is_directory(data_dir + "/data");
     if (!always_run_initdb && database_exists)
     {
-        std::cerr << "docker-init: ClickHouse data directory appears to contain a database; "
+        std::cerr << "docker-init: Datastore data directory appears to contain a database; "
                      "skipping initialization\n";
         return true;
     }
@@ -732,7 +732,7 @@ bool initClickHouseDB(
         if (g_shutdown_requested)
             std::cerr << "docker-init: shutdown requested, stopping init server\n";
         else
-            std::cerr << "docker-init: ClickHouse init process timed out\n";
+            std::cerr << "docker-init: Datastore init process timed out\n";
         kill(server_pid, SIGTERM);
         while (waitpid(server_pid, nullptr, 0) < 0 && errno == EINTR) {}
         g_init_server_pid = 0;
@@ -794,9 +794,9 @@ int mainEntryClickHouseDockerInit(int argc, char ** argv)
     {
         std::cout
             << "Usage: clickhouse docker-init [--keeper] [-- <extra-args>...]\n"
-               "Docker entrypoint for distroless ClickHouse images.\n"
+               "Docker entrypoint for distroless Datastore images.\n"
                "\nOptions:\n"
-               "  --keeper   Start ClickHouse Keeper instead of server\n"
+               "  --keeper   Start Datastore Keeper instead of server\n"
                "  --help     Show this help message\n"
                "\nEnvironment variables (server mode):\n"
                "  DATASTORE_CONFIG                   Path to config file "
@@ -826,7 +826,7 @@ int mainEntryClickHouseDockerInit(int argc, char ** argv)
     /// directly without server startup. This mirrors entrypoint.sh:
     ///   if [[ "$1" == "--"* ]]; then start server; fi; exec "$@"
     ///
-    /// For recognized ClickHouse subcommand names (client, local, etc.) resolve the path
+    /// For recognized Datastore subcommand names (client, local, etc.) resolve the path
     /// via bin_dir so that multi-tool dispatch (by argv[0] basename) works correctly.
     /// For everything else (echo, date, bash, ...) let PATH resolution handle it.
     if (!extra_args.empty() && !extra_args[0].starts_with("--"))

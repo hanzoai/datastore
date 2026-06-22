@@ -56,7 +56,7 @@ DistributedAsyncInsertHeader DistributedAsyncInsertHeader::read(ReadBufferFromFi
         readVarUInt(distributed_header.revision, header_buf);
         if (DBMS_TCP_PROTOCOL_VERSION < distributed_header.revision)
         {
-            LOG_WARNING(log, "ClickHouse shard version is older than ClickHouse initiator version. It may lack support for new features.");
+            LOG_WARNING(log, "Datastore shard version is older than Datastore initiator version. It may lack support for new features.");
         }
 
         readStringBinary(distributed_header.insert_query, header_buf);

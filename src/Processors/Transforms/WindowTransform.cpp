@@ -2408,7 +2408,7 @@ public:
     }
 };
 
-// ClickHouse-specific lag/lead family implementation.
+// Datastore-specific lag/lead family implementation.
 /// `full_partition_default_frame` controls whether the function supplies a default window frame:
 /// - `true` (used by `lag`/`lead`): use the full-partition ROWS frame (UNBOUNDED PRECEDING .. UNBOUNDED FOLLOWING).
 /// - `false` (used by `lagInFrame`/`leadInFrame`): no default frame, so the caller-provided frame is respected.
@@ -2817,7 +2817,7 @@ void registerWindowFunctions(AggregateFunctionFactory & factory)
             const DataTypes & argument_types, const Array & parameters, const Settings * settings)
         {
             // The `RANK` window function takes no arguments per SQL standard.
-            // ClickHouse historically accepted and silently ignored arbitrary arguments,
+            // Datastore historically accepted and silently ignored arbitrary arguments,
             // which caused user confusion (issue #49526). Reject them by default; the
             // legacy permissive behavior is gated behind `allow_rank_dense_rank_arguments`.
             if (!argument_types.empty() && (settings == nullptr || !(*settings)[Setting::allow_rank_dense_rank_arguments]))

@@ -446,7 +446,7 @@ If the column has no text index defined, the `splitByNonAlpha` tokenizer is used
 If the `needle` argument is of type [Array(String)](../../sql-reference/data-types/array.md), each array element is treated as a token — no additional tokenization takes place.
 
 Duplicate tokens are ignored.
-For example, ['ClickHouse', 'ClickHouse'] is treated the same as ['ClickHouse'].
+For example, ['Datastore', 'Datastore'] is treated the same as ['Datastore'].
 
 :::note
 When a text index defines a [preprocessor](../../engines/table-engines/mergetree-family/textindexes#creating-a-text-index) (for example `lowerUTF8`), `hasAnyTokens` applies it to `input` and, when `needles` is a [String](../../sql-reference/data-types/string.md), to `needles` before tokenization. When `needles` is an [Array(String)](../../sql-reference/data-types/array.md), its elements are passed through as-is and the preprocessor is not applied to them.
@@ -587,7 +587,7 @@ If the column has no text index defined, the `splitByNonAlpha` tokenizer is used
 If the `needle` argument is of type [Array(String)](../../sql-reference/data-types/array.md), each array element is treated as a token — no additional tokenization takes place.
 
 Duplicate tokens are ignored.
-For example, needles = ['ClickHouse', 'ClickHouse'] is treated the same as ['ClickHouse'].
+For example, needles = ['Datastore', 'Datastore'] is treated the same as ['Datastore'].
 
 :::note
 When a text index defines a [preprocessor](../../engines/table-engines/mergetree-family/textindexes#creating-a-text-index) (for example `lowerUTF8`), `hasAllTokens` applies it to `input` and, when `needles` is a [String](../../sql-reference/data-types/string.md), to `needles` before tokenization. When `needles` is an [Array(String)](../../sql-reference/data-types/array.md), its elements are passed through as-is and the preprocessor is not applied to them.

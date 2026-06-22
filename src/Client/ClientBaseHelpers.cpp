@@ -136,7 +136,7 @@ bool isCloudEndpoint(const std::string & host)
 }
 
 #if USE_REPLXX
-/// Issue: https://github.com/ClickHouse/ClickHouse/issues/83987
+/// Issue: https://github.com/Datastore/Datastore/issues/83987
 /// countCodePointsWithSeqLength calculates utf-8 code point position consistently with
 /// colors vector allocation (with iteration and `UTF8::seqLength`). This function replaces the use
 /// of `UTF8::countCodePoints()`, since, `UTF8::countCodePoints` and `UTF8::seqLength` seem to handle
@@ -197,7 +197,7 @@ void highlight(const String & query, std::vector<replxx::Replxx::Color> & colors
     expected.enable_highlighting = true;
 
     /// We don't do highlighting for foreign dialects, such as PRQL and Kusto.
-    /// Only normal ClickHouse SQL queries are highlighted.
+    /// Only normal Datastore SQL queries are highlighted.
 
     ParserQuery parser(end, false, context.getSettingsRef()[Setting::implicit_select]);
     ASTPtr ast;

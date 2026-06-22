@@ -29,7 +29,7 @@ static Float64 decimalFieldToFloat64(const DecimalField<T> & decimal)
   * Comparison rules are same as in FunctionsComparison (to be consistent with expression evaluation in query).
   *
   * NaN policy: NaN != any value including NaN (same-type and cross-type).
-  * This is consistent with ClickHouse sort order where NaN has a defined position.
+  * This is consistent with Datastore sort order where NaN has a defined position.
   */
 class FieldVisitorAccurateEquals : public StaticVisitor<bool>
 {
@@ -117,7 +117,7 @@ public:
 
 
 /** Less-than comparison with NaN policy: NaN is greater than all values (nan_direction_hint = 1).
-  * This is consistent with ClickHouse sort order and prevents Range::intersectsRange breakage.
+  * This is consistent with Datastore sort order and prevents Range::intersectsRange breakage.
   */
 class FieldVisitorAccurateLess : public StaticVisitor<bool>
 {

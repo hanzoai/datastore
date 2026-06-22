@@ -14,7 +14,7 @@ include (configure_config.cmake)
 configure_file (Common/config.h.in ${CONFIG_INCLUDE_PATH}/config.h)
 configure_file (Common/config_version.cpp.in ${CONFIG_INCLUDE_PATH}/config_version.cpp)
 
-# ClickHouse developers may use platform-dependent code under some macro (e.g. `#ifdef ENABLE_MULTITARGET`).
+# Datastore developers may use platform-dependent code under some macro (e.g. `#ifdef ENABLE_MULTITARGET`).
 # If turned ON, this option defines such macro.
 # See `src/Common/TargetSpecific.h`
 option(ENABLE_MULTITARGET_CODE "Enable platform-dependent code" ON)
@@ -61,10 +61,10 @@ add_subdirectory (Server)
 add_subdirectory (Coordination)
 
 if (ENABLE_CLICKHOUSE_DISTRIBUTED_CACHE)
-    message(STATUS "ClickHouse distributed cache is enabled, will build with it")
+    message(STATUS "Datastore distributed cache is enabled, will build with it")
     add_subdirectory (DistributedCache)
 else()
-    message(STATUS "ClickHouse distributed cache is disabled, will build without it")
+    message(STATUS "Datastore distributed cache is disabled, will build without it")
 endif()
 
 add_subdirectory (Daemon)
@@ -238,7 +238,7 @@ set_source_files_properties(Common/ThreadFuzzer.cpp PROPERTIES COMPILE_FLAGS "-f
 
 # Arrow IPC buffers use intentionally unaligned int32 offset arrays — suppress the alignment check.
 # RocksDB EmbeddedRocksDB full scan hits a pointer-overflow when a corrupted slice size
-# causes pointer arithmetic to overflow. Pre-existing bug: https://github.com/ClickHouse/ClickHouse/issues/99862
+# causes pointer arithmetic to overflow. Pre-existing bug: https://github.com/Datastore/Datastore/issues/99862
 if (SANITIZE STREQUAL "address,undefined")
     set_source_files_properties(
         ${CMAKE_CURRENT_SOURCE_DIR}/Processors/Formats/Impl/ArrowColumnToCHColumn.cpp
@@ -332,7 +332,7 @@ add_object_library(clickhouse_storages_time_series_prometheus_query_to_sql Stora
 add_object_library(clickhouse_storages_arrowflight Storages/ArrowFlight)
 add_object_library(clickhouse_client Client)
 # Always compile this file with the highest possible level of optimizations, even in Debug builds.
-# https://github.com/ClickHouse/ClickHouse/issues/65745
+# https://github.com/Datastore/Datastore/issues/65745
 set_source_files_properties(Client/ClientApplicationBaseParser.cpp PROPERTIES COMPILE_FLAGS "-O3")
 add_object_library(clickhouse_bridge BridgeHelper)
 

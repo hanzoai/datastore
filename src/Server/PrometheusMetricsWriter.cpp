@@ -317,7 +317,7 @@ void PrometheusMetricsWriter::writeInfo(WriteBuffer & wb) const
 {
     std::string key{"ClickHouse_Info"};
 
-    writeOutLine(wb, "# HELP", key, "ClickHouse server information");
+    writeOutLine(wb, "# HELP", key, "Datastore server information");
     writeOutLine(wb, "# TYPE", key, "gauge");
 
     wb << key << '{';

@@ -119,7 +119,7 @@ SELECT
     if (query.full)
     {
         /// "Full" mode is mostly for MySQL compat
-        /// - collation: no such thing in ClickHouse
+        /// - collation: no such thing in Datastore
         /// - comment
         /// - privileges: <not implemented, TODO ask system.grants>
         rewritten_query += R"(,

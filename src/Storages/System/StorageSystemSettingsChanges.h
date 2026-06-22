@@ -10,7 +10,7 @@ class Context;
 
 
 /** Implements system table "settings_changes", which allows to get information
-  * about the settings changes through different ClickHouse versions.
+  * about the settings changes through different Datastore versions.
   */
 class StorageSystemSettingsChanges final : public IStorageSystemOneBlock
 {

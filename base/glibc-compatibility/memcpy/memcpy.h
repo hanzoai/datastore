@@ -3,7 +3,7 @@
 #include <emmintrin.h>
 
 
-/** Custom memcpy implementation for ClickHouse.
+/** Custom memcpy implementation for Datastore.
   * It has the following benefits over using glibc's implementation:
   * 1. Avoiding dependency on specific version of glibc's symbol, like memcpy@@GLIBC_2.14 for portability.
   * 2. Avoiding indirect call via PLT due to shared linking, that can be less efficient.

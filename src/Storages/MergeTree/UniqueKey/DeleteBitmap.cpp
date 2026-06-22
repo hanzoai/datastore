@@ -45,7 +45,7 @@ namespace
     }
 
     /// Pack/unpack a UInt32 to/from a little-endian byte sequence. The
-    /// conventional ClickHouse on-disk pattern (see `MarkRange.cpp` /
+    /// conventional Datastore on-disk pattern (see `MarkRange.cpp` /
     /// `MergeTreeDataPartChecksum.cpp` / `CompressedReadBufferBase.cpp`)
     /// is LE-explicit so files survive a host-endian crossing.
     void packUInt32LE(char * dst, UInt32 value)

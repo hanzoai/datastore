@@ -206,7 +206,7 @@ namespace
     /// `arraySlice` takes exactly k (the partial sort may return more); the outer `arraySort`
     /// re-sorts the k indices numerically so Step 3 can use `indexOfAssumeSorted`.
     ///
-    /// TODO: Consider adding new functions `arrayTopK`/`arrayBottomK` to ClickHouse
+    /// TODO: Consider adding new functions `arrayTopK`/`arrayBottomK` to Datastore
     /// to simplify this expression.
     ASTPtr buildKIndices(ASTPtr && k, ASTPtr && values, ASTPtr && sort_key_lambda)
     {

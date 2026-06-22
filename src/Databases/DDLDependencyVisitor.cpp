@@ -559,7 +559,7 @@ namespace
         try
         {
             ParserSelectWithUnionQuery parser;
-            String description = fmt::format("Query for ClickHouse dictionary {}.{}", backQuoteIfNeed(data.table_name.database), backQuoteIfNeed(data.table_name.table));
+            String description = fmt::format("Query for Datastore dictionary {}.{}", backQuoteIfNeed(data.table_name.database), backQuoteIfNeed(data.table_name.table));
             String fixed_query = removeWhereConditionPlaceholder(query);
             const Settings & settings = data.global_context->getSettingsRef();
             ASTPtr select = parseQuery(

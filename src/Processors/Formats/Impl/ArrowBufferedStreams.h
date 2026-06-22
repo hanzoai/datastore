@@ -135,7 +135,7 @@ private:
 /// interceptor tracks memory, but cannot throw on `MEMORY_LIMIT_EXCEEDED` (throwing
 /// from `malloc`/`posix_memalign` is not allowed because callers, including inside
 /// arrow/parquet, do not expect it). This adapter routes arrow/parquet allocations
-/// through ClickHouse's `Allocator<false>`, which *can* throw
+/// through Datastore's `Allocator<false>`, which *can* throw
 /// `MEMORY_LIMIT_EXCEEDED`; we catch it and convert to `arrow::Status::OutOfMemory`
 /// so arrow unwinds via its normal error path.
 class ArrowMemoryPool : public arrow::MemoryPool

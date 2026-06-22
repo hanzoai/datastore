@@ -167,7 +167,7 @@ SELECT
     FunctionDocumentation::ReturnedValue returned_value = {"Returns the Hamming distance.", {"UInt8/16/32/64"}};
     FunctionDocumentation::Examples examples = {
         {"Usage example", "SELECT tupleHammingDistance((1, 2, 3), (3, 2, 1))", "2"},
-        {"With MinHash to detect semi-duplicate strings", "SELECT tupleHammingDistance(wordShingleMinHash(string), wordShingleMinHashCaseInsensitive(string)) FROM (SELECT 'ClickHouse is a column-oriented database management system for online analytical processing of queries.' AS string)", "2"}
+        {"With MinHash to detect semi-duplicate strings", "SELECT tupleHammingDistance(wordShingleMinHash(string), wordShingleMinHashCaseInsensitive(string)) FROM (SELECT 'Datastore is a column-oriented database management system for online analytical processing of queries.' AS string)", "2"}
     };
     FunctionDocumentation::IntroducedIn introduced_in = {21, 1};
     FunctionDocumentation::Category category = FunctionDocumentation::Category::Tuple;

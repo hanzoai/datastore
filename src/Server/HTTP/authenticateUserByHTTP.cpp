@@ -99,7 +99,7 @@ bool authenticateUserByHTTP(
     {
 #if USE_SSL
         /// For SSL certificate authentication we extract the user name from the "X-Datastore-User" HTTP header.
-        checkUserNameNotEmptyAndServerHasEnoughMemory(user, "X-ClickHouse HTTP headers", global_context);
+        checkUserNameNotEmptyAndServerHasEnoughMemory(user, "X-Datastore HTTP headers", global_context);
 
         /// It is prohibited to mix different authorization schemes.
         if (has_config_credentials)
@@ -123,20 +123,20 @@ bool authenticateUserByHTTP(
 #else
         UNUSED(log);
         throw Exception(ErrorCodes::SUPPORT_IS_DISABLED,
-                        "SSL certificate authentication disabled because ClickHouse was built without SSL library");
+                        "SSL certificate authentication disabled because Datastore was built without SSL library");
 #endif
     }
     else if (has_auth_headers)
     {
-        checkUserNameNotEmptyAndServerHasEnoughMemory(user, "X-ClickHouse HTTP headers", global_context);
+        checkUserNameNotEmptyAndServerHasEnoughMemory(user, "X-Datastore HTTP headers", global_context);
 
         /// It is prohibited to mix different authorization schemes.
         if (has_config_credentials)
-            throwMultipleAuthenticationMethods("X-ClickHouse HTTP headers", "authentication set in config");
+            throwMultipleAuthenticationMethods("X-Datastore HTTP headers", "authentication set in config");
         if (has_http_credentials)
-            throwMultipleAuthenticationMethods("X-ClickHouse HTTP headers", "Authorization HTTP header");
+            throwMultipleAuthenticationMethods("X-Datastore HTTP headers", "Authorization HTTP header");
         if (has_credentials_in_query_params)
-            throwMultipleAuthenticationMethods("X-ClickHouse HTTP headers", "authentication via parameters");
+            throwMultipleAuthenticationMethods("X-Datastore HTTP headers", "authentication via parameters");
     }
     else if (has_http_credentials)
     {

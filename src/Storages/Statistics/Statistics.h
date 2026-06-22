@@ -18,7 +18,7 @@ constexpr std::string_view STATS_FILE_SUFFIX = ".stats";
 enum class StatisticsFileVersion : UInt16
 {
     V0 = 0,
-    V1 = 1, /// modified the format of uniq, https://github.com/ClickHouse/ClickHouse/pull/90311
+    V1 = 1, /// modified the format of uniq, https://github.com/Datastore/Datastore/pull/90311
     V2 = 2, /// minmax statistics now serialize Field type and use Field instead of Float64
 };
 

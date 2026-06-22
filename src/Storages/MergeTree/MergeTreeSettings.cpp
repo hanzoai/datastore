@@ -92,7 +92,7 @@ namespace ErrorCodes
     in a column. Setting this value causes the column to be stored using sparse
     serializations.
 
-    If a column is sparse (contains mostly zeros), ClickHouse can encode it in
+    If a column is sparse (contains mostly zeros), Datastore can encode it in
     a sparse format and automatically optimize calculations - the data does not
     require full decompression during queries. To enable this sparse
     serialization, define the `ratio_of_defaults_for_sparse_serialization`
@@ -215,35 +215,35 @@ namespace ErrorCodes
     bytes) with some gap to avoid filesystem errors.
     )", 0) \
     DECLARE(UInt64, min_bytes_for_full_part_storage, 0, R"(
-    Only available in ClickHouse Cloud. Minimal uncompressed size in bytes to
+    Only available in Datastore Cloud. Minimal uncompressed size in bytes to
     use full type of storage for data part instead of packed
     )", 0) \
     DECLARE(UInt32, min_level_for_full_part_storage, 0, R"(
-    Only available in ClickHouse Cloud. Minimal part level to
+    Only available in Datastore Cloud. Minimal part level to
     use full type of storage for data part instead of packed
     )", 0) \
     DECLARE(UInt64, min_rows_for_full_part_storage, 0, R"(
-    Only available in ClickHouse Cloud. Minimal number of rows to use full type
+    Only available in Datastore Cloud. Minimal number of rows to use full type
     of storage for data part instead of packed
     )", 0) \
     DECLARE(UInt64, compact_parts_max_bytes_to_buffer, 128 * 1024 * 1024, R"(
-    Only available in ClickHouse Cloud. Maximal number of bytes to write in a
+    Only available in Datastore Cloud. Maximal number of bytes to write in a
     single stripe in compact parts
     )", 0) \
     DECLARE(NonZeroUInt64, compact_parts_max_granules_to_buffer, 128, R"(
-    Only available in ClickHouse Cloud. Maximal number of granules to write in a
+    Only available in Datastore Cloud. Maximal number of granules to write in a
     single stripe in compact parts
     )", 0) \
     DECLARE(UInt64, compact_parts_merge_max_bytes_to_prefetch_part, 16 * 1024 * 1024, R"(
-    Only available in ClickHouse Cloud. Maximal size of compact part to read it
+    Only available in Datastore Cloud. Maximal size of compact part to read it
     in a whole to memory during merge.
     )", 0) \
     DECLARE(UInt64, merge_max_bytes_to_prewarm_cache, 1ULL * 1024 * 1024 * 1024, R"(
-    Only available in ClickHouse Cloud. Maximal size of part (compact or packed)
+    Only available in Datastore Cloud. Maximal size of part (compact or packed)
     to prewarm cache during merge.
     )", 0) \
     DECLARE(UInt64, merge_total_max_bytes_to_prewarm_cache, 15ULL * 1024 * 1024 * 1024, R"(
-    Only available in ClickHouse Cloud. Maximal size of parts in total to prewarm
+    Only available in Datastore Cloud. Maximal size of parts in total to prewarm
     cache during merge.
     )", 0) \
     DECLARE(Bool, load_existing_rows_count_for_old_parts, false, R"(
@@ -532,7 +532,7 @@ namespace ErrorCodes
     The value of the `number_of_free_entries_in_pool_to_execute_mutation` setting
     should be less than the value of the [background_pool_size](/operations/server-configuration-parameters/settings.md/#background_pool_size)
     * [background_merges_mutations_concurrency_ratio](/operations/server-configuration-parameters/settings.md/#background_merges_mutations_concurrency_ratio).
-    Otherwise, ClickHouse will throw an exception.
+    Otherwise, Datastore will throw an exception.
     )", 0) \
     DECLARE(UInt64, max_number_of_mutations_for_replica, 0, R"(
     Limit the number of part mutations per replica to the specified amount.
@@ -551,7 +551,7 @@ namespace ErrorCodes
     Possible values:
     - Any positive integer.
 
-    After merging several parts into a new part, ClickHouse marks the original
+    After merging several parts into a new part, Datastore marks the original
     parts as inactive and deletes them only after `old_parts_lifetime` seconds.
     Inactive parts are removed if they are not used by current queries, i.e. if
     the `refcount` of the part is 1.
@@ -561,8 +561,8 @@ namespace ErrorCodes
     parts can be lost or damaged. To protect data inactive parts are not deleted
     immediately.
 
-    During startup ClickHouse checks the integrity of the parts. If the merged
-    part is damaged ClickHouse returns the inactive parts to the active list,
+    During startup Datastore checks the integrity of the parts. If the merged
+    part is damaged Datastore returns the inactive parts to the active list,
     and later merges them again. Then the damaged part is renamed (the `broken_`
     prefix is added) and moved to the `detached` folder. If the merged part is
     not damaged, then the original inactive parts are renamed (the `ignored_`
@@ -686,14 +686,14 @@ namespace ErrorCodes
     there's nothing to merge and divided when a merge was assigned
     )", 0) \
     DECLARE(UInt64, merge_tree_clear_old_temporary_directories_interval_seconds, 60, R"(
-    Sets the interval in seconds for ClickHouse to execute the cleanup of old
+    Sets the interval in seconds for Datastore to execute the cleanup of old
     temporary directories.
 
     Possible values:
     - Any positive integer.
     )", 0) \
     DECLARE(UInt64, merge_tree_clear_old_parts_interval_seconds, 1, R"(
-    Sets the interval in seconds for ClickHouse to execute the cleanup of old
+    Sets the interval in seconds for Datastore to execute the cleanup of old
     parts, WALs, and mutations.
 
     Possible values:
@@ -742,7 +742,7 @@ namespace ErrorCodes
     setting should be less than the value of the
     [background_pool_size](/operations/server-configuration-parameters/settings.md/#background_pool_size)
     * [background_merges_mutations_concurrency_ratio](/operations/server-configuration-parameters/settings.md/#background_merges_mutations_concurrency_ratio).
-    Otherwise, ClickHouse throws an exception.
+    Otherwise, Datastore throws an exception.
     )", 0) \
     DECLARE(Bool, remove_rolled_back_parts_immediately, 1, R"(
     Setting for an incomplete experimental feature.
@@ -846,7 +846,7 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(Bool, compress_per_column_in_compact_parts, true, R"(
     Controls the physical layout of Compact parts. If true (default), each column in a granule
-    starts a new compressed block, allowing ClickHouse to skip reading unnecessary columns
+    starts a new compressed block, allowing Datastore to skip reading unnecessary columns
     from disk. If false, all columns within a granule are packed into the same compressed block,
     improving compression ratio but requiring more data to be decompressed during reads.
     This is beneficial for workloads that always read all columns (e.g. projections).
@@ -859,7 +859,7 @@ namespace ErrorCodes
     Possible values:
     - Any positive integer.
 
-    ClickHouse artificially executes `INSERT` longer (adds 'sleep') so that the
+    Datastore artificially executes `INSERT` longer (adds 'sleep') so that the
     background merge process can merge parts faster than they are added.
     )", 0) \
     DECLARE(UInt64, inactive_parts_to_delay_insert, 0, R"(
@@ -959,8 +959,8 @@ namespace ErrorCodes
     Possible values:
     - Any positive integer.
 
-    A large number of parts in a table reduces performance of ClickHouse queries
-    and increases ClickHouse boot time. Most often this is a consequence of an
+    A large number of parts in a table reduces performance of Datastore queries
+    and increases Datastore boot time. Most often this is a consequence of an
     incorrect design (mistakes when choosing a partitioning strategy - too small
     partitions).
     )", 0) \
@@ -987,14 +987,14 @@ namespace ErrorCodes
     rates if the data exposes patterns. Long runs of the same value typically
     compress very well.
 
-    If this setting is enabled, ClickHouse attempts to store the data in newly
+    If this setting is enabled, Datastore attempts to store the data in newly
     inserted parts in a row order that minimizes the number of equal-value runs
     across the columns of the new table part.
     In other words, a small number of equal-value runs mean that individual runs
     are long and compress well.
 
     Finding the optimal row order is computationally infeasible (NP hard).
-    Therefore, ClickHouse uses a heuristics to quickly find a row order which
+    Therefore, Datastore uses a heuristics to quickly find a row order which
     still improves compression rates over the original row order.
 
     <details markdown="1">
@@ -1006,7 +1006,7 @@ namespace ErrorCodes
     equivalent.
 
     This freedom of shuffling rows is restricted when a primary key is defined
-    for the table. In ClickHouse, a primary key `C1, C2, ..., CN` enforces that
+    for the table. In Datastore, a primary key `C1, C2, ..., CN` enforces that
     the table rows are sorted by columns `C1`, `C2`, ... `Cn` ([clustered index](https://en.wikipedia.org/wiki/Database_index#Clustered)).
     As a result, rows can only be shuffled within "equivalence classes" of row,
     i.e. rows which have the same values in their primary key columns.
@@ -1073,7 +1073,7 @@ namespace ErrorCodes
 
     :::note
     If both `min_free_disk_bytes_to_perform_insert` and `min_free_disk_ratio_to_perform_insert`
-    are specified, ClickHouse will count on the value that will allow to perform
+    are specified, Datastore will count on the value that will allow to perform
     inserts on a bigger amount of free memory.
     :::
     )", 0) \
@@ -1089,7 +1089,7 @@ namespace ErrorCodes
     - Float, 0.0 - 1.0
 
     Note that if both `min_free_disk_ratio_to_perform_insert` and
-    `min_free_disk_bytes_to_perform_insert` are specified, ClickHouse will count
+    `min_free_disk_bytes_to_perform_insert` are specified, Datastore will count
     on the value that will allow to perform inserts on a bigger amount of free
     memory.
     )", 0) \
@@ -1101,7 +1101,7 @@ namespace ErrorCodes
     `simultaneous_parts_removal_limit` set to `0` means unlimited.
     )", 0) \
     DECLARE(UInt64, reduce_blocking_parts_sleep_ms, 5000, R"(
-    Only available in ClickHouse Cloud. Minimum time to wait before trying to
+    Only available in Datastore Cloud. Minimum time to wait before trying to
     reduce blocking parts again after no ranges were dropped/replaced. A lower
     setting will trigger tasks in background_schedule_pool frequently which
     results in large amount of requests to zookeeper in large-scale clusters
@@ -1109,7 +1109,7 @@ namespace ErrorCodes
     \
     /** Replication settings. */ \
     DECLARE(UInt64, replicated_deduplication_window, 10000, R"(
-    The number of most recently inserted blocks for which ClickHouse Keeper stores
+    The number of most recently inserted blocks for which Datastore Keeper stores
     hash sums to check for duplicates.
 
     Possible values:
@@ -1118,10 +1118,10 @@ namespace ErrorCodes
 
     The `Insert` command creates one or more blocks (parts). For
     [insert deduplication](../../engines/table-engines/mergetree-family/replication.md),
-    when writing into replicated tables, ClickHouse writes the hash sums of the
-    created parts into ClickHouse Keeper. Hash sums are stored only for the most
+    when writing into replicated tables, Datastore writes the hash sums of the
+    created parts into Datastore Keeper. Hash sums are stored only for the most
     recent `replicated_deduplication_window` blocks. The oldest hash sums are
-    removed from ClickHouse Keeper.
+    removed from Datastore Keeper.
 
     A large number for `replicated_deduplication_window` slows down `Inserts`
     because more entries need to be compared. The hash sum is calculated from
@@ -1130,7 +1130,7 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(UInt64, replicated_deduplication_window_seconds, 60 * 60 /* one hour */, R"(
     The number of seconds after which the hash sums of the inserted blocks are
-    removed from ClickHouse Keeper.
+    removed from Datastore Keeper.
 
     Possible values:
     - Any positive integer.
@@ -1138,14 +1138,14 @@ namespace ErrorCodes
     Similar to [replicated_deduplication_window](#replicated_deduplication_window),
     `replicated_deduplication_window_seconds` specifies how long to store hash
     sums of blocks for insert deduplication. Hash sums older than
-    `replicated_deduplication_window_seconds` are removed from ClickHouse Keeper,
+    `replicated_deduplication_window_seconds` are removed from Datastore Keeper,
     even if they are less than ` replicated_deduplication_window`.
 
     The time is relative to the time of the most recent record, not to the wall
     time. If it's the only record it will be stored forever.
     )", 0) \
     DECLARE(UInt64, replicated_deduplication_window_for_async_inserts, 10000, R"(
-    The number of most recently async inserted blocks for which ClickHouse Keeper
+    The number of most recently async inserted blocks for which Datastore Keeper
     stores hash sums to check for duplicates.
 
     Possible values:
@@ -1154,10 +1154,10 @@ namespace ErrorCodes
 
     The [Async Insert](/operations/settings/settings#async_insert) command will
     be cached in one or more blocks (parts). For [insert deduplication](/engines/table-engines/mergetree-family/replication),
-    when writing into replicated tables, ClickHouse writes the hash sums of each
-    insert into ClickHouse Keeper. Hash sums are stored only for the most recent
+    when writing into replicated tables, Datastore writes the hash sums of each
+    insert into Datastore Keeper. Hash sums are stored only for the most recent
     `replicated_deduplication_window_for_async_inserts` blocks. The oldest hash
-    sums are removed from ClickHouse Keeper.
+    sums are removed from Datastore Keeper.
     A large number of `replicated_deduplication_window_for_async_inserts` slows
     down `Async Inserts` because it needs to compare more entries.
     The hash sum is calculated from the composition of the field names and types
@@ -1165,7 +1165,7 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(UInt64, replicated_deduplication_window_seconds_for_async_inserts, 7 * 24 * 60 * 60 /* one week */, R"(
     The number of seconds after which the hash sums of the async inserts are
-    removed from ClickHouse Keeper.
+    removed from Datastore Keeper.
 
     Possible values:
     - Any positive integer.
@@ -1174,7 +1174,7 @@ namespace ErrorCodes
     `replicated_deduplication_window_seconds_for_async_inserts` specifies how
     long to store hash sums of blocks for async insert deduplication. Hash sums
     older than `replicated_deduplication_window_seconds_for_async_inserts` are
-    removed from ClickHouse Keeper, even if they are less than
+    removed from Datastore Keeper, even if they are less than
     `replicated_deduplication_window_for_async_inserts`.
 
     The time is relative to the time of the most recent record, not to the wall
@@ -1198,7 +1198,7 @@ namespace ErrorCodes
     able to filter the duplicated inserts in the memory.
     )", 0) \
     DECLARE(UInt64, max_replicated_logs_to_keep, 1000, R"(
-    How many records may be in the ClickHouse Keeper log if there is inactive
+    How many records may be in the Datastore Keeper log if there is inactive
     replica. An inactive replica becomes lost when when this number exceed.
 
     Possible values:
@@ -1213,7 +1213,7 @@ namespace ErrorCodes
     - Any positive integer.
     )", 0) \
     DECLARE(Seconds, prefer_fetch_merged_part_time_threshold, 3600, R"(
-    If the time passed since a replication log (ClickHouse Keeper or ZooKeeper)
+    If the time passed since a replication log (Datastore Keeper or ZooKeeper)
     entry creation exceeds this threshold, and the sum of the size of parts is
     greater than `prefer_fetch_merged_part_size_threshold`, then prefer fetching
     merged part from a replica instead of doing merge locally. This is to speed
@@ -1248,7 +1248,7 @@ namespace ErrorCodes
 
     :::note
     Zero-copy replication is not ready for production
-    Zero-copy replication is disabled by default in ClickHouse version 22.8 and
+    Zero-copy replication is disabled by default in Datastore version 22.8 and
     higher.
 
     This feature is not recommended for production use.
@@ -1259,7 +1259,7 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(Seconds, try_fetch_recompressed_part_timeout, 7200, R"(
     Timeout (in seconds) before starting merge with recompression. During this
-    time ClickHouse tries to fetch recompressed part from replica which assigned
+    time Datastore tries to fetch recompressed part from replica which assigned
     this merge with recompression.
 
     Recompression works slow in most cases, so we don't start merge with
@@ -1277,7 +1277,7 @@ namespace ErrorCodes
     - true, false
     )", 0) \
     DECLARE(UInt64, number_of_partitions_to_consider_for_merge, 10, R"(
-    Only available in ClickHouse Cloud. Up to top N partitions which we will
+    Only available in Datastore Cloud. Up to top N partitions which we will
     consider for merge. Partitions picked in a random weighted way where weight
     is amount of data parts which can be merged in this partition.
     )", 0) \
@@ -1424,111 +1424,111 @@ namespace ErrorCodes
     For testing. Do not change it.
     )", 0) \
     DECLARE(Bool, shared_merge_tree_disable_merges_and_mutations_assignment, false, R"(
-    Stop merges assignment for shared merge tree. Only available in ClickHouse
+    Stop merges assignment for shared merge tree. Only available in Datastore
     Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_use_zookeeper_connection_pool, false, R"(
     If enabled, SharedMergeTree uses one of server-level pooled ZooKeeper sessions.
     )", 0) \
     DECLARE(Bool, shared_merge_tree_enable_outdated_parts_check, true, R"(
-    Enable outdated parts check. Only available in ClickHouse Cloud
+    Enable outdated parts check. Only available in Datastore Cloud
     )", 0) \
     DECLARE(Float, shared_merge_tree_partitions_hint_ratio_to_reload_merge_pred_for_mutations, 0.5, R"(
     Will reload merge predicate in merge/mutate selecting task when `<candidate
     partitions for mutations only (partitions that cannot be merged)>/<candidate
     partitions for mutations>` ratio is higher than the setting. Only available
-    in ClickHouse Cloud
+    in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_parts_load_batch_size, 32, R"(
     Amount of fetch parts metadata jobs to schedule at once. Only available in
-    ClickHouse Cloud
+    Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_max_parts_update_leaders_in_total, 6, R"(
-    Maximum number of parts update leaders. Only available in ClickHouse Cloud
+    Maximum number of parts update leaders. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_max_parts_update_leaders_per_az, 2, R"(
-    Maximum number of parts update leaders. Only available in ClickHouse Cloud
+    Maximum number of parts update leaders. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_leader_update_period_seconds, 30, R"(
     Maximum period to recheck leadership for parts update. Only available in
-    ClickHouse Cloud
+    Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_leader_update_period_random_add_seconds, 10, R"(
     Add uniformly distributed value from 0 to x seconds to
     shared_merge_tree_leader_update_period to avoid thundering
-    herd effect. Only available in ClickHouse Cloud
+    herd effect. Only available in Datastore Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_read_virtual_parts_from_leader, true, R"(
-    Read virtual parts from leader when possible. Only available in ClickHouse
+    Read virtual parts from leader when possible. Only available in Datastore
     Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_initial_parts_update_backoff_ms, 50, R"(
-    Initial backoff for parts update. Only available in ClickHouse Cloud
+    Initial backoff for parts update. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_max_parts_update_backoff_ms, 5000, R"(
-    Max backoff for parts update. Only available in ClickHouse Cloud
+    Max backoff for parts update. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_interserver_http_connection_timeout_ms, 100, R"(
-    Timeouts for interserver HTTP connection. Only available in ClickHouse Cloud
+    Timeouts for interserver HTTP connection. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_interserver_http_timeout_ms, 10000, R"(
-    Timeouts for interserver HTTP communication. Only available in ClickHouse
+    Timeouts for interserver HTTP communication. Only available in Datastore
     Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_max_replicas_for_parts_deletion, 10, R"(
     Max replicas which will participate in parts deletion (killer thread). Only
-    available in ClickHouse Cloud
+    available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_max_replicas_to_merge_parts_for_each_parts_range, 5, R"(
     Max replicas which will try to assign potentially conflicting merges (allow
     to avoid redundant conflicts in merges assignment). 0 means disabled. Only
-    available in ClickHouse Cloud
+    available in Datastore Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_use_outdated_parts_compact_format, true, R"(
     Use compact format for outdated parts: reduces load to Keeper, improves
-    outdated parts processing. Only available in ClickHouse Cloud
+    outdated parts processing. Only available in Datastore Cloud
     )", 0) \
     DECLARE(Int64, shared_merge_tree_memo_ids_remove_timeout_seconds, 1800, R"(
     How long we store insert memoization ids to avoid wrong actions during
-    insert retries. Only available in ClickHouse Cloud
+    insert retries. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_idle_parts_update_seconds, 3600, R"(
     Interval in seconds for parts update without being triggered by ZooKeeper
-    watch in the shared merge tree. Only available in ClickHouse Cloud
+    watch in the shared merge tree. Only available in Datastore Cloud
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_max_outdated_parts_to_process_at_once, 1000, R"(
     Maximum amount of outdated parts leader will try to confirm for removal at
-    one HTTP request. Only available in ClickHouse Cloud.
+    one HTTP request. Only available in Datastore Cloud.
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_outdated_parts_group_size, 2, R"(
     How many replicas will be in the same rendezvous hash group for outdated parts cleanup.
-    Only available in ClickHouse Cloud.
+    Only available in Datastore Cloud.
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_postpone_next_merge_for_locally_merged_parts_rows_threshold, 1000000, R"(
     Minimum size of part (in rows) to postpone assigning a next merge just after
-    merging it locally. Only available in ClickHouse Cloud.
+    merging it locally. Only available in Datastore Cloud.
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_postpone_next_merge_for_locally_merged_parts_ms, 0, R"(
     Time to keep a locally merged part without starting a new merge containing
     this part. Gives other replicas a chance fetch the part and start this merge.
-    Only available in ClickHouse Cloud.
+    Only available in Datastore Cloud.
     )", 0) \
     DECLARE(UInt64, shared_merge_tree_range_for_merge_window_size, 10, R"(
     Time to keep a locally merged part without starting a new merge containing
     this part. Gives other replicas a chance fetch the part and start this merge.
-    Only available in ClickHouse Cloud
+    Only available in Datastore Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_use_too_many_parts_count_from_virtual_parts, 0, R"(
     If enabled too many parts counter will rely on shared data in Keeper, not on
-    local replica state. Only available in ClickHouse Cloud
+    local replica state. Only available in Datastore Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_create_per_replica_metadata_nodes, false, R"(
     Enables creation of per-replica /metadata and /columns nodes in ZooKeeper.
-    Only available in ClickHouse Cloud
+    Only available in Datastore Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_use_metadata_hints_cache, true, R"(
     Enables requesting FS cache hints from in-memory
-    cache on other replicas. Only available in ClickHouse Cloud
+    cache on other replicas. Only available in Datastore Cloud
     )", 0) \
     DECLARE(Bool, shared_merge_tree_try_fetch_part_in_memory_data_from_replicas, false, R"(
     If enabled all the replicas try to fetch part in memory data (like primary
@@ -1544,7 +1544,7 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(Bool, allow_reduce_blocking_parts_task, true, R"(
     Background task which reduces blocking parts for shared merge tree tables.
-    Only in ClickHouse Cloud
+    Only in Datastore Cloud
     )", 0) \
     DECLARE(Seconds, refresh_parts_interval, 0, R"(
     If it is greater than zero - refresh the list of data parts from the underlying filesystem to check if the data was updated under the hood.
@@ -1641,9 +1641,9 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(UInt64, min_merge_bytes_to_use_direct_io, 10ULL * 1024 * 1024 * 1024, R"(
     The minimum data volume for merge operation that is required for using direct
-    I/O access to the storage disk. When merging data parts, ClickHouse calculates
+    I/O access to the storage disk. When merging data parts, Datastore calculates
     the total storage volume of all the data to be merged. If the volume exceeds
-    `min_merge_bytes_to_use_direct_io` bytes, ClickHouse reads and writes the
+    `min_merge_bytes_to_use_direct_io` bytes, Datastore reads and writes the
     data to the storage disk using the direct I/O interface (`O_DIRECT` option).
     If `min_merge_bytes_to_use_direct_io = 0`, then direct I/O is disabled.
     )", 0) \
@@ -1689,7 +1689,7 @@ namespace ErrorCodes
     Enables or disables transitioning to control the granule size with the
     `index_granularity_bytes` setting. Before version 19.11, there was only the
     `index_granularity` setting for restricting granule size. The
-    `index_granularity_bytes` setting improves ClickHouse performance when
+    `index_granularity_bytes` setting improves Datastore performance when
     selecting data from tables with big rows (tens and hundreds of megabytes).
     If you have tables with big rows, you can enable this setting for the tables
     to improve the efficiency of `SELECT` queries.
@@ -1801,7 +1801,7 @@ namespace ErrorCodes
     The value of the `min_bytes_to_rebalance_partition_over_jbod` setting should
     not be less than the value of the
     [max_bytes_to_merge_at_max_space_in_pool](/operations/settings/merge-tree-settings#max_bytes_to_merge_at_max_space_in_pool)
-    / 1024. Otherwise, ClickHouse throws an exception.
+    / 1024. Otherwise, Datastore throws an exception.
     )", 0) \
     DECLARE(Bool, check_sample_column_is_correct, true, R"(
     Enables the check at table creation, that the data type of a column for s
@@ -1815,7 +1815,7 @@ namespace ErrorCodes
 
     Default value: `true`.
 
-    By default, the ClickHouse server checks at table creation the data type of
+    By default, the Datastore server checks at table creation the data type of
     a column for sampling or sampling expression. If you already have tables with
     incorrect sampling expression and do not want the server to raise an exception
     during startup, set `check_sample_column_is_correct` to `false`.
@@ -1966,7 +1966,7 @@ namespace ErrorCodes
     )", EXPERIMENTAL) \
     DECLARE(Bool, cache_populated_by_fetch, false, R"(
     :::note
-    This setting applies only to ClickHouse Cloud.
+    This setting applies only to Datastore Cloud.
     :::
 
     When `cache_populated_by_fetch` is disabled (the default setting), new data
@@ -1985,7 +1985,7 @@ namespace ErrorCodes
     )", 0) \
     DECLARE(String, cache_populated_by_fetch_filename_regexp, "", R"(
     :::note
-    This setting applies only to ClickHouse Cloud.
+    This setting applies only to Datastore Cloud.
     :::
 
     If not empty, only files that match this regex will be prewarmed into the cache after fetch (if `cache_populated_by_fetch` is enabled).
@@ -2046,7 +2046,7 @@ namespace ErrorCodes
     Requires `enable_block_number_column` and `enable_block_offset_column` to be enabled.
     )", EXPERIMENTAL) \
     DECLARE(Bool, notify_newest_block_number, false, R"(
-    Notify newest block number to SharedJoin or SharedSet. Only in ClickHouse Cloud.
+    Notify newest block number to SharedJoin or SharedSet. Only in Datastore Cloud.
     )", EXPERIMENTAL) \
     DECLARE(UInt64, shared_merge_tree_virtual_parts_discovery_batch, 1, R"(
     How many partition discoveries should be packed into batch
@@ -2171,7 +2171,7 @@ namespace ErrorCodes
     Default value: an empty string (not defined).
     )", 0) \
     DECLARE(SearchOrphanedPartsDisks, search_orphaned_parts_disks, SearchOrphanedPartsDisks::ANY, R"(
-    ClickHouse scans all disks for orphaned parts upon any ATTACH or CREATE table
+    Datastore scans all disks for orphaned parts upon any ATTACH or CREATE table
     in order to not allow to miss data parts at undefined (not included in policy) disks.
     Orphaned parts originates from potentially unsafe storage reconfiguration, e.g. if a disk was excluded from storage policy.
     This setting limits scope of disks to search by traits of the disks.
@@ -2636,7 +2636,7 @@ void MergeTreeSettings::applyCompatibilitySetting(const String & compatibility_v
 
     ClickHouseVersion version(compatibility_value);
     const auto & settings_changes_history = getMergeTreeSettingsChangesHistory();
-    /// Iterate through ClickHouse version in descending order and apply reversed
+    /// Iterate through Datastore version in descending order and apply reversed
     /// changes for each version that is higher that version from compatibility setting
     for (auto it = settings_changes_history.rbegin(); it != settings_changes_history.rend(); ++it)
     {

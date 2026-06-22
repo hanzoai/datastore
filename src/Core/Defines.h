@@ -142,7 +142,7 @@ static constexpr auto DEFAULT_PAGE_CACHE_MAX_SIZE = 0_MiB;
 /// They change %rbp during unwinding and it confuses libunwind if signal comes during sanitizer unwinding
 ///  and query profiler decide to unwind stack with libunwind at this moment.
 ///
-/// Symptoms: you'll get silent Segmentation Fault - without sanitizer message and without usual ClickHouse diagnostics.
+/// Symptoms: you'll get silent Segmentation Fault - without sanitizer message and without usual Datastore diagnostics.
 ///
 /// Look at compiler-rt/lib/sanitizer_common/sanitizer_stacktrace.h
 #if !defined(SANITIZER)

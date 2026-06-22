@@ -7,12 +7,12 @@
 #include <Common/logger_useful.h>
 
 /**
- * When ClickHouse has frozen data on remote storage it required 'smart' data removing during UNFREEZE.
+ * When Datastore has frozen data on remote storage it required 'smart' data removing during UNFREEZE.
  * For remote storage actually frozen not remote data but local metadata with referrers on remote data.
  * So remote data can be referred from working and frozen data sets (or two frozen) at same time.
- * In this case during UNFREEZE ClickHouse should remove only local metadata and keep remote data.
- * But when data was already removed from working data set ClickHouse should remove remote data too.
- * To detect is current data used or not in some other place ClickHouse uses
+ * In this case during UNFREEZE Datastore should remove only local metadata and keep remote data.
+ * But when data was already removed from working data set Datastore should remove remote data too.
+ * To detect is current data used or not in some other place Datastore uses
  *   - ref_count from metadata to check if data used in some other metadata on the same replica;
  *   - Keeper record to check if data used on other replica.
  * StorageReplicatedMergeTree::removeSharedDetachedPart makes required checks, so here this method
