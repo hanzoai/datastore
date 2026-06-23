@@ -656,9 +656,6 @@ if (TARGET ch_contrib::protobuf)
     target_link_libraries (datastore_common_io PUBLIC ch_contrib::protobuf)
 endif ()
 
-if (TARGET datastore_grpc_protos)
-    target_link_libraries(dbms PUBLIC datastore_grpc_protos)
-endif()
 
 if (TARGET ch_contrib::hdfs)
     target_link_libraries(dbms PRIVATE ch_contrib::hdfs)
