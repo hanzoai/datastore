@@ -1313,6 +1313,7 @@ const VersionToSettingsChangesMap & getMergeTreeSettingsChangesHistory()
         {
             {"shared_merge_tree_replica_set_max_lifetime_seconds", 300, 300, "New setting"},
             {"table_readonly", false, false, "New setting to mark table as read-only, preventing inserts and modifications"},
+        });
         addSettingsChanges(merge_tree_settings_changes_history, "26.6",
         {
             {"packed_skip_index_max_bytes", 0, 0, "New setting. Pack any skip-index substream whose serialized on-disk size is at most this many bytes into a single skp_idx.packed archive per part; larger substreams stay in the standalone skp_idx_<name>.idx2 / .mrk2 layout. Decision is made per substream at write time."},
