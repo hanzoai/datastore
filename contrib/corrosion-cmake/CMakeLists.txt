@@ -238,8 +238,11 @@ function(datastore_import_crate)
             PROFILE ${profile}
             # We only care about static libraries and want to avoid as much dynamic libs as possible
             CRATE_TYPES staticlib
+            # LOCKED (use the committed Cargo.lock) but NOT --offline: let cargo fetch the exact
+            # locked crate versions over the network. Our build host isn't fully vendored after the
+            # 26.6 merge; offline resolution fails. Keeps reproducibility (locked) without requiring
+            # a pre-populated cargo cache.
             LOCKED
-            FLAGS --offline
             NO_DEFAULT_FEATURES
     )
     enable_dummy_launchers_if_needed()
@@ -270,11 +273,11 @@ function(datastore_config_crate_flags target_name)
     #
     #   [1]: https://github.com/rust-lang/cc-rs/blob/7666d4f4f36d3bcacce9ab72fc6538fcc0ea1716/src/lib.rs#L762-L775
     corrosion_set_env_vars(${target_name} "CXXSTDLIB=cxx")
-    # Even with --offline it is still possible that some commands from build.rs
-    # will try to download, force them not to with CARGO_NET_OFFLINE=true
-    #
-    # Refs: https://github.com/rust-lang/cargo/issues/15099#issuecomment-2732847355
-    corrosion_set_env_vars(${target_name} "CARGO_NET_OFFLINE=true")
+    # Datastore: allow cargo network at build time. After the 26.6 upstream merge our build host's
+    # cargo cache/index can't resolve the rust workspace fully offline (the pinned crate set the
+    # merge brought isn't all vendored locally). Letting cargo fetch the locked versions is the
+    # reliable path; CI can re-pin to fully-vendored offline once the rust deps are vendored.
+    corrosion_set_env_vars(${target_name} "CARGO_NET_OFFLINE=false")
     corrosion_link_libraries(${target_name} cxx)
 
     # Localize all C-namespace symbols from Rust static libraries so they
