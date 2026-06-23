@@ -49,13 +49,13 @@ Start the ClickHouse server locally, listening on the default port (9000).
 To run, for example, the test `01428_hash_set_nan_key`, change to the repository folder and run the following command:
 
 ```sh
-PATH=<path to clickhouse-client>:$PATH tests/clickhouse-test 01428_hash_set_nan_key
+PATH=<path to clickhouse-client>:$PATH tests/datastore-test 01428_hash_set_nan_key
 ```
 
 Test results (`stderr` and `stdout`) are written to files `01428_hash_set_nan_key.[stderr|stdout]` which are located next the test itself (for `queries/0_stateless/foo.sql`, the output will be in `queries/0_stateless/foo.stdout`).
 
-See `tests/clickhouse-test --help` for all options of `clickhouse-test`.
-You can run all tests or run subset of tests by providing a filter for test names: `./clickhouse-test substring`.
+See `tests/datastore-test --help` for all options of `datastore-test`.
+You can run all tests or run subset of tests by providing a filter for test names: `./datastore-test substring`.
 There are also options to run tests in parallel or in random order.
 
 ### Running fast tests {#running-fast-tests}
@@ -160,7 +160,7 @@ Tests should be
 
 ### Templated tests with Jinja {#templated-tests-with-jinja}
 
-A `.sql` test can be written as a [Jinja2](https://jinja.palletsprojects.com/) template by adding a `.j2` suffix to the file name, so `foo.sql` becomes `foo.sql.j2`. Before running the test, `clickhouse-test` renders the template into an ordinary `.sql` script and executes the result.
+A `.sql` test can be written as a [Jinja2](https://jinja.palletsprojects.com/) template by adding a `.j2` suffix to the file name, so `foo.sql` becomes `foo.sql.j2`. Before running the test, `datastore-test` renders the template into an ordinary `.sql` script and executes the result.
 
 This is useful when a test repeats the same query with small variations: a loop generates the queries from a compact template instead of writing each one out by hand. The most commonly used constructs are:
 
@@ -184,7 +184,7 @@ SELECT toTypeName(0::UInt16);
 SELECT toTypeName(0::UInt32);
 ```
 
-The expected output can be supplied either as a plain `<name>.reference` file containing the fully-expanded results, or as a `<name>.reference.j2` template, which `clickhouse-test` renders the same way before comparing. Use the templated form when the expected output also follows a repeating pattern. For more examples, see the existing `*.sql.j2` files in `tests/queries/0_stateless/`.
+The expected output can be supplied either as a plain `<name>.reference` file containing the fully-expanded results, or as a `<name>.reference.j2` template, which `datastore-test` renders the same way before comparing. Use the templated form when the expected output also follows a repeating pattern. For more examples, see the existing `*.sql.j2` files in `tests/queries/0_stateless/`.
 
 ### Restricting test runs {#restricting-test-runs}
 

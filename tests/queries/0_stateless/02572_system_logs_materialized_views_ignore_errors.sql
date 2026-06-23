@@ -24,7 +24,7 @@ drop table push_to_logs_proxy_mv_02572;
 set log_queries=0;
 
 system flush logs query_log;
--- lower() to pass through clickhouse-test "exception" check
+-- lower() to pass through datastore-test "exception" check
 select replaceAll(query, '\n', '\\n'), lower(type::String), errorCodeToName(exception_code)
     from system.query_log
     where event_date >= yesterday() AND event_time >= now() - 600 AND current_database = currentDatabase()

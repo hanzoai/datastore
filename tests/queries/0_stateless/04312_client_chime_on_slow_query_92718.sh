@@ -4,7 +4,7 @@
 # Verifies that `--chime N` makes the client emit ASCII `BEL` (`\x07`) on stderr
 # when a query finishes after running for at least N seconds AND stderr is
 # attached to a terminal. When stderr is redirected to a file or pipe (the
-# common case for automation, including `clickhouse-test`), `BEL` is suppressed
+# common case for automation, including `datastore-test`), `BEL` is suppressed
 # so the captured stderr stream stays clean. Works in both success and error
 # paths and applies to clickhouse-client and clickhouse-local.
 

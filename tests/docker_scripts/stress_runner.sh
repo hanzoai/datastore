@@ -8,7 +8,7 @@ set -ex
 # Avoid overlaps with previous runs
 dmesg --clear
 
-ln -s /repo/tests/clickhouse-test /usr/bin/clickhouse-test
+ln -s /repo/tests/datastore-test /usr/bin/datastore-test
 
 # shellcheck source=../stateless/stress_tests.lib
 source /repo/tests/docker_scripts/stress_tests.lib
@@ -48,10 +48,10 @@ export ZOOKEEPER_FAULT_INJECTION=1
 configure
 
 # run before start_minio to have valid aws creds
-cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py logs_export_config || echo "ERROR: Failed to create log export config"
+cd /repo && python3 /repo/ci/jobs/scripts/datastore_proc.py logs_export_config || echo "ERROR: Failed to create log export config"
 
-cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py start_minio stateless || { echo "Failed to start minio"; exit 1; }
-cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py start_azurite || { echo "Failed to start azurite"; exit 1; }
+cd /repo && python3 /repo/ci/jobs/scripts/datastore_proc.py start_minio stateless || { echo "Failed to start minio"; exit 1; }
+cd /repo && python3 /repo/ci/jobs/scripts/datastore_proc.py start_azurite || { echo "Failed to start azurite"; exit 1; }
 
 # Start Redpanda (Kafka-compatible broker) so that Kafka engine tests work and
 # do not leave behind broken StorageKafka tables whose background threads cause
@@ -62,7 +62,7 @@ bash /repo/ci/jobs/scripts/functional_tests/setup_kafka.sh || { echo "Failed to 
 
 start_server || { echo "Failed to start server"; exit 1; }
 
-cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py logs_export_start || echo "ERROR: Failed to start log exports"
+cd /repo && python3 /repo/ci/jobs/scripts/datastore_proc.py logs_export_start || echo "ERROR: Failed to start log exports"
 
 clickhouse-client --query "CREATE DATABASE datasets"
 clickhouse-client < /repo/tests/docker_scripts/create.sql
@@ -288,7 +288,7 @@ fi
 
 start_server || { echo "Failed to start server"; exit 1; }
 
-cd /repo/tests/ || exit 1  # clickhouse-test can find queries dir from there
+cd /repo/tests/ || exit 1  # datastore-test can find queries dir from there
 python3 /repo/ci/jobs/scripts/stress/stress.py --hung-check --drop-databases --output-folder /test_output --skip-func-tests "$SKIP_TESTS_OPTION" --global-time-limit "${STRESS_GLOBAL_TIME_LIMIT:-1200}" --encrypted-storage "$USE_ENCRYPTED_STORAGE" \
     && echo -e "Test script exit code$OK" >> /test_output/test_results.tsv \
     || echo -e "Test script failed$FAIL script exit code: $?" >> /test_output/test_results.tsv

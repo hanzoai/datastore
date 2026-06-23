@@ -1,6 +1,6 @@
 """
 End-to-end test for the `--max-failures` / `--max-failures-chain` exit code in
-parallel runs of `tests/clickhouse-test`.
+parallel runs of `tests/datastore-test`.
 
 When a parallel worker reaches the failure limit it raises `StopTesting` inside
 its own process. That exit code only reaches the launcher if the parent
@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "clickhouse-test")
+_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "datastore-test")
 
 _ct = runpy.run_path(_CLICKHOUSE_TEST)
 MAX_FAILURES_EXIT_CODE = _ct["MAX_FAILURES_EXIT_CODE"]

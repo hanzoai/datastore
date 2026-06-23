@@ -16,9 +16,9 @@ NOT_FAILED_SIGN = "[ NOT_FAILED "
 HUNG_SIGN = "Found hung queries in processlist"
 DATABASE_SIGN = "Database: "
 
-# Pick up the runner exit codes straight from `tests/clickhouse-test` so
+# Pick up the runner exit codes straight from `tests/datastore-test` so
 # the contract has a single source of truth.
-_clickhouse_test = Path(__file__).resolve().parents[3] / "tests" / "clickhouse-test"
+_clickhouse_test = Path(__file__).resolve().parents[3] / "tests" / "datastore-test"
 _clickhouse_test_globals = runpy.run_path(str(_clickhouse_test))
 STOP_TESTING_EXIT_CODE = _clickhouse_test_globals["STOP_TESTING_EXIT_CODE"]
 GLOBAL_TIME_LIMIT_EXIT_CODE = _clickhouse_test_globals["GLOBAL_TIME_LIMIT_EXIT_CODE"]
@@ -282,7 +282,7 @@ class FTResultsProcessor:
         else:
             pass
 
-        # The runner's exit code is the authoritative signal: if `clickhouse-test`
+        # The runner's exit code is the authoritative signal: if `datastore-test`
         # exited non-zero, the job must not report OK even when log parsing finds
         # nothing to blame. The synthetic leaf is added only when the parser
         # found nothing - otherwise the real failure already explains the result
@@ -294,9 +294,9 @@ class FTResultsProcessor:
                 state = Result.Status.FAIL
                 test_results.append(
                     Result(
-                        name="clickhouse-test",
+                        name="datastore-test",
                         status=Result.Status.FAIL,
-                        info=f"clickhouse-test exited with code {runner_exit_code}",
+                        info=f"datastore-test exited with code {runner_exit_code}",
                     )
                 )
 

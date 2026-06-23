@@ -1,22 +1,22 @@
 """
-End-to-end test for the process-group orphan cleanup in tests/clickhouse-test.
+End-to-end test for the process-group orphan cleanup in tests/datastore-test.
 
 Works on both Linux and macOS.  The ``pgrep()`` helper is imported directly
-from ``tests/clickhouse-test`` so it uses ``ps -eo pid,ppid,pgid,command``
+from ``tests/datastore-test`` so it uses ``ps -eo pid,ppid,pgid,command``
 (POSIX) rather than the ``pgrep --pgroup`` system command (Linux-only).
 
 Scenario
 --------
-1. ``clickhouse-test`` starts a subprocess (the "test process") in its own
+1. ``datastore-test`` starts a subprocess (the "test process") in its own
    process group and writes the PGID to a file via ``write_text_atomic``
    right after ``Popen()``.  The test is ``01_parallel_sleep.sh``, which
    spawns 5 child ``sleep`` processes.
-2. ``clickhouse-test`` is killed with ``SIGKILL``, leaving the test process
+2. ``datastore-test`` is killed with ``SIGKILL``, leaving the test process
    (and its children) orphaned because the PGID file is never deleted.
 3. We assert the test process and its 5 child processes are still alive: they
    live in their own process group, so the parent's ``SIGKILL`` cannot reach
    them.
-4. We run ``clickhouse-test --cleanup``, which reads the file and kills all
+4. We run ``datastore-test --cleanup``, which reads the file and kills all
    recorded process groups.
 5. We assert all processes are now dead and the pid file is gone.
 """
@@ -30,10 +30,10 @@ import time
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "clickhouse-test")
+_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "datastore-test")
 _TEST = "01_parallel_sleep"
 
-# Import helpers directly from clickhouse-test so path changes propagate
+# Import helpers directly from datastore-test so path changes propagate
 # automatically.  runpy.run_path handles the missing .py extension and the
 # hyphen in the name.
 _ct = runpy.run_path(_CLICKHOUSE_TEST)
@@ -41,15 +41,15 @@ pgrep = _ct["pgrep"]
 _GROUP_PID_PATH = _ct["_GROUP_PID_PATH"]
 _GROUP_PID_NAME = _ct["_GROUP_PID_NAME"]
 
-# clickhouse-test uses --queries ci/tests, so per-test stdout files end up
+# datastore-test uses --queries ci/tests, so per-test stdout files end up
 # under ci/tests/0_stateless/ (args.tmp defaults to args.queries).
 _STDOUT = _REPO_ROOT / "ci" / "tests" / "0_stateless" / "test.stdout"
 
 
 def test_cleanup_kills_orphaned_test_process():
     """
-    Verify that ``clickhouse-test --cleanup`` kills a test subprocess that was
-    orphaned when its parent (clickhouse-test) was terminated with SIGKILL.
+    Verify that ``datastore-test --cleanup`` kills a test subprocess that was
+    orphaned when its parent (datastore-test) was terminated with SIGKILL.
     """
     _GROUP_PID_PATH.mkdir(parents=True, exist_ok=True)
     for _f in _GROUP_PID_PATH.glob(f"{_GROUP_PID_NAME}.*"):
@@ -67,7 +67,7 @@ def test_cleanup_kills_orphaned_test_process():
 
     try:
         try:
-            # Wait for clickhouse-test to open the stdout file for the test, which
+            # Wait for datastore-test to open the stdout file for the test, which
             # happens just before the test subprocess is launched.  This gives us
             # an early confirmation that the harness is actually running the test
             # rather than, e.g., still parsing options or connecting to the server.
@@ -79,7 +79,7 @@ def test_cleanup_kills_orphaned_test_process():
             else:
                 assert False, f"{_STDOUT} is empty"
 
-            # The PGID file is written by clickhouse-test synchronously right after
+            # The PGID file is written by datastore-test synchronously right after
             # Popen(), before the bash script starts.  By the time the test script
             # writes its output and the stdout file has content, the file is likely to exist.
             p = list(_GROUP_PID_PATH.glob(f"{_GROUP_PID_NAME}.*"))[0]
@@ -99,7 +99,7 @@ def test_cleanup_kills_orphaned_test_process():
                 time.sleep(0.05)
             assert len(procs) == 7, "(Before kill) Expect 7 processes (two bash processes + 5 test processes)" + got_procs(procs)
 
-            # Kill clickhouse-test with SIGKILL — simulates the OOM killer or an
+            # Kill datastore-test with SIGKILL — simulates the OOM killer or an
             # external timeout killing the test runner.
         finally:
             os.kill(_ch_proc.pid, signal.SIGKILL)
@@ -108,7 +108,7 @@ def test_cleanup_kills_orphaned_test_process():
         assert len(procs) == 7, "(After kill) Expect 7 processes" + got_procs(procs)
     finally:
         _ch_proc.wait()
-        # Run clickhouse-test --cleanup to kill the orphaned process group.
+        # Run datastore-test --cleanup to kill the orphaned process group.
         result = subprocess.run(
             [sys.executable, _CLICKHOUSE_TEST, "--cleanup"],
             capture_output=True,
@@ -117,13 +117,13 @@ def test_cleanup_kills_orphaned_test_process():
         )
 
     assert result.returncode == 0, (
-        f"clickhouse-test --cleanup failed (rc={result.returncode}):\n"
+        f"datastore-test --cleanup failed (rc={result.returncode}):\n"
         f"{result.stdout}\n{result.stderr}"
     )
 
     # All test processes must now be dead.
     procs = pgrep(pgid=pgid)
     assert not procs, (
-        "all test processes should be dead after clickhouse-test --cleanup" + got_procs(procs)
+        "all test processes should be dead after datastore-test --cleanup" + got_procs(procs)
     )
 

@@ -1,7 +1,7 @@
 --
 -- This is a cleaner approach for writing a test that relies on system.query_log/query_thread_log.
 --
--- It uses current database, and since clickhouse-test will generate random for
+-- It uses current database, and since datastore-test will generate random for
 -- each run you can run the test multiple times without worrying about
 -- overlaps.
 --

@@ -16,7 +16,7 @@ database (CIDB) that records which lines each test covered in recent nightly run
 NightlyCoverage CI job (nightly at 02:13 UTC)
   └─ Build amd_per_test_coverage binary
        (WITH_COVERAGE=ON -DWITH_COVERAGE_DEPTH=ON -finstrument-functions-after-inlining)
-  └─ Run stateless tests including --long (clickhouse-test --collect-per-test-coverage)
+  └─ Run stateless tests including --long (datastore-test --collect-per-test-coverage)
        ├─ SYSTEM SET COVERAGE TEST 'test_name'  (before each test)
        └─ SYSTEM SET COVERAGE TEST ''           (flush + reset counters)
   └─ export_coverage.py (reads local server tables, inserts into CIDB)
@@ -280,7 +280,7 @@ gh run list --repo ClickHouse/ClickHouse --workflow=NightlyCoverage --limit 5
 | `base/base/coverage.cpp` | Runtime: reads LLVM profile data, resets per-test, collects indirect calls |
 | `src/Common/CoverageCollection.cpp` | Server-side: maps counters to source regions, inserts into system tables |
 | `src/Common/LLVMCoverageMapping.cpp` | Parses ELF `__llvm_covmap`/`__llvm_covfun` sections at startup |
-| `tests/clickhouse-test` | Creates `system.coverage_log` and `system.coverage_indirect_calls` tables |
+| `tests/datastore-test` | Creates `system.coverage_log` and `system.coverage_indirect_calls` tables |
 
 ---
 

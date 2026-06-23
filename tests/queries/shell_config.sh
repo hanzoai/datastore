@@ -272,7 +272,7 @@ if [[ -n "${CLICKHOUSE_BASH_TRACING_FILE+x}" ]] && [[ ${BASH_VERSINFO[0]} -gt 4 
     # But anyway it is useful even without stderr!
     #
     # Note, that we can redirect stderr into separate file, this should work,
-    # but we will have to add a code to handle this in clickhouse-test wrapper,
+    # but we will have to add a code to handle this in datastore-test wrapper,
     # but let's keep things simple for now.
     BASH_XTRACEFD=3
     export PS4='+ [\D{%Y-%m-%d %H:%M:%S}] [:${LINENO}] '

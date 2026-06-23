@@ -52,7 +52,7 @@ kill $PID
 # Dump server.log in case wait hangs
 function trace()
 {
-    # clickhouse-test prints only stderr on timeouts
+    # datastore-test prints only stderr on timeouts
     cat "${CLICKHOUSE_TMP}/server.log" >&2
 }
 trap trace EXIT

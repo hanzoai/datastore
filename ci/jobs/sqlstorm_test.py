@@ -20,7 +20,7 @@ MIN_SUCCESS_RATE = 0.50  # at least 50% queries should succeed
 
 # Export of the server's `system.*_log` tables to the central CI logs cluster,
 # matching the setup used by other checks (e.g. `clickbench`). Defined here to
-# keep the values in sync with `ci/jobs/scripts/clickhouse_proc.py`.
+# keep the values in sync with `ci/jobs/scripts/datastore_proc.py`.
 LOG_EXPORT_CONFIG_TEMPLATE = """
 remote_servers:
     {CLICKHOUSE_CI_LOGS_CLUSTER}:

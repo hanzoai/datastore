@@ -238,7 +238,7 @@ def test_kafka_zone_awareness(kafka_cluster, create_query_generator):
     [
         ("AWS_ZONE_NAME", "eu-central-1a", "zone_awareness_aws_zone_name", "ok"),
         ("AWS_ZONE_NAME_THEN_GCP_ZONE", "europe-central2-a", "zone_awareness_gcp_fallback", "fail"),
-        ("CLICKHOUSE", "clickhouse-test-az", "zone_awareness_clickhouse", "ok"),
+        ("CLICKHOUSE", "datastore-test-az", "zone_awareness_clickhouse", "ok"),
     ],
 )
 @pytest.mark.parametrize(

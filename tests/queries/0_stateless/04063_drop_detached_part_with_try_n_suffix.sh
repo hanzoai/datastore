@@ -12,7 +12,7 @@
 # references, and the subsequent "ATTACH PARTITION ALL" fails because the data is gone. The bug
 # under test (detached part name parsing) is storage-agnostic, so the test runs on local disk only.
 #
-# The "no-object-storage" tag only skips the test in regular object-storage runs (clickhouse-test
+# The "no-object-storage" tag only skips the test in regular object-storage runs (datastore-test
 # with "--s3-storage"). The stress test does not pass that flag yet still randomly makes an object
 # storage policy the MergeTree default, so the table is pinned to the built-in local "default"
 # storage policy below to keep "cp -r" safe regardless of the server's default policy.

@@ -12,7 +12,7 @@ INSERT INTO t_lwu_parallel_replicas VALUES (1);
 
 -- `enable_analyzer = 0` forces the legacy parallel-replica path, which is the one that crashed.
 -- `automatic_parallel_replicas_mode = 0` is required so `canUseTaskBasedParallelReplicas` enters that
--- path; `clickhouse-test` otherwise randomizes it and could bypass the legacy code being tested.
+-- path; `datastore-test` otherwise randomizes it and could bypass the legacy code being tested.
 UPDATE t_lwu_parallel_replicas SET c0 = 2 WHERE 1
 SETTINGS enable_lightweight_update = 1,
     enable_analyzer = 0,

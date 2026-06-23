@@ -128,7 +128,7 @@ function main()
     # retries, since the query may be canceled earlier due to LIMIT, and so
     # only one shard will be processed, and it will get not 40 but 20 rows:
     #
-    #     1.160920 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> executeQuery: (from [::ffff:127.0.0.1]:42778, initial_query_id: 66cf643c-b1b4-4f7e-942a-c4c3493029f6, using production parser) (comment: /usr/share/clickhouse-test/queries/0_stateless/01814_distributed_push_down_limit.sql) WITH CAST('test_31uut9', 'String') AS id_distributed_push_down_limit_1 SELECT key FROM test_31uut9.data_01814 GROUP BY key LIMIT 10
+    #     1.160920 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> executeQuery: (from [::ffff:127.0.0.1]:42778, initial_query_id: 66cf643c-b1b4-4f7e-942a-c4c3493029f6, using production parser) (comment: /usr/share/datastore-test/queries/0_stateless/01814_distributed_push_down_limit.sql) WITH CAST('test_31uut9', 'String') AS id_distributed_push_down_limit_1 SELECT key FROM test_31uut9.data_01814 GROUP BY key LIMIT 10
     #     1.214964 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Trace> ContextAccess (default): Access granted: SELECT(key) ON test_31uut9.data_01814
     #     1.216790 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> test_31uut9.data_01814 (b484ad2e-0591-4faf-8110-1dcbd7cdd0db) (SelectExecutor): Key condition: unknown
     #     1.227245 [ 291 ] {7ac5de70-c26c-4e3b-bdee-3873ad1b84f1} <Debug> test_31uut9.data_01814 (b484ad2e-0591-4faf-8110-1dcbd7cdd0db) (SelectExecutor): Selected 1/1 parts by partition key, 1 parts by primary key, 10/11 marks by primary key, 10 marks to read from 1 ranges

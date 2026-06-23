@@ -7,7 +7,7 @@
 # The bug requires concurrent queries on the same Memory table: multiple
 # connections share ColumnVariant blocks via COW, and the permute optimization
 # used assumeMutable() on non-active variants, corrupting shared columns.
-# https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=4d4a583a5ad2322918638a3f6a01acd7e0ed7019&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_tsan%29
+# https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=4d4a583a5ad2322918638a3f6a01acd7e0ed7019&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_tsan%29
 
 CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh

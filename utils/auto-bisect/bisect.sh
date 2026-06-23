@@ -16,7 +16,7 @@ export COMMITS_ARG=""
 export SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 export PRIVATE=false # Default to public CI builds
 
-# clickhouse-test will use its client
+# datastore-test will use its client
 export CLICKHOUSE_BINARY="$SCRIPT_DIR/data/clickhouse"
 
 # Usage function to display help

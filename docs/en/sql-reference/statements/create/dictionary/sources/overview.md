@@ -64,7 +64,7 @@ The following source types (`SOURCE_TYPE`/`source_type`) are available:
 - DBMS
   - [ODBC](./odbc.md)
   - [MySQL](./mysql.md)
-  - [ClickHouse](./clickhouse.md)
+  - [ClickHouse](./datastore.md)
   - [MongoDB](./mongodb.md)
   - [Redis](./redis.md)
   - [Cassandra](./cassandra.md)
@@ -73,7 +73,7 @@ The following source types (`SOURCE_TYPE`/`source_type`) are available:
 - [YAMLRegExpTree](./yamlregexptree.md)
 - [Null](./null.md)
 
-For source types [Local file](./local-file.md), [Executable file](./executable-file.md), [HTTP(s)](./http.md), [ClickHouse](./clickhouse.md)
+For source types [Local file](./local-file.md), [Executable file](./executable-file.md), [HTTP(s)](./http.md), [ClickHouse](./datastore.md)
 optional settings are available:
 
 <Tabs>

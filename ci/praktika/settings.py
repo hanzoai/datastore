@@ -97,7 +97,7 @@ class _Settings:
     #        Report settings             #
     ######################################
     S3_REPORT_BUCKET: str = ""
-    # Optional: upstream report bucket to merge issue catalogs from (e.g. "clickhouse-test-reports")
+    # Optional: upstream report bucket to merge issue catalogs from (e.g. "datastore-test-reports")
     S3_UPSTREAM_REPORT_BUCKET: str = ""
     HTML_PAGE_FILE: str = "./ci/praktika/json.html"
     S3_BUCKET_TO_HTTP_ENDPOINT: Optional[Dict[str, str]] = None

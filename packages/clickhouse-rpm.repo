@@ -22,7 +22,7 @@ gpgcheck=0
 repo_gpgcheck=1
 enabled=0
 
-[clickhouse-testing]
+[datastore-testing]
 name=ClickHouse - Testing Repository
 baseurl=https://packages.clickhouse.com/rpm/testing/
 gpgkey=https://packages.clickhouse.com/rpm/testing/repodata/repomd.xml.key

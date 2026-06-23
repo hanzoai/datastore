@@ -24,7 +24,7 @@
  *   node fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/97171"
  *   node fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/97171" --failed --cidb
  *   node fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/97171" --report 2
- *   node fetch_ci_report.js "https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=94537&..."
+ *   node fetch_ci_report.js "https://s3.amazonaws.com/datastore-test-reports/json.html?PR=94537&..."
  *   node fetch_ci_report.js "https://s3.amazonaws.com/.../result_integration_tests.json"
  *   node fetch_ci_report.js "<url>" --test peak_memory --links
  *   node fetch_ci_report.js "<url>" --failed --download-logs
@@ -331,7 +331,7 @@ async function getCIReportsFromPR(prUrl) {
     }
 
     // Search through all bot comments for CI report URLs (not just the latest)
-    const reportUrlPattern = /https:\/\/s3\.amazonaws\.com\/clickhouse-test-reports\/json\.html\?[^\s)]+/g;
+    const reportUrlPattern = /https:\/\/s3\.amazonaws\.com\/datastore-test-reports\/json\.html\?[^\s)]+/g;
     for (const comment of comments) {
       if (!comment.body) continue;
       const urls = comment.body.match(reportUrlPattern);
@@ -692,7 +692,7 @@ Examples:
   node fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/97171"
   node fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/97171" --failed --cidb
   node fetch_ci_report.js "https://github.com/ClickHouse/ClickHouse/pull/97171" --report 2
-  node fetch_ci_report.js "https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=94537&sha=abc123&name_0=Integration%20tests"
+  node fetch_ci_report.js "https://s3.amazonaws.com/datastore-test-reports/json.html?PR=94537&sha=abc123&name_0=Integration%20tests"
   node fetch_ci_report.js "<url>" --test peak_memory --links
   node fetch_ci_report.js "<url>" --failed --download-logs
 `);

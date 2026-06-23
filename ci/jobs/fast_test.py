@@ -350,7 +350,7 @@ def main():
         # so we can use more parallelism than the default cpu_count/2.
         nproc_fast = max(1, int(Utils.cpu_count() * 3 / 4))
 
-        fast_test_command = f"cd {temp_dir} && clickhouse-test --hung-check --trace --capture-client-stacktrace --no-random-settings --no-random-merge-tree-settings --no-long --testname --shard --check-zookeeper-session --order random --report-logs-stats --fast-tests-only --no-stateful --timeout 60 --jobs {nproc_fast}"
+        fast_test_command = f"cd {temp_dir} && datastore-test --hung-check --trace --capture-client-stacktrace --no-random-settings --no-random-merge-tree-settings --no-long --testname --shard --check-zookeeper-session --order random --report-logs-stats --fast-tests-only --no-stateful --timeout 60 --jobs {nproc_fast}"
         if args.skip:
             skip_args = " ".join(args.skip)
             fast_test_command += f" --skip {skip_args}"

@@ -12,7 +12,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # assignments) must not be noexcept, otherwise that throw crosses a noexcept boundary and terminates
 # the server. Inject a small memory-tracker fault probability with every allocation tracked
 # (max_untracked_memory = 0) and loop, so a fault eventually lands inside append. With the bug the
-# server terminates and clickhouse-test fails the run; without it the queries just fail with
+# server terminates and datastore-test fails the run; without it the queries just fail with
 # MEMORY_LIMIT_EXCEEDED (swallowed below) and the server stays up.
 #
 # The fault probability is deliberately small: a large one makes the query fail early, before it

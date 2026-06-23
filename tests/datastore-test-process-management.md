@@ -1,8 +1,8 @@
-# clickhouse-test process management
+# datastore-test process management
 
 ## Problem: orphan processes when the runner dies unexpectedly
 
-`clickhouse-test` launches each `.sh` test in its own process group via
+`datastore-test` launches each `.sh` test in its own process group via
 `start_new_session=True` (which sets `PGID = PID` for the spawned shell).
 This is needed so that `os.killpg` can kill an entire test's subprocess tree
 at once — bash does not forward signals to its children by default.
@@ -11,7 +11,7 @@ at once — bash does not forward signals to its children by default.
 it walks direct children with `pgrep --parent` and calls `kill_process_group`
 on each one.
 
-If `clickhouse-test` or its parent `fast_test.py` is killed with **SIGKILL**
+If `datastore-test` or its parent `fast_test.py` is killed with **SIGKILL**
 (e.g. OOM), those handlers never run.  The test subprocesses are re-parented
 to `init`/`launchd` and keep running.  Because they are in separate sessions,
 `pgrep --parent` no longer finds them.
@@ -63,21 +63,21 @@ finally:
 ```
 
 On a clean run every started test deletes its file in the `finally` block, so
-no files remain when `clickhouse-test` exits.  If `clickhouse-test` is
+no files remain when `datastore-test` exits.  If `datastore-test` is
 SIGKILL'd, the file for the currently-running test is left behind with its
 PGID.
 
 ### `--cleanup` mode
 
 ```
-clickhouse-test --cleanup
+datastore-test --cleanup
 ```
 
 Calls `cleanup_test_groups()`, which globs `{_GROUP_PID_PATH}/{_GROUP_PID_NAME}.*`
 (skipping `.tmp` files), reads each file, calls `kill_process_group(pgid, None)`
 on the recorded PGID, and removes the file.
 
-### `clickhouse-test` startup
+### `datastore-test` startup
 
 ```python
 # Move to a new process group so terminal signals don't reach our caller.
@@ -87,7 +87,7 @@ if os.getpid() != os.getpgid(0):
     os.setpgid(0, 0)
 ```
 
-### Caller cleanup (`run_test` in `clickhouse_proc.py`)
+### Caller cleanup (`run_test` in `datastore_proc.py`)
 
 ```python
 # in finally block after process.wait():
@@ -101,7 +101,7 @@ subprocess.run([sys.executable, str(_clickhouse_test), "--cleanup"], check=False
 ```python
 darwin_fast_test_jobs = Job.Config(
     ...
-    post_hooks=["python3 ./ci/jobs/scripts/job_hooks/clickhouse_test_cleanup_hook.py"],
+    post_hooks=["python3 ./ci/jobs/scripts/job_hooks/datastore_test_cleanup_hook.py"],
 )
 ```
 
@@ -109,16 +109,16 @@ The **post-hook** covers the case where `fast_test.py` itself is SIGKILL'd and
 the `finally` block in `run_test` never executes.
 
 The hook contains no kill logic of its own — it just calls
-`clickhouse-test --cleanup`, the single source of truth for orphan cleanup.
+`datastore-test --cleanup`, the single source of truth for orphan cleanup.
 
 ### Cleanup layers
 
 | Layer | Trigger | Mechanism |
 |---|---|---|
-| `cleanup_child_processes` | SIGTERM/SIGINT/SIGHUP to `clickhouse-test` | `killpg` on each direct child's PGID |
+| `cleanup_child_processes` | SIGTERM/SIGINT/SIGHUP to `datastore-test` | `killpg` on each direct child's PGID |
 | test `finally` block | Any exit of the per-test code path (incl. SIGKILL to the worker) | `_gpid_file.unlink` — removes the per-worker file |
-| `run_test()` `finally` | Any exit of `clickhouse-test` (incl. SIGKILL) | `clickhouse-test --cleanup` → `kill_process_group` per PGID file |
-| Post-hook | Any exit of `fast_test.py` (incl. SIGKILL) | same — `clickhouse-test --cleanup` |
+| `run_test()` `finally` | Any exit of `datastore-test` (incl. SIGKILL) | `datastore-test --cleanup` → `kill_process_group` per PGID file |
+| Post-hook | Any exit of `fast_test.py` (incl. SIGKILL) | same — `datastore-test --cleanup` |
 
 ### Remaining limitation
 

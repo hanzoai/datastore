@@ -39,8 +39,8 @@ PLAY = re.compile(
 # pipes, extra redirects, other hosts/flags -- fails to match and prompts.
 FETCH = re.compile(
     r"node \.claude/tools/fetch_ci_report\.js "
-    r'"(?:https://s3\.amazonaws\.com/clickhouse-test-reports/'
-    r"|https://d1k2gkhrlfqv31\.cloudfront\.net/clickhouse-test-reports-private/"
+    r'"(?:https://s3\.amazonaws\.com/datastore-test-reports/'
+    r"|https://d1k2gkhrlfqv31\.cloudfront\.net/datastore-test-reports-private/"
     r'|https://github\.com/ClickHouse/ClickHouse/(?:pull|issues)/)[^"$`]*"'
     r"(?: (?:--failed|--cidb|--all|--links"
     r"|--report [0-9]+"

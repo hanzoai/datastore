@@ -38,7 +38,7 @@ In ClickHouse Cloud, you must use [query level settings](/operations/settings/qu
 :::
 
 :::note
-[clickhouse-local](utilities/clickhouse-local.md) runs a single query at a time. Since query result caching does not make sense, the query
+[clickhouse-local](utilities/datastore-local.md) runs a single query at a time. Since query result caching does not make sense, the query
 result cache is disabled in clickhouse-local.
 :::
 

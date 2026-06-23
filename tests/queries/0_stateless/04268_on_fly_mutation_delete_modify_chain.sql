@@ -10,7 +10,7 @@
 DROP TABLE IF EXISTS t_on_fly_del_then_mod SYNC;
 
 -- `enable_block_number_column` and `enable_block_offset_column` are randomised by
--- `clickhouse-test` (see `tests/clickhouse-test:1665`), so the test exercises both
+-- `datastore-test` (see `tests/datastore-test:1665`), so the test exercises both
 -- branches without pinning them here. Verified empirically that the original
 -- reproducer fails identically with the settings on or off.
 CREATE TABLE t_on_fly_del_then_mod (id UInt64, c String)

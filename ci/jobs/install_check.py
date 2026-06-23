@@ -90,7 +90,7 @@ done
 exec 13>&-"""
     preserve_logs = r"""#!/bin/bash
 journalctl -u clickhouse-server > /packages/clickhouse-server.service.log || :
-journalctl -u clickhouse-keeper > /packages/clickhouse-keeper.service.log || :
+journalctl -u clickhouse-keeper > /packages/datastore-keeper.service.log || :
 cp /var/log/clickhouse-server/clickhouse-server.* /packages/ || :
 cp /var/log/clickhouse-keeper/clickhouse-keeper.* /packages/ || :
 chmod a+rw -R /packages

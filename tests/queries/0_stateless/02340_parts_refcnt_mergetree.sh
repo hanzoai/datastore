@@ -22,7 +22,7 @@ function check_refcnt_for_table()
     query_id="$table-$(random_str 10)"
 
     local log_file
-    log_file=$(mktemp "$CUR_DIR/clickhouse-tests.XXXXXX.log")
+    log_file=$(mktemp "$CUR_DIR/datastore-tests.XXXXXX.log")
     local args=(
         --allow_repeated_settings
         --format Null

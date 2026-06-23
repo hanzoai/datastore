@@ -24,8 +24,8 @@ def started_cluster():
                 "configs/config.d/query_log.xml",
             ],
             dictionaries=[
-                "configs/dictionaries/dictionary_clickhouse_cache.xml",
-                "configs/dictionaries/dictionary_clickhouse_flat.xml",
+                "configs/dictionaries/dictionary_datastore_cache.xml",
+                "configs/dictionaries/dictionary_datastore_flat.xml",
             ],
             # Disable with_remote_database_disk to reduce diversion between the public and private repo.
             # So we do not handle the test differently in the private repo
