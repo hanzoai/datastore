@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include <Examples/datastore_examples.h>
 
 /** This program tests merge-selecting algorithm.
   * Usage:

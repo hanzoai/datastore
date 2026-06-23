@@ -26,7 +26,7 @@ def generate_keeper_configs(configs_dir, clusters):
                 "\n            <type>s3_plain</type>"
                 f"\n            <endpoint>{endpoint}</endpoint>"
                 "\n            <access_key_id>minio</access_key_id>"
-                "\n            <secret_access_key>ClickHouse_Minio_P@ssw0rd</secret_access_key>"
+                "\n            <secret_access_key>Datastore_Minio_P@ssw0rd</secret_access_key>"
                 "\n        </keeper_snap_s3>"
                 "\n    </disks>"
                 "\n</storage_configuration>"
@@ -56,7 +56,7 @@ def generate_keeper_configs(configs_dir, clusters):
                 f"            </server>"
             )
         return (
-            f"<datastore>\n"
+            "<datastore>\n"
             + (f"{storage_block}\n" if storage_block else "")
             + f"    <keeper_server>{snapshot_disk_line}\n"
             f"        <tcp_port>9181</tcp_port>\n"
@@ -73,9 +73,9 @@ def generate_keeper_configs(configs_dir, clusters):
             f"\n"
             f"        <raft_configuration>\n"
             + "\n".join(servers) + "\n"
-            f"        </raft_configuration>\n"
-            f"    </keeper_server>\n"
-            f"</datastore>\n"
+            "        </raft_configuration>\n"
+            "    </keeper_server>\n"
+            "</datastore>\n"
         )
 
     os.makedirs(configs_dir, exist_ok=True)

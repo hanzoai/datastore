@@ -173,7 +173,7 @@ datastore-client --query "INSERT INTO git.commits FORMAT TSV" < commits.tsv
 datastore-client --query "INSERT INTO git.file_changes FORMAT TSV" < file_changes.tsv
 datastore-client --query "INSERT INTO git.line_changes FORMAT TSV" < line_changes.tsv
 
-Check out this presentation: https://presentations.hanzo.ai/matemarketing_2020/
+Check out this presentation: https://presentations.datastore.com/matemarketing_2020/
 )";
 
 namespace po = boost::program_options;
@@ -811,11 +811,11 @@ static void processFileChanges(
             skipWhitespaceIfAny(in);
         }
 
-        char change_type;
+        char change_type = {};
         readChar(change_type, in);
 
         /// For rename and copy there is a number called "score". We ignore it.
-        int score;
+        int score = {};
 
         switch (change_type)
         {
@@ -1069,7 +1069,7 @@ static void processCommit(
     Commit commit;
     commit.hash = hash;
 
-    time_t commit_time;
+    time_t commit_time = {};
     readText(commit_time, in);
     commit.time = LocalDateTime(commit_time);
     assertChar('\0', in);
@@ -1198,6 +1198,7 @@ static void processLog(const Options & options)
 
 }
 
+int mainEntryDatastoreGitImport(int argc, char ** argv);
 int mainEntryDatastoreGitImport(int argc, char ** argv)
 try
 {

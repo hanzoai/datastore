@@ -10,7 +10,7 @@ set -ex
 
 # we mount tests folder from repo to /usr/share
 ln -s /repo/ci/jobs/scripts/stress/stress.py /usr/bin/stress
-ln -s /repo/tests/clickhouse-test /usr/bin/clickhouse-test
+ln -s /repo/tests/datastore-test /usr/bin/datastore-test
 ln -s /repo/tests/ci/download_release_packages.py /usr/bin/download_release_packages
 ln -s /repo/tests/ci/get_previous_release_tag.py /usr/bin/get_previous_release_tag
 
@@ -19,13 +19,15 @@ ln -s /repo/tests/ci/get_previous_release_tag.py /usr/bin/get_previous_release_t
 # shellcheck source=../stateless/stress_tests.lib
 source /repo/tests/docker_scripts/stress_tests.lib
 
-cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py start_azurite || { echo "Failed to start azurite"; exit 1; }
-cd /repo && python3 /repo/ci/jobs/scripts/clickhouse_proc.py start_minio stateless || ( echo "Failed to start minio" && exit 1 ) # to have a proper environment
+cd /repo && python3 /repo/ci/jobs/scripts/datastore_proc.py start_azurite || { echo "Failed to start azurite"; exit 1; }
+cd /repo && python3 /repo/ci/jobs/scripts/datastore_proc.py start_minio stateless || ( echo "Failed to start minio" && exit 1 ) # to have a proper environment
+
+bash /repo/ci/jobs/scripts/functional_tests/setup_kafka.sh || { echo "Failed to start Kafka (Redpanda)"; exit 1; }
 
 echo "Get previous release tag"
 PACKAGES_DIR=/repo/ci/tmp
 # shellcheck disable=SC2016
-previous_release_tag=$(dpkg-deb --showformat='${Version}' --show $PACKAGES_DIR/clickhouse-client*.deb | get_previous_release_tag)
+previous_release_tag=$(dpkg-deb --showformat='${Version}' --show $PACKAGES_DIR/datastore-client*.deb | get_previous_release_tag)
 if [ $? -ne 0 ]; then
     echo "Failed to get previous release tag"
     exit 1
@@ -33,20 +35,32 @@ fi
 echo $previous_release_tag
 
 echo "Clone previous release repository"
-git clone https://github.com/ClickHouse/ClickHouse.git --no-tags --progress --branch=$previous_release_tag --no-recurse-submodules --depth=1 previous_release_repository
+git clone https://github.com/Datastore/Datastore.git --no-tags --progress --branch=$previous_release_tag --no-recurse-submodules --depth=1 previous_release_repository
 
-echo "Download clickhouse-server from the previous release"
+echo "Download datastore-server from the previous release"
 mkdir previous_release_package_folder
 
-echo $previous_release_tag | download_release_packages && echo -e "Download script exit code$OK" >> /test_output/test_results.tsv \
-    || echo -e "Download script failed$FAIL" >> /test_output/test_results.tsv
+# --- download previous release packages: fail closed on a missing required one ---
+# `download_release_packages` exits nonzero when a required previous-release
+# package is missing or fails to download. Stop here at the download boundary
+# with a clear, attributable status instead of letting the later `install_packages`
+# die with an opaque `dpkg` glob error. (`set -e` does not fire inside an
+# `&& ... || ...` list, so the nonzero status must be handled explicitly.)
+if echo $previous_release_tag | download_release_packages; then
+    echo -e "Download script exit code$OK" >> /test_output/test_results.tsv
+else
+    echo -e "Download script failed$FAIL" >> /test_output/test_results.tsv
+    echo -e 'failure\tFailed to download previous release packages' > /test_output/check_status.tsv
+    exit 1
+fi
+# --- end download previous release packages ---
 
 # Check if we cloned previous release repository successfully
 if ! [ "$(ls -A previous_release_repository/tests/queries)" ]
 then
     echo -e 'failure\tFailed to clone previous release tests' > /test_output/check_status.tsv
     exit 1
-elif ! [ "$(ls -A previous_release_package_folder/clickhouse-common-static_*.deb && ls -A previous_release_package_folder/clickhouse-server_*.deb)" ]
+elif ! [ "$(ls -A previous_release_package_folder/datastore-common-static_*.deb && ls -A previous_release_package_folder/datastore-server_*.deb)" ]
 then
     echo -e 'failure\tFailed to download previous release packages' > /test_output/check_status.tsv
     exit 1
@@ -56,23 +70,23 @@ echo -e "Successfully cloned previous release tests$OK" >> /test_output/test_res
 echo -e "Successfully downloaded previous release packages$OK" >> /test_output/test_results.tsv
 
 # Make upgrade check more funny by forcing Ordinary engine for system database
-mkdir -p /var/lib/clickhouse/metadata
-echo "ATTACH DATABASE system ENGINE=Ordinary" > /var/lib/clickhouse/metadata/system.sql
+mkdir -p /var/lib/datastore/metadata
+echo "ATTACH DATABASE system ENGINE=Ordinary" > /var/lib/datastore/metadata/system.sql
 
 # Install previous release packages
 install_packages previous_release_package_folder
 
-# NOTE: we need to run clickhouse-local under script to get settings without any adjustments, like clickhouse-local does in case of stdout is not a tty
+# NOTE: we need to run datastore-local under script to get settings without any adjustments, like datastore-local does in case of stdout is not a tty
 function save_settings_clean()
 {
   local out=$1 && shift
-  script -q -c "clickhouse-local --implicit-select 0 -q \"select * from system.settings into outfile '$out'\"" --log-out /dev/null
+  script -q -c "datastore-local --implicit-select 0 -q \"select * from system.settings into outfile '$out'\"" --log-out /dev/null
 }
 
 function save_mergetree_settings_clean()
 {
   local out=$1 && shift
-  script -q -c "clickhouse-local --implicit-select 0 -q \"select * from system.merge_tree_settings into outfile '$out'\"" --log-out /dev/null
+  script -q -c "datastore-local --implicit-select 0 -q \"select * from system.merge_tree_settings into outfile '$out'\"" --log-out /dev/null
 }
 
 # We save the (numeric) version of the old server to compare setting changes between the 2
@@ -81,13 +95,13 @@ function save_mergetree_settings_clean()
 function save_major_version()
 {
   local out=$1 && shift
-  clickhouse-local -q "SELECT a[1]::UInt64 * 100 + a[2]::UInt64 as v FROM (Select splitByChar('.', version()) as a) into outfile '$out'"
+  datastore-local -q "SELECT a[1]::UInt64 * 100 + a[2]::UInt64 as v FROM (Select splitByChar('.', version()) as a) into outfile '$out'"
 }
 
 save_settings_clean 'old_settings.native'
 save_mergetree_settings_clean 'old_merge_tree_settings.native'
 save_major_version 'old_version.native'
-old_major_version=$(clickhouse-local -q "select a[1] || '.' || a[2] from (select splitByChar('.', version()) as a)")
+old_major_version=$(datastore-local -q "select a[1] || '.' || a[2] from (select splitByChar('.', version()) as a)")
 
 configure_opts=(
     # Let's enable S3 storage by default
@@ -98,36 +112,36 @@ if [ $((RANDOM % 2)) -eq 0 ]; then
 fi
 
 # Start server from previous release
-configure "${configure_opts[@]}"
+configure "${configure_opts[@]}" --previous-release
 
 # But we still need default disk because some tables loaded only into it
-sudo sed -i "s|<main><disk>s3</disk></main>|<main><disk>s3</disk></main><default><disk>default</disk></default>|" /etc/clickhouse-server/config.d/s3_storage_policy_by_default.xml
-sudo chown clickhouse /etc/clickhouse-server/config.d/s3_storage_policy_by_default.xml
-sudo chgrp clickhouse /etc/clickhouse-server/config.d/s3_storage_policy_by_default.xml
+sudo sed -i "s|<main><disk>s3</disk></main>|<main><disk>s3</disk></main><default><disk>default</disk></default>|" /etc/datastore-server/config.d/s3_storage_policy_by_default.xml
+sudo chown datastore /etc/datastore-server/config.d/s3_storage_policy_by_default.xml
+sudo chgrp datastore /etc/datastore-server/config.d/s3_storage_policy_by_default.xml
 
 start_server || (echo "Failed to start server" && exit 1)
 
-clickhouse-client --query="SELECT 'Server version: ', version()"
+datastore-client --receive_timeout 30 --query="SELECT 'Server version: ', version()"
 
 mkdir tmp_stress_output
 
-stress --test-cmd="/usr/bin/clickhouse-test --queries=\"previous_release_repository/tests/queries\""  --upgrade-check --output-folder tmp_stress_output --global-time-limit=1200 \
+stress --test-cmd="/usr/bin/datastore-test --queries=\"previous_release_repository/tests/queries\""  --upgrade-check --output-folder tmp_stress_output --global-time-limit=1200 \
     && echo -e "Test script exit code$OK" >> /test_output/test_results.tsv \
     || echo -e "Test script failed$FAIL script exit code: $?" >> /test_output/test_results.tsv
 
 rm -rf tmp_stress_output
 
 # We experienced deadlocks in this command in very rare cases. Let's debug it:
-timeout 10m clickhouse-client --query="SELECT 'Tables count:', count() FROM system.tables" ||
+timeout 10m datastore-client --query="SELECT 'Tables count:', count() FROM system.tables" ||
 (
     echo "thread apply all backtrace (on select tables count)" >> /test_output/gdb.log
-    timeout 30m gdb -batch -ex 'thread apply all backtrace' -p "$(cat /var/run/clickhouse-server/clickhouse-server.pid)" | ts '%Y-%m-%d %H:%M:%S' >> /test_output/gdb.log
-    clickhouse stop --force
+    timeout 30m gdb -batch -ex 'thread apply all backtrace' -p "$(cat /var/run/datastore-server/datastore-server.pid)" | ts '%Y-%m-%d %H:%M:%S' >> /test_output/gdb.log
+    datastore stop --force
 )
 
 # Use bigger timeout for previous version and disable additional hang check
 stop_server 300 false || (echo "Failed to stop server" && exit 1)
-mv /var/log/clickhouse-server/clickhouse-server.log /var/log/clickhouse-server/clickhouse-server.stress.log
+mv /var/log/datastore-server/datastore-server.log /var/log/datastore-server/datastore-server.stress.log
 
 # Install and start new server
 install_packages $PACKAGES_DIR
@@ -137,12 +151,12 @@ configure "${configure_opts[@]}"
 # Some settings can be different for builds with sanitizers, so we check
 # Also the automatic value of 'max_threads' and similar was displayed as "'auto(...)'" in previous versions instead of "auto(...)".
 # settings changes only for non-sanitizer builds.
-IS_SANITIZED=$(clickhouse-local --query "SELECT value LIKE '%-fsanitize=%' FROM system.build_options WHERE name = 'CXX_FLAGS'")
+IS_SANITIZED=$(datastore-local --query "SELECT value LIKE '%-fsanitize=%' FROM system.build_options WHERE name = 'CXX_FLAGS'")
 if [ "${IS_SANITIZED}" -eq "0" ]
 then
   save_settings_clean 'new_settings.native'
   save_mergetree_settings_clean 'new_merge_tree_settings.native'
-  clickhouse-local -nmq "
+  datastore-local -nmq "
   CREATE TABLE old_settings AS file('old_settings.native');
   CREATE TABLE old_merge_tree_settings AS file('old_merge_tree_settings.native');
   CREATE TABLE old_version AS file('old_version.native');
@@ -255,8 +269,8 @@ then
 fi
 
 # Just in case previous version left some garbage in zk
-sudo sed -i "s|>1<|>0<|g" /etc/clickhouse-server/config.d/lost_forever_check.xml
-rm -f /etc/clickhouse-server/config.d/filesystem_caches_path.xml
+sudo sed -i "s|>1<|>0<|g" /etc/datastore-server/config.d/lost_forever_check.xml
+rm -f /etc/datastore-server/config.d/filesystem_caches_path.xml
 
 # Set compatibility setting to previous version, so we won't fail due to known backward incompatible changes.
 echo "<datastore>
@@ -267,15 +281,15 @@ echo "<datastore>
             <enable_positional_arguments_for_projections>1</enable_positional_arguments_for_projections>
         </default>
     </profiles>
-</datastore>" > /etc/clickhouse-server/users.d/compatibility.xml
+</datastore>" > /etc/datastore-server/users.d/compatibility.xml
 
-cat /etc/clickhouse-server/users.d/compatibility.xml
+cat /etc/datastore-server/users.d/compatibility.xml
 
 # List of allowed reasons why the server cannot start up
 # ADD ENTRIES HERE ONLY IF YOU ARE CERTAIN THEY DO NOT INTRODUCE BACKWARD-INCOMPATIBLE CHANGES
 # 1. Lazy database engine has been removed in a backward-incompatible manner
 check_allow_list() {
-    local log="/var/log/clickhouse-server/clickhouse-server.log"
+    local log="/var/log/datastore-server/datastore-server.log"
     if [ -f "$log" ] && rg -q "Unknown database engine: Lazy" "$log"; then
         # cleanup errors
         echo -e "Found allow-listed error in logs. Suppressing failure"$OK > /test_output/test_results.tsv
@@ -286,29 +300,29 @@ check_allow_list() {
 
 start_server || check_allow_list || (echo "Failed to start server" && exit 1)
 
-clickhouse-client --query "SELECT 'Server successfully started', 'OK', NULL, ''" >> /test_output/test_results.tsv \
-    || (rg --text "<Error>.*Application" /var/log/clickhouse-server/clickhouse-server.log > /test_output/application_errors.txt \
-    && echo -e "Server failed to start (see application_errors.txt and clickhouse-server.clean.log)$FAIL$(trim_server_logs application_errors.txt)" \
+datastore-client --receive_timeout 30 --query "SELECT 'Server successfully started', 'OK', NULL, ''" >> /test_output/test_results.tsv \
+    || (rg --text "<Error>.*Application" /var/log/datastore-server/datastore-server.log > /test_output/application_errors.txt \
+    && echo -e "Server failed to start (see application_errors.txt and datastore-server.clean.log)$FAIL$(trim_server_logs application_errors.txt)" \
     >> /test_output/test_results.tsv)
 
 # Remove file application_errors.txt if it's empty
 [ -s /test_output/application_errors.txt ] || rm -f /test_output/application_errors.txt
 
-clickhouse-client --query="SELECT 'Server version: ', version()"
+datastore-client --receive_timeout 30 --query="SELECT 'Server version: ', version()"
 
 # Let the server run for a while before checking log.
 sleep 60
 
 stop_server || (echo "Failed to stop server" && exit 1)
-mv /var/log/clickhouse-server/clickhouse-server.log /var/log/clickhouse-server/clickhouse-server.upgrade.log
-cp /var/log/clickhouse-server/clickhouse-server.upgrade.log /test_output/clickhouse-server.upgrade.log
+mv /var/log/datastore-server/datastore-server.log /var/log/datastore-server/datastore-server.upgrade.log
+cp /var/log/datastore-server/datastore-server.upgrade.log /test_output/datastore-server.upgrade.log
 
 # Error messages (we should ignore some errors)
-# FIXME https://github.com/ClickHouse/ClickHouse/issues/38643 ("Unknown index: idx.")
+# FIXME https://github.com/Datastore/Datastore/issues/38643 ("Unknown index: idx.")
 # FIXME Not sure if it's expected, but some tests from stress test may not be finished yet when we restarting server.
 #       Let's just ignore all errors from queries ("} <Error> TCPHandler: Code:", "} <Error> executeQuery: Code:")
-# FIXME https://github.com/ClickHouse/ClickHouse/issues/39197 ("Missing columns: 'v3' while processing query: 'v3, k, v1, v2, p'")
-# FIXME https://github.com/ClickHouse/ClickHouse/issues/39174 - bad mutation does not indicate backward incompatibility:
+# FIXME https://github.com/Datastore/Datastore/issues/39197 ("Missing columns: 'v3' while processing query: 'v3, k, v1, v2, p'")
+# FIXME https://github.com/Datastore/Datastore/issues/39174 - bad mutation does not indicate backward incompatibility:
 #       stress tests may leave behind intentionally-broken mutations that retry after upgrade.
 #       `CANNOT_PARSE_TEXT` errors come from:
 #       - 00834_kill_mutation{,_replicated_zookeeper}: `DELETE WHERE toUInt32(s) = 1` on String data ('a', 'b')
@@ -335,7 +349,7 @@ cp /var/log/clickhouse-server/clickhouse-server.upgrade.log /test_output/clickho
 #       applied to old mutations that were created before the validation existed.
 # `e.what() = failed to parse response body` is a transient Azure blob storage batch-parsing error from
 #       `Azure::Storage::Blobs`. Narrowed with the `e.what() = ` prefix to only match caught C++ exceptions of this
-#       type (stable ClickHouse exception formatting), so arbitrary log lines containing the phrase are not masked.
+#       type (stable Datastore exception formatting), so arbitrary log lines containing the phrase are not masked.
 # `while loading statistics` + `ILLEGAL_STATISTICS` appears when the statistics file format version changes between
 #       releases. The new binary cannot deserialize old statistics files and throws ILLEGAL_STATISTICS (Code: 708).
 #       Filtered via regex in the secondary pipe below to require both the loading context AND the error code together.
@@ -344,6 +358,13 @@ cp /var/log/clickhouse-server/clickhouse-server.upgrade.log /test_output/clickho
 #       via regex in the secondary pipe below to require the `rdk:FAIL` tag AND the specific connection-refused
 #       message together, so real Kafka regressions (auth, protocol, config) that also emit `rdk:FAIL` are
 #       not masked.
+# `StorageKafka2` + `Exception during get topic partitions from Kafka: Local: Broker transport failure` is
+#       the wrapper-exception variant of the same class of error: the `KafkaConsumer2` background poll loop
+#       (`KafkaConsumer2::getAllTopicPartitionOffsets` -> `cppkafka::HandleException`) keeps polling while the
+#       Redpanda broker is in transition during the upgrade restart sequence and logs `<Error>` for each retry.
+#       Filtered via regex in the secondary pipe below to require both the `StorageKafka2` engine context AND
+#       the `Broker transport failure` symptom together, so real `StorageKafka2` regressions (auth errors,
+#       timeouts, protocol errors, other broker errors) still surface.
 # `No stream (column1_renamedcolumn1.bin) file checksum for column column1_renamed` is the unique signature of
 #       issue #102259 (`getFileNameForRenamedColumnStream` uses `substr(0, N)` instead of `substr(N)`, producing
 #       `<renamed><original>.bin` instead of `<renamed>.bin`). The fix is in PR #102689; until it lands, the
@@ -366,6 +387,15 @@ cp /var/log/clickhouse-server/clickhouse-server.upgrade.log /test_output/clickho
 #       this regex covers the other variant (peer wins, read returns EOF or another transient socket error).
 #       Filtered via regex in the secondary pipe below to require all three substrings together, so unrelated
 #       RaftInstance errors are not masked.
+# `Failed to flush system log system.metric_log` + `DEADLOCK_AVOIDED` is a transient lock-timeout emitted by
+#       `SystemLog<MetricLogElement>::flushImpl` when the background `MetricLog` flush loop races with the
+#       ongoing upgrade-test shutdown sequence. Another worker (DROP/RENAME/DETACH on `system.metric_log`,
+#       or a parallel mutation/merge) holds the table-level write lock, the flush blocks for the 60s timeout,
+#       and then aborts with code 473 (`DEADLOCK_AVOIDED`). Losing a few `MetricLogElement` samples during
+#       shutdown is harmless; the upgrade-check stage is not asserting on metric continuity. Filtered via
+#       regex in the secondary pipe below to require BOTH the `SystemLog` flush wrapper for `metric_log` AND
+#       the `DEADLOCK_AVOIDED` error code together, so unrelated lock-timeout errors and unrelated
+#       `metric_log` errors are not masked.
 echo "Check for Error messages in server log:"
 rg -Fav -e "Code: 236. DB::Exception: Cancelled merging parts" \
            -e "Code: 236. DB::Exception: Cancelled mutating parts" \
@@ -424,7 +454,7 @@ rg -Fav -e "Code: 236. DB::Exception: Cancelled merging parts" \
            -e "Disk does not support stat. (NOT_IMPLEMENTED" \
            -e "QUALIFY clause is not supported in the old analyzer" \
            -e "Cannot attach table \`test_7\`" \
-           -e "Cannot open file /var/lib/clickhouse/access/" \
+           -e "Cannot open file /var/lib/datastore/access/" \
            -e "NO_SUCH_INTERSERVER_IO_ENDPOINT" \
            -e "Mapping for table with UUID=1f474183-1403-4282-9309-21f6e3518dab already exists" \
            -e "Cannot parse projection test_projection" \
@@ -437,19 +467,22 @@ rg -Fav -e "Code: 236. DB::Exception: Cancelled merging parts" \
            -e "Tuple element name 'null' is reserved" \
            -e "No stream (column1_renamedcolumn1.bin) file checksum for column column1_renamed" \
            -e "No stream (ba1.bin) file checksum for column b" \
-    /test_output/clickhouse-server.upgrade.log \
+           -e "Exception during get topic partitions from Kafka: Local: Broker transport failure" \
+    /test_output/datastore-server.upgrade.log \
     | grep -av -e "_repl_01111_.*Mapping for table with UUID" \
     | grep -av -e "Azure::Storage::StorageException.*Not found address of host" \
     | grep -av -e "SystemLogQueue.*Queue had been full" \
     | grep -av -e "TraceCollector.*CANNOT_READ_FROM_FILE_DESCRIPTOR" \
     | grep -av -e "while loading statistics.*ILLEGAL_STATISTICS" \
     | grep -av -e "rdk:FAIL.*Connect to.*failed: Connection refused" \
+    | grep -av -e "StorageKafka2.*Exception during get topic partitions from Kafka: Local: Broker transport failure" \
     | grep -av -e "wrong_metadata.*Detaching broken part.*backward incompatibility" \
     | grep -av -e "RaftInstance: session.*failed to read rpc header from socket.*due to error" \
+    | grep -av -e "SystemLog.*Failed to flush system log system\.metric_log.*DEADLOCK_AVOIDED" \
     | grep -Fa "<Error>" > /test_output/upgrade_error_messages.txt || true
 
 if [ -s /test_output/upgrade_error_messages.txt ]; then
-    echo -e "Error message in clickhouse-server.log (see upgrade_error_messages.txt)$FAIL$(head_escaped /test_output/upgrade_error_messages.txt)" >> /test_output/test_results.tsv
+    echo -e "Error message in datastore-server.log (see upgrade_error_messages.txt)$FAIL$(head_escaped /test_output/upgrade_error_messages.txt)" >> /test_output/test_results.tsv
 else
     echo -e "No Error messages after server upgrade$OK" >> /test_output/test_results.tsv
 fi
@@ -460,8 +493,8 @@ fi
 # Grep logs for sanitizer asserts, crashes and other critical errors
 check_logs_for_critical_errors
 
-tar -chf /test_output/coordination.tar /var/lib/clickhouse/coordination ||:
+tar -chf /test_output/coordination.tar /var/lib/datastore/coordination ||:
 
 collect_query_and_trace_logs
 
-mv /var/log/clickhouse-server/stderr.log /test_output/
+mv /var/log/datastore-server/stderr.log /test_output/

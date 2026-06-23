@@ -14,6 +14,7 @@
 #include <Disks/DiskLocal.h>
 
 
+int mainEntryDatastoreKeeperConverter(int argc, char ** argv);
 int mainEntryDatastoreKeeperConverter(int argc, char ** argv)
 {
     using namespace DB;

@@ -4,13 +4,12 @@ import os
 import random
 import uuid
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 import pyarrow as pa
 import pytest
-import urllib3
 import pytz
-from datetime import datetime, timedelta
-from minio import Minio
+from datetime import timedelta
 from pyiceberg.catalog import load_catalog
 from pyiceberg.partitioning import PartitionField, PartitionSpec
 from pyiceberg.schema import Schema
@@ -29,7 +28,7 @@ from pyiceberg.types import (
     DecimalType,
 )
 
-from helpers.cluster import ClickHouseCluster, ClickHouseInstance
+from helpers.cluster import DatastoreCluster
 from helpers.mock_servers import start_mock_servers
 
 import boto3
@@ -196,7 +195,7 @@ def generate_arrow_data(num_rows=5):
 
     return table
 
-def create_clickhouse_glue_database(
+def create_datastore_glue_database(
     started_cluster, node, name, additional_settings={}, query_settings={}, with_credentials=True
 ):
     settings = {
@@ -222,7 +221,7 @@ SETTINGS {",".join((k+"="+repr(v) for k, v in settings.items()))}
         },
     )
 
-def create_clickhouse_glue_table(
+def create_datastore_glue_table(
     started_cluster, node, database_name, table_name, schema, additional_settings={}
 ):
     settings_suffix = "" if len(additional_settings) == 0 else f"SETTINGS {",".join((k+"="+repr(v) for k, v in additional_settings.items()))}"
@@ -241,7 +240,7 @@ CREATE TABLE {CATALOG_NAME}.`{database_name}.{table_name}` {schema} ENGINE = Ice
     show_result = node.query(f"SHOW DATABASE {CATALOG_NAME}")
     assert minio_secret_key not in show_result
 
-def drop_clickhouse_glue_table(
+def drop_datastore_glue_table(
     node, database_name, table_name
 ):
     node.query(
@@ -258,7 +257,7 @@ def started_cluster():
         # will reject boto connection
         os.environ["AWS_ACCESS_KEY_ID"] = "testing"
         os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-        cluster = ClickHouseCluster(__file__)
+        cluster = DatastoreCluster(__file__)
         cluster.add_instance(
             "node1",
             main_configs=[
@@ -274,11 +273,11 @@ def started_cluster():
         sts = cluster.add_instance(
             name="sts.us-east-1.amazonaws.com",
             hostname="sts.us-east-1.amazonaws.com",
-            image="clickhouse/python-bottle",
+            image="datastore/python-bottle",
             tag="latest",
             stay_alive=True,
         )
-        sts.stop_clickhouse(kill=True)
+        sts.stop_datastore(kill=True)
 
         logging.info("Starting cluster...")
         cluster.start()
@@ -382,7 +381,7 @@ FORMAT JSONEachRow
 def test_list_tables(started_cluster):
     node = started_cluster.instances["node1"]
 
-    root_namespace = f"clickhouse_{uuid.uuid4()}"
+    root_namespace = f"datastore_{uuid.uuid4()}"
     namespace_1 = f"{root_namespace}_testA_A"
     namespace_2 = f"{root_namespace}_testB_B"
     namespace_1_tables = ["tableA", "tableB"]
@@ -396,7 +395,7 @@ def test_list_tables(started_cluster):
     for namespace in [namespace_1, namespace_2]:
         assert len(catalog.list_tables(namespace)) == 0
 
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
     tables_list = ""
     for table in namespace_1_tables:
@@ -417,7 +416,7 @@ def test_list_tables(started_cluster):
             f"SELECT name FROM system.tables WHERE database = '{CATALOG_NAME}' and name ILIKE '{root_namespace}%' ORDER BY name SETTINGS show_data_lake_catalogs_in_system_tables = true"
         ).strip()
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
     assert (
         tables_list
         == node.query(
@@ -461,7 +460,7 @@ def test_select(started_cluster):
         df = generate_arrow_data(num_rows)
         table.append(df)
 
-        create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+        create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
         expected = DEFAULT_CREATE_TABLE.format(CATALOG_NAME, namespace, table_name)
         assert expected == node.query(
@@ -490,7 +489,7 @@ def test_hide_sensitive_info(started_cluster):
 
     create_table(catalog, namespace, table_name)
 
-    create_clickhouse_glue_database(
+    create_datastore_glue_database(
         started_cluster,
         node,
         CATALOG_NAME,
@@ -530,7 +529,7 @@ def test_select_after_rename(started_cluster):
         df = generate_arrow_data(num_rows)
         table.append(df)
 
-        create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+        create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
         expected = DEFAULT_CREATE_TABLE.format(CATALOG_NAME, namespace, table_name)
         assert expected == node.query(
@@ -566,7 +565,7 @@ def test_non_existing_tables(started_cluster):
         df = generate_arrow_data(num_rows)
         table.append(df)
 
-        create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+        create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
         expected = DEFAULT_CREATE_TABLE.format(CATALOG_NAME, namespace, table_name)
         assert expected == node.query(
@@ -596,9 +595,9 @@ def test_empty_table(started_cluster):
     catalog = load_catalog_impl(started_cluster)
     catalog.create_namespace(root_namespace)
 
-    table = create_table(catalog, root_namespace, table_name)
+    create_table(catalog, root_namespace, table_name)
 
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
     assert len(node.query(f"SELECT * FROM {CATALOG_NAME}.`{root_namespace}.{table_name}`")) == 0
 
 
@@ -620,7 +619,7 @@ def test_cloud_mode(started_cluster):
     df = generate_arrow_data(num_rows)
     table.append(df)
 
-    create_clickhouse_glue_database(
+    create_datastore_glue_database(
         started_cluster,
         node,
         CATALOG_NAME, query_settings={"cloud_mode": 1}
@@ -654,7 +653,7 @@ def test_timestamps(started_cluster):
     )
     table = create_table(catalog, root_namespace, table_name, schema)
 
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
     data = [
         {
@@ -690,7 +689,7 @@ def test_insert(started_cluster):
 
     create_table(catalog, root_namespace, table_name, DEFAULT_SCHEMA, PartitionSpec(), DEFAULT_SORT_ORDER, table_name)
 
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
     node.query(f"INSERT INTO {CATALOG_NAME}.`{root_namespace}.{table_name}` VALUES (NULL, 'AAPL', 193.24, 193.31, tuple('bot'), NULL);", settings={"allow_insert_into_iceberg": 1, 'write_full_path_in_iceberg_metadata': 1})
     catalog.load_table(f"{root_namespace}.{table_name}")
     assert node.query(f"SELECT * FROM {CATALOG_NAME}.`{root_namespace}.{table_name}`") == "\\N\tAAPL\t193.24\t193.31\t('bot')\t{}\n"
@@ -703,10 +702,79 @@ def test_create(started_cluster):
     table_name = f"{test_ref}_table"
     root_namespace = f"{test_ref}_namespace"
 
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
-    create_clickhouse_glue_table(started_cluster, node, root_namespace, table_name, "(x String)")
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_table(started_cluster, node, root_namespace, table_name, "(x String)")
     node.query(f"INSERT INTO {CATALOG_NAME}.`{root_namespace}.{table_name}` VALUES ('AAPL');", settings={"allow_insert_into_iceberg": 1, 'write_full_path_in_iceberg_metadata': 1})
     assert node.query(f"SELECT * FROM {CATALOG_NAME}.`{root_namespace}.{table_name}`") == "AAPL\n"
+
+
+def test_schema_evolution(started_cluster):
+    node = started_cluster.instances["node1"]
+
+    test_ref = f"test_schema_evolution_{uuid.uuid4()}"
+    table_name = f"{test_ref}_table"
+    root_namespace = f"{test_ref}_namespace"
+    table_ref = f"{CATALOG_NAME}.`{root_namespace}.{table_name}`"
+    write_settings = {"allow_insert_into_iceberg": 1, "write_full_path_in_iceberg_metadata": 1}
+
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_table(started_cluster, node, root_namespace, table_name, "(x String, y Int32)")
+
+    node.query(f"INSERT INTO {table_ref} VALUES ('123', 1);", settings=write_settings)
+
+    node.query(f"ALTER TABLE {table_ref} ADD COLUMN z Nullable(String);", settings=write_settings)
+    assert "z" in node.query(f"DESCRIBE TABLE {table_ref}", settings=write_settings)
+    assert node.query(f"SELECT x, y, z FROM {table_ref} ORDER BY ALL", settings=write_settings) == "123\t1\t\\N\n"
+
+    node.query(f"INSERT INTO {table_ref} VALUES ('456', 2, 'hello');", settings=write_settings)
+    assert (
+        node.query(f"SELECT x, y, z FROM {table_ref} ORDER BY ALL", settings=write_settings)
+        == "123\t1\t\\N\n456\t2\thello\n"
+    )
+
+    node.query(f"ALTER TABLE {table_ref} RENAME COLUMN z TO w;", settings=write_settings)
+    assert "w" in node.query(f"DESCRIBE TABLE {table_ref}", settings=write_settings)
+    assert (
+        node.query(f"SELECT x, y, w FROM {table_ref} ORDER BY ALL", settings=write_settings)
+        == "123\t1\t\\N\n456\t2\thello\n"
+    )
+
+
+def test_writes_schema_evolution_concurrent_add_columns(started_cluster):
+    node = started_cluster.instances["node1"]
+
+    test_ref = f"test_writes_schema_evolution_concurrent_{uuid.uuid4()}"
+    table_name = f"{test_ref}_table"
+    root_namespace = f"{test_ref}_namespace"
+    table_ref = f"{CATALOG_NAME}.`{root_namespace}.{table_name}`"
+    write_settings = {"allow_insert_into_iceberg": 1, "write_full_path_in_iceberg_metadata": 1}
+
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_table(started_cluster, node, root_namespace, table_name, "(x String, y Int32)")
+
+    node.query(f"INSERT INTO {table_ref} VALUES ('123', 1);", settings=write_settings)
+
+    num_columns = 10
+
+    def add_column(idx):
+        node.query(
+            f"ALTER TABLE {table_ref} ADD COLUMN col_{idx} Nullable(String);",
+            settings=write_settings,
+        )
+
+    with ThreadPoolExecutor(max_workers=num_columns) as executor:
+        list(executor.map(add_column, range(num_columns)))
+
+    description = node.query(f"DESCRIBE TABLE {table_ref}", settings=write_settings)
+    for idx in range(num_columns):
+        assert f"col_{idx}" in description, f"col_{idx} missing from:\n{description}"
+
+    columns = [line.split("\t")[0] for line in description.strip().split("\n")]
+    assert sorted(columns) == sorted(["x", "y"] + [f"col_{idx}" for idx in range(num_columns)])
+
+    select_cols = ", ".join(["x", "y"] + [f"col_{idx}" for idx in range(num_columns)])
+    expected = "123\t1" + "\t\\N" * num_columns + "\n"
+    assert node.query(f"SELECT {select_cols} FROM {table_ref} ORDER BY ALL", settings=write_settings) == expected
 
 
 def test_drop_table(started_cluster):
@@ -718,12 +786,12 @@ def test_drop_table(started_cluster):
 
     catalog = load_catalog_impl(started_cluster)
 
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
-    create_clickhouse_glue_table(started_cluster, node, root_namespace, table_name, "(x String)")
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
+    create_datastore_glue_table(started_cluster, node, root_namespace, table_name, "(x String)")
     assert len(catalog.list_tables(root_namespace)) == 1
     assert node.query(f"SELECT * FROM {CATALOG_NAME}.`{root_namespace}.{table_name}`") == ""
 
-    drop_clickhouse_glue_table(node, root_namespace, table_name)
+    drop_datastore_glue_table(node, root_namespace, table_name)
     assert len(catalog.list_tables(root_namespace)) == 0
 
 
@@ -754,7 +822,7 @@ def test_system_tables(started_cluster):
         df = generate_arrow_data(num_rows)
         table.append(df)
 
-        create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+        create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
         expected = DEFAULT_CREATE_TABLE.format(CATALOG_NAME, namespace, table_name)
         assert expected == node.query(
@@ -816,7 +884,7 @@ def test_show_tables_optimization(started_cluster):
         df = generate_arrow_data(num_rows)
         table.append(df)
 
-        create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+        create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
     assert table_name in node.query(f"SHOW TABLES FROM {CATALOG_NAME}")
 
@@ -829,12 +897,88 @@ def test_show_tables_optimization(started_cluster):
         f"Get table information for table {root_namespace}.{table_name}"
     )
 
-    node.query(f"SYSTEM ENABLE FAILPOINT lightweight_show_tables")
+    node.query("SYSTEM ENABLE FAILPOINT lightweight_show_tables")
     node.query(f"SHOW TABLES FROM {CATALOG_NAME}", timeout=5)
+
+
+def test_typo_hint_does_not_trigger_heavyweight_fetch(started_cluster):
+    """
+    Regression test for the high-memory typo-hint path on a DataLake (Glue) database.
+
+    When a query references a table that does not exist, the UNKNOWN_TABLE error
+    path builds a "maybe you meant ...?" suggestion through
+    TableNameHints -> getAllRegisteredNames -> IDatabase::getAllTableNames. Before
+    this fix DatabaseDataLake did not override getAllTableNames, so the base
+    implementation iterated getTablesIterator and fetched per-table metadata from
+    the catalog (one heavyweight S3 read per table). With many tables this hint
+    lookup alone could exhaust the server's memory. The fix overrides
+    getAllTableNames to return getCatalog()->getTables() (table names only).
+
+    INSERT resolves its target table through the throwing DatabaseCatalog::getTable
+    overload independently of the analyzer, so it deterministically drives the
+    hint path. show_data_lake_catalogs_in_system_tables=1 is required: otherwise
+    getAllRegisteredNames short-circuits for remote databases and getAllTableNames
+    is never reached, so the override would not be exercised at all.
+
+    Signal: the log line emitted once per table inside
+    DatabaseDataLake::getTablesIterator. Counting it scoped to this namespace
+    makes the measurement exact and immune to other tables in the catalog. A
+    global S3GetObject counter is deliberately NOT used: catalog metadata is
+    cached across queries, so a repeated heavyweight iteration issues no new S3
+    GET requests even though it still walks every table.
+
+    Pre-fix the marker fires once per table (N). With the fix it stays at 0.
+    """
+    node = started_cluster.instances["node1"]
+
+    test_ref = f"test_hint_heavy_{uuid.uuid4().hex[:8]}"
+    namespace = f"{test_ref}_ns"
+    N = 20
+
+    catalog = load_catalog_impl(started_cluster)
+    catalog.create_namespace(namespace)
+    try:
+        for i in range(N):
+            tbl = create_table(catalog, namespace, f"{test_ref}_t{i:02d}")
+            tbl.append(generate_arrow_data(1))
+
+        create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
+
+        # Emitted once per table inside DatabaseDataLake::getTablesIterator. If the
+        # message is ever rephrased, update this marker.
+        marker = f"Get table information for table {namespace}."
+        baseline = int(node.count_in_log(marker).strip())
+
+        # Reference a non-existent table; this must raise UNKNOWN_TABLE and on the
+        # way build the typo hint that walks getAllTableNames.
+        error = node.query_and_get_error(
+            f"INSERT INTO {CATALOG_NAME}.`{namespace}.does_not_exist` VALUES (1)",
+            settings={"show_data_lake_catalogs_in_system_tables": 1},
+        )
+        assert "UNKNOWN_TABLE" in error or "does not exist" in error, (
+            f"Expected an UNKNOWN_TABLE error for a non-existent table, got: {error}"
+        )
+
+        fetches = int(node.count_in_log(marker).strip()) - baseline
+        assert fetches == 0, (
+            f"The typo-hint lookup for a non-existent table triggered {fetches} "
+            f"per-table metadata fetches (expected 0; the namespace has {N} tables). "
+            f"DatabaseDataLake.getAllTableNames is falling through to "
+            f"IDatabase::getAllTableNames -> getTablesIterator instead of using "
+            f"getCatalog()->getTables() directly."
+        )
+    finally:
+        try:
+            for i in range(N):
+                catalog.drop_table(f"{namespace}.{test_ref}_t{i:02d}")
+            catalog.drop_namespace(namespace)
+        except Exception:
+            pass
+
 
 def test_table_without_metadata_location(started_cluster):
     """
-    Test that ClickHouse can read Iceberg tables from Glue when 'metadata_location' is not present in Glue parameters.
+    Test that Datastore can read Iceberg tables from Glue when 'metadata_location' is not present in Glue parameters.
     Glue's Location field is used to deduce the metadata location.
     """
     node = started_cluster.instances["node1"]
@@ -892,7 +1036,7 @@ def test_table_without_metadata_location(started_cluster):
     assert "metadata_location" not in updated_table["Table"].get("Parameters", {}), "Failed to remove metadata_location"
     assert updated_table["Table"]["StorageDescriptor"]["Location"], "Location should still be present"
 
-    create_clickhouse_glue_database(started_cluster, node, db_name)
+    create_datastore_glue_database(started_cluster, node, db_name)
 
     # Verify SHOW TABLES FROM works
     tables_result = node.query(f"SHOW TABLES FROM {db_name} LIKE '%{table_name}%'")
@@ -931,8 +1075,8 @@ def test_check_database(started_cluster):
         catalog.create_namespace(namespace)
         assert len(catalog.list_tables(namespace)) == 0
 
-    # Create ClickHouse Glue database once
-    create_clickhouse_glue_database(started_cluster, node, CATALOG_NAME)
+    # Create Datastore Glue database once
+    create_datastore_glue_database(started_cluster, node, CATALOG_NAME)
 
     # Create tables in each namespace
     for namespace in namespaces_to_create:
@@ -959,7 +1103,7 @@ def test_check_database(started_cluster):
 
     try:
         node.query(
-            f"SYSTEM ENABLE FAILPOINT check_database_datalake_negative"
+            "SYSTEM ENABLE FAILPOINT check_database_datalake_negative"
         )
     
         assert "fault when checking database" in node.query_and_get_error(
@@ -967,7 +1111,7 @@ def test_check_database(started_cluster):
         )
     finally:
         node.query(
-            f"SYSTEM DISABLE FAILPOINT check_database_datalake_negative"
+            "SYSTEM DISABLE FAILPOINT check_database_datalake_negative"
         )
 
 def test_sts_smoke(started_cluster):
@@ -997,7 +1141,7 @@ def test_sts_smoke(started_cluster):
 
     # Test with wrong role_session_name - should fail
     db_name_fail = f"db_fail_{test_ref.replace('-', '_')}"
-    create_clickhouse_glue_database(
+    create_datastore_glue_database(
         started_cluster,
         node,
         db_name_fail,
@@ -1023,7 +1167,7 @@ def test_sts_smoke(started_cluster):
 
     # Test with correct role_session_name - should succeed
     db_name_success = f"db_success_{test_ref.replace('-', '_')}"
-    create_clickhouse_glue_database(
+    create_datastore_glue_database(
         started_cluster,
         node,
         db_name_success,
@@ -1036,6 +1180,83 @@ def test_sts_smoke(started_cluster):
     )
 
     # Query should succeed with correct session name
+    result = node.query(f"SELECT sum(value) FROM {db_name_success}.`{root_namespace}.{table_name}`")
+    assert result.strip() == "60", f"Expected sum to be 60 but got: {result}"
+
+    # Cleanup
+    node.query(f"DROP DATABASE IF EXISTS {db_name_fail} SYNC")
+    node.query(f"DROP DATABASE IF EXISTS {db_name_success} SYNC")
+
+
+def test_sts_external_id(started_cluster):
+    """Test that `aws_external_id` reaches the STS AssumeRole request from the
+    Glue catalog database engine. The mock STS only vends working credentials
+    when the supplied ExternalId matches, so the negative case fails purely on
+    the external id (the role session name is correct in both cases)."""
+    node = started_cluster.instances["node1"]
+
+    test_ref = f"test_sts_external_id_{uuid.uuid4()}"
+    table_name = f"{test_ref}_table"
+    root_namespace = f"{test_ref}_namespace"
+
+    catalog = load_catalog_impl(started_cluster)
+    catalog.create_namespace(root_namespace)
+
+    schema = Schema(
+        NestedField(field_id=1, name="id", field_type=StringType(), required=False),
+        NestedField(field_id=2, name="value", field_type=DoubleType(), required=False),
+    )
+    table = create_table(catalog, root_namespace, table_name, schema, PartitionSpec(), DEFAULT_SORT_ORDER, dir=table_name)
+
+    data = [
+        {"id": "row1", "value": 10.0},
+        {"id": "row2", "value": 20.0},
+        {"id": "row3", "value": 30.0},
+    ]
+    df = pa.Table.from_pylist(data)
+    table.append(df)
+
+    # Negative: correct role session name but wrong external id - should fail.
+    db_name_fail = f"db_fail_{test_ref.replace('-', '_')}"
+    create_datastore_glue_database(
+        started_cluster,
+        node,
+        db_name_fail,
+        additional_settings={
+            "aws_role_arn": "arn::role",
+            "aws_role_session_name": "miniorole",
+            "aws_external_id": "wrong_external_id",
+        },
+        query_settings={},
+        with_credentials=False,
+    )
+
+    try:
+        result = node.query(
+            f"SELECT sum(value) FROM {db_name_fail}.`{root_namespace}.{table_name}` "
+            f"SETTINGS s3_max_single_read_retries = 1, s3_retry_attempts = 1, s3_request_timeout_ms = 1000"
+        )
+        assert False, f"Expected query to fail with wrong external id but got result: {result}"
+    except Exception as e:
+        error_str = str(e)
+        assert "403" in error_str or "Failed to get object info" in error_str or "HTTP response code: 403" in error_str, \
+            f"Expected 403 error but got: {error_str}"
+
+    # Positive: correct role session name and external id - should succeed.
+    db_name_success = f"db_success_{test_ref.replace('-', '_')}"
+    create_datastore_glue_database(
+        started_cluster,
+        node,
+        db_name_success,
+        additional_settings={
+            "aws_role_arn": "arn::role",
+            "aws_role_session_name": "miniorole",
+            "aws_external_id": "miniexternalid",
+        },
+        query_settings={},
+        with_credentials=False,
+    )
+
     result = node.query(f"SELECT sum(value) FROM {db_name_success}.`{root_namespace}.{table_name}`")
     assert result.strip() == "60", f"Expected sum to be 60 but got: {result}"
 
@@ -1085,7 +1306,7 @@ def test_sts_credential_refresh_on_expired_token(started_cluster):
     ).append(pa.Table.from_pylist(rows))
 
     db_name = f"db_{test_ref.replace('-', '_')}"
-    create_clickhouse_glue_database(
+    create_datastore_glue_database(
         started_cluster,
         node,
         db_name,

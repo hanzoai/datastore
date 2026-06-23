@@ -15,7 +15,7 @@ TEST(PocoJSON, roundtrip)
     /** We patched Poco library to support certain invalid JSONs
       * in favor of perfect roundtrip of binary data, including zero bytes and invalid UTF-8.
       *
-      * This is needed for consistency with ClickHouse's JSONEachRow format,
+      * This is needed for consistency with Datastore's JSONEachRow format,
       * and to allow storing SQL queries (which can contain binary data) inside serialized JSONs
       * without extra encoding.
       *

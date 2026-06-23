@@ -6,6 +6,7 @@
 #include <IO/ReadBufferFromFileDescriptor.h>
 #include <IO/ReadHelpers.h>
 #include "config.h"
+#include <Examples/datastore_examples.h>
 #if USE_SSL
 #   include <openssl/md5.h>
 #endif

@@ -20,6 +20,8 @@ file(GLOB AZURE_SDK_SRC
     "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-blobs/src/*.cpp"
     "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-blobs/src/private/*.cpp"
     "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-common/src/*.cpp"
+    "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-files-datalake/src/*.cpp"
+    "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-files-datalake/src/private/*.cpp"
 )
 
 set(AZURE_SDK_INCLUDES
@@ -27,9 +29,10 @@ set(AZURE_SDK_INCLUDES
     "${AZURE_SDK_LIBRARY_DIR}/identity/azure-identity/inc/"
     "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-common/inc/"
     "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-blobs/inc/"
+    "${AZURE_SDK_LIBRARY_DIR}/storage/azure-storage-files-datalake/inc/"
 )
 
-if (CLICKHOUSE_CLOUD)
+if (DATASTORE_CLOUD)
     list(APPEND AZURE_SDK_SRC
         "${AZURE_SDK_LIBRARY_DIR}/keyvault/azure-security-keyvault-keys/src/*.cpp"
         "${AZURE_SDK_LIBRARY_DIR}/keyvault/azure-security-keyvault-keys/src/cryptography/*.cpp"

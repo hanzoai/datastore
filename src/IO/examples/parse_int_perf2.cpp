@@ -5,6 +5,7 @@
 #include <IO/ReadBufferFromFileDescriptor.h>
 
 #include <Common/Stopwatch.h>
+#include <Examples/datastore_examples.h>
 
 
 namespace test

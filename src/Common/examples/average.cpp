@@ -8,6 +8,7 @@
 #include <Common/HashTable/FixedHashMap.h>
 #include <Common/Arena.h>
 #include <Common/Stopwatch.h>
+#include <Examples/datastore_examples.h>
 
 /** This test program evaluates different solutions for a simple degenerate task:
   * Aggregate data by UInt8 key, calculate "avg" function on Float values.

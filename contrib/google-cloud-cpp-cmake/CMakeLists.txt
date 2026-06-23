@@ -3,7 +3,7 @@ if(NOT ENABLE_GOOGLE_CLOUD_CPP)
     return()
 endif()
 
-if(CLICKHOUSE_CLOUD)
+if(DATASTORE_CLOUD)
     set(ENABLE_GOOGLE_CLOUD_CPP_KMS_DEFAULT ON)
 endif()
 

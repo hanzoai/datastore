@@ -8,6 +8,7 @@
 #include <Common/randomSeed.h>
 #include <Common/Stopwatch.h>
 #include <Common/IntervalTree.h>
+#include <Examples/datastore_examples.h>
 
 using namespace DB;
 using Int64Interval = Interval<Int64>;

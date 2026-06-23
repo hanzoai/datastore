@@ -1,1 +1,7 @@
-../../../tests/config/users.d/log_queries.xml
+<datastore>
+    <profiles>
+        <default>
+            <log_queries>1</log_queries>
+        </default>
+    </profiles>
+</datastore>

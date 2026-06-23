@@ -49,7 +49,7 @@ namespace
         return {first, second};
     }
 
-    std::optional<zap::StructSchema::Field> findFieldByName(const zap::StructSchema & struct_schema, const String & name)
+    std::optional<capnp::StructSchema::Field> findFieldByName(const capnp::StructSchema & struct_schema, const String & name)
     {
         const auto & fields = struct_schema.getFields();
         for (auto field : fields)
@@ -61,7 +61,7 @@ namespace
         return std::nullopt;
     }
 
-    [[noreturn]] void throwCannotConvert(const DataTypePtr & type, const String & name, const zap::Type & capnp_type)
+    [[noreturn]] void throwCannotConvert(const DataTypePtr & type, const String & name, const capnp::Type & capnp_type)
     {
         throw Exception(
             ErrorCodes::CAPN_PROTO_BAD_CAST,
@@ -78,32 +78,32 @@ namespace
 
     struct ListBuilder : public FieldBuilder
     {
-        explicit ListBuilder(zap::DynamicValue::Builder builder, UInt32 elements_size) : impl(builder.as<zap::DynamicList>()), nested_builders(elements_size)
+        explicit ListBuilder(capnp::DynamicValue::Builder builder, UInt32 elements_size) : impl(builder.as<capnp::DynamicList>()), nested_builders(elements_size)
         {
         }
 
-        zap::DynamicList::Builder impl;
+        capnp::DynamicList::Builder impl;
         std::vector<std::unique_ptr<FieldBuilder>> nested_builders;
     };
 
     struct StructBuilder : public FieldBuilder
     {
-        explicit StructBuilder(zap::DynamicStruct::Builder struct_builder, size_t fields_size) : impl(std::move(struct_builder)), field_builders(fields_size)
+        explicit StructBuilder(capnp::DynamicStruct::Builder struct_builder, size_t fields_size) : impl(std::move(struct_builder)), field_builders(fields_size)
         {
         }
 
-        zap::DynamicStruct::Builder impl;
+        capnp::DynamicStruct::Builder impl;
         std::vector<std::unique_ptr<FieldBuilder>> field_builders;
     };
 
     template <typename ParentBuilder>
-    std::unique_ptr<StructBuilder> initStructBuilder(ParentBuilder & parent_builder, UInt32 offset_or_index, const zap::_::StructSize & struct_size, size_t elements, const zap::StructSchema & schema)
+    std::unique_ptr<StructBuilder> initStructBuilder(ParentBuilder & parent_builder, UInt32 offset_or_index, const capnp::_::StructSize & struct_size, size_t elements, const capnp::StructSchema & schema)
     {
-        zap::DynamicStruct::Builder builder_impl;
-        if constexpr (std::is_same_v<ParentBuilder, zap::DynamicStruct::Builder>)
-            builder_impl = zap::DynamicStruct::Builder(schema, parent_builder.getBuilderImpl().getPointerField(offset_or_index).initStruct(struct_size));
+        capnp::DynamicStruct::Builder builder_impl;
+        if constexpr (std::is_same_v<ParentBuilder, capnp::DynamicStruct::Builder>)
+            builder_impl = capnp::DynamicStruct::Builder(schema, parent_builder.getBuilderImpl().getPointerField(offset_or_index).initStruct(struct_size));
         else
-            builder_impl = zap::DynamicStruct::Builder(schema, parent_builder.getBuilderImpl().getStructElement(offset_or_index));
+            builder_impl = capnp::DynamicStruct::Builder(schema, parent_builder.getBuilderImpl().getStructElement(offset_or_index));
         return std::make_unique<StructBuilder>(std::move(builder_impl), elements);
     }
 
@@ -114,7 +114,7 @@ namespace
         virtual void writeRow(
             const ColumnPtr & column,
             std::unique_ptr<FieldBuilder> & builder, /// Maybe unused for simple types, needed to initialize structs and lists.
-            zap::DynamicStruct::Builder & parent_struct_builder,
+            capnp::DynamicStruct::Builder & parent_struct_builder,
             UInt32 slot_offset,
             size_t row_num) = 0;
 
@@ -122,15 +122,15 @@ namespace
         virtual void writeRow(
             const ColumnPtr & column,
             std::unique_ptr<FieldBuilder> & builder, /// Maybe unused for simple types, needed to initialize structs and lists.
-            zap::DynamicList::Builder & parent_list_builder,
+            capnp::DynamicList::Builder & parent_list_builder,
             UInt32 array_index,
             size_t row_num) = 0;
 
         /// Read row from struct field at slot_offset.
-        virtual void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) = 0;
+        virtual void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) = 0;
 
         /// Read row from list element at array_index.
-        virtual void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) = 0;
+        virtual void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) = 0;
 
         virtual ~ICapnProtoSerializer() = default;
     };
@@ -139,22 +139,22 @@ namespace
     class CapnProtoIntegerSerializer : public ICapnProtoSerializer
     {
     public:
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<CapnProtoNumericType>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<CapnProtoNumericType>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<CapnProtoNumericType>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<CapnProtoNumericType>(array_index));
         }
@@ -175,27 +175,27 @@ namespace
     };
 
     template <typename NumericType, bool convert_to_bool_on_read = false>
-    std::unique_ptr<ICapnProtoSerializer> createIntegerSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+    std::unique_ptr<ICapnProtoSerializer> createIntegerSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
     {
         switch (capnp_type.which())
         {
-            case zap::schema::Type::INT8:
+            case capnp::schema::Type::INT8:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, Int8, convert_to_bool_on_read>>();
-            case zap::schema::Type::INT16:
+            case capnp::schema::Type::INT16:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, Int16, convert_to_bool_on_read>>();
-            case zap::schema::Type::INT32:
+            case capnp::schema::Type::INT32:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, Int32, convert_to_bool_on_read>>();
-            case zap::schema::Type::INT64:
+            case capnp::schema::Type::INT64:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, Int64, convert_to_bool_on_read>>();
-            case zap::schema::Type::UINT8:
+            case capnp::schema::Type::UINT8:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, UInt8, convert_to_bool_on_read>>();
-            case zap::schema::Type::UINT16:
+            case capnp::schema::Type::UINT16:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, UInt16, convert_to_bool_on_read>>();
-            case zap::schema::Type::UINT32:
+            case capnp::schema::Type::UINT32:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, UInt32, convert_to_bool_on_read>>();
-            case zap::schema::Type::UINT64:
+            case capnp::schema::Type::UINT64:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, UInt64, convert_to_bool_on_read>>();
-            case zap::schema::Type::BOOL:
+            case capnp::schema::Type::BOOL:
                 return std::make_unique<CapnProtoIntegerSerializer<NumericType, bool, convert_to_bool_on_read>>();
             default:
                 throwCannotConvert(data_type, column_name, capnp_type);
@@ -206,22 +206,22 @@ namespace
     class CapnProtoFloatSerializer : public ICapnProtoSerializer
     {
     public:
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<CapnProtoFloatType>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<CapnProtoFloatType>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<CapnProtoFloatType>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<CapnProtoFloatType>(array_index));
         }
@@ -239,13 +239,13 @@ namespace
     };
 
     template <typename FloatType>
-    std::unique_ptr<ICapnProtoSerializer> createFloatSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+    std::unique_ptr<ICapnProtoSerializer> createFloatSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
     {
         switch (capnp_type.which())
         {
-            case zap::schema::Type::FLOAT32:
+            case capnp::schema::Type::FLOAT32:
                 return std::make_unique<CapnProtoFloatSerializer<FloatType, Float32>>();
-            case zap::schema::Type::FLOAT64:
+            case capnp::schema::Type::FLOAT64:
                 return std::make_unique<CapnProtoFloatSerializer<FloatType, Float64>>();
             default:
                 throwCannotConvert(data_type, column_name, capnp_type);
@@ -259,7 +259,7 @@ namespace
         CapnProtoEnumSerializer(
             const DataTypePtr & data_type_,
             const String & column_name,
-            const zap::Type & capnp_type,
+            const capnp::Type & capnp_type,
             const FormatSettings::CapnProtoEnumComparingMode enum_comparing_mode_) : data_type(data_type_), enum_comparing_mode(enum_comparing_mode_)
         {
             if (!capnp_type.isEnum())
@@ -355,22 +355,22 @@ namespace
             }
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<UInt16>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<UInt16>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<UInt16>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<UInt16>(array_index));
         }
@@ -411,7 +411,7 @@ namespace
         }
 
         DataTypePtr data_type;
-        zap::EnumSchema enum_schema;
+        capnp::EnumSchema enum_schema;
         const FormatSettings::CapnProtoEnumComparingMode enum_comparing_mode;
         bool ch_enum_is_superset;
         bool capnp_enum_is_superset;
@@ -422,28 +422,28 @@ namespace
     class CapnProtoDateSerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoDateSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoDateSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             if (!capnp_type.isUInt16())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<UInt16>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<UInt16>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<UInt16>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<UInt16>(array_index));
         }
@@ -463,28 +463,28 @@ namespace
     class CapnProtoDate32Serializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoDate32Serializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoDate32Serializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             if (!capnp_type.isInt32())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<Int32>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<Int32>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<Int32>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<Int32>(array_index));
         }
@@ -504,28 +504,28 @@ namespace
     class CapnProtoDateTimeSerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoDateTimeSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoDateTimeSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             if (!capnp_type.isUInt32())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<UInt32>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<UInt32>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<UInt32>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<UInt32>(array_index));
         }
@@ -545,28 +545,28 @@ namespace
     class CapnProtoDateTime64Serializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoDateTime64Serializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoDateTime64Serializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             if (!capnp_type.isInt64())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<Int64>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<Int64>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<Int64>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<Int64>(array_index));
         }
@@ -589,29 +589,29 @@ namespace
     public:
         using NativeType = typename DecimalType::NativeType;
 
-        CapnProtoDecimalSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoDecimalSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             auto which = WhichDataType(data_type);
             if ((!capnp_type.isInt32() && which.isDecimal32()) || (!capnp_type.isInt64() && which.isDecimal64()))
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<NativeType>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<NativeType>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<NativeType>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<NativeType>(array_index));
         }
@@ -632,28 +632,28 @@ namespace
     class CapnProtoIPv4Serializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoIPv4Serializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoIPv4Serializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             if (!capnp_type.isUInt32())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().setDataField<UInt32>(slot_offset, getValue(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             parent_list_builder.getBuilderImpl().setDataElement<UInt32>(array_index, getValue(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertValue(column, parent_struct_reader.getReaderImpl().getDataField<UInt32>(slot_offset));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertValue(column, parent_list_reader.getReaderImpl().getDataElement<UInt32>(array_index));
         }
@@ -677,40 +677,40 @@ namespace
         static constexpr size_t expected_value_size = sizeof(T);
 
     public:
-        CapnProtoFixedSizeRawDataSerializer(const DataTypePtr & data_type_, const String & column_name, const zap::Type & capnp_type) : data_type(data_type_)
+        CapnProtoFixedSizeRawDataSerializer(const DataTypePtr & data_type_, const String & column_name, const capnp::Type & capnp_type) : data_type(data_type_)
         {
             if (!capnp_type.isData())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
-            parent_struct_builder.getBuilderImpl().getPointerField(slot_offset).setBlob<zap::Data>(getData(column, row_num));
+            parent_struct_builder.getBuilderImpl().getPointerField(slot_offset).setBlob<capnp::Data>(getData(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_struct_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_struct_builder, UInt32 array_index, size_t row_num) override
         {
-            parent_struct_builder.getBuilderImpl().getPointerElement(array_index).setBlob<zap::Data>(getData(column, row_num));
+            parent_struct_builder.getBuilderImpl().getPointerElement(array_index).setBlob<capnp::Data>(getData(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
-            insertData(column, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getBlob<zap::Data>(nullptr, 0));
+            insertData(column, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getBlob<capnp::Data>(nullptr, 0));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
-            insertData(column, parent_list_reader.getReaderImpl().getPointerElement(array_index).getBlob<zap::Data>(nullptr, 0));
+            insertData(column, parent_list_reader.getReaderImpl().getPointerElement(array_index).getBlob<capnp::Data>(nullptr, 0));
         }
 
     private:
-        zap::Data::Reader getData(const ColumnPtr & column, size_t row_num)
+        capnp::Data::Reader getData(const ColumnPtr & column, size_t row_num)
         {
             auto data = column->getDataAt(row_num);
-            return zap::Data::Reader(reinterpret_cast<const kj::byte *>(data.data()), data.size());
+            return capnp::Data::Reader(reinterpret_cast<const kj::byte *>(data.data()), data.size());
         }
 
-        void insertData(IColumn & column, zap::Data::Reader data)
+        void insertData(IColumn & column, capnp::Data::Reader data)
         {
             if (data.size() != expected_value_size)
                 throw Exception(ErrorCodes::INCORRECT_DATA, "Unexpected size of {} value: {}", data_type->getName(), data.size());
@@ -725,28 +725,28 @@ namespace
     class CapnProtoStringSerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoStringSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type)
+        CapnProtoStringSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type)
         {
             if (!capnp_type.isData() && !capnp_type.isText())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().getPointerField(slot_offset).setBlob<CapnpType>(getData(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_struct_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_struct_builder, UInt32 array_index, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().getPointerElement(array_index).setBlob<CapnpType>(getData(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertData(column, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getBlob<CapnpType>(nullptr, 0));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertData(column, parent_list_reader.getReaderImpl().getPointerElement(array_index).getBlob<CapnpType>(nullptr, 0));
         }
@@ -757,7 +757,7 @@ namespace
         Reader getData(const ColumnPtr & column, size_t row_num)
         {
             auto data = column->getDataAt(row_num);
-            if constexpr (std::is_same_v<CapnpType, zap::Data>)
+            if constexpr (std::is_same_v<CapnpType, capnp::Data>)
                 return Reader(reinterpret_cast<const kj::byte *>(data.data()), data.size());
             else
                 return Reader(data.data(), data.size());
@@ -775,28 +775,28 @@ namespace
     private:
 
     public:
-        CapnProtoFixedStringSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type_) : capnp_type(capnp_type_)
+        CapnProtoFixedStringSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type_) : capnp_type(capnp_type_)
         {
             if (!capnp_type.isData() && !capnp_type.isText())
                 throwCannotConvert(data_type, column_name, capnp_type);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().getPointerField(slot_offset).setBlob<CapnpType>(getData(column, row_num));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, zap::DynamicList::Builder & parent_struct_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> &, capnp::DynamicList::Builder & parent_struct_builder, UInt32 array_index, size_t row_num) override
         {
             parent_struct_builder.getBuilderImpl().getPointerElement(array_index).setBlob<CapnpType>(getData(column, row_num));
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             insertData(column, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getBlob<CapnpType>(nullptr, 0));
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             insertData(column, parent_list_reader.getReaderImpl().getPointerElement(array_index).getBlob<CapnpType>(nullptr, 0));
         }
@@ -807,7 +807,7 @@ namespace
         Reader getData(const ColumnPtr & column, size_t row_num)
         {
             auto data = column->getDataAt(row_num);
-            if constexpr (std::is_same_v<CapnpType, zap::Data>)
+            if constexpr (std::is_same_v<CapnpType, capnp::Data>)
             {
                 return Reader(reinterpret_cast<const kj::byte *>(data.data()), data.size());
             }
@@ -817,9 +817,9 @@ namespace
                     return Reader(data.data(), data.size());
 
                 /// In TEXT type data should be null-terminated, but Datastore FixedString data could not be.
-                /// To make data null-terminated we should copy it to temporary String object and use it in zap::Text::Reader.
-                /// Note that zap::Text::Reader works only with pointer to the data and it's size, so we should
-                /// guarantee that new String object life time is longer than zap::Text::Reader life time.
+                /// To make data null-terminated we should copy it to temporary String object and use it in capnp::Text::Reader.
+                /// Note that capnp::Text::Reader works only with pointer to the data and it's size, so we should
+                /// guarantee that new String object life time is longer than capnp::Text::Reader life time.
                 tmp_string = data;
                 return Reader(tmp_string.data(), tmp_string.size());
             }
@@ -835,35 +835,35 @@ namespace
         }
 
         String tmp_string;
-        zap::Type capnp_type;
+        capnp::Type capnp_type;
     };
 
-    std::unique_ptr<ICapnProtoSerializer> createSerializer(const DataTypePtr & type, const String & name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings);
+    std::unique_ptr<ICapnProtoSerializer> createSerializer(const DataTypePtr & type, const String & name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings);
 
     class CapnProtoLowCardinalitySerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoLowCardinalitySerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings)
+        CapnProtoLowCardinalitySerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings)
         {
             nested_serializer = createSerializer(assert_cast<const DataTypeLowCardinality &>(*data_type).getDictionaryType(), column_name, capnp_type, settings);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_struct_builder, slot_offset, row_num);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_list_builder, array_index, row_num);
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
             readRowImpl(column, parent_struct_reader, slot_offset);
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
             readRowImpl(column, parent_list_reader, array_index);
         }
@@ -893,7 +893,7 @@ namespace
     class CapnProtoNullableSerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoNullableSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings)
+        CapnProtoNullableSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings)
         {
             if (!capnp_type.isStruct())
                 throw Exception(
@@ -905,7 +905,7 @@ namespace
             /// Check that struct is a named union of type VOID and one arbitrary type.
             struct_schema = capnp_type.asStruct();
             auto node = struct_schema.getProto().getStruct();
-            struct_size = zap::_::StructSize(node.getDataWordCount(), node.getPointerCount());
+            struct_size = capnp::_::StructSize(node.getDataWordCount(), node.getPointerCount());
             discriminant_offset = node.getDiscriminantOffset();
             if (!checkIfStructIsNamedUnion(struct_schema))
                 throw Exception(
@@ -949,25 +949,25 @@ namespace
                     getCapnProtoFullTypeName(capnp_type));
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_struct_builder, slot_offset, row_num);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_list_builder, array_index, row_num);
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
-            auto struct_reader = zap::DynamicStruct::Reader(struct_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getStruct(nullptr));
+            auto struct_reader = capnp::DynamicStruct::Reader(struct_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getStruct(nullptr));
             readRowImpl(column, struct_reader);
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
-            auto struct_reader = zap::DynamicStruct::Reader(struct_schema, parent_list_reader.getReaderImpl().getStructElement(array_index));
+            auto struct_reader = capnp::DynamicStruct::Reader(struct_schema, parent_list_reader.getReaderImpl().getStructElement(array_index));
             readRowImpl(column, struct_reader);
         }
 
@@ -985,7 +985,7 @@ namespace
             {
                 auto struct_builder_impl = struct_builder.impl.getBuilderImpl();
                 struct_builder_impl.setDataField<uint16_t>(discriminant_offset, null_discriminant);
-                struct_builder_impl.setDataField<zap::Void>(nested_slot_offset, zap::Void());
+                struct_builder_impl.setDataField<capnp::Void>(nested_slot_offset, capnp::Void());
             }
             else
             {
@@ -995,7 +995,7 @@ namespace
             }
         }
 
-        void readRowImpl(IColumn & column, zap::DynamicStruct::Reader & struct_reader)
+        void readRowImpl(IColumn & column, capnp::DynamicStruct::Reader & struct_reader)
         {
             auto & nullable_column = assert_cast<ColumnNullable &>(column);
             auto discriminant = struct_reader.getReaderImpl().getDataField<uint16_t>(discriminant_offset);
@@ -1012,8 +1012,8 @@ namespace
 
 
         std::unique_ptr<ICapnProtoSerializer> nested_serializer;
-        zap::StructSchema struct_schema;
-        zap::_::StructSize struct_size;
+        capnp::StructSchema struct_schema;
+        capnp::_::StructSize struct_size{};
         UInt32 discriminant_offset;
         UInt16 null_discriminant;
         UInt16 nested_discriminant;
@@ -1023,7 +1023,7 @@ namespace
     class CapnProtoArraySerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoArraySerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings)
+        CapnProtoArraySerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings)
         {
             if (!capnp_type.isList())
                 throwCannotConvert(data_type, column_name, capnp_type);
@@ -1031,36 +1031,36 @@ namespace
             auto nested_type = assert_cast<const DataTypeArray *>(data_type.get())->getNestedType();
             list_schema = capnp_type.asList();
             auto element_type = list_schema.getElementType();
-            element_size = zap::elementSizeFor(element_type.which());
+            element_size = capnp::elementSizeFor(element_type.which());
             if (element_type.isStruct())
             {
                 element_is_struct = true;
                 auto node = element_type.asStruct().getProto().getStruct();
-                element_struct_size = zap::_::StructSize(node.getDataWordCount(), node.getPointerCount());
+                element_struct_size = capnp::_::StructSize(node.getDataWordCount(), node.getPointerCount());
             }
 
             nested_serializer = createSerializer(nested_type, column_name, capnp_type.asList().getElementType(), settings);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_struct_builder, slot_offset, row_num);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_list_builder, array_index, row_num);
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
-            auto list_reader = zap::DynamicList::Reader(list_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getList(element_size, nullptr));
+            auto list_reader = capnp::DynamicList::Reader(list_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getList(element_size, nullptr));
             readRowImpl(column, list_reader);
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
-            auto list_reader = zap::DynamicList::Reader(list_schema, parent_list_reader.getReaderImpl().getPointerElement(array_index).getList(element_size, nullptr));
+            auto list_reader = capnp::DynamicList::Reader(list_schema, parent_list_reader.getReaderImpl().getPointerElement(array_index).getList(element_size, nullptr));
             readRowImpl(column, list_reader);
         }
 
@@ -1075,7 +1075,7 @@ namespace
             UInt32 size = static_cast<UInt32>(offsets[row_num] - offset);
 
             if (!field_builder)
-                field_builder = std::make_unique<ListBuilder>(zap::DynamicList::Builder(list_schema, initListBuilder(parent_builder, offset_or_index, size)), size);
+                field_builder = std::make_unique<ListBuilder>(capnp::DynamicList::Builder(list_schema, initListBuilder(parent_builder, offset_or_index, size)), size);
 
             auto & list_builder = assert_cast<ListBuilder &>(*field_builder);
             for (UInt32 i = 0; i != size; ++i)
@@ -1083,23 +1083,23 @@ namespace
         }
 
         template <typename ParentBuilder>
-        zap::_::ListBuilder initListBuilder(ParentBuilder & parent_builder, UInt32 offset_or_index, UInt32 size)
+        capnp::_::ListBuilder initListBuilder(ParentBuilder & parent_builder, UInt32 offset_or_index, UInt32 size)
         {
             if (element_is_struct)
             {
-                if constexpr (std::is_same_v<ParentBuilder, zap::DynamicStruct::Builder>)
+                if constexpr (std::is_same_v<ParentBuilder, capnp::DynamicStruct::Builder>)
                     return parent_builder.getBuilderImpl().getPointerField(offset_or_index).initStructList(size, element_struct_size);
                 else
                     return parent_builder.getBuilderImpl().getPointerElement(offset_or_index).initStructList(size, element_struct_size);
             }
 
-            if constexpr (std::is_same_v<ParentBuilder, zap::DynamicStruct::Builder>)
+            if constexpr (std::is_same_v<ParentBuilder, capnp::DynamicStruct::Builder>)
                 return parent_builder.getBuilderImpl().getPointerField(offset_or_index).initList(element_size, size);
             else
                 return parent_builder.getBuilderImpl().getPointerElement(offset_or_index).initList(element_size, size);
         }
 
-        void readRowImpl(IColumn & column, const zap::DynamicList::Reader & list_reader)
+        void readRowImpl(IColumn & column, const capnp::DynamicList::Reader & list_reader)
         {
             UInt32 size = list_reader.size();
             auto & column_array = assert_cast<ColumnArray &>(column);
@@ -1117,10 +1117,10 @@ namespace
             SerializationArray::readArraySafe(column, read_array);
         }
 
-        zap::ListSchema list_schema;
+        capnp::ListSchema list_schema;
         std::unique_ptr<ICapnProtoSerializer> nested_serializer;
-        zap::ElementSize element_size;
-        zap::_::StructSize element_struct_size;
+        capnp::ElementSize element_size;
+        capnp::_::StructSize element_struct_size{};
         bool element_is_struct = false;
 
     };
@@ -1128,7 +1128,7 @@ namespace
     class CapnProtoMapSerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoMapSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings)
+        CapnProtoMapSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings)
         {
             /// We output/input Map type as follow CapnProto schema
             ///
@@ -1145,7 +1145,7 @@ namespace
 
             struct_schema = capnp_type.asStruct();
             auto node = struct_schema.getProto().getStruct();
-            struct_size = zap::_::StructSize(node.getDataWordCount(), node.getPointerCount());
+            struct_size = capnp::_::StructSize(node.getDataWordCount(), node.getPointerCount());
 
             if (checkIfStructContainsUnnamedUnion(struct_schema))
                 throw Exception(
@@ -1201,25 +1201,25 @@ namespace
             entries_slot_offset = struct_schema.getFields()[0].getProto().getSlot().getOffset();
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_struct_builder, slot_offset, row_num);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_list_builder, array_index, row_num);
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
-            auto struct_reader = zap::DynamicStruct::Reader(struct_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getStruct(nullptr));
+            auto struct_reader = capnp::DynamicStruct::Reader(struct_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getStruct(nullptr));
             readRowImpl(column, struct_reader);
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
-            auto struct_reader = zap::DynamicStruct::Reader(struct_schema, parent_list_reader.getReaderImpl().getStructElement(array_index));
+            auto struct_reader = capnp::DynamicStruct::Reader(struct_schema, parent_list_reader.getReaderImpl().getStructElement(array_index));
             readRowImpl(column, struct_reader);
         }
 
@@ -1235,22 +1235,22 @@ namespace
             nested_serializer->writeRow(entries_column, struct_builder.field_builders[0], struct_builder.impl, entries_slot_offset, row_num);
         }
 
-        void readRowImpl(IColumn & column, const zap::DynamicStruct::Reader & struct_reader)
+        void readRowImpl(IColumn & column, const capnp::DynamicStruct::Reader & struct_reader)
         {
             auto & entries_column = assert_cast<ColumnMap &>(column).getNestedColumn();
             nested_serializer->readRow(entries_column, struct_reader, entries_slot_offset);
         }
 
         std::unique_ptr<ICapnProtoSerializer> nested_serializer;
-        zap::StructSchema struct_schema;
-        zap::_::StructSize struct_size;
+        capnp::StructSchema struct_schema;
+        capnp::_::StructSize struct_size{};
         UInt32 entries_slot_offset;
     };
 
     class CapnProtoStructureSerializer : public ICapnProtoSerializer
     {
     public:
-        CapnProtoStructureSerializer(const DataTypes & data_types, const Names & names, const zap::StructSchema & schema, const FormatSettings::CapnProto & settings) : struct_schema(schema)
+        CapnProtoStructureSerializer(const DataTypes & data_types, const Names & names, const capnp::StructSchema & schema, const FormatSettings::CapnProto & settings) : struct_schema(schema)
         {
             if (checkIfStructIsNamedUnion(schema) || checkIfStructContainsUnnamedUnion(schema))
                 throw Exception(ErrorCodes::CAPN_PROTO_BAD_CAST, "Root CapnProto Struct cannot be named union/struct with unnamed union");
@@ -1258,7 +1258,7 @@ namespace
             initialize(data_types, names, settings);
         }
 
-        CapnProtoStructureSerializer(const DataTypePtr & data_type, const String & column_name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings)
+        CapnProtoStructureSerializer(const DataTypePtr & data_type, const String & column_name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings)
         {
             if (!capnp_type.isStruct())
                 throwCannotConvert(data_type, column_name, capnp_type);
@@ -1309,12 +1309,12 @@ namespace
             }
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicStruct::Builder & parent_struct_builder, UInt32 slot_offset, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_struct_builder, slot_offset, row_num);
         }
 
-        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, zap::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
+        void writeRow(const ColumnPtr & column, std::unique_ptr<FieldBuilder> & field_builder, capnp::DynamicList::Builder & parent_list_builder, UInt32 array_index, size_t row_num) override
         {
             writeRowImpl(column, field_builder, parent_list_builder, array_index, row_num);
         }
@@ -1326,20 +1326,20 @@ namespace
                 fields_serializers[i]->writeRow(columns[i], struct_builder.field_builders[fields_indexes[i]], struct_builder.impl, fields_offsets[i], row_num);
         }
 
-        void readRow(IColumn & column, const zap::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
+        void readRow(IColumn & column, const capnp::DynamicStruct::Reader & parent_struct_reader, UInt32 slot_offset) override
         {
-            auto struct_reader = zap::DynamicStruct::Reader(struct_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getStruct(nullptr));
+            auto struct_reader = capnp::DynamicStruct::Reader(struct_schema, parent_struct_reader.getReaderImpl().getPointerField(slot_offset).getStruct(nullptr));
             readRowImpl(column, struct_reader);
         }
 
-        void readRow(IColumn & column, const zap::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
+        void readRow(IColumn & column, const capnp::DynamicList::Reader & parent_list_reader, UInt32 array_index) override
         {
-            auto struct_reader = zap::DynamicStruct::Reader(struct_schema, parent_list_reader.getReaderImpl().getStructElement(array_index));
+            auto struct_reader = capnp::DynamicStruct::Reader(struct_schema, parent_list_reader.getReaderImpl().getStructElement(array_index));
             readRowImpl(column, struct_reader);
         }
 
         /// Method for reading from root struct.
-        void readRow(MutableColumns & columns, const zap::DynamicStruct::Reader & reader)
+        void readRow(MutableColumns & columns, const capnp::DynamicStruct::Reader & reader)
         {
             for (size_t i = 0; i != columns.size(); ++i)
                 fields_serializers[i]->readRow(*columns[i], reader, fields_offsets[i]);
@@ -1349,7 +1349,7 @@ namespace
         void initialize(const DataTypes & data_types, const Names & names, const FormatSettings::CapnProto & settings)
         {
             auto node = struct_schema.getProto().getStruct();
-            struct_size = zap::_::StructSize(node.getDataWordCount(), node.getPointerCount());
+            struct_size = capnp::_::StructSize(node.getDataWordCount(), node.getPointerCount());
             fields_count = struct_schema.getFields().size();
             fields_serializers.reserve(data_types.size());
             fields_offsets.reserve(data_types.size());
@@ -1387,7 +1387,7 @@ namespace
             }
         }
 
-        void readRowImpl(IColumn & column, const zap::DynamicStruct::Reader & struct_reader)
+        void readRowImpl(IColumn & column, const capnp::DynamicStruct::Reader & struct_reader)
         {
             if (auto * tuple_column = typeid_cast<ColumnTuple *>(&column))
             {
@@ -1403,16 +1403,16 @@ namespace
                 fields_serializers[0]->readRow(column, struct_reader, fields_offsets[0]);
         }
 
-        zap::StructSchema struct_schema;
-        zap::_::StructSize struct_size;
-        size_t fields_count;
+        capnp::StructSchema struct_schema;
+        capnp::_::StructSize struct_size{};
+        size_t fields_count{};
         std::vector<std::unique_ptr<ICapnProtoSerializer>> fields_serializers;
         std::vector<UInt32> fields_offsets;
         std::vector<size_t> fields_indexes;
 
     };
 
-    std::unique_ptr<ICapnProtoSerializer> createSerializer(const DataTypePtr & type, const String & name, const zap::Type & capnp_type, const FormatSettings::CapnProto & settings)
+    std::unique_ptr<ICapnProtoSerializer> createSerializer(const DataTypePtr & type, const String & name, const capnp::Type & capnp_type, const FormatSettings::CapnProto & settings)
     {
         auto [field_name, nested_name] = splitFieldName(name);
         if (!nested_name.empty() && !capnp_type.isList())
@@ -1483,12 +1483,12 @@ namespace
                 return std::make_unique<CapnProtoEnumSerializer<Int16>>(type, name, capnp_type, settings.enum_comparing_mode);
             case TypeIndex::String:
                 if (capnp_type.isData())
-                    return std::make_unique<CapnProtoStringSerializer<zap::Data>>(type, name, capnp_type);
-                return std::make_unique<CapnProtoStringSerializer<zap::Text>>(type, name, capnp_type);
+                    return std::make_unique<CapnProtoStringSerializer<capnp::Data>>(type, name, capnp_type);
+                return std::make_unique<CapnProtoStringSerializer<capnp::Text>>(type, name, capnp_type);
             case TypeIndex::FixedString:
                 if (capnp_type.isData())
-                    return std::make_unique<CapnProtoFixedStringSerializer<zap::Data>>(type, name, capnp_type);
-                return std::make_unique<CapnProtoFixedStringSerializer<zap::Text>>(type, name, capnp_type);
+                    return std::make_unique<CapnProtoFixedStringSerializer<capnp::Data>>(type, name, capnp_type);
+                return std::make_unique<CapnProtoFixedStringSerializer<capnp::Text>>(type, name, capnp_type);
             case TypeIndex::LowCardinality:
                 return std::make_unique<CapnProtoLowCardinalitySerializer>(type, name, capnp_type, settings);
             case TypeIndex::Nullable:
@@ -1508,19 +1508,19 @@ namespace
 class CapnProtoSerializer::Impl
 {
 public:
-    Impl(const DataTypes & data_types, const Names & names, const zap::StructSchema & schema, const FormatSettings::CapnProto & settings)
+    Impl(const DataTypes & data_types, const Names & names, const capnp::StructSchema & schema, const FormatSettings::CapnProto & settings)
         : struct_serializer(std::make_unique<CapnProtoStructureSerializer>(data_types, names, schema, settings))
         , fields_size(schema.getFields().size())
     {
     }
 
-    void writeRow(const Columns & columns, zap::DynamicStruct::Builder builder, size_t row_num)
+    void writeRow(const Columns & columns, capnp::DynamicStruct::Builder builder, size_t row_num)
     {
         StructBuilder struct_builder(std::move(builder), fields_size);
         struct_serializer->writeRow(columns, struct_builder, row_num);
     }
 
-    void readRow(MutableColumns & columns, zap::DynamicStruct::Reader & reader)
+    void readRow(MutableColumns & columns, capnp::DynamicStruct::Reader & reader)
     {
         struct_serializer->readRow(columns, reader);
     }
@@ -1530,17 +1530,17 @@ private:
     size_t fields_size;
 };
 
-CapnProtoSerializer::CapnProtoSerializer(const DataTypes & data_types, const Names & names, const zap::StructSchema & schema, const FormatSettings::CapnProto & settings)
+CapnProtoSerializer::CapnProtoSerializer(const DataTypes & data_types, const Names & names, const capnp::StructSchema & schema, const FormatSettings::CapnProto & settings)
     : serializer_impl(std::make_unique<Impl>(data_types, names, schema, settings))
 {
 }
 
-void CapnProtoSerializer::writeRow(const Columns & columns, zap::DynamicStruct::Builder builder, size_t row_num)
+void CapnProtoSerializer::writeRow(const Columns & columns, capnp::DynamicStruct::Builder builder, size_t row_num)
 {
     serializer_impl->writeRow(columns, std::move(builder), row_num);
 }
 
-void CapnProtoSerializer::readRow(MutableColumns & columns, zap::DynamicStruct::Reader & reader)
+void CapnProtoSerializer::readRow(MutableColumns & columns, capnp::DynamicStruct::Reader & reader)
 {
     serializer_impl->readRow(columns, reader);
 }

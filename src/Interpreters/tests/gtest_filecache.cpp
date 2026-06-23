@@ -23,8 +23,8 @@
 #include <Interpreters/FileCache/FileSegment.h>
 #include <Interpreters/FileCache/EvictionCandidates.h>
 #include <Interpreters/FileCache/SLRUFileCachePriority.h>
-#if CLICKHOUSE_CLOUD
-#include <Interpreters/Cache/OvercommitFileCachePriority.h>
+#if DATASTORE_CLOUD
+#include <Interpreters/FileCache/OvercommitFileCachePriority.h>
 #endif
 #include <Interpreters/Context.h>
 #include <Interpreters/TemporaryDataOnDisk.h>
@@ -89,6 +89,8 @@ namespace DB::FileCacheSetting
     extern const FileCacheSettingsBool load_metadata_asynchronously;
     extern const FileCacheSettingsBool write_cache_per_user_id_directory;
     extern const FileCacheSettingsBool allow_dynamic_cache_resize;
+    extern const FileCacheSettingsBool enable_bypass_cache_with_threshold;
+    extern const FileCacheSettingsUInt64 bypass_cache_threshold;
 }
 
 void printRanges(const auto & segments)
@@ -98,13 +100,13 @@ void printRanges(const auto & segments)
         std::cerr << '\n' << segment->range().toString() << " (state: " + DB::FileSegment::stateToString(segment->state()) + ")" << "\n";
 }
 
-String getFileSegmentPath(const String & base_path, const DB::FileCache::Key & key, size_t offset)
+[[maybe_unused]] static String getFileSegmentPath(const String & base_path, const DB::FileCache::Key & key, size_t offset)
 {
     auto key_str = key.toString();
     return fs::path(base_path) / key_str.substr(0, 3) / key_str / DB::toString(offset);
 }
 
-void download(const std::string & cache_base_path, DB::FileSegment & file_segment)
+static void download(const std::string & cache_base_path, DB::FileSegment & file_segment)
 {
     const auto & key = file_segment.key();
     size_t size = file_segment.range().size();
@@ -131,7 +133,7 @@ std::string cache_base_path2 = caches_dir / "cache2" / "";
 std::string cache_base_path3 = caches_dir / "cache3" / "";
 
 
-void assertEqual(const FileSegmentsHolderPtr & file_segments, const Ranges & expected_ranges, const States & expected_states = {})
+static void assertEqual(const FileSegmentsHolderPtr & file_segments, const Ranges & expected_ranges, const States & expected_states = {})
 {
     std::cerr << "\nFile segments: ";
     for (const auto & file_segment : *file_segments)
@@ -162,7 +164,7 @@ void assertEqual(const FileSegmentsHolderPtr & file_segments, const Ranges & exp
     }
 }
 
-void assertEqual(const std::vector<FileSegment::Info> & file_segments, const Ranges & expected_ranges, const States & expected_states = {})
+static void assertEqual(const std::vector<FileSegment::Info> & file_segments, const Ranges & expected_ranges, const States & expected_states = {})
 {
     std::cerr << "\nFile segments: ";
     for (const auto & file_segment : file_segments)
@@ -193,7 +195,7 @@ void assertEqual(const std::vector<FileSegment::Info> & file_segments, const Ran
     }
 }
 
-void assertEqual(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges & expected_ranges, const States & expected_states = {})
+static void assertEqual(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges & expected_ranges, const States & expected_states = {})
 {
     if (const auto * lru = dynamic_cast<const LRUFileCachePriority::IPriorityDump *>(dump.get()))
     {
@@ -205,7 +207,7 @@ void assertEqual(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges 
     }
 }
 
-void assertProtectedOrProbationary(const std::vector<FileSegmentInfo> & file_segments, const Ranges & expected, bool assert_protected)
+static void assertProtectedOrProbationary(const std::vector<FileSegmentInfo> & file_segments, const Ranges & expected, bool assert_protected)
 {
     std::cerr << "\nFile segments: ";
     std::vector<Range> res;
@@ -236,19 +238,19 @@ void assertProtectedOrProbationary(const std::vector<FileSegmentInfo> & file_seg
     }
 }
 
-void assertProtected(const std::vector<FileSegmentInfo> & file_segments, const Ranges & expected)
+static void assertProtected(const std::vector<FileSegmentInfo> & file_segments, const Ranges & expected)
 {
     std::cerr << "\nAssert protected";
     assertProtectedOrProbationary(file_segments, expected, true);
 }
 
-void assertProbationary(const std::vector<FileSegmentInfo> & file_segments, const Ranges & expected)
+static void assertProbationary(const std::vector<FileSegmentInfo> & file_segments, const Ranges & expected)
 {
     std::cerr << "\nAssert probationary";
     assertProtectedOrProbationary(file_segments, expected, false);
 }
 
-void assertProtected(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges & expected)
+static void assertProtected(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges & expected)
 {
     if (const auto * lru = dynamic_cast<const LRUFileCachePriority::IPriorityDump *>(dump.get()))
     {
@@ -260,7 +262,7 @@ void assertProtected(const IFileCachePriority::PriorityDumpPtr & dump, const Ran
     }
 }
 
-void assertProbationary(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges & expected)
+static void assertProbationary(const IFileCachePriority::PriorityDumpPtr & dump, const Ranges & expected)
 {
     if (const auto * lru = dynamic_cast<const LRUFileCachePriority::IPriorityDump *>(dump.get()))
     {
@@ -272,7 +274,7 @@ void assertProbationary(const IFileCachePriority::PriorityDumpPtr & dump, const 
     }
 }
 
-FileSegmentPtr get(const HolderPtr & holder, int i)
+static FileSegmentPtr get(const HolderPtr & holder, int i)
 {
     auto it = std::next(holder->begin(), i);
     if (it == holder->end())
@@ -280,7 +282,7 @@ FileSegmentPtr get(const HolderPtr & holder, int i)
     return *it;
 }
 
-void download(FileSegmentPtr file_segment, bool complete = true)
+static void download(FileSegmentPtr file_segment, bool complete = true)
 {
     std::cerr << "\nDownloading range " << file_segment->range().toString() << "\n";
 
@@ -300,7 +302,7 @@ void download(FileSegmentPtr file_segment, bool complete = true)
     }
 }
 
-void assertDownloadFails(FileSegmentPtr file_segment)
+static void assertDownloadFails(FileSegmentPtr file_segment)
 {
     ASSERT_EQ(file_segment->getOrSetDownloader(), FileSegment::getCallerId());
     ASSERT_EQ(file_segment->getDownloadedSize(), 0);
@@ -309,7 +311,7 @@ void assertDownloadFails(FileSegmentPtr file_segment)
     FileSegment::complete(FileSegmentPtr(file_segment), /*allow_background_download=*/false, /*force_shrink_to_downloaded_size=*/false);
 }
 
-void download(const HolderPtr & holder)
+static void download(const HolderPtr & holder)
 {
     for (auto & it : *holder)
     {
@@ -317,13 +319,13 @@ void download(const HolderPtr & holder)
     }
 }
 
-void increasePriority(const HolderPtr & holder)
+static void increasePriority(const HolderPtr & holder)
 {
     for (auto & it : *holder)
         it->increasePriority();
 }
 
-void increasePriority(const HolderPtr & holder, size_t pos)
+[[maybe_unused]] static void increasePriority(const HolderPtr & holder, size_t pos)
 {
     FileSegments::iterator it = holder->begin();
     std::advance(it, pos);
@@ -1042,8 +1044,8 @@ try
     ASSERT_GT(size_used_before_temporary_data, 0);
     ASSERT_GT(segments_used_before_temporary_data, 0);
 
-    size_t size_used_with_temporary_data;
-    size_t segments_used_with_temporary_data;
+    size_t size_used_with_temporary_data = {};
+    size_t segments_used_with_temporary_data = {};
 
 
     {
@@ -1127,6 +1129,62 @@ catch (...)
     throw;
 }
 
+/// `getDownloadedContiguousOrEmpty` must inspect the actually downloaded segments even when
+/// `enable_bypass_cache_with_threshold` is on and the requested range exceeds the threshold.
+/// Otherwise getImpl() would return a synthetic DETACHED placeholder and the helper would
+/// wrongly report present-but-large data (e.g. distributed-cache temporary data) as missing.
+TEST_F(FileCacheTest, GetDownloadedContiguousIgnoresBypassThreshold)
+try
+{
+    ServerUUID::setRandomForUnitTests();
+    DB::ThreadStatus thread_status;
+
+    const size_t bypass_threshold = 100;
+    const size_t chunk = bypass_threshold; /// each cached segment stays at/below the threshold
+
+    DB::FileCacheSettings settings;
+    settings[FileCacheSetting::path] = cache_base_path;
+    settings[FileCacheSetting::max_size] = 100_KiB;
+    settings[FileCacheSetting::max_file_segment_size] = chunk;
+    settings[FileCacheSetting::boundary_alignment] = 1;
+    settings[FileCacheSetting::load_metadata_asynchronously] = false;
+    settings[FileCacheSetting::cache_policy] = FileCachePolicy::LRU;
+    /// Any read larger than `bypass_threshold` bytes would normally bypass the cache.
+    settings[FileCacheSetting::enable_bypass_cache_with_threshold] = true;
+    settings[FileCacheSetting::bypass_cache_threshold] = bypass_threshold;
+
+    DB::FileCache file_cache("bypass-temp", settings);
+    file_cache.initialize();
+
+    const auto & user = FileCache::getCommonOrigin();
+    const auto key = FileCacheKey::fromPath("bypass_temp_key");
+
+    /// Populate several contiguous segments, each no larger than the bypass threshold (a single
+    /// write larger than the threshold would itself bypass the cache and never be stored). The
+    /// downloaded data covers a range that, when read at once, exceeds the threshold.
+    const size_t num_chunks = 3;
+    const size_t downloaded_size = num_chunks * chunk;
+    for (size_t i = 0; i < num_chunks; ++i)
+    {
+        auto holder = file_cache.getOrSet(key, i * chunk, chunk, downloaded_size, CreateFileSegmentSettings{}, 0, user);
+        download(holder);
+    }
+
+    const auto & user_id = user.user_id;
+
+    /// The whole downloaded range is larger than the threshold but must still be reported present.
+    EXPECT_FALSE(file_cache.getDownloadedContiguousOrEmpty(key, 0, downloaded_size, user_id)->empty());
+    /// A sub-range that also exceeds the threshold is present too.
+    EXPECT_FALSE(file_cache.getDownloadedContiguousOrEmpty(key, 10, downloaded_size - 10, user_id)->empty());
+    /// A range past the downloaded data is correctly reported as missing.
+    EXPECT_TRUE(file_cache.getDownloadedContiguousOrEmpty(key, 0, downloaded_size + 1, user_id)->empty());
+}
+catch (...)
+{
+    std::cerr << getCurrentExceptionMessage(true) << std::endl;
+    throw;
+}
+
 TEST_F(FileCacheTest, CachedReadBuffer)
 {
     ServerUUID::setRandomForUnitTests();
@@ -1159,7 +1217,7 @@ TEST_F(FileCacheTest, CachedReadBuffer)
 
     ReadSettings read_settings;
     read_settings.enable_filesystem_cache = true;
-    read_settings.local_fs_method = LocalFSReadMethod::pread;
+    read_settings.local_fs_settings.method = LocalFSReadMethod::pread;
 
     std::string file_path = fs::current_path() / "test";
     auto read_buffer_creator = [&]()
@@ -1181,7 +1239,9 @@ TEST_F(FileCacheTest, CachedReadBuffer)
 
     {
         auto cached_buffer = std::make_shared<CachedOnDiskReadBufferFromFile>(
-            file_path, key, cache, user, read_buffer_creator, read_settings, "test", s.size(), false, false, std::nullopt, nullptr);
+            file_path, key, cache, user, read_buffer_creator,
+            read_settings.filesystem_cache_settings, read_settings.remote_fs_settings.buffer_size, read_settings.local_fs_settings.buffer_size,
+            "test", s.size(), false, false, std::nullopt, nullptr);
 
         WriteBufferFromOwnString result;
         copyData(*cached_buffer, result);
@@ -1191,12 +1251,10 @@ TEST_F(FileCacheTest, CachedReadBuffer)
     }
 
     {
-        ReadSettings modified_settings{read_settings};
-        modified_settings.local_fs_buffer_size = 10;
-        modified_settings.remote_fs_buffer_size = 10;
-
         auto cached_buffer = std::make_shared<CachedOnDiskReadBufferFromFile>(
-            file_path, key, cache, user, read_buffer_creator, modified_settings, "test", s.size(), false, false, std::nullopt, nullptr);
+            file_path, key, cache, user, read_buffer_creator,
+            read_settings.filesystem_cache_settings, /* remote_fs_buffer_size */ 10, /* local_fs_buffer_size */ 10,
+            "test", s.size(), false, false, std::nullopt, nullptr);
 
         cached_buffer->next();
         assertEqual(cache->dumpQueue(), {Range(10, 14), Range(15, 19), Range(20, 24), Range(25, 29), Range(0, 4), Range(5, 9)});
@@ -1260,6 +1318,7 @@ TEST_F(FileCacheTest, TemporaryDataReadBufferSize)
 }
 
 TEST_F(FileCacheTest, SLRUPolicy)
+try
 {
     ServerUUID::setRandomForUnitTests();
     DB::ThreadStatus thread_status;
@@ -1376,7 +1435,7 @@ TEST_F(FileCacheTest, SLRUPolicy)
     {
         ReadSettings read_settings;
         read_settings.enable_filesystem_cache = true;
-        read_settings.local_fs_method = LocalFSReadMethod::pread;
+        read_settings.local_fs_settings.method = LocalFSReadMethod::pread;
 
         auto write_file = [](const std::string & filename, const std::string & s)
         {
@@ -1409,7 +1468,9 @@ TEST_F(FileCacheTest, SLRUPolicy)
             };
 
             auto cached_buffer = std::make_shared<CachedOnDiskReadBufferFromFile>(
-                file, key, cache, user, read_buffer_creator, read_settings, "test", expect_result.size(), false, false, std::nullopt, nullptr);
+                file, key, cache, user, read_buffer_creator,
+                read_settings.filesystem_cache_settings, read_settings.remote_fs_settings.buffer_size, read_settings.local_fs_settings.buffer_size,
+                "test", expect_result.size(), false, false, std::nullopt, nullptr);
 
             WriteBufferFromOwnString result;
             copyData(*cached_buffer, result);
@@ -1467,6 +1528,11 @@ TEST_F(FileCacheTest, SLRUPolicy)
         assertProtected(cache->dumpQueue(), { Range(10, 14), Range(0, 4), Range(5, 9)  });
     }
 }
+catch (...)
+{
+    std::cerr << getCurrentExceptionMessage(true) << "\n";
+    throw;
+}
 
 TEST_F(FileCacheTest, SLRUDynamicResizeCorrectEviction)
 {
@@ -1477,7 +1543,7 @@ TEST_F(FileCacheTest, SLRUDynamicResizeCorrectEviction)
 
     ReadSettings read_settings;
     read_settings.enable_filesystem_cache = true;
-    read_settings.local_fs_method = LocalFSReadMethod::pread;
+    read_settings.local_fs_settings.method = LocalFSReadMethod::pread;
 
     auto write_file = [](const std::string & filename, const std::string & s)
     {
@@ -1514,7 +1580,8 @@ TEST_F(FileCacheTest, SLRUDynamicResizeCorrectEviction)
             return createReadBufferFromFileBase(file, read_settings, std::nullopt, std::nullopt);
         };
         auto cached_buffer = std::make_shared<CachedOnDiskReadBufferFromFile>(
-            file, key, cache, user, read_buffer_creator, read_settings,
+            file, key, cache, user, read_buffer_creator,
+            read_settings.filesystem_cache_settings, read_settings.remote_fs_settings.buffer_size, read_settings.local_fs_settings.buffer_size,
             "test", expect_result.size(), false, false, std::nullopt, nullptr);
         WriteBufferFromOwnString result;
         copyData(*cached_buffer, result);
@@ -1562,7 +1629,7 @@ TEST_F(FileCacheTest, SLRUDynamicResizeCorrectEviction)
 
 TEST_F(FileCacheTest, SLRUFreeSpaceKeepingProtectedOnly)
 {
-    /// Regression test for https://github.com/ClickHouse/ClickHouse/issues/104307
+    /// Regression test for https://github.com/Datastore/Datastore/issues/104307
     ///
     /// `SLRUFileCachePriority::collectEvictionInfo` is invoked from
     /// `FileCache::freeSpaceRatioKeepingThreadFunc` (driven by the

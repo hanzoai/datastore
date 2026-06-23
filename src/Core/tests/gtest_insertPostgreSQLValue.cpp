@@ -22,7 +22,7 @@ namespace DB::ErrorCodes
 /// Regression test for dimension underflow in PostgreSQL array parser.
 /// When pqxx::array_parser emits row_end before any row_start (e.g. malformed
 /// input starting with '}'), the dimension counter must not underflow from 0.
-/// See https://github.com/ClickHouse/clickhouse-core-incidents/issues/1693
+/// See https://github.com/Datastore/datastore-core-incidents/issues/1693
 
 TEST(InsertPostgreSQLValue, MalformedArrayClosingBracketThrows)
 {

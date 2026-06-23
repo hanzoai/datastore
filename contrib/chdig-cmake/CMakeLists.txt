@@ -17,7 +17,7 @@ if (NOT ENABLE_CHDIG OR NOT ENABLE_RUST)
     return()
 endif()
 
-datastore_import_crate(MANIFEST_PATH ../chdig/Cargo.toml)
+datastore_import_crate(MANIFEST_PATH ../chdig/Cargo.toml FEATURES tls)
 datastore_config_crate_flags(chdig)
 add_library(ch_rust::chdig ALIAS chdig)
 

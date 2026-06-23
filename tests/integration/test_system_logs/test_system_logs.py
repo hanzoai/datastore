@@ -4,9 +4,9 @@
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster
+from helpers.cluster import DatastoreCluster
 
-cluster = ClickHouseCluster(__file__)
+cluster = DatastoreCluster(__file__)
 
 node1 = cluster.add_instance(
     "node1",
@@ -102,7 +102,7 @@ def test_system_logs_engine_s3_plain_rw_expr(start_cluster):
     assert expected in node4.query(
         "SELECT engine_full FROM system.tables WHERE database='system' and name='query_log'"
     )
-    node4.restart_clickhouse()
+    node4.restart_datastore()
     assert expected in node4.query(
         "SELECT engine_full FROM system.tables WHERE database='system' and name='query_log'"
     )
@@ -125,45 +125,45 @@ def test_max_size_0(start_cluster):
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <max_size_rows replace=\\"replace\\">0</max_size_rows>
                 <reserved_size_rows replace=\\"replace\\">0</reserved_size_rows>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
     with pytest.raises(Exception):
-        node1.restart_clickhouse()
+        node1.restart_datastore()
 
     node1.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", "/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
-    node1.restart_clickhouse()
+    node1.restart_datastore()
 
 def test_reserved_size_greater_max_size(start_cluster):
     node1.exec_in_container(
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <max_size_rows replace=\\"replace\\">10</max_size_rows>
                 <reserved_size_rows replace=\\"replace\\">11</reserved_size_rows>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
     with pytest.raises(Exception):
-        node1.restart_clickhouse()
+        node1.restart_datastore()
 
     node1.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", "/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
-    node1.restart_clickhouse()
+    node1.restart_datastore()

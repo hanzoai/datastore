@@ -17,7 +17,7 @@ using namespace DB;
 namespace
 {
 
-// Note: Map type cannot be inside Nullable in ClickHouse.
+// Note: Map type cannot be inside Nullable in Datastore.
 // This function is kept for reference but won't be used in tests
 // because makeNullable(Map(...)) will throw an exception.
 
@@ -46,7 +46,7 @@ DictionaryAttribute makeNullableJsonAttribute()
 
 TEST(DictionaryAttributeColumnProvider, MapTypeSupported)
 {
-    // Note: Map type cannot be inside Nullable in ClickHouse (canBeInsideNullable returns false).
+    // Note: Map type cannot be inside Nullable in Datastore (canBeInsideNullable returns false).
     // This test verifies that getColumn correctly handles a Map type (non-nullable).
     // The fix we made ensures that removeNullable is used to unwrap any Nullable wrapper,
     // even though Map cannot be Nullable in normal cases.
@@ -103,8 +103,8 @@ TEST(DictionaryAttributeColumnProvider, TypedJsonPathsPreservedForSubcolumns)
     DataTypePtr json_type = std::make_shared<DataTypeObject>(
         DataTypeObject::SchemaFormat::JSON,
         typed_paths,
-        std::unordered_set<String>{}, // STYLE_CHECK_ALLOW_STD_CONTAINERS
-        std::vector<String>{},
+        NameSet{},
+        Strings{},
         DataTypeObject::DEFAULT_MAX_DYNAMIC_PATHS,
         DataTypeDynamic::DEFAULT_MAX_DYNAMIC_TYPES);
     DataTypePtr nullable_json_type = makeNullable(json_type);

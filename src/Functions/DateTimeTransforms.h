@@ -984,7 +984,8 @@ struct ToStartOfSecondImpl
         if (fractional_with_sign < 0)
             fractional_with_sign += scale_multiplier;
 
-        return datetime64 - fractional_with_sign;
+        /// Use unsigned arithmetic to avoid signed overflow UB for inputs near `INT64_MIN`.
+        return static_cast<DateTime64>(static_cast<UInt64>(datetime64) - static_cast<UInt64>(fractional_with_sign));
     }
 
     static Time64 execute(const Time64 & time64, Int64 scale_multiplier, const DateLUTImpl &)
@@ -995,7 +996,8 @@ struct ToStartOfSecondImpl
         if (fractional_with_sign < 0)
             fractional_with_sign += scale_multiplier;
 
-        return time64 - fractional_with_sign;
+        /// Use unsigned arithmetic to avoid signed overflow UB for inputs near `INT64_MIN`.
+        return static_cast<Time64>(static_cast<UInt64>(time64) - static_cast<UInt64>(fractional_with_sign));
     }
 
     static UInt32 execute(UInt32, const DateLUTImpl &)
@@ -1045,9 +1047,10 @@ struct ToStartOfMillisecondImpl
             = DecimalUtils::getFractionalPartWithScaleMultiplier<DateTime64, true>(datetime64, scale_multiplier / 1000);
 
         if (droppable_part_with_sign < 0)
-            droppable_part_with_sign += scale_multiplier;
+            droppable_part_with_sign += scale_multiplier / 1000;
 
-        return datetime64 - droppable_part_with_sign;
+        /// Use unsigned arithmetic to avoid signed overflow UB for inputs near `INT64_MIN`.
+        return static_cast<DateTime64>(static_cast<UInt64>(datetime64) - static_cast<UInt64>(droppable_part_with_sign));
     }
 
     static Time64 execute(const Time64 & time64, Int64 scale_multiplier, const DateLUTImpl &)
@@ -1067,9 +1070,10 @@ struct ToStartOfMillisecondImpl
             = DecimalUtils::getFractionalPartWithScaleMultiplier<Time64, true>(time64, scale_multiplier / 1000);
 
         if (droppable_part_with_sign < 0)
-            droppable_part_with_sign += scale_multiplier;
+            droppable_part_with_sign += scale_multiplier / 1000;
 
-        return time64 - droppable_part_with_sign;
+        /// Use unsigned arithmetic to avoid signed overflow UB for inputs near `INT64_MIN`.
+        return static_cast<Time64>(static_cast<UInt64>(time64) - static_cast<UInt64>(droppable_part_with_sign));
     }
 
     static UInt32 execute(UInt32, const DateLUTImpl &)
@@ -1115,9 +1119,10 @@ struct ToStartOfMicrosecondImpl
             = DecimalUtils::getFractionalPartWithScaleMultiplier<DateTime64, true>(datetime64, scale_multiplier / 1000000);
 
         if (droppable_part_with_sign < 0)
-            droppable_part_with_sign += scale_multiplier;
+            droppable_part_with_sign += scale_multiplier / 1000000;
 
-        return datetime64 - droppable_part_with_sign;
+        /// Use unsigned arithmetic to avoid signed overflow UB for inputs near `INT64_MIN`.
+        return static_cast<DateTime64>(static_cast<UInt64>(datetime64) - static_cast<UInt64>(droppable_part_with_sign));
     }
 
     static Time64 execute(const Time64 & time64, Int64 scale_multiplier, const DateLUTImpl &)
@@ -1138,9 +1143,10 @@ struct ToStartOfMicrosecondImpl
             = DecimalUtils::getFractionalPartWithScaleMultiplier<Time64, true>(time64, scale_multiplier / 1000000);
 
         if (droppable_part_with_sign < 0)
-            droppable_part_with_sign += scale_multiplier;
+            droppable_part_with_sign += scale_multiplier / 1000000;
 
-        return time64 - droppable_part_with_sign;
+        /// Use unsigned arithmetic to avoid signed overflow UB for inputs near `INT64_MIN`.
+        return static_cast<Time64>(static_cast<UInt64>(time64) - static_cast<UInt64>(droppable_part_with_sign));
     }
 
     static UInt32 execute(UInt32, const DateLUTImpl &)
@@ -1915,6 +1921,76 @@ struct ToMillisecondImpl
     using FactorTransform = ZeroTransform;
 };
 
+struct ToMicrosecondImpl
+{
+    static constexpr auto name = "toMicrosecond";
+
+    static UInt32 execute(const DateTime64 & datetime64, Int64 scale_multiplier, const DateLUTImpl & time_zone)
+    {
+        return static_cast<UInt32>(time_zone.toMicrosecond(datetime64, scale_multiplier));
+    }
+
+    static UInt32 execute(const Time64 & time64, Int64 scale_multiplier, const DateLUTImpl & time_zone)
+    {
+        return static_cast<UInt32>(time_zone.toMicrosecond(time64, scale_multiplier));
+    }
+
+    static UInt32 execute(UInt32, const DateLUTImpl &)
+    {
+        return 0;
+    }
+    static UInt32 execute(Int32, const DateLUTImpl &)
+    {
+        throwDate32IsNotSupported(name);
+    }
+    static UInt32 execute(Int64, const DateLUTImpl &)
+    {
+        throwTimeIsNotSupported(name);
+    }
+    static UInt32 execute(UInt16, const DateLUTImpl &)
+    {
+        throwDateIsNotSupported(name);
+    }
+    static constexpr bool hasPreimage() { return false; }
+
+    using FactorTransform = ZeroTransform;
+};
+
+struct ToNanosecondImpl
+{
+    static constexpr auto name = "toNanosecond";
+
+    static UInt32 execute(const DateTime64 & datetime64, Int64 scale_multiplier, const DateLUTImpl & time_zone)
+    {
+        return static_cast<UInt32>(time_zone.toNanosecond(datetime64, scale_multiplier));
+    }
+
+    static UInt32 execute(const Time64 & time64, Int64 scale_multiplier, const DateLUTImpl & time_zone)
+    {
+        return static_cast<UInt32>(time_zone.toNanosecond(time64, scale_multiplier));
+    }
+
+    static UInt32 execute(UInt32, const DateLUTImpl &)
+    {
+        return 0;
+    }
+    static UInt32 execute(Int32, const DateLUTImpl &)
+    {
+        throwDate32IsNotSupported(name);
+    }
+    static UInt32 execute(Int64, const DateLUTImpl &)
+    {
+        throwTimeIsNotSupported(name);
+    }
+    static UInt32 execute(UInt16, const DateLUTImpl &)
+    {
+        throwDateIsNotSupported(name);
+    }
+    static constexpr bool hasPreimage() { return false; }
+
+    using FactorTransform = ZeroTransform;
+};
+
 struct ToISOYearImpl
 {
     static constexpr auto name = "toISOYear";
@@ -2481,9 +2557,9 @@ struct ToYYYYMMDDhhmmssImpl
 
 struct DateTimeComponentsWithFractionalPart : public DateLUTImpl::DateTimeComponents
 {
-    UInt16  millisecond;
-    UInt16  microsecond;
-    UInt16  nanosecond;
+    UInt16  millisecond{};
+    UInt16  microsecond{};
+    UInt16  nanosecond{};
 };
 
 struct ToDateTimeComponentsImpl

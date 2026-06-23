@@ -232,6 +232,7 @@ std::string DatastoreDictionarySource::doInvalidateQuery(const std::string & req
     return readInvalidateQuery(pipeline);
 }
 
+void registerDictionarySourceDatastore(DictionarySourceFactory & factory);
 void registerDictionarySourceDatastore(DictionarySourceFactory & factory)
 {
     auto create_table_source = [=](const String & /*name*/,
@@ -334,7 +335,10 @@ void registerDictionarySourceDatastore(DictionarySourceFactory & factory)
         return std::make_unique<DatastoreDictionarySource>(dict_struct, *configuration, sample_block, context);
     };
 
-    factory.registerSource("datastore", create_table_source);
+    factory.registerSource("datastore", create_table_source, Documentation{
+        .description = "Reads dictionary data from a table on a local or remote Datastore server.",
+        .syntax = "SOURCE(DATASTORE(host 'host' port 9000 user 'default' password '' db 'db' table 'table'))",
+        .related = {"mysql", "postgresql"}});
 }
 
 }

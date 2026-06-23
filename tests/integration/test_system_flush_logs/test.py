@@ -4,10 +4,10 @@
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster
+from helpers.cluster import DatastoreCluster
 from helpers.test_tools import TSV, assert_eq_with_retry, assert_logs_contain_with_retry
 
-cluster = ClickHouseCluster(__file__)
+cluster = DatastoreCluster(__file__)
 node = cluster.add_instance(
     "node_default",
     main_configs=[
@@ -84,7 +84,7 @@ def test_log_max_size(start_cluster):
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
@@ -93,14 +93,14 @@ def test_log_max_size(start_cluster):
                 <reserved_size_rows replace=\\"replace\\">10</reserved_size_rows>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
 
     node.query("SYSTEM FLUSH LOGS")
-    node.query(f"TRUNCATE TABLE IF EXISTS system.query_log")
-    node.restart_clickhouse()
+    node.query("TRUNCATE TABLE IF EXISTS system.query_log")
+    node.restart_datastore()
 
     # all logs records above max_size_rows are lost
     # The accepted logs records are never flushed until system flush logs is called by us
@@ -116,7 +116,7 @@ def test_log_max_size(start_cluster):
     ) == TSV([[1, 1]])
 
     node.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", "/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
 
 
@@ -125,7 +125,7 @@ def test_log_buffer_size_rows_flush_threshold(start_cluster):
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
@@ -133,29 +133,29 @@ def test_log_buffer_size_rows_flush_threshold(start_cluster):
                 <max_size_rows replace=\\"replace\\">10000</max_size_rows>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
-    node.restart_clickhouse()
-    node.query(f"TRUNCATE TABLE IF EXISTS system.query_log")
+    node.restart_datastore()
+    node.query("TRUNCATE TABLE IF EXISTS system.query_log")
     for i in range(10):
         node.query(f"select {i}")
 
     assert_eq_with_retry(
         node,
-        f"select count() >= 11 from system.query_log",
+        "select count() >= 11 from system.query_log",
         "1",
         sleep_time=0.2,
         retry_count=100,
     )
 
-    node.query(f"TRUNCATE TABLE IF EXISTS system.query_log")
+    node.query("TRUNCATE TABLE IF EXISTS system.query_log")
     node.exec_in_container(
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
@@ -163,25 +163,25 @@ def test_log_buffer_size_rows_flush_threshold(start_cluster):
                 <max_size_rows replace=\\"replace\\">10000</max_size_rows>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
     for i in range(10):
         node.query(f"select {i}")
 
     # Logs aren't flushed
     assert_eq_with_retry(
         node,
-        f"select count() < 10 from system.query_log",
+        "select count() < 10 from system.query_log",
         "1",
         sleep_time=0.2,
         retry_count=100,
     )
 
     node.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", "/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
 
 

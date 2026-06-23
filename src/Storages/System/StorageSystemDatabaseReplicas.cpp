@@ -42,7 +42,7 @@ using TStatus = typename StorageSystemDatabaseReplicas::TPools::StatusPool::TSta
 namespace
 {
 
-class SystemDatabaseReplicasSource : public ISource
+class SystemDatabaseReplicasSource final : public ISource
 {
 public:
     SystemDatabaseReplicasSource(
@@ -104,7 +104,7 @@ Chunk SystemDatabaseReplicasSource::generate()
             }
         }
 
-        const TStatus * status;
+        const TStatus * status = nullptr;
         try
         {
             status = &futures[index].get();

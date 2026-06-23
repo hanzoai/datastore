@@ -69,7 +69,7 @@ TEST(ExternalQueryBuilderEscaping, DoubleQuotesLeavesBackslashUnchanged)
     EXPECT_EQ(sql.find("'foo\\\\bar'"), std::string::npos) << "Must not double backslash. SQL: " << sql;
 }
 
-/// Backticks (ClickHouse / MySQL): \' for single quotes, \\ for backslashes.
+/// Backticks (Datastore / MySQL): \' for single quotes, \\ for backslashes.
 TEST(ExternalQueryBuilderEscaping, BackticksEscapesSingleQuoteWithBackslash)
 {
     std::string sql = buildWhereClause(IdentifierQuotingStyle::Backticks, {"it's"});
@@ -79,7 +79,7 @@ TEST(ExternalQueryBuilderEscaping, BackticksEscapesSingleQuoteWithBackslash)
 
 TEST(ExternalQueryBuilderEscaping, BackticksDoublesBackslash)
 {
-    // ClickHouse/MySQL treat '\' as an escape character; backslashes must be doubled.
+    // Datastore/MySQL treat '\' as an escape character; backslashes must be doubled.
     std::string sql = buildWhereClause(IdentifierQuotingStyle::Backticks, {"foo\\bar"});
     EXPECT_NE(sql.find("foo\\\\bar"), std::string::npos) << "SQL: " << sql;
 }

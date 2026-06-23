@@ -7,6 +7,7 @@ set (DATASTORE_KEEPER_BENCH_SOURCES
     Generator.cpp
     Runner.cpp
     Stats.cpp
+    StorageRunner.cpp
     KeeperBench.cpp
 )
 

@@ -25,24 +25,24 @@ namespace DB::ErrorCodes {
 
 #define CH_TYPE(type) DB::DataTypeFactory::instance().get(type)
 
-std::string createSimpleTypeJson(const std::string & simple_type, bool required) {
+static std::string createSimpleTypeJson(const std::string & simple_type, bool required) {
     return fmt::format(
         R"({{"name": "id", "type": "{}", "required": {}}})",
         simple_type,
         required);
 }
 
-std::string createComplexTypeJson(const std::string & type_v3) {
+[[maybe_unused]] static std::string createComplexTypeJson(const std::string & type_v3) {
     return fmt::format(
         R"({{"name": "id", "type": "any", "required": false, "type_v3": {}}})",
         type_v3);
 }
 
-bool checkColumnType(const Poco::JSON::Object::Ptr & json, const DB::DataTypePtr & correct_type) {
+static bool checkColumnType(const Poco::JSON::Object::Ptr & json, const DB::DataTypePtr & correct_type) {
     return correct_type->equals(*DB::convertYTSchema(json));
 }
 
-bool checkColumnType(const String & yt_json_str, const DB::DataTypePtr & correct_type) {
+static bool checkColumnType(const String & yt_json_str, const DB::DataTypePtr & correct_type) {
     Poco::JSON::Parser parser;
     Poco::JSON::Object::Ptr json = parser.parse(yt_json_str).extract<Poco::JSON::Object::Ptr>();
     return checkColumnType(json, correct_type);
@@ -73,7 +73,7 @@ TEST(YTDataType, CheckSimpleTypeConversation) {
     ASSERT_TRUE(checkColumnType(createSimpleTypeJson("uuid", true), CH_TYPE("UUID")));
 
     // // Dates
-    // Commented until https://github.com/ClickHouse/ClickHouse/issues/82003 not resolved
+    // Commented until https://github.com/Datastore/Datastore/issues/82003 not resolved
     // ASSERT_TRUE(checkColumnType(createSimpleTypeJson("date32", true), CH_TYPE("Date")));
     // ASSERT_TRUE(checkColumnType(createSimpleTypeJson("date", true), CH_TYPE("Date")));
     ASSERT_TRUE(checkColumnType(createSimpleTypeJson("datetime64", true), CH_TYPE("DateTime64(0)")));

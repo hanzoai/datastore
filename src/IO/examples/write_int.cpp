@@ -1,5 +1,6 @@
 #include <IO/WriteHelpers.h>
 #include <IO/WriteBufferFromFileDescriptor.h>
+#include <Examples/datastore_examples.h>
 
 using namespace DB;
 

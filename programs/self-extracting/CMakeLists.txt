@@ -23,7 +23,7 @@ if (BUILD_STRIPPED_BINARY)
     add_custom_target (datastore-self-extracting-stripped ALL
         ${CMAKE_COMMAND} -E remove datastore-stripped
         COMMAND ${COMPRESSOR} ${DECOMPRESSOR} datastore-stripped ../datastore-stripped
-        DEPENDS datastore datastore-stripped
+        DEPENDS datastore-stripped compressor
     )
     list(APPEND self_extracting_deps datastore-self-extracting-stripped)
 endif()

@@ -39,7 +39,7 @@ set(MINIZIP_LIB)
 # Check if zlib is present
 set(MZ_ZLIB ON)
 if(MZ_ZLIB)
-    # Use zlib from ClickHouse contrib
+    # Use zlib from Datastore contrib
     list(APPEND MINIZIP_LIB ch_contrib::zlib)
 
     list(APPEND MINIZIP_SRC
@@ -54,7 +54,7 @@ endif()
 # Check if bzip2 is present
 set(MZ_BZIP2 ${ENABLE_BZIP2})
 if(MZ_BZIP2)
-    # Use bzip2 from ClickHouse contrib
+    # Use bzip2 from Datastore contrib
     list(APPEND MINIZIP_LIB ch_contrib::bzip2)
 
     list(APPEND MINIZIP_SRC
@@ -69,7 +69,7 @@ endif()
 # Check if liblzma is present
 set(MZ_LZMA ON)
 if(MZ_LZMA)
-    # Use liblzma from ClickHouse contrib
+    # Use liblzma from Datastore contrib
     list(APPEND MINIZIP_LIB ch_contrib::xz)
 
     list(APPEND MINIZIP_SRC
@@ -84,7 +84,7 @@ endif()
 # Check if zstd is present
 set(MZ_ZSTD ON)
 if(MZ_ZSTD)
-    # Use zstd from ClickHouse contrib
+    # Use zstd from Datastore contrib
     list(APPEND MINIZIP_LIB ch_contrib::zstd)
 
     list(APPEND MINIZIP_SRC
@@ -106,7 +106,7 @@ endif()
 # Check to see if openssl installation is present
 set(MZ_OPENSSL ${ENABLE_SSL})
 if(MZ_OPENSSL)
-    # Use openssl from ClickHouse contrib
+    # Use openssl from Datastore contrib
     list(APPEND MINIZIP_LIB OpenSSL::SSL OpenSSL::Crypto)
 
     list(APPEND MINIZIP_SRC

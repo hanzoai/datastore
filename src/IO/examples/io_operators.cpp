@@ -3,6 +3,7 @@
 #include <IO/WriteBufferFromString.h>
 
 #include <iostream>
+#include <Examples/datastore_examples.h>
 
 
 int mainEntryExampleIoOperators(int, char **)

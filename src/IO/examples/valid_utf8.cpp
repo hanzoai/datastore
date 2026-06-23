@@ -3,6 +3,7 @@
 #include <IO/WriteHelpers.h>
 #include <string>
 #include <iostream>
+#include <Examples/datastore_examples.h>
 
 int mainEntryExampleValidUtf8(int, char **)
 {

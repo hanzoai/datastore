@@ -4,6 +4,7 @@
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TTransportUtils.h>
 #include <ThriftHiveMetastore.h>
+#include <Examples/datastore_examples.h>
 
 
 using namespace std;

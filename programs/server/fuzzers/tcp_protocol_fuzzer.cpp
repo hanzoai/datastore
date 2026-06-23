@@ -14,13 +14,16 @@
 
 int mainEntryDatastoreServer(int argc, char ** argv);
 
-static std::string datastore("datastore-server");
-static std::vector<char *> args{datastore.data()};
-static std::future<int> main_app;
+namespace
+{
 
-static std::string s_host("0.0.0.0");
-static char * host = s_host.data();
-static int64_t port = 9000;
+std::string datastore("datastore-server");
+std::vector<char *> args{datastore.data()};
+std::future<int> main_app;
+
+std::string s_host("0.0.0.0");
+char * host = s_host.data();
+int64_t port = 9000;
 
 using namespace std::chrono_literals;
 
@@ -42,6 +45,11 @@ void on_exit()
     BaseDaemon::terminate();
     main_app.wait();
 }
+
+}
+
+extern "C" int LLVMFuzzerInitialize(int * argc, char ***argv);
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size);
 
 extern "C"
 int LLVMFuzzerInitialize(int * argc, char ***argv)

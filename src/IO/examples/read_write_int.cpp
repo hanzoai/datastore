@@ -7,6 +7,7 @@
 #include <IO/WriteBufferFromString.h>
 #include <IO/ReadHelpers.h>
 #include <IO/WriteHelpers.h>
+#include <Examples/datastore_examples.h>
 
 
 int mainEntryExampleReadWriteInt(int, char **)

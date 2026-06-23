@@ -9,6 +9,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <Examples/datastore_examples.h>
 
 namespace fs = std::filesystem;
 

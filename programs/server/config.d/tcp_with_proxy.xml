@@ -1,1 +1,3 @@
-../../../tests/config/config.d/tcp_with_proxy.xml
+<datastore>
+    <tcp_with_proxy_port>9010</tcp_with_proxy_port>
+</datastore>

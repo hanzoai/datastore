@@ -1,1 +1,7 @@
-../../../tests/config/config.d/session_log.xml
+<datastore>
+    <session_log>
+        <database>system</database>
+        <table>session_log</table>
+        <flush_interval_milliseconds>100000</flush_interval_milliseconds>
+    </session_log>
+</datastore>

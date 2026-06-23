@@ -61,6 +61,8 @@ enable_heavy_build_check_if_needed()
 
 add_contrib (miniselect-cmake miniselect)
 add_contrib (pdqsort-cmake pdqsort)
+add_contrib (ipnsort-cmake ipnsort)
+add_contrib (driftsort-cmake driftsort)
 add_contrib (pocketfft-cmake pocketfft)
 add_contrib (crc32-vpmsum-cmake crc32-vpmsum)
 add_contrib (sparsehash-c11-cmake sparsehash-c11)
@@ -78,6 +80,10 @@ add_contrib (lz4-cmake lz4)
 add_contrib (murmurhash)
 add_contrib (replxx-cmake replxx)
 add_contrib (zap-cmake zap)
+add_contrib (libpng-cmake libpng) # requires: zlib
+# capnproto dropped: contrib/zap IS the debranded Cap'n Proto and provides the kj toolkit; building
+# capnproto-cmake too would duplicate kj. The CapnProto data FORMAT stays gated off (USE_CAPNP=0,
+# no ch_contrib::capnp alias) — same as before the 26.6 merge.
 add_contrib (yaml-cpp-cmake yaml-cpp)
 add_contrib (re2-cmake re2)
 add_contrib (xz-cmake xz)
@@ -91,7 +97,8 @@ add_contrib (snappy-cmake snappy)
 add_contrib (thrift-cmake thrift)
 add_contrib (StringZilla-cmake StringZilla)
 # parquet/arrow/orc
-add_contrib (arrow-cmake arrow) # requires: snappy, thrift, double-conversion
+add_contrib (xsimd-cmake xsimd) # required by arrow's SIMD codepaths
+add_contrib (arrow-cmake arrow) # requires: snappy, thrift, double-conversion, xsimd
 add_contrib (avro-cmake avro) # requires: snappy
 add_contrib (openldap-cmake openldap)
 add_contrib (msgpack-c-cmake msgpack-c)
@@ -99,9 +106,9 @@ add_contrib (libarchive-cmake libarchive)
 
 add_contrib (corrosion-cmake corrosion)
 add_contrib (delta-kernel-rs-cmake delta-kernel-rs)
-# chdig (the ClickHouse "dig" TUI debugger) and its clickhouse-rs Rust client dependency are a
-# third-party ClickHouse tool — removed from datastore (USE_CHDIG=0; the `datastore dig` entry
-# point compiles out). This also strips the bulk of vendored clickhouse-* strings from the binary.
+# chdig (the Datastore "dig" TUI debugger) and its datastore-rs Rust client dependency are a
+# third-party Datastore tool — removed from datastore (USE_CHDIG=0; the `datastore dig` entry
+# point compiles out). This also strips the bulk of vendored datastore-* strings from the binary.
 add_contrib (wasmedge-cmake wasmedge)
 
 if (ENABLE_FUZZING)

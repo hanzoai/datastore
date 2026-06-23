@@ -58,7 +58,7 @@ VirtualColumnsDescription StorageSystemDataSkippingIndices::createVirtuals()
     return desc;
 }
 
-class DataSkippingIndicesSource : public ISource
+class DataSkippingIndicesSource final : public ISource
 {
 public:
     DataSkippingIndicesSource(
@@ -121,7 +121,7 @@ protected:
                 const auto table = tables_it->table();
                 if (!table)
                     continue;
-                StorageMetadataPtr metadata_snapshot = table->getInMemoryMetadataPtr(context, false);
+                const auto metadata_snapshot = table->getInMemoryMetadataPtr(context, false);
                 if (!metadata_snapshot)
                     continue;
                 const auto indices = metadata_snapshot->getSecondaryIndices();
