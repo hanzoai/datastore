@@ -785,10 +785,6 @@ if (TARGET ch_rust::skim)
     target_link_libraries(dbms PUBLIC ch_rust::skim)
 endif()
 
-if (TARGET ch_contrib::google_cloud_cpp)
-    target_link_libraries(dbms PUBLIC ch_contrib::google_cloud_cpp)
-endif()
-
 if (TARGET ch_rust::delta_kernel_rs)
     # FIXME: This is a temporary hack to force cmake put delta_kernel_rs at the
     # end of the dependencies list, so that the linker will use symbols from it
