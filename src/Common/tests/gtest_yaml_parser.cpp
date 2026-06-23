@@ -33,7 +33,7 @@ rules:
     SCOPE_EXIT({ yaml_file->remove(); });
 
     Poco::AutoPtr<Poco::XML::Document> xml = YAMLParser::parse(yaml_file->path());
-    auto *p_node = xml->getNodeByPath("/clickhouse");
+    auto *p_node = xml->getNodeByPath("/datastore");
     EXPECT_EQ(xmlNodeAsString(p_node), R"CONFIG(<datastore>
 <rules>
 <apiGroups></apiGroups>
@@ -62,7 +62,7 @@ operator:
     SCOPE_EXIT({ yaml_file->remove(); });
 
     Poco::AutoPtr<Poco::XML::Document> xml = YAMLParser::parse(yaml_file->path());
-    auto *p_node = xml->getNodeByPath("/clickhouse");
+    auto *p_node = xml->getNodeByPath("/datastore");
     EXPECT_EQ(xmlNodeAsString(p_node), R"CONFIG(<datastore>
 <operator>
 <access_management>1</access_management>
@@ -91,7 +91,7 @@ seq:
     SCOPE_EXIT({ yaml_file->remove(); });
 
     Poco::AutoPtr<Poco::XML::Document> xml = YAMLParser::parse(yaml_file->path());
-    auto *p_node = xml->getNodeByPath("/clickhouse");
+    auto *p_node = xml->getNodeByPath("/datastore");
     EXPECT_EQ(xmlNodeAsString(p_node), R"CONFIG(<datastore>
 <seq attr1="x"></seq>
 <seq attr2="y">
@@ -120,7 +120,7 @@ map:
     SCOPE_EXIT({ yaml_file->remove(); });
 
     Poco::AutoPtr<Poco::XML::Document> xml = YAMLParser::parse(yaml_file->path());
-    auto *p_node = xml->getNodeByPath("/clickhouse");
+    auto *p_node = xml->getNodeByPath("/datastore");
     EXPECT_EQ(xmlNodeAsString(p_node), R"CONFIG(<datastore>
 <map attr1="x" attr2="y" attr3="z">
 <k1>val1</k1>
@@ -153,7 +153,7 @@ test_cluster:
     SCOPE_EXIT({ yaml_file->remove(); });
 
     Poco::AutoPtr<Poco::XML::Document> xml = YAMLParser::parse(yaml_file->path());
-    auto *p_node = xml->getNodeByPath("/clickhouse");
+    auto *p_node = xml->getNodeByPath("/datastore");
     EXPECT_EQ(xmlNodeAsString(p_node), R"CONFIG(<datastore>
 <test_cluster>
 <shard>

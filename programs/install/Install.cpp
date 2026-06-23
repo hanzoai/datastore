@@ -206,6 +206,7 @@ static std::string formatWithSudo(std::string command, bool needed = true)
 }
 
 
+int mainEntryDatastoreInstall(int argc, char ** argv);
 int mainEntryDatastoreInstall(int argc, char ** argv)
 {
     try
@@ -1024,7 +1025,7 @@ namespace
         if (fs::exists(pid_file))
         {
             ReadBufferFromFile in(pid_file.string());
-            Int32 pid;
+            Int32 pid = {};
             if (tryReadIntText(pid, in))
             {
                 fmt::print("{} file exists and contains pid = {}.\n", pid_file.string(), pid);
@@ -1243,6 +1244,7 @@ namespace
 }
 
 
+int mainEntryDatastoreStart(int argc, char ** argv);
 int mainEntryDatastoreStart(int argc, char ** argv)
 {
     try
@@ -1304,6 +1306,7 @@ int mainEntryDatastoreStart(int argc, char ** argv)
 }
 
 
+int mainEntryDatastoreStop(int argc, char ** argv);
 int mainEntryDatastoreStop(int argc, char ** argv)
 {
     try
@@ -1344,6 +1347,7 @@ int mainEntryDatastoreStop(int argc, char ** argv)
 }
 
 
+int mainEntryDatastoreStatus(int argc, char ** argv);
 int mainEntryDatastoreStatus(int argc, char ** argv)
 {
     try
@@ -1380,6 +1384,7 @@ int mainEntryDatastoreStatus(int argc, char ** argv)
 }
 
 
+int mainEntryDatastoreRestart(int argc, char ** argv);
 int mainEntryDatastoreRestart(int argc, char ** argv)
 {
     try

@@ -65,6 +65,7 @@ ColumnsDescription QueryThreadLogElement::getColumnsDescription()
         {"os_user", low_cardinality_string, "OSs username who runs datastore-client."},
         {"client_hostname", low_cardinality_string, "Hostname of the client machine where the datastore-client or another TCP client is run."},
         {"client_name", low_cardinality_string, "The datastore-client or another TCP client name."},
+        {"client_agent", low_cardinality_string, "The AI coding agent that invoked the client (e.g. `claude-code`, `cursor`), detected from environment variables. Empty if no agent was detected."},
         {"client_revision", std::make_shared<DataTypeUInt32>(), "Revision of the datastore-client or another TCP client."},
         {"client_version_major", std::make_shared<DataTypeUInt32>(), "Major version of the datastore-client or another TCP client."},
         {"client_version_minor", std::make_shared<DataTypeUInt32>(), "Minor version of the datastore-client or another TCP client."},

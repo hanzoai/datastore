@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <Examples/datastore_examples.h>
 
 
 int mainEntryExampleLimitReadBuffer(int argc, char ** argv)

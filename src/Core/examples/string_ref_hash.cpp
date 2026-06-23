@@ -2,6 +2,7 @@
 #include <IO/ReadBufferFromFileDescriptor.h>
 #include <IO/WriteBufferFromFileDescriptor.h>
 #include <IO/Operators.h>
+#include <Examples/datastore_examples.h>
 
 
 /** Calculates StringViewHash from stdin. For debugging.

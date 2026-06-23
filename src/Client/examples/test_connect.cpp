@@ -11,6 +11,7 @@
 #include <IO/ReadHelpers.h>
 #include <IO/WriteBufferFromFileDescriptor.h>
 #include <IO/copyData.h>
+#include <Examples/datastore_examples.h>
 
 
 /** In a loop it connects to the server and immediately breaks the connection.
@@ -60,7 +61,7 @@ try
                         Poco::Net::Socket::SELECT_READ | Poco::Net::Socket::SELECT_WRITE | Poco::Net::Socket::SELECT_ERROR))
                     {
                         /// Allow to debug the server.
-/*                        auto command = ShellCommand::execute("kill -STOP $(pidof clickhouse-server)");
+/*                        auto command = ShellCommand::execute("kill -STOP $(pidof datastore-server)");
                         copyData(command->err, out);
                         copyData(command->out, out);
                         command->wait();*/

@@ -1,3 +1,5 @@
+#include <Examples/datastore_examples.h>
+
 #pragma clang diagnostic ignored "-Wreserved-identifier"
 
 #if defined (OS_LINUX)

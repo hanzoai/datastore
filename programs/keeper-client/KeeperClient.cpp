@@ -745,6 +745,7 @@ int KeeperClient::main(const std::vector<String> & /* args */)
 }
 
 
+int mainEntryDatastoreKeeperClient(int argc, char ** argv);
 int mainEntryDatastoreKeeperClient(int argc, char ** argv)
 {
     try

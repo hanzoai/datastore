@@ -4,9 +4,9 @@
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster
+from helpers.cluster import DatastoreCluster
 
-cluster = ClickHouseCluster(__file__)
+cluster = DatastoreCluster(__file__)
 node = cluster.add_instance("node_default", stay_alive=True)
 
 
@@ -24,7 +24,7 @@ def test_system_logs_comment():
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <engine>ENGINE = MergeTree
@@ -37,11 +37,11 @@ def test_system_logs_comment():
                 <partition_by remove='remove'/>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
 
     node.query("select 1")
     node.query("system flush logs")

@@ -1,3 +1,5 @@
+#include <Examples/datastore_examples.h>
+
 #define DBMS_HASH_MAP_DEBUG_RESIZES
 #define DBMS_HASH_MAP_COUNT_COLLISIONS
 

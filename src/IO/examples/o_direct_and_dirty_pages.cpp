@@ -8,6 +8,7 @@
 #include <IO/ReadHelpers.h>
 #include <IO/WriteBufferFromFile.h>
 #include <IO/ReadBufferFromFile.h>
+#include <Examples/datastore_examples.h>
 
 int mainEntryExampleODirectAndDirtyPages(int, char **)
 {

@@ -20,7 +20,7 @@
 /// For the expansion of gtest macros.
 #pragma clang diagnostic ignored "-Wused-but-marked-unused"
 
-// All timezones present at build time and embedded into ClickHouse binary.
+// All timezones present at build time and embedded into Datastore binary.
 extern const char * auto_time_zones[];
 
 namespace
@@ -363,7 +363,7 @@ INSTANTIATE_TEST_SUITE_P(AllTimeZones,
     ::testing::ValuesIn(allTimezones())
 );
 
-std::ostream & operator<<(std::ostream & ostr, const DateLUTImpl::Values & v)
+[[maybe_unused]] static std::ostream & operator<<(std::ostream & ostr, const DateLUTImpl::Values & v)
 {
     return ostr << "DateLUTImpl::Values{"
             << "\n\t date              : " << v.date
@@ -384,7 +384,7 @@ struct TimeRangeParam
     const int step_in_seconds;
 };
 
-std::ostream & operator<<(std::ostream & ostr, const TimeRangeParam & param)
+static std::ostream & operator<<(std::ostream & ostr, const TimeRangeParam & param)
 {
     return ostr << param.begin << " : " << param.end << " step: " << param.step_in_seconds << "s";
 }

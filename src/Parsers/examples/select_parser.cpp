@@ -3,6 +3,7 @@
 #include <Parsers/ParserQueryWithOutput.h>
 #include <Parsers/parseQuery.h>
 #include <IO/WriteBufferFromOStream.h>
+#include <Examples/datastore_examples.h>
 
 
 int mainEntryExampleSelectParser(int, char **)

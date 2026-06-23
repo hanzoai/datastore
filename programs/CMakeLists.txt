@@ -16,7 +16,7 @@ include(${Datastore_SOURCE_DIR}/cmake/split_debug_symbols.cmake)
 # If you do not know what modes you need, turn then all.
 option (ENABLE_DATASTORE_ALL "Enable all Datastore modes by default" ON)
 
-# https://presentations.hanzo.ai/matemarketing_2020/
+# https://presentations.datastore.com/matemarketing_2020/
 option (ENABLE_DATASTORE_GIT_IMPORT "A tool to analyze Git repositories" ${ENABLE_DATASTORE_ALL})
 
 option (ENABLE_DATASTORE_KEEPER "Datastore alternative to ZooKeeper" ${ENABLE_DATASTORE_ALL})
@@ -109,6 +109,7 @@ add_subdirectory (keeper-data-dumper)
 add_subdirectory (keeper-utils)
 add_subdirectory (local)
 add_subdirectory (obfuscator)
+add_subdirectory (oom-canary)
 add_subdirectory (server)
 add_subdirectory (static-files-disk-uploader)
 add_subdirectory (su)
@@ -131,7 +132,6 @@ if (ENABLE_DATASTORE_SELF_EXTRACTING AND NOT ENABLE_DUMMY_LAUNCHERS)
 endif ()
 
 datastore_add_executable (datastore main.cpp)
-set_target_properties (datastore PROPERTIES OUTPUT_NAME datastore)
 
 # A library that prevent usage of several functions from libc.
 if (ARCH_AMD64 AND OS_LINUX AND NOT OS_ANDROID)
@@ -185,6 +185,7 @@ datastore_program_install(datastore-format format)
 datastore_program_install(datastore-git-import git-import)
 datastore_program_install(datastore-local local chl ch)
 datastore_program_install(datastore-obfuscator obfuscator)
+datastore_program_install(datastore-oom-canary oom-canary)
 datastore_program_install(datastore-server server)
 datastore_program_install(datastore-static-files-disk-uploader static-files-disk-uploader)
 datastore_program_install(datastore-su su)

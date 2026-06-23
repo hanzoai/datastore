@@ -142,7 +142,7 @@ set(SRCS
 if (ARCH_AMD64 AND NOT APPLE)
     find_program(YASM_PATH NAMES yasm)
     if (NOT YASM_PATH)
-        message(FATAL_ERROR "Please install the Yasm assembler to build ClickHouse with Hadoop Distributed File System (HDFS) support")
+        message(FATAL_ERROR "Please install the Yasm assembler to build Datastore with Hadoop Distributed File System (HDFS) support")
     endif ()
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crc_iscsi_v_pcl.o
@@ -162,7 +162,7 @@ target_compile_options(_hdfs3 PRIVATE
     -include "${Datastore_SOURCE_DIR}/contrib/google-protobuf/src/google/protobuf/stubs/port.h"
 )
 
-if (ENABLE_CLICKHOUSE_BENCHMARK)
+if (ENABLE_DATASTORE_BENCHMARK)
     message(STATUS "enable perf checksum")
     target_include_directories(_hdfs3 PUBLIC ${HDFS3_SOURCE_DIR})
     target_include_directories(_hdfs3 PUBLIC ${HDFS3_COMMON_DIR})
@@ -194,7 +194,7 @@ endif()
 
 add_library(ch_contrib::hdfs ALIAS _hdfs3)
 
-if (ENABLE_CLICKHOUSE_BENCHMARK)
+if (ENABLE_DATASTORE_BENCHMARK)
      add_executable(perf_checksum ${HDFS3_SOURCE_DIR}/common/perf_checksum.cpp)
      target_link_libraries(perf_checksum PRIVATE ch_contrib::hdfs)
 endif ()

@@ -4,7 +4,7 @@ from os import path as p
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster
+from helpers.cluster import DatastoreCluster
 from helpers.keeper_utils import (
     get_active_zk_connections,
     replace_zookeeper_config,
@@ -13,7 +13,7 @@ from helpers.keeper_utils import (
 from helpers.test_tools import TSV, assert_eq_with_retry
 
 default_zk_config = p.join(p.dirname(p.realpath(__file__)), "configs/zookeeper.xml")
-cluster = ClickHouseCluster(__file__, zookeeper_config_path="configs/zookeeper.xml")
+cluster = DatastoreCluster(__file__, zookeeper_config_path="configs/zookeeper.xml")
 
 node1 = cluster.add_instance(
     "node1",
@@ -93,9 +93,9 @@ def test_create_replicated_on_cluster(started_cluster, entity):
 @pytest.mark.parametrize("entity", entities, ids=get_entity_id)
 def test_create_replicated_on_cluster_ignore(started_cluster, entity):
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
-            f"""
+            """
             <datastore>
                 <profiles>
                     <default>
@@ -121,9 +121,9 @@ def test_create_replicated_on_cluster_ignore(started_cluster, entity):
     node1.query(f"DROP {entity.keyword} {entity.name} {entity.options}")
 
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
-            f"""
+            """
             <datastore>
                 <profiles>
                     <default/>
@@ -144,7 +144,7 @@ def test_create_replicated_on_cluster_ignore(started_cluster, entity):
 )
 def test_grant_revoke_replicated(started_cluster, use_on_cluster: bool):
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
             f"""
             <datastore>
@@ -164,15 +164,15 @@ def test_grant_revoke_replicated(started_cluster, use_on_cluster: bool):
 
     assert node1.query(f"GRANT {on_cluster} SELECT ON *.* to theuser2") == ""
 
-    assert node2.query(f"SHOW GRANTS FOR theuser2") == "GRANT SELECT ON *.* TO theuser2\n"
+    assert node2.query("SHOW GRANTS FOR theuser2") == "GRANT SELECT ON *.* TO theuser2\n"
 
     assert node1.query(f"REVOKE {on_cluster} SELECT ON *.* from theuser2") == ""
     node1.query(f"DROP USER theuser2 {on_cluster}")
 
     node1.replace_config(
-        "/etc/clickhouse-server/users.d/users.xml",
+        "/etc/datastore-server/users.d/users.xml",
         inspect.cleandoc(
-            f"""
+            """
             <datastore>
                 <profiles>
                     <default/>

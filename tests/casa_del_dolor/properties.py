@@ -7,7 +7,7 @@ import string
 import typing
 
 from environment import get_system_timezones
-from integration.helpers.cluster import ClickHouseCluster
+from integration.helpers.cluster import DatastoreCluster
 from integration.helpers.config_cluster import mongo_pass, mysql_pass, pg_pass
 
 
@@ -145,7 +145,20 @@ possible_properties = {
     "concurrent_threads_soft_limit_num": threads_lambda,
     "concurrent_threads_soft_limit_ratio_to_cores": threads_lambda,
     "cpu_slot_preemption": true_false_lambda,
+    "cpu_slot_preemption_timeout_ms": threshold_generator(0.2, 0.2, 0, 5000),
+    "cpu_slot_quantum_ns": threshold_generator(0.2, 0.2, 0, 100000000),
+    "database_atomic_delay_before_drop_table_sec": threshold_generator(0.2, 0.2, 0, 60),
+    "database_catalog_drop_error_cooldown_sec": threshold_generator(0.2, 0.2, 0, 30),
     "database_catalog_drop_table_concurrency": threads_lambda,
+    "database_catalog_unused_dir_cleanup_period_sec": threshold_generator(
+        0.2, 0.2, 60, 86400
+    ),
+    "database_catalog_unused_dir_hide_timeout_sec": threshold_generator(
+        0.2, 0.2, 60, 3600
+    ),
+    "database_catalog_unused_dir_rm_timeout_sec": threshold_generator(
+        0.2, 0.2, 3600, 2592000
+    ),
     "database_replicated_allow_detach_permanently": true_false_lambda,
     "database_replicated_drop_broken_tables": true_false_lambda,
     "distributed_ddl_cleanup_delay_period": threshold_generator(0.2, 0.2, 0, 300),
@@ -173,6 +186,7 @@ possible_properties = {
     "dns_cache_update_period": threshold_generator(0.2, 0.2, 1, 600),
     "dns_max_consecutive_failures": threshold_generator(0.2, 0.2, 1, 10),
     "drop_distributed_cache_pool_size": threads_lambda,
+    "drop_distributed_cache_queue_size": threshold_generator(0.2, 0.2, 0, 1000),
     "enable_azure_sdk_logging": true_false_lambda,
     "enable_system_unfreeze": true_false_lambda,
     "format_parsing_thread_pool_queue_size": threshold_generator(0.2, 0.2, 0, 1000),
@@ -185,6 +199,8 @@ possible_properties = {
     "iceberg_background_schedule_pool_size": threads_lambda,
     "iceberg_catalog_threadpool_pool_size": threads_lambda,
     "iceberg_catalog_threadpool_queue_size": threshold_generator(0.2, 0.2, 0, 1000),
+    "iceberg_compaction_threadpool_pool_size": threads_lambda,
+    "iceberg_compaction_threadpool_queue_size": threshold_generator(0.2, 0.2, 0, 1000),
     "iceberg_metadata_files_cache_max_entries": threshold_generator(0.2, 0.2, 0, 1024),
     "iceberg_metadata_files_cache_policy": lambda: random.choice(["LRU", "SLRU"]),
     "iceberg_metadata_files_cache_size": threshold_generator(0.2, 0.2, 0, 5368709120),
@@ -271,6 +287,7 @@ possible_properties = {
     "max_view_num_to_throw": threshold_generator(0.2, 0.2, 0, 10),
     "max_waiting_queries": threshold_generator(0.2, 0.2, 0, 100),
     "memory_worker_correct_memory_tracker": true_false_lambda,
+    "memory_worker_decay_adjustment_period_ms": threshold_generator(0.2, 0.2, 0, 30000),
     "memory_worker_use_cgroup": true_false_lambda,
     "merges_mutations_memory_usage_soft_limit": threshold_generator(0.2, 0.2, 0, 1000),
     "merges_mutations_memory_usage_to_ram_ratio": threshold_generator(
@@ -280,6 +297,7 @@ possible_properties = {
     "mlock_executable_min_total_memory_amount_bytes": threshold_generator(
         0.2, 0.2, 0, 10 * 1024 * 1024
     ),
+    "message_queue_disable_insertion": true_false_lambda,
     "mmap_cache_size": threshold_generator(0.2, 0.2, 0, 2000),
     "os_collect_psi_metrics": true_false_lambda,
     "os_threads_nice_value_distributed_cache_tcp_handler": threshold_generator(
@@ -319,9 +337,14 @@ possible_properties = {
         "max_entry_size_in_rows": threshold_generator(0.2, 0.2, 0, 10000),
         "max_size_in_bytes": threshold_generator(0.2, 0.2, 0, 10 * 1024 * 1024),
     },
+    "query_cache_max_entries": threshold_generator(0.2, 0.2, 0, 1024),
+    "query_cache_max_entry_size_in_bytes": threshold_generator(0.2, 0.2, 0, 1048576),
+    "query_cache_max_entry_size_in_rows": threshold_generator(0.2, 0.2, 0, 30000000),
+    "query_cache_max_size_in_bytes": threshold_generator(0.2, 0.2, 0, 1073741824),
     "query_condition_cache_policy": lambda: random.choice(["LRU", "SLRU"]),
     "query_condition_cache_size": threshold_generator(0.2, 0.2, 0, 104857600),
     "query_condition_cache_size_ratio": threshold_generator(0.2, 0.2, 0.0, 1.0),
+    "prepare_system_log_tables_on_startup": true_false_lambda,
     "remap_executable": true_false_lambda,
     "restore_threads": no_zero_threads_lambda,
     "s3_credentials_provider_max_cache_size": threshold_generator(
@@ -331,8 +354,11 @@ possible_properties = {
     "shutdown_wait_backups_and_restores": true_false_lambda,
     "shutdown_wait_unfinished": threshold_generator(0.2, 0.2, 0, 30),
     "shutdown_wait_unfinished_queries": true_false_lambda,
+    "snapshot_cleaner_period": threshold_generator(0.2, 0.2, 0, 600),
     "snapshot_cleaner_pool_size": threads_lambda,
+    "skip_check_for_incorrect_settings": true_false_lambda,
     "startup_mv_delay_ms": threshold_generator(0.2, 0.2, 0, 1000),
+    "storage_metadata_write_full_object_key": true_false_lambda,
     "storage_connections_hard_limit": threshold_generator(0.2, 0.2, 0, 400000),
     "storage_connections_rcvbuf": threshold_generator(0.2, 0.2, 0, 16 * 1024 * 1024),
     "storage_connections_sndbuf": threshold_generator(0.2, 0.2, 0, 16 * 1024 * 1024),
@@ -431,7 +457,7 @@ object_storages_properties = {
         "s3_strict_upload_part_size": threshold_generator(
             0.2, 0.2, 0, 100 * 1024 * 1024
         ),
-        "s3_upload_part_size_multiply_factor": threshold_generator(0.2, 0.2, 1, 10),
+        "s3_upload_part_size_multiply_factor": threshold_generator(0.2, 0.2, 1, 10, 4),
         "s3_upload_part_size_multiply_parts_count_threshold": threshold_generator(
             0.2, 0.2, 1, 1000
         ),
@@ -472,7 +498,7 @@ object_storages_properties = {
         # "skip_access_check": true_false_lambda, may break the startup
         "strict_upload_part_size": threshold_generator(0.2, 0.2, 0, 100 * 1024 * 1024),
         "thread_pool_size": threads_lambda,
-        "upload_part_size_multiply_factor": threshold_generator(0.2, 0.2, 1, 10),
+        "upload_part_size_multiply_factor": threshold_generator(0.2, 0.2, 1, 10, 4),
         "upload_part_size_multiply_parts_count_threshold": threshold_generator(
             0.2, 0.2, 1, 1000
         ),
@@ -502,7 +528,7 @@ cache_storage_properties = {
     ),
     "background_download_queue_size_limit": threshold_generator(0.2, 0.2, 0, 128),
     "background_download_threads": threads_lambda,
-    "boundary_alignment": threshold_generator(0.2, 0.2, 1, 128),
+    "boundary_alignment": threshold_generator(0.2, 0.2, 1, 128, bits=7),
     "bypass_cache_threshold": threshold_generator(0.2, 0.2, 0, 1024 * 1024 * 1024),
     "cache_on_write_operations": true_false_lambda,
     "check_cache_probability": threshold_generator(0.2, 0.2, 0.0, 1.0),
@@ -572,7 +598,7 @@ class PropertiesGroup:
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         pass
@@ -662,7 +688,7 @@ class ClusterPropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         # remote_server_config = ET.SubElement(root, "remote_servers")
@@ -686,7 +712,7 @@ class ClusterPropertiesGroup(PropertiesGroup):
 def add_single_disk(
     i: int,
     args,
-    cluster: ClickHouseCluster,
+    cluster: DatastoreCluster,
     next_disk: ET.Element,
     backups_element: ET.Element,
     disk_type: str,
@@ -740,7 +766,11 @@ def add_single_disk(
         object_storage_type_xml.text = object_storage_type
 
         # Set disk metadata type
-        metadata_type = "keeper" if object_storage_type == "s3_with_keeper" else "local"
+        metadata_type = (
+            "keeper"
+            if object_storage_type == "s3_with_keeper"
+            else "web" if object_storage_type == "web" else "local"
+        )
         if random.randint(1, 100) <= 70:
             possible_metadata_types = (
                 ["plain", "web"]
@@ -777,9 +807,9 @@ def add_single_disk(
             )
         elif object_storage_type == "local":
             path_xml = ET.SubElement(next_disk, "path")
-            path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            path_xml.text = f"/var/lib/datastore/disk{i}/"
             allowed_path_xml = ET.SubElement(backups_element, "allowed_path")
-            allowed_path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            allowed_path_xml.text = f"/var/lib/datastore/disk{i}/"
 
         # Add a endpoint_subpath
         if metadata_type == "plain_rewritable" and random.randint(1, 100) <= 70:
@@ -823,9 +853,9 @@ def add_single_disk(
         disk_xml.text = f"disk{prev_disk}"
         if disk_type == "cache" or random.randint(1, 2) == 1:
             path_xml = ET.SubElement(next_disk, "path")
-            path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            path_xml.text = f"/var/lib/datastore/disk{i}/"
             allowed_path_xml = ET.SubElement(backups_element, "allowed_path")
-            allowed_path_xml.text = f"/var/lib/clickhouse/disk{i}/"
+            allowed_path_xml.text = f"/var/lib/datastore/disk{i}/"
 
         if disk_type == "cache":
             max_size_xml = ET.SubElement(next_disk, "max_size")
@@ -863,7 +893,7 @@ class DiskPropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         disk_element = ET.SubElement(property_element, "disks")
@@ -970,9 +1000,9 @@ class DiskPropertiesGroup(PropertiesGroup):
                     apply_properties_recursively(next_policy_xml, policy_properties)
 
         allowed_path_xml1 = ET.SubElement(backups_element, "allowed_path")
-        allowed_path_xml1.text = "/var/lib/clickhouse/"
+        allowed_path_xml1.text = "/var/lib/datastore/"
         allowed_path_xml2 = ET.SubElement(backups_element, "allowed_path")
-        allowed_path_xml2.text = "/var/lib/clickhouse/user_files/"
+        allowed_path_xml2.text = "/var/lib/datastore/user_files/"
         if random.randint(1, 100) <= 70:
             apply_properties_recursively(backups_element, backup_properties)
 
@@ -1001,7 +1031,7 @@ class DiskPropertiesGroup(PropertiesGroup):
             #    )
             else:
                 tmp_path_xml = ET.SubElement(top_root, "tmp_path")
-                tmp_path_xml.text = "/var/lib/clickhouse/tmp/"
+                tmp_path_xml.text = "/var/lib/datastore/tmp/"
         # Set disk for SMTs
         if top_root.find("shared_merge_tree") is None and len(created_keeper_disks) > 0:
             smt_element = ET.SubElement(top_root, "shared_merge_tree")
@@ -1019,14 +1049,14 @@ class DiskPropertiesGroup(PropertiesGroup):
         # Add custom_local_disks_base_directory
         if top_root.find("custom_local_disks_base_directory") is None:
             clddb_element = ET.SubElement(top_root, "custom_local_disks_base_directory")
-            clddb_element.text = "/var/lib/clickhouse/disks/"
+            clddb_element.text = "/var/lib/datastore/disks/"
 
 
 def add_single_cache(i: int, next_cache: ET.Element):
     max_size_xml = ET.SubElement(next_cache, "max_size")
     max_size_xml.text = file_size_value(100, 4, 5)()
     path_xml = ET.SubElement(next_cache, "path")
-    path_xml.text = f"/var/lib/clickhouse/fcache{i}/"
+    path_xml.text = f"/var/lib/datastore/fcache{i}/"
 
     # Add random settings
     if random.randint(1, 100) <= 70:
@@ -1040,7 +1070,7 @@ class CachePropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         # filesystem_caches_config = ET.SubElement(root, "filesystem_caches")
@@ -1057,7 +1087,7 @@ class KeeperMapPropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         property_element.text = "/keeper_map_tables"
@@ -1070,7 +1100,7 @@ class TransactionsPropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         property_element.text = "1"
@@ -1083,13 +1113,13 @@ class DistributedDDLPropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         path_xml = ET.SubElement(property_element, "path")
-        path_xml.text = "/clickhouse/task_queue/ddl"
+        path_xml.text = "/datastore/task_queue/ddl"
         replicas_path_xml = ET.SubElement(property_element, "replicas_path")
-        replicas_path_xml.text = "/clickhouse/task_queue/replicas"
+        replicas_path_xml.text = "/datastore/task_queue/replicas"
         apply_properties_recursively(property_element, distributed_properties, 0)
 
 
@@ -1100,7 +1130,7 @@ class SharedCatalogPropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         number_clusters = 0
@@ -1141,7 +1171,7 @@ class DatabaseReplicatedGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         replicated_settings = {
@@ -1170,7 +1200,7 @@ class LogTablePropertiesGroup(PropertiesGroup):
         top_root: ET.Element,
         property_element: ET.Element,
         args,
-        cluster: ClickHouseCluster,
+        cluster: DatastoreCluster,
         is_private_binary: bool,
     ):
         database_xml = ET.SubElement(property_element, "database")
@@ -1230,16 +1260,16 @@ def add_ssl_settings(next_ssl: ET.Element):
     certificate_xml = ET.SubElement(next_ssl, "certificateFile")
     private_key_xml = ET.SubElement(next_ssl, "privateKeyFile")
     if random.randint(1, 2) == 1:
-        certificate_xml.text = "/etc/clickhouse-server/config.d/server.crt"
-        private_key_xml.text = "/etc/clickhouse-server/config.d/server.key"
+        certificate_xml.text = "/etc/datastore-server/config.d/server.crt"
+        private_key_xml.text = "/etc/datastore-server/config.d/server.key"
     else:
-        certificate_xml.text = "/etc/clickhouse-server/config.d/server-cert.pem"
-        private_key_xml.text = "/etc/clickhouse-server/config.d/server-key.pem"
+        certificate_xml.text = "/etc/datastore-server/config.d/server-cert.pem"
+        private_key_xml.text = "/etc/datastore-server/config.d/server-key.pem"
         ca_config_xml = ET.SubElement(next_ssl, "caConfig")
-        ca_config_xml.text = "/etc/clickhouse-server/config.d/ca-cert.pem"
+        ca_config_xml.text = "/etc/datastore-server/config.d/ca-cert.pem"
     if random.randint(1, 2) == 1:
         dh_params_xml = ET.SubElement(next_ssl, "dhParamsFile")
-        dh_params_xml.text = "/etc/clickhouse-server/config.d/dhparam.pem"
+        dh_params_xml.text = "/etc/datastore-server/config.d/dhparam.pem"
 
     if random.randint(1, 2) == 1:
         verification_xml = ET.SubElement(next_ssl, "verificationMode")
@@ -1267,7 +1297,7 @@ def add_ssl_settings(next_ssl: ET.Element):
 
 def modify_server_settings(
     args,
-    cluster: ClickHouseCluster,
+    cluster: DatastoreCluster,
     is_private_binary: bool,
     input_config_path: str,
 ) -> tuple[bool, str, int]:
@@ -1277,7 +1307,7 @@ def modify_server_settings(
     # Parse the existing XML file
     tree = ET.parse(input_config_path)
     root = tree.getroot()
-    if root.tag != "clickhouse":
+    if root.tag != "datastore":
         raise Exception("<datastore> element not found")
 
     if root.find("tcp_port_secure") is None:
@@ -1492,7 +1522,7 @@ def modify_server_settings(
         distributed_ddl_xml = root.find("distributed_ddl")
         if distributed_ddl_xml is not None and distributed_ddl_xml.find("path") is None:
             path_xml = ET.SubElement(distributed_ddl_xml, "path")
-            path_xml.text = "/clickhouse/task_queue/ddl"
+            path_xml.text = "/datastore/task_queue/ddl"
         # Make sure `zookeeper_path` in transaction_log is set
         transaction_log_xml = root.find("transaction_log")
         if (
@@ -1500,7 +1530,7 @@ def modify_server_settings(
             and transaction_log_xml.find("zookeeper_path") is None
         ):
             zookeeper_path_xml = ET.SubElement(transaction_log_xml, "zookeeper_path")
-            zookeeper_path_xml.text = "/clickhouse/txn"
+            zookeeper_path_xml.text = "/datastore/txn"
 
     # Get number of clusters if generated, to be used in `users.xml` if needed
     remote_servers = root.find("remote_servers")
@@ -1529,7 +1559,7 @@ def modify_user_settings(
     # Parse the existing XML file
     tree = ET.parse(input_config_path)
     root = tree.getroot()
-    if root.tag != "clickhouse":
+    if root.tag != "datastore":
         raise Exception("<datastore> element not found")
 
     if number_clusters > 0:
@@ -1573,8 +1603,8 @@ KEEPER_PROPERTIES_TEMPLATE = """
 
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-keeper/clickhouse-keeper.log</log>
-        <errorlog>/var/log/clickhouse-keeper/clickhouse-keeper.err.log</errorlog>
+        <log>/var/log/datastore-keeper/datastore-keeper.log</log>
+        <errorlog>/var/log/datastore-keeper/datastore-keeper.err.log</errorlog>
     </logger>
 
     <placement>
@@ -1673,6 +1703,7 @@ keeper_settings = {
         "nuraft_max_uncommitted_log_entries": threshold_generator(
             0.2, 0.2, 0, 1000000
         ),
+        "nuraft_use_bg_thread_for_snapshot_io": true_false_lambda,
         "nuraft_streaming_mode": true_false_lambda,
         "parallel_read_chunk_size": threshold_generator(0.2, 0.2, 1, 1024),
         "parallel_read_min_batch": threshold_generator(0.2, 0.2, 0, 4096),

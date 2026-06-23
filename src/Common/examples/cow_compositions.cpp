@@ -1,6 +1,7 @@
 #include <Common/COW.h>
 #include <iostream>
 #include <base/defines.h>
+#include <Examples/datastore_examples.h>
 
 namespace
 {
