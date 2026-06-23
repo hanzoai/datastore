@@ -12,5 +12,5 @@ CLICKHOUSE_TEST_SLEEP=3
 CLICKHOUSE_TEST_TRIES=5
 
 function cname {
-  echo clickhouse-test-contained-$RANDOM-$RANDOM
+  echo datastore-test-contained-$RANDOM-$RANDOM
 }

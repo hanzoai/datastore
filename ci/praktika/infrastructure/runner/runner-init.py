@@ -375,7 +375,7 @@ class Runner:
 
         ts = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         archive_path = Path(f"/tmp/runner-logs-{ts}.tar.gz")
-        s3_bucket = "clickhouse-test-reports-private"
+        s3_bucket = "datastore-test-reports-private"
         s3_key = f"gh_actions/{error_id}_logs_{self.ec2._instance_id}_{ts}.tar.gz"
 
         if not config.log_dir.exists():
@@ -598,7 +598,7 @@ fi
 brew update
 
 # Essential tools. `llvm` is included for `lldb`, used to print C stack traces
-# of ClickHouse server processes from `clickhouse-test` cleanup paths.
+# of ClickHouse server processes from `datastore-test` cleanup paths.
 # `python@3` is bootstrapped by `user_data_macos.txt` (along with the
 # `~/venv` and `boto3` that runner-init itself runs inside), so it is not
 # re-installed here.

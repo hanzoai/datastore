@@ -13,7 +13,7 @@
 --
 -- `max_rows_to_read = 0` is needed to enable the data-read phase in
 -- `supportsSkipIndexesOnDataRead` (it disables itself when `read_overflow_mode = throw`
--- and `max_rows_to_read` is set, which `clickhouse-test` injects by default).
+-- and `max_rows_to_read` is set, which `datastore-test` injects by default).
 
 DROP TABLE IF EXISTS test_skip_index_alter;
 

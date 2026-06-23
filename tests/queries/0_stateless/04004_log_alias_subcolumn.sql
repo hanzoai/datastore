@@ -1,6 +1,6 @@
 -- Regression test: reading subcolumns of ALIAS columns from StorageLog
 -- should not cause a LOGICAL_ERROR exception.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=98367&sha=9acc57e1ae51dba197e0d9b12743fb3804683bc4&name_0=PR&name_1=BuzzHouse%20%28arm_asan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?PR=98367&sha=9acc57e1ae51dba197e0d9b12743fb3804683bc4&name_0=PR&name_1=BuzzHouse%20%28arm_asan%29
 
 SET enable_analyzer = 1;
 

@@ -86,7 +86,7 @@ run_case()
 
     local http_fd
     exec {http_fd}<>/dev/tcp/"$host"/"$port"
-    printf 'POST %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: clickhouse-test\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n' \
+    printf 'POST %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: datastore-test\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n' \
         "$request_path" "$host_port" >&${http_fd}
 
     send_chunk()

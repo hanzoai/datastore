@@ -362,7 +362,7 @@ if __name__ == "__main__":
             def _is_test_path(p: str) -> bool:
                 # Strict allowlist of paths containing runnable test
                 # definitions. `tests/ci/**`, `tests/integration/helpers/**`,
-                # `tests/clickhouse-test`, `tests/runner` and other
+                # `tests/datastore-test`, `tests/runner` and other
                 # `tests/`-prefixed *infrastructure* are deliberately NOT
                 # tests — counting them as test changes would mis-attribute
                 # coverage-build noise to PRs that only touched helpers.

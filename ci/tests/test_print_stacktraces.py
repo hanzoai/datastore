@@ -1,9 +1,9 @@
 """
-End-to-end tests for the stacktrace helpers in tests/clickhouse-test.
+End-to-end tests for the stacktrace helpers in tests/datastore-test.
 
 Background
 ----------
-``clickhouse-test`` assigns ``args = parse_args()`` only inside
+``datastore-test`` assigns ``args = parse_args()`` only inside
 ``if __name__ == "__main__":``.  On macOS, Python's default
 multiprocessing start method is ``spawn``, which re-imports the module
 in each worker without executing ``__main__`` — so module-level
@@ -13,7 +13,7 @@ hung-check path raised ``NameError: name 'args' is not defined`` inside
 ``get_server_pid``.
 
 These tests reproduce the same import condition by loading
-``clickhouse-test`` via ``runpy.run_path`` (which, like spawn, does not
+``datastore-test`` via ``runpy.run_path`` (which, like spawn, does not
 run ``__main__``) and then invoke each public stacktrace helper against
 the live ClickHouse server provided by the ``ClickHouseService``
 fixture in ``ci/jobs/ci_tests_job.py``.
@@ -29,11 +29,11 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "clickhouse-test")
+_CLICKHOUSE_TEST = str(_REPO_ROOT / "tests" / "datastore-test")
 
 
 def _load_clickhouse_test():
-    # Mimic a spawn worker: load clickhouse-test without running __main__,
+    # Mimic a spawn worker: load datastore-test without running __main__,
     # so module-level `args` is absent.
     ct = runpy.run_path(_CLICKHOUSE_TEST)
     assert "args" not in ct, (

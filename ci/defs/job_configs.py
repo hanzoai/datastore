@@ -41,7 +41,7 @@ build_digest_config = Job.CacheDigestConfig(
         "./base",
         "./programs",
         "./rust",
-        "./ci/jobs/build_clickhouse.py",
+        "./ci/jobs/build_datastore.py",
         "./ci/jobs/scripts/job_hooks/build_profile_hook.py",
         "./utils/list-licenses",
         "./utils/self-extracting-executable",
@@ -52,10 +52,10 @@ build_digest_config = Job.CacheDigestConfig(
 fast_test_digest_config = Job.CacheDigestConfig(
     include_paths=[
         "./ci/jobs/fast_test.py",
-        "./ci/jobs/scripts/clickhouse_proc.py",
+        "./ci/jobs/scripts/datastore_proc.py",
         "./tests/queries/0_stateless/",
         "./tests/config/",
-        "./tests/clickhouse-test",
+        "./tests/datastore-test",
         "./src",
         "./contrib/",
         "./.gitmodules",
@@ -80,7 +80,7 @@ common_build_job_config = Job.Config(
     name=JobNames.BUILD,
     runs_on=[],  # from parametrize()
     requires=[],
-    command='python3 ./ci/jobs/build_clickhouse.py --build-type "{PARAMETER}"',
+    command='python3 ./ci/jobs/build_datastore.py --build-type "{PARAMETER}"',
     run_in_docker=BINARY_DOCKER_COMMAND,
     timeout=3600 * 4,
     digest_config=build_digest_config,
@@ -93,19 +93,19 @@ common_ft_job_config = Job.Config(
     command='python3 ./ci/jobs/functional_tests.py --options "{PARAMETER}"',
     # some tests can be flaky due to very slow disks - use tmpfs for temporary ClickHouse files
     # --cap-add=SYS_PTRACE and --privileged for gdb in docker
-    # --root/--privileged/--cgroupns=host is required for clickhouse-test --memory-limit
+    # --root/--privileged/--cgroupns=host is required for datastore-test --memory-limit
     # --ulimit nofile is raised so that azurite-rs (the in-process Azure Blob
     # Storage emulator) does not run out of file descriptors under parallel load
     run_in_docker=f"clickhouse/stateless-test+--memory={LIMITED_MEM}+--cgroupns=host+--cap-add=SYS_PTRACE+--privileged+--security-opt seccomp=unconfined+--ulimit nofile=1048576:1048576+--tmpfs /tmp/clickhouse:mode=1777+--volume=./ci/tmp/var/lib/clickhouse:/var/lib/clickhouse+--volume=./ci/tmp/etc/clickhouse-client:/etc/clickhouse-client+--volume=./ci/tmp/etc/clickhouse-server:/etc/clickhouse-server+--volume=./ci/tmp/etc/clickhouse-server1:/etc/clickhouse-server1+--volume=./ci/tmp/etc/clickhouse-server2:/etc/clickhouse-server2+--volume=./ci/tmp/var/log:/var/log+root",
     digest_config=Job.CacheDigestConfig(
         include_paths=[
             "./ci/jobs/functional_tests.py",
-            "./ci/jobs/scripts/clickhouse_proc.py",
+            "./ci/jobs/scripts/datastore_proc.py",
             "./ci/jobs/scripts/functional_tests_results.py",
             "./ci/jobs/scripts/functional_tests/setup_log_cluster.sh",
             "./ci/praktika/cidb.py",
             "./tests/queries",
-            "./tests/clickhouse-test",
+            "./tests/datastore-test",
             "./tests/config",
             "./tests/*.txt",
             "./ci/docker/stateless-test",
@@ -137,14 +137,14 @@ common_stress_job_config = Job.Config(
         include_paths=[
             "./tests/queries/0_stateless/",
             "./ci/jobs/stress_job.py",
-            "./ci/jobs/scripts/clickhouse_proc.py",
+            "./ci/jobs/scripts/datastore_proc.py",
             "./ci/jobs/scripts/stress/stress.py",
-            "./tests/clickhouse-test",
+            "./tests/datastore-test",
             "./tests/config",
             "./tests/*.txt",
             "./tests/docker_scripts/",
             "./ci/docker/stress-test",
-            "./ci/jobs/scripts/clickhouse_proc.py",
+            "./ci/jobs/scripts/datastore_proc.py",
             "./ci/jobs/scripts/log_parser.py",
         ],
     ),
@@ -227,7 +227,7 @@ class JobConfigs:
             # teardown runs, so drop any leaked aliases here (best-effort: a hook
             # cannot fail the job, and a timed-out job already fails).
             'for i in $(seq 2 16); do sudo ifconfig lo0 -alias 127.0.0.$i 2>/dev/null || true; done',
-            "python3 ./ci/jobs/scripts/job_hooks/clickhouse_test_cleanup_hook.py",
+            "python3 ./ci/jobs/scripts/job_hooks/datastore_test_cleanup_hook.py",
             "sudo rm -rf /Users/ec2-user/actions-runner/_work/ClickHouse/ClickHouse/ci/tmp/run* /System/Volumes/Data/System/Library/Caches/com.apple.coresymbolicationd/data",
         ],
     ).parametrize(
@@ -548,7 +548,7 @@ class JobConfigs:
             requires=[ArtifactNames.CH_ARM_ASAN_UBSAN],
         ),
     )
-    # --root/--privileged/--cgroupns=host is required for clickhouse-test --memory-limit
+    # --root/--privileged/--cgroupns=host is required for datastore-test --memory-limit
     bugfix_validation_ft_pr_job = Job.Config(
         name=JobNames.BUGFIX_VALIDATE_FT,
         runs_on=RunnerLabels.FUNC_TESTER_AMD,
@@ -559,10 +559,10 @@ class JobConfigs:
             include_paths=[
                 "./ci/jobs/functional_tests.py",
                 "./ci/jobs/scripts/bugfix_validation.py",
-                "./ci/jobs/scripts/clickhouse_proc.py",
+                "./ci/jobs/scripts/datastore_proc.py",
                 "./ci/jobs/scripts/functional_tests_results.py",
                 "./tests/queries",
-                "./tests/clickhouse-test",
+                "./tests/datastore-test",
                 "./tests/config",
                 "./tests/*.txt",
             ],
@@ -571,10 +571,10 @@ class JobConfigs:
     )
     lightweight_functional_tests_job = Job.Config(
         name="Quick functional tests",
-        command="python3 ./ci/jobs/clickhouse_light.py --path ./ci/tmp/clickhouse",
+        command="python3 ./ci/jobs/datastore_light.py --path ./ci/tmp/clickhouse",
         digest_config=Job.CacheDigestConfig(
             include_paths=[
-                "./ci/jobs/clickhouse_light.py",
+                "./ci/jobs/datastore_light.py",
                 "./ci/jobs/queries",
             ],
         ),
@@ -1407,12 +1407,12 @@ class JobConfigs:
     collect_clickhouse_profiles_jobs = Job.Config(
         name=JobNames.COLLECT_CLICKHOUSE_PROFILES,
         runs_on=[],  # from parametrize()
-        command="python3 ./ci/jobs/collect_clickhouse_profiles.py",
+        command="python3 ./ci/jobs/collect_datastore_profiles.py",
         run_in_docker=BINARY_DOCKER_COMMAND,
         timeout=8 * 3600,
         digest_config=Job.CacheDigestConfig(
             include_paths=[
-                "./ci/jobs/collect_clickhouse_profiles.py",
+                "./ci/jobs/collect_datastore_profiles.py",
                 "./cmake/profile_optimization.cmake",
                 "./tests/performance/",
             ],

@@ -219,7 +219,7 @@ python -m ci.praktika run "BUILD_JOB_NAME"
 where BUILD_JOB_NAME is the job name as shown in the CI report, e.g., "Build (arm_release)", "Build (amd_debug)"
 
 This command pulls the appropriate Docker image `clickhouse/binary-builder` with all required dependencies,
-and runs the build script inside it: `./ci/jobs/build_clickhouse.py`
+and runs the build script inside it: `./ci/jobs/build_datastore.py`
 
 The build output will be placed in `./ci/tmp/`.
 

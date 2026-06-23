@@ -72,14 +72,14 @@ class Targeting:
             self._cidb = CIDB(url=url, user=user, passwd=passwd)
         return self._cidb
 
-    # Keep in sync with TEST_FILE_EXTENSIONS in tests/clickhouse-test.
+    # Keep in sync with TEST_FILE_EXTENSIONS in tests/datastore-test.
     _TEST_FILE_EXTENSIONS = (".sql.j2", ".sql", ".sh", ".py", ".expect")
 
     @classmethod
     def _derive_test_name(cls, fpath: str):
         """Map a changed file under `tests/queries/0_stateless/` to a test name.
 
-        Returns the test base name (without extension) suitable for `clickhouse-test --test`,
+        Returns the test base name (without extension) suitable for `datastore-test --test`,
         or `None` if the file does not correspond to a real test (e.g. a data file like
         `02995_settings_26_4_1.tsv`, which is consumed by `02995_new_settings_history.sh`
         but has no test of its own).
@@ -133,7 +133,7 @@ class Targeting:
                 test_base_name = self._derive_test_name(fpath)
                 if test_base_name is None:
                     # Avoid emitting a regex like `02995_settings_26_4_1.` that
-                    # matches no test — clickhouse-test exits with code 1 when
+                    # matches no test — datastore-test exits with code 1 when
                     # "no tests were run", failing the flaky check.
                     print(
                         f"File '{fpath}' is not a test source and has no sibling test — skipping"

@@ -16,8 +16,8 @@ import sys
 
 HOOK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "allow_investigate_cmds.py")
 T = ".claude/tools/fetch_ci_report.js"
-S3 = "https://s3.amazonaws.com/clickhouse-test-reports/"
-CF = "https://d1k2gkhrlfqv31.cloudfront.net/clickhouse-test-reports-private/"
+S3 = "https://s3.amazonaws.com/datastore-test-reports/"
+CF = "https://d1k2gkhrlfqv31.cloudfront.net/datastore-test-reports-private/"
 
 
 def decision(command, tool_name="Bash"):

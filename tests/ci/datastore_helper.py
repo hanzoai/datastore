@@ -28,12 +28,12 @@ class ClickHouseHelper:
         self, url: Optional[str] = None, auth: Optional[Dict[str, str]] = None
     ):
         if url is None:
-            url = get_parameter_from_ssm("clickhouse-test-stat-url")
+            url = get_parameter_from_ssm("datastore-test-stat-url")
 
         self.url = url
         self.auth = auth or {
-            "X-Datastore-User": get_parameter_from_ssm("clickhouse-test-stat-login"),
-            "X-Datastore-Key": get_parameter_from_ssm("clickhouse-test-stat-password"),
+            "X-Datastore-User": get_parameter_from_ssm("datastore-test-stat-login"),
+            "X-Datastore-Key": get_parameter_from_ssm("datastore-test-stat-password"),
         }
 
     @staticmethod

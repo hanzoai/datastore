@@ -35,7 +35,7 @@ function set_and_restart {
 	sudo service clickhouse-server stop 1>/dev/null
 	set_vertical_alg $1
 	sudo service clickhouse-server start 1>/dev/null
-	./wait_clickhouse_server
+	./wait_datastore_server
 }
 
 function get_n_columns {
@@ -100,7 +100,7 @@ function run_case {
 	sudo service clickhouse-server stop 1>/dev/null
 	sudo rm -f /var/log/clickhouse-server/clickhouse-server.log
 	sudo service clickhouse-server start 1>/dev/null
-	./wait_clickhouse_server
+	./wait_datastore_server
 
 	clickhouse-client --query "DROP TABLE IF EXISTS $table"
 	drop_cache

@@ -1,7 +1,7 @@
 -- Regression test: KILL QUERY/MUTATION TEST should not throw
 -- "Bad cast from type X to Y" when the internal SELECT returns columns
 -- that need materialization (e.g. ColumnConst).
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=98138&sha=a349e29ce98d34354439478bec564adb7d5b66c9&name_0=PR&name_1=Stress%20test%20%28amd_msan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?PR=98138&sha=a349e29ce98d34354439478bec564adb7d5b66c9&name_0=PR&name_1=Stress%20test%20%28amd_msan%29
 
 SELECT 'KILL QUERY';
 KILL QUERY WHERE 1 TEST FORMAT Null;

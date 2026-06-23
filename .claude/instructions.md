@@ -13,7 +13,7 @@ Stateless tests are located in `tests/queries/0_stateless/`.
 Run tests with the correct port environment variables (default config uses TCP=9000, HTTP=8123):
 
 ```bash
-CLICKHOUSE_PORT_TCP=9000 CLICKHOUSE_PORT_HTTP=8123 ./tests/clickhouse-test <test_name>
+CLICKHOUSE_PORT_TCP=9000 CLICKHOUSE_PORT_HTTP=8123 ./tests/datastore-test <test_name>
 ```
 
 ### Useful Flags

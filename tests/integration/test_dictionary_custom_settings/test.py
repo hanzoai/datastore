@@ -10,7 +10,7 @@ DICTIONARY_FILES = [
     "configs/dictionaries/ExecutableSourceConfig.xml",
     "configs/dictionaries/source.csv",
     "configs/dictionaries/HTTPSourceConfig.xml",
-    "configs/dictionaries/ClickHouseSourceConfig.xml",
+    "configs/dictionaries/DatastoreSourceConfig.xml",
 ]
 
 cluster = ClickHouseCluster(__file__)

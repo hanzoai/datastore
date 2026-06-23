@@ -14,7 +14,7 @@ if [ -d "$TEMP_DIR" ]; then
 fi
 
 usage() {
-  echo $"Usage: $0 <stateful|stateless> <test_path> (default path: /usr/share/clickhouse-test)"
+  echo $"Usage: $0 <stateful|stateless> <test_path> (default path: /usr/share/datastore-test)"
   exit 1
 }
 
@@ -22,7 +22,7 @@ check_arg() {
   local query_dir
   if [ ! $# -eq 1 ]; then
     if [ ! $# -eq 2 ]; then
-      echo "ERROR: need either one or two arguments, <stateful|stateless> <test_path> (default path: /usr/share/clickhouse-test)"
+      echo "ERROR: need either one or two arguments, <stateful|stateless> <test_path> (default path: /usr/share/datastore-test)"
       usage
     fi
   fi
@@ -100,7 +100,7 @@ setup_minio() {
 }
 
 # uploads data to minio, by default after unpacking all tests
-# will be in /usr/share/clickhouse-test/queries
+# will be in /usr/share/datastore-test/queries
 upload_data() {
   local query_dir=$1
   local test_path=$2

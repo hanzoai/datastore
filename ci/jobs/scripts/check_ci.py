@@ -30,7 +30,7 @@ FORCE_MERGE = True
 PUBLIC_REPO = "ClickHouse/ClickHouse"
 SYNC_REPO = "ClickHouse/clickhouse-private"
 S3_PROXY_BASE_URL = "http://ci-reports:8080"
-S3_PRIVATE_REPORT_BUCKET = "clickhouse-test-reports-private"
+S3_PRIVATE_REPORT_BUCKET = "datastore-test-reports-private"
 
 
 pr_number = None
@@ -64,12 +64,12 @@ class CreateIssue:
         quoted_job_name = quote(job_name, safe="")
         if not pr_number:
             res = (
-                "https://s3.amazonaws.com/clickhouse-test-reports/json.html"
+                "https://s3.amazonaws.com/datastore-test-reports/json.html"
                 f"?REF=master&sha={head_sha}&name_0=MasterCI"
             )
         else:
             res = (
-                "https://s3.amazonaws.com/clickhouse-test-reports/json.html"
+                "https://s3.amazonaws.com/datastore-test-reports/json.html"
                 f"?PR={pr_number}&sha={head_sha}&name_0=PR"
             )
         if job_name:
@@ -393,9 +393,9 @@ class CommitStatusCheck:
     @staticmethod
     def get_ci_praktika_result(pr_number, commit_sha):
         if pr_number != 0:
-            report_url = f"https://s3.amazonaws.com/clickhouse-test-reports/PRs/{pr_number}/{commit_sha}/result_pr.json"
+            report_url = f"https://s3.amazonaws.com/datastore-test-reports/PRs/{pr_number}/{commit_sha}/result_pr.json"
         else:
-            report_url = f"https://s3.amazonaws.com/clickhouse-test-reports/REFs/master/{commit_sha}/result_masterci.json"
+            report_url = f"https://s3.amazonaws.com/datastore-test-reports/REFs/master/{commit_sha}/result_masterci.json"
         _ = Shell.check(f"curl {report_url} -o /tmp/result_pr.json > /dev/null 2>&1")
         return Result.from_file("/tmp/result_pr.json")
 

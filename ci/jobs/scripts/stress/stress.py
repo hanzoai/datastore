@@ -23,7 +23,7 @@ def escape_tsv_info(text: str) -> str:
     # Escape CR alongside the other separators rather than dropping it.
     # Bare CR is emitted by tools like `apt-get`/`dpkg` to overwrite
     # progress frames in place, and the hung-check path embeds dpkg
-    # output verbatim when `clickhouse-test --capture-client-stacktrace`
+    # output verbatim when `datastore-test --capture-client-stacktrace`
     # installs `lldb` on the fly. Left raw in the TSV, those CRs are
     # turned back into LF by universal-newlines mode at read time and
     # fragment the row. Encoding them as `\r` keeps the diagnostic
@@ -77,7 +77,7 @@ class RandomQueryKiller:
     def _kill_random_client(self) -> None:
         """Kill a random clickhouse-client process."""
         try:
-            # Get list of clickhouse-test child processes (clickhouse client)
+            # Get list of datastore-test child processes (clickhouse client)
             result = check_output(
                 "pgrep -f 'clickhouse-client|clickhouse client' 2>/dev/null || true",
                 shell=True,
@@ -293,7 +293,7 @@ def run_func_test(
         f"--global_time_limit={global_time_limit}" if global_time_limit else ""
     )
     # --stress-tests loops until global_time_limit; cap the smoke check so
-    # clickhouse-test exits on its own within the execute_bash timeout (180s).
+    # datastore-test exits on its own within the execute_bash timeout (180s).
     smoke_time_limit = min(global_time_limit, 120) if global_time_limit else 120
     smoke_time_limit_option = f"--global_time_limit={smoke_time_limit}"
 
@@ -314,7 +314,7 @@ def run_func_test(
         full_command = f"{base_command} {global_time_limit_option} "
         commands.append(full_command)
         # Smoke check: disable AST fuzzer (fuzzed queries produce expected
-        # errors in stderr) and cap global_time_limit so clickhouse-test
+        # errors in stderr) and cap global_time_limit so datastore-test
         # exits on its own within the execute_bash timeout.
         smoke_command = base_command.replace(
             "--client-option ", "--client-option ast_fuzzer_runs=0 ", 1
@@ -561,7 +561,7 @@ def prepare_for_hung_check(drop_databases: bool) -> bool:
             break
         time.sleep(1)
 
-    # Even if all clickhouse-test processes are finished, there are probably some sh scripts,
+    # Even if all datastore-test processes are finished, there are probably some sh scripts,
     # which still run some new queries. Let's ignore them.
     try:
         query = 'clickhouse client --receive_timeout=30 -q "SELECT count() FROM system.processes where elapsed > 300" '
@@ -581,7 +581,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="ClickHouse script for running stresstest"
     )
-    parser.add_argument("--test-cmd", default="/usr/bin/clickhouse-test")
+    parser.add_argument("--test-cmd", default="/usr/bin/datastore-test")
     parser.add_argument("--skip-func-tests", default="")
     parser.add_argument(
         "--server-log-folder", default="/var/log/clickhouse-server", type=Path
