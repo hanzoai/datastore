@@ -100,7 +100,9 @@ add_contrib (libarchive-cmake libarchive)
 
 add_contrib (corrosion-cmake corrosion)
 add_contrib (delta-kernel-rs-cmake delta-kernel-rs)
-add_contrib (chdig-cmake chdig)
+# chdig (the ClickHouse "dig" TUI debugger) and its clickhouse-rs Rust client dependency are a
+# third-party ClickHouse tool — removed from datastore (USE_CHDIG=0; the `datastore dig` entry
+# point compiles out). This also strips the bulk of vendored clickhouse-* strings from the binary.
 add_contrib (wasmedge-cmake wasmedge)
 
 if (ENABLE_FUZZING)
