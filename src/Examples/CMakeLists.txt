@@ -96,14 +96,6 @@ if (TARGET ch_contrib::icu)
     list(APPEND EXAMPLES_SOURCES ../Common/examples/utf8_upper_lower.cpp)
 endif()
 
-if (TARGET ch_contrib::google_cloud_cpp)
-    list(APPEND EXAMPLES_SOURCES ../Core/examples/gcloud_storage.cpp)
-endif()
-
-if (ENABLE_GOOGLE_CLOUD_CPP_KMS)
-    list(APPEND EXAMPLES_SOURCES ../Core/examples/gcloud_kms.cpp)
-endif()
-
 if (TARGET ch_contrib::hdfs)
     list(APPEND EXAMPLES_SOURCES ../IO/examples/read_buffer_from_hdfs.cpp)
 endif()
