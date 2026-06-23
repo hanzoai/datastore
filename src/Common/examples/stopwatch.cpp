@@ -2,6 +2,7 @@
 #include <thread>
 #include <iostream>
 #include <Common/Stopwatch.h>
+#include <Examples/datastore_examples.h>
 
 
 int mainEntryExampleStopwatch(int, char **)

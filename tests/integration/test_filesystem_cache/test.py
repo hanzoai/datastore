@@ -6,9 +6,7 @@ import uuid
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster
-from helpers.mock_servers import start_mock_servers, start_s3_mock
-from helpers.utility import SafeThread, generate_values, replace_config
+from helpers.cluster import DatastoreCluster
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -16,7 +14,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 @pytest.fixture(scope="module")
 def cluster():
     try:
-        cluster = ClickHouseCluster(__file__)
+        cluster = DatastoreCluster(__file__)
         cluster.add_instance(
             "node",
             main_configs=[
@@ -77,7 +75,7 @@ def non_shared_cluster():
     """
     try:
         # Randomize the cluster name
-        cluster = ClickHouseCluster(f"{__file__}_non_shared_{random.randint(0, 10**7)}")
+        cluster = DatastoreCluster(f"{__file__}_non_shared_{random.randint(0, 10**7)}")
         cluster.add_instance(
             "node_no_filesystem_caches_path",
             main_configs=[
@@ -164,7 +162,7 @@ def test_parallel_cache_loading_on_startup(cluster, node_name):
         .splitlines()
     )
 
-    node.restart_clickhouse()
+    node.restart_datastore()
     wait_for_cache_initialized(node, "parallel_loading_test")
 
     # < because of additional files loaded into cache on server startup.
@@ -187,6 +185,83 @@ def test_parallel_cache_loading_on_startup(cluster, node_name):
     )
     node.query("SELECT * FROM test FORMAT Null")
     assert count == int(node.query("SELECT count() FROM test"))
+
+
+@pytest.mark.parametrize("node_name", ["node"])
+def test_bypass_cache_does_not_overread_non_last_segment(cluster, node_name):
+    """
+    Regression test for an over-read on the `REMOTE_FS_READ_BYPASS_CACHE` path.
+
+    A non-last file segment read in bypass mode relies on the buffer being
+    right-bounded (the read size is clamped to the range only for a single held
+    segment). For readers without right-bounded support (local object storage)
+    the bypass buffer must be wrapped into `BoundedReadBuffer`, otherwise it
+    reads past the segment and trips a logical error in
+    `CachedOnDiskReadBufferFromFile`.
+
+    The `cache_filesystem_failure` failpoint with `skip_cache_on_disk_failure`
+    leaves segments in `PARTIALLY_DOWNLOADED_NO_CONTINUATION`, so concurrent
+    readers read the front segment in bypass mode while holding the next ones.
+    """
+    node = cluster.instances[node_name]
+    cache_name = f"bypass_overread_{uuid.uuid4().hex[:8]}"
+    table_name = f"bypass_overread_{uuid.uuid4().hex[:8]}"
+    try:
+        node.query(
+            f"""
+            DROP TABLE IF EXISTS {table_name} SYNC;
+            CREATE TABLE {table_name} (key UInt32, value String)
+            ENGINE = MergeTree() ORDER BY key
+            SETTINGS disk = disk(
+                type = cache,
+                name = '{cache_name}',
+                path = '{cache_name}/',
+                max_size = '1Gi',
+                max_file_segment_size = 32768,
+                boundary_alignment = 32768,
+                skip_cache_on_disk_failure = true,
+                disk = 'hdd_blob'
+            );
+            INSERT INTO {table_name} SELECT number, randomString(100) FROM numbers(100000);
+            SYSTEM DROP FILESYSTEM CACHE;
+            """
+        )
+
+        test_start = node.query("SELECT now()").strip()
+
+        # Force every download write to fail so segments stay in
+        # PARTIALLY_DOWNLOADED_NO_CONTINUATION and reads fall back to bypass.
+        node.query("SYSTEM ENABLE FAILPOINT cache_filesystem_failure")
+        try:
+            # Concurrent readers: while one query leaves the front segment in a
+            # bypass state, others read it together with the following segments.
+            node.exec_in_container(
+                [
+                    "/usr/bin/datastore",
+                    "benchmark",
+                    "--iterations",
+                    "200",
+                    "--concurrency",
+                    "50",
+                    "--query",
+                    f"SELECT * FROM {table_name} FORMAT Null",
+                ]
+            )
+        finally:
+            node.query("SYSTEM DISABLE FAILPOINT cache_filesystem_failure")
+
+        # If the over-read aborted the server, the queries above raise a
+        # connection error (and the cluster teardown reports the crash).
+        # Otherwise make sure no logical error was recorded.
+        node.query("SELECT 1")
+        errors = int(
+            node.query(
+                f"SELECT count() FROM system.errors WHERE name = 'LOGICAL_ERROR' AND last_error_time >= '{test_start}'"
+            ).strip()
+        )
+        assert errors == 0, f"LOGICAL_ERROR occurred on {node.name}"
+    finally:
+        node.query(f"DROP TABLE IF EXISTS {table_name} SYNC")
 
 
 @pytest.mark.parametrize("node_name", ["node"])
@@ -305,7 +380,7 @@ def test_custom_cached_disk(non_shared_cluster):
     node = non_shared_cluster.instances["node_no_filesystem_caches_path"]
 
     assert "Cannot create cached custom disk without" in node.query_and_get_error(
-        f"""
+        """
         DROP TABLE IF EXISTS test SYNC;
         CREATE TABLE test (a Int32)
         ENGINE = MergeTree() ORDER BY tuple()
@@ -317,18 +392,18 @@ def test_custom_cached_disk(non_shared_cluster):
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
-            <filesystem_caches_path>/var/lib/clickhouse/filesystem_caches/</filesystem_caches_path>
+            <filesystem_caches_path>/var/lib/datastore/filesystem_caches/</filesystem_caches_path>
         </datastore>
-        " > /etc/clickhouse-server/config.d/filesystem_caches_path.xml
+        " > /etc/datastore-server/config.d/filesystem_caches_path.xml
         """,
         ]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
 
     node.query(
-        f"""
+        """
     CREATE TABLE test (a Int32)
     ENGINE = MergeTree() ORDER BY tuple()
     SETTINGS disk = disk(type = cache, name = 'custom_cached', path = 'kek', max_size = 10, disk = 'hdd_blob');
@@ -336,7 +411,7 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     assert (
-        "/var/lib/clickhouse/filesystem_caches/kek"
+        "/var/lib/datastore/filesystem_caches/kek"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached'"
         ).strip()
@@ -346,11 +421,11 @@ def test_custom_cached_disk(non_shared_cluster):
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
-            <custom_cached_disks_base_directory>/var/lib/clickhouse/custom_caches/</custom_cached_disks_base_directory>
+            <custom_cached_disks_base_directory>/var/lib/datastore/custom_caches/</custom_cached_disks_base_directory>
         </datastore>
-        " > /etc/clickhouse-server/config.d/custom_filesystem_caches_path.xml
+        " > /etc/datastore-server/config.d/custom_filesystem_caches_path.xml
         """,
         ]
     )
@@ -358,13 +433,13 @@ def test_custom_cached_disk(non_shared_cluster):
         [
             "bash",
             "-c",
-            "rm /etc/clickhouse-server/config.d/remove_filesystem_caches_path.xml",
+            "rm /etc/datastore-server/config.d/remove_filesystem_caches_path.xml",
         ]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
 
     node.query(
-        f"""
+        """
     CREATE TABLE test2 (a Int32)
     ENGINE = MergeTree() ORDER BY tuple()
     SETTINGS disk = disk(type = cache, name = 'custom_cached2', path = 'kek2', max_size = 10, disk = 'hdd_blob');
@@ -372,19 +447,19 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     assert (
-        "/var/lib/clickhouse/custom_caches/kek2"
+        "/var/lib/datastore/custom_caches/kek2"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached2'"
         ).strip()
     )
 
     node.exec_in_container(
-        ["bash", "-c", "rm /etc/clickhouse-server/config.d/filesystem_caches_path.xml"]
+        ["bash", "-c", "rm /etc/datastore-server/config.d/filesystem_caches_path.xml"]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
 
     node.query(
-        f"""
+        """
     CREATE TABLE test3 (a Int32)
     ENGINE = MergeTree() ORDER BY tuple()
     SETTINGS disk = disk(type = cache, name = 'custom_cached3', path = 'kek3', max_size = 10, disk = 'hdd_blob');
@@ -392,14 +467,14 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     assert (
-        "/var/lib/clickhouse/custom_caches/kek3"
+        "/var/lib/datastore/custom_caches/kek3"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached3'"
         ).strip()
     )
 
     assert "Filesystem cache absolute path must lie inside" in node.query_and_get_error(
-        f"""
+        """
     CREATE TABLE test4 (a Int32)
     ENGINE = MergeTree() ORDER BY tuple()
     SETTINGS disk = disk(type = cache, name = 'custom_cached4', path = '/kek4', max_size = 10, disk = 'hdd_blob');
@@ -407,15 +482,15 @@ def test_custom_cached_disk(non_shared_cluster):
     )
 
     node.query(
-        f"""
+        """
     CREATE TABLE test4 (a Int32)
     ENGINE = MergeTree() ORDER BY tuple()
-    SETTINGS disk = disk(type = cache, name = 'custom_cached4', path = '/var/lib/clickhouse/custom_caches/kek4', max_size = 10, disk = 'hdd_blob');
+    SETTINGS disk = disk(type = cache, name = 'custom_cached4', path = '/var/lib/datastore/custom_caches/kek4', max_size = 10, disk = 'hdd_blob');
     """
     )
 
     assert (
-        "/var/lib/clickhouse/custom_caches/kek4"
+        "/var/lib/datastore/custom_caches/kek4"
         == node.query(
             "SELECT cache_path FROM system.disks WHERE name = 'custom_cached4'"
         ).strip()
@@ -636,7 +711,7 @@ INSERT INTO test SELECT randomString(200);
     )
     count = int(
         node.query(
-            f"""
+            """
     SYSTEM FLUSH LOGS;
     SELECT uniqExact(concat(key, toString(offset)))
     FROM system.filesystem_cache_log
@@ -657,6 +732,70 @@ INSERT INTO test SELECT randomString(200);
             break
         time.sleep(1)
     assert elements <= expected
+
+
+def test_proactive_invalidated_entries_cleanup(cluster):
+    node = cluster.instances["node"]
+    cache_name = "proactive_invalidated_cleanup"
+    # keep_free_space_*_ratio are left at their defaults (disabled), so the only
+    # thing that purges invalidated (lazily-removed) priority queue entries is the
+    # dedicated background cleanup task. max_size/max_elements are large enough to
+    # hold everything, so no eviction happens (eviction would purge them itself).
+    node.query(
+        f"""
+DROP TABLE IF EXISTS test_proactive_cleanup;
+
+CREATE TABLE test_proactive_cleanup (a String)
+ENGINE = MergeTree() ORDER BY tuple()
+SETTINGS disk = disk(type = cache,
+            name = {cache_name},
+            max_size = '1Gi',
+            max_elements = 100000,
+            max_file_segment_size = 10,
+            boundary_alignment = 10,
+            path = "test_proactive_invalidated_cleanup",
+            invalidated_entries_cleanup_threshold = 5,
+            invalidated_entries_cleanup_interval_ms = 500,
+            disk = hdd_blob),
+        min_bytes_for_wide_part = 10485760;
+    """
+    )
+
+    wait_for_cache_initialized(node, "test_proactive_invalidated_cleanup")
+
+    node.query("INSERT INTO test_proactive_cleanup SELECT randomString(2000);")
+    node.query("SELECT * FROM test_proactive_cleanup FORMAT Null")
+
+    cached = int(
+        node.query(
+            f"SELECT count() FROM system.filesystem_cache WHERE cache_name = '{cache_name}'"
+        )
+    )
+    # We need clearly more than the cleanup threshold of invalidated entries.
+    assert cached > 5
+
+    def removed_count():
+        return int(
+            node.query(
+                "SELECT sum(value) FROM system.events "
+                "WHERE event = 'FilesystemCacheBackgroundRemovedInvalidatedEntries'"
+            )
+        )
+
+    before = removed_count()
+
+    # Removing the segments invalidates their priority queue entries lazily
+    # (without taking the priority write lock), leaving them in the queue.
+    node.query(f"SYSTEM DROP FILESYSTEM CACHE '{cache_name}'")
+
+    removed = 0
+    for _ in range(120):
+        removed = removed_count() - before
+        if removed >= cached:
+            break
+        time.sleep(0.5)
+
+    assert removed >= cached
 
 
 cache_dynamic_resize_config = """
@@ -698,7 +837,6 @@ cache_dynamic_resize_config = """
 
 def test_dynamic_resize(cluster):
     node = cluster.instances["cache_dynamic_resize"]
-    max_elements = 20
     cache_name = "cache_dynamic_resize"
     node.query(
         f"""
@@ -756,7 +894,7 @@ SELECT * FROM test;
     default_config = cache_dynamic_resize_config.format(100000, 100, 100000, 100)
     new_config = cache_dynamic_resize_config.format(100000, 10, 100000, 100)
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", new_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -764,11 +902,11 @@ SELECT * FROM test;
     assert 10 == get_downloaded_elements()
     assert 10 == get_queue_elements()
 
-    node.query(f"SYSTEM ENABLE FAILPOINT file_cache_dynamic_resize_fail_to_evict")
+    node.query("SYSTEM ENABLE FAILPOINT file_cache_dynamic_resize_fail_to_evict")
 
     new_config = cache_dynamic_resize_config.format(100000, 5, 100000, 100)
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", new_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -787,7 +925,7 @@ SELECT * FROM test;
         )
     )
 
-    node.query(f"SYSTEM DISABLE FAILPOINT file_cache_dynamic_resize_fail_to_evict")
+    node.query("SYSTEM DISABLE FAILPOINT file_cache_dynamic_resize_fail_to_evict")
     node.query("SYSTEM RELOAD CONFIG")
 
     assert 5 == get_downloaded_elements()
@@ -805,7 +943,7 @@ SELECT * FROM test;
     )
 
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", default_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", default_config
     )
     node.query("SYSTEM RELOAD CONFIG")
 
@@ -875,7 +1013,6 @@ INSERT INTO test SELECT 1, 'test';
 
 def test_dynamic_resize_disabled(cluster):
     node = cluster.instances["cache_dynamic_resize"]
-    max_elements = 20
     cache_name = "cache_dynamic_resize_disabled"
     node.query(
         f"""
@@ -917,7 +1054,7 @@ SELECT * FROM test;
     default_config = cache_dynamic_resize_config.format(100000, 100, 100000, 100)
     new_config = cache_dynamic_resize_config.format(100000, 100, 100000, 10)
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", new_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", new_config
     )
 
     node.query("SYSTEM RELOAD CONFIG")
@@ -930,7 +1067,7 @@ SELECT * FROM test;
     )
     # Return config back to initial state.
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize.xml", default_config
+        "/etc/datastore-server/config.d/cache_dynamic_resize.xml", default_config
     )
 
 
@@ -945,7 +1082,7 @@ def test_max_size_ratio(cluster):
         SETTINGS disk = 'cache_with_max_size_ratio'
         """
     )
-    assert node.contains_in_log("Using max_size as ratio 0.7 to total disk space on path /var/log/clickhouse/fs-cache/max_size_ratio")
+    assert node.contains_in_log("Using max_size as ratio 0.7 to total disk space on path /var/log/datastore/fs-cache/max_size_ratio")
 
 
 def test_finished_download_time(cluster):
@@ -1018,7 +1155,7 @@ def test_concurrent_eviction(cluster, cache_policy):
         try:
             node.exec_in_container(
                 [
-                    "/usr/bin/clickhouse",
+                    "/usr/bin/datastore",
                     "benchmark",
                     "--iterations",
                     "200",
@@ -1145,7 +1282,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Shrink max_size from 100 to 10 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=10, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1158,7 +1295,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Grow max_size back to 100 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1175,7 +1312,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Shrink max_elements from 10 to 2 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=2),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1187,7 +1324,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # --- Grow max_elements back to 10 ---
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1207,11 +1344,11 @@ SYSTEM CLEAR FILESYSTEM CACHE;
                 f"WHERE name = 'LOGICAL_ERROR' AND last_error_time >= '{test_start}'"
             ).strip()
         )
-        assert errors == 0, f"LOGICAL_ERROR occurred during SLRU resize test"
+        assert errors == 0, "LOGICAL_ERROR occurred during SLRU resize test"
 
     finally:
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1229,7 +1366,7 @@ def test_dynamic_resize_slru_failpoint_eviction(cluster):
 
     # Restore to known-good initial state
     node.replace_config(
-        "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+        "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
         slru_config(max_size=100, max_elements=10),
     )
     node.query("SYSTEM RELOAD CONFIG")
@@ -1291,7 +1428,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
         # Attempt to shrink -- eviction will fail, so limits should stay
         # at old values (or somewhere between old and desired)
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=10, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1329,7 +1466,7 @@ SYSTEM CLEAR FILESYSTEM CACHE;
 
         # Now do a real resize (without failpoint) to verify cache is not corrupted
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=10, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")
@@ -1355,14 +1492,14 @@ SYSTEM CLEAR FILESYSTEM CACHE;
                 f"WHERE name = 'LOGICAL_ERROR' AND last_error_time >= '{test_start}'"
             ).strip()
         )
-        assert errors == 0, f"LOGICAL_ERROR occurred during SLRU failpoint resize test"
+        assert errors == 0, "LOGICAL_ERROR occurred during SLRU failpoint resize test"
 
     finally:
         node.query(
             "SYSTEM DISABLE FAILPOINT file_cache_dynamic_resize_fail_to_evict"
         )
         node.replace_config(
-            "/etc/clickhouse-server/config.d/cache_dynamic_resize_slru.xml",
+            "/etc/datastore-server/config.d/cache_dynamic_resize_slru.xml",
             slru_config(max_size=100, max_elements=10),
         )
         node.query("SYSTEM RELOAD CONFIG")

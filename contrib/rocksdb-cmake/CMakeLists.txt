@@ -7,7 +7,7 @@ endif()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64|AARCH64")
   set (HAS_ARMV8_CRC 1)
-  # the original build descriptions set specific flags for ARM. These flags are already subsumed by ClickHouse's general
+  # the original build descriptions set specific flags for ARM. These flags are already subsumed by Datastore's general
   # ARM flags, see cmake/cpu_features.cmake
   # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=armv8-a+crc+crypto -Wno-unused-function")
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv8-a+crc+crypto -Wno-unused-function")
@@ -361,7 +361,7 @@ target_include_directories(_rocksdb SYSTEM BEFORE INTERFACE "${ROCKSDB_SOURCE_DI
 # Make all functions in xxHash.h inline. Beneficial for performance: https://github.com/Cyan4973/xxHash/tree/v0.8.2#build-modifiers
 target_compile_definitions(_rocksdb PRIVATE XXH_INLINE_ALL)
 
-# ClickHouse cannot be compiled without snappy, lz4, zlib, zstd
+# Datastore cannot be compiled without snappy, lz4, zlib, zstd
 option(WITH_SNAPPY "build with SNAPPY" ON)
 option(WITH_LZ4 "build with lz4" ON)
 option(WITH_ZLIB "build with zlib" ON)

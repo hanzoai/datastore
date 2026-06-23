@@ -1,6 +1,7 @@
 FROM ubuntu:22.04
 
 # see https://github.com/moby/moby/issues/4032#issuecomment-192327844
+# It could be removed after we move on a version 23:04+
 ARG DEBIAN_FRONTEND=noninteractive
 
 # ARG for quick switch to a given ubuntu mirror
@@ -8,10 +9,12 @@ ARG apt_archive="http://archive.ubuntu.com"
 
 # We shouldn't use `apt upgrade` to not change the upstream image. It's updated biweekly
 
-# user/group precreated explicitly with fixed uid/gid (101) on purpose, as upstream.
-# Important for rootless containers: the entrypoint can't chown, so owners of mounted
-# volumes are configured externally. Done before any package install so unrelated
-# software can't pick that uid/gid.
+# user/group precreated explicitly with fixed uid/gid on purpose.
+# It is especially important for rootless containers: in that case entrypoint
+# can't do chown and owners of mounted volumes should be configured externally.
+# We do that in advance at the begining of Dockerfile before any packages will be
+# installed to prevent picking those uid / gid by some unrelated software.
+# The same uid / gid (101) is used both for alpine and ubuntu.
 RUN sed -i "s|http://archive.ubuntu.com|${apt_archive}|g" /etc/apt/sources.list \
     && groupadd -r datastore --gid=101 \
     && useradd -r -g datastore --uid=101 --home-dir=/var/lib/datastore --shell=/bin/bash datastore \
@@ -25,23 +28,33 @@ RUN sed -i "s|http://archive.ubuntu.com|${apt_archive}|g" /etc/apt/sources.list 
     && busybox --install -s \
     && rm -rf /var/lib/apt/lists/* /var/cache/debconf /tmp/*
 
-ARG VERSION="26.5.3.1"
+ARG REPO_CHANNEL="stable"
+ARG REPOSITORY="deb [signed-by=/usr/share/keyrings/datastore-keyring.gpg] https://packages.datastore.com/deb ${REPO_CHANNEL} main"
+ARG VERSION="26.5.2.39"
 ARG PACKAGES="datastore-client datastore-server datastore-common-static"
+
+#docker-official-library:off
+# The part between `docker-official-library` tags is related to our builds
+
+# set non-empty deb_location_url url to create a docker image
+# from debs created by CI build, for example:
+# docker build . --network host --build-arg version="21.4.1.6282" --build-arg deb_location_url="https://..." -t ...
+ARG deb_location_url=""
+ARG DIRECT_DOWNLOAD_URLS=""
+
+# set non-empty single_binary_location_url to create docker image
+# from a single binary url (useful for non-standard builds - with sanitizers, for arm64).
+ARG single_binary_location_url=""
+
 ARG TARGETARCH
 
-# The datastore packages come from our own from-source build: the CI build job
-# compiles the binary and nfpm-packages the debs from packages/datastore-*.yaml,
-# then this image installs them via one of the locations below. There is NO upstream
-# package-repository fallback — this image ships our binary, never a redistributed
-# clickhouse package.
-
-# Number of `wget` retries and delay between them, for resilience against transient
-# HTTP errors from the build artifact store.
+# Number of `wget` retries and delay between them, for resilience against
+# transient HTTP errors (e.g. `datastore-builds.s3.amazonaws.com` returning
+# `500 Internal Server Error` / `503 Service Unavailable` during builds).
 ARG WGET_RETRIES=5
 ARG WGET_RETRY_DELAY=1
 
-# (a) install from explicit deb URLs — CI passes one URL per package
-ARG DIRECT_DOWNLOAD_URLS=""
+# install from direct URL
 RUN wget_with_retry() { \
         local attempt=1; \
         while [ "$attempt" -le "${WGET_RETRIES}" ]; do \
@@ -53,8 +66,9 @@ RUN wget_with_retry() { \
         echo "ERROR: Failed to download after ${WGET_RETRIES} attempts"; return 1; \
     } \
     && if [ -n "${DIRECT_DOWNLOAD_URLS}" ]; then \
-        echo "installing from explicit deb urls: ${DIRECT_DOWNLOAD_URLS}" \
-        && rm -rf /tmp/datastore_debs && mkdir -p /tmp/datastore_debs \
+        echo "installing from custom predefined urls with deb packages: ${DIRECT_DOWNLOAD_URLS}" \
+        && rm -rf /tmp/datastore_debs \
+        && mkdir -p /tmp/datastore_debs \
         && for url in $DIRECT_DOWNLOAD_URLS; do \
             wget_with_retry "$url" -P /tmp/datastore_debs || exit 1 \
         ; done \
@@ -62,41 +76,76 @@ RUN wget_with_retry() { \
         && rm -rf /tmp/* ; \
     fi
 
-# (b) install from a web location holding the deb packages — CI passes a base URL
-ARG deb_location_url=""
+# install from a web location with deb packages
 RUN arch="${TARGETARCH:-amd64}" \
     && if [ -n "${deb_location_url}" ]; then \
-        echo "installing from deb location: ${deb_location_url}" \
-        && rm -rf /tmp/datastore_debs && mkdir -p /tmp/datastore_debs \
+        echo "installing from custom url with deb packages: ${deb_location_url}" \
+        && rm -rf /tmp/datastore_debs \
+        && mkdir -p /tmp/datastore_debs \
         && for package in ${PACKAGES}; do \
             { wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_${arch}.deb" -P /tmp/datastore_debs || \
-              wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_all.deb" -P /tmp/datastore_debs ; } \
+                wget --progress=bar:force:noscroll "${deb_location_url}/${package}_${VERSION}_all.deb" -P /tmp/datastore_debs ; } \
             || exit 1 \
         ; done \
         && dpkg -i /tmp/datastore_debs/*.deb \
         && rm -rf /tmp/* ; \
     fi
 
-# (c) install from a single multi-call binary — sanitizer / non-standard builds
-ARG single_binary_location_url=""
+# install from a single binary
 RUN if [ -n "${single_binary_location_url}" ]; then \
         echo "installing from single binary url: ${single_binary_location_url}" \
-        && rm -rf /tmp/datastore_binary && mkdir -p /tmp/datastore_binary \
+        && rm -rf /tmp/datastore_binary \
+        && mkdir -p /tmp/datastore_binary \
         && wget --progress=bar:force:noscroll "${single_binary_location_url}" -O /tmp/datastore_binary/datastore \
         && chmod +x /tmp/datastore_binary/datastore \
-        && /tmp/datastore_binary/datastore install --user datastore --group datastore \
+        && /tmp/datastore_binary/datastore install --user "datastore" --group "datastore" \
         && rm -rf /tmp/* ; \
     fi
 
-# fail fast if no install location produced a binary — there is no silent fallback to
-# an upstream package repository.
-RUN datastore local -q 'SELECT 1' >/dev/null 2>&1 \
-    || { echo "ERROR: no datastore binary installed — pass DIRECT_DOWNLOAD_URLS, deb_location_url, or single_binary_location_url (the CI build provides these)."; exit 1; }
+# The rest is the same in the official docker and in our build system
+#docker-official-library:on
+
+# A fallback to installation from Datastore repository
+# It works unless the datastore binary already exists
+RUN datastore local -q 'SELECT 1' >/dev/null 2>&1 && exit 0 || : \
+    ; apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        dirmngr \
+        gnupg2 \
+    && mkdir -p /etc/apt/sources.list.d \
+    && GNUPGHOME=$(mktemp -d) \
+    && ( set +e; \
+        for KEYSERVER in \
+            hkp://keys.openpgp.org:80 \
+            hkp://pgp.mit.edu:80 \
+            hkp://keyserver.ubuntu.com:80; do \
+            GNUPGHOME="$GNUPGHOME" gpg --batch --no-default-keyring \
+                --keyring /usr/share/keyrings/datastore-keyring.gpg \
+                --keyserver "$KEYSERVER" \
+                --recv-keys 3a9ea1193a97b548be1457d48919f6bd2b48d754 && break; \
+        done || exit 1 \
+    ) \
+    && rm -rf "$GNUPGHOME" \
+    && chmod +r /usr/share/keyrings/datastore-keyring.gpg \
+    && echo "${REPOSITORY}" > /etc/apt/sources.list.d/datastore.list \
+    && echo "installing from repository: ${REPOSITORY}" \
+    && apt-get update \
+    && for package in ${PACKAGES}; do \
+        packages="${packages} ${package}=${VERSION}" \
+    ; done \
+    && apt-get install --yes --no-install-recommends ${packages} || exit 1 \
+    && rm -rf \
+        /var/lib/apt/lists/* \
+        /var/cache/debconf \
+        /tmp/* \
+    && apt-get autoremove --purge -yq dirmngr gnupg2 \
+    && chmod ugo+Xrw -R /etc/datastore-server /etc/datastore-client
+# The last chmod is here to make the next one is No-op in docker official library Dockerfile
 
 # post install
-# allow "others" access to the data/config dirs, because the container can be started
-# with an arbitrary uid (openshift usecase)
-RUN datastore local -q 'SELECT * FROM system.build_options' \
+# we need to allow "others" access to datastore folder, because docker container
+# can be started with arbitrary uid (openshift usecase)
+RUN datastore-local -q 'SELECT * FROM system.build_options' \
     && mkdir -p /var/lib/datastore /var/log/datastore-server /etc/datastore-server /etc/datastore-client \
     && chmod ugo+Xrw -R /var/lib/datastore /var/log/datastore-server /etc/datastore-server /etc/datastore-client
 
@@ -107,8 +156,6 @@ ENV TZ=UTC
 RUN mkdir /docker-entrypoint-initdb.d
 
 COPY docker_related_config.xml /etc/datastore-server/config.d/
-COPY datastore-paths.xml           /etc/datastore-server/config.d/
-COPY datastore-port-override.xml /etc/datastore-server/config.d/
 COPY entrypoint.sh /entrypoint.sh
 
 EXPOSE 9000 8123 9009

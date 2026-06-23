@@ -4,9 +4,9 @@
 
 import pytest
 
-from helpers.cluster import ClickHouseCluster
+from helpers.cluster import DatastoreCluster
 
-cluster = ClickHouseCluster(__file__)
+cluster = DatastoreCluster(__file__)
 node = cluster.add_instance(
     "node_default",
     main_configs=["configs/config.d/storage_configuration.xml"],
@@ -67,12 +67,12 @@ def test_system_logs_recreate():
                     <partition_by remove='remove'/>
                 </{table}>
             </datastore>
-            " > /etc/clickhouse-server/config.d/zzz-override-{table}.xml
+            " > /etc/datastore-server/config.d/zzz-override-{table}.xml
             """,
                 ]
             )
 
-        node.restart_clickhouse()
+        node.restart_datastore()
         node.query("SYSTEM FLUSH LOGS")
         for table in system_logs:
             assert "ENGINE = MergeTree" not in node.query(
@@ -100,11 +100,11 @@ def test_system_logs_recreate():
                     <storage_policy>system_tables</storage_policy>
                 </{table}>
             </datastore>
-            " > /etc/clickhouse-server/config.d/zzz-override-{table}.xml
+            " > /etc/datastore-server/config.d/zzz-override-{table}.xml
             """,
                 ]
             )
-        node.restart_clickhouse()
+        node.restart_datastore()
         node.query("SYSTEM FLUSH LOGS")
         import logging
 
@@ -131,10 +131,10 @@ def test_system_logs_recreate():
 
         for table in system_logs:
             node.exec_in_container(
-                ["rm", f"/etc/clickhouse-server/config.d/zzz-override-{table}.xml"]
+                ["rm", f"/etc/datastore-server/config.d/zzz-override-{table}.xml"]
             )
 
-        node.restart_clickhouse()
+        node.restart_datastore()
         node.query("SYSTEM FLUSH LOGS")
         for table in system_logs:
             assert "ENGINE = MergeTree" in node.query(
@@ -175,17 +175,17 @@ def test_drop_system_log():
         [
             "bash",
             "-c",
-            f"""echo "
+            """echo "
         <datastore>
             <query_log>
                 <flush_interval_milliseconds replace=\\"replace\\">1000000</flush_interval_milliseconds>
             </query_log>
         </datastore>
-        " > /etc/clickhouse-server/config.d/yyy-override-query_log.xml
+        " > /etc/datastore-server/config.d/yyy-override-query_log.xml
         """,
         ]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()
     node.query("select 1")
     node.query("system flush logs")
     node.query("select 2")
@@ -198,13 +198,13 @@ def test_drop_system_log():
     assert node.query("select count() >= 1 from system.query_log") == "1\n"
 
     node.query("drop table system.query_log sync")
-    node.restart_clickhouse()
+    node.restart_datastore()
     node.query("system flush logs")
     assert (
         node.query("select count() >= 0 from system.query_log") == "1\n"
     )  # we check that query_log just exists
 
     node.exec_in_container(
-        ["rm", f"/etc/clickhouse-server/config.d/yyy-override-query_log.xml"]
+        ["rm", "/etc/datastore-server/config.d/yyy-override-query_log.xml"]
     )
-    node.restart_clickhouse()
+    node.restart_datastore()

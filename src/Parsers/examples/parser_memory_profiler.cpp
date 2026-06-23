@@ -81,6 +81,7 @@
 #include <Parsers/parseQuery.h>
 
 #include <jemalloc/jemalloc.h>
+#include <Examples/datastore_examples.h>
 
 
 namespace

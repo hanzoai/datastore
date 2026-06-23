@@ -962,6 +962,7 @@ int deserializeChangelog(
 
 }
 
+int mainEntryDatastoreKeeperUtils(int argc, char ** argv);
 int mainEntryDatastoreKeeperUtils(int argc, char ** argv)
 {
     namespace po = boost::program_options;

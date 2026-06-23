@@ -1,1 +1,8 @@
-../../../tests/config/config.d/logging_no_rotate.xml
+<datastore>
+    <logger>
+        <!-- Disable rotation
+             https://pocoproject.org/docs/Poco.FileChannel.html
+        -->
+        <size>never</size>
+    </logger>
+</datastore>

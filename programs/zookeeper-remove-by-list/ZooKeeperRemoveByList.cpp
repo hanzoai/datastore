@@ -6,6 +6,7 @@
 #include <boost/program_options.hpp>
 
 
+int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv);
 int mainEntryDatastoreZooKeeperRemoveByList(int argc, char ** argv)
 try
 {
@@ -13,7 +14,7 @@ try
     desc.add_options()
         ("help,h", "produce help message")
         ("address,a", boost::program_options::value<std::string>()->required(),
-        "addresses of ZooKeeper instances, comma separated. Example: example01e.hanzo.ai:2181")
+        "addresses of ZooKeeper instances, comma separated. Example: example01e.datastore.com:2181")
         ;
 
     boost::program_options::variables_map options;

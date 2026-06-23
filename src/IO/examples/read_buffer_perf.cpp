@@ -5,6 +5,7 @@
 #include <base/types.h>
 #include <IO/ReadHelpers.h>
 #include <IO/ReadBufferFromFile.h>
+#include <Examples/datastore_examples.h>
 
 
 int mainEntryExampleReadBufferPerf(int, char **)

@@ -135,7 +135,7 @@ std::pair<int, std::vector<std::string>> captureCommand(const std::vector<std::s
 
     std::string output;
     char buf[4096];
-    ssize_t n;
+    ssize_t n = 0;
     while ((n = read(pipefd[0], buf, sizeof(buf))) > 0)
         output.append(buf, static_cast<size_t>(n));
     (void)close(pipefd[0]);
@@ -444,7 +444,7 @@ bool manageDatastoreUser(
             const std::string_view needle = "]]>";
             const std::string_view replacement = "]]]]><![CDATA[>";
             size_t pos = 0;
-            size_t found;
+            size_t found = 0;
             while ((found = src.find(needle, pos)) != std::string_view::npos)
             {
                 escaped_password.append(src, pos, found - pos);
@@ -457,7 +457,7 @@ bool manageDatastoreUser(
         {
             std::ofstream f(default_user_xml);
             f << "<datastore>\n"
-              << "  <!-- Docs: <https://hanzo.ai/docs/operations/settings/settings_users/> -->\n"
+              << "  <!-- Docs: <https://datastore.com/docs/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <!-- Remove default user -->\n"
               << "    <default remove=\"remove\">\n"
@@ -489,7 +489,7 @@ bool manageDatastoreUser(
         {
             std::ofstream f(default_user_xml);
             f << "<datastore>\n"
-              << "  <!-- Docs: <https://hanzo.ai/docs/operations/settings/settings_users/> -->\n"
+              << "  <!-- Docs: <https://datastore.com/docs/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <default>\n"
               << "      <!-- User default is available only locally -->\n"
@@ -763,7 +763,7 @@ bool initDatastoreDB(
 
 } // anonymous namespace
 
-
+int mainEntryDatastoreDockerInit(int argc, char ** argv);
 int mainEntryDatastoreDockerInit(int argc, char ** argv)
 {
     g_datastore_binary = (argc > 0 && argv[0][0] != '\0') ? argv[0] : "datastore";
@@ -878,8 +878,8 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
 
     /// --- Resolve identity ---
     uid_t current_uid = getuid();
-    uid_t run_uid;
-    gid_t run_gid;
+    uid_t run_uid = 0;
+    gid_t run_gid = 0;
     bool do_chown = true;
 
     if (getEnv("DATASTORE_RUN_AS_ROOT") == "1" || getEnv("DATASTORE_DO_NOT_CHOWN") == "1")
@@ -1034,7 +1034,10 @@ int mainEntryDatastoreDockerInit(int argc, char ** argv)
     /// As PID 1, signals without a handler are silently dropped by the kernel.
     {
         struct sigaction sa{};
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         sa.sa_handler = shutdownHandler;
+#pragma clang diagnostic pop
         sigemptyset(&sa.sa_mask);
         sa.sa_flags = SA_RESTART;
         sigaction(SIGTERM, &sa, nullptr);

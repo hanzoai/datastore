@@ -126,7 +126,7 @@ target_compile_options(_zapc PRIVATE ${ZAP_PRIVATE_CXX_FLAGS})
 add_library(ch_contrib::zap ALIAS _zapc)
 
 # NOTE: the CapnProto data format (src/Formats/CapnProto*, #if USE_CAPNP) is intentionally
-# NOT wired here. It depends on ClickHouse-fork capnp patches (DynamicStruct/List
+# NOT wired here. It depends on Datastore-fork capnp patches (DynamicStruct/List
 # getBuilderImpl/getReaderImpl, Text::Reader->String) that vanilla zap-proto/cpp-core lacks.
 # Without a ch_contrib::capnp target, USE_CAPNP=0 and that format gates off cleanly. Re-enabling
 # it = porting those ~16 lines of accessors into zap-proto/cpp-core's dynamic.h (tracked follow-up).

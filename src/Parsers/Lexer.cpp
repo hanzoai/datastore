@@ -588,6 +588,8 @@ const char * getErrorTokenDescription(TokenType type)
 
 #else
 
+#include <Parsers/datastore_lexer.h>
+
 extern "C"
 {
 

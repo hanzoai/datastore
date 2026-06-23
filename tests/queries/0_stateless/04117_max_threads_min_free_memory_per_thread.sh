@@ -7,21 +7,30 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Test for `max_threads_min_free_memory_per_thread` and
 # `max_insert_threads_min_free_memory_per_thread`.
 #
-# Use `clickhouse-local` with a constrained `max_server_memory_usage` so the
+# Use `datastore-local` with a constrained `max_server_memory_usage` so the
 # free-memory limiter actually kicks in, then count parallel stages from the
 # `EXPLAIN PIPELINE` output.
 
-CONFIG_FILE=$(mktemp -p "${CLICKHOUSE_TMP:-.}" 04117_config.XXXXXX.xml)
+CONFIG_FILE=$(mktemp -p "${DATASTORE_TMP:-.}" 04117_config.XXXXXX.xml)
 trap 'rm -f "$CONFIG_FILE"' EXIT
 
+# `max_server_memory_usage` gives the free-memory limiter a deterministic budget.
+# `memory_worker_use_cgroup` is disabled so `datastore-local` tracks its own
+# process memory instead of the (shared) cgroup: in CI the cgroup spans the whole
+# container, and under load the worker would seed `total_memory_tracker` with the
+# container-wide usage (e.g. ~8 GiB), tripping the 4G hard limit on the first
+# allocation of any query. `memory_worker_dynamic_hard_limit` is disabled so the
+# 4G hard limit (and thus the limiter's budget) stays fixed regardless of host load.
 cat > "$CONFIG_FILE" <<'EOF'
 <datastore>
     <max_server_memory_usage>4G</max_server_memory_usage>
+    <memory_worker_use_cgroup>false</memory_worker_use_cgroup>
+    <memory_worker_dynamic_hard_limit>false</memory_worker_dynamic_hard_limit>
 </datastore>
 EOF
 
 run_local() {
-    ${CLICKHOUSE_LOCAL} --config-file "$CONFIG_FILE" "$@"
+    ${DATASTORE_LOCAL} --config-file "$CONFIG_FILE" "$@"
 }
 
 # `EXPLAIN PIPELINE SELECT ...` produces text output where the source stage

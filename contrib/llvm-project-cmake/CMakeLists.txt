@@ -1,4 +1,4 @@
-# Lean LLVM build for ClickHouse
+# Lean LLVM build for Datastore
 #
 # Builds LLVM libraries without including LLVM's own CMake definitions.
 # Uses llvm-tblgen built from sources to generate .inc files at build time.
@@ -1004,7 +1004,7 @@ if (ENABLE_XRAY)
 endif()
 
 #
-# Create the interface library that ClickHouse links against
+# Create the interface library that Datastore links against
 #
 if (NOT ENABLE_EMBEDDED_COMPILER AND NOT ENABLE_DWARF_PARSER)
     set (REQUIRED_LLVM_LIBRARIES LLVMSupport)

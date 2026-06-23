@@ -1,1 +1,6 @@
-../../../tests/config/config.d/filesystem_cache_log.xml
+<datastore>
+        <filesystem_cache_log>
+                <database>system</database>
+                <table>filesystem_cache_log</table>
+        </filesystem_cache_log>
+</datastore>

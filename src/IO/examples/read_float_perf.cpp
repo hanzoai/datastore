@@ -17,6 +17,7 @@
 #include <IO/ReadBufferFromFileDescriptor.h>
 #include <IO/WriteBufferFromFileDescriptor.h>
 #include <Compression/CompressedReadBuffer.h>
+#include <Examples/datastore_examples.h>
 
 /** How to test:
 

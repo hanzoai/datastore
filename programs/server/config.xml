@@ -248,7 +248,7 @@
       -->
 
     <!--
-    <interserver_http_host>example.hanzo.ai</interserver_http_host>
+    <interserver_http_host>example.datastore.com</interserver_http_host>
     -->
 
     <!-- Port for the SSH server which allows to connect and execute
@@ -279,6 +279,25 @@
         <user>interserver</user>
         <password></password>
     </interserver_http_credentials>-->
+
+    <!-- Multi-stage distributed query execution (experimental, enabled per query with the
+         `make_distributed_plan` setting). When a query uses streaming exchanges, workers connect
+         directly to each other on this port to pass intermediate results.
+
+         Security: the streaming exchange handshake is NOT authenticated. The port must be treated
+         like the interserver port: reachable only from trusted Datastore nodes in the same cluster,
+         never from untrusted networks. For that reason the listener is started only when an explicit
+         `streaming_exchange_listen_host` is configured; setting only the port logs an error and does
+         not start the listener. Bind it to a private interface and protect it with a firewall.
+         Exchanges are keyed by a random per-query identifier, which makes blind injection into a
+         running query impractical, but this is defense in depth, not an access-control mechanism.
+      -->
+    <!--
+    <distributed_query>
+        <streaming_exchange_port>9223</streaming_exchange_port>
+        <streaming_exchange_listen_host>127.0.0.1</streaming_exchange_listen_host>
+    </distributed_query>
+    -->
 
     <!-- Listen specified address.
          Use :: (wildcard IPv6 address), if you want to accept connections both with IPv4 and IPv6 from everywhere.
@@ -326,13 +345,38 @@
     <!-- Enable stacktrace in default http handler. -->
     <!-- <enable_http_stacktrace/>true<enable_http_stacktrace>-->
 
-    <!-- ZAP native transport (zero-copy, promise pipelining) — the gRPC replacement.
-         Uncomment to listen; the HTTP (8123) and native TCP (9000) protocols are unaffected. -->
-    <!-- <zap_port>9999</zap_port> -->
+    <!-- gRPC protocol (see src/Server/grpc_protos/datastore_grpc.proto for the API) -->
+    <!-- <grpc_port>9100</grpc_port> -->
+    <grpc>
+        <enable_ssl>false</enable_ssl>
 
+        <!-- The following two files are used only if enable_ssl=1 -->
+        <ssl_cert_file>/path/to/ssl_cert_file</ssl_cert_file>
+        <ssl_key_file>/path/to/ssl_key_file</ssl_key_file>
+
+        <!-- Whether server will request client for a certificate -->
+        <ssl_require_client_auth>false</ssl_require_client_auth>
+
+        <!-- The following file is used only if ssl_require_client_auth=1 -->
+        <ssl_ca_cert_file>/path/to/ssl_ca_cert_file</ssl_ca_cert_file>
+
+        <!-- Default transport compression type (can be overridden by client, see the transport_compression_type field in QueryInfo).
+             Supported algorithms: none, deflate, gzip, stream_gzip -->
+        <transport_compression_type>none</transport_compression_type>
+
+        <!-- Default transport compression level. Supported levels: 0..3 -->
+        <transport_compression_level>0</transport_compression_level>
+
+        <!-- Send/receive message size limits in bytes. -1 means unlimited -->
+        <max_send_message_size>-1</max_send_message_size>
+        <max_receive_message_size>-1</max_receive_message_size>
+
+        <!-- Enable if you want very detailed logs -->
+        <verbose_logs>false</verbose_logs>
+    </grpc>
 
     <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/Datastore-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71
-         Note: Datastore Cloud https://hanzo.ai/cloud always has secure connections configured.
+         Note: Datastore Cloud https://datastore.com/cloud always has secure connections configured.
     -->
     <openSSL>
         <server> <!-- Used for https server AND secure tcp port -->
@@ -442,7 +486,17 @@
       -->
     <async_load_databases>true</async_load_databases>
 
-    <!-- On memory constrained environments you may have to set this to value larger than 1.
+    <!-- The maximum amount of memory the server is allowed to use, as a ratio to the available memory.
+
+         Besides capping the hard memory limit at startup, the background memory worker periodically
+         recomputes the limit at runtime as (resident memory + system available memory) * this ratio,
+         so the server leaves room for other processes on the same host. In a cgroup with a finite
+         memory limit, the cgroup's available memory is used instead of the host-wide value.
+
+         On memory constrained environments you may have to set this to a value larger than 1.
+         A value of 0 disables both the startup cap and the runtime adjustment.
+         To keep only the static cap (the behavior of previous versions), set
+         memory_worker_dynamic_hard_limit to 0.
       -->
     <max_server_memory_usage_to_ram_ratio>0.9</max_server_memory_usage_to_ram_ratio>
 
@@ -602,7 +656,7 @@
     <bcrypt_workfactor>12</bcrypt_workfactor>
 
     <!-- Complexity requirements for user passwords.
-         Note: Datastore Cloud https://hanzo.ai/cloud is always configured for strong passwords.
+         Note: Datastore Cloud https://datastore.com/cloud is always configured for strong passwords.
       -->
     <!-- <password_complexity>
         <rule>
@@ -934,8 +988,8 @@
     -->
 
     <!-- Configuration of clusters that could be used in Distributed tables.
-         https://hanzo.ai/docs/en/operations/table_engines/distributed/
-         Note: Datastore Cloud https://hanzo.ai/cloud has the cluster preconfigured and dynamically scalable.
+         https://datastore.com/docs/en/operations/table_engines/distributed/
+         Note: Datastore Cloud https://datastore.com/cloud has the cluster preconfigured and dynamically scalable.
       -->
     <remote_servers>
         <!-- Test only shard config for testing distributed storage -->
@@ -976,6 +1030,13 @@
                     <!-- <secure>0</secure> -->
                     <!-- Optional. Bind to specific host before connecting to use a specific network. -->
                     <!-- <bind_host>10.0.0.1</bind_host> -->
+                    <!-- Optional. Per-node ports for the multi-stage distributed query engine
+                         (make_distributed_plan): the interserver port the initiator dispatches
+                         tasks to, and the streaming-exchange listener port. When unset, the
+                         initiator falls back to its stateless_worker_client.port /
+                         distributed_query.streaming_exchange_port. -->
+                    <!-- <stateless_worker_port>9009</stateless_worker_port> -->
+                    <!-- <streaming_exchange_port>9223</streaming_exchange_port> -->
                 </replica>
             </shard>
         </default>
@@ -986,14 +1047,14 @@
     -->
     <!--<remote_url_allow_hosts>-->
         <!-- Host should be specified exactly as in URL. The name is checked before DNS resolution.
-            Example: "hanzo.ai", "hanzo.ai." and "hanzo.ai" are different hosts.
+            Example: "datastore.com", "datastore.com." and "www.datastore.com" are different hosts.
                     If port is explicitly specified in URL, the host:port is checked as a whole.
                     If host specified here without port, any port with this host allowed.
-                    "hanzo.ai" -> "hanzo.ai:443", "hanzo.ai:80" etc. is allowed, but "hanzo.ai:80" -> only "hanzo.ai:80" is allowed.
+                    "datastore.com" -> "datastore.com:443", "datastore.com:80" etc. is allowed, but "datastore.com:80" -> only "datastore.com:80" is allowed.
             If the host is specified as IP address, it is checked as specified in URL. Example: "[2a02:6b8:a::a]".
             If there are redirects and support for redirects is enabled, every redirect (the Location field) is checked.
             Host should be specified using the host xml tag:
-                    <host>hanzo.ai</host>
+                    <host>datastore.com</host>
         -->
 
         <!-- Regular expression can be specified. RE2 engine is used for regexps.
@@ -1018,9 +1079,9 @@
     <!-- ZooKeeper is used to store metadata about replicas, when using Replicated tables.
          Optional. If you don't use replicated tables, you could omit that.
 
-         See https://hanzo.ai/docs/en/engines/table-engines/mergetree-family/replication/
+         See https://datastore.com/docs/en/engines/table-engines/mergetree-family/replication/
 
-         Note: Datastore Cloud https://hanzo.ai/cloud has Datastore Keeper automatically configured for every service.
+         Note: Datastore Cloud https://datastore.com/cloud has Datastore Keeper automatically configured for every service.
       -->
 
     <!--
@@ -1043,7 +1104,7 @@
     <!-- Substitutions for parameters of replicated tables.
           Optional. If you don't use replicated tables, you could omit that.
 
-         See https://hanzo.ai/docs/en/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
+         See https://datastore.com/docs/en/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
       -->
     <!--
     <macros>
@@ -1142,7 +1203,7 @@
         <database>system</database>
         <table>query_log</table>
         <!--
-            PARTITION BY expr: https://hanzo.ai/docs/en/table_engines/mergetree-family/custom_partitioning_key/
+            PARTITION BY expr: https://datastore.com/docs/en/table_engines/mergetree-family/custom_partitioning_key/
             Example:
                 event_date
                 toMonday(event_date)
@@ -1151,7 +1212,7 @@
         -->
         <partition_by>toYYYYMM(event_date)</partition_by>
         <!--
-            Table TTL specification: https://hanzo.ai/docs/en/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
+            Table TTL specification: https://datastore.com/docs/en/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
             Example:
                 event_date + INTERVAL 1 WEEK
                 event_date + INTERVAL 7 DAY DELETE
@@ -1161,7 +1222,7 @@
         -->
 
         <!--
-            ORDER BY expr: https://hanzo.ai/docs/en/engines/table-engines/mergetree-family/mergetree#order_by
+            ORDER BY expr: https://datastore.com/docs/en/engines/table-engines/mergetree-family/mergetree#order_by
             Example:
                 event_date, event_time
                 event_date, type, query_id
@@ -1540,7 +1601,7 @@
     </top_level_domains_lists>
 
     <!-- Configuration of external dictionaries. See:
-         https://hanzo.ai/docs/en/sql-reference/dictionaries/external-dictionaries/external-dicts
+         https://datastore.com/docs/en/sql-reference/dictionaries/external-dictionaries/external-dicts
     -->
     <dictionaries_config>*_dictionary.*ml</dictionaries_config>
 
@@ -1568,7 +1629,7 @@
 
     <!-- Uncomment if you want data to be compressed 30-100% better.
          Don't do that if you just started using Datastore.
-         Note: Datastore Cloud https://hanzo.ai/cloud has a stronger compression by default.
+         Note: Datastore Cloud https://datastore.com/cloud has a stronger compression by default.
       -->
     <!--
     <compression>
@@ -1591,7 +1652,7 @@
          command is executed through /bin/sh and is expected to write
          a Base64-encoded key to the stdout.
 
-         Note: Datastore Cloud https://hanzo.ai/cloud supports encryption with customer-managed keys.
+         Note: Datastore Cloud https://datastore.com/cloud supports encryption with customer-managed keys.
     -->
     <encryption_codecs>
         <!-- aes_128_gcm_siv -->
@@ -1618,7 +1679,7 @@
 
     <!-- Allow to execute distributed DDL queries (CREATE, DROP, ALTER, RENAME) on cluster.
          Works only if ZooKeeper is enabled. Comment it if such functionality isn't required.
-         Note: Datastore Cloud https://hanzo.ai/cloud always runs DDL queries on cluster.
+         Note: Datastore Cloud https://datastore.com/cloud always runs DDL queries on cluster.
     -->
     <distributed_ddl>
         <!-- Path in ZooKeeper to queue with DDL queries -->
@@ -1688,7 +1749,7 @@
     -->
 
     <!-- Settings to fine-tune ReplicatedMergeTree tables. See documentation in source code, in MergeTreeSettings.h
-         Note: Datastore Cloud https://hanzo.ai/cloud has a SharedMergeTree engine that does not require fine-tuning.
+         Note: Datastore Cloud https://datastore.com/cloud has a SharedMergeTree engine that does not require fine-tuning.
     -->
     <!--
     <replicated_merge_tree>
@@ -1781,12 +1842,21 @@
     <!-- Uncomment to use custom http handlers.
 
         rules are checked from top to bottom, first match runs the handler
-            url - to match request URL (path and query string only), you can use 'regex:' prefix to use regex match(optional)
-            full_url - to match request **full** URL (schema, host:port, path and query string), you can use 'regex:' prefix to use regex match(optional)
-                       note, Datastore does not support "virtual hosts" so "host" will contain IP address not the "Host" header.
+            url - to match request URL path (query string is excluded) (optional)
+            url_prefix - to match request URL path against a base path: the path itself or anything below it on a
+                         path-segment boundary, e.g. /api/v1 matches /api/v1, /api/v1/ and /api/v1/write but not
+                         /api/v1beta (query string is excluded) (optional)
+            url_regexp - to match request URL path against a regular expression (query string is excluded) (optional)
+            full_url - to match the complete request URL `scheme://host:port/path` (host is an IP address here;
+                       query string is excluded) (optional)
+            full_url_prefix - to match the complete request URL `scheme://host:port/path` against base
+                              (see url_prefix above; query string is excluded) (optional)
+            full_url_regexp - to match the complete request URL `scheme://host:port/path` against a regular expression
+                             (query string is excluded) (optional)
             empty_query_string - check that there is no query string in the URL
             methods - to match request method, you can use commas to separate multiple method matches(optional)
-            headers - to match request headers, match each child element (child element name is header name), you can use 'regex:' prefix to use regex match(optional)
+            headers - to match request headers, match each child element (child element name is header name)(optional)
+            headers_regexp - like headers, but each child element's value is matched against a regular expression (optional)
 
         handler is request handler
             type - supported types: static, dynamic_query_handler, predefined_query_handler, redirect
@@ -1828,7 +1898,7 @@
         </rule>
 
         <rule>
-            <full_url>regex:http?://[^/]/dashboard</full_url>
+            <full_url_regexp>http?://[^/]/dashboard</full_url_regexp>
             <handler>
                 <type>redirect</type>
                 <location>/dashboard?user=play</location>
@@ -1853,7 +1923,7 @@
         <!-- The reports are anonymized -->
         <enabled>true</enabled>
         <send_logical_errors>true</send_logical_errors>
-        <endpoint>https://crash.hanzo.ai/</endpoint>
+        <endpoint>https://crash.datastore.com/</endpoint>
     </send_crash_reports>
 
     <!-- Uncomment to disable Datastore internal DNS caching. -->
@@ -1934,7 +2004,7 @@
         -->
     <!-- </kafka> -->
 
-    <!-- Note: Datastore Cloud https://hanzo.ai/cloud provides automatic backups to object storage. -->
+    <!-- Note: Datastore Cloud https://datastore.com/cloud provides automatic backups to object storage. -->
     <backups>
         <allowed_path>backups</allowed_path>
 

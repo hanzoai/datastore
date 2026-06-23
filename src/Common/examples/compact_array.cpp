@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <unistd.h>
+#include <Examples/datastore_examples.h>
 
 
 namespace fs = std::filesystem;

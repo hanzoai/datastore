@@ -5,7 +5,7 @@ set (SRC_DIR "${Datastore_SOURCE_DIR}/contrib/xz")
 # This file has been put into the public domain.
 # You can do whatever you want with this file.
 #
-# The file was edited for ClickHouse
+# The file was edited for Datastore
 
 # Get the package version from version.h into XZ_VERSION variable.
 file(READ ${SRC_DIR}/src/liblzma/api/lzma/version.h XZ_VERSION)

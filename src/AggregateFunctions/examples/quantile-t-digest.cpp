@@ -2,6 +2,7 @@
 #include <IO/WriteBufferFromString.h>
 #include <IO/ReadBufferFromString.h>
 #include <iostream>
+#include <Examples/datastore_examples.h>
 
 int mainEntryExampleQuantileTDigest(int, char **)
 {
