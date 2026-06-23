@@ -511,8 +511,12 @@ target_include_directories(_arrow SYSTEM BEFORE PUBLIC "${Datastore_SOURCE_DIR}/
 target_include_directories(_arrow SYSTEM PRIVATE ${HDFS_INCLUDE_DIR})
 
 # === arrow flight
-
-include(flight.cmake)
+# Arrow Flight is a gRPC-based transport. Datastore has removed gRPC entirely (no contrib/grpc,
+# no grpc_cpp_plugin), so Flight cannot and must not be built. Gate it on ENABLE_ARROW_FLIGHT
+# (always OFF here) — otherwise flight.cmake references the removed $<TARGET_FILE:grpc_cpp_plugin>.
+if (ENABLE_ARROW_FLIGHT)
+    include(flight.cmake)
+endif()
 
 # === parquet
 

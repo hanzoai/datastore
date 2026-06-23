@@ -18,7 +18,6 @@ public:
         HTTP,
         HTTPS,
         MYSQL,
-        GRPC,
         ZAP,
         ARROW_FLIGHT,
         POSTGRESQL,

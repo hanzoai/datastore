@@ -157,10 +157,6 @@
 #    include <Common/LibSSHLogger.h>
 #endif
 
-#if USE_GRPC
-#   include <Server/GRPCServer.h>
-#endif
-
 #if USE_NURAFT
 #    include <Coordination/FourLetterCommand.h>
 #    include <Coordination/KeeperAsynchronousMetrics.h>
@@ -3576,25 +3572,6 @@ void Server::createServers(
             });
         }
 
-#if USE_ARROWFLIGHT
-        if (server_type.shouldStart(ServerType::Type::ARROW_FLIGHT))
-        {
-            port_name = "arrowflight_port";
-            createServer(config, listen_host, port_name, listen_try, start_servers, servers, [&](UInt16 port) -> ProtocolServerAdapter
-            {
-                Poco::Net::ServerSocket socket;
-                auto address = socketBindListen(server_settings, socket, listen_host, port, /* secure = */ true);
-                socket.setReceiveTimeout(Poco::Timespan());
-                socket.setSendTimeout(settings[Setting::send_timeout]);
-                return ProtocolServerAdapter(
-                    listen_host,
-                    port_name,
-                    "Arrow Flight compatibility protocol: " + address.toString(),
-                    std::unique_ptr<IGRPCServer>(new ArrowFlightServer(*this, makeSocketAddress(listen_host, port, &logger()))),
-                    true);
-            });
-        }
-#endif
 
         if (server_type.shouldStart(ServerType::Type::TCP_SECURE))
         {
@@ -3711,21 +3688,6 @@ void Server::createServers(
             });
         }
 
-#if USE_GRPC
-        if (server_type.shouldStart(ServerType::Type::GRPC))
-        {
-            port_name = "grpc_port";
-            createServer(config, listen_host, port_name, listen_try, start_servers, servers, [&](UInt16 port) -> ProtocolServerAdapter
-            {
-                Poco::Net::SocketAddress server_address(listen_host, port);
-                return ProtocolServerAdapter(
-                    listen_host,
-                    port_name,
-                    "gRPC protocol: " + server_address.toString(),
-                    std::make_unique<GRPCServer>(*this, makeSocketAddress(listen_host, port, &logger())));
-            });
-        }
-#endif
         if (server_type.shouldStart(ServerType::Type::PROMETHEUS))
         {
             /// Prometheus (if defined and not setup yet with http_port)

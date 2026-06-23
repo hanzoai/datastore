@@ -10,12 +10,11 @@
 namespace DB
 {
 
-class IGRPCServer;
 class ZapServer;
 class TCPServer;
 
 /// Provides an unified interface to access a protocol implementing server
-/// no matter what type it has (HTTPServer, TCPServer, MySQLServer, GRPCServer, ...).
+/// no matter what type it has (HTTPServer, TCPServer, MySQLServer, ZapServer, ...).
 class ProtocolServerAdapter
 {
     friend class ProtocolServers;
@@ -29,14 +28,6 @@ public:
         std::unique_ptr<TCPServer> tcp_server_,
         bool supports_runtime_reconfiguration_ = true);
 
-#if USE_GRPC
-    ProtocolServerAdapter(
-        const std::string & listen_host_,
-        const char * port_name_,
-        const std::string & description_,
-        std::unique_ptr<IGRPCServer> grpc_server_,
-        bool supports_runtime_reconfiguration_ = true);
-#endif
 #if USE_ZAP
     ProtocolServerAdapter(
         const std::string & listen_host_,
@@ -87,7 +78,6 @@ private:
         virtual size_t refusedConnections() const = 0;
     };
     class TCPServerAdapterImpl;
-    class GRPCServerAdapterImpl;
     class ZapServerAdapterImpl;
 
     std::string listen_host;
