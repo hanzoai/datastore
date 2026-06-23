@@ -56,12 +56,6 @@ int mainEntryExampleDecompressPerf(int argc, char ** argv);
 int mainEntryExampleStringPool(int argc, char ** argv);
 int mainEntryExampleField(int argc, char ** argv);
 int mainEntryExampleStringRefHash(int argc, char ** argv);
-#if USE_GOOGLE_CLOUD
-int mainEntryExampleGcloudStorage(int argc, char ** argv);
-#endif
-#if USE_GOOGLE_CLOUD_KMS
-int mainEntryExampleGcloudKms(int argc, char ** argv);
-#endif
 int mainEntryExampleReadBuffer(int argc, char ** argv);
 int mainEntryExampleReadBufferPerf(int argc, char ** argv);
 int mainEntryExampleReadFloatPerf(int argc, char ** argv);
@@ -163,12 +157,6 @@ std::pair<std::string_view, MainFunc> examples[] =
     {"string_pool", mainEntryExampleStringPool},
     {"field", mainEntryExampleField},
     {"string_ref_hash", mainEntryExampleStringRefHash},
-#if USE_GOOGLE_CLOUD
-    {"gcloud_storage", mainEntryExampleGcloudStorage},
-#endif
-#if USE_GOOGLE_CLOUD_KMS
-    {"gcloud_kms", mainEntryExampleGcloudKms},
-#endif
     {"read_buffer", mainEntryExampleReadBuffer},
     {"read_buffer_perf", mainEntryExampleReadBufferPerf},
     {"read_float_perf", mainEntryExampleReadFloatPerf},

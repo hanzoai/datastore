@@ -233,20 +233,10 @@ add_contrib(simdcomp-cmake simdcomp)
 
 add_contrib (numactl-cmake numactl)
 
-# Google Cloud Cpp (gRPC-based; off when gRPC is ripped out)
-if(ENABLE_GRPC AND ENABLE_LIBRARIES AND (OS_LINUX OR OS_DARWIN OR OS_FREEBSD) AND (ARCH_AMD64 OR (ARCH_AARCH64 AND NOT NO_ARMV81_OR_HIGHER)))
-    set(ENABLE_GOOGLE_CLOUD_CPP_DEFAULT ON)
-else()
-    set(ENABLE_GOOGLE_CLOUD_CPP_DEFAULT OFF)
-endif()
-option(ENABLE_GOOGLE_CLOUD_CPP "Enable Google Cloud Cpp" ${ENABLE_GOOGLE_CLOUD_CPP_DEFAULT})
-if(ENABLE_GOOGLE_CLOUD_CPP)
-    add_contrib (nlohmann-json-cmake nlohmann-json)
-    add_contrib (crc32c-cmake crc32c)
-    add_contrib (google-cloud-cpp-cmake google-cloud-cpp) # requires grpc, protobuf, absl, nlohmann's json, crc32c
-else()
-    message(STATUS "Not using Google Cloud Cpp")
-endif()
+# Google Cloud Cpp — DROPPED from datastore. It is gRPC-based (gRPC is removed) and redundant:
+# GCS is reached through its S3-compatible endpoint via the AWS S3 client, and secrets/KMS go
+# through Hanzo KMS — not GCP KMS. Object storage = S3 only. Do not re-add without re-adding gRPC.
+message(STATUS "Not using Google Cloud Cpp (dropped: gRPC-based; use S3 + Hanzo KMS)")
 
 add_contrib (jwt-cpp-cmake jwt-cpp)
 
