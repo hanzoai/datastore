@@ -11,7 +11,7 @@ Usage:
 
 URL formats:
   - GitHub PR URL:  https://github.com/ClickHouse/ClickHouse/pull/12345
-  - CI HTML URL:    https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=...&sha=...
+  - CI HTML URL:    https://s3.amazonaws.com/datastore-test-reports/json.html?PR=...&sha=...
 
 Options:
   --arch <amd|arm|all>   Filter by architecture (default: all)
@@ -85,7 +85,7 @@ def resolve_pr(pr_url):
     pr_number = m.group(2)
 
     is_private = "private" in repo.lower()
-    bucket = "clickhouse-private-test-reports" if is_private else "clickhouse-test-reports"
+    bucket = "clickhouse-private-test-reports" if is_private else "datastore-test-reports"
     base_url = f"https://s3.amazonaws.com/{bucket}"
 
     gh_repo = f"ClickHouse/{repo}" if is_private else "ClickHouse/ClickHouse"

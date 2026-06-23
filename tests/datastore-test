@@ -58,9 +58,9 @@ except ImportError:
 # Base path for per-process PGID files used by `--cleanup` to locate orphaned
 # test process groups.  Each worker process writes its own file named
 # ``_GROUP_PID_NAME.<pid>`` so no cross-process locking is needed.
-# The CI hook can invoke `clickhouse-test --cleanup` even if the parent was
+# The CI hook can invoke `datastore-test --cleanup` even if the parent was
 # killed with SIGKILL before its cleanup code ran.
-# `__file__` is `{repo}/tests/clickhouse-test`, so this resolves to
+# `__file__` is `{repo}/tests/datastore-test`, so this resolves to
 # `{repo}/ci/tmp/clickhouse_test_group_pid`.
 _GROUP_PID_PATH = Path(__file__).resolve().parent.parent / "ci" / "tmp"
 _GROUP_PID_NAME = "clickhouse_test_group_pid"
@@ -76,7 +76,7 @@ def write_text_atomic(path: Path, text: str) -> None:
     except Exception as e:
         print(f"Warning: could not write {path}: {e}", file=sys.stderr)
 
-# Exit code returned by `clickhouse-test` when the run was aborted early via
+# Exit code returned by `datastore-test` when the run was aborted early via
 # `stop_testing` (typically: server died / health check failed). Distinct from
 # the generic failure code 1 so the job side can populate the synthetic
 # "Server died" leaf without fragile log-line matching. Kept in sync with
@@ -756,7 +756,7 @@ def cleanup_child_processes(pid):
 
 
 # send signal to all processes in group to avoid hung check triggering
-# (to avoid terminating clickhouse-test itself, the signal should be ignored)
+# (to avoid terminating datastore-test itself, the signal should be ignored)
 def stop_tests():
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
     cleanup_child_processes(os.getpid())
@@ -1088,7 +1088,7 @@ def get_all_server_pids():
     """Get PIDs of all clickhouse-server processes visible to the current user.
 
     No pgid scoping: in every real scenario where this helper is useful the
-    server lives outside `clickhouse-test`'s process group (CI harnesses,
+    server lives outside `datastore-test`'s process group (CI harnesses,
     Docker, systemd, and the `ClickHouseService` test fixture all spawn the
     server with `start_new_session=True` or equivalent).  A pgid filter
     silently filters out everything we are meant to find.
@@ -1243,7 +1243,7 @@ class FailureReason(enum.Enum):
     NO_ASYNC_INSERT = "test is not supported with async inserts enabled"
     NO_LLVM_COVERAGE = "test is not supported with llvm coverage enabled"
     SHARED_MERGE_TREE = "no-shared-merge-tree"
-    REQUIRE_REPLICATED_TO_SHARED_MERGE_TREE_REPLACEMENT = "Test with shared_merge_tree in name require option --replace-replicated-with-shared for clickhouse-test"
+    REQUIRE_REPLICATED_TO_SHARED_MERGE_TREE_REPLACEMENT = "Test with shared_merge_tree in name require option --replace-replicated-with-shared for datastore-test"
     SHARED_CATALOG = "no-shared-catalog"
     SHARED_CATALOG_ONLY = "shared-catalog"
     DISTRIBUTED_CACHE = "distributed-cache"
@@ -3372,13 +3372,13 @@ class TestCase:
         preexec_fn = None
         cgroup_name = None
         if args.memory_limit:
-            cgroup_name = f"clickhouse-test-{os.getpid()}"
+            cgroup_name = f"datastore-test-{os.getpid()}"
             preexec_fn = setup_cgroup_with_memory_limit_cb(cgroup_name, self.memory_limit)
 
         # pylint:disable-next=consider-using-with; TODO: fix
         proc = Popen(command, shell=True, executable=BASH, env=tests_env, start_new_session=True, preexec_fn=preexec_fn)
         # proc.pid == PGID after start_new_session=True; write it atomically so
-        # `clickhouse-test --cleanup` can find it even if we are killed with SIGKILL.
+        # `datastore-test --cleanup` can find it even if we are killed with SIGKILL.
         _gpid_file = _GROUP_PID_PATH / f"{_GROUP_PID_NAME}.{os.getpid()}"
         write_text_atomic(_gpid_file, f"{proc.pid}\n")
 
@@ -6624,12 +6624,12 @@ if __name__ == "__main__":
     if not os.path.isdir(args.queries):
         # Next we're going to try some system directories, don't write 'stdout' files into them.
         if args.tmp is None:
-            args.tmp = "/tmp/clickhouse-test"
+            args.tmp = "/tmp/datastore-test"
 
-        args.queries = "/usr/local/share/clickhouse-test/queries"
+        args.queries = "/usr/local/share/datastore-test/queries"
 
     if not os.path.isdir(args.queries):
-        args.queries = "/usr/share/clickhouse-test/queries"
+        args.queries = "/usr/share/datastore-test/queries"
 
     if not os.path.isdir(args.queries):
         args.queries = "/repo/tests/queries"

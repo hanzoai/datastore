@@ -1216,7 +1216,7 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
         select '' test_name,
             '$(sed -n 's/.*<!--message: \(.*\)-->/\1/p' report.html)' test_status,
             0 test_duration_ms,
-            'https://s3.amazonaws.com/clickhouse-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/report.html#fail1' report_url
+            'https://s3.amazonaws.com/datastore-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/report.html#fail1' report_url
         union all
             select
                 test || ' #' || toString(query_index) || '::' || test_desc_.1 test_name,
@@ -1226,7 +1226,7 @@ create table ci_checks engine File(TSVWithNamesAndTypes, 'ci-checks.tsv')
                     'success'
                 ) test_status,
                 test_desc_.2*1e3 test_duration_ms,
-                'https://s3.amazonaws.com/clickhouse-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/'
+                'https://s3.amazonaws.com/datastore-test-reports/$PR_TO_TEST/$SHA_TO_TEST/${CLICKHOUSE_PERFORMANCE_COMPARISON_CHECK_NAME_PREFIX}/'
                     || multiIf(
                         changed_fail != 0 and diff > 0, 'report.html#changes-in-performance.',
                         unstable_fail != 0, 'report.html#unstable-queries.',

@@ -5,7 +5,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=../shell_config.sh
 . "$CUR_DIR"/../shell_config.sh
 
-# use $CLICKHOUSE_DATABASE so that clickhouse-test will replace it with default to match .reference
+# use $CLICKHOUSE_DATABASE so that datastore-test will replace it with default to match .reference
 config=$CLICKHOUSE_TMP/config_$CLICKHOUSE_DATABASE
 xml_config=$CLICKHOUSE_TMP/config_$CLICKHOUSE_DATABASE.xml
 XML_config=$CLICKHOUSE_TMP/config_$CLICKHOUSE_DATABASE.XML

@@ -1,5 +1,5 @@
 <datastore>
     <placement>
-        <availability_zone>clickhouse-test-az</availability_zone>
+        <availability_zone>datastore-test-az</availability_zone>
     </placement>
 </datastore>

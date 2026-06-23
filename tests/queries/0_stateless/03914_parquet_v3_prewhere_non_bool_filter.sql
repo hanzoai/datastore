@@ -4,7 +4,7 @@
 -- produces a UInt8 filter with values > 1. The old assertion used std::accumulate
 -- (which sums values) instead of countBytesInFilter (which counts non-zero values),
 -- causing a mismatch when the filter column contained e.g. 5 instead of 1.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=2938a4bc37947f550260419a7f1aba60ea01ba82&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_debug%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=2938a4bc37947f550260419a7f1aba60ea01ba82&name_0=MasterCI&name_1=AST%20fuzzer%20%28amd_debug%29
 
 set engine_file_truncate_on_insert = 1;
 

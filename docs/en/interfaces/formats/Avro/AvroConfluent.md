@@ -113,7 +113,7 @@ SELECT * FROM clusterAllReplicas('default',system.kafka_consumers)
 ORDER BY assignments.partition_id ASC;
 ```
 
-If you run into schema resolution issues, you can use [kafkacat](https://github.com/edenhill/kafkacat) with [clickhouse-local](/operations/utilities/clickhouse-local.md) to troubleshoot:
+If you run into schema resolution issues, you can use [kafkacat](https://github.com/edenhill/kafkacat) with [clickhouse-local](/operations/utilities/datastore-local.md) to troubleshoot:
 
 ```bash
 $ kafkacat -b kafka-broker  -C -t topic1 -o beginning -f '%s' -c 3 | clickhouse-local   --input-format AvroConfluent --format_avro_schema_registry_url 'http://schema-registry' -S "field1 Int64, field2 String"  -q 'select *  from table'

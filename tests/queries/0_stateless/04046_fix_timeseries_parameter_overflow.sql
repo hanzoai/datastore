@@ -1,6 +1,6 @@
 -- Test that extreme parameter values don't cause signed integer overflow in normalizeParameter
 -- Previously, large Int64 values multiplied by the scale multiplier would overflow Decimal64.
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=99724&sha=465742228dbb9152c5c3f98cc28f5249b27f98ab&name_0=PR&name_1=AST%20fuzzer%20%28amd_ubsan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?PR=99724&sha=465742228dbb9152c5c3f98cc28f5249b27f98ab&name_0=PR&name_1=AST%20fuzzer%20%28amd_ubsan%29
 
 SET allow_experimental_ts_to_grid_aggregate_function = 1;
 

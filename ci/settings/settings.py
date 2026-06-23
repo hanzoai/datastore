@@ -1,7 +1,7 @@
 S3_BUCKET_NAME = "clickhouse-builds"
-S3_REPORT_BUCKET_NAME = "clickhouse-test-reports"
+S3_REPORT_BUCKET_NAME = "datastore-test-reports"
 S3_BUCKET_HTTP_ENDPOINT = "clickhouse-builds.s3.amazonaws.com"
-S3_REPORT_BUCKET_HTTP_ENDPOINT = "s3.amazonaws.com/clickhouse-test-reports"
+S3_REPORT_BUCKET_HTTP_ENDPOINT = "s3.amazonaws.com/datastore-test-reports"
 
 
 class RunnerLabels:
@@ -42,9 +42,9 @@ DOCKERHUB_SECRET = "dockerhub_robot_password"
 
 CI_DB_DB_NAME = "default"
 CI_DB_TABLE_NAME = "checks"
-SECRET_CI_DB_URL = "clickhouse-test-stat-url"
-SECRET_CI_DB_USER = "clickhouse-test-stat-login"
-SECRET_CI_DB_PASSWORD = "clickhouse-test-stat-password"
+SECRET_CI_DB_URL = "datastore-test-stat-url"
+SECRET_CI_DB_USER = "datastore-test-stat-login"
+SECRET_CI_DB_PASSWORD = "datastore-test-stat-password"
 
 USE_CUSTOM_GH_AUTH = True
 GH_AUTH_LAMBDA_NAME: str = "mint-token-pr-lambda-terraform"
@@ -62,7 +62,7 @@ READY_FOR_MERGE_CUSTOM_STATUS_NAME = "Mergeable Check"
 CI_DB_READ_USER = "play"
 CI_DB_READ_URL = "https://play.clickhouse.com"
 
-EVENT_FEED_S3_PATH = "clickhouse-test-reports-private/slack_feed"
+EVENT_FEED_S3_PATH = "datastore-test-reports-private/slack_feed"
 CLOUD_INFRASTRUCTURE_CONFIG_PATH = "./ci/infra/cloud.py"
 AWS_REGION = "us-east-1"
 

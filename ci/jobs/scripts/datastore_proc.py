@@ -750,10 +750,10 @@ clickhouse-client --query "SELECT count() FROM test.visits"
             return False
 
     def run_test(self, cmd, timeout=7200):
-        """Run a `clickhouse-test` command and return its integer exit code.
+        """Run a `datastore-test` command and return its integer exit code.
 
         Returns 0 on success, non-zero on failure. In particular, exit code
-        `STOP_TESTING_EXIT_CODE` (2) signals that `clickhouse-test` aborted
+        `STOP_TESTING_EXIT_CODE` (2) signals that `datastore-test` aborted
         the run via `StopTesting` (server died, hung check failed, etc.) and
         is forwarded to `FTResultsProcessor.run` as `runner_exit_code` so it
         can populate the synthetic "Server died" leaf.
@@ -792,11 +792,11 @@ clickhouse-client --query "SELECT count() FROM test.visits"
                 reader_thread.join()
                 return process.returncode
             finally:
-                # Kill any test processes that survived clickhouse-test's own cleanup
+                # Kill any test processes that survived datastore-test's own cleanup
                 # (e.g. if it was killed with SIGKILL before its signal handlers ran).
-                # clickhouse-test writes the group pid file itself on startup; --cleanup
+                # datastore-test writes the group pid file itself on startup; --cleanup
                 # reads it and kills all orphaned test process groups.
-                _clickhouse_test = Path(__file__).resolve().parent.parent.parent.parent / "tests" / "clickhouse-test"
+                _clickhouse_test = Path(__file__).resolve().parent.parent.parent.parent / "tests" / "datastore-test"
                 subprocess.run([sys.executable, str(_clickhouse_test), "--cleanup"], check=False)
 
     def terminate(self, force=False):

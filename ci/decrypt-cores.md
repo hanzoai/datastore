@@ -92,5 +92,5 @@ investigation is complete — they may contain sensitive data from the test run.
 
 - Pull request that introduced the scheme: [ClickHouse/ClickHouse#97342](https://github.com/ClickHouse/ClickHouse/pull/97342)
 - Encryption helper: `Utils.encrypt` in `ci/praktika/utils.py`
-- Core collection: `ClickHouseProc._collect_core_dumps` in `ci/jobs/scripts/clickhouse_proc.py`
+- Core collection: `ClickHouseProc._collect_core_dumps` in `ci/jobs/scripts/datastore_proc.py`
 - Public key: `ci/defs/public.pem`

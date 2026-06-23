@@ -17,7 +17,7 @@ and provides hierarchical regex-to-attribute mappings for pattern-based lookups 
 
 :::note
 The `YAMLRegExpTree` source is only available in ClickHouse Open Source.
-For ClickHouse Cloud, export the dictionary to CSV and load it via a [ClickHouse table source](./clickhouse.md) instead.
+For ClickHouse Cloud, export the dictionary to CSV and load it via a [ClickHouse table source](./datastore.md) instead.
 See [Using regexp_tree dictionaries in ClickHouse Cloud](../layouts/regexp-tree#use-regular-expression-tree-dictionary-in-clickhouse-cloud) for details.
 :::
 

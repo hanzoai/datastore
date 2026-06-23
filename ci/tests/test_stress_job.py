@@ -178,7 +178,7 @@ def test_sanitize_replaces_nul_bytes():
 
 def test_sanitize_strips_carriage_returns():
     # CR is dropped: dpkg/apt-get progress frames captured via
-    # `clickhouse-test --capture-client-stacktrace` arrive as
+    # `datastore-test --capture-client-stacktrace` arrive as
     # `(Reading database ... 5%\r... 10%\r...)` and must not be
     # turned into LF by universal-newlines mode.
     assert sanitize_test_result_line("a\rb\rc") == "abc"

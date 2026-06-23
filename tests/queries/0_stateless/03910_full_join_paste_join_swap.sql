@@ -7,7 +7,7 @@
 -- We need query_plan_use_new_logical_join_step = 0 because the new logical join step path
 -- marks JoinStep as optimized, causing optimizeJoinLegacy to skip it.
 --
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=b373b658edd0a03cb8daacf2c6d77aedd250e7f1&name_0=MasterCI&name_1=Stress%20test%20%28arm_asan%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=b373b658edd0a03cb8daacf2c6d77aedd250e7f1&name_0=MasterCI&name_1=Stress%20test%20%28arm_asan%29
 
 SET query_plan_join_swap_table = 'true', join_algorithm = 'hash', query_plan_use_new_logical_join_step = 0, enable_analyzer = 1, max_bytes_before_external_join = 0;
 

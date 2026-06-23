@@ -1,6 +1,6 @@
 """
 Unit tests for `FTResultsProcessor`, the job-side parser that turns
-`clickhouse-test` output + its exit code into the report tree.
+`datastore-test` output + its exit code into the report tree.
 
 Focus: a run stopped early by `--max-failures` / `--max-failures-chain`
 (exit code `MAX_FAILURES_EXIT_CODE`) must be reported as real failures plus a

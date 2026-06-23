@@ -7,9 +7,9 @@ TEMP_DIR = f"{Utils.cwd()}/ci/tmp"  # == _Settings.TEMP_DIR != env_helper.TEMP_P
 SYNC = "CH Inc sync"
 
 S3_BUCKET_NAME = "clickhouse-builds"
-S3_REPORT_BUCKET_NAME = "clickhouse-test-reports"
+S3_REPORT_BUCKET_NAME = "datastore-test-reports"
 S3_BUCKET_HTTP_ENDPOINT = "clickhouse-builds.s3.amazonaws.com"
-S3_REPORT_BUCKET_HTTP_ENDPOINT = "s3.amazonaws.com/clickhouse-test-reports"
+S3_REPORT_BUCKET_HTTP_ENDPOINT = "s3.amazonaws.com/datastore-test-reports"
 
 
 class RunnerLabels:
@@ -60,17 +60,17 @@ SECRETS = [
         type=Secret.Type.AWS_SSM_PARAMETER,
     ),
     Secret.Config(
-        name="clickhouse-test-stat-url",
+        name="datastore-test-stat-url",
         type=Secret.Type.AWS_SSM_PARAMETER,
         region="us-east-1",
     ),
     Secret.Config(
-        name="clickhouse-test-stat-login",
+        name="datastore-test-stat-login",
         type=Secret.Type.AWS_SSM_PARAMETER,
         region="us-east-1",
     ),
     Secret.Config(
-        name="clickhouse-test-stat-password",
+        name="datastore-test-stat-password",
         type=Secret.Type.AWS_SSM_PARAMETER,
         region="us-east-1",
     ),

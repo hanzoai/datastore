@@ -8,7 +8,7 @@
 -- unique names across the two sides, so the optimizer must skip reordering in that case
 -- instead of failing.
 -- https://github.com/ClickHouse/ClickHouse/issues/89166
--- https://s3.amazonaws.com/clickhouse-test-reports/json.html?REF=master&sha=3fca01d3c822b27f51779bda78ba8afac8ffc460&name_0=MasterCI&name_1=Stress%20test%20%28arm_release%29
+-- https://s3.amazonaws.com/datastore-test-reports/json.html?REF=master&sha=3fca01d3c822b27f51779bda78ba8afac8ffc460&name_0=MasterCI&name_1=Stress%20test%20%28arm_release%29
 
 DROP TABLE IF EXISTS t_jr_04303_left;
 DROP TABLE IF EXISTS t_jr_04303_right;

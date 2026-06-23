@@ -61,7 +61,7 @@ ClickHouse Inc does **not** maintain the libraries listed below and hasn't done 
 - [ClickHouse (Ruby)](https://github.com/shlima/click_house)
 - [clickhouse-activerecord](https://github.com/PNixx/clickhouse-activerecord)
 ### Rust {#rust}
-- [clickhouse.rs](https://github.com/loyd/clickhouse.rs)
+- [datastore.rs](https://github.com/loyd/datastore.rs)
 - [clickhouse-rs](https://github.com/suharev7/clickhouse-rs)
 - [Klickhouse](https://github.com/Protryon/klickhouse)
 ### R {#r}

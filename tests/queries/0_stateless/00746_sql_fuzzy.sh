@@ -12,7 +12,7 @@ export SQL_FUZZY_FILE_TABLE_FUNCTIONS=${CLICKHOUSE_TMP}/clickhouse-table_functio
 $CLICKHOUSE_CLIENT -q "select name from system.table_functions format TSV;" > "$SQL_FUZZY_FILE_TABLE_FUNCTIONS"
 
 # This is short run for ordinary tests.
-# if you want long run use: env SQL_FUZZY_RUNS=100000 clickhouse-test sql_fuzzy
+# if you want long run use: env SQL_FUZZY_RUNS=100000 datastore-test sql_fuzzy
 
 for SQL_FUZZY_RUN in $(seq "${SQL_FUZZY_RUNS:=5}"); do
     env SQL_FUZZY_RUN="$SQL_FUZZY_RUN" perl "$CURDIR"/00746_sql_fuzzy.pl | timeout 60 $CLICKHOUSE_CLIENT --format Null --max_execution_time 10 -n --ignore-error >/dev/null 2>&1
