@@ -11,10 +11,11 @@
 # PGO+thinLTO build is faster on aggregations/filters AND uses less than half
 # the resident memory (PGO hot/cold splitting shrinks the working set).
 #
-# BOLT (post-link layout) is applied to x86_64 release artifacts in CI, where
-# llvm-bolt is mature and the CPU exposes LBR. It is NOT applied on aarch64:
-# llvm-bolt's AArch64 composed-relocation emission (R_AARCH64_PREL64) is broken
-# upstream. Since PGO+thinLTO alone already beats upstream, aarch64 ships it.
+# BOLT (post-link layout, ENABLE_CLICKHOUSE_BOLT=ON above) works on BOTH x86_64 and
+# aarch64 once XRay is off. On aarch64 the only requirement is a large linker stack
+# for llvm-bolt (the binary needs many veneers): run it under `ulimit -s 2097152`.
+# Measured: no-XRay PGO+thinLTO+BOLT uses ~50MB RSS vs official ClickHouse's ~116MB
+# and is faster on filters/aggregations.
 set -euo pipefail
 
 SRC="${SRC:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
@@ -26,7 +27,10 @@ PROFDATA_TOOL="${PROFDATA_TOOL:-llvm-profdata}"
 TARGET="${TARGET:-datastore}"
 : "${CC:=clang}" "${CXX:=clang++}"; export CC CXX
 
-common=(-G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTS=0)
+# XRay (-fxray-instrument) must be OFF: it adds ~45MB of sled sections + per-function
+# sleds to every binary, and its composed R_AARCH64_PREL64 relocations break BOLT on
+# aarch64. A release binary should never carry tracing instrumentation.
+common=(-G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTS=0 -DENABLE_XRAY=OFF)
 
 echo "==> [1/3] instrumented build (-fprofile-generate)"
 cmake -S "$SRC" -B "$BUILD_INSTRUMENT" "${common[@]}" \
