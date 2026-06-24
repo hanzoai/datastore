@@ -102,7 +102,7 @@ if (ENABLE_BUZZHOUSE)
     set (ENABLE_PROTOBUF 1)
 endif()
 
-option (ENABLE_XRAY "Enable LLVM XRay" ON)
+option (ENABLE_XRAY "Enable LLVM XRay" OFF)
 
 if (NOT ENABLE_XRAY)
     message (STATUS "Not using LLVM XRay because it's disabled")

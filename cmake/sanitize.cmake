@@ -172,6 +172,9 @@ if (WITH_COVERAGE)
 
     if (WITH_COVERAGE_XRAY)
         message (STATUS "Enabled XRay-based exact call-depth tracking for coverage")
+        # WITH_COVERAGE_XRAY requires XRay; enable it here (default is OFF so release
+        # binaries stay lean). This runs before the ENABLE_XRAY flag-apply in CMakeLists.txt.
+        set (ENABLE_XRAY ON)
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDATASTORE_XRAY_INSTRUMENT_COVERAGE=1")
         set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -DDATASTORE_XRAY_INSTRUMENT_COVERAGE=1")
     endif()
