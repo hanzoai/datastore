@@ -6,6 +6,22 @@ Hanzo's analytics database — a fork of ClickHouse with Hanzo-side overlays.
 - **Upstream**: https://github.com/ClickHouse/ClickHouse (`upstream` remote)
 - **Image**: `ghcr.io/hanzoai/datastore`
 
+## Architecture — S-Chain & the two-engine platform
+
+Datastore is the **OLAP** half of Hanzo's data platform, and it separates storage
+from compute. Its `MergeTree` parts are content-addressed objects on **Hanzo S3 /
+"S-Chain"** — the SeaweedFS-fork storage substrate
+([hanzoai/s3](https://github.com/hanzoai/s3)) — so stateless compute replicas share
+one zero-copy copy of the data. This is a proven PoC: a 5M-row table whose storage
+policy targets S-Chain reports disk `seaweed`, and two compute nodes scale out over a
+single physical copy via zero-copy replication. Transport is **ZAP**, the
+Cap'n-Proto-derived RPC; the gRPC and Arrow Flight surfaces are removed. The **OLTP**
+half of the platform is the decentralized SQL engine (SQLite/Base). Both ride S-Chain
+storage and target **Quasar** (post-quantum, leaderless) coordination — the
+Raft→Quasar swap is the near-term direction.
+
+Design paper: `hanzo-datastore/` in [hanzoai/papers](https://github.com/hanzoai/papers).
+
 ## Stack
 
 - **Server**: C++ (the ClickHouse codebase under `programs/`, `src/`, `base/`)
