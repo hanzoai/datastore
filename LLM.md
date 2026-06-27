@@ -192,8 +192,48 @@ git rm -r contrib/mariadb-connector-c contrib/mariadb-connector-c-cmake
 
 ## Phase C — deferred deletions (do NOT do in Phase B)
 
-- `programs/keeper/`, `src/Coordination/`, `contrib/NuRaft/`, `contrib/nuraft-cmake/` — wait for the `keeper-replace` Blue (lux/consensus → Quasar) to land. Until then, ZooKeeper coordination is load-bearing for `Replicated*` engines.
+- `programs/keeper/`, `src/Coordination/`, `contrib/NuRaft/`, `contrib/nuraft-cmake/` — wait for the `keeper-replace` Blue (lux/consensus → Quasar) to land. Until then, ZooKeeper coordination is load-bearing for `Replicated*` engines. **Status: in progress — see "Coordination: Raft → Quasar" below.**
 - HDFS, YTsaurus, MySQL — see RISKY notes above; they require `src/CMakeLists.txt` edits to gate currently-unconditional `add_headers_and_sources` / `add_object_library` calls. That edit is itself a Phase C task because it touches code on the upstream merge path.
+
+## Coordination: Raft → Quasar (the NuRaft rip)
+
+The fork is replacing the NuRaft consensus engine under Keeper with native Lux
+**Quasar** (`libluxconsensus`, from [luxfi/consensus](https://github.com/luxfi/consensus)
+`pkg/c`), linked into the C++ server. The **ZooKeeper API is kept** —
+`KeeperStateMachine` over `KeeperStorage` is the contract `Replicated*` speaks; only
+the *engine* (`raft_server`, leader election, asio peer transport) is replaced.
+
+**Why it's tractable:** NuRaft coupling is contained in `src/Coordination/` (25
+files); the only references elsewhere are `src/CMakeLists.txt` + `configure_config.cmake`
+(build config, not code). Nothing in the query/storage/replication layers touches
+`nuraft::` types. The join point is `KeeperStateMachine::commit(log_idx, buf)`:
+NuRaft calls it today, the Quasar engine calls the identical method.
+
+**Staged so each step lands under green tests (never break it all at once):**
+1. **Engine proven + reusable** ✅ — `src/Coordination/QuasarKeeperConsensus.{h,cpp}`
+   orders + commits batches through the real `KeeperStateMachine` (single-node:
+   always-leader, 1-of-1 finality). Tested by `src/Coordination/examples/`
+   (`keeper_quasar_poc`, `keeper_quasar_engine_test`), opt-in behind
+   `ENABLE_EXAMPLES AND LUXCONSENSUS_DIR`, build-verified on a 26.6.1.1 host.
+2. **Engine into `dbms` + `KeeperServer` cutover** — wire `libluxconsensus` as a
+   contrib (`ch_contrib::luxconsensus`), move the engine `.cpp` into `dbms`, and
+   make `KeeperServer` construct `QuasarKeeperConsensus` instead of
+   `nuraft::raft_server` for single-node. The dispatcher contract it must satisfy
+   (`putRequestBatch` async result, `isLeader`/`isLeaderAlive`/`getLeaderID`,
+   `createSnapshot`, `applyConfigUpdate`, recovery flags) is mapped in the engine
+   README. Gate on the full `gtest_coordination` suite green.
+3. **Multi-node Quasar over ZAP** — replace NuRaft's asio peer transport with ZAP
+   (the canonical Hanzo transport); leadership/membership derive from the Quasar
+   validator set. This is what makes a real keeper *ensemble* run on Quasar.
+4. **Excise residual `nuraft::` data types** (`buffer`/`log_entry`/`snapshot`/`ptr`
+   — trivial containers, ~300 sites) and **delete `contrib/NuRaft` + `contrib/nuraft-cmake`**
+   + the `src/CMakeLists.txt`/`configure_config.cmake` refs. End state: no `libnuraft`
+   in the fork; coordination is Quasar-native end to end.
+
+Stage 1 is merged. Stages 2–4 are the production cutover and are large (`KeeperServer`
+is ~1350 lines welded to raft internals, incl. a `KeeperRaftServer : nuraft::raft_server`
+subclass reaching protected members) — do them on a Linux build host with the
+Coordination test suite as the gate, not on a laptop.
 
 ## Phase B — execution status
 
