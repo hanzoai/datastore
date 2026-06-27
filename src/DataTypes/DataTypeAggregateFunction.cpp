@@ -454,7 +454,7 @@ See [AggregatingMergeTree](../../engines/table-engines/mergetree-family/aggregat
 
 ## Related Content {#related-content}
 
-- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://hanzo.ai/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
 - [MergeState](/sql-reference/aggregate-functions/combinators#-mergestate)
 combinator.
 - [State](/sql-reference/aggregate-functions/combinators#-state) combinator.

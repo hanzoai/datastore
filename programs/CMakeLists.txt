@@ -16,7 +16,7 @@ include(${Datastore_SOURCE_DIR}/cmake/split_debug_symbols.cmake)
 # If you do not know what modes you need, turn then all.
 option (ENABLE_DATASTORE_ALL "Enable all Datastore modes by default" ON)
 
-# https://presentations.datastore.com/matemarketing_2020/
+# https://presentations.hanzo.ai/matemarketing_2020/
 option (ENABLE_DATASTORE_GIT_IMPORT "A tool to analyze Git repositories" ${ENABLE_DATASTORE_ALL})
 
 option (ENABLE_DATASTORE_KEEPER "Datastore alternative to ZooKeeper" ${ENABLE_DATASTORE_ALL})

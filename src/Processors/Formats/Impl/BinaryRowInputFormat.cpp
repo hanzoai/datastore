@@ -284,7 +284,7 @@ Boolean values are encoded as a single byte, and can be deserialized similarly t
 
 ### BFloat16 {#bfloat16}
 
-[BFloat16](https://datastore.com/docs/sql-reference/data-types/float#bfloat16) (Brain Floating Point) is a 16-bit floating point format with the range of Float32 and reduced precision, making it useful for machine learning workloads. The wire format is essentially the top 16 bits of a Float32 value. If your language doesn't support it natively, the easiest way to handle it is to read and write as UInt16, converting to and from Float32:
+[BFloat16](https://docs.hanzo.ai/sql-reference/data-types/float#bfloat16) (Brain Floating Point) is a 16-bit floating point format with the range of Float32 and reduced precision, making it useful for machine learning workloads. The wire format is essentially the top 16 bits of a Float32 value. If your language doesn't support it natively, the easiest way to handle it is to read and write as UInt16, converting to and from Float32:
 
 To convert BFloat16 to Float32 (pseudocode):
 
@@ -342,7 +342,7 @@ let scale_multiplier = 10 ** scale
 let result = whole_part * scale_multiplier + fractional_part
 ```
 
-See more details in the [Decimal types Datastore docs](https://datastore.com/docs/sql-reference/data-types/decimal).
+See more details in the [Decimal types Datastore docs](https://docs.hanzo.ai/sql-reference/data-types/decimal).
 
 ### String {#string}
 
@@ -747,7 +747,7 @@ This only applies to RowBinary. In the Native format, `LowCardinality` uses a di
 A column can be defined as `LowCardinality(Nullable(T))`, but it is not possible to define it as `Nullable(LowCardinality(T))` - it will always result in an error from the server.
 :::
 
-While testing, [allow_suspicious_low_cardinality_types](https://datastore.com/docs/operations/settings/settings#allow_suspicious_low_cardinality_types) can be set to `1` to allow most of the data types inside `LowCardinality` for better coverage.
+While testing, [allow_suspicious_low_cardinality_types](https://docs.hanzo.ai/operations/settings/settings#allow_suspicious_low_cardinality_types) can be set to `1` to allow most of the data types inside `LowCardinality` for better coverage.
 
 ### Array {#array}
 
@@ -943,17 +943,17 @@ SELECT NULL :: Variant(UInt32, String)
 0xFF, // discriminant = NULL
 ```
 
-The [allow_suspicious_variant_types](https://datastore.com/docs/operations/settings/settings#allow_suspicious_variant_types) setting can be used to allow more exhaustive testing of the `Variant` type.
+The [allow_suspicious_variant_types](https://docs.hanzo.ai/operations/settings/settings#allow_suspicious_variant_types) setting can be used to allow more exhaustive testing of the `Variant` type.
 
 ### Dynamic {#dynamic}
 
-The `Dynamic` type can hold values of any type, determined at runtime. In RowBinary format, each value is self-describing: the first part is the type specification in [this format](https://datastore.com/docs/sql-reference/data-types/data-types-binary-encoding). The contents then follow, with the value encoding as described in this document. So to parse a value you just need to use the type index to determine the right parser and then re-use the RowBinary parsing you already have elsewhere.
+The `Dynamic` type can hold values of any type, determined at runtime. In RowBinary format, each value is self-describing: the first part is the type specification in [this format](https://docs.hanzo.ai/sql-reference/data-types/data-types-binary-encoding). The contents then follow, with the value encoding as described in this document. So to parse a value you just need to use the type index to determine the right parser and then re-use the RowBinary parsing you already have elsewhere.
 
 ```text
 [BinaryTypeIndex][type-specific parameters...][value]
 ```
 
-Where `BinaryTypeIndex` is a single byte identifying the type. See the reference [here](https://datastore.com/docs/sql-reference/data-types/data-types-binary-encoding) for the type indices and parameters.
+Where `BinaryTypeIndex` is a single byte identifying the type. See the reference [here](https://docs.hanzo.ai/sql-reference/data-types/data-types-binary-encoding) for the type indices and parameters.
 
 A `NULL` Dynamic value is encoded with `BinaryTypeIndex` `0x00` (the `Nothing` type), with no additional bytes:
 

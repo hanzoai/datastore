@@ -1885,7 +1885,7 @@ ALTER TABLE keeper_map_table UPDATE v1 = v1 * 10 + 2 WHERE key LIKE 'some%' AND 
 
 ## Related content {#related-content}
 
-- Blog: [Building a Real-time Analytics Apps with Datastore and Hex](https://datastore.com/blog/building-real-time-applications-with-datastore-and-hex-notebook-keeper-engine)
+- Blog: [Building a Real-time Analytics Apps with Datastore and Hex](https://hanzo.ai/blog/building-real-time-applications-with-datastore-and-hex-notebook-keeper-engine)
 )DOCS_MD",
             .syntax = "ENGINE = KeeperMap(root_path[, keys_limit]) PRIMARY KEY(primary_key_name)",
         });

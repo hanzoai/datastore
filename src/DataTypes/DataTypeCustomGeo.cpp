@@ -181,7 +181,7 @@ SELECT * FROM geo_dst;
 
 ## Related Content {#related-content}
 
-- [Exploring massive, real-world data sets: 100+ Years of Weather Records in Datastore](https://datastore.com/blog/real-world-data-noaa-climate-data)
+- [Exploring massive, real-world data sets: 100+ Years of Weather Records in Datastore](https://hanzo.ai/blog/real-world-data-noaa-climate-data)
 )DOCS_MD",
         .syntax = "Point",
         .examples = {},

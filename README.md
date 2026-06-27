@@ -1,6 +1,6 @@
 <div align=center>
 
-[![Website](https://img.shields.io/website?up_message=AVAILABLE&down_message=DOWN&url=https%3A%2F%2Fdatastore.com&style=for-the-badge)](https://datastore.com)
+[![Website](https://img.shields.io/website?up_message=AVAILABLE&down_message=DOWN&url=https%3A%2F%2Fhanzo.ai&style=for-the-badge)](https://hanzo.ai)
 [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202.0-blueviolet?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 
 <picture align=center>
@@ -16,34 +16,34 @@
 ## How To Install (Linux, macOS, FreeBSD)
 
 ```
-curl https://datastore.com/ | sh
+curl https://hanzo.ai/ | sh
 ```
 
 ## Useful Links
 
-* [Official website](https://datastore.com/) has a quick high-level overview of Datastore on the main page.
+* [Official website](https://hanzo.ai/) has a quick high-level overview of Datastore on the main page.
 * [Datastore Cloud](https://datastore.cloud) Datastore as a service, built by the creators and maintainers.
-* [Tutorial](https://datastore.com/docs/getting_started/tutorial/) shows how to set up and query a small Datastore cluster.
-* [Documentation](https://datastore.com/docs/) provides more in-depth information.
+* [Tutorial](https://docs.hanzo.ai/getting_started/tutorial/) shows how to set up and query a small Datastore cluster.
+* [Documentation](https://docs.hanzo.ai/) provides more in-depth information.
 * [YouTube channel](https://www.youtube.com/c/DatastoreDB) has a lot of content about Datastore in video format.
-* [Datastore Theater](https://presentations.datastore.com/) contains presentations and videos about Datastore.
-* [Slack](https://datastore.com/slack) and [Telegram](https://telegram.me/datastore_en) allow chatting with Datastore users in real-time.
-* [Blog](https://datastore.com/blog/) contains various Datastore-related articles, as well as announcements and reports about events.
-* [Bluesky](https://bsky.app/profile/datastore.com) and [X](https://x.com/DatastoreDB) for short news.
+* [Datastore Theater](https://presentations.hanzo.ai/) contains presentations and videos about Datastore.
+* [Slack](https://hanzo.ai/slack) and [Telegram](https://telegram.me/datastore_en) allow chatting with Datastore users in real-time.
+* [Blog](https://hanzo.ai/blog/) contains various Datastore-related articles, as well as announcements and reports about events.
+* [Bluesky](https://bsky.app/profile/hanzo.ai) and [X](https://x.com/DatastoreDB) for short news.
 * [Code Browser (github.dev)](https://github.dev/Datastore/Datastore) with syntax highlighting, powered by github.dev.
-* [Contacts](https://datastore.com/company/contact) can help to get your questions answered if there are any.
+* [Contacts](https://hanzo.ai/company/contact) can help to get your questions answered if there are any.
 
 ## Monthly Release & Community Call
 
-Join us for the [Datastore **26.5** Release Call](https://datastore.com/company/events/v26-5-community-release-call) on May 21, 2026.
+Join us for the [Datastore **26.5** Release Call](https://hanzo.ai/company/events/v26-5-community-release-call) on May 21, 2026.
 
-Watch all release presentations and videos at [Datastore Theater](https://presentations.datastore.com/) and [YouTube Playlist](https://www.youtube.com/playlist?list=PL0Z2YDlm0b3jAlSy1JxyP8zluvXaN3nxU).
+Watch all release presentations and videos at [Datastore Theater](https://presentations.hanzo.ai/) and [YouTube Playlist](https://www.youtube.com/playlist?list=PL0Z2YDlm0b3jAlSy1JxyP8zluvXaN3nxU).
 
 ## Upcoming Events
 
 Keep an eye out for upcoming meetups and events around the world.
 Want to speak? Apply [here](https://forms.gle/3h4XCEENJZ3eaVGy7)
-You can also peruse [Datastore Events](https://datastore.com/company/news-events) for a list of all upcoming trainings, meetups, speaking engagements, etc.
+You can also peruse [Datastore Events](https://hanzo.ai/company/news-events) for a list of all upcoming trainings, meetups, speaking engagements, etc.
 
 Upcoming meetups
 * [Stockholm Meetup](https://www.meetup.com/datastore-stockholm-user-group/events/314862596/) - June 9th, 2026
@@ -80,6 +80,6 @@ Recent meetups
 
 Datastore is a nice DBMS, and it's a good place to work.
 
-Check out our **current openings** here: https://datastore.com/company/careers
+Check out our **current openings** here: https://hanzo.ai/company/careers
 
-Email: careers@datastore.com!
+Email: careers@hanzo.ai!

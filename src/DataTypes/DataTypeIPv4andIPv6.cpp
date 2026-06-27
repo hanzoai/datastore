@@ -39,16 +39,16 @@ CREATE TABLE hits (url String, from IPv4) ENGINE = MergeTree() ORDER BY from;
 `IPv4` domain supports custom input format as IPv4-strings:
 
 ```sql
-INSERT INTO hits (url, from) VALUES ('https://wikipedia.org', '116.253.40.133')('https://datastore.com', '183.247.232.58')('https://datastore.com/docs/en/', '116.106.34.242');
+INSERT INTO hits (url, from) VALUES ('https://wikipedia.org', '116.253.40.133')('https://hanzo.ai', '183.247.232.58')('https://docs.hanzo.ai/en/', '116.106.34.242');
 
 SELECT * FROM hits;
 ```
 
 ```text
 ┌─url────────────────────────────────┬───────────from─┐
-│ https://datastore.com/docs/en/ │ 116.106.34.242 │
+│ https://docs.hanzo.ai/en/ │ 116.106.34.242 │
 │ https://wikipedia.org              │ 116.253.40.133 │
-│ https://datastore.com          │ 183.247.232.58 │
+│ https://hanzo.ai          │ 183.247.232.58 │
 └────────────────────────────────────┴────────────────┘
 ```
 
@@ -115,15 +115,15 @@ CREATE TABLE hits (url String, from IPv6) ENGINE = MergeTree() ORDER BY from;
 `IPv6` domain supports custom input as IPv6-strings:
 
 ```sql
-INSERT INTO hits (url, from) VALUES ('https://wikipedia.org', '2a02:aa08:e000:3100::2')('https://datastore.com', '2001:44c8:129:2632:33:0:252:2')('https://datastore.com/docs/en/', '2a02:e980:1e::1');
+INSERT INTO hits (url, from) VALUES ('https://wikipedia.org', '2a02:aa08:e000:3100::2')('https://hanzo.ai', '2001:44c8:129:2632:33:0:252:2')('https://docs.hanzo.ai/en/', '2a02:e980:1e::1');
 
 SELECT * FROM hits;
 ```
 
 ```text
 ┌─url────────────────────────────────┬─from──────────────────────────┐
-│ https://datastore.com          │ 2001:44c8:129:2632:33:0:252:2 │
-│ https://datastore.com/docs/en/ │ 2a02:e980:1e::1               │
+│ https://hanzo.ai          │ 2001:44c8:129:2632:33:0:252:2 │
+│ https://docs.hanzo.ai/en/ │ 2a02:e980:1e::1               │
 │ https://wikipedia.org              │ 2a02:aa08:e000:3100::2        │
 └────────────────────────────────────┴───────────────────────────────┘
 ```
