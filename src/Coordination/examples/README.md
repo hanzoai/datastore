@@ -46,3 +46,47 @@ non-zero on any mismatch.
 > Build-verified on a 26.6.1.1 source tree (aarch64, clang-21): all 10 coordination
 > writes preprocessed, ordered through Quasar, finalized and committed to the real
 > `KeeperStorage`; `blocks_accepted == 10`; assertions pass.
+
+# QuasarKeeperConsensus — the reusable engine
+
+`keeper_quasar_poc` proves the seam inline; `QuasarKeeperConsensus`
+(`src/Coordination/QuasarKeeperConsensus.h`) is the same mechanism factored into a
+reusable engine class — the component that replaces the NuRaft `raft_server` slot.
+It exposes the contract the dispatcher needs: `append(batch)` orders + commits a
+batch through the state machine and returns the committed log index;
+`isLeader`/`isLeaderAlive`/`lastCommittedIndex` for the dispatcher's routing and
+read-after-write barrier.
+
+`keeper_quasar_engine_test.cpp` drives that engine against the real
+`KeeperStateMachine<KeeperMemoryStorage>` over two batches and asserts the full
+commit contract: `append` returns accepted + correct last log index; the
+`commit_callback` fires once per entry in strict log order; `KeeperContext`'s
+committed index advances; the real `KeeperStorage` tree is exactly correct
+(parents before children, both `SET`s applied in order). Build + run:
+
+```bash
+ninja keeper_quasar_engine_test
+./src/Coordination/examples/keeper_quasar_engine_test
+# == QuasarKeeperConsensus drives the real Keeper commit path — zero Raft ==
+```
+
+> Build-verified on a 26.6.1.1 source tree (aarch64, clang-21): 2 batches, 9
+> ordered commits, monotonic committed index, real `KeeperStorage` correct.
+
+## Staged plan to drop NuRaft entirely
+
+Replacing a Raft-backed ZooKeeper is staged so each step lands under green tests,
+never breaking everything at once:
+
+1. **Engine proven against real types** (this directory) — single-node ordering +
+   commit through the real state machine. ✅
+2. **Engine into `dbms` + `KeeperServer` uses it** — wire `libluxconsensus` as a
+   contrib, move `QuasarKeeperConsensus.cpp` into `dbms`, and make `KeeperServer`
+   construct it instead of `nuraft::raft_server` for the single-node path; the
+   whole NuRaft surface (`KeeperServer.cpp`) the dispatcher depends on
+   (`putRequestBatch`, leadership, snapshots) is satisfied by the engine.
+3. **Multi-node Quasar over ZAP** — replace NuRaft's asio peer transport with ZAP;
+   leadership and membership derive from the Quasar validator set.
+4. **Excise residual `nuraft::` data types** (`buffer`/`log_entry`/`snapshot`) and
+   **delete `contrib/NuRaft`** + its cmake. ZooKeeper *API* (`KeeperStorage`) stays;
+   the Raft *engine* is gone.
