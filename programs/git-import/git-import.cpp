@@ -173,7 +173,7 @@ datastore-client --query "INSERT INTO git.commits FORMAT TSV" < commits.tsv
 datastore-client --query "INSERT INTO git.file_changes FORMAT TSV" < file_changes.tsv
 datastore-client --query "INSERT INTO git.line_changes FORMAT TSV" < line_changes.tsv
 
-Check out this presentation: https://presentations.datastore.com/matemarketing_2020/
+Check out this presentation: https://presentations.hanzo.ai/matemarketing_2020/
 )";
 
 namespace po = boost::program_options;

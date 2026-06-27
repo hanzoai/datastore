@@ -457,7 +457,7 @@ bool manageDatastoreUser(
         {
             std::ofstream f(default_user_xml);
             f << "<datastore>\n"
-              << "  <!-- Docs: <https://datastore.com/docs/operations/settings/settings_users/> -->\n"
+              << "  <!-- Docs: <https://docs.hanzo.ai/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <!-- Remove default user -->\n"
               << "    <default remove=\"remove\">\n"
@@ -489,7 +489,7 @@ bool manageDatastoreUser(
         {
             std::ofstream f(default_user_xml);
             f << "<datastore>\n"
-              << "  <!-- Docs: <https://datastore.com/docs/operations/settings/settings_users/> -->\n"
+              << "  <!-- Docs: <https://docs.hanzo.ai/operations/settings/settings_users/> -->\n"
               << "  <users>\n"
               << "    <default>\n"
               << "      <!-- User default is available only locally -->\n"

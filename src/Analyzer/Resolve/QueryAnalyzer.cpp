@@ -1219,7 +1219,7 @@ IdentifierResolveResult QueryAnalyzer::tryResolveIdentifierFromAliases(const Ide
     {
         /* This is an important fallback in the identifier resolution. In the case of transitive aliases,
          * we may end up in the situation when we try to resolve the same expression, but it's not a cycle.
-         * Example: WITH path('datastore.com/a/b/c') AS x SELECT x AS path;
+         * Example: WITH path('hanzo.ai/a/b/c') AS x SELECT x AS path;
          * Here, identifier `x` would be resolved one time as a projection column and one time during `path`
          * function lookup. The second lookup must fail here to break the alias cycle.
          */

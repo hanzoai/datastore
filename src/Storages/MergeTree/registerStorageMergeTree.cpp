@@ -3445,7 +3445,7 @@ SELECT key, metrics.total_visits, metrics.unique_users FROM agg_tuples ORDER BY 
 
 ## Related content {#related-content}
 
-- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://hanzo.ai/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
 )DOCS_MD",
         .syntax = "ENGINE = AggregatingMergeTree() ORDER BY expr",
         .related = {"MergeTree", "SummingMergeTree", "ReplicatedAggregatingMergeTree"}});
@@ -3679,7 +3679,7 @@ SELECT key, metrics.impressions, metrics.clicks, metrics.nested.conversions FROM
 
 ## Related content {#related-content}
 
-- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://hanzo.ai/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
 )DOCS_MD",
         .syntax = "ENGINE = SummingMergeTree([columns]) ORDER BY expr",
         .related = {"MergeTree", "AggregatingMergeTree", "ReplicatedSummingMergeTree"}});

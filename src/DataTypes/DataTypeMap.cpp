@@ -434,7 +434,7 @@ If bucketed `Map` serialization does not fit your use case, there are two altern
 
 #### Using the JSON Data Type {#using-the-json-data-type}
 
-The [JSON](/sql-reference/data-types/newjson) data type stores each frequent path as a separate dynamic subcolumn. Paths that exceed the `max_dynamic_paths` limit go into a [shared data structure](/sql-reference/data-types/newjson#shared-data-structure), which can use `advanced` serialization for optimized single-path reads. See the [blog post](https://datastore.com/blog/json-data-type-gets-even-better) for a detailed overview of the `advanced` serialization.
+The [JSON](/sql-reference/data-types/newjson) data type stores each frequent path as a separate dynamic subcolumn. Paths that exceed the `max_dynamic_paths` limit go into a [shared data structure](/sql-reference/data-types/newjson#shared-data-structure), which can use `advanced` serialization for optimized single-path reads. See the [blog post](https://hanzo.ai/blog/json-data-type-gets-even-better) for a detailed overview of the `advanced` serialization.
 
 | Aspect             | `Map` with buckets                                                                             | `JSON`                                                                                                                                                           |
 |--------------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -481,7 +481,7 @@ Manual sharding is beneficial when vertical merges are important for reducing me
 
 ## Related content {#related-content}
 
-- Blog: [Building an Observability Solution with Datastore - Part 2 - Traces](https://datastore.com/blog/storing-traces-and-spans-open-telemetry-in-datastore)
+- Blog: [Building an Observability Solution with Datastore - Part 2 - Traces](https://hanzo.ai/blog/storing-traces-and-spans-open-telemetry-in-datastore)
 )DOCS_MD",
             .syntax = "Map(K, V)",
             .examples = {},
