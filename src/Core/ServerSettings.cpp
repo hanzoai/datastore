@@ -1457,7 +1457,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <interserver_http_host>example.datastore.com</interserver_http_host>
+    <interserver_http_host>example.hanzo.ai</interserver_http_host>
     ```
     )", 0) \
     DECLARE(UInt64, interserver_http_port, 0, R"(
@@ -1475,7 +1475,7 @@ The policy on how to perform a scheduling of CPU slots specified by `concurrent_
     **Example**
 
     ```xml
-    <interserver_https_host>example.datastore.com</interserver_https_host>
+    <interserver_https_host>example.hanzo.ai</interserver_https_host>
     ```
     )", 0) \
     DECLARE(UInt64, interserver_https_port, 0, R"(

@@ -120,7 +120,7 @@ int mainEntryDatastoreCompressor(int argc, char ** argv)
             std::cout << "Usage: datastore compressor [options] < INPUT > OUTPUT" << std::endl;
             std::cout << "Alternative usage: datastore compressor [options] INPUT OUTPUT" << std::endl;
             std::cout << desc << std::endl;
-            std::cout << "\nSee also: https://datastore.com/docs/en/operations/utilities/datastore-compressor/\n";
+            std::cout << "\nSee also: https://docs.hanzo.ai/en/operations/utilities/datastore-compressor/\n";
             return 0;
         }
 

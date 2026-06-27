@@ -996,7 +996,7 @@ int mainEntryDatastoreBenchmark(int argc, char ** argv)
                 std::cout << options_description << "\n";
             else
                 std::cout << options_description_non_verbose << "\n";
-            std::cout << "\nSee also: https://datastore.com/docs/operations/utilities/datastore-benchmark/\n";
+            std::cout << "\nSee also: https://docs.hanzo.ai/operations/utilities/datastore-benchmark/\n";
             return 0;
         }
 

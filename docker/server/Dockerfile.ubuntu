@@ -29,7 +29,7 @@ RUN sed -i "s|http://archive.ubuntu.com|${apt_archive}|g" /etc/apt/sources.list 
     && rm -rf /var/lib/apt/lists/* /var/cache/debconf /tmp/*
 
 ARG REPO_CHANNEL="stable"
-ARG REPOSITORY="deb [signed-by=/usr/share/keyrings/datastore-keyring.gpg] https://packages.datastore.com/deb ${REPO_CHANNEL} main"
+ARG REPOSITORY="deb [signed-by=/usr/share/keyrings/datastore-keyring.gpg] https://packages.hanzo.ai/deb ${REPO_CHANNEL} main"
 ARG VERSION="26.5.2.39"
 ARG PACKAGES="datastore-client datastore-server datastore-common-static"
 

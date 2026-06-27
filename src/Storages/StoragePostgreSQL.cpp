@@ -895,8 +895,8 @@ CREATE TABLE pg_table_schema_with_dots (a UInt32)
 
 ## Related content {#related-content}
 
-- Blog: [Datastore and PostgreSQL - a match made in data heaven - part 1](https://datastore.com/blog/migrating-data-between-datastore-postgres)
-- Blog: [Datastore and PostgreSQL - a Match Made in Data Heaven - part 2](https://datastore.com/blog/migrating-data-between-datastore-postgres-part-2)
+- Blog: [Datastore and PostgreSQL - a match made in data heaven - part 1](https://hanzo.ai/blog/migrating-data-between-datastore-postgres)
+- Blog: [Datastore and PostgreSQL - a Match Made in Data Heaven - part 2](https://hanzo.ai/blog/migrating-data-between-datastore-postgres-part-2)
 )DOCS_MD",
         .syntax = "ENGINE = PostgreSQL('host:port', 'database', 'table', 'user', 'password'[, 'schema', 'on_conflict'])",
         .related = {"MySQL", "SQLite", "MaterializedPostgreSQL"}});

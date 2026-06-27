@@ -248,7 +248,7 @@
       -->
 
     <!--
-    <interserver_http_host>example.datastore.com</interserver_http_host>
+    <interserver_http_host>example.hanzo.ai</interserver_http_host>
     -->
 
     <!-- Port for the SSH server which allows to connect and execute
@@ -346,7 +346,7 @@
     <!-- <enable_http_stacktrace/>true<enable_http_stacktrace>-->
 
     <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/Datastore-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71
-         Note: Datastore Cloud https://datastore.com/cloud always has secure connections configured.
+         Note: Datastore Cloud https://hanzo.ai/datastore always has secure connections configured.
     -->
     <openSSL>
         <server> <!-- Used for https server AND secure tcp port -->
@@ -626,7 +626,7 @@
     <bcrypt_workfactor>12</bcrypt_workfactor>
 
     <!-- Complexity requirements for user passwords.
-         Note: Datastore Cloud https://datastore.com/cloud is always configured for strong passwords.
+         Note: Datastore Cloud https://hanzo.ai/datastore is always configured for strong passwords.
       -->
     <!-- <password_complexity>
         <rule>
@@ -958,8 +958,8 @@
     -->
 
     <!-- Configuration of clusters that could be used in Distributed tables.
-         https://datastore.com/docs/en/operations/table_engines/distributed/
-         Note: Datastore Cloud https://datastore.com/cloud has the cluster preconfigured and dynamically scalable.
+         https://docs.hanzo.ai/en/operations/table_engines/distributed/
+         Note: Datastore Cloud https://hanzo.ai/datastore has the cluster preconfigured and dynamically scalable.
       -->
     <remote_servers>
         <!-- Test only shard config for testing distributed storage -->
@@ -1017,14 +1017,14 @@
     -->
     <!--<remote_url_allow_hosts>-->
         <!-- Host should be specified exactly as in URL. The name is checked before DNS resolution.
-            Example: "datastore.com", "datastore.com." and "www.datastore.com" are different hosts.
+            Example: "hanzo.ai", "hanzo.ai." and "www.hanzo.ai" are different hosts.
                     If port is explicitly specified in URL, the host:port is checked as a whole.
                     If host specified here without port, any port with this host allowed.
-                    "datastore.com" -> "datastore.com:443", "datastore.com:80" etc. is allowed, but "datastore.com:80" -> only "datastore.com:80" is allowed.
+                    "hanzo.ai" -> "hanzo.ai:443", "hanzo.ai:80" etc. is allowed, but "hanzo.ai:80" -> only "hanzo.ai:80" is allowed.
             If the host is specified as IP address, it is checked as specified in URL. Example: "[2a02:6b8:a::a]".
             If there are redirects and support for redirects is enabled, every redirect (the Location field) is checked.
             Host should be specified using the host xml tag:
-                    <host>datastore.com</host>
+                    <host>hanzo.ai</host>
         -->
 
         <!-- Regular expression can be specified. RE2 engine is used for regexps.
@@ -1049,9 +1049,9 @@
     <!-- ZooKeeper is used to store metadata about replicas, when using Replicated tables.
          Optional. If you don't use replicated tables, you could omit that.
 
-         See https://datastore.com/docs/en/engines/table-engines/mergetree-family/replication/
+         See https://docs.hanzo.ai/en/engines/table-engines/mergetree-family/replication/
 
-         Note: Datastore Cloud https://datastore.com/cloud has Datastore Keeper automatically configured for every service.
+         Note: Datastore Cloud https://hanzo.ai/datastore has Datastore Keeper automatically configured for every service.
       -->
 
     <!--
@@ -1074,7 +1074,7 @@
     <!-- Substitutions for parameters of replicated tables.
           Optional. If you don't use replicated tables, you could omit that.
 
-         See https://datastore.com/docs/en/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
+         See https://docs.hanzo.ai/en/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
       -->
     <!--
     <macros>
@@ -1173,7 +1173,7 @@
         <database>system</database>
         <table>query_log</table>
         <!--
-            PARTITION BY expr: https://datastore.com/docs/en/table_engines/mergetree-family/custom_partitioning_key/
+            PARTITION BY expr: https://docs.hanzo.ai/en/table_engines/mergetree-family/custom_partitioning_key/
             Example:
                 event_date
                 toMonday(event_date)
@@ -1182,7 +1182,7 @@
         -->
         <partition_by>toYYYYMM(event_date)</partition_by>
         <!--
-            Table TTL specification: https://datastore.com/docs/en/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
+            Table TTL specification: https://docs.hanzo.ai/en/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
             Example:
                 event_date + INTERVAL 1 WEEK
                 event_date + INTERVAL 7 DAY DELETE
@@ -1192,7 +1192,7 @@
         -->
 
         <!--
-            ORDER BY expr: https://datastore.com/docs/en/engines/table-engines/mergetree-family/mergetree#order_by
+            ORDER BY expr: https://docs.hanzo.ai/en/engines/table-engines/mergetree-family/mergetree#order_by
             Example:
                 event_date, event_time
                 event_date, type, query_id
@@ -1571,7 +1571,7 @@
     </top_level_domains_lists>
 
     <!-- Configuration of external dictionaries. See:
-         https://datastore.com/docs/en/sql-reference/dictionaries/external-dictionaries/external-dicts
+         https://docs.hanzo.ai/en/sql-reference/dictionaries/external-dictionaries/external-dicts
     -->
     <dictionaries_config>*_dictionary.*ml</dictionaries_config>
 
@@ -1599,7 +1599,7 @@
 
     <!-- Uncomment if you want data to be compressed 30-100% better.
          Don't do that if you just started using Datastore.
-         Note: Datastore Cloud https://datastore.com/cloud has a stronger compression by default.
+         Note: Datastore Cloud https://hanzo.ai/datastore has a stronger compression by default.
       -->
     <!--
     <compression>
@@ -1622,7 +1622,7 @@
          command is executed through /bin/sh and is expected to write
          a Base64-encoded key to the stdout.
 
-         Note: Datastore Cloud https://datastore.com/cloud supports encryption with customer-managed keys.
+         Note: Datastore Cloud https://hanzo.ai/datastore supports encryption with customer-managed keys.
     -->
     <encryption_codecs>
         <!-- aes_128_gcm_siv -->
@@ -1649,7 +1649,7 @@
 
     <!-- Allow to execute distributed DDL queries (CREATE, DROP, ALTER, RENAME) on cluster.
          Works only if ZooKeeper is enabled. Comment it if such functionality isn't required.
-         Note: Datastore Cloud https://datastore.com/cloud always runs DDL queries on cluster.
+         Note: Datastore Cloud https://hanzo.ai/datastore always runs DDL queries on cluster.
     -->
     <distributed_ddl>
         <!-- Path in ZooKeeper to queue with DDL queries -->
@@ -1719,7 +1719,7 @@
     -->
 
     <!-- Settings to fine-tune ReplicatedMergeTree tables. See documentation in source code, in MergeTreeSettings.h
-         Note: Datastore Cloud https://datastore.com/cloud has a SharedMergeTree engine that does not require fine-tuning.
+         Note: Datastore Cloud https://hanzo.ai/datastore has a SharedMergeTree engine that does not require fine-tuning.
     -->
     <!--
     <replicated_merge_tree>
@@ -1893,7 +1893,7 @@
         <!-- The reports are anonymized -->
         <enabled>true</enabled>
         <send_logical_errors>true</send_logical_errors>
-        <endpoint>https://crash.datastore.com/</endpoint>
+        <endpoint>https://crash.hanzo.ai/</endpoint>
     </send_crash_reports>
 
     <!-- Uncomment to disable Datastore internal DNS caching. -->
@@ -1974,7 +1974,7 @@
         -->
     <!-- </kafka> -->
 
-    <!-- Note: Datastore Cloud https://datastore.com/cloud provides automatic backups to object storage. -->
+    <!-- Note: Datastore Cloud https://hanzo.ai/datastore provides automatic backups to object storage. -->
     <backups>
         <allowed_path>backups</allowed_path>
 

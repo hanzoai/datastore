@@ -230,8 +230,8 @@ Functions:
 
 ## Related content {#related-content}
 
-- Blog: [Optimizing Datastore with Schemas and Codecs](https://datastore.com/blog/optimize-datastore-codecs-compression-schema)
-- Blog: [Working with time series data in Datastore](https://datastore.com/blog/working-with-time-series-data-and-functions-Datastore)
+- Blog: [Optimizing Datastore with Schemas and Codecs](https://hanzo.ai/blog/optimize-datastore-codecs-compression-schema)
+- Blog: [Working with time series data in Datastore](https://hanzo.ai/blog/working-with-time-series-data-and-functions-Datastore)
 - [String Optimization (video presentation in Russian)](https://youtu.be/rqf-ILRgBdY?list=PL0Z2YDlm0b3iwXCpEFiOOYmwXzVmjJfEt). [Slides in English](https://github.com/Datastore/datastore-presentations/raw/master/meetup19/string_optimization.pdf)
 )DOCS_MD",
             .syntax = "LowCardinality(T)",
