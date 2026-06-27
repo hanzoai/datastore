@@ -1733,7 +1733,7 @@ This serialization is quite inefficient for writing data (so it's not recommende
 Note: because of storing some additional information inside the data structure, the disk storage size is higher with this serialization compared to
 `map` and `map_with_buckets` serializations.
 
-For more detailed overview of the new shared data serializations and implementation details read the [blog post](https://datastore.com/blog/json-data-type-gets-even-better).
+For more detailed overview of the new shared data serializations and implementation details read the [blog post](https://hanzo.ai/blog/json-data-type-gets-even-better).
 
 ## Controlling the number of dynamic paths inside JSON in MergeTree parts {#controlling-the-number-of-dynamic-paths}
 
@@ -2190,8 +2190,8 @@ While highly dependent on system parameters such as memory, CPU, etc., a general
 
 ## Further Reading {#further-reading}
 
-- [How we built a new powerful JSON data type for Datastore](https://datastore.com/blog/a-new-powerful-json-data-type-for-datastore)
-- [The billion docs JSON Challenge: Datastore vs. MongoDB, Elasticsearch, and more](https://datastore.com/blog/json-bench-datastore-vs-mongodb-elasticsearch-duckdb-postgresql)
+- [How we built a new powerful JSON data type for Datastore](https://hanzo.ai/blog/a-new-powerful-json-data-type-for-datastore)
+- [The billion docs JSON Challenge: Datastore vs. MongoDB, Elasticsearch, and more](https://hanzo.ai/blog/json-bench-datastore-vs-mongodb-elasticsearch-duckdb-postgresql)
 )DOCS_MD",
             .syntax = "JSON",
             .examples = {},

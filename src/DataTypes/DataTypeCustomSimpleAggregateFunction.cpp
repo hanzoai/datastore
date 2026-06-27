@@ -257,7 +257,7 @@ CREATE TABLE simple (id UInt64, val SimpleAggregateFunction(sum, Double)) ENGINE
 ```
 ## Related Content {#related-content}
 
-- Blog: [Using Aggregate Combinators in Datastore](https://datastore.com/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
+- Blog: [Using Aggregate Combinators in Datastore](https://hanzo.ai/blog/aggregate-functions-combinators-in-datastore-for-arrays-maps-and-states)
 - [AggregateFunction](/sql-reference/data-types/aggregatefunction) type.
 )DOCS_MD",
             .syntax = "SimpleAggregateFunction(name, types...)",

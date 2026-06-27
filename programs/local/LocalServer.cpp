@@ -1734,10 +1734,10 @@ void LocalServer::printHelpMessage(const OptionsDescription & options_descriptio
     output_stream << getHelpHeader() << "\n";
     if (options_description.main_description.has_value())
         output_stream << options_description.main_description.value() << "\n";
-    output_stream << "All settings are documented at https://datastore.com/docs/operations/settings/settings.\n\n";
+    output_stream << "All settings are documented at https://docs.hanzo.ai/operations/settings/settings.\n\n";
     output_stream << getHelpFooter() << "\n";
     output_stream << "In addition, --param_name=value can be specified for substitution of parameters for parameterized queries.\n";
-    output_stream << "\nSee also: https://datastore.com/docs/en/operations/utilities/datastore-local/\n";
+    output_stream << "\nSee also: https://docs.hanzo.ai/en/operations/utilities/datastore-local/\n";
 }
 
 
