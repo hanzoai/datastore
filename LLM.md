@@ -37,15 +37,16 @@ official `clickhouse` binary.
 | Per-query | — | faster on 8/43; median 0.95× | ~neutral |
 | Binary, stripped | — | 398 MB | — |
 
-**Honest verdict:** the optimization buys ~4% less peak memory and is statistically
-tied on speed for this workload — it does **not** reproduce the "half the
-memory / half the binary / much faster" figures that were circulating. Those
-likely referred to a different metric/config (idle RSS, a minimal build) and do
-not hold under ClickBench load. Caveats: only 4 runs/query (per-query noise
-±25%, so "tied" is within noise), one workload, one machine, warm cache. The real
-value of the fork is not raw OLAP speed over stock — it is the architecture
-(S-Chain storage separation, consensus2 coordination, gRPC removed); benchmark
-those separately, and don't quote a memory/speed win the data doesn't support.
+**Honest verdict:** under production-scale load the optimization buys ~4% less peak
+memory and is statistically tied on speed. **The scale matters and must be quoted:**
+an earlier "~half the memory / much faster" figure was real but measured at **10M
+rows**, where the removed XRay instrumentation + leaner binary are a large fraction
+of a small working set. At **100M rows** the data dominates RSS, so the same fixed
+savings shrink to ~4% and the speed win vanishes. Both are true at their scale —
+never cite "half the memory" without "at 10M rows." Caveats on the 100M run: only 4
+runs/query (per-query noise ±25%, so "tied" is within noise), one workload, one
+machine, warm cache. The fork's real value is architectural (S-Chain storage
+separation, consensus2 coordination, gRPC removed), not raw OLAP speed over stock.
 
 ## Stack
 
