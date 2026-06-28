@@ -50,7 +50,7 @@ lux::consensus2::VotePosition QuasarKeeperConsensus::submit(const KeeperRequestF
     pos.epoch = epoch;
 
     gate.submit(pos);
-    pending[pos.block_id] = Pending{buf, idx, false};
+    pending[pos.block_id] = Pending{buf, idx};
     return pos;
 }
 
@@ -75,18 +75,22 @@ QuasarKeeperConsensus::CommitResult QuasarKeeperConsensus::tryCommit()
 {
     /// 1) Promote entries that have reached BOTH liveness (wave Accept) and safety
     ///    (a >2/3-stake quorum cert) into the ready queue, keyed by log index.
-    for (auto & [block_id, p] : pending)
+    /// ...then ERASE finalized entries from `pending` and drop their votes from the
+    /// gate, so the scan walks in-flight entries only (no O(N²) re-walk of finalized
+    /// state) and memory stays bounded (no retained vote sets) — both flagged by the
+    /// coordination benchmark.
+    for (auto it = pending.begin(); it != pending.end();)
     {
-        if (p.ready)
-            continue;
-        if (wave.decision(block_id) != lux::consensus2::Decision::Accept)
-            continue;
-        if (!gate.is_final(block_id))
-            continue;
-        if (!gate.assemble_cert(block_id))  /// structurally impossible once final; fail-closed
-            continue;
-        ready.emplace(p.idx, p.buf);
-        p.ready = true;
+        const auto & block_id = it->first;
+        if (wave.decision(block_id) == lux::consensus2::Decision::Accept
+            && gate.is_final(block_id) && gate.assemble_cert(block_id))
+        {
+            ready.emplace(it->second.idx, it->second.buf);
+            gate.drop(block_id);            /// release the gate's accumulated votes
+            it = pending.erase(it);          /// shrink the working set
+        }
+        else
+            ++it;
     }
 
     /// 2) Apply a contiguous prefix to the state machine, in strict index order —

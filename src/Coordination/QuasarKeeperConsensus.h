@@ -83,10 +83,9 @@ private:
     {
         nuraft::ptr<nuraft::buffer> buf;  /// the serialized ZooKeeper log entry
         std::uint64_t idx = 0;
-        bool ready = false;               /// finality reached, queued for in-order commit
     };
-    std::map<lux::consensus2::BlockId, Pending> pending;
-    std::map<std::uint64_t, nuraft::ptr<nuraft::buffer>> ready;  /// idx → entry awaiting a whole prefix
+    std::map<lux::consensus2::BlockId, Pending> pending;        /// in-flight only; erased on finality
+    std::map<std::uint64_t, nuraft::ptr<nuraft::buffer>> ready; /// idx → entry awaiting a whole prefix
 };
 
 }
