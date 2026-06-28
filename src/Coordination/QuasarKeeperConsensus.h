@@ -83,7 +83,6 @@ private:
     {
         nuraft::ptr<nuraft::buffer> buf;  /// the serialized ZooKeeper log entry
         std::uint64_t idx = 0;
-        std::uint64_t item = 0;           /// wave handle (first 8 bytes of block id)
         bool ready = false;               /// finality reached, queued for in-order commit
     };
     std::map<lux::consensus2::BlockId, Pending> pending;
