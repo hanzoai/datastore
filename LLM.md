@@ -24,6 +24,29 @@ The direction for both halves: ride S-Chain storage and move coordination from R
 
 Design paper: `hanzo-datastore/` in [hanzoai/papers](https://github.com/hanzoai/papers).
 
+## Benchmark vs official ClickHouse (measured, honest)
+
+ClickBench (43 queries, 100M-row `hits` dataset), spark (aarch64), 4 runs/query,
+warm. **opt** = our PGO+ThinLTO+BOLT `datastore.bolt` 26.6.1.1; **stock** = the
+official `clickhouse` binary.
+
+| Metric | Official ClickHouse | Hanzo Datastore (opt) | Delta |
+|--------|--------------------|------------------------|-------|
+| Peak RSS (under load) | 14.52 GB | 13.96 GB | **−3.8%** |
+| Total query time (Σ per-query medians) | 16.83 s | 16.82 s | tied (+0.1%) |
+| Per-query | — | faster on 8/43; median 0.95× | ~neutral |
+| Binary, stripped | — | 398 MB | — |
+
+**Honest verdict:** the optimization buys ~4% less peak memory and is statistically
+tied on speed for this workload — it does **not** reproduce the "half the
+memory / half the binary / much faster" figures that were circulating. Those
+likely referred to a different metric/config (idle RSS, a minimal build) and do
+not hold under ClickBench load. Caveats: only 4 runs/query (per-query noise
+±25%, so "tied" is within noise), one workload, one machine, warm cache. The real
+value of the fork is not raw OLAP speed over stock — it is the architecture
+(S-Chain storage separation, consensus2 coordination, gRPC removed); benchmark
+those separately, and don't quote a memory/speed win the data doesn't support.
+
 ## Stack
 
 - **Server**: C++ (the ClickHouse codebase under `programs/`, `src/`, `base/`)
