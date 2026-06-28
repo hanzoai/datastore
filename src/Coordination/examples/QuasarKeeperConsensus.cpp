@@ -5,15 +5,6 @@ namespace DB
 
 namespace
 {
-    /// Wave item handle from a block id (first 8 bytes, big-endian).
-    std::uint64_t itemOf(const lux::consensus2::BlockId & b)
-    {
-        std::uint64_t h = 0;
-        for (int i = 0; i < 8; ++i)
-            h = (h << 8) | b[i];
-        return h;
-    }
-
     /// Deterministic, distinct block id per log index. The quorum cert binds the
     /// canonical message (block id + height + epoch), so a per-index id is enough
     /// to make each entry's certificate unique and position-bound.
@@ -59,7 +50,7 @@ lux::consensus2::VotePosition QuasarKeeperConsensus::submit(const KeeperRequestF
     pos.epoch = epoch;
 
     gate.submit(pos);
-    pending[pos.block_id] = Pending{buf, idx, itemOf(pos.block_id), false};
+    pending[pos.block_id] = Pending{buf, idx, false};
     return pos;
 }
 
@@ -69,7 +60,7 @@ lux::consensus2::Decision QuasarKeeperConsensus::recordPoll(
     const auto it = pending.find(block_id);
     if (it == pending.end())
         return lux::consensus2::Decision::Undecided;
-    return wave.record_round(it->second.item, yes, total);
+    return wave.record_round(block_id, yes, total);  // wave keys on the full block id (M4)
 }
 
 lux::consensus2::VoteResult QuasarKeeperConsensus::recordVote(
@@ -88,7 +79,7 @@ QuasarKeeperConsensus::CommitResult QuasarKeeperConsensus::tryCommit()
     {
         if (p.ready)
             continue;
-        if (wave.decision(p.item) != lux::consensus2::Decision::Accept)
+        if (wave.decision(block_id) != lux::consensus2::Decision::Accept)
             continue;
         if (!gate.is_final(block_id))
             continue;
