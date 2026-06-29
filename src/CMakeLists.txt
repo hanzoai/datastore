@@ -603,6 +603,15 @@ if (TARGET ch_contrib::nuraft)
     target_link_libraries(clickhouse_compression PUBLIC ch_contrib::nuraft)
 endif()
 
+# Single-node Quasar coordination engine (consensus2 + BLS). Linked into dbms so
+# KeeperServer + QuasarKeeperConsensus (compiled into dbms from src/Coordination)
+# resolve the leaderless Lux consensus + BLS quorum-cert symbols, and the final
+# binaries pull in blst. Defined in src/Coordination/CMakeLists.txt. The NuRaft raft
+# ENGINE no longer provides ordering; nuraft above is the TYPE substrate only.
+if (TARGET _consensus2_keeper)
+    target_link_libraries(dbms PUBLIC _consensus2_keeper)
+endif()
+
 target_link_libraries(
     dbms
     PRIVATE

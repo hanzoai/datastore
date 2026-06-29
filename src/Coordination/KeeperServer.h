@@ -4,20 +4,54 @@
 #include <Coordination/InMemoryLogStore.h>
 #include <Coordination/KeeperStateMachine.h>
 #include <Coordination/KeeperStateManager.h>
-#include <libnuraft/raft_params.hxx>
-#include <libnuraft/raft_server.hxx>
 #include <Poco/Util/AbstractConfiguration.h>
 #include <Coordination/Keeper4LWInfo.h>
 #include <Coordination/KeeperContext.h>
 #include <Coordination/RaftServerConfig.h>
 
+#include <memory>
+#include <mutex>
+
 namespace DB
 {
 
+/// The async-append result the request dispatchers consume. `nuraft::cmd_result`
+/// is a header-only template (the TYPE substrate stays); the raft ENGINE that used
+/// to fill it is gone. Single-node Quasar fills it synchronously — accepted, OK,
+/// carrying the committed log index for the read-after-write barrier.
 using RaftAppendResult = nuraft::ptr<nuraft::cmd_result<nuraft::ptr<nuraft::buffer>>>;
+
+/// The leaderless Lux consensus engine (consensus2) that replaced the NuRaft raft
+/// algorithm. Forward-declared so the consensus2/BLS headers stay out of every
+/// translation unit that merely includes KeeperServer.h.
+class QuasarKeeperConsensus;
+class KeeperServer;
 
 struct KeeperConfiguration;
 using KeeperConfigurationPtr = std::shared_ptr<KeeperConfiguration>;
+
+/// Single-node append "stream": the synchronous replacement for NuRaft's
+/// `client_req_stream`. Because the embedded node is the sole validator, an append
+/// commits SYNCHRONOUSLY through Quasar before returning — there is no in-flight
+/// window, no leader to lose, nothing to abandon. The streaming dispatcher's
+/// stream-state predicates therefore collapse to constants. Multi-node streaming
+/// over the ZAP vote transport is a later stage.
+class KeeperAppendStream
+{
+public:
+    explicit KeeperAppendStream(KeeperServer & server_) : server(server_) {}
+
+    /// Drive each request to single-node Quasar finality + commit, in order
+    /// (routes through KeeperServer::putRequestBatch — the one commit primitive).
+    void append(const KeeperRequestsForSessions & requests);
+
+    bool is_abandoned() const { return false; }  /// single-node leader never abandons
+    bool is_ready() const { return true; }
+    bool is_idle() const { return true; }         /// synchronous: nothing left in flight
+
+private:
+    KeeperServer & server;
+};
 
 class KeeperServer
 {
@@ -32,52 +66,7 @@ public:
 
 private:
     friend class KeeperRequestDispatcher;
-
-    /**
-     * Tiny wrapper around nuraft::raft_server which adds some functions
-     * necessary for recovery, mostly connected to config manipulation.
-     */
-    struct KeeperRaftServer : public nuraft::raft_server
-    {
-        bool isClusterHealthy();
-
-        // Manually set the internal config of the raft server
-        // This should be used only for recovery
-        void setConfig(const nuraft::ptr<nuraft::cluster_config> & new_config);
-
-        // Manually reconfigure the cluster
-        // This should be used only for recovery
-        void forceReconfigure(const nuraft::ptr<nuraft::cluster_config> & new_config);
-
-        void commit_in_bg() override;
-        void append_entries_in_bg() override;
-
-        std::unique_lock<std::recursive_mutex> lockRaft();
-
-        bool isCommitInProgress() const;
-
-        void setServingRequest(bool value);
-
-        /// Collect IDs of learner (non-voting) servers from the cluster config.
-        std::unordered_set<int32_t> getLearnerIds();
-
-        /// Returns alive (responding) learner and follower counters.
-        /// Follower counters include only voting peers; learners include all peers.
-        /// Both get_peer_info_all and get_srv_config_all hold the raft lock internally.
-        KeeperServer::RespondingCounts getRespondingCounts();
-
-        using nuraft::raft_server::raft_server;
-
-        /// Keeper context for accessing coordination settings (e.g. commit profiler).
-        /// Set after construction because the base class constructor is inherited.
-        KeeperContextPtr keeper_context;
-
-        // peers are initially marked as responding because at least one cycle
-        // of heartbeat * response_limit (20) need to pass to be marked
-        // as not responding
-        // until that time passes we can't say that the cluster is healthy
-        std::optional<Stopwatch> timer_from_init = std::make_optional<Stopwatch>();
-    };
+    friend class KeeperAppendStream;
 
     const int server_id;
 
@@ -85,42 +74,28 @@ private:
 
     nuraft::ptr<IKeeperStateMachine> state_machine;
 
-    nuraft::ptr<KeeperRaftServer> raft_instance; // TSA_GUARDED_BY(server_write_mutex);
-    nuraft::ptr<nuraft::asio_service> asio_service;
-    std::vector<nuraft::ptr<nuraft::rpc_listener>> asio_listeners;
+    /// The leaderless Lux consensus engine (consensus2) — the single-node
+    /// self-certifying coordinator that replaced nuraft::raft_server. Owns one BLS
+    /// validator key; every write becomes a genuine 1-of-1 quorum certificate.
+    std::unique_ptr<QuasarKeeperConsensus> consensus;
 
-    // because some actions can be applied
-    // when we are sure that there are no requests currently being
-    // processed (e.g. recovery) we do all write actions
-    // on raft_server under this mutex.
+    /// Serializes the synchronous submit→vote→commit drive of the engine. Only the
+    /// single active dispatch thread drives it, but the engine's wrapper state
+    /// (next index, pending/ready maps) is not internally locked, so we guard it.
+    mutable std::mutex consensus_mutex;
+
+    // retained for API compatibility with callers that took the write lock during
+    // recovery/reconfiguration; single-node has neither, but the mutex is harmless.
     mutable std::mutex server_write_mutex;
 
     std::mutex initialized_mutex;
     std::atomic<bool> initialized_flag = false;
     std::condition_variable initialized_cv;
-    std::atomic<bool> initial_batch_committed = false;
 
-    std::atomic<uint64_t> last_log_idx_on_disk = 0;
-
-    nuraft::ptr<nuraft::cluster_config> last_local_config;
+    /// Single-node has no quorum to recover; always false.
+    std::atomic_bool is_recovering = false;
 
     LoggerPtr log;
-
-    /// Callback func which is called by NuRaft on all internal events.
-    /// Used to determine the moment when raft is ready to server new requests
-    nuraft::cb_func::ReturnCode callbackFunc(nuraft::cb_func::Type type, nuraft::cb_func::Param * param);
-
-    /// Almost copy-paste from nuraft::launcher, but with separated server init and start
-    /// Allows to avoid race conditions.
-    void launchRaftServer(const Poco::Util::AbstractConfiguration & config, bool enable_ipv6);
-
-    void shutdownRaftServer();
-
-    void loadLatestConfig();
-
-    void enterRecoveryMode(nuraft::raft_params & params);
-
-    std::atomic_bool is_recovering = false;
 
     KeeperContextPtr keeper_context;
 
@@ -138,8 +113,17 @@ public:
         KeeperSnapshotManagerS3 & snapshot_manager_s3,
         IKeeperStateMachine::CommitCallback commit_callback);
 
-    /// Load state machine from the latest snapshot and load log storage. Start NuRaft with required settings.
+    /// Out-of-line so the unique_ptr<QuasarKeeperConsensus> member is destroyed where
+    /// the engine type is complete (forward-declared in this header).
+    ~KeeperServer();
+
+    /// Load state machine from the latest snapshot and load log storage, then bring up
+    /// the single-node Quasar coordinator (always-ready leader).
     void startup(const Poco::Util::AbstractConfiguration & config, bool enable_ipv6 = true);
+
+    /// Open a single-node append stream (the synchronous successor to NuRaft's
+    /// `client_req_stream`). Always non-null for a single-node leader.
+    std::shared_ptr<KeeperAppendStream> openAppendStream(uint64_t timeout_ms);
 
     /// Execute read requests directly in the local state machine. Put response into responses queue.
     void putLocalReadRequests(const KeeperRequestsForSessions & requests);

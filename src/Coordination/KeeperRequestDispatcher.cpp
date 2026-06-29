@@ -249,15 +249,10 @@ void KeeperRequestDispatcher::shutdown(bool closed_all_connections)
         uint64_t timeout_ms = keeper_context->getCoordinationSettings()[CoordinationSetting::session_shutdown_timeout].totalMilliseconds();
         bool sent = false;
         auto start_time = std::chrono::steady_clock::now();
-        auto temp_stream = server->raft_instance->open_client_req_stream(timeout_ms);
+        auto temp_stream = server->openAppendStream(timeout_ms);
         if (temp_stream)
         {
-            std::vector<nuraft::ptr<nuraft::buffer>> entries;
-            entries.reserve(close_requests.size());
-            for (const auto & r : close_requests)
-                entries.push_back(IKeeperStateMachine::getZooKeeperLogEntry(r));
-
-            temp_stream->append(std::move(entries));
+            temp_stream->append(close_requests);
 
             /// Wait for the request to reach the leader, don't wait for commit.
             ///
@@ -542,8 +537,8 @@ void KeeperRequestDispatcher::recreateStreamWithBackoff()
     }
 
     current_stream_is_suspect.store(true);
-    /// May return nullptr.
-    stream = server->raft_instance->open_client_req_stream(
+    /// Single-node: always returns a valid synchronous stream.
+    stream = server->openAppendStream(
         keeper_context->getCoordinationSettings()[CoordinationSetting::operation_timeout_ms].totalMilliseconds());
 
     if (stream)
@@ -885,11 +880,6 @@ void KeeperRequestDispatcher::dispatchThread()
 
                 LOG_TEST(log, "Starting batch {}, {} bytes, {} writes, {} reads ({} of them are at the end of batch). First request: {}", batch_idx, batch_bytes, requests.size(), reads_requests, late_reads.size(), requests[0].request->toString());
 
-                std::vector<nuraft::ptr<nuraft::buffer>> entries;
-                entries.reserve(requests.size());
-                for (const auto & r : requests)
-                    entries.push_back(IKeeperStateMachine::getZooKeeperLogEntry(r));
-
                 /// Add information about the batch to the queue of in-flight requests.
 
                 auto & batch = in_flight_batches[batch_idx % in_flight_batches.size()];
@@ -899,9 +889,10 @@ void KeeperRequestDispatcher::dispatchThread()
                 batch.activate(std::move(late_reads));
                 tail_idx.store(batch_idx + 1);
 
-                /// Finally send the requests to leader.
-
-                stream->append(std::move(entries));
+                /// Drive the batch through single-node Quasar. It commits synchronously,
+                /// so the commit callback advances head_idx (and the response callback
+                /// enqueues responses) before this returns — head catches up to tail.
+                stream->append(batch.requests);
             }
 
             /// Ordering between Reconfig requests and other requests is not very important.

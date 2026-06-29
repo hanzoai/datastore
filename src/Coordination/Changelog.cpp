@@ -2244,11 +2244,13 @@ void Changelog::appendCompletionThread()
         if (!append_ok)
             current_writer->finalize();
 
-        // we shouldn't start the raft_server before sending it here
+        // The NuRaft raft ENGINE is gone: single-node Quasar commits synchronously
+        // and has no raft_server to notify of async log-append completion (NuRaft's
+        // parallel_log_appending hook). The wptr is never set; the completion is
+        // simply drained. Multi-node replication notification is a later stage.
         if (auto raft_server_locked = raft_server.lock())
-            raft_server_locked->notify_log_append_completion(append_ok);
-        else
-            LOG_INFO(log, "Raft server is not set in LogStore.");
+        {
+        }
     }
 }
 
