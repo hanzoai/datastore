@@ -129,6 +129,13 @@ TYPED_TEST(CoordinationTest, BufferSerde)
     }
 }
 
+// ── Gated out by rip/nuraft-quasar ──────────────────────────────────────────────
+// SimpliestRaftServer + TestSummingRaft1 drive a raw nuraft::raft_launcher /
+// nuraft::raft_server (the consensus ALGORITHM). That engine has been removed; only
+// the nuraft TYPE substrate remains. Single-node Quasar coordination over the real
+// KeeperStateMachine is exercised by keeper_quasar_engine_test, and the Keeper
+// storage/state-machine/snapshot/changelog suites below run unchanged.
+#if 0
 template <typename StateMachine>
 struct SimpliestRaftServer
 {
@@ -252,6 +259,7 @@ TYPED_TEST(CoordinationTest, TestSummingRaft1)
 
     s1.launcher.shutdown(5);
 }
+#endif  // rip/nuraft-quasar: raw-raft fixture + TestSummingRaft1
 
 template<typename Storage>
 void testLogAndStateMachine(

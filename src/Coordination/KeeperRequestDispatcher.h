@@ -290,7 +290,9 @@ private:
     /// head_idx is incremented after the slot is fully vacated.
     std::vector<InFlightBatch> in_flight_batches;
 
-    nuraft::ptr<nuraft::client_req_stream> stream;
+    /// Single-node append stream (synchronous successor to nuraft::client_req_stream).
+    /// Multi-node leader streaming over the ZAP vote transport is a later stage.
+    std::shared_ptr<KeeperAppendStream> stream;
 
     /// True if we should sleep for a bit before trying to create a new stream, to avoid spamming
     /// retries when the leader not ready to process requests.
