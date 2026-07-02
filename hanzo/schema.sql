@@ -423,3 +423,30 @@ ORDER BY (provider, id);
 -- Create read-only user for analytics
 -- CREATE USER IF NOT EXISTS hanzo_analytics_ro IDENTIFIED BY 'secure_password';
 -- GRANT SELECT ON hanzo.* TO hanzo_analytics_ro;
+
+-- =============================================================================
+-- COMPUTE ANALYTICS (visor fleet/bot/spend — one-way rollup from hanzoai/visor)
+-- =============================================================================
+
+-- Per-tenant compute fleet events. hanzoai/visor emits one row per lifecycle
+-- transition (launched | running | destroyed), best-effort, alongside its
+-- commerce metering — so the ANALYTICAL plane (unified, cross-tenant) mirrors
+-- visor's OPERATIONAL state without coupling to it (tenant-data-hierarchy HIP).
+-- Keys are IAM slugs in the org > app > project hierarchy, so admin.hanzo.ai
+-- rolls fleet count and spend up by org / app / project across every tenant.
+-- price_cents is the resale price charged for that event's hour (0 for
+-- 'destroyed'); machine_id ties a launched row to its later running/destroyed
+-- rows.
+CREATE TABLE IF NOT EXISTS hanzo.compute_events (
+    org LowCardinality(String),
+    app LowCardinality(String),
+    project LowCardinality(String),
+    event LowCardinality(String), -- 'launched' | 'running' | 'destroyed'
+    machine_id String,
+    size LowCardinality(String),
+    price_cents UInt64,
+    ts DateTime64(3) DEFAULT now(),
+    INDEX idx_machine machine_id TYPE bloom_filter() GRANULARITY 1
+) ENGINE = MergeTree
+PARTITION BY toYYYYMM(ts)
+ORDER BY (org, app, project, event, ts);
