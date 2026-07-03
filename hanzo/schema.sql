@@ -428,19 +428,25 @@ ORDER BY (provider, id);
 -- COMPUTE ANALYTICS (visor fleet/bot/spend — one-way rollup from hanzoai/visor)
 -- =============================================================================
 
--- Per-tenant compute fleet events. hanzoai/visor emits one row per lifecycle
+-- Per-tenant compute usage events. hanzoai/visor emits one row per lifecycle
 -- transition (launched | running | destroyed), best-effort, alongside its
 -- commerce metering — so the ANALYTICAL plane (unified, cross-tenant) mirrors
 -- visor's OPERATIONAL state without coupling to it (tenant-data-hierarchy HIP).
--- Keys are IAM slugs in the org > app > project hierarchy, so admin.hanzo.ai
--- rolls fleet count and spend up by org / app / project across every tenant.
--- price_cents is the resale price charged for that event's hour (0 for
--- 'destroyed'); machine_id ties a launched row to its later running/destroyed
--- rows.
-CREATE TABLE IF NOT EXISTS hanzo.compute_events (
+--
+-- kind is the fleet lens: a BOT is a machine running the @hanzo/bot agent
+-- (cloud-init'd to gw.hanzo.bot); a MACHINE is raw compute with no agent. Every
+-- bot is a machine; not every machine is a bot. admin.hanzo.ai renders two lenses
+-- over this one table — Bots (kind='bot') and Machines (kind='machine').
+--
+-- Keys are IAM slugs in the org > app > project hierarchy, so fleet count and
+-- spend roll up by org / app / project across every tenant. price_cents is the
+-- resale price charged for that event's hour (0 for 'destroyed'); machine_id ties
+-- a launched row to its later running/destroyed rows.
+CREATE TABLE IF NOT EXISTS hanzo.compute_usage (
     org LowCardinality(String),
     app LowCardinality(String),
     project LowCardinality(String),
+    kind Enum8('machine' = 1, 'bot' = 2),
     event LowCardinality(String), -- 'launched' | 'running' | 'destroyed'
     machine_id String,
     size LowCardinality(String),
@@ -449,4 +455,4 @@ CREATE TABLE IF NOT EXISTS hanzo.compute_events (
     INDEX idx_machine machine_id TYPE bloom_filter() GRANULARITY 1
 ) ENGINE = MergeTree
 PARTITION BY toYYYYMM(ts)
-ORDER BY (org, app, project, event, ts);
+ORDER BY (ts, org, app, project);
