@@ -433,10 +433,12 @@ ORDER BY (provider, id);
 -- commerce metering — so the ANALYTICAL plane (unified, cross-tenant) mirrors
 -- visor's OPERATIONAL state without coupling to it (tenant-data-hierarchy HIP).
 --
--- kind is the fleet lens: a BOT is a machine running the @hanzo/bot agent
--- (cloud-init'd to gw.hanzo.bot); a MACHINE is raw compute with no agent. Every
--- bot is a machine; not every machine is a bot. admin.hanzo.ai renders two lenses
--- over this one table — Bots (kind='bot') and Machines (kind='machine').
+-- kind is the compute-spectrum lens: machine (raw droplet/VM), bot (a machine
+-- running the @hanzo/bot agent at gw.hanzo.bot), cluster (K8s cluster), nodepool
+-- (K8s node pool), container, function (FaaS, hanzoai/functions). Every bot is a
+-- machine; not every machine is a bot. admin.hanzo.ai renders one lens per kind
+-- over this one table. LowCardinality (not Enum) keeps it open-ended so a new kind
+-- never needs a migration; only machine and bot emit today.
 --
 -- Keys are IAM slugs in the org > app > project hierarchy, so fleet count and
 -- spend roll up by org / app / project across every tenant. price_cents is the
@@ -446,7 +448,7 @@ CREATE TABLE IF NOT EXISTS hanzo.compute_usage (
     org LowCardinality(String),
     app LowCardinality(String),
     project LowCardinality(String),
-    kind Enum8('machine' = 1, 'bot' = 2),
+    kind LowCardinality(String), -- machine|bot|cluster|nodepool|container|function
     event LowCardinality(String), -- 'launched' | 'running' | 'destroyed'
     machine_id String,
     size LowCardinality(String),
