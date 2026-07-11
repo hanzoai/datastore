@@ -156,6 +156,12 @@ ENV TZ=UTC
 RUN mkdir /docker-entrypoint-initdb.d
 
 COPY docker_related_config.xml /etc/datastore-server/config.d/
+# System-log retention overlay — bounds every system.*_log table with a 3-day
+# TTL (and caps text_log to `warning`) so they can never again fill the data
+# disk. 2026-07 incident: system.text_log grew to ~115 GB / 2.5B rows with no
+# TTL and took down api.hanzo.ai. Root element is <clickhouse> to match the
+# baked main config.xml (a <datastore>-rooted overlay throws at startup).
+COPY datastore-log-retention.xml /etc/datastore-server/config.d/
 COPY entrypoint.sh /entrypoint.sh
 
 EXPOSE 9000 8123 9009
