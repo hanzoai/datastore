@@ -1,0 +1,61 @@
+<clickhouse>
+    <!--
+      System-log retention. Bounds ClickHouse's internal `system.*_log` tables so
+      they can never again fill the data disk (2026-07 incident: `system.text_log`
+      grew to ~115 GB / 2.5B rows with no TTL and took down api.hanzo.ai).
+
+      Root element MUST be <clickhouse> to match the baked main config.xml — a
+      <datastore>-rooted overlay throws "Root element ..." at startup (see
+      src/Common/Config/ConfigProcessor.cpp merge check) and fails the server.
+
+      Most <*_log> blocks are granular (no <engine>), so <ttl> merges in cleanly.
+      opentelemetry_span_log is the ONE table the main config gives an explicit
+      <engine> (it has no event_time; it sorts by finish_date/finish_time_us), so
+      its TTL MUST live inside <engine> — a separate <ttl> beside an <engine> is
+      rejected at startup (Code 36 BAD_ARGUMENTS). text_log is additionally capped
+      to <level>warning</level> so trace/debug rows (the 2.5B-row offender) are
+      never written to the table.
+    -->
+    <text_log>
+        <level>warning</level>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </text_log>
+    <query_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </query_log>
+    <query_thread_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </query_thread_log>
+    <query_views_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </query_views_log>
+    <trace_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </trace_log>
+    <metric_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </metric_log>
+    <asynchronous_metric_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </asynchronous_metric_log>
+    <part_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </part_log>
+    <processors_profile_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </processors_profile_log>
+    <background_schedule_pool_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </background_schedule_pool_log>
+    <error_log>
+        <ttl>event_date + INTERVAL 3 DAY DELETE</ttl>
+    </error_log>
+    <opentelemetry_span_log>
+        <engine replace="replace">
+            engine MergeTree
+            partition by toYYYYMM(finish_date)
+            order by (finish_date, finish_time_us)
+            TTL finish_date + INTERVAL 3 DAY DELETE
+        </engine>
+    </opentelemetry_span_log>
+</clickhouse>
