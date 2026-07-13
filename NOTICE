@@ -1,6 +1,23 @@
 datastore
 Copyright (c) 2024-2026 Hanzo AI, Inc.
 
+Forked from https://github.com/ClickHouse/ClickHouse at v26.6.1.1.
+
 This product includes software from ClickHouse (https://github.com/ClickHouse/ClickHouse), licensed under Apache-2.0:
 
     Copyright 2016-2026 ClickHouse, Inc.
+
+Upstream ClickHouse ships no NOTICE file; no Apache-2.0 section 4(d) attributions to propagate.
+
+DEVIATIONS
+
+Changes in this fork relative to upstream ClickHouse v26.6.1.1:
+
+- Product-facing surfaces are rebranded from ClickHouse to Hanzo Datastore (README, docs, program and command names, package descriptions, install defaults); website and documentation references point to hanzo.ai.
+- gRPC is removed entirely: no contrib/grpc, no gRPC server, no USE_GRPC build paths.
+- A native ZAP transport (Cap'n-Proto-derived RPC, contrib/zap from https://github.com/zap-proto/cpp-core) is added as the gRPC replacement; the ZapServer server stub lives in src/Server and is wired through ProtocolServerAdapter, but is not yet the live query path.
+- The Google Cloud C++ backend (GCS object storage and GCP KMS) is removed; object storage is S3-based.
+- A hanzo/ integration overlay is added: config.xml, compose.yml, and schema.sql defining the hanzo analytics database (organizations, projects, and compute-usage tables).
+- A native QuasarKeeperConsensus coordination engine (Lux Quasar) is added in src/Coordination alongside the existing Keeper state machine, proven single-node via src/Coordination/examples.
+- Profile-guided optimization and BOLT optimized-release build tooling is added (cmake/profile_optimization.cmake).
+- LLVM XRay instrumentation defaults to OFF (ENABLE_XRAY) for leaner binaries.

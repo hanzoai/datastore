@@ -9,7 +9,7 @@
     <img alt="The Datastore company logo." src="https://github.com/Datastore/datastore-docs/assets/9611008/b001dc7b-5a45-4dcd-9275-e03beb7f9177">
 </picture>
 
-<h4>Datastore® is an open-source column-oriented database management system that allows generating analytical data reports in real-time.</h4>
+<h4>Hanzo Datastore is an open-source column-oriented database management system that allows generating analytical data reports in real-time.</h4>
 
 </div>
 
