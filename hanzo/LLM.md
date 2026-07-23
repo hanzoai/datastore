@@ -85,9 +85,11 @@ DATASTORE_DB=hanzo
 
 The C++ port of the Hanzo Research SDK: the ONE way a native producer (a kernel, a
 benchmark, the datastore/luxcpp stack) records + queries R&D evidence on the unified
-`/v1/research` plane (HIP-0512). It mirrors the Python `hanzo-research` SDK verb-for-verb
-and is **byte-identical on the wire** (same key order, `ensure_ascii`, float repr), so every
-language emits uniform records into the one store.
+`/v1/research` plane (HIP-0512). It mirrors the Python `hanzo-research` SDK verb-for-verb.
+Records are **semantically identical** across languages — the server keys each experiment on
+`(project, id = kind:subject:task)`, so every language upserts the same row regardless of
+serialization. This C++ serializer additionally matches Python's `json.dumps` byte-for-byte
+(same key order, `ensure_ascii`, float repr).
 
 ```cpp
 #include "research.hpp"
