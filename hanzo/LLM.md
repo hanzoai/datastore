@@ -81,6 +81,50 @@ DATASTORE_PORT=8123
 DATASTORE_DB=hanzo
 ```
 
+## Research client (C++) — `research.hpp` / `research.cpp`
+
+The C++ port of the Hanzo Research SDK: the ONE way a native producer (a kernel, a
+benchmark, the datastore/luxcpp stack) records + queries R&D evidence on the unified
+`/v1/research` plane (HIP-0512). It mirrors the Python `hanzo-research` SDK verb-for-verb
+and is **byte-identical on the wire** (same key order, `ensure_ascii`, float repr), so every
+language emits uniform records into the one store.
+
+```cpp
+#include "research.hpp"
+namespace research = hanzo::research;
+
+research::Client c;                                   // base/key/project from the env
+auto k = c.experiment("kernel-perf", "matvec_q4k_f32_blk", "vulkan/6144x2048",
+                      {.metric = "ratio_vs_hand",
+                       .hypothesis = "the DSL f32-direct matvec beats the hand kernel",
+                       .predict    = "DSL/hand >= 1.0 cold at the dominant FFN shape"});
+k.log("cold in-engine A/B, evo gfx1151, 3 runs, bit-exact 2.3e-6");
+k.conclude(research::Verdict::Proven, "1.022x at 6144 rows", 1.022);  // git sha auto-stamped
+```
+
+- **Verbs**: `experiment(kind, subject, task, opts)` → `record` / `log` (chainable) /
+  `snapshot` / `report` / `conclude(Verdict, because, value)` / `finish`; reads `query` /
+  `totals`; low-level `ingest` / `artifact` / `grant`. `Verdict{Proven,Refuted,Inconclusive}`
+  is type-safe — a refutation is a first-class result.
+- **`kind` is an open string** — `benchmark`, `kernel-perf`, `training`, `ablation`,
+  `policy-eval` AND `marketing-experiment`, `ad-test`, `growth-experiment`. No kind enum.
+- **Zero-config provenance**: the constructor auto-captures git sha/branch/dirty, the commit
+  narrative since the experiment's last recorded run, host, and caller-supplied lib versions.
+- **Auth**: per-org key (`Authorization: Bearer $HANZO_API_KEY`) + `X-Project-Id`. The key is
+  KMS-sourced via the env (KMSSecret → K8s Secret → env); never hardcoded, never logged. The
+  client never sends `X-Org-Id` (server-injected from the validated principal).
+- **Deps**: the record-serialization + provenance core is dependency-free (hand-rolled ordered
+  JSON, SHA-256, base64 — standard library only). HTTP is the one swappable `Transport` seam;
+  the production transport is **libcurl** (TLS to api.hanzo.ai), gated by `-DHANZO_RESEARCH_CURL`
+  and vendored at `contrib/curl`. A test/sidecar injects its own transport.
+
+```bash
+# Zero-dep core (any producer can vendor the two files):
+g++ -std=c++17 -O2 research.cpp research_example.cpp -o research_example && ./research_example
+# Production build (links libcurl):
+cmake -S hanzo -B build && cmake --build build && ctest --test-dir build
+```
+
 ## Syncing with Upstream ClickHouse
 
 ```bash
