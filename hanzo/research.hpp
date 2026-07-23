@@ -1,7 +1,9 @@
 // The C++ port of the Hanzo Research SDK — the ONE way a native producer (a kernel, a
 // benchmark, the datastore/luxcpp stack) records and queries R&D evidence on the unified
-// /v1/research plane (HIP-0512). It mirrors the Python reference verb-for-verb so every
-// language emits byte-identical records into the one store.
+// /v1/research plane (HIP-0512). It mirrors the Python reference verb-for-verb. Records are
+// semantically identical across languages — the server keys each experiment on (project,
+// id = kind:subject:task) — so every language upserts the same row regardless of
+// serialization. This serializer also happens to match Python's json.dumps byte-for-byte.
 //
 //   #include "research.hpp"
 //   namespace research = hanzo::research;
@@ -34,10 +36,11 @@ namespace hanzo::research {
 
 // ── json ────────────────────────────────────────────────────────────────────────────
 // A minimal ordered JSON value. Objects preserve insertion order and dump() matches
-// Python's json.dumps default (", "/": " separators, ensure_ascii, float repr) so a C++
-// record is byte-identical to the same record from the Python SDK. The record schema is
-// small and closed, so a focused serializer is simpler than taking a JSON dependency —
-// and it is the only way to guarantee that byte-identity.
+// Python's json.dumps default (", "/": " separators, ensure_ascii, float repr), so a C++
+// record is byte-for-byte the same as the Python SDK's. That match is a convenience, not
+// the identity guarantee: the server keys records on (project, id = kind:subject:task), so
+// identity across languages is semantic. The record schema is small and closed, so a
+// focused serializer is simpler than taking on a JSON dependency.
 namespace json {
 
 class Value {

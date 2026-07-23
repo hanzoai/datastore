@@ -1,5 +1,7 @@
 // Implementation of the Hanzo Research C++ client. See research.hpp for the API and the
-// wire contract it mirrors (the Python hanzo-research SDK, byte-for-byte).
+// wire contract it mirrors (the Python hanzo-research SDK). Records are semantically
+// identical across languages (the server keys on project + id = kind:subject:task); this
+// serializer also happens to match Python's json.dumps byte-for-byte.
 #include "research.hpp"
 
 #include <array>
@@ -182,10 +184,29 @@ void escape(std::string& out, const std::string& s) {
 }
 
 void writeReal(std::string& out, double d) {
-    char buf[32];
-    auto r = std::to_chars(buf, buf + sizeof buf, d);
+    char buf[64];
+    // Non-finite has no JSON form; emit the to_chars text ("inf"/"nan") and stop.
+    if (!std::isfinite(d)) {
+        auto r = std::to_chars(buf, buf + sizeof buf, d);
+        out.append(buf, r.ptr);
+        return;
+    }
+    // Match CPython repr(float): shortest round-tripping digits, in FIXED notation when the
+    // decimal exponent E = floor(log10(|d|)) is in [-4, 16) and SCIENTIFIC otherwise (the
+    // json.dumps float rule). std::to_chars yields the shortest digits in either notation;
+    // we only pick the notation CPython would, so the boundary values (1e15, 1e-4) agree.
+    std::chars_format fmt = std::chars_format::fixed;
+    if (d != 0.0) {
+        char sci[64];
+        auto r = std::to_chars(sci, sci + sizeof sci, d, std::chars_format::scientific);
+        *r.ptr = '\0';
+        const char* e = std::strchr(sci, 'e');
+        int E = e ? std::atoi(e + 1) : 0;
+        if (E < -4 || E >= 16) fmt = std::chars_format::scientific;
+    }
+    auto r = std::to_chars(buf, buf + sizeof buf, d, fmt);
     std::string s(buf, r.ptr);
-    if (s.find_first_of(".eEnN") == std::string::npos) s += ".0";  // a Python float always shows a point
+    if (s.find_first_of(".eE") == std::string::npos) s += ".0";  // a Python float always shows a point
     out += s;
 }
 
@@ -249,6 +270,11 @@ namespace {
 struct Parser {
     const std::string& s;
     size_t i = 0;
+    int depth = 0;
+    // Nested-container cap. Past it, value() returns Null (a parse-fail) instead of
+    // recursing — a hostile deeply-nested response degrades, it never overflows the stack.
+    // Every server response is parsed here, so the bound is a DoS guard, not a nicety.
+    static constexpr int kMaxDepth = 256;
     explicit Parser(const std::string& t) : s(t) {}
 
     void ws() { while (i < s.size() && (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r')) ++i; }
@@ -258,8 +284,15 @@ struct Parser {
         ws();
         if (i >= s.size()) return Value();
         char c = s[i];
-        if (c == '{') return object();
-        if (c == '[') return array();
+        if (c == '{' || c == '[') {
+            // Bound the nesting: past the cap, fail the parse (Null) rather than recurse into
+            // a stack overflow. Increment before descending, decrement on the way back up.
+            if (depth >= kMaxDepth) return Value();
+            ++depth;
+            Value v = (c == '{') ? object() : array();
+            --depth;
+            return v;
+        }
         if (c == '"') return Value(string());
         if (c == 't') { i += 4; return Value(true); }
         if (c == 'f') { i += 5; return Value(false); }
@@ -474,9 +507,17 @@ public:
     }
 
 private:
+    // Response-body cap (8 MiB): a hostile or broken server cannot stream an unbounded body
+    // to OOM the client. Parity with the Go/Rust ports.
+    static constexpr size_t kMaxResponseBytes = 8u << 20;
     static size_t write(char* p, size_t sz, size_t n, void* ud) {
-        static_cast<std::string*>(ud)->append(p, sz * n);
-        return sz * n;
+        auto* body = static_cast<std::string*>(ud);
+        size_t add = sz * n;
+        // Refuse an oversized body: returning a short count aborts the transfer, so
+        // curl_easy_perform returns CURLE_WRITE_ERROR and request() throws — never an OOM.
+        if (add > 0 && body->size() + add > kMaxResponseBytes) return 0;
+        body->append(p, add);
+        return add;
     }
 };
 #endif
