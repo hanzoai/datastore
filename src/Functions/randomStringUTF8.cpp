@@ -167,7 +167,7 @@ It is still possible that the client interacting with Datastore server is not ab
     FunctionDocumentation::Examples examples = {
         {"Usage example", "SELECT randomStringUTF8(13)", R"(
 ┌─randomStringUTF8(13)─┐
-│ 𘤗𙉝д兠庇󡅴󱱎󦐪􂕌𔊹𓰛       │
+│ 󶡕𲉗𩍄ԍ╃𑄅󦨁󷌁󬾣𹼫󤓆󺜘󩶧         │
 └──────────────────────┘
         )"}
     };
