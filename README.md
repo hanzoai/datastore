@@ -4,82 +4,113 @@
 [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202.0-blueviolet?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 
 <picture align=center>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Datastore/datastore-docs/assets/9611008/4ef9c104-2d3f-4646-b186-507358d2fe28">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Datastore/datastore-docs/assets/9611008/b001dc7b-5a45-4dcd-9275-e03beb7f9177">
-    <img alt="The Datastore company logo." src="https://github.com/Datastore/datastore-docs/assets/9611008/b001dc7b-5a45-4dcd-9275-e03beb7f9177">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logo/dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/logo/light.svg">
+    <img alt="Hanzo Datastore" src="docs/logo/light.svg">
 </picture>
 
-<h4>Hanzo Datastore is an open-source column-oriented database management system that allows generating analytical data reports in real-time.</h4>
+<h4>Hanzo Datastore is a column-oriented database for real-time analytical queries.</h4>
 
 </div>
 
-## How To Install (Linux, macOS, FreeBSD)
+## What it is
 
+Datastore is the OLAP half of Hanzo's data platform. It is a fork of
+[ClickHouse](https://github.com/ClickHouse/ClickHouse), narrowed to one job and
+rebuilt around separated storage and compute.
+
+`MergeTree` parts are stored as objects on [Hanzo S3](https://github.com/hanzoai/s3),
+so stateless compute replicas share a single zero-copy copy of the data instead of
+each carrying its own. Scaling out adds query capacity without adding storage.
+
+## Run
+
+The published image is `ghcr.io/hanzoai/datastore`, built multi-arch by CI from
+`docker/server/Dockerfile.ubuntu`.
+
+```bash
+cd hanzo && docker compose up
 ```
-curl https://hanzo.ai/ | sh
+
+Debian and RPM packages are built from `packages/` — `datastore-server`,
+`datastore-client` and `datastore-common-static`.
+
+## Connect
+
+| Port | Protocol | Purpose |
+|------|----------|---------|
+| 9000 | TCP | native binary protocol — the live query path |
+| 8123 | HTTP | HTTP interface |
+| 9009 | TCP | interserver replication |
+| 9181 | TCP | embedded coordination client port |
+
+HTTP requests authenticate with `X-Datastore-User` and `X-Datastore-Key`, or with
+HTTP Basic, or with `?user=` and `?password=` query parameters. The server also
+returns `X-Datastore-Query-Id`, `X-Datastore-Format`, `X-Datastore-Summary` and
+`X-Datastore-Exception-Code`.
+
+```bash
+curl -H 'X-Datastore-User: default' -H 'X-Datastore-Key: ' \
+     --data 'SELECT version()' http://localhost:8123/
 ```
 
-## Useful Links
+## How it differs from upstream
 
-* [Official website](https://hanzo.ai/) has a quick high-level overview of Datastore on the main page.
-* [Datastore Cloud](https://datastore.cloud) Datastore as a service, built by the creators and maintainers.
-* [Tutorial](https://docs.hanzo.ai/getting_started/tutorial/) shows how to set up and query a small Datastore cluster.
-* [Documentation](https://docs.hanzo.ai/) provides more in-depth information.
-* [YouTube channel](https://www.youtube.com/c/DatastoreDB) has a lot of content about Datastore in video format.
-* [Datastore Theater](https://presentations.hanzo.ai/) contains presentations and videos about Datastore.
-* [Slack](https://hanzo.ai/slack) and [Telegram](https://telegram.me/datastore_en) allow chatting with Datastore users in real-time.
-* [Blog](https://hanzo.ai/blog/) contains various Datastore-related articles, as well as announcements and reports about events.
-* [Bluesky](https://bsky.app/profile/hanzo.ai) and [X](https://x.com/DatastoreDB) for short news.
-* [Code Browser (github.dev)](https://github.dev/Datastore/Datastore) with syntax highlighting, powered by github.dev.
-* [Contacts](https://hanzo.ai/company/contact) can help to get your questions answered if there are any.
+**One binary.** `datastore` is the only server binary. Coordination runs in-process
+whenever `<keeper_server>` is present in the config — there is no separate keeper
+process to deploy.
 
-## Monthly Release & Community Call
+**OLAP only.** External stream brokers and foreign-database read/CDC engines are
+disabled at build time: Kafka, RabbitMQ, MySQL, PostgreSQL, MongoDB, HDFS, Hive,
+Cassandra, YTsaurus. Their source trees remain behind `USE_*` macros so upstream
+merges stay clean. `MergeTree` and its replicated and distributed variants, `S3`,
+`ObjectStorage`, `File`, `URL`, `Memory`, `Log`, views, `RocksDB` and dictionaries
+are kept.
 
-Join us for the [Datastore **26.5** Release Call](https://hanzo.ai/company/events/v26-5-community-release-call) on May 21, 2026.
+**No gRPC, no Arrow Flight.** Both RPC surfaces are removed. The replacement
+transport is ZAP, a Cap'n-Proto-derived RPC; its server stub has landed but is not
+yet the query path.
 
-Watch all release presentations and videos at [Datastore Theater](https://presentations.hanzo.ai/) and [YouTube Playlist](https://www.youtube.com/playlist?list=PL0Z2YDlm0b3jAlSy1JxyP8zluvXaN3nxU).
+**Coordination is moving off Raft.** The ZooKeeper API stays — it is the contract
+that replicated tables speak — while the engine underneath is being replaced with
+[Quasar](https://github.com/luxfi/consensus), which is post-quantum and leaderless.
+The engine is proven single-node and tested; the multi-node cutover is in progress.
 
-## Upcoming Events
+## Performance
 
-Keep an eye out for upcoming meetups and events around the world.
-Want to speak? Apply [here](https://forms.gle/3h4XCEENJZ3eaVGy7)
-You can also peruse [Datastore Events](https://hanzo.ai/company/news-events) for a list of all upcoming trainings, meetups, speaking engagements, etc.
+ClickBench, 43 queries against the 100M-row `hits` dataset, aarch64, 4 runs per
+query, warm cache. Compared against the official ClickHouse binary:
 
-Upcoming meetups
-* [Stockholm Meetup](https://www.meetup.com/datastore-stockholm-user-group/events/314862596/) - June 9th, 2026
-* [LA Happy Hour](https://luma.com/clickh-tshu) - June 10th, 2026
-* [Datastore + Hex AI hackathon](https://luma.com/clickh-2ujv)- June 11th, 2026
-* [Meetup São Paulo](https://luma.com/clickh-87tk) - June 11th, 2026
-* [Paris Meetup](https://www.meetup.com/datastore-france-user-group/events/314863232/) - June 11, 2026
-* [Datastore Cafe @ Data & AI Summit](https://luma.com/clickh-vrjd) - June 16th, 2026
-* [NY Happy Hour](https://luma.com/odgqf98e) - June 17th, 2026
-* [Seattle Iceberg Meetup](https://luma.com/vwt2i2rs) - June 25th, 2026
-* [KL Meetup](https://luma.com/clickh-8cfv) - June 26th, 2026 
-* [AI Demo Night SF](https://luma.com/clickh-2crf) - July 1st, 2026
-* [Data at scale Amsterdam](https://luma.com/clickh-ha56) - July 7th, 2026
-* [AI Builders Night NY](https://luma.com/clickh-lz8k) - July 8th, 2026
-* [Happy Hour Open Source de Montréal](https://luma.com/clickh-o8up) - July 9th, 2026
-* [AI Builders Night SF](https://luma.com/clickh-gz0r)- July 14th, 2026
-* [Bangkok OSS & Data Evening: Queries, Code & Community](https://luma.com/gpzn0n8v) - July 23, 2026 
+| Metric | ClickHouse | Datastore | Delta |
+|--------|-----------|-----------|-------|
+| Peak RSS under load | 14.52 GB | 13.96 GB | −3.8% |
+| Total query time | 16.83 s | 16.82 s | tied |
+| Per-query | — | faster on 8 of 43 | ~neutral |
 
+Read that honestly: at production scale the build buys about 4% less peak memory
+and is statistically tied on speed. An earlier "half the memory, much faster"
+figure was real but measured at **10M rows**, where a leaner binary is a large
+share of a small working set; at 100M rows the data dominates and the same fixed
+saving shrinks. Never quote the 10M number without its scale. The 100M run is one
+workload on one machine with per-query noise around ±25%, so "tied" is within
+noise. The fork's value is architectural, not raw speed over stock.
 
-Recent meetups
-* [Toronto Meetup](https://luma.com/d5sytpvo) - June 2nd, 2026
-* [AI Demo Night NY](https://luma.com/zi2360cm) - May 21st, 2026
-* [Chicago Meetup](https://luma.com/c5evgnbc) - May 19th, 2026
-* [Agentic AI Unplugged: Bengaluru Edition](https://luma.com/AgenticAI-BLR2026) - May 15th, 2026
-* [Long Beach Pycon Party](https://luma.com/hs289p7w) - May 15th, 2026
-* [Datastore + Cast AI Meetup (Singapore)](https://luma.com/awssummitsg26party) - May 6th, 2026
-* [Boston Meetup](https://luma.com/0f3asaol) - May 6th, 2026
+## Upstream
 
-## Recent Recordings
+Upstream is [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse). A
+scheduled workflow merges `upstream/master` into a dated branch weekly and opens a
+draft pull request; it never auto-merges, and a conflicted merge is pushed with
+markers intact and labelled. Net-new Hanzo files live under `hanzo/`, disjoint from
+upstream, so most syncs land clean.
 
-* **Recent Meetup Videos**: [Meetup Playlist](https://www.youtube.com/playlist?list=PL0Z2YDlm0b3iNDUzpY1S3L_iV4nARda_U) Whenever possible recordings of the Datastore Community Meetups are edited and presented as individual talks. 
+## Links
 
-## Interested in joining Datastore and making it your full-time job?
+* [hanzo.ai](https://hanzo.ai) — Hanzo AI
+* [docs.hanzo.ai](https://docs.hanzo.ai) — documentation
+* [hanzo.ai/blog](https://hanzo.ai/blog) — announcements
 
-Datastore is a nice DBMS, and it's a good place to work.
+## License
 
-Check out our **current openings** here: https://hanzo.ai/company/careers
-
-Email: careers@hanzo.ai!
+Apache-2.0. Forked from ClickHouse at v26.6.1.1, Copyright 2016-2026 ClickHouse,
+Inc. See [NOTICE](NOTICE) for attribution and the full list of deviations from
+upstream.
