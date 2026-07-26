@@ -533,7 +533,7 @@ void AggregatingStep::transformPipeline(QueryPipelineBuilder & pipeline, const B
     if (!sort_description_for_merging.empty())
     {
         /// We don't rely here on input_stream.sort_description because it is not correctly propagated for now in all cases
-        /// see https://github.com/Datastore/Datastore/pull/45892#discussion_r1094503048
+        /// see https://github.com/ClickHouse/ClickHouse/pull/45892#discussion_r1094503048
         if (explicit_sorting_required_for_aggregation_in_order)
         {
             /// We don't really care about optimality of this sorting, because it's required only in fairly marginal cases.
@@ -800,7 +800,7 @@ void AggregatingStep::requestOnlyMergeForAggregateProjection(const SharedHeader 
 
     /// The projection header may have different types for key columns due to metadata-only ALTERs
     /// (e.g., extending an Enum). We need to adapt the input header to match the expected output types.
-    /// See https://github.com/Datastore/Datastore/issues/56334
+    /// See https://github.com/ClickHouse/ClickHouse/issues/56334
     auto adapted_header = std::make_shared<Block>();
     for (const auto & column : *input_header)
     {

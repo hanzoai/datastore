@@ -191,7 +191,7 @@ public:
         /// Note, that GCS may return other errors (like EntityTooLarge), but
         /// those are not retriable by default S3 RetryStrategy.
         ///
-        ///   [1]: https://github.com/Datastore/Datastore/issues/59660
+        ///   [1]: https://github.com/ClickHouse/ClickHouse/issues/59660
         static bool useGCSRewrite(const Aws::Client::AWSError<Aws::Client::CoreErrors>& error);
 
     private:

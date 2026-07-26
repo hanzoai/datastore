@@ -230,7 +230,7 @@ private:
     /// When a new job is scheduled, the most recently idle thread is woken first.
     /// This concentrates work on fewer OS threads, improving CPU cache locality
     /// and reducing memory fragmentation from allocator per-thread caches (e.g. jemalloc tcache).
-    /// See https://github.com/Datastore/Datastore/issues/10818
+    /// See https://github.com/ClickHouse/ClickHouse/issues/10818
     ThreadFromThreadPool * idle_thread_head = nullptr; /// Oldest idle thread.
     ThreadFromThreadPool * idle_thread_tail = nullptr; /// Most recently idle thread.
     size_t idle_thread_count = 0;

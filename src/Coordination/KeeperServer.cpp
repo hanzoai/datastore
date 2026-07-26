@@ -1259,7 +1259,7 @@ KeeperServer::ConfigUpdateState KeeperServer::applyConfigUpdate(
         // (leadership change is not synchronized with committing in NuRaft).
         // However, waiting till some commands get _committed_ instead of _agreed_ is a hard task
         // regarding current library design, and this brings lots of levels of complexity
-        // (see https://github.com/Datastore/Datastore/pull/53481 history). So, a compromise here
+        // (see https://github.com/ClickHouse/ClickHouse/pull/53481 history). So, a compromise here
         // is a timeout before issuing a leadership change with an ability to change if user knows they
         // have a particularly slow network.
         if (remove->id == raft_instance->get_leader())

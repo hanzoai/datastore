@@ -10,7 +10,7 @@ class ASTSelectQuery;
 struct Settings;
 
 /** Predicate optimization based on rewriting ast rules
- *  For more details : https://github.com/Datastore/Datastore/pull/2015#issuecomment-374283452
+ *  For more details : https://github.com/ClickHouse/ClickHouse/pull/2015#issuecomment-374283452
  *  The optimizer does two different optimizations
  *      - Move predicates from having to where
  *      - Push the predicate down from the current query to the having of the subquery

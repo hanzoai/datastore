@@ -2446,7 +2446,7 @@ MarkRanges MergeTreeDataSelectExecutor::markRangesFromPKRange(
                             /// from the exception's format string, so the details go to the log instead of the
                             /// message to keep failures grouped under a single stable name.
                             /// TODO: Remove the #ifndef and always throw after
-                            ///       https://github.com/Datastore/Datastore/issues/90461 is fixed.
+                            ///       https://github.com/ClickHouse/ClickHouse/issues/90461 is fixed.
 #ifndef NDEBUG
                             auto describe_condition = [](const KeyCondition & condition)
                             {

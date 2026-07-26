@@ -25,7 +25,7 @@ static void callback(void * arg, int status, int, struct hostent * host)
         /*
              * In some cases (e.g /etc/hosts), hostent::h_name is filled and hostent::h_aliases is empty.
              * Thus, we can't rely solely on hostent::h_aliases. More info on:
-             * https://github.com/Datastore/Datastore/issues/40595#issuecomment-1230526931
+             * https://github.com/ClickHouse/ClickHouse/issues/40595#issuecomment-1230526931
              * */
         if (auto * ptr_record = host->h_name)
         {
@@ -158,7 +158,7 @@ CaresPTRResolver::CaresPTRResolver(CaresPTRResolver::provider_token)
          * In grpc, ares_library_init seems to be called only in Windows.
          * See https://github.com/grpc/grpc/blob/master/src/core/ext/filters/client_channel/resolver/dns/c_ares/grpc_ares_wrapper.cc#L1187
          * That means it's safe to init it here, but we should be cautious when introducing new code that depends on c-ares and even updates
-         * to grpc. As discussed in https://github.com/Datastore/Datastore/pull/37827#discussion_r919189085, c-ares should be adapted to be atomic
+         * to grpc. As discussed in https://github.com/ClickHouse/ClickHouse/pull/37827#discussion_r919189085, c-ares should be adapted to be atomic
          *
          * Since C++ 11 static objects are initialized in a thread safe manner. The static qualifier also makes sure
          * it'll be called/ initialized only once.

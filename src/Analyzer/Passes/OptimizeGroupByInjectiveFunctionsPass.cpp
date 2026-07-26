@@ -33,7 +33,7 @@ public:
         /// Don't optimize injective functions when group_by_use_nulls=true,
         /// because in this case we make initial group by keys Nullable
         /// and eliminating some functions can cause issues with arguments Nullability
-        /// during their execution. See examples in https://github.com/Datastore/Datastore/pull/61567#issuecomment-2008181143
+        /// during their execution. See examples in https://github.com/ClickHouse/ClickHouse/pull/61567#issuecomment-2008181143
         if (getSettings()[Setting::group_by_use_nulls])
             return;
 

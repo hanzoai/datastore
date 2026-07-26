@@ -838,7 +838,7 @@ void StatementGenerator::generateTableKey(
             if (b.engine.value != SummingMergeTree && rg.nextSmallNumber() < 3)
             {
                 /// Use a single expression for the entire table
-                /// See https://github.com/Datastore/Datastore/issues/72043 for SummingMergeTree exception
+                /// See https://github.com/ClickHouse/ClickHouse/issues/72043 for SummingMergeTree exception
                 TableKeyExpr * tke = tkey->add_exprs();
                 Expr * expr = tke->mutable_expr();
                 SQLFuncCall * func_call = expr->mutable_comp_expr()->mutable_func_call();

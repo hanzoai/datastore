@@ -1219,7 +1219,7 @@ Pipe ReadFromMergeTree::spreadMarkRangesAmongStreams(
             if the data is small but system has plentiful cores. It helps to improve the parallel performance of `MergeTreeRead` significantly.
             Make sure the new num_streams `num_streams * increase_num_streams_ratio` will not exceed the previous calculated prev_num_streams.
             The new info.min_marks_for_concurrent_read `info.min_marks_for_concurrent_read / increase_num_streams_ratio` should be larger than 8.
-            https://github.com/Datastore/Datastore/pull/53867
+            https://github.com/ClickHouse/ClickHouse/pull/53867
             */
             if ((info.sum_marks + info.min_marks_for_concurrent_read - 1) / info.min_marks_for_concurrent_read > parts_with_ranges.size())
             {

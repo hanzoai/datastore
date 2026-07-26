@@ -8,7 +8,7 @@
 
 using namespace DB;
 
-/// Regression test for https://github.com/Datastore/Datastore/issues/102183.
+/// Regression test for https://github.com/ClickHouse/ClickHouse/issues/102183.
 /// On builds without `JEMALLOC_BACKGROUND_THREAD` (notably macOS),
 /// `je_mallctl` for `background_thread` / `max_background_threads` returns
 /// `ENOENT`. The fix in `Jemalloc::verifySetup` relies on `tryGetValue` to

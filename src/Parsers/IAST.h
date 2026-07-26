@@ -394,7 +394,7 @@ public:
     void format(WriteBuffer & ostr, const FormatSettings & settings) const;
     void format(WriteBuffer & ostr, const FormatSettings & settings, FormatState & state, FormatStateStacked frame) const;
 
-    /// TODO: Move more logic into this class (see https://github.com/Datastore/Datastore/pull/45649).
+    /// TODO: Move more logic into this class (see https://github.com/ClickHouse/ClickHouse/pull/45649).
     struct FormattingBuffer
     {
         WriteBuffer & ostr;

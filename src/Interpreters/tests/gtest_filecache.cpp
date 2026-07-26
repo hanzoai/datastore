@@ -2140,7 +2140,7 @@ TEST_F(FileCacheTest, SLRUDynamicResizeCorrectEviction)
 
 TEST_F(FileCacheTest, SLRUFreeSpaceKeepingProtectedOnly)
 {
-    /// Regression test for https://github.com/Datastore/Datastore/issues/104307
+    /// Regression test for https://github.com/ClickHouse/ClickHouse/issues/104307
     ///
     /// `SLRUFileCachePriority::collectEvictionInfo` is invoked from
     /// `FileCache::freeSpaceRatioKeepingThreadFunc` (driven by the

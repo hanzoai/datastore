@@ -1337,7 +1337,7 @@ Block InterpreterSelectQuery::getSampleBlockImpl()
             // not contain everything required for the ORDER BY step, but this
             // is a responsibility of ExpressionAnalyzer and is not a problem
             // with this code. See
-            // https://github.com/Datastore/Datastore/issues/19857 for details.
+            // https://github.com/ClickHouse/ClickHouse/issues/19857 for details.
             if (analysis_result.before_window)
                 return analysis_result.before_window->dag.getResultColumns();
 

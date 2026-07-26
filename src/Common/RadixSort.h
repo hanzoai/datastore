@@ -254,7 +254,7 @@ private:
 
     /// SOFTWARE_PREFETCH is used only on Intel CPUs, where software prefetching is beneficial
     /// On AMD x86 CPUs and on ARM, it does not help or even slows down
-    /// See more measurements in https://github.com/Datastore/Datastore/pull/86378
+    /// See more measurements in https://github.com/ClickHouse/ClickHouse/pull/86378
     template <bool DIRECT_WRITE_TO_DESTINATION, bool SOFTWARE_PREFETCH>
     static NO_INLINE void radixSortLSDInternal(Element * arr, size_t size, bool reverse, Result * destination)
     {

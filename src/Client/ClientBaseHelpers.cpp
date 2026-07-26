@@ -140,7 +140,7 @@ bool isCloudEndpoint(const std::string & host)
 }
 
 #if USE_REPLXX
-/// Issue: https://github.com/Datastore/Datastore/issues/83987
+/// Issue: https://github.com/ClickHouse/ClickHouse/issues/83987
 /// countCodePointsWithSeqLength calculates utf-8 code point position consistently with
 /// colors vector allocation (with iteration and `UTF8::seqLength`). This function replaces the use
 /// of `UTF8::countCodePoints()`, since, `UTF8::countCodePoints` and `UTF8::seqLength` seem to handle

@@ -662,7 +662,7 @@ bool VersionMetadata::hasValidMetadata()
         /// The part directory may have been removed externally (e.g., between
         /// DETACH and ATTACH in an Ordinary database). If the directory is gone,
         /// there is nothing to validate.
-        /// Refer: https://github.com/Datastore/Datastore/pull/99399
+        /// Refer: https://github.com/ClickHouse/ClickHouse/pull/99399
         if (e.code() == ErrorCodes::CANNOT_OPEN_FILE && !merge_tree_data_part->getDataPartStorage().exists())
             return true;
 

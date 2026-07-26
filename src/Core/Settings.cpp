@@ -4850,7 +4850,7 @@ Possible values:
 - false — Disallow.
 )", 0) \
     DECLARE(Bool, convert_query_to_cnf, false, R"(
-When set to `true`, a `SELECT` query will be converted to conjuctive normal form (CNF). There are scenarios where rewriting a query in CNF may execute faster (view this [Github issue](https://github.com/Datastore/Datastore/issues/11749) for an explanation).
+When set to `true`, a `SELECT` query will be converted to conjuctive normal form (CNF). There are scenarios where rewriting a query in CNF may execute faster (view this [Github issue](https://github.com/ClickHouse/ClickHouse/issues/11749) for an explanation).
 
 For example, notice how the following `SELECT` query is not modified (the default behavior):
 

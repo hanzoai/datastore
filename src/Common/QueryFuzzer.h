@@ -179,7 +179,7 @@ private:
     // Similar to current_ast_depth, this is a limit on some measure of query size or number of
     // steps we take. Without it, with small probability, query size may explode even when depth is
     // limited. In particular, array lengths and depths in fuzzField() were seen to do that:
-    // https://github.com/Datastore/Datastore/issues/77408
+    // https://github.com/ClickHouse/ClickHouse/issues/77408
     //
     // I don't fully understand how this happens, but my impression is that recursive random
     // generators like this just generally tend to produce size distribution with heavy tail.

@@ -71,7 +71,7 @@ namespace
 {
 
 /// Diagnostic predicate for the bounds-corruption class of bug tracked in
-/// `https://github.com/Datastore/Datastore/issues/104692`. Validates that
+/// `https://github.com/ClickHouse/ClickHouse/issues/104692`. Validates that
 /// `inner` is fully contained in `outer` WITHOUT touching `Buffer::size` or
 /// `begin + size` arithmetic on `inner`. If `inner` is corrupt (inverted, or
 /// `begin`/`end` from different allocations), `Buffer::size` would be a huge
@@ -252,7 +252,7 @@ bool ReadBufferFromS3::nextImpl()
     }
 
     /// Diagnostic asserts for the bounds-corruption class of bug tracked in
-    /// `https://github.com/Datastore/Datastore/issues/104692`. When
+    /// `https://github.com/ClickHouse/ClickHouse/issues/104692`. When
     /// `use_external_buffer` is set, the inner `impl` was told to fill our
     /// caller-provided `internal_buffer`. If the populated range escapes that
     /// external buffer, every consumer up the chain

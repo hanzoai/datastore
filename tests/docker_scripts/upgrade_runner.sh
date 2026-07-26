@@ -35,7 +35,7 @@ fi
 echo $previous_release_tag
 
 echo "Clone previous release repository"
-git clone https://github.com/Datastore/Datastore.git --no-tags --progress --branch=$previous_release_tag --no-recurse-submodules --depth=1 previous_release_repository
+git clone https://github.com/ClickHouse/ClickHouse.git --no-tags --progress --branch=$previous_release_tag --no-recurse-submodules --depth=1 previous_release_repository
 
 echo "Download datastore-server from the previous release"
 mkdir previous_release_package_folder
@@ -324,11 +324,11 @@ mv /var/log/datastore-server/datastore-server.log /var/log/datastore-server/data
 cp /var/log/datastore-server/datastore-server.upgrade.log /test_output/datastore-server.upgrade.log
 
 # Error messages (we should ignore some errors)
-# FIXME https://github.com/Datastore/Datastore/issues/38643 ("Unknown index: idx.")
+# FIXME https://github.com/ClickHouse/ClickHouse/issues/38643 ("Unknown index: idx.")
 # FIXME Not sure if it's expected, but some tests from stress test may not be finished yet when we restarting server.
 #       Let's just ignore all errors from queries ("} <Error> TCPHandler: Code:", "} <Error> executeQuery: Code:")
-# FIXME https://github.com/Datastore/Datastore/issues/39197 ("Missing columns: 'v3' while processing query: 'v3, k, v1, v2, p'")
-# FIXME https://github.com/Datastore/Datastore/issues/39174 - bad mutation does not indicate backward incompatibility:
+# FIXME https://github.com/ClickHouse/ClickHouse/issues/39197 ("Missing columns: 'v3' while processing query: 'v3, k, v1, v2, p'")
+# FIXME https://github.com/ClickHouse/ClickHouse/issues/39174 - bad mutation does not indicate backward incompatibility:
 #       stress tests may leave behind intentionally-broken mutations that retry after upgrade.
 #       `CANNOT_PARSE_TEXT` errors come from:
 #       - 00834_kill_mutation{,_replicated_zookeeper}: `DELETE WHERE toUInt32(s) = 1` on String data ('a', 'b')

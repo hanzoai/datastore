@@ -24,7 +24,7 @@ endif ()
 #   lg_extent_max_active_fit:8 Reuse an extent for requests up to 2^8 (256x) smaller; default 6 (64x).
 #                              Lets ClickBench Q35's 256 coalesced 16KB sub-hashtables be split and
 #                              reused instead of faulting via MADV_DONTNEED.
-#                              https://github.com/Datastore/Datastore/pull/80245
+#                              https://github.com/ClickHouse/ClickHouse/pull/80245
 #                              https://github.com/jemalloc/jemalloc/pull/2842
 # Linux and macOS:
 #   prof:true,prof_active:true,prof_thread_active_init:false
@@ -46,7 +46,7 @@ endif ()
 #                              isolating big transient buffers (e.g. large hash tables) from the per-CPU
 #                              arenas. 64MiB on Linux: fewer page faults on hashtable-heavy queries and
 #                              ~2x less retained virtual address space; explicit arenas are not affected.
-#                              https://github.com/Datastore/Datastore/pull/103958
+#                              https://github.com/ClickHouse/ClickHouse/pull/103958
 #                              0 disables the arena. Left disabled on non-Linux: the win relies on THP
 #                              madvise on the oversize arena (JEMALLOC_HAVE_MADVISE_HUGE, absent on macOS)
 #                              and is unvalidated there.
@@ -58,7 +58,7 @@ elseif (OS_DARWIN)
     # lives (it requires switching malloc_mutex_t off os_unfair_lock and the nstime clock off Mach uptime).
     # Previously this used dirty_decay_ms:0 (eager per-free purging) to bound RSS, under the wrong
     # assumption that background_thread was unavailable; see
-    # https://github.com/Datastore/Datastore/issues/108429
+    # https://github.com/ClickHouse/ClickHouse/issues/108429
     # percpu_arena relies on malloc_getcpu, which reads the CPU number via TPIDR_EL0/sidt on macOS (see above).
     set (JEMALLOC_CONFIG_MALLOC_CONF "percpu_arena:percpu,oversize_threshold:0,muzzy_decay_ms:0,dirty_decay_ms:5000,prof:true,prof_active:true,prof_thread_active_init:false,background_thread:true,lg_extent_max_active_fit:8")
 else()

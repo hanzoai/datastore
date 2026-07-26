@@ -803,7 +803,7 @@ struct ContextSharedPart : boost::noncopyable
         /// Shutdown must be called first to stop all background tasks (like loadOutdatedDataParts)
         /// that may be using the thread pool readers. Otherwise there is a data race between
         /// background tasks calling getThreadPoolReader() and the destructor resetting the readers.
-        /// See https://github.com/Datastore/Datastore/issues/62143
+        /// See https://github.com/ClickHouse/ClickHouse/issues/62143
         try
         {
             shutdown();
@@ -996,7 +996,7 @@ struct ContextSharedPart : boost::noncopyable
         /// are running when storage objects are shut down or destroyed.
         /// Without this, a background task could be accessing a storage's data_parts_indexes
         /// while DatabaseCatalog::shutdown is destroying that storage, causing a SIGBUS.
-        /// See https://github.com/Datastore/Datastore/issues/85433
+        /// See https://github.com/ClickHouse/ClickHouse/issues/85433
         SHUTDOWN(log, "merges executor", merge_mutate_executor, wait());
         SHUTDOWN(log, "fetches executor", fetch_executor, wait());
         SHUTDOWN(log, "moves executor", moves_executor, wait());
@@ -1732,7 +1732,7 @@ std::unordered_map<Context::WarningType, PreformattedMessage> Context::getWarnin
             bool single_element = obsolete_settings.size() == 1;
             constexpr auto message_format_string
                 = "Obsolete setting{} [{}]{} changed. Please check 'SELECT * FROM system.settings WHERE changed AND is_obsolete' and read the "
-                  "changelog at https://github.com/Datastore/Datastore/blob/master/CHANGELOG.md";
+                  "changelog at https://github.com/ClickHouse/ClickHouse/blob/master/CHANGELOG.md";
             String settings_list = fmt::format("'{}'", fmt::join(obsolete_settings, "', '"));
             common_warnings[Context::WarningType::OBSOLETE_SETTINGS]
                 = PreformattedMessage::create(message_format_string, single_element ? "" : "s", settings_list, single_element ? " is" : " are");

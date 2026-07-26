@@ -3,7 +3,7 @@
 # Tag no-fasttest: depends on delta-kernel-rs (not built in fast test)
 # Tag no-msan: delta-kernel-rs is not built with MSan
 
-# Regression test for https://github.com/Datastore/Datastore/issues/104509
+# Regression test for https://github.com/ClickHouse/ClickHouse/issues/104509
 #
 # A binary credential (e.g. raw `MD5(...)` bytes used as a SAS token) used to abort the
 # server: the `delta-kernel-rs` FFI `set_builder_option` called `.unwrap()` on invalid UTF-8,

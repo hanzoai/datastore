@@ -2490,7 +2490,7 @@ MutationCommands ReplicatedMergeTreeQueue::getMutationCommands(
     for (auto it = begin; it != end; ++it)
     {
         /// FIXME : This was supposed to be fixed after releasing 23.5 (it fails in Upgrade check)
-        /// but it's still present https://github.com/Datastore/Datastore/issues/65275
+        /// but it's still present https://github.com/ClickHouse/ClickHouse/issues/65275
         /// chassert(mutation_pointer < it->second->entry->znode_name);
         mutation_ids.push_back(it->second->entry->znode_name);
         const auto & commands_from_entry = it->second->entry->commands;

@@ -93,7 +93,7 @@ REGISTER_FUNCTION(Bitmap)
 
     factory.registerFunction<FunctionBitmapSubsetLimit>(documentation_bitmapSubsetLimit);
 
-    /// Documentation for subBitmap (bitmapSubsetOffsetLimit is the unregistered alias see: https://github.com/Datastore/Datastore/pull/27234)
+    /// Documentation for subBitmap (bitmapSubsetOffsetLimit is the unregistered alias see: https://github.com/ClickHouse/ClickHouse/pull/27234)
     FunctionDocumentation::Description description_subBitmap = "Returns a subset of the bitmap, starting from position `offset`. The maximum cardinality of the returned bitmap is `cardinality_limit`.";
     FunctionDocumentation::Syntax syntax_subBitmap = "subBitmap(bitmap, offset, cardinality_limit)";
     FunctionDocumentation::Arguments arguments_subBitmap = {

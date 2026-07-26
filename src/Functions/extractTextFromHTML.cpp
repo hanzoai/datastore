@@ -53,7 +53,7 @@
   *
   * Usage example:
   *
-  * SELECT extractTextFromHTML(html) FROM url('https://github.com/Datastore/Datastore', RawBLOB, 'html String')
+  * SELECT extractTextFromHTML(html) FROM url('https://github.com/ClickHouse/ClickHouse', RawBLOB, 'html String')
   *
   * - Datastore has embedded web browser.
   */
