@@ -141,7 +141,7 @@ interserver_http_port: 9009
 # max_connections: 4096
 
 # For 'Connection: keep-alive' in HTTP 1.1
-keep_alive_timeout: 10
+keep_alive_timeout: 30
 
 # Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/Datastore-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71
 openSSL:

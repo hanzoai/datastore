@@ -61,9 +61,9 @@ Returns the fully qualified domain name of the Datastore server.
 SELECT fqdn()
         )",
         R"(
-┌─FQDN()──────────────────────────┐
+┌─FQDN()───────────────────────┐
 │ datastore.us-east-2.internal │
-└─────────────────────────────────┘
+└──────────────────────────────┘
         )"
     }
     };

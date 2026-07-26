@@ -3,12 +3,12 @@ Connection: Keep-Alive
 Content-Type: text/tab-separated-values; charset=UTF-8
 Access-Control-Expose-Headers: X-Datastore-Query-Id,X-Datastore-Summary,X-Datastore-Server-Display-Name,X-Datastore-Format,X-Datastore-Timezone,X-Datastore-Exception-Code,X-Datastore-Exception-Tag
 Transfer-Encoding: chunked
-Keep-Alive: timeout=10, max=?
+Keep-Alive: timeout=30, max=?
 
 HTTP/1.1 200 OK
 Connection: Keep-Alive
 Content-Type: text/tab-separated-values; charset=UTF-8
 Access-Control-Expose-Headers: X-Datastore-Query-Id,X-Datastore-Summary,X-Datastore-Server-Display-Name,X-Datastore-Format,X-Datastore-Timezone,X-Datastore-Exception-Code,X-Datastore-Exception-Tag
 Transfer-Encoding: chunked
-Keep-Alive: timeout=10, max=?
+Keep-Alive: timeout=30, max=?
 
