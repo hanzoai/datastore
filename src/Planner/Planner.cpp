@@ -1325,7 +1325,7 @@ void addPreliminarySortOrDistinctOrLimitStepsIfNeeded(
             "Before LIMIT BY",
             useful_sets);
         /// We don't apply LIMIT BY on remote nodes at all in the old infrastructure.
-        /// https://github.com/Datastore/Datastore/blob/67c1e89d90ef576e62f8b1c68269742a3c6f9b1e/src/Interpreters/InterpreterSelectQuery.cpp#L1697-L1705
+        /// https://github.com/ClickHouse/ClickHouse/blob/67c1e89d90ef576e62f8b1c68269742a3c6f9b1e/src/Interpreters/InterpreterSelectQuery.cpp#L1697-L1705
         /// Let's be optimistic and only don't skip offset (it will be skipped on the initiator).
         addLimitByStep(query_plan, limit_by_analysis_result, query_analysis_result, true /*do_not_skip_offset*/);
     }

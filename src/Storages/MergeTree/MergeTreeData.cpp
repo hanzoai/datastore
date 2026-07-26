@@ -1064,7 +1064,7 @@ void MergeTreeData::checkProperties(
 
             indices_names.insert(index.name);
 
-            /// Workaround for https://github.com/Datastore/Datastore/issues/82385 where functions hasAllTokens/hasAnyTokens don't work
+            /// Workaround for https://github.com/ClickHouse/ClickHouse/issues/82385 where functions hasAllTokens/hasAnyTokens don't work
             /// on columns with more than one text index
             if (index.type == TEXT_INDEX_NAME)
             {

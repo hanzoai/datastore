@@ -13,7 +13,7 @@
 /// Regression test for the case when it may not work,
 /// because of broken getauxval() [1].
 ///
-///   [1]: https://github.com/Datastore/Datastore/pull/33957
+///   [1]: https://github.com/ClickHouse/ClickHouse/pull/33957
 TEST(SanitizerDeathTest, LSan)
 {
     EXPECT_DEATH(

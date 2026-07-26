@@ -124,7 +124,7 @@ std::shared_ptr<const QueryPlan> createRemotePlanForParallelReplicas(
     /// Positional arguments in the outer query were already resolved by the initiator.
     /// Use a context flag instead of disabling enable_positional_arguments so that
     /// view-inner queries on this node are still processed correctly.
-    /// See https://github.com/Datastore/Datastore/issues/62289.
+    /// See https://github.com/ClickHouse/ClickHouse/issues/62289.
     new_context->setPositionalArgumentsAlreadyResolved(true);
     new_context->setSetting("allow_experimental_parallel_reading_from_replicas", Field(0));
 
@@ -199,7 +199,7 @@ std::pair<QueryPlanPtr, bool> createLocalPlanForParallelReplicas(
     /// Positional arguments in the outer query were already resolved by the initiator.
     /// Use a context flag instead of disabling enable_positional_arguments so that
     /// view-inner queries on this node are still processed correctly.
-    /// See https://github.com/Datastore/Datastore/issues/62289.
+    /// See https://github.com/ClickHouse/ClickHouse/issues/62289.
     auto new_context = Context::createCopy(context);
     new_context->setPositionalArgumentsAlreadyResolved(true);
     new_context->setSetting("allow_experimental_parallel_reading_from_replicas", Field(0));

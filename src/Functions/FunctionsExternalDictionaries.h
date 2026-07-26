@@ -154,7 +154,7 @@ private:
     /// where ExpressionActionsPtr is cached (StorageDistributed caching it for sharding_key_expr and
     /// optimize_skip_unused_shards), and if the dictionary will be cached within "query" then
     /// cached ExpressionActionsPtr will always have first version of the query and the dictionary
-    /// will not be updated after reload (see https://github.com/Datastore/Datastore/pull/16205)
+    /// will not be updated after reload (see https://github.com/ClickHouse/ClickHouse/pull/16205)
 };
 
 

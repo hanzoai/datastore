@@ -168,7 +168,7 @@ public:
                 }
                 else
                 {
-                    // Need to check if constant folded from QueryNode/UnionNode until https://github.com/Datastore/Datastore/issues/60847 is fixed.
+                    // Need to check if constant folded from QueryNode/UnionNode until https://github.com/ClickHouse/ClickHouse/issues/60847 is fixed.
                     if (constant_node.hasSourceExpression()
                         && constant_node.getSourceExpression()->getNodeType() != QueryTreeNodeType::QUERY
                         && constant_node.getSourceExpression()->getNodeType() != QueryTreeNodeType::UNION)
@@ -960,7 +960,7 @@ PlannerActionsVisitorImpl::NodeNameAndNodeMinLevel PlannerActionsVisitorImpl::vi
             return calculateActionNodeNameWithCastIfNeeded(constant_node, planner_context->getQueryContext()->getSettingsRef()[Setting::optimize_const_name_size]);
         }
 
-        // Need to check if constant folded from QueryNode/UnionNode until https://github.com/Datastore/Datastore/issues/60847 is fixed.
+        // Need to check if constant folded from QueryNode/UnionNode until https://github.com/ClickHouse/ClickHouse/issues/60847 is fixed.
         if (constant_node.hasSourceExpression()
             && constant_node.getSourceExpression()->getNodeType() != QueryTreeNodeType::QUERY
             && constant_node.getSourceExpression()->getNodeType() != QueryTreeNodeType::UNION)

@@ -30,8 +30,8 @@ static size_t tryConvertOuterJoinToInnerJoinLegacy(QueryPlan::Node * parent_node
 
     const auto & table_join = join->getJoin()->getTableJoin();
 
-    /// Any JOIN issue https://github.com/Datastore/Datastore/issues/66447
-    /// Anti JOIN issue https://github.com/Datastore/Datastore/issues/67156
+    /// Any JOIN issue https://github.com/ClickHouse/ClickHouse/issues/66447
+    /// Anti JOIN issue https://github.com/ClickHouse/ClickHouse/issues/67156
     if (table_join.strictness() != JoinStrictness::All)
         return 0;
 
@@ -96,7 +96,7 @@ size_t tryConvertAnyOuterJoinToInnerJoin(
         /*allow_unknown_function_arguments=*/true);
 
     /// If not matched rows are not always filtered out, then we cannot convert ANY OUTER JOIN to INNER JOIN
-    /// See discussion in https://github.com/Datastore/Datastore/issues/66447
+    /// See discussion in https://github.com/ClickHouse/ClickHouse/issues/66447
     if (result_for_not_matched_rows != FilterResult::FALSE)
         return 0;
 

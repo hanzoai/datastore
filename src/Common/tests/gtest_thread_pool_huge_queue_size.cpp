@@ -12,7 +12,7 @@ namespace CurrentMetrics
     extern const Metric LocalThreadScheduled;
 }
 
-/// Regression test for https://github.com/Datastore/Datastore/issues/83273
+/// Regression test for https://github.com/ClickHouse/ClickHouse/issues/83273
 /// Configuring an unreasonably large queue_size (e.g. via *_queue_size server settings)
 /// used to throw std::length_error from jobs.reserve(). The queue_size is only a logical
 /// limit; the pre-reservation must be bounded so it neither throws nor attempts a huge

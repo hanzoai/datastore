@@ -832,7 +832,7 @@ void StatementGenerator::generateTableKey(
             if (b.teng != SummingMergeTree && rg.nextSmallNumber() < 3)
             {
                 /// Use a single expression for the entire table
-                /// See https://github.com/Datastore/Datastore/issues/72043 for SummingMergeTree exception
+                /// See https://github.com/ClickHouse/ClickHouse/issues/72043 for SummingMergeTree exception
                 TableKeyExpr * tke = tkey->add_exprs();
                 Expr * expr = tke->mutable_expr();
                 SQLFuncCall * func_call = expr->mutable_comp_expr()->mutable_func_call();
@@ -977,7 +977,7 @@ void StatementGenerator::generateMergeTreeEngineDetails(
     {
         generateTableKey(rg, rel, b, false, te->mutable_partition_by());
     }
-    /// TODO re-enable this once https://github.com/Datastore/Datastore/issues/104963 is fixed
+    /// TODO re-enable this once https://github.com/ClickHouse/ClickHouse/issues/104963 is fixed
     if (!entries.empty() && rg.nextSmallNumber() < 1)
     {
         TableKey * ukey = te->mutable_unique_key();

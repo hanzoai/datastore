@@ -197,7 +197,7 @@ struct SortedLookupVectorBase
 
 
 // It only contains a std::unique_ptr which is memmovable.
-// Source: https://github.com/Datastore/Datastore/issues/4906
+// Source: https://github.com/ClickHouse/ClickHouse/issues/4906
 using AsofRowRefs = std::unique_ptr<SortedLookupVectorBase>;
 AsofRowRefs createAsofRowRef(TypeIndex type, ASOFJoinInequality inequality);
 }

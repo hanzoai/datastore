@@ -170,7 +170,7 @@ static bool parseParameterValueIntoString(IParser::Pos & pos, String & value, Ex
     {
         value = applyVisitor(FieldVisitorToString(), node->as<ASTLiteral>()->value);
 
-        /// writeQuoted is not always quoted in line with SQL standard https://github.com/Datastore/Datastore/blob/master/src/IO/WriteHelpers.h
+        /// writeQuoted is not always quoted in line with SQL standard https://github.com/ClickHouse/ClickHouse/blob/master/src/IO/WriteHelpers.h
         if (value.starts_with('\''))
         {
             ReadBufferFromOwnString buf(value);

@@ -88,7 +88,7 @@ struct EnvironmentProxySetter
         setenv("https_proxy", HTTPS_PROXY, 1); // NOLINT(concurrency-mt-unsafe)
 
         // Some other tests rely on HTTP clients (e.g, gtest_aws_s3_client), which depend on proxy configuration
-        // since in https://github.com/Datastore/Datastore/pull/63314 the environment proxy resolver reads only once
+        // since in https://github.com/ClickHouse/ClickHouse/pull/63314 the environment proxy resolver reads only once
         // from the environment, the proxy configuration will always be there.
         // The problem is that the proxy server does not exist, causing the test to fail.
         // To work around this issue, `no_proxy` is set to bypass all domains.

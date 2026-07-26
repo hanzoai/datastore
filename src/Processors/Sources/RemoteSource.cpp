@@ -125,7 +125,7 @@ void RemoteSource::work()
 {
     /// Connection drain is a heavy operation that may take a long time.
     /// Therefore we move connection drain from prepare() to work(), and drain multiple connections in parallel.
-    /// See issue: https://github.com/Datastore/Datastore/issues/60844
+    /// See issue: https://github.com/ClickHouse/ClickHouse/issues/60844
     if (need_drain)
     {
         query_executor->finish();

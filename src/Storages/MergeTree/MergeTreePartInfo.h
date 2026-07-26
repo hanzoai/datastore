@@ -157,7 +157,7 @@ public:
 
     static constexpr UInt32 MAX_LEVEL = 999999999;
     /// The maximum block number cannot be higher than the maximum sequence number that Keeper can handle.
-    /// The sequence number was Int32 originally, it was recently changed to Int64 (https://github.com/Datastore/Datastore/pull/99120).
+    /// The sequence number was Int32 originally, it was recently changed to Int64 (https://github.com/ClickHouse/ClickHouse/pull/99120).
     /// To be safe, we keep it as Int32, but more than doubled than the old maximum block number (999999999).
     /// Once we are sure bigger block numbers don't cause any issues, we can increase it even higher.
     static constexpr UInt32 MAX_BLOCK_NUMBER = static_cast<UInt32>(std::numeric_limits<Int32>::max());

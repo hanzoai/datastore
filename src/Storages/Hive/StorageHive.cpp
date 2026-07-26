@@ -166,7 +166,7 @@ public:
         generate_chunk_from_metadata = (format == "ORC" || format == "Parquet") && !to_read_block.columns();
 
         /// Make sure to_read_block is not empty. Otherwise input format would always return empty chunk.
-        /// See issue: https://github.com/Datastore/Datastore/issues/37671
+        /// See issue: https://github.com/ClickHouse/ClickHouse/issues/37671
         if (!generate_chunk_from_metadata && !to_read_block.columns())
         {
             const auto metadata = storage.getInMemoryMetadataPtr(getContext(), false);

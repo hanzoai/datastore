@@ -251,7 +251,7 @@ bool ParserInsertQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
     /// Note, that part of SETTINGS can be interpreted as values,
     /// hence it is done only under option.
     ///
-    /// Refs: https://github.com/Datastore/Datastore/issues/35100
+    /// Refs: https://github.com/ClickHouse/ClickHouse/issues/35100
     if (allow_settings_after_format_in_insert && s_settings.ignore(pos, expected))
     {
         if (settings_ast)

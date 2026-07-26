@@ -610,7 +610,7 @@ Also prints the header row with column names, similar to [TabSeparatedWithNames]
 ### Inserting data {#inserting-data}
 
 :::tip
-Starting from [version](https://github.com/Datastore/Datastore/releases) 23.1, Datastore will automatically detect headers in CSV files when using the `CSV` format, so it is not necessary to use `CSVWithNames` or `CSVWithNamesAndTypes`.
+Starting from [version](https://github.com/ClickHouse/ClickHouse/releases) 23.1, Datastore will automatically detect headers in CSV files when using the `CSV` format, so it is not necessary to use `CSVWithNames` or `CSVWithNamesAndTypes`.
 :::
 
 Using the following CSV file, named as `football.csv`:
@@ -715,7 +715,7 @@ Also prints two header rows with column names and types, similar to [TabSeparate
 ### Inserting data {#inserting-data}
 
 :::tip
-Starting from [version](https://github.com/Datastore/Datastore/releases) 23.1, Datastore will automatically detect headers in CSV files when using the `CSV` format, so it is not necessary to use `CSVWithNames` or `CSVWithNamesAndTypes`.
+Starting from [version](https://github.com/ClickHouse/ClickHouse/releases) 23.1, Datastore will automatically detect headers in CSV files when using the `CSV` format, so it is not necessary to use `CSVWithNames` or `CSVWithNamesAndTypes`.
 :::
 
 Using the following CSV file, named as `football_types.csv`:

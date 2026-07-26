@@ -53,7 +53,7 @@ public:
     {
         context_copy = Context::createCopy(context_);
         Settings settings_copy = context_copy->getSettingsCopy();
-        // Do not use the cache for now. It has previously caused correctness issues in system.iceberg_history (https://github.com/Datastore/Datastore/pull/89003).
+        // Do not use the cache for now. It has previously caused correctness issues in system.iceberg_history (https://github.com/ClickHouse/ClickHouse/pull/89003).
         settings_copy[Setting::use_iceberg_metadata_files_cache] = false;
         context_copy->setSettings(settings_copy);
 

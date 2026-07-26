@@ -608,7 +608,7 @@ bool ParserFilterClause::parseImpl(Pos & pos, ASTPtr & node, Expected & expected
     if (function.name == "count")
     {
         /// Remove child from function.arguments if it's '*' because countIf(*) is not supported.
-        /// See https://github.com/Datastore/Datastore/issues/61004
+        /// See https://github.com/ClickHouse/ClickHouse/issues/61004
         boost::range::remove_erase_if(function.arguments->children, [] (const ASTPtr & child)
         {
             return typeid_cast<const ASTAsterisk *>(child.get()) || typeid_cast<const ASTQualifiedAsterisk *>(child.get());

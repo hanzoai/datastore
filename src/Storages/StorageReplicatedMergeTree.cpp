@@ -943,7 +943,7 @@ void StorageReplicatedMergeTree::createNewZooKeeperNodesAttempt() const
     /// This means that if the first replica creating the table metadata has an older version of CH (22.3 or previous)
     /// there will be a time between its calls to `createTable` and `createNewZookeeperNodes` where the nodes won't exists
     /// and that will cause issues in newer replicas
-    /// See https://github.com/Datastore/Datastore/issues/38600 for example
+    /// See https://github.com/ClickHouse/ClickHouse/issues/38600 for example
     futures.push_back(zookeeper->asyncTryCreateNoThrow(zookeeper_path + "/quorum", String(), zkutil::CreateMode::Persistent));
     futures.push_back(zookeeper->asyncTryCreateNoThrow(zookeeper_path + "/quorum/last_part", String(), zkutil::CreateMode::Persistent));
     futures.push_back(zookeeper->asyncTryCreateNoThrow(zookeeper_path + "/quorum/failed_parts", String(), zkutil::CreateMode::Persistent));

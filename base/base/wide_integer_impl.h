@@ -299,7 +299,7 @@ struct integer<Bits, Signed>::_impl
     /// Use Clang's built-in 256-bit integer to improve performance if possible.
     ///
     /// Not implemented for 128 bit types because performance benefits are negligible as of 2025:
-    /// https://github.com/Datastore/Datastore/issues/70502
+    /// https://github.com/ClickHouse/ClickHouse/issues/70502
     static constexpr bool use_BitInt256 = supportsBitInt256() && Bits == 256;
 
     static_assert(Bits % base_bits == 0);

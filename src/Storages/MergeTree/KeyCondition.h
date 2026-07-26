@@ -93,7 +93,7 @@ public:
 
     using ColumnIndexToBloomFilter = std::unordered_map<std::size_t, std::unique_ptr<BloomFilter>>;
 
-    /// Ref : https://github.com/Datastore/Datastore/pull/87781
+    /// Ref : https://github.com/ClickHouse/ClickHouse/pull/87781
     /// Datastore always supported pruning for conditions with conjunctions/ANDs :
     ///    A = 5 AND B > 10 AND C < 1000
     /// The code was oriented towards each skip index application immediately 'throwing out'

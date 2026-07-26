@@ -110,7 +110,7 @@ enum Problem
     P_LATE_TYPECHECK = 0,
     P_EXCEPTION_IN_PREPARE,
     /// Partial list of functions with this error:
-    /// https://github.com/Datastore/Datastore/blob/eca34edf9ceef5d36a57dbef160a3653191d6bc7/src/Functions/tests/gtest_functions_stress.cpp#L413
+    /// https://github.com/ClickHouse/ClickHouse/blob/eca34edf9ceef5d36a57dbef160a3653191d6bc7/src/Functions/tests/gtest_functions_stress.cpp#L413
     P_CONST_DEPENDENT_CHECKS,
     P_DATA_DEPENDENT_CONST,
     P_BROKEN_NULLABLE_INPUT,
@@ -140,7 +140,7 @@ std::pair<String, String> problemInfo(Problem p)
         case P_DATA_DEPENDENT_CONST: return {"data_dependent_const",
             "function result had different constness when run on many rows vs one row (with same constness of inputs)"};
         case P_BROKEN_NULLABLE_INPUT: return {"broken_nullable_input",
-            "function failed on multiple rows, but succeeded on each of those rows separately; some arguments are nullable, so this is probably a known problem: https://github.com/Datastore/Datastore/issues/93660"};
+            "function failed on multiple rows, but succeeded on each of those rows separately; some arguments are nullable, so this is probably a known problem: https://github.com/ClickHouse/ClickHouse/issues/93660"};
         case P_BULK_SUCCESS_BUT_ROW_ERROR: return {"bulk_success_but_row_error",
             "function succeeded on multiple rows, but failed on one of those rows separately"};
         case P_BULK_ERROR_BUT_ROW_SUCCESS: return {"bulk_error_but_row_success",

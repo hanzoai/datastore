@@ -23,7 +23,7 @@ gss_buffer_desc makeBuffer(std::vector<char> & storage)
 
 }
 
-/// Regression test for https://github.com/Datastore/Datastore/issues/97414
+/// Regression test for https://github.com/ClickHouse/ClickHouse/issues/97414
 /// Opaque GSS tokens (e.g. the AP-REP from gss_accept_sec_context) may legitimately end
 /// in 0x00 bytes. These must be preserved verbatim, not stripped.
 TEST(GSSBufferToString, PreservesTrailingNulls)

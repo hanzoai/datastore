@@ -139,7 +139,7 @@ bool ParserKQLWithUnionQuery::parseImpl(Pos & pos, ASTPtr & node, Expected & exp
 
 bool ParserKQLParenExpression::parseImpl(Pos & pos, ASTPtr & node, Expected & expected)
 {
-    /// TODO: This code is idiotic, see https://github.com/Datastore/Datastore/issues/61742
+    /// TODO: This code is idiotic, see https://github.com/ClickHouse/ClickHouse/issues/61742
 
     ParserToken lparen(TokenType::OpeningRoundBracket);
 
