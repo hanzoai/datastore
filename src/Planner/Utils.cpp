@@ -224,7 +224,7 @@ namespace
 /// `__table1.v` and break position-by-name lookup of the source stream on the
 /// receiver, which manifests as `THERE_IS_NO_COLUMN`.
 ///
-/// See https://github.com/Datastore/Datastore/issues/74324.
+/// See https://github.com/ClickHouse/ClickHouse/issues/74324.
 void deduplicateProjectionAliases(ASTSelectQuery & select_query)
 {
     auto projection_ast = select_query.select();

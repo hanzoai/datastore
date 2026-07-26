@@ -110,7 +110,7 @@ TEST(Context, GetAccessRace)
 /// and TSan reported a data race against the writer's `emplace`. With the fix
 /// the copy of `table_function_results` happens under that mutex.
 ///
-/// See issue Datastore/Datastore#104807 (STID 1003-358c).
+/// See issue ClickHouse/ClickHouse#104807 (STID 1003-358c).
 TEST(Context, TableFunctionResultsCopyRace)
 {
     auto context = Context::createCopy(getContext().context);
@@ -182,7 +182,7 @@ TEST(Context, TableFunctionResultsCopyRace)
 /// `QueryPrivilegesInfo`. This test models the scenario deterministically: it pollutes a parent
 /// context's privileges, derives a query context from it, and asserts the query starts clean.
 ///
-/// See issue Datastore/Datastore#105983.
+/// See issue ClickHouse/ClickHouse#105983.
 TEST(Context, MakeQueryContextDoesNotInheritPrivileges)
 {
     /// Stand in for the shared session/global context whose `QueryPrivilegesInfo` gets polluted.

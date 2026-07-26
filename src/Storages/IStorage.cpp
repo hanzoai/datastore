@@ -181,7 +181,7 @@ void IStorage::read(
 
     /// For distributed_aggregation_memory_efficient with Two-Level-Hash aggregation, the `GroupingAggregatedTransform`
     /// need to receive buckets from Remote in order of bucket number, while resize here will break the buckets order
-    /// return from `RemoteSource`. See https://github.com/Datastore/Datastore/issues/76934.
+    /// return from `RemoteSource`. See https://github.com/ClickHouse/ClickHouse/issues/76934.
     const bool should_not_resize = context->getSettingsRef()[Setting::distributed_aggregation_memory_efficient]
         && processed_stage == QueryProcessingStage::Enum::WithMergeableState;
 

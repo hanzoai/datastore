@@ -73,7 +73,7 @@ TEST(YTDataType, CheckSimpleTypeConversation) {
     ASSERT_TRUE(checkColumnType(createSimpleTypeJson("uuid", true), CH_TYPE("UUID")));
 
     // // Dates
-    // Commented until https://github.com/Datastore/Datastore/issues/82003 not resolved
+    // Commented until https://github.com/ClickHouse/ClickHouse/issues/82003 not resolved
     // ASSERT_TRUE(checkColumnType(createSimpleTypeJson("date32", true), CH_TYPE("Date")));
     // ASSERT_TRUE(checkColumnType(createSimpleTypeJson("date", true), CH_TYPE("Date")));
     ASSERT_TRUE(checkColumnType(createSimpleTypeJson("datetime64", true), CH_TYPE("DateTime64(0)")));

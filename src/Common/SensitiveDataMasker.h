@@ -57,7 +57,7 @@ public:
     size_t wipeSensitiveDataThrow(std::string & data) const;
 
     /// setInstance is not thread-safe and should be called once in single-thread mode.
-    /// https://github.com/Datastore/Datastore/pull/6810#discussion_r321183367
+    /// https://github.com/ClickHouse/ClickHouse/pull/6810#discussion_r321183367
     static void setInstance(std::unique_ptr<SensitiveDataMasker>&& sensitive_data_masker_);
     static MaskerMultiVersion::Version getInstance();
 

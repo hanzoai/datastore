@@ -6324,7 +6324,7 @@ void QueryAnalyzer::resolveQuery(const QueryTreeNodePtr & query_node, Identifier
         /// retains them — the same alias appearing on two different bodies trips
         /// `MULTIPLE_EXPRESSIONS_FOR_ALIAS` on the remote replica's re-analysis when
         /// the tree is dispatched via `parallel_replicas_local_plan = 0`.
-        /// See https://github.com/Datastore/Datastore/issues/74324.
+        /// See https://github.com/ClickHouse/ClickHouse/issues/74324.
         scope.aliases.node_to_remove_aliases.push_back(prewhere_node);
 
         scope.enableIdentifierCache();

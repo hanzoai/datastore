@@ -103,7 +103,7 @@ static auto getQueryInterpreter(const ASTSubquery & subquery, ExecuteScalarSubqu
     if (subquery_context->hasQueryContext())
     {
         /// When execute `INSERT INTO t WITH ... SELECT ...`, it may lead to `Unknown columns`
-        /// exception with this settings enabled(https://github.com/Datastore/Datastore/issues/52494).
+        /// exception with this settings enabled(https://github.com/ClickHouse/ClickHouse/issues/52494).
         subquery_context->getQueryContext()->setSetting("use_structure_from_insertion_table_in_table_functions", false);
         if (!data.only_analyze)
         {

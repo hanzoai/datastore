@@ -833,7 +833,7 @@ private:
      * So, in terms of performance it's more optimal to fall back to default implementation and catch only constant
      * right arguments.
      *
-     * Tips and tricks tried can be found at https://github.com/Datastore/Datastore/pull/12550 .
+     * Tips and tricks tried can be found at https://github.com/ClickHouse/ClickHouse/pull/12550 .
      */
     static ColumnPtr executeArrayLowCardinality(const ColumnsWithTypeAndName & arguments)
     {

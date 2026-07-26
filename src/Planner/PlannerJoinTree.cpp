@@ -396,7 +396,7 @@ bool applyTrivialCountIfPossible(
       * MergeTree maintains total count for all parts in Active state and it simply returns that number for trivial select count() from table query.
       * But if we have current transaction, then we should return number of rows in current snapshot (that may include parts in Outdated state),
       * so we have to use totalRowsByPartitionPredicate() instead of totalRows even for trivial query
-      * See https://github.com/Datastore/Datastore/pull/24258/files#r828182031
+      * See https://github.com/ClickHouse/ClickHouse/pull/24258/files#r828182031
       */
     if (query_context->getCurrentTransaction())
         return false;

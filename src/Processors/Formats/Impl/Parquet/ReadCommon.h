@@ -63,7 +63,7 @@ struct SharedResourcesExt
 /// columns).
 ///
 /// Here's a slightly simplified dependency graph:
-/// https://github.com/Datastore/Datastore/pull/82789#discussion_r2292203372
+/// https://github.com/ClickHouse/ClickHouse/pull/82789#discussion_r2292203372
 /// (if you need to edit this diagram, load this into excalidraw:
 ///  https://pastila.nl/?cafebabe/5f32c6546f4797c537707535c515f2c3#Fp02Ps7p2hRahC0B5cK+TQ== )
 ///

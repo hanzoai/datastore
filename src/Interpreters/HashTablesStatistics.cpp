@@ -105,7 +105,7 @@ std::optional<AggregationEntry> getSizeHint(const DB::StatsCollectingParams & st
                     stats_collecting_params.max_size_to_preallocate,
                     hint->median_size * tables_cnt);
             }
-            /// https://github.com/Datastore/Datastore/issues/44402#issuecomment-1359920703
+            /// https://github.com/ClickHouse/ClickHouse/issues/44402#issuecomment-1359920703
             else if ((tables_cnt > 1 && hint->sum_of_sizes > 100'000) || hint->sum_of_sizes > 500'000)
             {
                 return AggregationEntry{hint->sum_of_sizes, std::max(lower_limit, hint->median_size)};

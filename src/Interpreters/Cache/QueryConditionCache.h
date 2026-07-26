@@ -31,7 +31,7 @@ public:
 private:
     /// A hash of the table id, part name and condition id.
     /// CityHash128 is enough to use for practical applications as the probability of collisions is very low.
-    /// https://github.com/Datastore/Datastore/issues/9506
+    /// https://github.com/ClickHouse/ClickHouse/issues/9506
     using Key = UInt128;
 
     struct Entry

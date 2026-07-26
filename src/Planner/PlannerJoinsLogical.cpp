@@ -108,7 +108,7 @@ static const ActionsDAG::Node * appendExpression(
          *   SELECT count() FROM (SELECT number FROM numbers(10)) as t1 LEFT JOIN t2 ON number = t2.id
          * In this case, the right side of the join returns an aggregated result with the header [`count()`],
          * and we attempt to join it again, resulting in the `id` column not being found.
-         * We may try replacing this to LOGICAL_ERROR after https://github.com/Datastore/Datastore/issues/63984 is resolved.
+         * We may try replacing this to LOGICAL_ERROR after https://github.com/ClickHouse/ClickHouse/issues/63984 is resolved.
          */
         auto unknown_inputs = dag.getInputs()
             | std::views::transform([](const auto * input) { return input->result_name; })

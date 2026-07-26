@@ -252,7 +252,7 @@ private:
 
         /// Fetch a provider-backed cipher once per block to avoid implicit EVP_CIPHER_fetch
         /// on every EVP_EncryptInit_ex call in the per-row loop.
-        /// See https://github.com/Datastore/Datastore/issues/65116
+        /// See https://github.com/ClickHouse/ClickHouse/issues/65116
         auto fetched_cipher = fetchCipher(mode);
         if (fetched_cipher == nullptr)
             throw Exception(ErrorCodes::BAD_ARGUMENTS, "Invalid mode: {}", mode);
@@ -345,7 +345,7 @@ private:
     /// EVP_EncryptUpdate calls lose to OpenSSL's stitched AES-NI CBC implementation,
     /// so those rows go through a CBC context that is re-initialized with only the IV
     /// (keeping the expanded key schedule) between rows.
-    /// See https://github.com/Datastore/Datastore/issues/65116
+    /// See https://github.com/ClickHouse/ClickHouse/issues/65116
     template <CipherMode mode>
     static ColumnPtr doEncryptBlockCipher(
         const EVP_CIPHER * evp_cipher,
@@ -739,7 +739,7 @@ private:
 
         /// Fetch a provider-backed cipher once per block to avoid implicit EVP_CIPHER_fetch
         /// on every EVP_DecryptInit_ex call in the per-row loop.
-        /// See https://github.com/Datastore/Datastore/issues/65116
+        /// See https://github.com/ClickHouse/ClickHouse/issues/65116
         auto fetched_cipher = fetchCipher(mode);
         if (fetched_cipher == nullptr)
             throw Exception(ErrorCodes::BAD_ARGUMENTS, "Invalid mode: {}", mode);
@@ -829,7 +829,7 @@ private:
     /// streaming ECB context (with padding disabled), initialized once per distinct
     /// key. The CBC chaining XOR is applied afterwards, and PKCS#7 padding is
     /// validated manually, checking all padding bytes like EVP_DecryptFinal_ex does.
-    /// See https://github.com/Datastore/Datastore/issues/65116
+    /// See https://github.com/ClickHouse/ClickHouse/issues/65116
     template <CipherMode mode, bool use_null_when_decrypt_fail>
     static ColumnPtr doDecryptBlockCipher(
         const EVP_CIPHER * evp_cipher,

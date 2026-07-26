@@ -18,7 +18,7 @@ allowed-tools: Task, Bash, Read, Glob, Grep, WebFetch, AskUserQuestion
 - Fetch the full PR diff.
 - Fetch PR metadata (title, description, base/head refs, comments, changed files).
 - Note the PR title, description, and linked issues
-- **Detect revert PRs** before validating template metadata. A PR is a revert when the title starts with `Revert "..."` (the GitHub default), or the body matches `Reverts Datastore/Datastore#<N>` / `This reverts commit <sha>`. Revert PRs are **exempt** from PR template validation: skip `Changelog category` and `Changelog entry` checks for them, and do not flag missing template fields. Only verify that the body identifies the reverted PR or commit.
+- **Detect revert PRs** before validating template metadata. A PR is a revert when the title starts with `Revert "..."` (the GitHub default), or the body matches `Reverts ClickHouse/ClickHouse#<N>` / `This reverts commit <sha>`. Revert PRs are **exempt** from PR template validation: skip `Changelog category` and `Changelog entry` checks for them, and do not flag missing template fields. Only verify that the body identifies the reverted PR or commit.
 - For non-revert PRs, validate PR template metadata against `.github/PULL_REQUEST_TEMPLATE.md`:
   - `Changelog category` is present, valid, and semantically correct for the actual code change.
   - `Changelog entry` is present and user-readable when required by the selected category.

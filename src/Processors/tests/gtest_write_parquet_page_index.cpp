@@ -328,7 +328,7 @@ TEST(Parquet, WriteParquetPageIndexSingleThread)
         });
 }
 
-/// Regression test for https://github.com/Datastore/Datastore/issues/103039
+/// Regression test for https://github.com/ClickHouse/ClickHouse/issues/103039
 /// When a page has a short min and a long max (exceeding max_statistics_size=4096),
 /// the column index must not be written because it would contain invalid bounds
 /// (e.g. min_value="a", max_value="" which violates min <= max).

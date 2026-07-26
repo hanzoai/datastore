@@ -89,15 +89,15 @@ static unsigned long NO_SANITIZE_THREAD __auxv_init_procfs(unsigned long type)
     ///
     ///    ==301455==ERROR: MemorySanitizer: SEGV on unknown address 0x2ffc6d721550 (pc 0x5622c1cc0073 bp 0x000000000003 sp 0x7ffc6d721530 T301455)
     ///    ==301455==The signal is caused by a WRITE memory access.
-    /// #0 0x5622c1cc0073 in __auxv_init_procfs ./Datastore/base/glibc-compatibility/musl/getauxval.c:129:5
-    /// #1 0x5622c1cbffe9 in getauxval ./Datastore/base/glibc-compatibility/musl/getauxval.c:240:12
+    /// #0 0x5622c1cc0073 in __auxv_init_procfs ./ClickHouse/base/glibc-compatibility/musl/getauxval.c:129:5
+    /// #1 0x5622c1cbffe9 in getauxval ./ClickHouse/base/glibc-compatibility/musl/getauxval.c:240:12
     /// #2 0x5622c0d7bfb4 in __sanitizer::ReExec() crtstuff.c
     /// #3 0x5622c0df7bfc in __msan::InitShadowWithReExec(bool) crtstuff.c
-    /// #4 0x5622c0d95356 in __msan_init (./Datastore/build_msan/contrib/google-protobuf-cmake/protoc+0x256356) (BuildId: 6411d3c88b898ba3f7d49760555977d3e61f0741)
+    /// #4 0x5622c0d95356 in __msan_init (./ClickHouse/build_msan/contrib/google-protobuf-cmake/protoc+0x256356) (BuildId: 6411d3c88b898ba3f7d49760555977d3e61f0741)
     /// #5 0x5622c0dfe878 in msan.module_ctor main.cc
-    /// #6 0x5622c1cc156c in __libc_csu_init (./Datastore/build_msan/contrib/google-protobuf-cmake/protoc+0x118256c) (BuildId: 6411d3c88b898ba3f7d49760555977d3e61f0741)
+    /// #6 0x5622c1cc156c in __libc_csu_init (./ClickHouse/build_msan/contrib/google-protobuf-cmake/protoc+0x118256c) (BuildId: 6411d3c88b898ba3f7d49760555977d3e61f0741)
     /// #7 0x73dc05dd7ea3 in __libc_start_main /usr/src/debug/glibc/glibc/csu/../csu/libc-start.c:343:6
-    /// #8 0x5622c0d6b7cd in _start (./Datastore/build_msan/contrib/google-protobuf-cmake/protoc+0x22c7cd) (BuildId: 6411d3c88b898ba3f7d49760555977d3e61f0741)
+    /// #8 0x5622c0d6b7cd in _start (./ClickHouse/build_msan/contrib/google-protobuf-cmake/protoc+0x22c7cd) (BuildId: 6411d3c88b898ba3f7d49760555977d3e61f0741)
 
     /// The source of the issue above is that, at this point in time during __msan_init, we can't really do much as
     /// most global variables aren't initialized or available yet, so we can't initiate the auxiliary vector.

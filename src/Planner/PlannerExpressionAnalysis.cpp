@@ -149,7 +149,7 @@ std::optional<AggregationAnalysisResult> analyzeAggregation(
 
     ActionsAndProjectInputsFlagPtr before_aggregation_actions = std::make_shared<ActionsAndProjectInputsFlag>();
     /// Here it is OK to materialize const columns: if column is used in GROUP BY, it may be expected to become non-const
-    /// See https://github.com/Datastore/Datastore/issues/70655 for example
+    /// See https://github.com/ClickHouse/ClickHouse/issues/70655 for example
     before_aggregation_actions->dag = ActionsDAG(input_columns, false);
     before_aggregation_actions->dag.getOutputs().clear();
 

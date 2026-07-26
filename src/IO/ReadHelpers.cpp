@@ -236,7 +236,7 @@ bool checkStringByFirstCharacterAndAssertTheRestCaseInsensitive(const char * s, 
 
 
 /// Diagnostic predicate for the bounds-corruption class of bug tracked in
-/// `https://github.com/Datastore/Datastore/issues/104692`. Validates the
+/// `https://github.com/ClickHouse/ClickHouse/issues/104692`. Validates the
 /// caller-supplied `[rb.position(), end)` source range against the working
 /// buffer `[rb.buffer().begin(), rb.buffer().end())` WITHOUT performing
 /// relational pointer comparisons on the untrusted range. C++ relational
@@ -261,7 +261,7 @@ template <typename T>
 static void appendToStringOrVector(T & s, ReadBuffer & rb, const char * end)
 {
     /// Diagnostic asserts for the bounds-corruption class of bug tracked in
-    /// `https://github.com/Datastore/Datastore/issues/104692`. If
+    /// `https://github.com/ClickHouse/ClickHouse/issues/104692`. If
     /// `working_buffer` becomes inverted or extends past the underlying owned
     /// `Memory<>`, the `s.append` below memcpys an arbitrary span and corrupts
     /// the destination `String`'s heap arena. The exception then surfaces

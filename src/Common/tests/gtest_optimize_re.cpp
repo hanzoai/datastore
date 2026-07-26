@@ -64,7 +64,7 @@ TEST(OptimizeRE, analyze)
     test_f("[a-zA-Z]+(?x<num>\\d+)", "x<num>", {}, false, true, false);
     /// Escapes that encode a byte through trailing argument characters must not leak those
     /// characters into the required substring; otherwise the strstr pre-filter would drop
-    /// matching rows before re2 runs. See https://github.com/Datastore/Datastore/issues/106382.
+    /// matching rows before re2 runs. See https://github.com/ClickHouse/ClickHouse/issues/106382.
     test_f("\\x41bc", "");           /// `\x41` is 'A'; "41bc" must not become a required substring
     test_f("\\101aa", "");           /// octal `\101` is 'A'; "01aa" must not become required
     test_f("\\x41abcd", "abcd");     /// only two hex digits belong to `\x41`; "abcd" stays literal

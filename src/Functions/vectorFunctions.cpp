@@ -1369,7 +1369,7 @@ public:
     ColumnPtr executeImpl(const ColumnsWithTypeAndName & arguments, const DataTypePtr &, size_t input_rows_count) const override
     {
         /// TODO: cosineDistance does not support nullable arguments
-        /// https://github.com/Datastore/Datastore/pull/27933#issuecomment-916670286
+        /// https://github.com/ClickHouse/ClickHouse/pull/27933#issuecomment-916670286
         auto return_type = getReturnTypeImpl(arguments);
         if (return_type->isNullable())
             return return_type->createColumnConstWithDefaultValue(input_rows_count);

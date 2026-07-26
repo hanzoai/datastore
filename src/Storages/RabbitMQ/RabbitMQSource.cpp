@@ -257,7 +257,7 @@ Chunk RabbitMQSource::generateImpl()
                     /// delivery tag so that `nackMessages` in `streamToViews`
                     /// can properly reject it. Without this, the tag is lost and
                     /// the message stays unacked in RabbitMQ forever.
-                    /// See https://github.com/Datastore/Datastore/issues/73541
+                    /// See https://github.com/ClickHouse/ClickHouse/issues/73541
                     const auto & message = consumer->currentMessage();
                     commit_info.channel_id = message.channel_id;
                     commit_info.delivery_tag = std::max(commit_info.delivery_tag, message.delivery_tag);
