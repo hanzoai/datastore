@@ -133,7 +133,7 @@ void QueryAnalyzer::evaluateScalarSubqueryIfNeeded(QueryTreeNodePtr & node, Iden
         subquery_settings[Setting::extremes] = false;
         subquery_settings[Setting::implicit_table_at_top_level] = "";
         /// When execute `INSERT INTO t WITH ... SELECT ...`, it may lead to `Unknown columns`
-        /// exception with this settings enabled(https://github.com/Datastore/Datastore/issues/52494).
+        /// exception with this settings enabled(https://github.com/ClickHouse/ClickHouse/issues/52494).
         subquery_settings[Setting::use_structure_from_insertion_table_in_table_functions] = false;
         subquery_settings[Setting::allow_experimental_parallel_reading_from_replicas] = 0;
         subquery_context->setSettings(subquery_settings);

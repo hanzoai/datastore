@@ -273,7 +273,7 @@ values with different sign bits or different mantissa payloads. For example:
 
 - `0./0.` produces a `NaN` whose sign bit is 1 on most x86 platforms.
 - The literal `nan` produces a `NaN` whose sign bit is 0.
-- After [PR #98230](https://github.com/Datastore/Datastore/pull/98230), the AArch64 NEON path of
+- After [PR #98230](https://github.com/ClickHouse/ClickHouse/pull/98230), the AArch64 NEON path of
 `log` returns a `NaN` whose sign bit differs from glibc's scalar `log` on negative inputs.
 
 Hash tables in Datastore compare keys byte-wise, so different `NaN` bit patterns hash to

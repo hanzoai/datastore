@@ -12,7 +12,7 @@ using namespace DB;
 /// honor nullptr_on_error themselves. An out-of-range enum value (or a malformed tuple) used
 /// to escape through tryGet as an exception, breaking callers such as Dynamic-subcolumn
 /// type detection that treat the null result as the "not a type" signal.
-/// See: https://github.com/Datastore/Datastore/pull/107081
+/// See: https://github.com/ClickHouse/ClickHouse/pull/107081
 
 TEST(DataTypeFactoryTryGet, OutOfRangeEnumReturnsNullptr)
 {

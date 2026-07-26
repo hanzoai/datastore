@@ -2103,7 +2103,7 @@ MarkRanges MergeTreeDataSelectExecutor::markRangesFromPKRange(
                             /// key_condition.matchesExactContinuousRange returned true, but the
                             /// range doesn't seem to be continuous. Something's broken.
                             /// TODO: Remove the #ifndef and always throw after
-                            ///       https://github.com/Datastore/Datastore/issues/90461 is fixed.
+                            ///       https://github.com/ClickHouse/ClickHouse/issues/90461 is fixed.
 #ifndef NDEBUG
                             throw Exception(ErrorCodes::LOGICAL_ERROR, "Inconsistent KeyCondition behavior");
 #endif

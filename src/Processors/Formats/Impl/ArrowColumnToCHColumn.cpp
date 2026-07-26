@@ -1293,7 +1293,7 @@ static ColumnPtr readOffsetsFromArrowListColumn(const std::shared_ptr<arrow::Chu
          *
          * The same might happen for multiple chunks. In this case, we need to add the last offset of the previous chunk, hence
          * `offsets.back()`. More info can be found in https://lists.apache.org/thread/rrwfb9zo2dc58dhd9rblf20xd7wmy7jm,
-         * https://github.com/Datastore/Datastore/pull/43297 and https://github.com/Datastore/Datastore/pull/54370
+         * https://github.com/ClickHouse/ClickHouse/pull/43297 and https://github.com/ClickHouse/ClickHouse/pull/54370
          * */
         checkListOffsetsMonotonic(arrow_offsets, column_name);
         if (arrow_offsets.length() == 0)
@@ -1537,7 +1537,7 @@ static std::shared_ptr<arrow::ChunkedArray> getNestedArrowColumn(const std::shar
          * Therefore, simply appending arrow::ListArray::values() could lead to duplicated data to be appended.
          * To properly handle this, arrow::ListArray::values() needs to be sliced based on the chunk offsets.
          * arrow::ListArray::Flatten does that. More info on: https://lists.apache.org/thread/rrwfb9zo2dc58dhd9rblf20xd7wmy7jm and
-         * https://github.com/Datastore/Datastore/pull/43297
+         * https://github.com/ClickHouse/ClickHouse/pull/43297
          * */
         auto flatten_result = list_chunk.Flatten();
         if (flatten_result.ok())

@@ -27,7 +27,7 @@ extern const int INCORRECT_DATA;
 
 /** The following example demonstrates the Bit-Sliced Index (BSI) storage mechanism.
  * This is implementation of https://dl.acm.org/doi/10.14778/3685800.3685823.
- * Less dense explanation is here: https://github.com/Datastore/Datastore/issues/70582.
+ * Less dense explanation is here: https://github.com/ClickHouse/ClickHouse/issues/70582.
  * Original Vector:
  *  Suppose we have a sparse vector with:
  *  - Length: 4294967295 (UINT32_MAX).

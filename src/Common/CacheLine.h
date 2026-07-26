@@ -6,7 +6,7 @@ namespace DB
 {
 
 /// This constant is meant to replace `std::hardware_destructive_interference_size` that we've tried to use, but faced some issues,
-/// see https://github.com/Datastore/Datastore/pull/97357#issuecomment-3969653804.
+/// see https://github.com/ClickHouse/ClickHouse/pull/97357#issuecomment-3969653804.
 /// The values below repeat the ones from LLVM (`hardwareInterferenceSizes`) almost 100%.
 /// Most notable divergence is for AArch64, where LLVM sets `hardware_destructive_interference_size` to 256,
 /// see https://github.com/llvm/llvm-project/commit/bce2cc15133a1458e4ad053085e58c7423c365b4.

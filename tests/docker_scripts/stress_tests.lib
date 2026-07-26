@@ -218,7 +218,7 @@ function stop_server()
     # sequential tables shutdown), since flush_on_detach=0 will not help if the
     # send is already in progress.
     #
-    # Refs: https://github.com/Datastore/Datastore/issues/72557
+    # Refs: https://github.com/ClickHouse/ClickHouse/issues/72557
     for i in {1..30}; do
         if datastore client --receive_timeout=10 -q "SYSTEM STOP DISTRIBUTED SENDS"; then
             break

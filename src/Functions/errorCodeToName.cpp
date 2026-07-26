@@ -59,7 +59,7 @@ REGISTER_FUNCTION(ErrorCodeToName)
 {
     FunctionDocumentation::Description description = R"(
 Returns the textual name of a numeric Datastore error code.
-The mapping from numeric error codes to error names is available [here](https://github.com/Datastore/Datastore/blob/master/src/Common/ErrorCodes.cpp).
+The mapping from numeric error codes to error names is available [here](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/ErrorCodes.cpp).
 )";
     FunctionDocumentation::Syntax syntax = "errorCodeToName(error_code)";
     FunctionDocumentation::Arguments arguments = {

@@ -13,7 +13,7 @@ using namespace DB;
 /// Regression test for BuzzHouse segfault: null pointer dereference when
 /// `DataTypeDynamic::create` receives a malformed AST where the LHS of
 /// the `equals` operator is not an `ASTIdentifier` (e.g., a literal).
-/// See: https://github.com/Datastore/Datastore/issues/101309
+/// See: https://github.com/ClickHouse/ClickHouse/issues/101309
 /// STID: 1320-2f88
 TEST(DataTypeDynamic, CreateWithMalformedASTDoesNotCrash)
 {

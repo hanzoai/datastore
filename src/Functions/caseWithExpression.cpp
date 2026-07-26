@@ -200,7 +200,7 @@ public:
 
             /// `transform` uses standard equality (`NULL != NULL`), so skip it when WHEN values
             /// are Nullable; `multiIf` via `caseWhenEquals` handles CASE's `NULL = NULL` semantics.
-            /// See https://github.com/Datastore/Datastore/issues/101262.
+            /// See https://github.com/ClickHouse/ClickHouse/issues/101262.
             /// Also skip Dynamic/Variant: their hash-based lookup keys on type discriminator.
             auto src_supertype = tryGetLeastSupertype(src_array_types);
             auto dst_supertype = tryGetLeastSupertype(dst_array_types);

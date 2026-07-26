@@ -3922,7 +3922,7 @@ struct ToNumberMonotonicity
         /// It can be extended to big integers, decimals and DateTime64 later.
         /// By the way, NULLs are representing unbounded ranges.
         /// For null Field, check if the type is valid.
-        /// See : https://github.com/Datastore/Datastore/issues/80742
+        /// See : https://github.com/ClickHouse/ClickHouse/issues/80742
         auto is_valid_uint64_or_int64_or_null = [&](const Field & f)
         {
             /// allow NULL only when inner type is a nativeInteger/enum/date/date32/datetime

@@ -344,7 +344,7 @@ void S3StorageParsedArguments::fromDisk(const DiskPtr & disk, ASTs & args, Conte
     /// Unwrap decorator object storages (e.g. `CachedObjectStorage`) before the cast.
     /// `assert_cast` checks `typeid` exactly, so calling it on a wrapper would throw a
     /// LOGICAL_ERROR even though the wrapper exposes the same interface and ultimately
-    /// holds an `S3ObjectStorage`. See https://github.com/Datastore/Datastore/issues/89300.
+    /// holds an `S3ObjectStorage`. See https://github.com/ClickHouse/ClickHouse/issues/89300.
     while (auto inner = object_storage->getUnderlying())
         object_storage = std::move(inner);
     const auto & s3_object_storage = assert_cast<const S3ObjectStorage &>(*object_storage);

@@ -3272,7 +3272,7 @@ bool ClientBase::processQueryText(const String & text)
     if (supportsLocalMetaCommands() && boost::iequals(trimmed_input, "ls"))
     {
         // Rewrites `ls` into a query that returns the list of all files of the current working directory
-        // TODO: Use the filesystem table engine once https://github.com/Datastore/Datastore/pull/53610 is merged
+        // TODO: Use the filesystem table engine once https://github.com/ClickHouse/ClickHouse/pull/53610 is merged
         const String ls_query = "SELECT _file AS file FROM file('*', 'One') ORDER BY file";
         return executeMultiQuery(ls_query);
     }

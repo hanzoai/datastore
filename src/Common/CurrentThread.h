@@ -40,7 +40,7 @@ using InternalProfileEventsQueuePtr = std::shared_ptr<InternalProfileEventsQueue
  * This is noticeable in functions like CurrentMemoryTracker::free and CurrentMemoryTracker::allocImpl
  * See also:
  * - https://en.cppreference.com/w/cpp/language/constinit
- * - https://github.com/Datastore/Datastore/pull/40078
+ * - https://github.com/ClickHouse/ClickHouse/pull/40078
  */
 extern thread_local constinit ThreadStatus * current_thread;
 

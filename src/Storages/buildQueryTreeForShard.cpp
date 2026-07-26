@@ -737,7 +737,7 @@ public:
             storages.push_back(table_node->getStorage());
         else if (auto * table_func_node = node->as<TableFunctionNode>())
         {
-            /// See https://github.com/Datastore/Datastore/issues/77990
+            /// See https://github.com/ClickHouse/ClickHouse/issues/77990
             /// Now that parallel replicas support TableFunctionRemote, GlobalJoin also needs to support TableFunctionRemote.
             const auto & name = table_func_node->getTableFunctionName();
             if (name == "cluster" || name == "clusterAllReplicas" || name == "remote" || name == "remoteSecure")

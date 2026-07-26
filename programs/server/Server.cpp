@@ -2954,7 +2954,7 @@ try
     /// 2. We then start this server a few lines below. While handling the first request, it will access (read) certs.
     /// 3. A little further down, we reload certificates before starting the rest of the servers.
     /// 4. `CertificateReloader` will set its custom `cert_cb` to the default context if it is not initialized yet (see `CertificateReloader::init()`).
-    /// 5. Items (2) and (4) are not synchronized, so there might be a data race for example (see https://github.com/Datastore/Datastore/issues/85412).
+    /// 5. Items (2) and (4) are not synchronized, so there might be a data race for example (see https://github.com/ClickHouse/ClickHouse/issues/85412).
     CertificateReloader::instance().tryLoad(config());
     CertificateReloader::instance().tryLoadClient(config());
 #endif

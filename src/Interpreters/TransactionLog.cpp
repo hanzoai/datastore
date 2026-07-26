@@ -288,7 +288,7 @@ void TransactionLog::removeOldEntries()
         return;
 
     /// Because `loadTableFromMetadataAsync` is running asynchronously, it is possible that the outdated parts are loading while the `tail_ptr` is updated here.
-    /// It might trigger assertion when the part `create_csn` is lower than `tail_ptr`. Refer: https://github.com/Datastore/Datastore/issues/60406
+    /// It might trigger assertion when the part `create_csn` is lower than `tail_ptr`. Refer: https://github.com/ClickHouse/ClickHouse/issues/60406
     /// We keep track of `asyncTablesLoadingJobNumber`, and not update `tail_ptr` if there are running jobs.
     if (!updated_tail_ptr.load(std::memory_order_relaxed) && asyncTablesLoadingJobNumber() != 0)
     {

@@ -36,7 +36,7 @@ public:
 
         /// When group_by_use_nulls = 1 removing keys from GROUP BY can lead
         /// to unexpected types in some functions.
-        /// See example in https://github.com/Datastore/Datastore/pull/61567#issuecomment-2018007887
+        /// See example in https://github.com/ClickHouse/ClickHouse/pull/61567#issuecomment-2018007887
         if (getSettings()[Setting::group_by_use_nulls])
             return;
 

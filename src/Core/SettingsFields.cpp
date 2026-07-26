@@ -412,7 +412,7 @@ void SettingFieldTimespan<unit_>::writeBinary(WriteBuffer & out) const
     /// in which the value was passed as binary (as a UInt64)
     /// Later versions pass the setting values as String (using toString() and parseFromString()) and there passing "1.2" will
     /// lead to `1` on releases with integer seconds or `1.2` on more recent releases
-    /// See https://github.com/Datastore/Datastore/issues/36940 for more details
+    /// See https://github.com/ClickHouse/ClickHouse/issues/36940 for more details
     auto num_units = operator UInt64();
     writeVarUInt(num_units, out);
 }

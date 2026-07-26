@@ -639,7 +639,7 @@ QueryPipeline InterpreterExplainQuery::executeImpl()
     options.setExplain();
     options.max_step_description_length = query_context->getSettingsRef()[Setting::query_plan_max_step_description_length];
 
-    /// https://github.com/Datastore/Datastore/issues/88467
+    /// https://github.com/ClickHouse/ClickHouse/issues/88467
     /// EXPLAIN is to get a good picture of how the query will execute after *static* planning.
     /// Hence disable any optimizations that stagger the planning or introduce variablility due to caches.
     auto explain_query_context = Context::createCopy(query_context);

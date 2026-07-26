@@ -2158,7 +2158,7 @@ void IMergeTreeDataPart::loadColumnsSubstreams()
 
         /// Validate that all substream names have valid prefixes matching their column names.
         /// This detects a specific corruption caused by a bug in getFileNameForRenamedColumnStream
-        /// (fixed in https://github.com/Datastore/Datastore/pull/102689) where renaming a column
+        /// (fixed in https://github.com/ClickHouse/ClickHouse/pull/102689) where renaming a column
         /// produced wrong substream names in columns_substreams.txt.
         /// For Wide parts this file is not mandatory, so we can safely discard it and proceed
         /// as if it didn't exist.

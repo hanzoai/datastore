@@ -340,7 +340,7 @@ public:
     using value_type = T;
 
     /// We cannot use boost::iterator_adaptor, because it defeats loop vectorization,
-    ///  see https://github.com/Datastore/Datastore/pull/9442
+    ///  see https://github.com/ClickHouse/ClickHouse/pull/9442
 
     using iterator = T *;
     using const_iterator = const T *;

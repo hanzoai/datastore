@@ -409,7 +409,7 @@ void KafkaConsumer::doPoll()
         // let's make polls shorter and not block other consumer
         // which can work successfully in parallel
         // POLL_TIMEOUT_WO_ASSIGNMENT_MS (50ms) is 100% enough just to check if we got assignment
-        //  (see https://github.com/Datastore/Datastore/issues/11218)
+        //  (see https://github.com/ClickHouse/ClickHouse/issues/11218)
         auto actual_poll_timeout_ms = (waited_for_assignment >= MAX_TIME_TO_WAIT_FOR_ASSIGNMENT_MS)
                         ? std::min(POLL_TIMEOUT_WO_ASSIGNMENT_MS,poll_timeout)
                         : poll_timeout;

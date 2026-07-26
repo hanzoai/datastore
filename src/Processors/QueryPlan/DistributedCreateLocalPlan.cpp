@@ -51,7 +51,7 @@ std::unique_ptr<QueryPlan> createLocalPlan(
         /// Positional arguments in the outer query were already resolved by the initiator.
         /// Use a context flag instead of disabling enable_positional_arguments so that
         /// view-inner queries on this node (which were never resolved by the initiator) are
-        /// still processed correctly. See https://github.com/Datastore/Datastore/issues/62289.
+        /// still processed correctly. See https://github.com/ClickHouse/ClickHouse/issues/62289.
         new_context->setPositionalArgumentsAlreadyResolved(true);
         auto interpreter = InterpreterSelectQueryAnalyzer(query_ast, new_context, select_query_options);
         query_plan = std::make_unique<QueryPlan>(std::move(interpreter).extractQueryPlan());
