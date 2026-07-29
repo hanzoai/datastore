@@ -1,0 +1,42 @@
+name: CI/CD
+# The ONE pipeline for datastore, on our own runners against git.hanzo.ai.
+# Everything real lives in the repo-root hanzo.yml — one image, built from
+# source, published to ghcr.io/hanzoai/datastore. No deploy block: the live
+# StatefulSet is a reviewed, backed-up migration, not a rollout (see hanzo.yml).
+#
+# ONE PRECONDITION, and until it is met this file does not run.
+# git.hanzo.ai/hanzoai/datastore is currently a PULL MIRROR (mirror=true,
+# interval 8h, original_url github.com/hanzoai/datastore). A mirror is read-only
+# and runs no CI, so nothing here fires no matter what is pushed. It has to be
+# converted to a normal repo — the same shape hanzoai/iam and hanzoai/universe
+# already have in that namespace, which are mirror=false — after which the
+# forge's own git-runner pool picks this up on push.
+#
+# The alternative was a .github/workflows caller, and it is a dead end rather
+# than a tradeoff: the GitHub org has ZERO self-hosted runners registered
+# (/orgs/hanzoai/actions/runners → total_count 0) because the estate moved to
+# native CI. A GitHub-side job accepts the push, queues against a pool that does
+# not exist, and sits there — verified, then cancelled. Worse, it would do that
+# on every push to main forever, so shipping one would be actively harmful.
+#
+# NOTE ON COST. This is a from-source C++ build of a tree with 135 submodules —
+# hours per run, where the rest of the estate takes minutes. Two consequences are
+# baked into the triggers below.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  # No `pull_request`. Deliberate: a multi-hour build on every PR would hold a
+  # runner slot for the whole day and starve every other repo sharing the pool.
+  # Gate a proposed change with workflow_dispatch on its branch when it touches
+  # the build; merges to main are always built.
+  workflow_dispatch:
+concurrency:
+  # cancel-in-progress matters more here than anywhere else: without it a busy
+  # afternoon stacks several hour-long builds of commits that are already stale.
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  cicd:
+    uses: hanzoai/ci/.hanzo/workflows/build.yml@v2
+    secrets: inherit
