@@ -1,0 +1,46 @@
+name: CI/CD
+# The ONE pipeline for datastore. Everything real lives in the repo-root
+# hanzo.yml — one image, built from source, published to
+# ghcr.io/hanzoai/datastore. No deploy block: the live StatefulSet is a
+# reviewed, backed-up migration, not a rollout (see hanzo.yml).
+#
+# WHY THIS IS IN .github AND NOT .hanzo, against the usual estate law.
+# The law ("git.hanzo.ai canonical, .github/workflows is sync only, CI runs
+# native from .hanzo/workflows") assumes the forge holds the canonical repo.
+# This one it does not: git.hanzo.ai/hanzoai/datastore is a PULL MIRROR
+# (mirror=true, interval 8h, original_url = github.com/hanzoai/datastore), so it
+# is read-only, it syncs GitHub -> forge, and a mirror runs no CI. GitHub is
+# therefore the only forge that can build this repo, and GitHub resolves
+# reusable workflows only out of .github/workflows — a caller placed in
+# .hanzo/workflows here would be valid YAML that never runs, which is the
+# expensive kind of wrong.
+#
+# @v1 is not an older pipeline. hanzoai/ci v1 and v2 differ by a file MOVE and
+# nothing else: v1 holds .github/workflows/build.yml and v2 holds
+# .hanzo/workflows/build.yml, byte-identical. The path is part of the version,
+# so GitHub gets @v1 and the native forge gets @v2 — same build either way.
+#
+# If the forge repo is ever de-mirrored to canonical, this becomes
+# .hanzo/workflows/cicd.yml @v2 and nothing else changes.
+#
+# NOTE ON COST. This is a from-source C++ build of a tree with 135 submodules —
+# hours per run, where the rest of the estate takes minutes. Two consequences are
+# baked into the triggers below.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  # No `pull_request`. Deliberate: a multi-hour build on every PR would hold a
+  # slot on hanzo-build-linux-amd64 for the whole day and starve every other
+  # repo that shares the pool. Gate a proposed change with workflow_dispatch on
+  # its branch when it touches the build; merges to main are always built.
+  workflow_dispatch:
+concurrency:
+  # cancel-in-progress matters more here than anywhere else: without it a busy
+  # afternoon stacks several hour-long builds of commits that are already stale.
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  cicd:
+    uses: hanzoai/ci/.github/workflows/build.yml@v1
+    secrets: inherit
