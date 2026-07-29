@@ -52,6 +52,11 @@ RUN wget -nv -O /tmp/llvm.key https://apt.llvm.org/llvm-snapshot.gpg.key \
     && apt-get install --yes --no-install-recommends \
         clang-${LLVM_VERSION} lld-${LLVM_VERSION} \
         llvm-${LLVM_VERSION}-dev libclang-${LLVM_VERSION}-dev libclang-rt-${LLVM_VERSION}-dev \
+        `# llvm-N (not just -dev) carries llvm-ar/ranlib/objcopy/nm/strip.` \
+        `# cmake/tools.cmake resolves each by versioned name and raises` \
+        `# FATAL_ERROR when one is missing, so omitting this package fails the` \
+        `# build at configure — cheap to install, expensive to debug.` \
+        llvm-${LLVM_VERSION} \
     && rm -rf /var/lib/apt/lists/* \
     # cmake resolves the linker as plain `ld.lld`; the apt package only ships the
     # versioned name.
