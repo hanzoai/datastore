@@ -32,6 +32,19 @@ namespace ErrorCodes
 
 namespace
 {
+    /// The fork renames the ClickHouse HTTP auth headers to the X-Datastore-* family. To stay
+    /// wire-compatible with the entire ClickHouse driver ecosystem (Grafana, dbt, clickhouse-go,
+    /// clickhouse-connect, ...), the corresponding X-ClickHouse-* header is accepted as an alias.
+    /// The X-Datastore-* name takes precedence; the alias is used only when it is absent/empty.
+    std::string getAuthHeaderWithAlias(
+        const HTTPServerRequest & request, const std::string & datastore_name, const std::string & clickhouse_alias)
+    {
+        std::string value = request.get(datastore_name, "");
+        if (value.empty())
+            value = request.get(clickhouse_alias, "");
+        return value;
+    }
+
     /// Throws an exception that multiple authorization schemes are used simultaneously.
     [[noreturn]] void throwMultipleAuthenticationMethods(std::string_view method1, std::string_view method2)
     {
@@ -82,14 +95,16 @@ bool authenticateUserByHTTP(
 
     /// The user and password can be passed by headers (similar to X-Auth-*),
     /// which is used by load balancers to pass authentication information.
-    std::string user = request.get("X-Datastore-User", "");
-    std::string password = request.get("X-Datastore-Key", "");
-    std::string quota_key = request.get("X-Datastore-Quota", "");
+    std::string user = getAuthHeaderWithAlias(request, "X-Datastore-User", "X-ClickHouse-User");
+    std::string password = getAuthHeaderWithAlias(request, "X-Datastore-Key", "X-ClickHouse-Key");
+    std::string quota_key = getAuthHeaderWithAlias(request, "X-Datastore-Quota", "X-ClickHouse-Quota");
     bool has_auth_headers = !user.empty() || !password.empty();
 
-    /// The header 'X-Datastore-SSL-Certificate-Auth: on' enables checking the common name
-    /// extracted from the SSL certificate used for this connection instead of checking password.
-    bool has_ssl_certificate_auth = (request.get("X-Datastore-SSL-Certificate-Auth", "") == "on");
+    /// The header 'X-Datastore-SSL-Certificate-Auth: on' (alias 'X-ClickHouse-SSL-Certificate-Auth')
+    /// enables checking the common name extracted from the SSL certificate used for this connection
+    /// instead of checking password.
+    bool has_ssl_certificate_auth
+        = (getAuthHeaderWithAlias(request, "X-Datastore-SSL-Certificate-Auth", "X-ClickHouse-SSL-Certificate-Auth") == "on");
     bool has_config_credentials = config_credentials.has_value();
 
     /// User name and password can be passed using HTTP Basic auth or query parameters
