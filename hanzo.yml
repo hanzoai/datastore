@@ -1,0 +1,51 @@
+# Canonical CI config for hanzoai/datastore — read by the hanzoai/ci reusable
+# (.hanzo/workflows/build.yml) and by platform.hanzo.ai.
+#
+# One image, built from source by the repo-root Dockerfile. See that file for why
+# source and not docker/server/Dockerfile (short version: the .deb path points at
+# packages.hanzo.ai, an apt repo that does not exist).
+
+images:
+  - name: datastore
+    context: .
+    dockerfile: Dockerfile
+    repo: ghcr.io/hanzoai/datastore
+    # Explicit even though it is the reusable's default: DOKS has no arm64 nodes,
+    # so arm64 would be a QEMU-emulated C++ build — days, not hours — for a node
+    # pool that cannot schedule it. Revisit only when DO ships arm64 droplets.
+    platforms: [linux/amd64]
+
+# NO `test:` block, and that is a deliberate statement rather than an omission.
+#
+# `test:` entries run directly ON the runner, before the artifact exists — but
+# everything worth asserting about this repo is a property of a binary that takes
+# hours to produce. The gate therefore lives inside the Dockerfile, as the last
+# layer: it runs `SELECT version()` and reads system.build_options through the
+# binary it just linked, so an image that cannot answer a query is never pushed.
+# That is a real gate on the real artifact, and it fails the build.
+#
+# The upstream suites (ci/, tests/) are a separate machine — stateless/integration
+# runs that need a server, a keeper and fixtures. They belong in their own
+# workflow against an already-published tag, not in the path that produces it.
+
+# NO `deploy:` block, deliberately and importantly.
+#
+# The live instance is StatefulSet `datastore` in namespace `hanzo`, running
+# 26.2.3.2 with ~155 days of telemetry, and 26.7 is NOT a drop-in for it. Two
+# independent one-way doors:
+#
+#   1. Data path. Live resolves `path` to /var/lib/hanzo-datastore/ and mounts
+#      both its PVC and its ConfigMaps there. This tree compiles in
+#      /var/lib/datastore/ instead, and no image bakes an overlay that says
+#      otherwise — so an image-only swap misses the volume AND every config
+#      mount, initializes an empty database on the container's ephemeral layer,
+#      and passes its /ping probes while doing it. Green, and silently empty.
+#   2. Part format. Crossing 26.3 makes new parts unreadable by older versions,
+#      so the rollback is a volume snapshot, not a tag revert.
+#
+# An automated rollout is exactly the wrong shape for that. It has to be a
+# reviewed change that moves the image and the mount paths in one commit, behind
+# a snapshot, asserting `system.server_settings.path` afterwards.
+#
+# So this pipeline BUILDS and PUBLISHES only. Rollout stays a reviewed tag pin in
+# hanzoai/universe, the same rule cloud, ci and git follow.
