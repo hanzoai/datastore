@@ -2,7 +2,7 @@
 description: 'A table engine which provides a table-like interface to SELECT from
   and INSERT into files, similar to the s3 table function. Use `file` when working
   with local files, and `s3` when working with buckets in object storage such as
-  S3, GCS, or MinIO.'
+  S3, GCS, or any S3-compatible store.'
 sidebar_label: 'file'
 sidebar_position: 60
 slug: /sql-reference/table-functions/file
@@ -15,7 +15,7 @@ import CloudNotSupportedBadge from '@theme/badges/CloudNotSupportedBadge';
 
 # file Table Function
 
-A table engine which provides a table-like interface to SELECT from and INSERT into files, similar to the [s3](/sql-reference/table-functions/s3.md) table function. Use `file` when working with local files, and `s3` when working with buckets in object storage such as S3, GCS, or MinIO.
+A table engine which provides a table-like interface to SELECT from and INSERT into files, similar to the [s3](/sql-reference/table-functions/s3.md) table function. Use `file` when working with local files, and `s3` when working with buckets in object storage such as S3, GCS, or any S3-compatible store.
 
 The `file` function can be used in `SELECT` and `INSERT` queries to read from or write to files.
 
