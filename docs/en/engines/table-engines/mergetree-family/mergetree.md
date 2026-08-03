@@ -872,7 +872,7 @@ If you perform the `SELECT` query between merges, you may get expired data. To a
 ## Disk types {#disk-types}
 
 In addition to local block devices, ClickHouse supports these storage types:
-- [`s3` for S3 and MinIO](#table_engine-mergetree-s3)
+- [`s3` for S3-compatible object storage](#table_engine-mergetree-s3)
 - [`gcs` for GCS](/integrations/data-ingestion/gcs/index.md/#creating-a-disk)
 - [`blob_storage_disk` for Azure Blob Storage](/operations/storing-data#azure-blob-storage)
 - [`hdfs` for HDFS](/engines/table-engines/integrations/hdfs)

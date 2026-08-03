@@ -80,13 +80,13 @@ When using a catalog, most users will want to use the `DataLakeCatalog` database
 
 To use them, create a table with the `IcebergS3` engine and provide the necessary settings.
 
-For example, using REST Catalog with MinIO storage:
+For example, using REST Catalog with S3 storage:
 ```sql
 CREATE TABLE `database_name.table_name`
 ENGINE = IcebergS3(
-  'http://minio:9000/warehouse-rest/table_name/',
-  'minio_access_key',
-  'minio_secret_key'
+  'http://s3.hanzo.svc:9000/warehouse-rest/table_name/',
+  '<access_key_id>',
+  '<secret_access_key>'
 )
 ```
 

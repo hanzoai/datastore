@@ -268,6 +268,48 @@ Branch `cleanup/phase-b` was created but **no deletions were committed**. Local 
 
 Per the rule "If cmake configure fails after deletion, revert that group and report it as risky — don't try to patch around it", baseline configure failure means *no* group can be safely validated locally on this host. Deletion was therefore not executed; the plan above is the deliverable. Run the deletion + configure check on a Linux build host (CI runner with submodules initialized) before committing any of these `git rm -r` blocks.
 
+## MinIO: purged from the docs, deliberately kept in the test harness
+
+Hanzo S3 is SeaweedFS-derived and Apache-2.0 — never a MinIO fork. The
+user-facing S3 documentation said otherwise and handed out `minioadmin` /
+`minioadminpassword` as example credentials, so `docs/en/**` and the `src/**`
+doc-strings that mirror it now use placeholders and a Hanzo S3 endpoint.
+
+**The integration-test harness still runs MinIO, and that is the correct state
+until someone ports it properly.** Do not `sed` it. What holds it:
+
+- `minio==7.2.20` in `ci/docker/integration/runner/requirements.txt` is a real
+  dependency: `helpers/cluster.py` does `from minio import Minio`, and 60 test
+  files call 16 distinct methods on `cluster.minio_client` (`make_bucket`,
+  `fput_object`, `set_bucket_policy`, `get_object_tags`, …). boto3 is already
+  in the same requirements file, but its API is not method-for-method
+  compatible, so this is a rewrite of the harness plus every call site.
+- 136 tests pass `with_minio=True`; ~120 storage-config XMLs hardcode the
+  fixture credential `ClickHouse_Minio_P@ssw0rd`.
+- `compose/docker_compose_minio.yml` leans on MinIO-only surface: `--certs-dir`
+  TLS (`test_s3_with_https`), `MINIO_PROMETHEUS_AUTH_TYPE`, a console address,
+  and the `warehouse.minio` / `warehouse-rest.minio` aliases that exercise
+  virtual-host-style bucket addressing. Hanzo S3 has equivalents
+  (`-s3.domainName`, `/healthz`, `Hanzo_s3_*` metrics) but not the same flags.
+- `proxy1`/`proxy2` come from `clickhouse/s3-proxy`, built in-repo at
+  `ci/docker/integration/s3_proxy` but **pulled from a registry** at test time —
+  a migration needs that image rebuilt and republished, which is a CI change,
+  not a source change.
+
+A port is a real project with a real acceptance test (the S3 integration suite
+green), and it cannot be validated on an arm64 workstation: `ghcr.io/hanzoai/s3`
+publishes linux/amd64 only, and the suite needs a built `datastore` binary. Run
+it on a Linux CI host or not at all.
+
+Also left: the MinIO-quirk comments in `src/IO/S3/**` and `src/IO/S3Common.h`
+(the transient `InvalidPart` / `NO_SUCH_KEY` retries). They explain why live
+retry logic exists, and they describe the server CI actually runs — deleting
+them would delete the rationale and make the comment less true, not more.
+
+`src/Parsers/obfuscateQueries.cpp` matches `minio` only as a prefix of the word
+`minion` in a word list. Grep case-sensitively **and** with `\bminio` before
+touching anything.
+
 ## Related
 
 - Used by: `hanzo/insights` (insights-datastore deployment in `~/work/hanzo/universe/infra/k8s/insights/`)

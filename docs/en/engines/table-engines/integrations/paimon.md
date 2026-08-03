@@ -159,7 +159,7 @@ SETTINGS
 
 -- S3 storage (the `Paimon` engine defaults to the S3 implementation when no `disk` is specified)
 CREATE TABLE paimon_mv_source
-ENGINE = Paimon('http://minio:9000/bucket/path/to/table', 'access_key', 'secret_key')
+ENGINE = Paimon('http://s3.hanzo.svc:9000/bucket/path/to/table', 'access_key', 'secret_key')
 SETTINGS
     paimon_incremental_read = 1,
     paimon_keeper_path = '/clickhouse/tables/{uuid}',

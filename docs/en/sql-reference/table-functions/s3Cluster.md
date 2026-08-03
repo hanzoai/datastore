@@ -55,9 +55,9 @@ Select the data from all the files in the `/root/data/clickhouse` and `/root/dat
 ```sql
 SELECT * FROM s3Cluster(
     'cluster_simple',
-    'http://minio1:9001/root/data/{clickhouse,database}/*',
-    'minio',
-    'ClickHouse_Minio_P@ssw0rd',
+    'http://s3.hanzo.svc:9000/root/data/{clickhouse,database}/*',
+    '<access_key_id>',
+    '<secret_access_key>',
     'CSV',
     'name String, value UInt32, polygon Array(Array(Tuple(Float64, Float64)))'
 ) ORDER BY (name, value, polygon);
@@ -73,8 +73,8 @@ For production use cases, it is recommended to use [named collections](/operatio
 ```sql
 
 CREATE NAMED COLLECTION creds AS
-        access_key_id = 'minio',
-        secret_access_key = 'ClickHouse_Minio_P@ssw0rd';
+        access_key_id = '<access_key_id>',
+        secret_access_key = '<secret_access_key>';
 SELECT count(*) FROM s3Cluster(
     'cluster_simple', creds, url='https://s3-object-url.csv',
     format='CSV', structure='name String, value UInt32, polygon Array(Array(Tuple(Float64, Float64)))'
