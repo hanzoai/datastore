@@ -376,7 +376,7 @@ set (COMPILER_FLAGS "${COMPILER_FLAGS} -fno-math-errno")
 # never extracted and the reference binds to shared glibc's newer symbol version, which the
 # compatibility check rejects (max allowed GLIBC version is 2.4 on amd64, 2.18 on aarch64). Force
 # our in-tree `musl` implementations to be pulled from the static archive so they preempt glibc,
-# in the same spirit as the explicit `memcpy` interposition in `clickhouse_add_executable` below.
+# in the same spirit as the explicit `memcpy` interposition in `datastore_add_executable` below.
 #
 # Both the single-precision functions (new glibc version `@GLIBC_2.27`) and the double-precision
 # ones (`@GLIBC_2.29`) are pinned. The doubles matter when `ENABLE_LLVM_LIBC_MATH=OFF`: in that
