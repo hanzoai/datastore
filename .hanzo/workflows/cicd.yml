@@ -4,13 +4,12 @@ name: CI/CD
 # source, published to ghcr.io/hanzoai/datastore. No deploy block: the live
 # StatefulSet is a reviewed, backed-up migration, not a rollout (see hanzo.yml).
 #
-# ONE PRECONDITION, and until it is met this file does not run.
-# git.hanzo.ai/hanzoai/datastore is currently a PULL MIRROR (mirror=true,
-# interval 8h, original_url github.com/hanzoai/datastore). A mirror is read-only
-# and runs no CI, so nothing here fires no matter what is pushed. It has to be
-# converted to a normal repo — the same shape hanzoai/iam and hanzoai/universe
-# already have in that namespace, which are mirror=false — after which the
-# forge's own git-runner pool picks this up on push.
+# HOW A CHANGE GETS HERE. git.hanzo.ai/hanzoai/datastore is a PULL MIRROR
+# (mirror=true, interval 8h, original_url github.com/hanzoai/datastore), so the
+# forge tree is read-only: push to GitHub, then POST /v1/repos/hanzoai/datastore
+# /mirror-sync. Read-only does not mean CI-less — the sync lands as a push event
+# and the forge's git-runner pool picks this file up (runs #1 and #2 both fired
+# that way). Converting to mirror=false is not a precondition for anything here.
 #
 # The alternative was a .github/workflows caller, and it is a dead end rather
 # than a tradeoff: the GitHub org has ZERO self-hosted runners registered
@@ -38,5 +37,5 @@ concurrency:
   cancel-in-progress: true
 jobs:
   cicd:
-    uses: hanzoai/ci/.hanzo/workflows/build.yml@v2
+    uses: hanzoai/ci/.hanzo/workflows/build.yml@v1
     secrets: inherit
