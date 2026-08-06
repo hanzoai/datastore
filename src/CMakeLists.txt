@@ -124,7 +124,7 @@ add_headers_and_sources(datastore_compression Compression)
 add_library(datastore_compression ${datastore_compression_headers} ${datastore_compression_sources})
 
 if (TARGET ch_contrib::sz3)
-    target_link_libraries (clickhouse_compression PUBLIC ch_contrib::sz3)
+    target_link_libraries (datastore_compression PUBLIC ch_contrib::sz3)
 endif()
 
 add_headers_and_sources(dbms Disks/IO)
@@ -495,7 +495,7 @@ if (USE_PARQUET)
 endif()
 
 if (USE_ARROW)
-    add_object_library(clickhouse_processors_formats_impl_arrow_ipc Processors/Formats/Impl/ArrowIPC)
+    add_object_library(datastore_processors_formats_impl_arrow_ipc Processors/Formats/Impl/ArrowIPC)
 endif()
 
 if (TARGET ch_contrib::nuraft)
@@ -567,7 +567,7 @@ target_link_libraries(datastore_common_io
 )
 
 if (TARGET ch_contrib::libdeflate)
-    target_link_libraries(clickhouse_common_io PUBLIC ch_contrib::libdeflate)
+    target_link_libraries(datastore_common_io PUBLIC ch_contrib::libdeflate)
 endif()
 
 if (TARGET ch_contrib::libfiu)
@@ -575,7 +575,7 @@ if (TARGET ch_contrib::libfiu)
 endif()
 
 if (TARGET ch_contrib::silk_fibers)
-    target_link_libraries(clickhouse_common_io PRIVATE ch_contrib::silk_fibers)
+    target_link_libraries(datastore_common_io PRIVATE ch_contrib::silk_fibers)
 endif()
 
 if (TARGET ch_contrib::cpuid)
@@ -936,9 +936,9 @@ if (ENABLE_TESTS)
         datastore_parsers
         datastore_storages_system
         dbms
-        clickhouse_common_zookeeper_base
-        clickhouse_common_config
-        clickhouse_common_zookeeper
+        datastore_common_zookeeper_base
+        datastore_common_config
+        datastore_common_zookeeper
         # `ConnectionParameters` (exercised by a gtest) pulls in `readpassphrase` for the
         # interactive password prompt, so the unit test executable must link it too.
         readpassphrase)
