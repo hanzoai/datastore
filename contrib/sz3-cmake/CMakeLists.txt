@@ -12,9 +12,9 @@ endif()
 # It must be updated when the library is updated. Refer to contrib/sz3/README.md for that (section #Installation).
 # Turn off ska hash because ska::unordered_map (this is inner hash map) doesn't work with UB sanitizer.
 set(SZ3_USE_SKA_HASH OFF)
-set(SZ3_PROJECT_DIR "${ClickHouse_SOURCE_DIR}/contrib/sz3")
+set(SZ3_PROJECT_DIR "${Datastore_SOURCE_DIR}/contrib/sz3")
 set(SZ3_SOURCE_DIR "${SZ3_PROJECT_DIR}/include")
-set(SZ3_VERSION_DIR "${ClickHouse_SOURCE_DIR}/contrib/sz3-cmake")
+set(SZ3_VERSION_DIR "${Datastore_SOURCE_DIR}/contrib/sz3-cmake")
 
 add_library(_sz3 INTERFACE)
 target_include_directories(_sz3 SYSTEM INTERFACE ${SZ3_SOURCE_DIR})

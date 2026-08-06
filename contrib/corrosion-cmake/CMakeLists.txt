@@ -82,12 +82,12 @@ if (USE_MUSL)
     string(REGEX REPLACE "-isystem [^ ]*musl[^ ]*" "" CMAKE_C_FLAGS_STRIPPED "${CMAKE_C_FLAGS}")
     string(REGEX REPLACE "-isystem [^ ]*musl[^ ]*" "" CMAKE_CXX_FLAGS_STRIPPED "${CMAKE_CXX_FLAGS}")
 
-    set(MUSL_STUB_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/musl-cmake/include")
-    set(MUSL_GENERATED_DIR "${ClickHouse_BINARY_DIR}/contrib/musl-cmake/include")
-    set(MUSL_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/musl/include")
-    set(MUSL_ARCH_DIR "${ClickHouse_SOURCE_DIR}/contrib/musl/arch/${MUSL_ARCH}")
-    set(MUSL_GENERIC_DIR "${ClickHouse_SOURCE_DIR}/contrib/musl/arch/generic")
-    set(MUSL_KERNEL_HEADERS_DIR "${ClickHouse_BINARY_DIR}/contrib/musl-cmake/kernel-headers")
+    set(MUSL_STUB_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/musl-cmake/include")
+    set(MUSL_GENERATED_DIR "${Datastore_BINARY_DIR}/contrib/musl-cmake/include")
+    set(MUSL_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/musl/include")
+    set(MUSL_ARCH_DIR "${Datastore_SOURCE_DIR}/contrib/musl/arch/${MUSL_ARCH}")
+    set(MUSL_GENERIC_DIR "${Datastore_SOURCE_DIR}/contrib/musl/arch/generic")
+    set(MUSL_KERNEL_HEADERS_DIR "${Datastore_BINARY_DIR}/contrib/musl-cmake/kernel-headers")
 
     # The regex above strips every "-isystem ...musl..." entry, so we must reconstruct the full
     # musl header surface that cmake/linux/toolchain-*-musl.cmake puts into CMAKE_*_FLAGS via
