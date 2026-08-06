@@ -47,7 +47,7 @@ if (USE_MUSL)
     add_dependencies(unwind musl-headers)
     # The arch dirs are not in the toolchain flags to avoid include order issues in musl's own build.
     target_include_directories(unwind SYSTEM BEFORE PRIVATE
-        "${ClickHouse_SOURCE_DIR}/contrib/musl/arch/${MUSL_ARCH}"
-        "${ClickHouse_SOURCE_DIR}/contrib/musl/arch/generic"
+        "${Datastore_SOURCE_DIR}/contrib/musl/arch/${MUSL_ARCH}"
+        "${Datastore_SOURCE_DIR}/contrib/musl/arch/generic"
     )
 endif()

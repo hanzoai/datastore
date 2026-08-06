@@ -5,8 +5,8 @@ if (NOT ENABLE_SIMDUTF)
     return()
 endif()
 
-set(SIMDUTF_INCLUDE_DIR "${ClickHouse_SOURCE_DIR}/contrib/simdutf/include")
-set(SIMDUTF_SRC_DIR "${ClickHouse_SOURCE_DIR}/contrib/simdutf/src")
+set(SIMDUTF_INCLUDE_DIR "${Datastore_SOURCE_DIR}/contrib/simdutf/include")
+set(SIMDUTF_SRC_DIR "${Datastore_SOURCE_DIR}/contrib/simdutf/src")
 set(SIMDUTF_SRC "${SIMDUTF_SRC_DIR}/simdutf.cpp")
 
 add_library(_simdutf ${SIMDUTF_SRC})

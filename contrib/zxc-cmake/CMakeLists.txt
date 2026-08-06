@@ -8,7 +8,7 @@
 # of zxc's build that matter: the per-ISA "variant" objects plus the scalar
 # core, combined into a single static library.
 
-set(LIBRARY_DIR "${ClickHouse_SOURCE_DIR}/contrib/zxc")
+set(LIBRARY_DIR "${Datastore_SOURCE_DIR}/contrib/zxc")
 set(SRC_DIR "${LIBRARY_DIR}/src/lib")
 
 set(ZXC_INCLUDE_DIRS

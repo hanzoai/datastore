@@ -1,4 +1,4 @@
-set(MUSL_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/musl")
+set(MUSL_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/musl")
 
 # MUSL_ARCH is musl's name for the target architecture (the arch/<MUSL_ARCH>
 # directory in the musl sources), set by cmake/linux/toolchain-*-musl.cmake.

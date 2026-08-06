@@ -925,7 +925,7 @@ if (ENABLE_TESTS)
     )
 
     target_compile_definitions(unit_tests_dbms PRIVATE
-        CLICKHOUSE_TESTS_CONFIG_DIR="${ClickHouse_SOURCE_DIR}/tests/config"
+        CLICKHOUSE_TESTS_CONFIG_DIR="${Datastore_SOURCE_DIR}/tests/config"
     )
 
     target_link_libraries(unit_tests_dbms PRIVATE

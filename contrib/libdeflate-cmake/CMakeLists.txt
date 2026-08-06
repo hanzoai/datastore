@@ -5,7 +5,7 @@ if (NOT ENABLE_LIBDEFLATE)
     return()
 endif()
 
-set(LIBDEFLATE_SOURCE_DIR "${ClickHouse_SOURCE_DIR}/contrib/libdeflate")
+set(LIBDEFLATE_SOURCE_DIR "${Datastore_SOURCE_DIR}/contrib/libdeflate")
 
 # Architecture-specific code is pulled in via headers from these translation units, so the same
 # source list builds on every target; the per-arch cpu_features.c files compile to nothing on a
