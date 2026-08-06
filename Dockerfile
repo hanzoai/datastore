@@ -101,11 +101,32 @@ RUN git config --global --add safe.directory /src \
 # else stays default ON so the image we ship has the same capability surface the
 # .deb would have: dropping ENABLE_DATASTORE_ALL would silently remove keeper,
 # which a deployment can depend on and which no error message would explain.
+#
+# COMPILER_CACHE=disabled, because a missing ccache is a hard FATAL_ERROR here,
+# not a warning: FAIL_ON_UNSUPPORTED_OPTIONS_COMBINATION defaults ON, which makes
+# RECONFIGURE_MESSAGE_LEVEL fatal, and cmake/ccache.cmake takes that path when it
+# finds neither ccache nor sccache. `disabled` is the honest statement rather than
+# apt-installing one: nothing in this Dockerfile or in hanzoai/ci mounts a cache,
+# so a compiler cache would start cold on every run and cache nothing for the next.
+# Install one only together with a cache mount that outlives the layer.
+#
+# PARALLEL_*_JOBS, because cmake/limit_jobs.cmake sizes them with
+# cmake_host_system_information, which reports the NODE and not this container's
+# cgroup. On the runner fleet that reads 64311 MB / 8 cores while the pod is
+# capped at 26 GiB / 6 CPU, so it derives 64311/MAX_LINKER_MEMORY(5000) = 12 link
+# jobs, clamps to 8 cores, and runs 8 concurrent links budgeted at 40 GB inside a
+# 26 GiB pod. That dies as SIGKILL with no Kubernetes OOM event — the kill happens
+# inside the pod's own dockerd, so the kubelet never records it and the build log
+# simply stops. 6 compiles (the CPU limit; more only earns CFS throttling) plus 1
+# link is 6*2500 + 5000 = 20 GB, which fits with headroom.
 RUN cmake -S /src -B /build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=clang-${LLVM_VERSION} \
         -DCMAKE_CXX_COMPILER=clang++-${LLVM_VERSION} \
         -DENABLE_TESTS=0 \
+        -DCOMPILER_CACHE=disabled \
+        -DPARALLEL_COMPILE_JOBS=6 \
+        -DPARALLEL_LINK_JOBS=1 \
     && ninja -C /build datastore \
     && llvm-strip-${LLVM_VERSION} /build/programs/datastore
 
