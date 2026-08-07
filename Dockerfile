@@ -115,34 +115,42 @@ RUN git config --global --add safe.directory /src \
 # cgroup. On the runner fleet that reads 64311 MB / 8 cores while the pod is
 # capped at 26 GiB / 6 CPU, so it derives 64311/MAX_LINKER_MEMORY(5000) = 12 link
 # jobs, clamps to 8 cores, and runs 8 concurrent links budgeted at 40 GB inside a
-# 26 GiB pod. That dies as SIGKILL with no Kubernetes OOM event — the kill happens
-# inside the pod's own dockerd, so the kubelet never records it and the build log
-# simply stops. That is exactly how it presented: the log ended mid-line on
-# [11637/15284] with no error, no FAILED:, no "ninja: build stopped", while the
-# runner pod itself showed restarts=0 and an empty lastState.
+# 26 GiB pod, so both are pinned here rather than derived.
 #
-# COMPILE_JOBS is 3 and not the 6 CPU limit, and the difference is measured
-# rather than modelled. limit_jobs.cmake budgets MAX_COMPILER_MEMORY=2500 per
-# compile, so 6 jobs should have peaked near 15 GB and fit easily. It died anyway,
-# and it died in Functions/FunctionsConversion_impl*.cpp — the cluster upstream
-# had to split into impl00..impl27 precisely because one translation unit could
-# not be built. 2500 is an average across ~15k targets and those TUs are the tail
-# it does not describe: 6 concurrent ones exhausted 26 GiB, so each must exceed
-# ~3.9 GB. 3 jobs holds even if the true peak is 7 GB apiece. Half the cores idle
-# during that stretch is the price of the build finishing at all; a run that dies
-# at 75% has already spent three hours to buy nothing.
+# COMPILE_JOBS is 6, the pod's CPU limit. It was briefly 3, on a wrong reading of
+# a failure that looked like memory and was not — recorded because the wrong
+# answer is the instructive one. Run #7 at 6 jobs stopped mid-line on
+# [11637/15284] with no error and no FAILED:, and the runner pod showed
+# restarts=0 with an empty lastState, which is the signature of a kill inside the
+# pod's own dockerd that the kubelet never sees. It died in
+# FunctionsConversion_impl*.cpp, the cluster upstream split into impl00..impl27
+# because one TU would not build, so "6 concurrent heavy TUs blew the cgroup" fit
+# the evidence. It was wrong. Run #8 at 3 jobs died the same silent way but
+# EARLIER, at [9688/15284], in rocksdb TUs that are not memory-hungry at all.
 #
-# The durable fix is not a smaller number here. git-runner is 20 replicas packed
-# 10-per-node, each requesting 4Gi but limited to 26Gi — 260Gi of limit on a
-# 62.8 GiB box. Raising this pod's limit would only move the kill to the node,
-# where it is equally invisible. Right-sizing that fleet is a platform change.
+# What the two runs share is not a target or a translation unit, it is a clock:
+# 190.5 and 193.5 minutes. That is act_runner's 3h job timeout plus teardown
+# (git-runner-config: "runner.timeout allows 3h"). A timeout kills the container
+# and truncates the log exactly like an OOM does, which is why the shape is
+# indistinguishable without comparing wall time across runs. Halving parallelism
+# only bought less work per unit of the same fixed budget.
+#
+# THIS BUILD CANNOT FIT THAT BUDGET, and no value on the line below changes it.
+# At 6 jobs ninja reached 76% in 173.6 min, so a full build needs ~228 min plus
+# ~17 min of preamble = ~245 min against a 180 min cap: 1.36x over, a 65 minute
+# shortfall, on a pod capped at 6 CPU. A BuildKit cache mount to resume across
+# runs does not rescue it either — run #7 and run #8 landed on git-runner-6 and
+# git-runner-18, and each runner has its own dockerd, so a cached /build is a
+# 1-in-20 coincidence rather than a mechanism. Closing this needs a longer job
+# timeout or a larger dedicated runner, which is a platform decision and is
+# written down here instead of being papered over with smaller job counts.
 RUN cmake -S /src -B /build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=clang-${LLVM_VERSION} \
         -DCMAKE_CXX_COMPILER=clang++-${LLVM_VERSION} \
         -DENABLE_TESTS=0 \
         -DCOMPILER_CACHE=disabled \
-        -DPARALLEL_COMPILE_JOBS=3 \
+        -DPARALLEL_COMPILE_JOBS=6 \
         -DPARALLEL_LINK_JOBS=1 \
     && ninja -C /build datastore \
     && llvm-strip-${LLVM_VERSION} /build/programs/datastore
