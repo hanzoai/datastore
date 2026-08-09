@@ -369,3 +369,102 @@ services speak the **envelope** wire, and there is no C++ envelope runtime (zapg
 Honest cost: demo-grade first cut 8-15 engineer-days; parity with the deleted gRPC transport
 +30-60; actually wire-compatible with the Go services +20-40 and needs a C++ runtime nobody has
 written yet.
+
+## The from-source build fails on a macro the rename half-renamed
+
+`CMakeLists.txt` sets `DATASTORE_CLOUD` and `src/Common/config.h.in` emits it as
+`#cmakedefine01 DATASTORE_CLOUD`, so that is the only spelling that reaches the preprocessor.
+Eighteen `#if` sites in `src/` still read `CLICKHOUSE_CLOUD`, which is defined nowhere. This tree
+builds with `-Werror,-Wundef`, so an undefined macro in `#if` is a hard error, not a false branch.
+
+The trap is *when* it lands. Ninja reaches `Storages/` about two hours in, so the failure looks
+like the build died of exhaustion — and it was twice answered as memory (compile jobs 6 → 3) and
+once as a timeout. It is neither. Read the log for `is not defined, evaluates to 0` before you
+believe any resource theory.
+
+The definition side of the rename was already complete — CMake variable, config template and the
+contrib guards all say `DATASTORE_CLOUD`. Only the reads were missed.
+
+Check the whole class in one pass, because each miss costs a two-hour round trip:
+
+    git grep -hoE '#\s*(if|ifdef|ifndef|elif)[^/]*\b(CLICKHOUSE|HANZO)_[A-Z_]+' -- src/ programs/ base/ utils/
+    comm -23 <(git grep -hoE '#\s*(if|elif)[^/]*\bDATASTORE_[A-Z_]+' -- src/ | grep -oE 'DATASTORE_[A-Z_]+' | sort -u) \
+             <(grep -oE 'DATASTORE_[A-Z_]+' src/Common/config.h.in | sort -u)
+
+Both must come back empty.
+
+## The published 26.2.3.2 image was never built from this source
+
+`Dockerfile.hanzo` at the revision the live image carries (`8adc31826d42`) downloads upstream
+release tarballs and then runs `mv /usr/bin/clickhouse /usr/bin/hanzo-datastore`, copies
+`hanzo-paths.xml` (which is what resolves `path` to `/var/lib/hanzo-datastore/`), a port override
+that moves the engine to 8124, and `nginx-header-proxy.conf`. The binary is upstream ClickHouse.
+
+Two consequences worth holding onto. The engine emits `X-ClickHouse-*` because it *is* upstream —
+nginx was baked into the image from the beginning, not bolted on later. And there is no
+source-level rename on the 26.2 line to port forward: "put the rename on the same 26.2 base" is not
+a cherry-pick, it is a new from-source image. `origin/26.2` and `v26.2.3.2-stable` are pristine
+upstream, and `main` is not a descendant of either (43,008 commits of divergence).
+
+That build is feasible — 26.2 wants clang 21, the same floor `main` compiles under, and the
+from-source `Dockerfile` already takes the Rust nightly as an ARG (26.2 wants
+`nightly-2025-07-07`). What it needs decided first is the tag: `imgver` publishes
+`max(declared, published)`, which assumes one monotonic lineage and cannot express a 26.2-lineage
+image once 26.7 is published.
+
+## Config that lives in git is not config the cluster has
+
+The runner job ceiling is `timeout:` in `infra/k8s/git-runner/config.yaml` in `hanzoai/universe`.
+Two independent gaps sit between committing it and a build benefiting from it.
+
+The universe CD Application is deliberately **non-enforcing** — no `syncPolicy.automated` — so a
+commit changes nothing on its own; it reports `OutOfSync` and waits. Reconcile the one directory
+with `kubectl diff -k infra/k8s/git-runner` then `apply -k`, which moves the cluster toward git
+rather than away from it.
+
+Then act_runner reads its config **once at boot**. The ConfigMap is a volume mount, so the file
+updates inside every running pod within about a minute — checking the file in a pod therefore
+proves nothing. Only a pod that booted after the apply is actually running the new ceiling. Cycle
+the StatefulSet and verify against `.status.updatedReplicas`, not pod age.
+
+## Talking to the forge
+
+`git.hanzo.ai` serves only the git wire from outside; its API is not exposed there. Port-forward
+`svc/hanzo-git` and use **`/v1/`** — not `/api/v1/`, which 404s. Basic auth with the same
+credentials that push works. Useful paths: `/v1/repos/hanzoai/datastore/actions/tasks?limit=N`,
+`.../actions/runs/<run>/jobs`, and `/v1/repos/hanzoai/datastore/actions/jobs/<job>/logs` — note the
+log endpoint takes a *job* id and only one of a run's two job rows serves logs; the other 404s.
+
+The repo is **not a mirror any more** (`"mirror": false`), whatever `.hanzo/workflows/cicd.yml`
+says about mirror-sync. Push to it directly to trigger CI. Because the workflow sets
+`cancel-in-progress: true` on `main`, a second push cancels the build the first one started — batch
+your commits, and do not push docs while a build you want is running.
+
+## An image-only tag swap starts green and reads nothing
+
+The live StatefulSet sets **no `command` and no `args`**, so the image's own ENTRYPOINT decides
+everything. That makes the image, not the manifest, the thing holding the contract — and the
+from-source image does not hold the same one the running image does.
+
+    live (Dockerfile.hanzo)        from-source (Dockerfile)
+    /usr/bin/hanzo-datastore       /usr/bin/datastore
+    /etc/hanzo-datastore-server/   /etc/datastore-server/
+    /var/lib/hanzo-datastore/      /var/lib/datastore/   (config.xml:556)
+
+Every one of those is where the cluster has something mounted: the 200Gi PVC at
+`/var/lib/hanzo-datastore`, and the whole universe `config.d` set — including `paths.xml`, which is
+what actually resolves `path`, and which no image bakes — at `/etc/hanzo-datastore-server/config.d/`.
+
+So a tag swap does not fail. `entrypoint.sh` defaults `DATASTORE_CONFIG` to
+`/etc/datastore-server/config.xml`, a directory where none of those overlays are mounted, reads
+`path` from the compiled default, and initializes an **empty database on the container's ephemeral
+layer**. `/ping` answers 200, both probes pass, and the pod reports 1/1. The parts are still on the
+PVC, untouched — the engine simply never looks at them. Reverting the tag brings them back; writes
+taken during the window are gone.
+
+Worth being precise about the order of the two doors. Until the contract is aligned the new engine
+never touches the existing data directory, so it cannot rewrite a part — the part-format door is
+not even open yet. Align the paths and it opens on the first merge, and from there the way back is
+a volume snapshot rather than a tag revert. A migration therefore needs *both*, in one reviewed
+change: the contract (binary, config dir, path) and a snapshot taken before the engine is first
+pointed at real data.
