@@ -451,7 +451,7 @@ bool IcebergMetadata::optimize(
     [[maybe_unused]] ContextPtr context,
     [[maybe_unused]] const std::optional<FormatSettings> & format_settings)
 {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (!compaction_enabled)
         throw Exception(
             ErrorCodes::BAD_ARGUMENTS, "Enable `allow_experimental_iceberg_compaction` setting to call OPTIMIZE for Iceberg tables.");

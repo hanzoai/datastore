@@ -5397,7 +5397,7 @@ Strings ReadFromMergeTree::getShardsForDistributedRead() const
 bool ReadFromMergeTree::supportsBucketedRead() const
 {
     bool unsupported_deferred_filters = deferred_row_level_filter || deferred_prewhere_info;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// Deferred FINAL filters are reapplied after the merge only by the shared-storage stateless-worker
     /// read, which ships them explicitly. The replica path and the non-shared full-replica fallback would
     /// apply them before FINAL, so a deferred-FINAL read can be bucketed only on the shared-storage worker.

@@ -1106,7 +1106,7 @@ RangesInDataParts MergeTreeDataSelectExecutor::filterPartsByPrimaryKeyAndSkipInd
             {
                 CurrentMetrics::Increment metric(CurrentMetrics::FilteringMarksWithSecondaryKeys);
                 auto alter_conversions = MergeTreeData::getAlterConversionsForPart(ranges.data_part, mutations_snapshot, context
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
                     , context->getAccess()->getEnabledMaskingPolicies()
 #endif
                 );

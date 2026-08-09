@@ -36,7 +36,7 @@
 #include <Common/FieldVisitorDump.h>
 #include <Common/Logger.h>
 
-#if USE_AVRO && !CLICKHOUSE_CLOUD
+#if USE_AVRO && !DATASTORE_CLOUD
 
 namespace DB::ErrorCodes
 {

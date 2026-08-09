@@ -30,7 +30,7 @@
 
 #include <Parsers/ASTCreateResourceQuery.h>
 #if ENABLE_DISTRIBUTED_CACHE
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <DistributedCache/Utils.h>
 #endif
 #endif

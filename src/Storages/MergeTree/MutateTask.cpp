@@ -3298,7 +3298,7 @@ bool MutateTask::prepare()
 
     auto mutations_snapshot = ctx->data->getMutationsSnapshot(params);
     auto alter_conversions = MergeTreeData::getAlterConversionsForPart(ctx->source_part, mutations_snapshot, ctx->context
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         , nullptr
 #endif
     );

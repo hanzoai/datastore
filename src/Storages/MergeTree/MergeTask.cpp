@@ -861,7 +861,7 @@ bool MergeTask::ExecuteAndFinalizeHorizontalPart::prepare() const
         }
 
         global_ctx->alter_conversions.push_back(MergeTreeData::getAlterConversionsForPart(part, mutations_snapshot, global_ctx->context
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
             , nullptr
 #endif
             ));

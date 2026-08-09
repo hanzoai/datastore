@@ -11,7 +11,7 @@
 #include <Common/threadPoolCallbackRunner.h>
 
 #include <Access/AccessControl.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Access/ContextAccess.h>
 #include <Access/EnabledMaskingPolicies.h>
 #include <Access/MaskingPolicy.h>
@@ -6580,7 +6580,7 @@ MergeTreeData::getColumnDefaultnessStatsUnavailableReason(ContextPtr query_conte
 
 bool MergeTreeData::hasEnabledMaskingPolicies(const ContextPtr & query_context) const
 {
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     auto storage_id = getStorageID();
     if (!storage_id.hasDatabase())
         return false;
@@ -11173,7 +11173,7 @@ AlterConversionsPtr MergeTreeData::getAlterConversionsForPart(
     const MergeTreeDataPartPtr & part,
     const MutationsSnapshotPtr & mutations,
     const ContextPtr & query_context
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     , const EnabledMaskingPoliciesPtr & enabled_masking_policies
 #endif
     )
@@ -11183,7 +11183,7 @@ AlterConversionsPtr MergeTreeData::getAlterConversionsForPart(
     PatchPartsForReader patches_for_reader;
 
     /// Apply masking policies to the part
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     if (enabled_masking_policies)
     {
         auto alter_commands = enabled_masking_policies->getAlterCommands(
