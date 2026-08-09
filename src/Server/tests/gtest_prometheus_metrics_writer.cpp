@@ -49,12 +49,12 @@ TEST(PrometheusMetricsWriter, HistogramEscapesLabelValues)
     }
 
     static constexpr const char * expected =
-        "# HELP ClickHouseHistogramMetrics_test_histogram_escaped_labels_gtest Test histogram\n"
-        "# TYPE ClickHouseHistogramMetrics_test_histogram_escaped_labels_gtest histogram\n"
-        "ClickHouseHistogramMetrics_test_histogram_escaped_labels_gtest_bucket{database=\"db\\\"1\",table=\"users\\\\active\\nall\",le=\"1\"} 1\n"
-        "ClickHouseHistogramMetrics_test_histogram_escaped_labels_gtest_bucket{database=\"db\\\"1\",table=\"users\\\\active\\nall\",le=\"+Inf\"} 1\n"
-        "ClickHouseHistogramMetrics_test_histogram_escaped_labels_gtest_count{database=\"db\\\"1\",table=\"users\\\\active\\nall\"} 1\n"
-        "ClickHouseHistogramMetrics_test_histogram_escaped_labels_gtest_sum{database=\"db\\\"1\",table=\"users\\\\active\\nall\"} 0\n";
+        "# HELP DatastoreHistogramMetrics_test_histogram_escaped_labels_gtest Test histogram\n"
+        "# TYPE DatastoreHistogramMetrics_test_histogram_escaped_labels_gtest histogram\n"
+        "DatastoreHistogramMetrics_test_histogram_escaped_labels_gtest_bucket{database=\"db\\\"1\",table=\"users\\\\active\\nall\",le=\"1\"} 1\n"
+        "DatastoreHistogramMetrics_test_histogram_escaped_labels_gtest_bucket{database=\"db\\\"1\",table=\"users\\\\active\\nall\",le=\"+Inf\"} 1\n"
+        "DatastoreHistogramMetrics_test_histogram_escaped_labels_gtest_count{database=\"db\\\"1\",table=\"users\\\\active\\nall\"} 1\n"
+        "DatastoreHistogramMetrics_test_histogram_escaped_labels_gtest_sum{database=\"db\\\"1\",table=\"users\\\\active\\nall\"} 0\n";
 
     EXPECT_EQ(expected, output);
 }
@@ -94,9 +94,9 @@ TEST(PrometheusMetricsWriter, DimensionalEscapesLabelValues)
     }
 
     static constexpr const char * expected =
-        "# HELP ClickHouseDimensionalMetrics_test_dimensional_escaped_labels_gtest Test dimensional metrics\n"
-        "# TYPE ClickHouseDimensionalMetrics_test_dimensional_escaped_labels_gtest gauge\n"
-        "ClickHouseDimensionalMetrics_test_dimensional_escaped_labels_gtest{database=\"db\\\"1\",table=\"users\\\\active\\nall\"} 42\n";
+        "# HELP DatastoreDimensionalMetrics_test_dimensional_escaped_labels_gtest Test dimensional metrics\n"
+        "# TYPE DatastoreDimensionalMetrics_test_dimensional_escaped_labels_gtest gauge\n"
+        "DatastoreDimensionalMetrics_test_dimensional_escaped_labels_gtest{database=\"db\\\"1\",table=\"users\\\\active\\nall\"} 42\n";
 
     EXPECT_EQ(expected, output);
 }
@@ -120,9 +120,9 @@ TEST(PrometheusMetricsWriter, DimensionalCounter)
     }
 
     static constexpr const char * expected =
-        "# HELP ClickHouseDimensionalMetrics_test_dimensional_counter_gtest Test dimensional counter\n"
-        "# TYPE ClickHouseDimensionalMetrics_test_dimensional_counter_gtest counter\n"
-        "ClickHouseDimensionalMetrics_test_dimensional_counter_gtest{database=\"db1\",table=\"users\"} 42\n";
+        "# HELP DatastoreDimensionalMetrics_test_dimensional_counter_gtest Test dimensional counter\n"
+        "# TYPE DatastoreDimensionalMetrics_test_dimensional_counter_gtest counter\n"
+        "DatastoreDimensionalMetrics_test_dimensional_counter_gtest{database=\"db1\",table=\"users\"} 42\n";
 
     EXPECT_EQ(expected, output);
 }

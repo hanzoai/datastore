@@ -34,7 +34,6 @@ namespace DB
     M(BACKUP_WORKER, "BackupWorker") \
     M(CACHE_DICTIONARY_UPDATE_QUEUE, "UpdQueue") \
     M(CGROUP_MEMORY_OBSERVER, "CgrpMemUsgObsr") \
-    M(DATASTORE_WATCH, "DatastoreWatch") \
     M(CLUSTER_DISCOVERY, "ClusterDiscover") \
     M(COMPLETED_PIPELINE_EXECUTOR, "QueryCompPipeEx") \
     M(CONFIG_RELOADER, "ConfigReloader") \
@@ -45,6 +44,7 @@ namespace DB
     M(DATABASE_REPLICAS, "DBReplicas") \
     M(DATALAKE_REST_CATALOG, "RestCatalog") \
     M(DATALAKE_TABLE_SNAPSHOT, "TableSnapshot") \
+    M(DATASTORE_WATCH, "DatastoreWatch") \
     M(DDL_WORKER, "DDLWorker") \
     M(DDL_WORKER_CLEANUP, "DDLWorkerClnup") \
     M(DDL_WORKER_EXECUTER, "DDLWorkerExec") \

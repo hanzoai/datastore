@@ -50,7 +50,7 @@ void DiskLocalCheckThread::run()
 {
     try
     {
-        const String path = fmt::format("clickhouse_disk_checker_{}", toString(DB::ServerUUID::get()));
+        const String path = fmt::format("datastore_disk_checker_{}", toString(DB::ServerUUID::get()));
         disk->checkAccessImpl(path);
         check_period.rotateToMin();
     }

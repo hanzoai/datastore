@@ -424,12 +424,12 @@ enum class FwhtKernel
     Neon,
 };
 
-/// Read the kernel choice once from CLICKHOUSE_RHT_KERNEL (default: NEON on AArch64).
+/// Read the kernel choice once from DATASTORE_RHT_KERNEL (default: NEON on AArch64).
 inline FwhtKernel selectKernel()
 {
     static const FwhtKernel kernel = []
     {
-        if (const char * env = std::getenv("CLICKHOUSE_RHT_KERNEL"))  /// NOLINT(concurrency-mt-unsafe)
+        if (const char * env = std::getenv("DATASTORE_RHT_KERNEL"))  /// NOLINT(concurrency-mt-unsafe)
         {
             if (std::string_view(env) == "scalar")
                 return FwhtKernel::Scalar;
