@@ -2288,7 +2288,7 @@ async function postImpl(posted_request_num, query)
         response = await fetch(url, { method: "POST", body: query, signal: controller.signal,
             headers: { 'Authorization': 'never' } });
 
-        format = response.headers.get('X-ClickHouse-Format') ?? default_format;
+        format = response.headers.get('X-Datastore-Format') ?? default_format;
 
         if (!response.ok) {
             is_error = true;
