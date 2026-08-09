@@ -242,7 +242,7 @@ TEST(ConvertDictionaryAST, LayoutKeyValueCollectionParameter)
                    "    count UInt64 DEFAULT 0"
                    " )"
                    " PRIMARY KEY ngram"
-                   " SOURCE(CLICKHOUSE(TABLE 'training_data'))"
+                   " SOURCE(DATASTORE(TABLE 'training_data'))"
                    " LAYOUT(NAIVE_BAYES(class_attribute 'class_id' n 1 mode 'token' priors_mode 'explicit' priors [(0, 0.6), (1, 0.4)]))"
                    " LIFETIME(0)";
 
@@ -279,7 +279,7 @@ TEST(ConvertDictionaryAST, LayoutCollectionParameterWithoutDeclaredNames)
                    "    second_column UInt8"
                    " )"
                    " PRIMARY KEY key_column"
-                   " SOURCE(CLICKHOUSE(TABLE 'table_for_dict'))"
+                   " SOURCE(DATASTORE(TABLE 'table_for_dict'))"
                    " LAYOUT(CACHE(size_in_cells [(0, 0.6)]))"
                    " LIFETIME(MIN 1 MAX 10)";
 
@@ -306,7 +306,7 @@ TEST(ConvertDictionaryAST, SourceCollectionParameterRejected)
                    "    second_column UInt8"
                    " )"
                    " PRIMARY KEY key_column"
-                   " SOURCE(CLICKHOUSE(HOST ['localhost', 'localhost2'] TABLE 'table_for_dict'))"
+                   " SOURCE(DATASTORE(HOST ['localhost', 'localhost2'] TABLE 'table_for_dict'))"
                    " LAYOUT(CACHE(size_in_cells 50))"
                    " LIFETIME(MIN 1 MAX 10)";
 

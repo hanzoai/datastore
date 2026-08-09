@@ -25,7 +25,7 @@ struct ParsedRemoteFunctionArguments
 /// storage engines. `args` is the list of argument expressions (may be modified in place during evaluation).
 ///
 /// Lives in `Storages` (the `dbms` library) rather than in `TableFunctions` so that it is available to
-/// `StorageDistributed` without pulling in `clickhouse_table_functions`, which is not linked into every
+/// `StorageDistributed` without pulling in `datastore_table_functions`, which is not linked into every
 /// target that uses `dbms` (e.g. `unit_tests_dbms`).
 ///
 /// `dependent_table_id` is used only when the addresses are given as a named collection: the persistent

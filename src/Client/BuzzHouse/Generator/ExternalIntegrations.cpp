@@ -411,8 +411,8 @@ String MySQLIntegration::truncateStatement()
 
 String MySQLIntegration::truncateSuffix()
 {
-    /// SYNC is ClickHouse-only; plain MySQL does not accept it.
-    return is_clickhouse ? " SYNC" : "";
+    /// SYNC is ours; plain MySQL does not accept it.
+    return is_datastore ? " SYNC" : "";
 }
 
 bool MySQLIntegration::optimizeTableForOracle(const PeerTableDatabase pt, const SQLTable & t)

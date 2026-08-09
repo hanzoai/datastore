@@ -198,7 +198,12 @@ void FileChecker::load()
     }
     JSON json(out.str());
 
-    JSON files = json.has("datastore") ? json["datastore"] : json["yandex"];
+    /// Three names for the same object, because three eras wrote this file. `ConfigProcessor`
+    /// accepts the same three for the config root; a reader that knows fewer names than the
+    /// writers used does not fail, it silently reports an empty file list.
+    JSON files = json.has("datastore") ? json["datastore"]
+        : json.has("clickhouse") ? json["clickhouse"]
+        : json["yandex"];
     for (const JSON file : files) // NOLINT
         map[unescapeForFileName(file.getName())] = file.getValue()["size"].toUInt();
 }

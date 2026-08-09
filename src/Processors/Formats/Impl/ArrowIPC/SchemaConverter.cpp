@@ -1161,7 +1161,7 @@ DataTypePtr fieldToCHType(
     }
 
     if (!result)
-        throw Exception(ErrorCodes::UNKNOWN_TYPE, "Could not map Arrow field '{}' to a ClickHouse type", field.name);
+        throw Exception(ErrorCodes::UNKNOWN_TYPE, "Could not map Arrow field '{}' to a Datastore type", field.name);
 
     if (make_nullable && result->canBeInsideNullable())
     {
