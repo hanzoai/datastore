@@ -271,3 +271,101 @@ Per the rule "If cmake configure fails after deletion, revert that group and rep
 ## Related
 
 - Used by: `hanzo/insights` (insights-datastore deployment in `~/work/hanzo/universe/infra/k8s/insights/`)
+
+## Operating this thing (2026-08-09, learned the hard way)
+
+**There is no client binary.** Ours is named ours, so `clickhouse-client` does not exist in the
+pod. Query it over HTTP from an `insights-web` pod:
+
+    http://datastore:8123/?query=<urlencoded>&user=$DATASTORE_USER&password=$DATASTORE_PASSWORD
+
+**Logs are NOT on the PVC.** Only `/var/lib/hanzo-datastore` is persisted; the server logs to
+`/var/log/hanzo-datastore-server/` on the container filesystem, so a crashing container takes its
+error log with it and `kubectl logs` shows only the pre-logger startup lines. To see a startup
+failure, run a throwaway pod with the same image and configmap plus
+`<logger><console>1</console></logger>` — that is the only way to read the real exception.
+
+**Two config faults that make it refuse to start**, both found in production
+(`universe/charts/app/values/hanzo/datastore.yaml`, Helm-managed — a `kubectl` edit to the
+ConfigMap IS reverted by GitOps within about a minute):
+
+- **`--` is illegal inside an XML comment.** Prose explaining a previous outage used it six times
+  across `log-retention.xml` and `memory.xml`; the server dies with `SAXParseException: Invalid
+  token`. The running process holds its config in memory, so this stays invisible until a restart.
+  Validate every embedded document parses before pushing.
+- **`background_pool_size` below the mutation threshold.** Setting it to 4 makes the server exit 36:
+  `number_of_free_entries_in_pool_to_execute_mutation` defaults to 20 and must be LOWER than the
+  pool. It also starves the merges you need most.
+
+**The memory death spiral.** `datastore-0` wedged above its own `max_server_memory_usage`
+(10.80 GiB of a 12Gi limit) and refused EVERY query including `SELECT 1`, so all analytics failed
+while the site still served 200. Mechanism: merges need memory → memory exhausted → merges stall →
+parts accumulate → per-part metadata consumes more memory. `event.metric_30m` reached ~126k of
+~126.7k total active parts. The tiny parts were the SYMPTOM, not a bad writer — recent parts were
+~4,600 rows each. A restart clears it and it drains on its own (~2.4 parts/sec, memory falling).
+Reducing the merge pool makes it worse, not better. The node has no headroom: memory limits at
+161% overcommit, 12Gi limit against ~13.6Gi allocatable, so raising it in place is not available.
+
+**Migrations.** `migrate_datastore --check` failing is not always about migrations — it fails the
+same way when the server is unreachable or wedged, so read the error before concluding. As of
+2026-08-09 there were 83 genuinely unapplied migrations (last applied `0223_event_name_backmap`),
+several of them materializations over a 15.5 GiB table; drain the parts backlog first and classify
+additive-vs-destructive before applying.
+
+## The headers are translated by nginx, not emitted by the engine
+
+There is an **nginx header-translation proxy inside the container** (`Server: nginx`, master + 2
+workers on 8123, engine demoted to 8124). It rewrites response headers from the engine's spelling
+to ours. So seeing `X-Datastore-*` on the wire is NOT evidence that a renamed binary shipped — it
+translated five and missed three, which is where `x-clickhouse-exception-tag` came from. The
+translation is complete now (zero `x-clickhouse-*`, error path included), but `Server: nginx`
+remains because stock nginx cannot rename that header. It goes away when the proxy does.
+
+**No published image contains the rename.** The newest revision-labelled build is 2026-03-11; the
+rename commits are 2026-06-21. Every March revision is unreachable — a later re-import of the
+overlay orphaned that history. `26.6.1.1`/`26.6` carry no revision label and are a laptop
+hand-build (arm64, `/etc/datastore-server` paths, `single_binary_location_url=localhost:8899`);
+do not pin them. The fast rebuild path is dead (`pkg.hanzo.ai` is now an npm proxy, tarball 404s),
+so a from-source build is the only route: ~245 min against a runner ceiling that was 3h and is now
+6h. Two earlier runs died at 190.5 and 193.5 min and were misread as OOM — they were the ceiling.
+**26.2 → 26.7 is a one-way door** (data path AND part format); treat it as a reviewed migration.
+
+## subPath mounts do not refresh — and a missing key blocks startup
+
+A ConfigMap key deleted while a `subPath` mount still names it makes the next pod stop at
+ContainerCreating. It is invisible until something restarts the pod, because subPath mounts never
+refresh. This nearly bit us: `f2ec4616c` removed the `paths.xml` key and left the mount. If you
+delete a config key, delete its mount in the same change.
+
+## Two real bugs the rename left, worth knowing the shape of
+
+- `src/Client/BuzzHouse/Generator/ExternalIntegrations.cpp` read `is_clickhouse`, a member that
+  exists nowhere (it is `is_datastore` three lines away). It compiles only because
+  `ENABLE_BUZZHOUSE` is off — turning it on does not build.
+- `src/Common/FileChecker.cpp` wrote `{"datastore": …}` but read only `datastore`/`yandex`. A
+  directory written by a build that said `clickhouse` reads back as an **empty file list** — no
+  error, just a checker that believes the table has no data.
+
+## The rename crossed the contract line in places, and those are breaking now
+
+Renaming a name is safe; renaming a contract is not. Already throwing or broken:
+`SET dialect='clickhouse'`; the dictionary source registers only as `datastore`, so
+`SOURCE(CLICKHOUSE(…))` and `<source><clickhouse>` throw (48 examples in `FunctionDocumentation`
+are now invalid SQL and are served through `system.functions`); Prometheus metric prefixes are
+`Datastore*`, so any dashboard matching `ClickHouse*` is broken; the SSH-signature namespace is
+`datastore`, so SSH-key auth will not interop with upstream clients. Decide these deliberately —
+aliases are cheap where interop matters.
+
+## ZAP is present but is a port-opener, not a transport
+
+`contrib/zap` (debranded Cap'n Proto) and `src/Server/ZapServer.{h,cpp}` (181 lines) exist, but the
+server serves a **null bootstrap capability** — no schema, no method, no SQL — and is compiled out
+(`USE_ZAP=0`, submodule empty). The `ProtocolServerAdapter` plumbing is done (~70 lines); that was
+never the expensive half. For scale: the gRPC server deleted to make room was 2,023 lines plus a
+227-line schema.
+
+The decisive constraint: this stub speaks **capnp-family** RPC, while `hanzoai/s3` and the Hanzo Go
+services speak the **envelope** wire, and there is no C++ envelope runtime (zapgen emits Go only).
+Honest cost: demo-grade first cut 8-15 engineer-days; parity with the deleted gRPC transport
++30-60; actually wire-compatible with the Go services +20-40 and needs a C++ runtime nobody has
+written yet.
