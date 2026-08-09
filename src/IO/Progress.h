@@ -124,8 +124,8 @@ struct Progress
 
     enum class DisplayMode
     {
-        Verbose,  // Display zero values. Needed for X-ClickHouse-Summary
-        Minimal   // Do not write zero values. Needed to send less data for frequent progress updates (X-ClickHouse-Progress)
+        Verbose,  // Display zero values. Needed for X-Datastore-Summary
+        Minimal   // Do not write zero values. Needed to send less data for frequent progress updates (X-Datastore-Progress)
     };
 
     /// Progress in JSON format (single line, without whitespaces) is used in HTTP headers.

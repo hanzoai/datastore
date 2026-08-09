@@ -150,7 +150,7 @@
         </header>
         <header>
             <name>Access-Control-Allow-Headers</name>
-            <value>origin, x-requested-with, x-clickhouse-format, x-clickhouse-user, x-clickhouse-key, Authorization</value>
+            <value>origin, x-requested-with, x-datastore-format, x-datastore-user, x-datastore-key, Authorization</value>
         </header>
         <header>
             <name>Access-Control-Allow-Methods</name>
