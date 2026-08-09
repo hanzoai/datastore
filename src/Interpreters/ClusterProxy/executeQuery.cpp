@@ -22,7 +22,7 @@
 #include <Interpreters/OptimizeShardingKeyRewriteInVisitor.h>
 #include <Interpreters/ProcessList.h>
 #include <Interpreters/getCustomKeyFilterForParallelReplicas.h>
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
 #include <Interpreters/SharedDatabaseCatalog.h>
 #endif
 #include <Parsers/ASTInsertQuery.h>
@@ -627,7 +627,7 @@ static std::vector<bool> getActiveReplicasForParallelReplicas(const ContextPtr &
     const String cluster_name = context->getSettingsRef()[Setting::cluster_for_parallel_replicas];
 
     ReplicasInfo replicas_info;
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
     /// The shared catalog cluster is exposed in `system.clusters` both under its plain name and under the
     /// `all_groups.` prefix, and both report the same `is_active` data - accept either spelling here.
     if (SharedDatabaseCatalog::initialized())

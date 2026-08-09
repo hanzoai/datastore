@@ -1304,7 +1304,7 @@ public:
         const MergeTreeDataPartPtr & part,
         const MutationsSnapshotPtr & mutations,
         const ContextPtr & query_context
-#if CLICKHOUSE_CLOUD
+#if DATASTORE_CLOUD
         , const EnabledMaskingPoliciesPtr & enabled_masking_policies
 #endif
         );
