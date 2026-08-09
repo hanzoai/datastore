@@ -1,0 +1,28 @@
+name: CI/CD
+# The 26.2 line of hanzoai/datastore, on our own runners against git.hanzo.ai.
+# Everything real lives in the repo-root hanzo.yml — one image, built from source,
+# published to ghcr.io/hanzoai/datastore-26.2. No deploy block: the live
+# StatefulSet is a reviewed tag pin in hanzoai/universe, not a rollout.
+#
+# Upstream's .github/workflows is deleted on this branch, as it is on main. The
+# forge reads BOTH .hanzo/workflows and .github/workflows
+# (GIT__actions__WORKFLOW_DIRS), so leaving 17 upstream workflow files in place
+# offers this fleet a stack of jobs it was never meant to run.
+#
+# NOTE ON COST. This is a from-source C++ build of a tree with 135 submodules —
+# hours per run, where the rest of the estate takes minutes. Hence the triggers.
+on:
+  push:
+    branches: [26.2-headers]
+  # No `pull_request`: a multi-hour build on every PR would hold a runner slot for
+  # the whole day and starve every other repo sharing the pool.
+  workflow_dispatch:
+concurrency:
+  # Without this a busy afternoon stacks several hour-long builds of commits that
+  # are already stale — and each one holds a capacity-1 runner while it does it.
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  cicd:
+    uses: hanzoai/ci/.hanzo/workflows/build.yml@v1
+    secrets: inherit
