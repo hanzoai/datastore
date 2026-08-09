@@ -1,0 +1,58 @@
+# CI config for the 26.2 line of hanzoai/datastore — read by the hanzoai/ci
+# reusable (.hanzo/workflows/build.yml) and by platform.hanzo.ai.
+#
+# This branch exists to retire the nginx sidecar without also migrating the
+# storage format. It is the release tag plus the HTTP header rename and the
+# packaging that build needs — see the Dockerfile for the path contract, which is
+# the part that can fail silently.
+
+# ITS OWN IMAGE, and that is the whole point of the name.
+#
+# imgver derives what to publish from max(declared, published), where `published`
+# is read per package from the GitHub Packages API. That assumes ONE monotonic
+# series behind a name. Two engine lineages behind `datastore` would therefore
+# fight: once 26.7 is published there, a 26.2 build asks for max(26.2.x, 26.7.y)
+# and gets handed a 26.7 number for a 26.2 binary. Nothing downstream would catch
+# it, and the thing it breaks is a 3am `docker pull` believing the tag.
+#
+# So the series goes in the name, where a human reads it before pinning, rather
+# than in a tag the resolver is free to move. It is the same split postgres and
+# node publish under — the release series IS the identity of an engine lineage,
+# not a suffix added for uniqueness. `datastore` keeps the 26.7 line.
+#
+# The engine here is upstream 26.2.3.2. imgver takes three components, so the tag
+# reads 26.2.3 and cannot carry upstream's fourth. Declared and unpublished means
+# imgver emits exactly this rather than bumping a patch, so the tag states the
+# engine version instead of a number nobody chose. If this branch is re-cut on a
+# later 26.2 patch, move this line with it.
+version: 26.2.3
+
+images:
+  - name: datastore-26.2
+    context: .
+    dockerfile: Dockerfile
+    repo: ghcr.io/hanzoai/datastore-26.2
+    # DOKS has no arm64 nodes, so arm64 would be a QEMU-emulated C++ build — days,
+    # not hours — for a pool that cannot schedule it.
+    platforms: [linux/amd64]
+
+# NO `test:` block. `test:` entries run on the runner before the artifact exists,
+# and everything worth asserting here is a property of a binary that takes hours
+# to link. The gate lives in the Dockerfile's last layers instead, against the
+# real binary: it answers a query, reads system.build_options, and asserts the
+# compiled-in header literals are ours with no X-ClickHouse- left. An image that
+# would regress the wire never gets pushed.
+
+# NO `deploy:` block, deliberately.
+#
+# Publishing is safe; rolling this out is not automatic. The live StatefulSet sets
+# no command and no args, so the image ENTRYPOINT is the entire contract, and an
+# image whose paths disagree with the mounts does not crash — it initializes an
+# empty database on the ephemeral layer and answers /ping 200 while holding
+# nothing. This image is built to hold the live spelling exactly, and the check
+# for that is a deploy-time assertion, not a build-time one: after rollout,
+# `system.server_settings.path` must read /var/lib/hanzo-datastore/ AND a known
+# table must return its real row count. Green is not the test.
+#
+# So this pipeline BUILDS and PUBLISHES only. Rollout stays a reviewed tag pin in
+# hanzoai/universe, the same rule cloud, ci and git follow.
