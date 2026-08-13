@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <users>
         <default>
             <networks replace="replace">
@@ -7,4 +7,4 @@
             </networks>
         </default>
     </users>
-</clickhouse>
+</datastore>

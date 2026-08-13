@@ -1,5 +1,5 @@
 <!-- Config that is used when server is run without config file. -->
-<clickhouse>
+<datastore>
     <logger>
         <level>trace</level>
         <console>true</console>
@@ -83,4 +83,4 @@
         <enable_user_name_access_type>true</enable_user_name_access_type>
         <throw_on_invalid_replicated_access_entities>true</throw_on_invalid_replicated_access_entities>
     </access_control_improvements>
-</clickhouse>
+</datastore>

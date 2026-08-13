@@ -160,11 +160,12 @@ RUN groupadd -r hanzo-datastore --gid=101 \
 
 COPY --from=builder /build/programs/clickhouse /usr/bin/hanzo-datastore
 
-# The binary is multi-call, but its dispatch matches `clickhouse-*` on argv[0] and
+# The binary is multi-call, but its dispatch matches `datastore-*` on argv[0] and
 # nothing else — a `hanzo-datastore-server` symlink silently falls through to
-# `local` mode. So these exist for operator convenience only, and every real
-# invocation (here and in the entrypoint) uses SUBCOMMAND syntax:
-# `hanzo-datastore server`, never `hanzo-datastore-server`.
+# `local` mode, because the prefix it carries is `hanzo-datastore-`. So these exist
+# for operator convenience only, and every real invocation (here and in the
+# entrypoint) uses SUBCOMMAND syntax: `hanzo-datastore server`, never
+# `hanzo-datastore-server`.
 RUN for tool in server client local keeper extract-from-config disks su benchmark; do \
         ln -sf /usr/bin/hanzo-datastore "/usr/bin/hanzo-datastore-$tool"; \
     done
