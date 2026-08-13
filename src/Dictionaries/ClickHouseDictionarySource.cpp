@@ -247,7 +247,21 @@ void registerDictionarySourceClickHouse(DictionarySourceFactory & factory)
         using Configuration = ClickHouseDictionarySource::Configuration;
         std::optional<Configuration> configuration;
 
-        std::string settings_config_prefix = config_prefix + ".clickhouse";
+        /// The parameters live under the key the caller actually spelled: `SOURCE(DATASTORE(...))`
+        /// writes them under `datastore`, `SOURCE(CLICKHOUSE(...))` under `clickhouse`. The factory
+        /// resolved this source by that same key but does not hand it over -- its first argument is
+        /// the DICTIONARY's name, used only in messages -- so read it back the way the factory did.
+        /// Hardcoding one name here while two are registered does not fail loudly: every lookup
+        /// misses, every field takes its default, and the source silently becomes user `default`
+        /// against an empty table, surfacing much later as an authentication error that names
+        /// neither the dictionary nor the real cause.
+        Poco::Util::AbstractConfiguration::Keys source_keys;
+        config.keys(config_prefix, source_keys);
+        const std::string source_key = source_keys.empty()
+            ? std::string("clickhouse")
+            : (source_keys.front() == "settings" && source_keys.size() > 1 ? source_keys.back() : source_keys.front());
+
+        std::string settings_config_prefix = config_prefix + "." + source_key;
         auto named_collection = created_from_ddl ? tryGetNamedCollectionWithOverrides(config, settings_config_prefix, global_context) : nullptr;
 
         if (named_collection)
