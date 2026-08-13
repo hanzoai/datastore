@@ -1,4 +1,4 @@
-<clickhouse>
+<datastore>
     <!-- Override upstream paths for Hanzo Datastore white-label -->
     <path>/var/lib/hanzo-datastore/</path>
     <tmp_path>/var/lib/hanzo-datastore/tmp/</tmp_path>
@@ -19,4 +19,4 @@
             <path>/var/lib/hanzo-datastore/access/</path>
         </local_directory>
     </user_directories>
-</clickhouse>
+</datastore>

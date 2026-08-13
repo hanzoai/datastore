@@ -120,7 +120,7 @@ function manage_user() {
         # if hanzo user is defined - create it (user "default" already exists out of box)
         echo "$0: create new user '$DATASTORE_USER' instead 'default'"
         cat <<EOT > /etc/hanzo-datastore-server/users.d/default-user.xml
-<clickhouse>
+<datastore>
   <!-- Docs: <https://hanzo.ai/docs/operations/settings/settings_users/> -->
   <users>
     <!-- Remove default user -->
@@ -137,7 +137,7 @@ function manage_user() {
       <access_management>${DATASTORE_ACCESS_MANAGEMENT}</access_management>
     </${DATASTORE_USER}>
   </users>
-</clickhouse>
+</datastore>
 EOT
     elif [ "$DATASTORE_DEFAULT_CHANGED" == "1" ]; then
         # Leave users as is, do nothing
@@ -145,7 +145,7 @@ EOT
     else
         echo "$0: neither DATASTORE_USER nor DATASTORE_PASSWORD is set, disabling network access for user '$DATASTORE_USER'"
         cat <<EOT > /etc/hanzo-datastore-server/users.d/default-user.xml
-<clickhouse>
+<datastore>
   <!-- Docs: <https://hanzo.ai/docs/operations/settings/settings_users/> -->
   <users>
     <default>
@@ -156,7 +156,7 @@ EOT
       </networks>
     </default>
   </users>
-</clickhouse>
+</datastore>
 EOT
     fi
 }

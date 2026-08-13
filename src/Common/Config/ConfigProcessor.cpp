@@ -402,16 +402,15 @@ bool ConfigProcessor::merge(XMLDocumentPtr config, XMLDocumentPtr with)
     std::string config_root_node_name = config_root->nodeName();
     std::string merged_root_node_name = with_root->nodeName();
 
-    /// For compatibility, we treat 'yandex' and 'clickhouse' equivalent.
-    /// See https://clickhouse.com/blog/en/2021/clickhouse-inc/
+    /// One root element, `datastore`. Upstream carried two here -- `clickhouse` and the
+    /// older `yandex` -- treated as equivalent, plus a silent `return false` for anything
+    /// else. That third path is the dangerous one: a config.d file with an unexpected root
+    /// was SKIPPED rather than refused, so a typo dropped a whole file's settings and the
+    /// server started anyway, reporting nothing. With a single name the rule is just that
+    /// the roots match, and a file that does not match is refused out loud.
 
-    if (config_root_node_name != merged_root_node_name
-        && !((config_root_node_name == "yandex" || config_root_node_name == "clickhouse")
-            && (merged_root_node_name == "yandex" || merged_root_node_name == "clickhouse")))
+    if (config_root_node_name != merged_root_node_name)
     {
-        if (config_root_node_name != "clickhouse" && config_root_node_name != "yandex")
-            return false;
-
         throw Poco::Exception("Root element doesn't have the corresponding root element as the config file."
             " It must be <" + config_root->nodeName() + ">");
     }

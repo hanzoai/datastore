@@ -222,8 +222,8 @@ bool isClickhouseApp(std::string_view app_suffix, std::vector<char *> & argv)
         }
     }
 
-    /// Use app if clickhouse binary is run through symbolic link with name clickhouse-app
-    std::string app_name = "clickhouse-" + std::string(app_suffix);
+    /// Use app if the binary is run through a symbolic link named datastore-app
+    std::string app_name = "datastore-" + std::string(app_suffix);
     return !argv.empty() && (app_name == argv[0] || endsWith(argv[0], "/" + app_name));
 }
 
