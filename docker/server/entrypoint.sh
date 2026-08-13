@@ -177,15 +177,7 @@ function init_db() {
     if [ -n "${RUN_INITDB_SCRIPTS}" ]; then
         if [ -n "$(ls /docker-entrypoint-initdb.d/)" ] || [ -n "$DATASTORE_DB" ]; then
             # port is needed to check if server is ready for connections
-            HTTP_PORT="$(hanzo-datastore extract-from-config --config-file "$DATASTORE_CONFIG" --key=http_port --try)"
-            HTTPS_PORT="$(hanzo-datastore extract-from-config --config-file "$DATASTORE_CONFIG" --key=https_port --try)"
             NATIVE_PORT="$(hanzo-datastore extract-from-config --config-file "$DATASTORE_CONFIG" --key=tcp_port --try)"
-
-            if [ -n "$HTTP_PORT" ]; then
-                URL="http://127.0.0.1:$HTTP_PORT/ping"
-            else
-                URL="https://127.0.0.1:$HTTPS_PORT/ping"
-            fi
 
             # Listen only on localhost until the initialization is done
             # NOTE: must use subcommand "hanzo-datastore server" not symlink "hanzo-datastore-server"
@@ -193,19 +185,29 @@ function init_db() {
             hanzo-datastore su "${USER}:${GROUP}" /usr/bin/hanzo-datastore server --config-file="$DATASTORE_CONFIG" -- --listen_host=127.0.0.1 &
             pid="$!"
 
-            # check if server is ready to accept connections
-            # will try to send ping via http_port (max 1000 retries by default, with 1 sec timeout and 1 sec delay between retries)
+            hanzoclient=( hanzo-datastore client --multiquery --host "127.0.0.1" --port "$NATIVE_PORT" -u "$DATASTORE_USER" --password "$DATASTORE_PASSWORD" )
+
+            # Ready means the client the rest of this script uses can connect and
+            # authenticate -- so wait on exactly that, with exactly those credentials.
+            #
+            # This spidered $URL with wget until now, which could never succeed: the
+            # runtime image installs bash, ca-certificates, locales and tzdata, and
+            # wget is in none of them. Every container with DATASTORE_DB set (the live
+            # one sets it) would spin here for DATASTORE_INIT_TIMEOUT seconds and then
+            # exit 1 -- a slow start that turns into a crash loop 17 minutes later,
+            # which reads like a storage problem rather than a missing binary.
+            #
+            # It also watched http_port while the next command connects to tcp_port,
+            # so even where wget existed, passing did not imply this would work.
             tries=${DATASTORE_INIT_TIMEOUT:-1000}
-            while ! wget --spider --no-check-certificate -T 1 -q "$URL" 2>/dev/null; do
+            until ready="$("${hanzoclient[@]}" -q 'SELECT 1' 2>&1)"; do
                 if [ "$tries" -le "0" ]; then
-                    echo >&2 'Hanzo Datastore init process timeout.'
+                    echo >&2 "Hanzo Datastore init process timeout. Last error: $ready"
                     exit 1
                 fi
                 tries=$(( tries-1 ))
                 sleep 1
             done
-
-            hanzoclient=( hanzo-datastore client --multiquery --host "127.0.0.1" --port "$NATIVE_PORT" -u "$DATASTORE_USER" --password "$DATASTORE_PASSWORD" )
 
             echo
 
