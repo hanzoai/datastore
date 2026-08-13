@@ -335,6 +335,21 @@ void registerDictionarySourceClickHouse(DictionarySourceFactory & factory)
         return std::make_unique<ClickHouseDictionarySource>(dict_struct, *configuration, sample_block, context);
     };
 
+    /// `SOURCE(DATASTORE(...))` is the name to write. It is a word in the DDL
+    /// grammar, resolved here against a fixed registry, so it is the one piece of
+    /// the brand that a caller cannot alias away at an import boundary the way the
+    /// Rust crate and the npm client are aliased -- the client has to spell it, and
+    /// until this line existed the only spelling the server accepted was upstream's.
+    ///
+    /// `clickhouse` stays registered for exactly one reason, and it is not
+    /// compatibility for its own sake: a dictionary re-resolves its source type
+    /// from the STORED definition every time it reloads, not just when it is
+    /// created. Dropping the old name in the same release that adds the new one
+    /// would therefore break every dictionary already in the warehouse at its next
+    /// reload -- including ones no deploy recreates. It comes out once the stored
+    /// definitions have been rewritten through DATASTORE, which is a migration, not
+    /// an edit here.
+    factory.registerSource("datastore", create_table_source);
     factory.registerSource("clickhouse", create_table_source);
 }
 
