@@ -25,6 +25,16 @@ on:
   push:
     branches: [main]
     tags: ["v*"]
+    # A file that cannot change the binary must not cost a from-source C++ build
+    # of 135 submodules. Documentation-only pushes are the common case for that
+    # and were costing ~2.4h of runner time each; the pool is the constraint the
+    # NOTE above is about, so this filter is the same argument applied to paths.
+    # Anything that CAN affect the artifact is deliberately absent from this list.
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "LICENSE"
+      - ".github/ISSUE_TEMPLATE/**"
   # No `pull_request`. Deliberate: a multi-hour build on every PR would hold a
   # runner slot for the whole day and starve every other repo sharing the pool.
   # Gate a proposed change with workflow_dispatch on its branch when it touches
