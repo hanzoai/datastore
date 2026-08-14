@@ -1,5 +1,5 @@
 name: Installation issue
-description: Issue with ClickHouse installation from https://clickhouse.com/docs/en/install/
+description: Issue with Datastore installation
 labels: ["comp-install"]
 body:
   - type: markdown
@@ -20,7 +20,7 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Source of the ClickHouse
+      label: Source of the Datastore
       description: A link to the source. Or the command you've tried.
     validations:
       required: true

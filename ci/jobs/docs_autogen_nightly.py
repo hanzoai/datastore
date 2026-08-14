@@ -33,7 +33,7 @@ BODY = """\
 This pull request is opened automatically by the nightly documentation
 autogeneration workflow. It regenerates settings, functions, table and database
 engines, data types, formats, table functions, and window functions from the
-structured documentation embedded in the ClickHouse source and exposed through
+structured documentation embedded in the Datastore source and exposed through
 the corresponding `system.*` tables.
 
 The generator preserves page frontmatter and hand-written content outside the

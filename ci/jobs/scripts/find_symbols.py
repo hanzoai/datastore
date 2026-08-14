@@ -64,7 +64,7 @@ class DiffToSymbols:
 
     def run_query(self, line_numbers: list) -> dict:
         """
-        Execute a ClickHouse query with the provided (filename, line_number) tuples.
+        Execute a Datastore query with the provided (filename, line_number) tuples.
 
         Args:
             line_numbers: List of tuples (filename, line_number)
@@ -73,7 +73,7 @@ class DiffToSymbols:
             Dictionary mapping (filename, line_number) -> (address, linkage_name, symbol)
             Example: {('src/foo.cpp', 42): ('0x12345', '_Z...symbol', 'myFunction()')}
         """
-        # Convert list of tuples to CSV format for ClickHouse stdin
+        # Convert list of tuples to CSV format for Datastore stdin
         out = io.StringIO()
         out.write("filename,line\n")
         for filename, line_no in line_numbers:
@@ -184,7 +184,7 @@ class DiffToSymbols:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="List changed symbols for a PR by parsing the diff and querying ClickHouse."
+        description="List changed symbols for a PR by parsing the diff and querying Datastore."
     )
     parser.add_argument("pr", help="Pull request number")
     parser.add_argument(

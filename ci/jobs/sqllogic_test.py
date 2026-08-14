@@ -50,7 +50,7 @@ class ClickHouseBinary:
         import subprocess
         import time
 
-        print("Starting ClickHouse server")
+        print("Starting Datastore server")
         print("Command: ", self.start_cmd)
         kill_leftover_server_processes()
         self.log_fd = open(self.log_file, "w")
@@ -62,14 +62,14 @@ class ClickHouseBinary:
         if retcode is not None:
             stdout = self.proc.stdout.read().strip() if self.proc.stdout else ""
             stderr = self.proc.stderr.read().strip() if self.proc.stderr else ""
-            Utils.print_formatted_error("Failed to start ClickHouse", stdout, stderr)
+            Utils.print_formatted_error("Failed to start Datastore", stdout, stderr)
             return False
-        print("ClickHouse server process started -> wait ready")
+        print("Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print("ClickHouse server ready")
+            print("Datastore server ready")
         else:
-            print("ClickHouse server NOT ready")
+            print("Datastore server NOT ready")
         return res
 
     def wait_ready(self):
@@ -296,7 +296,7 @@ def generate_html_report(
                     set(d["test_name"] for d in new_failures.values())
                 )
                 f.write(
-                    "\n  To reproduce via sqllogictest (ClickHouse must be running):\n"
+                    "\n  To reproduce via sqllogictest (Datastore must be running):\n"
                     "  <span style='color: blue;'>"
                     "git clone https://github.com/gregrahn/sqllogictest.git"
                     " /tmp/sqllogictest</span>\n\n"
@@ -457,15 +457,15 @@ def main():
     known_failures_path = os.path.join(sqllogic_dir, "known_failures.txt")
     current_failures_path = os.path.join(out_dir, "current_failures.txt")
 
-    # Step 1: Start ClickHouse
-    print("Start ClickHouse")
+    # Step 1: Start Datastore
+    print("Start Datastore")
 
     def start():
         return ch.install() and ch.start()
 
     results.append(
         Result.from_commands_run(
-            name="Start ClickHouse",
+            name="Start Datastore",
             command=start,
         )
     )
@@ -629,7 +629,7 @@ def main():
                         print("\nNEW FAILURES (with reproduction commands):")
                         print(
                             "\nTo reproduce via sqllogictest"
-                            " (ClickHouse must be running):"
+                            " (Datastore must be running):"
                         )
                         print(
                             "  git clone"

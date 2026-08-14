@@ -1,5 +1,5 @@
 name: Build issue
-description: Report failed ClickHouse build from master
+description: Report failed Datastore build from master
 labels: ["build"]
 body:
   - type: markdown

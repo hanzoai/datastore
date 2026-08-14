@@ -3,7 +3,7 @@ from ci.praktika.utils import Shell, Utils
 
 
 def kill_leftover_server_processes():
-    """Kill ClickHouse server processes leaked by a previous CI job.
+    """Kill Datastore server processes leaked by a previous CI job.
 
     Runners are reused across jobs, and a job that is cancelled or times out
     can leave its clickhouse-server running or slowly shutting down. Such a
@@ -28,7 +28,7 @@ def kill_leftover_server_processes():
     if not leftovers:
         return
     print(
-        "WARNING: killing leftover clickhouse server processes"
+        "WARNING: killing leftover datastore server processes"
         f" from a previous job:\n{leftovers}"
     )
     Shell.check(f"pkill -9 -f '{pattern}'", verbose=True)
@@ -37,8 +37,8 @@ def kill_leftover_server_processes():
             break
         Utils.sleep(1)
     else:
-        print("WARNING: leftover clickhouse server processes survived SIGKILL")
+        print("WARNING: leftover datastore server processes survived SIGKILL")
     Info().add_workflow_warning(
-        "Leftover clickhouse server processes from a previous job"
+        "Leftover datastore server processes from a previous job"
         " were found and killed, see job.log"
     )

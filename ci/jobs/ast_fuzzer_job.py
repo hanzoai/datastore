@@ -216,7 +216,7 @@ def run_fuzz_job(check_name: str):
     buzzhouse: bool = check_name.lower().startswith("buzzhouse")
 
     clickhouse_binary = Path(cwd) / "ci/tmp/clickhouse"
-    assert clickhouse_binary.exists(), "ClickHouse binary not found"
+    assert clickhouse_binary.exists(), "Datastore binary not found"
     clickhouse_binary.chmod(clickhouse_binary.stat().st_mode | 0o111)
 
     docker_image = DockerImage.get_docker_image(IMAGE_NAME).pull_image()

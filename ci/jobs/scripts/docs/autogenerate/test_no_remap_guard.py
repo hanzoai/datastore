@@ -10,7 +10,7 @@ therefore reject the whole mode up front (a full run, or an --only that matches
 any family) instead of dying mid-run with FileNotFoundError. See the review
 discussion on PR #110195.
 
-Runs without a ClickHouse binary or the clickhouse-docs repo: `migrate` is
+Runs without a Datastore binary or the clickhouse-docs repo: `migrate` is
 stubbed and generate() is monkeypatched so the positive (remap) case does not
 shell out. Run: `python3 test_no_remap_guard.py` (exit 0 on success).
 """

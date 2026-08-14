@@ -128,12 +128,12 @@ tr:nth-child(odd) td {{filter: brightness(90%);}}
 {{ text-align: right; }}
 
   </style>
-  <title>ClickHouse performance comparison</title>
+  <title>Datastore performance comparison</title>
 </head>
 <body>
 <div class="main">
 
-<h1>ClickHouse performance comparison</h1>
+<h1>Datastore performance comparison</h1>
 
 <div style="border: 1px solid #ccc; padding: 0 10px; border-radius: 8px; max-width: 1000px; background-color: #fffbea; text-align: center;">
   <h3>Good to know</h3>

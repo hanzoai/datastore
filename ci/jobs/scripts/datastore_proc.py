@@ -105,7 +105,7 @@ class ClickHouseProc:
         self.minio_proc = None
         self.azurite_proc = None
         self.kafka_proc = None
-        # The failing sub-command + its ClickHouse error tail from
+        # The failing sub-command + its Datastore error tail from
         # prepare_stateful_data(), so the re-prepare ERROR row carries the real
         # reason instead of the generic "failed to re-prepare stateful data".
         self.stateful_setup_error = None
@@ -396,7 +396,7 @@ class ClickHouseProc:
         else:
             assert False
 
-        print(f"Starting ClickHouse server replica {replica_num}, command: {command}")
+        print(f"Starting Datastore server replica {replica_num}, command: {command}")
 
         Path(pid_file).unlink(missing_ok=True)
         Utils.clean_dir(Path(run_path))
@@ -464,12 +464,12 @@ class ClickHouseProc:
             stdout = proc.stdout.read().strip() if proc.stdout else ""
             stderr = proc.stderr.read().strip() if proc.stderr else ""
             Utils.print_formatted_error(
-                f"Failed to start ClickHouse replica {replica_num}", stdout, stderr
+                f"Failed to start Datastore replica {replica_num}", stdout, stderr
             )
             return False
 
         print(
-            f"ClickHouse server replica {replica_num} started successfully, pid [{pid}]"
+            f"Datastore server replica {replica_num} started successfully, pid [{pid}]"
         )
         res = True
         if self.is_db_replicated and replica_num == 0:
@@ -588,7 +588,7 @@ set -e
 set -o pipefail
 # Record which sub-command failed (set -e then exits). $BASH_COMMAND is the
 # failing command itself, so the captured reason names the exact query instead
-# of just a line number; combined with the ClickHouse client error already on
+# of just a line number; combined with the Datastore client error already on
 # stderr this is captured below so the bugfix-validation re-prepare path can
 # report the real reason.
 trap 'rc=$?; echo "prepare_stateful_data: command [$BASH_COMMAND] at line $LINENO failed with exit $rc" >&2' ERR
@@ -637,7 +637,7 @@ clickhouse-client --query "SELECT count() FROM test.visits"
         if with_s3_storage:
             command = "USE_S3_STORAGE_FOR_MERGE_TREE=1\n" + command
         # Run via Shell.run (bash, like Shell.check) but keep a log file so that
-        # on failure we can surface the failing sub-command + its ClickHouse
+        # on failure we can surface the failing sub-command + its Datastore
         # error tail to the caller. Same success semantics as before
         # (returncode == 0). This is what makes the intermittent msan re-prepare
         # failure diagnosable in CIDB instead of a generic boolean.
@@ -737,7 +737,7 @@ clickhouse-client --query "SELECT count() FROM test.visits"
         return self
 
     def stop_server(self, force=False):
-        """Gracefully stop only the ClickHouse server processes.
+        """Gracefully stop only the Datastore server processes.
 
         Unlike `terminate`, this leaves the auxiliary services (Redpanda/Kafka,
         MinIO) running. It is used between bugfix-validation iterations so the
@@ -746,7 +746,7 @@ clickhouse-client --query "SELECT count() FROM test.visits"
         Kafka or MinIO would pass under the first build type and spuriously
         "reproduce" a bug under the next one.
         """
-        print("Stop ClickHouse processes")
+        print("Stop Datastore processes")
 
         Shell.check("ps -ef | grep  clickhouse")
         for proc, pid_file, pid, run_path in (
@@ -770,7 +770,7 @@ clickhouse-client --query "SELECT count() FROM test.visits"
                 ):
                     continue
                 print(
-                    f"Failed to stop ClickHouse process {pid} gracefully - send TRAP signal to generate core file"
+                    f"Failed to stop Datastore process {pid} gracefully - send TRAP signal to generate core file"
                 )
                 proc.send_signal(signal.SIGTRAP)
                 try:

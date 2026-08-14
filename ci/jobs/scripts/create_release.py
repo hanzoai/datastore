@@ -658,7 +658,7 @@ class ReleaseInfo:
                         f"gh pr create --repo {GITHUB_REPOSITORY} "
                         f"--title 'Release pull request for branch {self.release_branch}' "
                         f"--head {self.release_branch} {pr_labels} "
-                        "--body 'This PullRequest is a part of ClickHouse release cycle. "
+                        "--body 'This PullRequest is a part of Datastore release cycle. "
                         "It is used by CI system only. Do not perform any changes with it.'",
                         dry_run=dry_run,
                         strict=True,
