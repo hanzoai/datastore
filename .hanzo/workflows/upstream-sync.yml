@@ -1,0 +1,139 @@
+name: upstream-sync
+# Weekly merge of upstream ClickHouse into this fork, proposed as a pull request
+# on git.hanzo.ai. It never merges anything itself.
+#
+# The fork edits upstream files in place to debrand them — docker/server/,
+# packages/, programs/server/config.xml, the top-level CMakeLists.txt — so a sync
+# conflicts more often than it lands clean. The conflicted merge is therefore
+# committed WITH its markers and pushed anyway: the branch stays checkoutable and
+# a human resolves it in place, instead of the job throwing away the merge it
+# just did and reporting only that one happened.
+#
+# The branch is named for the upstream commit it carries, not for the day it ran.
+# That makes a re-run on an unchanged upstream head a no-op instead of a second
+# branch proposing the same merge.
+#
+# One way: this is the only upstream sync entry point for this repo.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      upstream_url:
+        description: "Upstream git URL"
+        required: false
+        default: "https://github.com/ClickHouse/ClickHouse.git"
+      upstream_branch:
+        description: "Upstream branch"
+        required: false
+        default: "master"
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: hanzo-build-linux-amd64
+    timeout-minutes: 60
+    env:
+      UPSTREAM_URL: ${{ inputs.upstream_url || 'https://github.com/ClickHouse/ClickHouse.git' }}
+      UPSTREAM_BRANCH: ${{ inputs.upstream_branch || 'master' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: read upstream
+        id: upstream
+        run: |
+          set -euo pipefail
+          git remote add upstream "$UPSTREAM_URL" 2>/dev/null || git remote set-url upstream "$UPSTREAM_URL"
+          git fetch upstream "$UPSTREAM_BRANCH" --no-tags --no-recurse-submodules
+          head=$(git rev-parse FETCH_HEAD)
+          {
+            echo "head=$head"
+            echo "short=$(git rev-parse --short=12 "$head")"
+            echo "behind=$(git rev-list --count "HEAD..$head")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: merge onto a branch named for that commit
+        id: merge
+        if: steps.upstream.outputs.behind != '0'
+        env:
+          HEAD_SHA: ${{ steps.upstream.outputs.head }}
+          SHORT: ${{ steps.upstream.outputs.short }}
+        run: |
+          set -euo pipefail
+          branch="upstream-sync/$SHORT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            echo "This merge is already proposed on $branch."
+            echo "state=proposed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name upstream-sync
+          git config user.email dev@hanzo.ai
+          git checkout -b "$branch"
+          if git merge --no-edit --no-ff "$HEAD_SHA" -m "merge: upstream $UPSTREAM_BRANCH $SHORT"; then
+            echo "state=clean" >> "$GITHUB_OUTPUT"
+          else
+            git diff --name-only --diff-filter=U > conflicts.txt
+            git add -A
+            git commit --no-verify -m "merge: upstream $UPSTREAM_BRANCH $SHORT — conflict markers committed for human resolution"
+            echo "state=conflict" >> "$GITHUB_OUTPUT"
+          fi
+          git push origin "$branch"
+
+      - name: propose it
+        if: steps.merge.outputs.state == 'clean' || steps.merge.outputs.state == 'conflict'
+        env:
+          FORGE_TOKEN: ${{ secrets.FORGE_TOKEN }}
+          STATE: ${{ steps.merge.outputs.state }}
+          BRANCH: ${{ steps.merge.outputs.branch }}
+          BEHIND: ${{ steps.upstream.outputs.behind }}
+          SHORT: ${{ steps.upstream.outputs.short }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, urllib.request
+
+          state, branch = os.environ["STATE"], os.environ["BRANCH"]
+          behind, short = os.environ["BEHIND"], os.environ["SHORT"]
+          upstream = os.environ["UPSTREAM_BRANCH"]
+
+          lines = [f"Merges upstream `{upstream}` at `{short}`, {behind} commits ahead of this fork.", ""]
+          if state == "conflict":
+              conflicts = pathlib.Path("conflicts.txt").read_text().strip()
+              lines += [
+                  "The merge conflicted. Its markers are COMMITTED on this branch so it is",
+                  "checkoutable — resolve in place, do not re-merge.", "",
+                  "## Conflicts", "", "```", conflicts, "```", "",
+                  "## Resolve", "", "```",
+                  f"git fetch origin && git checkout {branch}",
+                  "# resolve the files above, then:",
+                  "git add -A && git commit --amend --no-edit",
+                  f"git push --force-with-lease origin {branch}",
+                  "```",
+              ]
+          else:
+              lines.append("The merge produced no conflicts.")
+          lines += ["", "Nothing merges this automatically. A human reviews it, drops the WIP", "prefix, and merges."]
+
+          verdict = "conflicts" if state == "conflict" else "clean"
+          payload = json.dumps({
+              "head": branch,
+              "base": "main",
+              # WIP: is how the forge marks a pull request a draft.
+              "title": f"WIP: sync upstream {upstream} {short} — {verdict}",
+              "body": "\n".join(lines),
+          }).encode()
+
+          req = urllib.request.Request(
+              f"{os.environ['GITHUB_SERVER_URL']}/v1/repos/{os.environ['GITHUB_REPOSITORY']}/pulls",
+              data=payload,
+              headers={
+                  "Authorization": f"token {os.environ['FORGE_TOKEN']}",
+                  "Content-Type": "application/json",
+              },
+          )
+          with urllib.request.urlopen(req) as r:
+              print(f"opened {json.load(r)['html_url']}")
+          PY

@@ -79,18 +79,21 @@ datastore/
 # Local dev (compose):
 cd hanzo && docker compose up
 
-# CI: the release/master workflows run the "Docker server image" job
-# (ci/jobs/docker_server.py) — it builds docker/server/Dockerfile.ubuntu from the
-# source-built datastore debs and pushes ghcr.io/hanzoai/datastore (multi-arch).
+# CI: .hanzo/workflows/cicd.yml calls hanzoai/ci, which reads the root hanzo.yml
+# and builds the repo-root Dockerfile from source, publishing
+# ghcr.io/hanzoai/datastore (linux/amd64). See hanzo.yml for why it is the root
+# Dockerfile and not docker/server/, and why there is no deploy block.
 ```
 
 ## Upstream Sync
 
-Automated via `.github/workflows/upstream-sync.yml` (weekly, Mon 06:00 UTC,
-plus `workflow_dispatch`). The workflow fetches `upstream/master`, merges into
-a fresh `upstream-sync/<UTC-date>` branch, and opens a **draft** PR — it
-never auto-merges. On conflict the merge commit is pushed with conflict
-markers intact and the draft PR is labelled `upstream-sync,conflict`.
+Automated via `.hanzo/workflows/upstream-sync.yml` (weekly, Mon 06:00 UTC, plus
+`workflow_dispatch`). The workflow fetches `upstream/master`, merges it onto an
+`upstream-sync/<upstream-commit>` branch, and opens a `WIP:` pull request on
+git.hanzo.ai — it never auto-merges. On conflict the merge commit is pushed with
+the markers intact and the pull request lists the conflicting files. Naming the
+branch after the upstream commit makes a re-run on an unchanged upstream head a
+no-op rather than a duplicate proposal.
 
 There is exactly one upstream sync workflow. Do not add a second.
 
