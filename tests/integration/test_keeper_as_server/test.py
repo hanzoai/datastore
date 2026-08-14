@@ -51,7 +51,7 @@ def test_prometheus_keeper_metrics_only(start_cluster):
         timeout=5,
     )
     assert prometheus_handler_response.status_code == 200
-    assert "ClickHouseAsyncMetrics_KeeperIsStandalone" in prometheus_handler_response.text
+    assert "DatastoreAsyncMetrics_KeeperIsStandalone" in prometheus_handler_response.text
     assert "PolygonDictionaryThreads" not in prometheus_handler_response.text
 
 
