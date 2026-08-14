@@ -8,7 +8,7 @@ RUN apk --no-cache add curl
 
 # Connector/J 8.2.0+ (including 9.x) reads the `info` field of the MySQL `OK`
 # packet as a length-encoded string; it used to be pinned to 8.1.0 because
-# ClickHouse wrote that field as a plain string and newer drivers failed to
+# Datastore wrote that field as a plain string and newer drivers failed to
 # connect. Fixed by length-encoding `info` (see #84542), so test against a
 # modern driver. CLASSPATH=. is required so javac-compiled .class files in the
 # WORKDIR are found at runtime.

@@ -115,7 +115,7 @@ genhtml --version
 html_escape() { printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g'; }
 export -f html_escape
 
-HEADER_TITLE="ClickHouse coverage report"
+HEADER_TITLE="Datastore coverage report"
 if [ -n "${PR_NUMBER}" ] && [ "${PR_NUMBER}" -gt 0 ]; then
   PR_URL="https://github.com/ClickHouse/ClickHouse/pull/${PR_NUMBER}"
   HEADER_TITLE="${HEADER_TITLE} &middot; <a href=\"${PR_URL}\">#${PR_NUMBER}</a>"

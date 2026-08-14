@@ -274,7 +274,7 @@ git ls-files -z "$ROOT_PATH" | xargs -0 stat "$STAT_FMT_FLAG" "$STAT_FMT" 2>/dev
         echo "File $file is larger than 5 MB. Large files should not be committed to git — download them at test time or build from source instead."
     done
 
-# The analyzer has been enabled by default since ClickHouse 24.3, so it is no longer "new".
+# The analyzer has been enabled by default since Datastore 24.3, so it is no longer "new".
 # Do not describe it as "new analyzer" or "new query analyzer" in documentation or comments;
 # write "the analyzer" or "Analyzer" instead.
 # Historical changelogs are excluded on purpose: they are a fixed record of past releases.
@@ -310,4 +310,4 @@ analyzer_wording_files=$(
         tr '\0' '\n'
 } |
     grep -P '.' &&
-    echo 'The analyzer is enabled by default since ClickHouse 24.3 and is no longer new. Write "the analyzer" or "Analyzer" instead of "new analyzer"/"new query analyzer" in the lines above.'
+    echo 'The analyzer is enabled by default since Datastore 24.3 and is no longer new. Write "the analyzer" or "Analyzer" instead of "new analyzer"/"new query analyzer" in the lines above.'

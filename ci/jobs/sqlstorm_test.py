@@ -14,9 +14,9 @@ from ci.jobs.scripts.server_cleanup import kill_leftover_server_processes
 
 temp_dir = f"{Utils.cwd()}/ci/tmp/"
 
-# Thresholds based on baseline run with ClickHouse 26.3 and ClickHouse-dialect queries.
+# Thresholds based on baseline run with Datastore 26.3 and Datastore-dialect queries.
 # The DBA StackOverflow dataset with ~18K SQLStorm queries.
-# With the PostgreSQL -> ClickHouse query rewriter, ~60% of queries succeed.
+# With the PostgreSQL -> Datastore query rewriter, ~60% of queries succeed.
 MIN_TOTAL_QUERIES = 18_000
 MIN_SUCCESS_RATE = 0.50  # at least 50% queries should succeed
 
@@ -68,7 +68,7 @@ class ClickHouseBinary:
         import subprocess
         import time
 
-        print("Starting ClickHouse server")
+        print("Starting Datastore server")
         print("Command: ", self.start_cmd)
         kill_leftover_server_processes()
         self.log_fd = open(self.log_file, "w")
@@ -90,17 +90,17 @@ class ClickHouseBinary:
             except OSError as e:
                 log_tail = f"(could not read {self.log_file}: {e})"
             Utils.print_formatted_error(
-                f"Failed to start ClickHouse (exit code {retcode})",
+                f"Failed to start Datastore (exit code {retcode})",
                 log_tail,
                 "",
             )
             return False
-        print("ClickHouse server process started -> wait ready")
+        print("Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print("ClickHouse server ready")
+            print("Datastore server ready")
         else:
-            print("ClickHouse server NOT ready")
+            print("Datastore server NOT ready")
         return res
 
     def wait_ready(self):
@@ -351,8 +351,8 @@ def main():
         )
     )
 
-    # Step 1: Start ClickHouse
-    print("Start ClickHouse")
+    # Step 1: Start Datastore
+    print("Start Datastore")
 
     def start():
         if not ch.install():
@@ -370,7 +370,7 @@ def main():
 
     results.append(
         Result.from_commands_run(
-            name="Start ClickHouse",
+            name="Start Datastore",
             command=start,
         )
     )
@@ -379,7 +379,7 @@ def main():
     if results[-1].is_ok():
         print("Clone SQLStorm repo")
 
-        # Use the ClickHouse fork with queries rewritten for ClickHouse dialect.
+        # Use the ClickHouse fork with queries rewritten for Datastore dialect.
         # Pin to an immutable commit SHA so reruns are reproducible and historical
         # failures remain debuggable, matching the pattern used for `olapbench_commit`.
         sqlstorm_commit = "31952876e628817190c8a787a21afea08ca2bf87"

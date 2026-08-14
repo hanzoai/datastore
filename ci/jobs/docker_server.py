@@ -515,10 +515,10 @@ def main():
         version = CHVersion.get_current_version(no_strict=True)
         if not info.is_local_run:
             print(
-                "WARNING: ClickHouse version has not been found in workflow kv storage - read from repo"
+                "WARNING: Datastore version has not been found in workflow kv storage - read from repo"
             )
             info.add_workflow_warning(
-                "ClickHouse version has not been found in workflow kv storage"
+                "Datastore version has not been found in workflow kv storage"
             )
     assert version
 

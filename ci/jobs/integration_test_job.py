@@ -279,7 +279,7 @@ def prefetch_images(
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Build Job")
+    parser = argparse.ArgumentParser(description="Datastore Build Job")
     parser.add_argument("--options", help="Job parameters: ...")
     parser.add_argument(
         "--test",
@@ -738,7 +738,7 @@ tar -czf ./ci/tmp/logs.tar.gz \
                     break
             else:
                 raise FileNotFoundError(
-                    "Clickhouse binary not found in any of the paths: "
+                    "Datastore binary not found in any of the paths: "
                     + ", ".join(paths_to_check)
                     + ". You can also specify path to binary via --path argument"
                 )
@@ -746,8 +746,8 @@ tar -czf ./ci/tmp/logs.tar.gz \
             clickhouse_server_config_dir = args.path_1
     assert Path(
         clickhouse_server_config_dir
-    ), f"Clickhouse config dir does not exist [{clickhouse_server_config_dir}]"
-    print(f"Using ClickHouse binary at [{clickhouse_path}]")
+    ), f"Datastore config dir does not exist [{clickhouse_server_config_dir}]"
+    print(f"Using Datastore binary at [{clickhouse_path}]")
 
     changed_test_modules = []
     if is_bugfix_validation or is_flaky_check or is_targeted_check:

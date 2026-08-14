@@ -702,7 +702,7 @@ def insert_flamegraph_stacks(cidb, info, reference_sha, compare_against_release)
 
 def match_reference_debug_info():
     # addressToLine resolves a frame to "file:line" only where DWARF covers
-    # ClickHouse code. PR builds use -g0 (DISABLE_ALL_DEBUG_SYMBOLS): the symbol
+    # Datastore code. PR builds use -g0 (DISABLE_ALL_DEBUG_SYMBOLS): the symbol
     # table remains (addressToSymbol works) but there is no line info, so the
     # patched binary symbolizes differently from the reference (master) build and
     # flamegraph tooling cannot match the frames. A ".debug_info" section is not a
@@ -789,7 +789,7 @@ class CHServer:
             --jemalloc_profiler_sampling_rate {self.JEMALLOC_PROFILER_SAMPLING_RATE}"
 
     def start(self):
-        print(f"Starting [{self.name}] ClickHouse server")
+        print(f"Starting [{self.name}] Datastore server")
         print("Command: ", self.start_cmd)
         self.log_fd = open(self.log_file, "w")
         self.proc = subprocess.Popen(
@@ -804,14 +804,14 @@ class CHServer:
         if retcode is not None:
             stdout = self.proc.stdout.read().strip() if self.proc.stdout else ""
             stderr = self.proc.stderr.read().strip() if self.proc.stderr else ""
-            Utils.print_formatted_error("Failed to start ClickHouse", stdout, stderr)
+            Utils.print_formatted_error("Failed to start Datastore", stdout, stderr)
             return False
-        print("ClickHouse server process started -> wait ready")
+        print("Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print("ClickHouse server ready")
+            print("Datastore server ready")
         else:
-            print("ClickHouse server NOT ready")
+            print("Datastore server NOT ready")
         return res
 
     def wait_ready(self):
@@ -867,7 +867,7 @@ class CHServer:
             f.write(f"{test_name}\t{duration}\n")
 
     def terminate(self):
-        print("Terminate ClickHouse process")
+        print("Terminate Datastore process")
         timeout = 10
         if self.proc:
             Utils.terminate_process_group(self.proc.pid)
@@ -888,7 +888,7 @@ class CHServer:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Performance Tests Job")
+    parser = argparse.ArgumentParser(description="Datastore Performance Tests Job")
     parser.add_argument("--ch-path", help="Path to clickhouse binary", default=temp_dir)
     parser.add_argument(
         "--test-options",
@@ -1065,7 +1065,7 @@ def main():
                 link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/aarch64/clickhouse"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_arm_release")
-            assert link_for_ref_ch, "reference clickhouse build has not been found"
+            assert link_for_ref_ch, "reference datastore build has not been found"
         else:
             assert False
     elif Utils.is_amd():
@@ -1076,7 +1076,7 @@ def main():
                 link_for_ref_ch = "https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/amd64/clickhouse"
         elif compare_against_release:
             link_for_ref_ch = find_base_release_build(info, "build_amd_release")
-            assert link_for_ref_ch, "reference clickhouse build has not been found"
+            assert link_for_ref_ch, "reference datastore build has not been found"
         else:
             assert False
     else:
@@ -1133,7 +1133,7 @@ def main():
     # export PYTHONIOENCODING=utf-8
 
     if res and JobStages.INSTALL_CLICKHOUSE in stages:
-        print("Install ClickHouse")
+        print("Install Datastore")
         commands = [
             f"mkdir -p {perf_right_config}",
             f"cp ./programs/server/config.xml {perf_right_config}",
@@ -1161,7 +1161,7 @@ def main():
             "clickhouse-local --version",
         ]
         results.append(
-            Result.from_commands_run(name="Install ClickHouse", command=commands)
+            Result.from_commands_run(name="Install Datastore", command=commands)
         )
         res = results[-1].is_ok()
 
@@ -1181,7 +1181,7 @@ def main():
             ]
             results.append(
                 Result.from_commands_run(
-                    name="Install Reference ClickHouse", command=commands
+                    name="Install Reference Datastore", command=commands
                 )
             )
             reference_sha = Shell.get_output(

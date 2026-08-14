@@ -16,7 +16,7 @@ temp_dir = f"{repo_dir}/ci/tmp"
 
 
 class ClickHouseService:
-    RESULT_NAME = "Start ClickHouse"
+    RESULT_NAME = "Start Datastore"
     def __init__(
         self,
         ch_config_dir: str = f"{temp_dir}/etc/clickhouse-server",
@@ -85,7 +85,7 @@ class ClickHouseService:
 
             # Recreate data directory so it is owned by the current process user.
             # If the directory was created on the host by a different UID (e.g. 501
-            # on macOS) and the server runs as root inside Docker, ClickHouse raises
+            # on macOS) and the server runs as root inside Docker, Datastore raises
             # MISMATCHING_USERS_FOR_PROCESS_AND_DATA and refuses to start.
             if Path(self.run_path).exists():
                 shutil.rmtree(self.run_path)
@@ -110,7 +110,7 @@ class ClickHouseService:
                 "--top_level_domains_path", f"{self.ch_config_dir}/top_level_domains",
                 "--logger.stderr", f"{self.log_dir}/stderr.log",
             ]
-            print(f"Starting ClickHouse server: {shlex.join(argv)}")
+            print(f"Starting Datastore server: {shlex.join(argv)}")
             with open(f"{self.log_dir}/clickhouse-server.log", "w") as log_fd:
                 self._proc = subprocess.Popen(
                     argv,
@@ -156,11 +156,11 @@ class ClickHouseService:
         dest = Path(temp_dir) / "clickhouse"
         arch = "aarch64" if Utils.is_arm() else "amd64"
         url = f"https://clickhouse-builds.s3.us-east-1.amazonaws.com/master/{arch}/clickhouse"
-        print(f"Downloading ClickHouse binary from [{url}] to [{dest}]")
+        print(f"Downloading Datastore binary from [{url}] to [{dest}]")
         try:
             urllib.request.urlretrieve(url, dest)
         except Exception as e:
-            raise RuntimeError(f"Failed to download ClickHouse binary: {e}") from e
+            raise RuntimeError(f"Failed to download Datastore binary: {e}") from e
 
     def _print_server_log(self) -> None:
         log_path = Path(self.log_dir) / "clickhouse-server.log"
@@ -192,7 +192,7 @@ class ClickHouseService:
                 f'clickhouse-client --port {port} --receive_timeout=5 --query "select 1"', verbose=True
             )
             if out.strip() == "1":
-                print("ClickHouse server ready")
+                print("Datastore server ready")
                 return
             print(f"Server not ready (attempt {attempt + 1}/{attempts}), err: {err}")
             time.sleep(delay)

@@ -147,7 +147,7 @@ SERVER_DIR="$TMP_PATH/server"
 mkdir -p "$SERVER_DIR/config.d"
 cp /sqlancer/sqlancer-main/.claude/clickhouse-config/*.xml "$SERVER_DIR/config.d/"
 
-echo "Starting ClickHouse server..."
+echo "Starting Datastore server..."
 ( cd "$SERVER_DIR" && exec "$CLICKHOUSE_BIN" server -P "$PID_FILE" ) 1>$OUTPUT_PATH/clickhouse-server.log 2>$OUTPUT_PATH/clickhouse-server.log.err &
 for _ in $(seq 1 60); do if [[ $(wget -q 'localhost:8123' -O- 2>/dev/null) == 'Ok.' ]]; then break ; else sleep 1; fi ; done
 

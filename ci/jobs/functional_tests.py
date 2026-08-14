@@ -597,7 +597,7 @@ def main():
                 break
         else:
             raise FileNotFoundError(
-                "Clickhouse binary not found in any of the paths: "
+                "Datastore binary not found in any of the paths: "
                 + ", ".join(paths_to_check)
                 + ". You can also specify path to binary via --path argument"
             )
@@ -1246,7 +1246,7 @@ def main():
                     # Coverage binaries are slow and prone to timing-related flakiness
                     # (e.g. TIMEOUT_EXCEEDED on SystemLogQueue). Don't penalise them
                     # for it — mark the test green so it doesn't block coverage jobs.
-                    # See: https://github.com/Datastore/Datastore/pull/95763
+                    # See: https://github.com/ClickHouse/ClickHouse/pull/95763
                     test_case.set_status(Result.Status.OK)
             if diag_exit_code != 0:
                 diag_status = Result.Status.FAIL
