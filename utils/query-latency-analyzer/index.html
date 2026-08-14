@@ -54,13 +54,13 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sorttable@1.0.2/sorttable.min.js"></script>
-    <script language="javascript" type="text/javascript" src="js/query-clickhouse.js"></script>
+    <script language="javascript" type="text/javascript" src="js/query-datastore.js"></script>
     <script language="javascript" type="text/javascript" src="js/data-visualization.js"></script>
     <script language="javascript" type="text/javascript" src="js/data-processing.js"></script>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">ClickHouse query-latency-analyzer</a>
+            <a class="navbar-brand" href="#">Hanzo Datastore query-latency-analyzer</a>
             <button class="navbar-toggler" type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#bs-example-navbar-collapse-1"
@@ -97,8 +97,8 @@
                                 data-bs-target="#tabFileUpload" type="button" role="tab">Upload JSON</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="clickhouse-tab" data-bs-toggle="tab"
-                                data-bs-target="#tabClickhouse" type="button" role="tab">From ClickHouse</button>
+                            <button class="nav-link" id="datastore-tab" data-bs-toggle="tab"
+                                data-bs-target="#tabDatastore" type="button" role="tab">From ClickHouse</button>
                         </li>
                     </ul>
 
@@ -106,7 +106,7 @@
                         <div class="tab-pane fade show active" id="tabFileUpload" role="tabpanel">
                             <input type="file" id="loadFiles" class="form-control" />
                         </div>
-                        <div class="tab-pane fade" id="tabClickhouse" role="tabpanel">
+                        <div class="tab-pane fade" id="tabDatastore" role="tabpanel">
                             <form id="params">
                                 <div id="connection-params" class="mb-3">
                                     <input spellcheck="false" id="url" type="text" value="http://localhost:8123"
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tabButtons.forEach(button => {
             button.addEventListener('shown.bs.tab', function (e) {
                 const target = e.target.getAttribute('data-bs-target');
-                if (target === '#tabClickhouse') {
+                if (target === '#tabDatastore') {
                     document.getElementById('btnDoLoad').style.display = 'none';
                     document.getElementById('btnQueryClickhouse').style.display = 'inline-block';
                 } else {
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Handle ClickHouse query
+// Handle the Datastore query
 let queryController = null;
 document.getElementById('btnQueryClickhouse').addEventListener('click', async function () {
     if (queryController === null) {
@@ -298,7 +298,7 @@ document.getElementById('btnQueryClickhouse').addEventListener('click', async fu
 
         if (document.getElementById('flushLogsCheckbox').checked) {
             queryController = new AbortController();
-            await queryClickHouse({
+            await queryDatastore({
                 host: document.getElementById('url').value,
                 user: document.getElementById('user').value,
                 password: document.getElementById('password').value,
@@ -311,7 +311,7 @@ document.getElementById('btnQueryClickhouse').addEventListener('click', async fu
 
         if (error === '') {
             queryController = new AbortController();
-            await queryClickHouse({
+            await queryDatastore({
                 host: document.getElementById('url').value,
                 user: document.getElementById('user').value,
                 password: document.getElementById('password').value,
@@ -331,7 +331,7 @@ document.getElementById('btnQueryClickhouse').addEventListener('click', async fu
             errorDiv.style.display = 'block';
         } else {
             const filterByDuration = document.getElementById('filterByDurationCheckbox').checked;
-            renderTable(handleData(parseClickHouseData(rows), filterByDuration));
+            renderTable(handleData(parseDatastoreData(rows), filterByDuration));
             const loadModal = bootstrap.Modal.getInstance(document.getElementById('loadModal'));
             loadModal.hide();
         }
@@ -352,7 +352,7 @@ document.getElementById('btnDoLoad').addEventListener('click', function () {
     fr.onload = function (e) {
         document.getElementById('query-error').style.display = 'none';
         const filterByDuration = document.getElementById('filterByDurationCheckbox').checked;
-        renderTable(handleData(parseClickHouseData(JSON.parse(e.target.result).data), filterByDuration));
+        renderTable(handleData(parseDatastoreData(JSON.parse(e.target.result).data), filterByDuration));
     };
     fr.readAsText(files.item(0));
     element.value = '';
@@ -360,7 +360,7 @@ document.getElementById('btnDoLoad').addEventListener('click', function () {
     loadModal.hide();
 });
 
-function parseClickHouseData(rows) {
+function parseDatastoreData(rows) {
     let result = [];
     for (let i = 0; i < rows.length; i++) {
         let row = rows[i];
