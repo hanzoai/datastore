@@ -736,7 +736,7 @@ function storeCredentials() {
 
 /// Live credential feedback, as in `play.html`: paint the user/password fields green
 /// once a probe query succeeds and red when it fails, and surface the server version.
-/// The `Connected to ClickHouse v...` message shares the single `#status` line with the load
+/// The `Connected to Hanzo Datastore v...` message shares the single `#status` line with the load
 /// status, so we record when that line currently holds a credential-probe message. That lets
 /// `resetCredentialsStatus` clear the stale message — and only that message — when the fields
 /// change, without wiping an unrelated load status such as `Loaded N tables`.
@@ -747,7 +747,7 @@ function setCredentialStatus(ok, version) {
         $(id).classList.toggle('fail', !ok);
     }
     if (ok && version) {
-        setStatus(`Connected to ClickHouse v${version}.`);
+        setStatus(`Connected to Hanzo Datastore v${version}.`);
         /// `setStatus` clears the flag, so claim ownership of the line afterwards.
         statusIsCredentialProbe = true;
     }

@@ -1,6 +1,6 @@
 let add_http_cors_header = (location.protocol != 'file:');
 
-export async function queryClickHouse({host, user, password, query, is_stopping, for_each_row, on_error})
+export async function queryDatastore({host, user, password, query, is_stopping, for_each_row, on_error})
 {
     // Construct URL
     let url = `${host}?default_format=JSONEachRow&enable_http_compression=1`
