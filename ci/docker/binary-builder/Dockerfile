@@ -57,7 +57,7 @@ RUN if [ "$TOOLCHAIN_COMMIT" != "none" ]; then \
     echo "Installed PGO+BOLT toolchain from commit ${TOOLCHAIN_COMMIT}" \
     ; fi
 
-# Optional PGO+BOLT profiles for ClickHouse binary optimization
+# Optional PGO+BOLT profiles for Datastore binary optimization
 # Set CLICKHOUSE_PROFILES_COMMIT to a master commit SHA to download pre-collected profiles.
 # Set to "none" (default) to skip — profiles are opt-in.
 ARG CLICKHOUSE_PROFILES_COMMIT=none

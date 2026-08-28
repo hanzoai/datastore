@@ -18,7 +18,7 @@ ARG CACHE_INVALIDATOR=0
 
 # Create a specific user and group
 RUN groupadd -r clickhouse && \
-    useradd -r -g clickhouse -m -d /home/clickhouse -s /sbin/nologin -c "ClickHouse user" clickhouse
+    useradd -r -g clickhouse -m -d /home/clickhouse -s /sbin/nologin -c "Datastore user" clickhouse
 
 RUN npm install -g npm@11 mint@latest
 

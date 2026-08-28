@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Autogenerate ClickHouse reference documentation (settings, functions, ...) from
-a ClickHouse binary's introspection tables. Python port of clickhouse-docs's
+Autogenerate Datastore reference documentation (settings, functions, ...) from
+a Datastore binary's introspection tables. Python port of clickhouse-docs's
 `scripts/settings/autogenerate-settings.sh`, living under ci/jobs/scripts/docs
 so it can run as an optional step of the docs check.
 

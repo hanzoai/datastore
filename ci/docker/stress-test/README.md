@@ -1,4 +1,4 @@
-Allows to run simple ClickHouse stress test in Docker from debian packages.
+Allows to run simple Datastore stress test in Docker from debian packages.
 Actually it runs multiple copies of datastore-test (functional tests).
 This allows to find problems like failed assertions and memory safety issues.
 

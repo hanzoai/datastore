@@ -8,8 +8,10 @@
 /// debounced `persist` to write the reconciled workspace back, and then asserts both the live
 /// `tabs` state and what was persisted.
 ///
-/// Driven by `test.py` inside the `clickhouse/mysql-js-client` container (node:22-alpine),
-/// against the `/play` page served by a real ClickHouse server. Can also be run standalone
+/// Driven by `test.py` inside the `clickhouse/mysql-js-client` container (node:22-alpine)
+/// — an upstream image we still PULL; see ci/defs/defs.py. It is a pull coordinate
+/// rather than branding, and replacing it means publishing our own test image.
+/// against the `/play` page served by a real Datastore server. Can also be run standalone
 /// against a checkout for development: node reconcile_harness.js programs/server/play.html
 ///
 /// Usage: node reconcile_harness.js <path-or-url-of-play.html>

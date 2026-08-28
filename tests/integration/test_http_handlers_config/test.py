@@ -643,7 +643,7 @@ def test_prometheus_handler():
             ).status_code
         )
         assert (
-            b"ClickHouseProfileEvents_Query"
+            b"DatastoreProfileEvents_Query"
             in cluster.instance.http_request(
                 "test_prometheus", method="GET", headers={"XXX": "xxx"}
             ).content

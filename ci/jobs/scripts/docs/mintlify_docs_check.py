@@ -144,7 +144,7 @@ def clone_aggregator(repo, ref, sparse, dest):
     # (--depth 1), only the trees/blobs under the sparse paths (blob:none filter
     # + sparse-checkout), and nothing else. `git clone` without --depth would
     # download the aggregator's entire commit history -- enormous for a repo like
-    # ClickHouse -- so build the repo with `git init` + a single shallow fetch
+    # Datastore -- so build the repo with `git init` + a single shallow fetch
     # instead, which never materialises history or out-of-slice files.
     run(["git", "init", "-q", dest], check=True)
     run(["git", "-C", dest, "remote", "add", "origin", repo], check=True)

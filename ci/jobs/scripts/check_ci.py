@@ -771,7 +771,7 @@ def main():
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser(
-        description="Check CI status and process failures for ClickHouse PRs"
+        description="Check CI status and process failures for Datastore PRs"
     )
     parser.add_argument(
         "pr_number",
