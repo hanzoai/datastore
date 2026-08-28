@@ -493,14 +493,14 @@ def main():
     if not Path(ch_path).is_file():
         _abort(
             job_name, results, stop_watch, status=Result.Status.ERROR,
-            info=f"ClickHouse binary not found at {ch_path}. The pipeline must provide the binary (e.g. build or artifact step).",
+            info=f"Datastore binary not found at {ch_path}. The pipeline must provide the binary (e.g. build or artifact step).",
         )
         return
     if not Shell.check(f"chmod +x {ch_path}", verbose=True):
-        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="chmod +x on ClickHouse binary failed.")
+        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="chmod +x on Datastore binary failed.")
         return
     if not Shell.check(f"{ch_path} --version", verbose=True):
-        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="ClickHouse binary --version failed.")
+        _abort(job_name, results, stop_watch, status=Result.Status.ERROR, info="Datastore binary --version failed.")
         return
 
     # Build RaftKeeper Docker image if the raftkeeper backend is enabled.

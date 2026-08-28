@@ -96,7 +96,7 @@ def clone_submodules():
 
 
 def update_path_ch_config(config_file_path=""):
-    print("Updating path in clickhouse config")
+    print("Updating path in datastore config")
     config_file_path = (
         config_file_path or f"{temp_dir}/etc/clickhouse-server/config.xml"
     )
@@ -137,7 +137,7 @@ def _load_darwin_skip_tests():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Fast Test Job")
+    parser = argparse.ArgumentParser(description="Datastore Fast Test Job")
     parser.add_argument(
         "--test",
         help="Optional. Space-separated test name patterns",
@@ -179,7 +179,7 @@ def main():
     ]:
         if path.is_file():
             clickhouse_bin_path = path
-            print(f"NOTE: clickhouse binary is found [{clickhouse_bin_path}] - skip the build")
+            print(f"NOTE: datastore binary is found [{clickhouse_bin_path}] - skip the build")
 
             stages = [JobStages.CONFIG, JobStages.TEST]
             resolved_clickhouse_bin_path = clickhouse_bin_path.resolve()
@@ -201,7 +201,7 @@ def main():
             break
     else:
         print(
-            f"NOTE: clickhouse binary is not found [{clickhouse_bin_path}] - will be built"
+            f"NOTE: datastore binary is not found [{clickhouse_bin_path}] - will be built"
         )
 
     # Global sccache settings for local and CI runs
@@ -283,7 +283,7 @@ def main():
         Shell.check("sccache --show-stats")
         results.append(
             Result.from_commands_run(
-                name="Build ClickHouse",
+                name="Build Datastore",
                 command=f"command time -v cmake --build {build_dir_normalized} --"
                 " clickhouse-bundle clickhouse-stripped lexer_test",
             )
@@ -328,7 +328,7 @@ def main():
         ]
         results.append(
             Result.from_commands_run(
-                name="Install ClickHouse Config",
+                name="Install Datastore Config",
                 command=commands,
             )
         )
@@ -343,7 +343,7 @@ def main():
     attach_debug = False
     if res and JobStages.TEST in stages:
         stop_watch_ = Utils.Stopwatch()
-        step_name = "Start ClickHouse Server"
+        step_name = "Start Datastore Server"
         print(step_name)
         res = CH.start()
         res = res and CH.wait_ready()
@@ -388,7 +388,7 @@ def main():
         clickhouse_se_path if (attach_debug or not res) else clickhouse_se_stripped_path
     )
     if clickhouse_upload_path.is_file():
-        # do not reupload clickhouse binary for non-building jobs (e.g. darwin tests)
+        # do not reupload datastore binary for non-building jobs (e.g. darwin tests)
         attach_files.append(clickhouse_upload_path)
     if attach_debug:
         attach_files.extend(CH.prepare_logs(info=info, all=True))

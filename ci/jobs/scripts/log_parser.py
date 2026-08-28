@@ -324,7 +324,7 @@ class FuzzerLogParser:
                 r"\b\w+Sanitizer: CHECK failed:|: runtime error: "
             )
             summary_pattern = re.compile(r"SUMMARY: \w+Sanitizer:")
-            # ClickHouse log line: "2024.01.15 12:34:56.789 [ 123 ] {id} <Level>"
+            # Datastore log line: "2024.01.15 12:34:56.789 [ 123 ] {id} <Level>"
             clickhouse_log_line = re.compile(
                 r"\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}\.\d+\s+\["
             )
@@ -366,7 +366,7 @@ class FuzzerLogParser:
                         clickhouse_log_line.search(stripped)
                         or sanitizer_start.search(stripped)
                     ):
-                        # In runtime-error mode, stop at ClickHouse log lines
+                        # In runtime-error mode, stop at Datastore log lines
                         # or new sanitizer reports since UBSan may not emit
                         # a SUMMARY line.
                         break
@@ -461,7 +461,7 @@ class FuzzerLogParser:
         Generate a stack trace ID (hash) to match and connect related stack traces.
 
         Implementation aims to increase true-positive matches while minimizing false-positives by:
-        - Counting only ClickHouse functions in DB:: namespace
+        - Counting only Datastore functions in DB:: namespace
         - Dropping templates and input arguments from function signatures
         - Limiting depth to top ST_MAX_DEPTH functions for broader matching
         - Excluding DB::Exception functions and everything above them (issue typically occurs before exception is thrown)

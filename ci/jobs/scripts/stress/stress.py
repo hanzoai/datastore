@@ -465,7 +465,7 @@ def prepare_for_hung_check(drop_databases: bool) -> bool:
     # FIXME this function should not exist, but...
 
     # We attach gdb to clickhouse-server before running tests
-    # to print stacktraces of all crashes even if clickhouse cannot print it for some reason.
+    # to print stacktraces of all crashes even if datastore cannot print it for some reason.
     # However, it obstructs checking for hung queries.
     logging.info("Will terminate gdb (if any)")
     call_with_retry("kill -TERM $(pidof gdb)")
@@ -598,7 +598,7 @@ def prepare_for_hung_check(drop_databases: bool) -> bool:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="ClickHouse script for running stresstest"
+        description="Datastore script for running stresstest"
     )
     parser.add_argument("--test-cmd", default="/usr/bin/datastore-test")
     parser.add_argument("--skip-func-tests", default="")

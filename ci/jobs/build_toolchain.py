@@ -36,7 +36,7 @@ STAGE2_LLVM_PROJECTS = "clang;clang-tools-extra;lld;bolt;polly"
 
 # Cross-target triples for compiler-rt builtins. Builtins are freestanding C code
 # (no sysroot needed), built via LLVM_BUILTIN_TARGETS so the toolchain is
-# self-contained for all ClickHouse cross-compilation targets.
+# self-contained for all Datastore cross-compilation targets.
 # Must match the architectures supported in contrib/compiler-rt-cmake/CMakeLists.txt.
 CROSS_BUILTIN_TARGETS = [
     ("x86_64-unknown-linux-gnu", "Linux"),
@@ -108,7 +108,7 @@ def main():
     arch = get_arch()
     toolchain_file = get_toolchain_file()
     print(f"Building toolchain for {arch}")
-    print(f"Using ClickHouse toolchain file: {toolchain_file}")
+    print(f"Using Datastore toolchain file: {toolchain_file}")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -236,7 +236,7 @@ def main():
             res = results[-1].is_ok()
 
         # Install compiler-rt headers (xray, sanitizer, etc.) into the clang resource
-        # directory so that ClickHouse can find <xray/xray_interface.h> when compiled
+        # directory so that Datastore can find <xray/xray_interface.h> when compiled
         # with this toolchain.
         if res:
             resource_dirs = glob.glob(
@@ -260,7 +260,7 @@ def main():
                     f" {STAGE1_INSTALL_DIR}/lib/clang/*/include"
                 )
 
-    # Stage 2: Profile collection - build ClickHouse with instrumented clang
+    # Stage 2: Profile collection - build Datastore with instrumented clang
     if res and JobStages.PROFILE_COLLECTION in stages:
         clean_dirs(CH_PROFILE_BUILD_DIR)
 
@@ -304,12 +304,12 @@ def main():
             # Build may fail at link step but profraw files from compilation
             # steps are still useful for PGO
             build_result = Result.from_commands_run(
-                name="Profile collection build (ClickHouse)",
+                name="Profile collection build (Datastore)",
                 command=f"{CUSTOM_NINJA} -C {CH_PROFILE_BUILD_DIR} clickhouse",
             )
             if not build_result.is_ok():
                 print(
-                    "ClickHouse build finished with errors"
+                    "Datastore build finished with errors"
                     " (link failures with instrumented compiler are expected)."
                     " Profraw files from compilation steps should still be available."
                 )
@@ -516,7 +516,7 @@ def main():
                 print(f"Failed to create clang++ symlink: {e}")
                 bolt_ok = False
 
-        # Step 3: Configure ClickHouse build with BOLT-instrumented clang
+        # Step 3: Configure Datastore build with BOLT-instrumented clang
         if bolt_ok:
             cmake_cmd = (
                 f"cmake"
@@ -650,7 +650,7 @@ def main():
             print(f"Installed .ninja_log to {ninja_log_dir}/ninja_log")
 
         # LLVM installs the versioned `clang-21` plus unversioned `clang++`->`clang`->`clang-21`,
-        # but not a versioned `clang++-21`. ClickHouse selects compilers by versioned name, so
+        # but not a versioned `clang++-21`. Datastore selects compilers by versioned name, so
         # without this the C++ compiler resolves to whatever `clang++-21` is elsewhere on PATH (e.g.
         # a distro one) while C/ASM use this toolchain - a silent mismatch. Add the missing symlink.
         clangpp = f"{STAGE2_INSTALL_DIR}/bin/clang++-21"

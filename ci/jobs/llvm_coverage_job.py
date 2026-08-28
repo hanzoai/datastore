@@ -437,7 +437,7 @@ if __name__ == "__main__":
                 return False
 
             # Conservative allowlist of paths that *definitely* cannot affect
-            # the compiled ClickHouse binary. Anything not in this set is
+            # the compiled Datastore binary. Anything not in this set is
             # assumed to potentially affect the binary, which suppresses the
             # newly-covered analysis below — exhaustively enumerating
             # build-affecting inputs (CMakeLists at any depth, *.cmake,
@@ -457,7 +457,7 @@ if __name__ == "__main__":
             def _is_non_binary_path(p: str) -> bool:
                 # Everything under tests/ — runnable tests AND infrastructure
                 # (helpers, runners, tests/ci, conftests, jepsen.clickhouse,
-                # ...) — does not link into the production ClickHouse binary.
+                # ...) — does not link into the production Datastore binary.
                 # The test-infrastructure case is intentionally broader than
                 # _is_test_path so changes to helpers don't flip
                 # _binary_unchanged to False, but they also don't flip

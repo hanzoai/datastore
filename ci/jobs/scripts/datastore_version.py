@@ -78,7 +78,7 @@ def _version_type_from_describe(versions: dict) -> str:
 
 
 class CHVersion:
-    """The ClickHouse release version.
+    """The Datastore release version.
 
     A stateful model (`major.minor.patch.tweak`, plus `revision`, `githash` and
     `version_type`, with the derived `string`/`describe` kept in sync) that the

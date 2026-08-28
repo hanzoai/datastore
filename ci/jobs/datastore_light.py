@@ -258,7 +258,7 @@ class ClickHouseSetup:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Starts ClickHouse server in the specified work directory."
+        description="Starts Datastore server in the specified work directory."
     )
     parser.add_argument("--workdir", help="Work directory", default="./ci/tmp/wd")
     parser.add_argument("--path", help="Path to the clickhouse binary", default="")

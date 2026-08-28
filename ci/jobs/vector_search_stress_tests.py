@@ -1,4 +1,4 @@
-# vector_search_stress_tests.py : Stress testing of ClickHouse Vector Search
+# vector_search_stress_tests.py : Stress testing of Datastore Vector Search
 # Documentation : https://clickhouse.com/docs/engines/table-engines/mergetree-family/annindexes
 
 import os
@@ -22,7 +22,7 @@ temp_dir = f"{Utils.cwd()}/ci/tmp"
 def install_vector_search(config_dir, var_lib_dir):
     config_d = f"{config_dir}/config.d"
     os.makedirs(config_d, exist_ok=True)
-    # Large values are set, ClickHouse will auto downsize
+    # Large values are set, Datastore will auto downsize
     c1 = """<clickhouse>
     <max_server_memory_usage_to_ram_ratio>0.95</max_server_memory_usage_to_ram_ratio>
     <cache_size_to_ram_max_ratio>0.95</cache_size_to_ram_max_ratio>
@@ -833,7 +833,7 @@ def install_clickhouse():
         assert False, "Unknown processor architecture"
 
     results.append(Result.from_commands_run(
-        name="Download ClickHouse",
+        name="Download Datastore",
         command=[
             f"wget -nv -P {temp_dir} {latest_ch_master_url}",
             f"chmod +x {temp_dir}/clickhouse",

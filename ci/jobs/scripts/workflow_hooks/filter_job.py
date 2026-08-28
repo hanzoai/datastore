@@ -79,7 +79,7 @@ def _has_keeper_stress_changes(changed_files):
 
 
 def _has_build_digest_changes(changed_files):
-    """True if any changed file may affect the compiled ClickHouse binary,
+    """True if any changed file may affect the compiled Datastore binary,
     per `build_digest_config.include_paths`/`exclude_paths` - the same paths
     that gate the build job's cache digest in `ci/defs/job_configs.py`.
     """

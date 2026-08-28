@@ -1,4 +1,4 @@
-import { queryClickHouse } from './queryClickHouse.js';
+import { queryDatastore } from './queryDatastore.js';
 
 export async function* datastorePartsInserter({host, user, password, query, table, database, partition})
 {
@@ -14,7 +14,7 @@ export async function* datastorePartsInserter({host, user, password, query, tabl
         query = `SELECT * FROM system.parts ${where} ORDER BY min_block_number`;
     }
     let rows = [];
-    await queryClickHouse({
+    await queryDatastore({
         host,
         user,
         password,

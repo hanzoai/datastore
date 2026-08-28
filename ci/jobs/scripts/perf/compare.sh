@@ -58,7 +58,7 @@ function wait_for_server # port, pid
 
     if ! clickhouse-client --port "$1" --receive_timeout=5 --query "select 1"
     then
-        echo "Cannot connect to ClickHouse server at $1"
+        echo "Cannot connect to Datastore server at $1"
         return 1
     fi
 
@@ -153,7 +153,7 @@ function configure
 }
 
 # addressToLine resolves a frame to "file:line" only where DWARF covers
-# ClickHouse code. PR builds use -g0 (DISABLE_ALL_DEBUG_SYMBOLS): the symbol
+# Datastore code. PR builds use -g0 (DISABLE_ALL_DEBUG_SYMBOLS): the symbol
 # table remains (addressToSymbol works) but there is no line info, so the patched
 # (right) binary symbolizes differently from the reference (left, master) build
 # and flamegraph tooling cannot match the frames. A ".debug_info" section is not

@@ -61,7 +61,7 @@ chmod +x "$CLICKHOUSE_BIN"
 # `clickhouse/sqlancer-test` image (ci/docker/sqlancer-test/Dockerfile) installs
 # `wget` but not `curl`, so any `curl` call dies with "command not found" and
 # fails the whole job. `sqlancer_job.sh` already uses `wget` for the same reason.
-# `--content-on-error` on the write queries below surfaces ClickHouse's error
+# `--content-on-error` on the write queries below surfaces Datastore's error
 # body (wget still exits non-zero on HTTP >= 400, so `set -e` fails loud).
 for _ in $(seq 1 60); do
     if [[ $(wget -q -T 1 -O- 'http://localhost:8123/' 2>/dev/null) == 'Ok.' ]]; then
@@ -70,7 +70,7 @@ for _ in $(seq 1 60); do
     sleep 1
 done
 
-# Provision a SQLancer user with a real password. ClickHouse's `default` user
+# Provision a SQLancer user with a real password. Datastore's `default` user
 # has an empty password, which `com.clickhouse:clickhouse-jdbc >= 0.9.8`
 # refuses to send via the JDBC URL ("Invalid query parameter value in pair
 # 'password='"). Creating a dedicated user with a non-empty password is the
@@ -83,7 +83,7 @@ wget -q -O- --tries=1 --content-on-error --post-data="CREATE USER OR REPLACE ${S
 # `GRANT ALL`: on the embedded-config server the default user does not hold the
 # full ALL set (e.g. it lacks `SHOW NAMED COLLECTIONS SECRETS`), so a plain
 # `GRANT ALL ON *.* ... WITH GRANT OPTION` fails with ACCESS_DENIED (code 497)
-# on current ClickHouse. CURRENT GRANTS copies exactly the default user's
+# on current Datastore. CURRENT GRANTS copies exactly the default user's
 # privileges, which is everything SQLancer++ needs (DDL/DML on any database).
 wget -q -O- --tries=1 --content-on-error --post-data="GRANT CURRENT GRANTS ON *.* TO ${SQLANCER_USER} WITH GRANT OPTION" 'http://localhost:8123/'
 

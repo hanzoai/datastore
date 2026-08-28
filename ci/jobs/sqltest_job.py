@@ -45,7 +45,7 @@ class ClickHouseBinary:
         return res
 
     def start(self):
-        print("Starting ClickHouse server")
+        print("Starting Datastore server")
         print("Command: ", self.start_cmd)
         kill_leftover_server_processes()
         self.log_fd = open(self.log_file, "w")
@@ -57,14 +57,14 @@ class ClickHouseBinary:
         if retcode is not None:
             stdout = self.proc.stdout.read().strip() if self.proc.stdout else ""
             stderr = self.proc.stderr.read().strip() if self.proc.stderr else ""
-            Utils.print_formatted_error("Failed to start ClickHouse", stdout, stderr)
+            Utils.print_formatted_error("Failed to start Datastore", stdout, stderr)
             return False
-        print("ClickHouse server process started -> wait ready")
+        print("Datastore server process started -> wait ready")
         res = self.wait_ready()
         if res:
-            print("ClickHouse server ready")
+            print("Datastore server ready")
         else:
-            print("ClickHouse server NOT ready")
+            print("Datastore server NOT ready")
         return res
 
     def wait_ready(self):
@@ -107,14 +107,14 @@ def main():
     }
 
     if True:
-        print("Start ClickHouse")
+        print("Start Datastore")
 
         def start():
             return ch.install() and ch.start()
 
         results.append(
             Result.from_commands_run(
-                name="Start ClickHouse",
+                name="Start Datastore",
                 command=start,
             )
         )
