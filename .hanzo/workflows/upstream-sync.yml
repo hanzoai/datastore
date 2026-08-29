@@ -32,7 +32,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sync:
-    runs-on: hanzo-build-linux-amd64
+    runs-on: [hanzo-build-linux-amd64]
     timeout-minutes: 60
     env:
       UPSTREAM_URL: ${{ inputs.upstream_url || 'https://github.com/ClickHouse/ClickHouse.git' }}
