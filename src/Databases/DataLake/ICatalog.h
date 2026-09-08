@@ -124,7 +124,7 @@ private:
     /// This is extracted from URLs like: abfss://container@account.dfs.core.windows.net/path
     std::string azure_account_with_suffix;
     bool force_add_bucket = false;
-    /// Endpoint is set and used in case we have non-AWS storage implementation, for example, Minio.
+    /// Endpoint is set and used in case we have non-AWS storage implementation, for example, Hanzo S3.
     /// Also not all catalogs support non-AWS storages.
     std::string endpoint;
 

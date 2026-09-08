@@ -338,7 +338,7 @@ To enable caching use a setting `filesystem_cache_name = '<name>'` and `enable_f
 
 ```sql
 SELECT *
-FROM s3('http://minio:10000/datastore//test_3.csv', 'minioadmin', 'minioadminpassword', 'CSV')
+FROM s3('http://s3.hanzo.svc:9000/datastore//test_3.csv', '<access_key_id>', '<secret_access_key>', 'CSV')
 SETTINGS filesystem_cache_name = 'cache_for_s3', enable_filesystem_cache = 1;
 ```
 
@@ -415,7 +415,8 @@ select _path, * from t_03363_parquet;
 
 ### Querying partitioned data {#querying-partitioned-data}
 
-This example uses the [docker compose recipe](https://github.com/Datastore/examples/tree/5fdc6ff72f4e5137e23ea075c88d3f44b0202490/docker-compose-recipes/recipes/ch-and-minio-S3), which integrates Datastore and MinIO.  You should be able to reproduce the same queries using S3 by replacing the endpoint and authentication values.
+This example uses a local S3-compatible endpoint (Hanzo S3, `hanzoai/s3`); any
+S3-compatible store works by replacing the endpoint and authentication values.
 
 Notice that the S3 endpoint in the `ENGINE` configuration uses the parameter token `{_partition_id}` as part of the S3 object (filename), and that the SELECT queries select against those resulting object names (e.g., `test_3.csv`).
 
@@ -442,9 +443,9 @@ CREATE TABLE p
 )
 ENGINE = S3(
 -- highlight-next-line
-           'http://minio:10000/datastore//test_{_partition_id}.csv',
-           'minioadmin',
-           'minioadminpassword',
+           'http://s3.hanzo.svc:9000/datastore//test_{_partition_id}.csv',
+           '<access_key_id>',
+           '<secret_access_key>',
            'CSV',
            partition_strategy='wildcard')
 PARTITION BY column3
@@ -463,7 +464,7 @@ This query uses the s3 table function
 
 ```sql
 SELECT *
-FROM s3('http://minio:10000/datastore//test_3.csv', 'minioadmin', 'minioadminpassword', 'CSV')
+FROM s3('http://s3.hanzo.svc:9000/datastore//test_3.csv', '<access_key_id>', '<secret_access_key>', 'CSV')
 ```
 ```response
 ┌─c1─┬─c2─┬─c3─┐
@@ -474,7 +475,7 @@ FROM s3('http://minio:10000/datastore//test_3.csv', 'minioadmin', 'minioadminpas
 #### Select from partition 1 {#select-from-partition-1}
 ```sql
 SELECT *
-FROM s3('http://minio:10000/datastore//test_1.csv', 'minioadmin', 'minioadminpassword', 'CSV')
+FROM s3('http://s3.hanzo.svc:9000/datastore//test_1.csv', '<access_key_id>', '<secret_access_key>', 'CSV')
 ```
 ```response
 ┌─c1─┬─c2─┬─c3─┐
@@ -485,7 +486,7 @@ FROM s3('http://minio:10000/datastore//test_1.csv', 'minioadmin', 'minioadminpas
 #### Select from partition 45 {#select-from-partition-45}
 ```sql
 SELECT *
-FROM s3('http://minio:10000/datastore//test_45.csv', 'minioadmin', 'minioadminpassword', 'CSV')
+FROM s3('http://s3.hanzo.svc:9000/datastore//test_45.csv', '<access_key_id>', '<secret_access_key>', 'CSV')
 ```
 ```response
 ┌─c1─┬─c2─┬─c3─┐
@@ -1874,7 +1875,7 @@ SETTINGS
 
 -- S3 storage (the `Paimon` engine defaults to the S3 implementation when no `disk` is specified)
 CREATE TABLE paimon_mv_source
-ENGINE = Paimon('http://minio:9000/bucket/path/to/table', 'access_key', 'secret_key')
+ENGINE = Paimon('http://s3.hanzo.svc:9000/bucket/path/to/table', 'access_key', 'secret_key')
 SETTINGS
     paimon_incremental_read = 1,
     paimon_keeper_path = '/datastore/tables/{uuid}',
