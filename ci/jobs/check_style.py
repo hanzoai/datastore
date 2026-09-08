@@ -578,7 +578,7 @@ def check_compose_images(files) -> str:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Style Check Job")
+    parser = argparse.ArgumentParser(description="Datastore Style Check Job")
     parser.add_argument("--test", help="Sub check name", default="")
     return parser.parse_args()
 

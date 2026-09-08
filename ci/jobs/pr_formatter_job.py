@@ -13,7 +13,7 @@ if __name__ == "__main__":
     output_file = "./ci/tmp/pr_body_generated.md"
 
     prompt = f"""
-Generate a formatted PR body for PR #{info.pr_number} following ClickHouse conventions.
+Generate a formatted PR body for PR #{info.pr_number} following Datastore conventions.
 
 ## Required Sections
 

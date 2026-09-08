@@ -86,7 +86,7 @@ class JobStages(metaclass=MetaClasses.WithIter):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="ClickHouse Build Job")
+    parser = argparse.ArgumentParser(description="Datastore Build Job")
     parser.add_argument(
         "--build-type",
         help="see BuildTypes.*",
@@ -292,10 +292,10 @@ def main():
         version = CHVersion.get_current_version(no_strict=True)
         if not info.is_local_run:
             print(
-                "WARNING: ClickHouse version has not been found in workflow kv storage - read from repo"
+                "WARNING: Datastore version has not been found in workflow kv storage - read from repo"
             )
             info.add_workflow_warning(
-                "ClickHouse version has not been found in workflow kv storage"
+                "Datastore version has not been found in workflow kv storage"
             )
     assert version
 
@@ -398,7 +398,7 @@ def main():
         build_result_index = len(results)
         results.append(
             Result.from_commands_run(
-                name="Build ClickHouse",
+                name="Build Datastore",
                 command=build_command,
                 workdir=build_dir_normalized,
             )
@@ -419,7 +419,7 @@ def main():
             )
             if retry_cmake.is_ok():
                 retry_build = Result.from_commands_run(
-                    name="Build ClickHouse (retry without PGO)",
+                    name="Build Datastore (retry without PGO)",
                     command=f"command time -v ninja {targets}",
                     workdir=build_dir_normalized,
                 )

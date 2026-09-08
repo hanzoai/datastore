@@ -31,7 +31,7 @@ def main():
     try:
         if not info.is_local_run:
             results.append(r := Result.from_commands_run(
-                name="Download ClickHouse",
+                name="Download Datastore",
                 command=[
                     f"wget -nv -P {temp_dir} {latest_ch_master_url}",
                     f"chmod +x {temp_dir}/clickhouse",

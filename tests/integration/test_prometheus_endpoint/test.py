@@ -21,7 +21,7 @@ def start_cluster():
 
 def parse_response_line(line):
     allowed_prefixes = [
-        "ClickHouse",
+        "Datastore",
         "# HELP",
         "# TYPE",
     ]
@@ -71,21 +71,21 @@ def get_and_check_metrics(retries):
 
 def test_prometheus_endpoint(start_cluster):
     metrics_dict = get_and_check_metrics(10)
-    assert metrics_dict["ClickHouseProfileEvents_Query"] >= 0
-    prev_query_count = metrics_dict["ClickHouseProfileEvents_Query"]
+    assert metrics_dict["DatastoreProfileEvents_Query"] >= 0
+    prev_query_count = metrics_dict["DatastoreProfileEvents_Query"]
 
     node.query("SELECT 1")
     node.query("SELECT 2")
     node.query("SELECT 3")
 
     metrics_dict = get_and_check_metrics(10)
-    assert metrics_dict["ClickHouseProfileEvents_Query"] >= prev_query_count + 3
+    assert metrics_dict["DatastoreProfileEvents_Query"] >= prev_query_count + 3
 
     node.query_and_get_error(
         "SELECT throwIf(1, 'test', toInt16(42)) SETTINGS allow_custom_error_code_in_throwif=1"
     )
     metrics_dict = get_and_check_metrics(10)
 
-    assert metrics_dict["ClickHouseErrorMetric_NUMBER_OF_ARGUMENTS_DOESNT_MATCH"] >= 1
-    assert metrics_dict["ClickHouseErrorMetric_ALL"] >= 1
-    assert metrics_dict["ClickHouse_Info"] == 1
+    assert metrics_dict["DatastoreErrorMetric_NUMBER_OF_ARGUMENTS_DOESNT_MATCH"] >= 1
+    assert metrics_dict["DatastoreErrorMetric_ALL"] >= 1
+    assert metrics_dict["Datastore_Info"] == 1

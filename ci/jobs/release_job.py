@@ -58,7 +58,7 @@ REPO_PATH = Utils.cwd()
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description="Runs the ClickHouse release pipeline",
+        description="Runs the Datastore release pipeline",
     )
     parser.add_argument(
         "--ref",

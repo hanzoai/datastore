@@ -1,11 +1,11 @@
 """
-Collect PGO and BOLT profiles for the ClickHouse binary.
+Collect PGO and BOLT profiles for the Datastore binary.
 
 This job:
-  1. Builds ClickHouse with PGO instrumentation (-fprofile-generate)
+  1. Builds Datastore with PGO instrumentation (-fprofile-generate)
   2. Runs performance tests to collect representative execution profiles
   3. Merges PGO profiles into a single .profdata file
-  4. Rebuilds ClickHouse with --emit-relocs for BOLT
+  4. Rebuilds Datastore with --emit-relocs for BOLT
   5. Instruments the binary with llvm-bolt
   6. Runs performance tests again to collect BOLT profiles
   7. Merges BOLT profiles and uploads both artifacts
@@ -164,7 +164,7 @@ def log_resources(stage):
 
 
 def install_clickhouse(binary_path, server_dir):
-    """Install ClickHouse binary and configs for running performance tests."""
+    """Install Datastore binary and configs for running performance tests."""
     config_dir = f"{server_dir}/config"
     Shell.check(f"mkdir -p {config_dir}/config.d {config_dir}/users.d {server_dir}/db/user_files {server_dir}/top_level_domains")
     Shell.check(f"cp {repo_path}/programs/server/config.xml {config_dir}/")
@@ -281,7 +281,7 @@ def wait_for_server_ready(proc, server_dir, port, log_file):
 
 
 def start_server(server_dir, port=9000, keeper_port=9181, raft_port=9234):
-    """Start a ClickHouse server and wait for it to be ready."""
+    """Start a Datastore server and wait for it to be ready."""
     config_file = f"{server_dir}/config/config.xml"
     db_path = f"{server_dir}/db"
     log_file = f"{server_dir}/server.log"
@@ -315,7 +315,7 @@ def start_server(server_dir, port=9000, keeper_port=9181, raft_port=9234):
 
 
 def stop_server(proc, log_fd):
-    """Stop a ClickHouse server."""
+    """Stop a Datastore server."""
     if proc:
         Utils.terminate_process_group(proc.pid)
         proc.terminate()
@@ -518,7 +518,7 @@ def configure_datasets(server_dir, port=9000):
 def parse_args():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Collect ClickHouse PGO/BOLT profiles")
+    parser = argparse.ArgumentParser(description="Collect Datastore PGO/BOLT profiles")
     parser.add_argument(
         "--param",
         help="Start from this stage (for resuming after partial runs)",
@@ -566,7 +566,7 @@ def main():
         )
         res = results[-1].is_ok()
 
-    # --- Stage: Build PGO-instrumented ClickHouse ---
+    # --- Stage: Build PGO-instrumented Datastore ---
     if res and JobStages.BUILD_PGO_INSTRUMENTED in stages:
         os.makedirs(PGO_BUILD_DIR, exist_ok=True)
         os.makedirs(PGO_RAW_PROFILES_DIR, exist_ok=True)
@@ -677,7 +677,7 @@ def main():
                 size = os.path.getsize(PGO_PROFDATA_PATH)
                 print(f"PGO profile size: {size / 1024 / 1024:.1f} MB")
 
-    # --- Stage: Build ClickHouse for BOLT ---
+    # --- Stage: Build Datastore for BOLT ---
     if res and JobStages.BUILD_FOR_BOLT in stages:
         # The instrumented build, its raw profraw files, and the instrumented server's
         # data directory (which holds tens of GB of tables left behind by perf tests

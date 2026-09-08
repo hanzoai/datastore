@@ -364,7 +364,7 @@ fi
 #
 #   [1]: git grep --recurse-submodules -e find_library -e find_path contrib
 if git grep -e find_path -e find_library -- :**CMakeLists.txt; then
-    echo "There is find_path/find_library usage. ClickHouse should use everything bundled. Consider adding one more contrib module."
+    echo "There is find_path/find_library usage. Datastore should use everything bundled. Consider adding one more contrib module."
 fi
 
 # Don't allow dynamic compiler check with CMake, because we are using hermetic, reproducible, cross-compiled, static (TLDR, good) builds.

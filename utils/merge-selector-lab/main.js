@@ -68,7 +68,7 @@ function createNavigationPage() {
             <div class="col-12">
                 <div class="jumbotron jumbotron-fluid bg-primary text-white text-center">
                     <div class="container">
-                        <h1 class="display-4">ClickHouse Merge Selector Lab</h1>
+                        <h1 class="display-4">Datastore Merge Selector Lab</h1>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@ function createNavigationPage() {
         <div class="row mt-5">
             <div class="col-12">
                 <h2 class="text-success pb-2 mb-4">Simple Merge Selector (Sequential)</h2>
-                <p>Simple merges demo. Scenarios show how default ClickHouse merge selector behaves. It is sequential (only one merge is selected and executed at a time) and non realistic demo, but it helps to understand the behaviour of simple merge selector.</p>
+                <p>Simple merges demo. Scenarios show how the default Datastore merge selector behaves. It is sequential (only one merge is selected and executed at a time) and non realistic demo, but it helps to understand the behaviour of simple merge selector.</p>
                 <div class="row" id="simple-grid"></div>
             </div>
         </div>
