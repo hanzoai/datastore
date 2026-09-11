@@ -43,7 +43,7 @@ The unified schema lives in `hanzo/schema.sql` and includes:
 | `ai_scores` | Evaluations, metrics | LangFuse |
 | `business_events` | Purchases, signups | Hanzo |
 | `api_metrics` | API usage tracking | Hanzo |
-| `base_metrics` | PocketBase instances | Hanzo |
+| `base_metrics` | Base instances | Hanzo |
 | `app_metrics` | App deployments | Hanzo |
 | `model_catalog` | LLM pricing/config | Hanzo |
 

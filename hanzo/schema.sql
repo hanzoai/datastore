@@ -283,7 +283,7 @@ ORDER BY (project_id, endpoint, toStartOfHour(timestamp), timestamp);
 -- INFRASTRUCTURE METRICS (compute, storage, network)
 -- =============================================================================
 
--- Base Instance Metrics (PocketBase deployments)
+-- Base Instance Metrics
 CREATE TABLE IF NOT EXISTS hanzo.base_metrics (
     instance_id UUID,
     project_id UUID,
